@@ -29,7 +29,20 @@ run `npm start` in the current folder
 (which is the root folder containing the src and the server folders)
 
 This command will build the the front end and then start the express server.
+
 // this is the call that npm start will execute `npm run build  && (cd server && npm start)`
+
+
+# Starting the client 
+
+run `npm run start-client` in the current folder 
+
+This will start a react 'server' hosting only the frontend application.
+It has the hotreloading and other helpful thigs which can help during the development process of the frontend. 
+
+<b>Note:</b> Login functionallity will not work in this environment. 
+
+
 
 
  
