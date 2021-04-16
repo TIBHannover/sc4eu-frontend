@@ -103,11 +103,24 @@
       "prettier"
     ],
     "plugins": [
-      "prettier"
+      "prettier",
+      "import"
     ],
     "rules": {
       "prettier/prettier": [
         "error"
+      ],
+      "import/no-anonymous-default-export": [
+        "error",
+        {
+          "allowArray": false,
+          "allowArrowFunction": true,
+          "allowAnonymousClass": false,
+          "allowAnonymousFunction": false,
+          "allowCallExpression": true,
+          "allowLiteral": false,
+          "allowObject": true
+        }
       ],
       "react/jsx-closing-bracket-location": [
         "error"

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Button, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-import Tippy from '@tippyjs/react';
+
 class ResourceHeader extends Component {
     constructor(props) {
         super(props);

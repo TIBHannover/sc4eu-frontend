@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Link, NavLink as RouterNavLink, withRouter } from 'react-router-dom';
-import ROUTES from '../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faUnlockAlt, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
 
 export default class PreInitMessages extends Component {
     constructor(props) {

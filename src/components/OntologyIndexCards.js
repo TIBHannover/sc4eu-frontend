@@ -5,10 +5,6 @@ import OntologyCard from './OntologyCard';
 import { withCookies } from 'react-cookie';
 
 class OntologyIndexCards extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}

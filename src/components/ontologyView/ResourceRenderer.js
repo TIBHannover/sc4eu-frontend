@@ -16,7 +16,6 @@ class ResourceRenderer extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     renderAllResources = () => {
-        const testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8];
         if (this.props.resources.length > 0) {
             const mappedResources = this.props.resources.map((item, index) => {
                 // const mappedResources = testArray.map((item, index) => {

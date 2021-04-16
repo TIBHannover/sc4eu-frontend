@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import PageA from './pages/PageA';
 import PageB from './pages/PageB';
+import ServiceStatus from './pages/ServiceStatus';
 
 import ROUTES from './constants/routes';
 import OntologyIndexing from './pages/OntologyIndexing';
@@ -12,6 +13,11 @@ const routes = [
         path: ROUTES.HOME,
         exact: true,
         component: Home
+    },
+    {
+        path: ROUTES.SERVICE_STATUS,
+        exact: true,
+        component: ServiceStatus
     },
 
     // DUmmY CASES TO CHECK HISTORY IN REDUX STATE

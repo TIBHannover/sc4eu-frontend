@@ -25,23 +25,28 @@ passport.deserializeUser(function(user, done) {
 });
 
 app.use(passport.initialize());
-passport.use(
-    new GitHubStrategy(
-        {
-            clientID: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            callbackURL: APPLICATION_URL + ':' + APPLICATION_PORT + '/auth/github/callback'
-        },
-        function(__accessToken, __refreshToken, profile, cb) {
-            // console.log(profile);
-            // Create of find a user in a database (based on the githubID
-            const local_accessToken = jwt.sign({ userId: 'user_123456' }, 'secretKey', { expiresIn: '8h' });
-            console.log('local token:', local_accessToken);
-            cb(null, { accessToken: local_accessToken }); // sends the local access token to the call back routine;
-            // it will forward the local access token to the client side;
-        }
-    )
-);
+
+try {
+    passport.use(
+        new GitHubStrategy(
+            {
+                clientID: process.env.GITHUB_CLIENT_ID,
+                clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                callbackURL: APPLICATION_URL + ':' + APPLICATION_PORT + '/auth/github/callback'
+            },
+            function(__accessToken, __refreshToken, profile, cb) {
+                // console.log(profile);
+                // Create of find a user in a database (based on the githubID
+                const local_accessToken = jwt.sign({ userId: 'user_123456' }, 'secretKey', { expiresIn: '8h' });
+                console.log('local token:', local_accessToken);
+                cb(null, { accessToken: local_accessToken }); // sends the local access token to the call back routine;
+                // it will forward the local access token to the client side;
+            }
+        )
+    );
+} catch (e) {
+    console.log(e);
+}
 
 // add middlewares
 app.use(express.static(path.join(__dirname, '..', 'build')));
@@ -53,6 +58,7 @@ app.listen(APPLICATION_PORT, () => {
     console.log('You can access it via ' + APPLICATION_URL + ':' + APPLICATION_PORT);
 });
 
+// TODO : make this configurable
 app.use(
     cors({
         origin: 'http://localhost:9000', // allow to server to accept request from different origin
@@ -63,6 +69,17 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/oauthStatus', (req, res) => {
+    const github_client_id = process.env.GITHUB_CLIENT_ID;
+    const github_client_secret = process.env.GITHUB_CLIENT_SECRET;
+    
+    if (github_client_id && github_client_id.length > 1 && github_client_secret && github_client_secret.length > 1) {
+        res.json({ oauth: true });
+    } else {
+        res.json({ oauth: false });
+    }
+});
 
 app.get('/user', verifyToken, (req, res) => {
     if (req.token === null) {
@@ -87,7 +104,6 @@ function verifyToken(req, res, next) {
         next();
     }
 }
-
 
 /** GITHUB OAUTH STUFF**/
 app.get('/auth/github', passport.authenticate('github'));

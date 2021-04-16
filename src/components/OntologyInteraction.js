@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, FormGroup, Input, Label } from 'reactstrap';
+import { FormGroup, Input, Label } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { getOntologyBy } from '../network/GetOntologyData';
@@ -85,7 +85,7 @@ const mapStateToProps = state => {
     };
 };
 
-ViewOntology.propTypes = {
+OntologyViewRoot.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.shape({
             ontologyId: PropTypes.string.isRequired
@@ -98,4 +98,4 @@ const mapDispatchToProps = dispatch => ({
     initializeResourceRelationModel: payload => dispatch(initializeResourceRelationModel(payload))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewOntology);
+export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);

@@ -13,7 +13,6 @@ export const submitGetRequest = (url, headers, send_token = false) => {
         const cookies = new Cookies();
         const token = cookies.get('token') ? cookies.get('token') : null;
         if (token) {
-            console.log('BUILDING THE NEW HEADER WITH BEARER!!!!!!');
             myHeaders.append('Authorization', `Bearer ${token}`);
         }
     }

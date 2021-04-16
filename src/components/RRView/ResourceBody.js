@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { FormGroup, Input, Button } from 'reactstrap';
+import { Input } from 'reactstrap';
 
 import { transformResourceToTTL, calculateBodyRows } from '../../mappers/ResToTTL';
 
@@ -84,12 +84,6 @@ const StyledResourceBody = styled.div`
     }
     word-break: none;
     white-space: nowrap;
-`;
-
-const StyledContentView = styled.div`
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 `;
 
 export const StyledBodyInput = styled(Input)`
