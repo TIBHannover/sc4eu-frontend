@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Link, NavLink as RouterNavLink, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faUnlockAlt, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
-import { Button, Navbar } from 'reactstrap';
-import Logo from './Logo';
 
 export default class OntologyIndexCards extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     render() {
-        console.log(this.props.inputData);
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>

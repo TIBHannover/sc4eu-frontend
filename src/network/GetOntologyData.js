@@ -1,4 +1,4 @@
-import { URL_ONTOLOGYINDEXING, URL_PRE_INIT, URL_GET_JSON_MODEL } from 'constants/services';
+import { URL_ONTOLOGYINDEXING, URL_GET_JSON_MODEL } from 'constants/services';
 import { plainGetRequest } from './networkRequests';
 export const getOntologyBy = id => {
     // we use parameters from env.

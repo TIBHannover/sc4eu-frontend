@@ -4,7 +4,7 @@ import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import styled, { keyframes } from 'styled-components';
-import TabLikeHeader from './TabLikeHeader';
+// import TabLikeHeader from './TabLikeHeader';
 
 export default class LeftSideBar extends Component {
     constructor(props) {

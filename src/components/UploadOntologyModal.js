@@ -1,22 +1,9 @@
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap';
 import React, { createRef, Component } from 'react';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import { Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { FormGroup, Label, Input } from 'reactstrap';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology } from '../network/ontologyIndexing';
-
-const AnimationContainer = styled(CSSTransition)`
-    &.fadeIn-enter {
-        opacity: 0;
-    }
-
-    &.fadeIn-enter.fadeIn-enter-active {
-        opacity: 1;
-        transition: 1s opacity;
-    }
-`;
 
 export default class UploadOntology extends Component {
     constructor(props) {

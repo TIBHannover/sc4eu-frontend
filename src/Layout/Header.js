@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ROUTES from 'constants/routes';
 
-import { Cookies } from 'react-cookie';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -88,7 +87,10 @@ class Header extends Component {
                                 console.log('SING IN ACTION ');
                                 console.log('location:', this.props.location);
                                 // push that to the redux state so that the user is rederected to its prev location;
-                                this.props.openAuthDialog({ action: 'signin', redirectRoute: this.props.location.pathname });
+                                this.props.openAuthDialog({
+                                    action: 'signin',
+                                    redirectRoute: this.props.location.pathname
+                                });
                             }}
                         >
                             <Icon className="mr-1" icon={faUser} /> Sign in

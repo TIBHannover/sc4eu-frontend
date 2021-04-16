@@ -1,6 +1,6 @@
 import * as type from './types';
 // import { getUserInformation } from "services/backend/users";
-import { Cookies } from 'react-cookie';
+// import { Cookies } from 'react-cookie';
 
 export const initializeResourceRelationModel = payload => dispatch => {
     const wrappedPayload = {

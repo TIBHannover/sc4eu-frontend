@@ -1,4 +1,4 @@
-import env from '@beam-australia/react-env';
+// import env from '@beam-australia/react-env';
 
 export const URL_ONTOLOGYINDEXING = `${process.env.REACT_APP_FLASK_BACKEND_URL}ontologyIndex/`;
 export const URL_INITIALIZE = `${process.env.REACT_APP_FLASK_BACKEND_URL}ontologyIndex/`;
