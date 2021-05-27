@@ -10,11 +10,25 @@ const initialState = {
 
 export default (state = initialState, action) => {
     switch (action.type) {
+        case type.UPDATE_USER_SETTINGS:
+            const currentState = { ...state };
+            // we try to merge the payload into the new state
+            const payload = action.payload.user; // this unrolls the user obj
+            currentState.user = { ...currentState.user, ...payload };
+            return currentState;
+
         case type.UPDATE_AUTH:
             console.log('rage:', {
                 ...state,
                 ...action.payload
             });
+            console.log(
+                'user:',
+                {
+                    ...state,
+                    ...action.payload
+                }.user
+            );
             return {
                 ...state,
                 ...action.payload
@@ -42,6 +56,13 @@ export default (state = initialState, action) => {
                 ...state,
                 dialogIsOpen: !state.dialogIsOpen,
                 redirectRoute: !state.dialogIsOpen ? state.redirectRoute : null // reset redirectRoute on close
+            };
+        }
+
+        case type.CLOSE_AUTHENTICATION_DIALOG: {
+            return {
+                ...state,
+                dialogIsOpen: false
             };
         }
 

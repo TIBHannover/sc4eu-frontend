@@ -28,7 +28,7 @@ class SignInModal extends Component {
                         <TransitionGroup exit={false}>
                             {this.props.action === 'signin' && (
                                 <AnimationContainer key={1} classNames="fadeIn" timeout={{ enter: 700, exit: 0 }}>
-                                    <SignIn />
+                                    <SignIn callback={this.props.callback} />
                                 </AnimationContainer>
                             )}
                         </TransitionGroup>
@@ -53,7 +53,8 @@ SignInModal.propTypes = {
     action: PropTypes.string.isRequired,
     dialogIsOpen: PropTypes.bool.isRequired,
     toggleAuthDialog: PropTypes.func.isRequired,
-    openAuthDialog: PropTypes.func.isRequired
+    openAuthDialog: PropTypes.func.isRequired,
+    callback: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignInModal);

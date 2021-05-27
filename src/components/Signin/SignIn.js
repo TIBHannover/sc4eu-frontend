@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { openAuthDialog, toggleAuthDialog, updateAuth } from '../../redux/actions/auth';
 import { compose } from 'redux';
+import LoginViaEmail from './LoginViaEmail';
 
 class SignIn extends Component {
     constructor(props) {
@@ -19,7 +20,7 @@ class SignIn extends Component {
         return (
             <>
                 <div>
-                    We do not provide any local users, we use OAuth2 to allow you to login (and if not yet register, create an internal account)
+                    <LoginViaEmail toggleAuthDialog={this.props.toggleAuthDialog} callback={this.props.callback} />
                 </div>
                 <hr />
                 <div>We do not store any e-mail or password credentials. We will investigate further sign in methods like Google and twitter.</div>
@@ -41,7 +42,7 @@ class SignIn extends Component {
 
                 {/*TODO: TEST IF WE CAN USE A BUTTON REDIRECT HERE */}
                 <a href={githubAuthURL} className="btn btn-primary">
-                    Sign in
+                    Sign in with GitHub
                 </a>
             </>
         );
@@ -52,6 +53,7 @@ SignIn.propTypes = {
     openAuthDialog: PropTypes.func.isRequired,
     updateAuth: PropTypes.func.isRequired,
     toggleAuthDialog: PropTypes.func.isRequired,
+    callback: PropTypes.func.isRequired,
     signInRequired: PropTypes.bool.isRequired,
     // history: PropTypes.object.isRequired,
     redirectRoute: PropTypes.string

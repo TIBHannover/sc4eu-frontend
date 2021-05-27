@@ -4,10 +4,14 @@ import NotFound from './pages/NotFound';
 import PageA from './pages/PageA';
 import PageB from './pages/PageB';
 import ServiceStatus from './pages/ServiceStatus';
+import Dashboard from './pages/dashboard';
+import UserProfile from './pages/UserProfile';
+import UserSettings from './pages/UserSettings';
 
 import ROUTES from './constants/routes';
 import OntologyIndexing from './pages/OntologyIndexing';
 import ViewOntology from './pages/ViewOntology';
+
 const routes = [
     {
         path: ROUTES.HOME,
@@ -18,6 +22,23 @@ const routes = [
         path: ROUTES.SERVICE_STATUS,
         exact: true,
         component: ServiceStatus
+    },
+
+    {
+        path: ROUTES.ADMIN_DASHBOARD,
+        exact: true,
+        component: Dashboard
+    },
+
+    {
+        path: ROUTES.USER_PROFILE,
+        exact: true,
+        component: UserProfile
+    },
+    {
+        path: ROUTES.USER_SETTINGS,
+        exact: true,
+        component: UserSettings
     },
 
     // DUmmY CASES TO CHECK HISTORY IN REDUX STATE
