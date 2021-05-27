@@ -9,11 +9,12 @@ import { initializeResourceRelationModel } from 'redux/actions/rrm_actions';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import OntologyViewRoot from '../components/ontologyView/OntologyViewRoot';
+
 class ViewOntology extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { isLoading: true, ontologyFileContent: undefined };
+        this.state = { isLoading: true, ontologyFileContent: undefined, error: false, errorMsg: '' };
         this.headerValue = 'This is the View of the Ontology Data ';
     }
 
@@ -28,14 +29,16 @@ class ViewOntology extends Component {
         // console.log('fetching ontologies from backend');
         // console.log(this.props.match.params.ontologyId);
         getOntologyBy(this.props.match.params.ontologyId).then(res => {
-            // console.log('we have the data!!!!!!', res);
-            getJSON_ModelForOntology({ ontologyData: res.ontology_data }).then(jsModel => {
-                console.log('>>> should call that redux function');
-                // create json obj from the string
-                const parsedModel = JSON.parse(jsModel);
-                this.props.initializeResourceRelationModel(parsedModel);
-                this.setState({ isLoading: false, ontologyFileContent: jsModel });
-            });
+            if (res.ontology_data) {
+                getJSON_ModelForOntology({ ontologyData: res.ontology_data }).then(jsModel => {
+                    // create json obj from the string
+                    const parsedModel = JSON.parse(jsModel);
+                    this.props.initializeResourceRelationModel(parsedModel);
+                    this.setState({ isLoading: false, ontologyFileContent: jsModel });
+                });
+            } else {
+                this.setState({ isLoading: false, error: true, errorMsg: 'Could not find this ontology' });
+            }
         });
     };
 
@@ -51,7 +54,7 @@ class ViewOntology extends Component {
                     {this.headerValue}
                 </h1>
                 <div className="pl-1 pr-1">
-                    {this.state.isLoading ? (
+                    {this.state.isLoading === true && (
                         <div className="text-center text-primary mt-4 mb-4">
                             {/*using a manual fixed scale value for the spinner scale! */}
 
@@ -62,9 +65,9 @@ class ViewOntology extends Component {
                                 Loading
                             </h2>
                         </div>
-                    ) : (
-                        <OntologyViewRoot />
                     )}
+                    {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
+                    {this.state.isLoading === false && this.state.error === false && <OntologyViewRoot />}
                 </div>
             </div>
         );

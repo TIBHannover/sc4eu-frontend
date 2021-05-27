@@ -10,6 +10,7 @@ export const submitGetRequest = (url, headers, send_token = false) => {
     }
     const myHeaders = headers ? new Headers(headers) : {};
     if (send_token) {
+        console.log('WHATS THE URL???', url);
         const cookies = new Cookies();
         const token = cookies.get('token') ? cookies.get('token') : null;
         if (token) {
@@ -42,91 +43,94 @@ export const submitGetRequest = (url, headers, send_token = false) => {
     });
 };
 //
-// export const submitPostRequest = (url, headers, data, jsonStringify = true, send_token = true) => {
-//     if (!url) {
-//         throw new Error('Cannot submit POST request. URL is null or undefined.');
-//     }
-//
-//     const myHeaders = new Headers(headers);
-//
-//     // if (send_token) {
-//     //     const cookies = new Cookies();
-//     //     const token = cookies.get('token') ? cookies.get('token') : null;
-//     //     if (token) {
-//     //         myHeaders.append('Authorization', `Bearer ${token}`);
-//     //     }
-//     // }
-//
-//     if (jsonStringify) {
-//         data = JSON.stringify(data);
-//     }
-//
-//     return new Promise((resolve, reject) => {
-//         fetch(url, { method: 'POST', headers: myHeaders, body: data })
-//             .then(response => {
-//                 if (!response.ok) {
-//                     const json = response.json();
-//                     if (json.then) {
-//                         json.then(reject);
-//                     } else {
-//                         reject(new Error(`Error response. (${response.status}) ${response.statusText}`));
-//                     }
-//                 } else {
-//                     const json = response.json();
-//                     if (json.then) {
-//                         json.then(resolve).catch(reject);
-//                     } else {
-//                         return resolve(json);
-//                     }
-//                 }
-//             })
-//             .catch(reject);
-//     });
-// };
+export const submitPostRequest = (url, headers, data, jsonStringify = true, send_token = true) => {
+    if (!url) {
+        throw new Error('Cannot submit POST request. URL is null or undefined.');
+    }
 
-// export const submitPutRequest = (url, headers, data, jsonStringify = true) => {
-//     if (!url) {
-//         throw new Error('Cannot submit PUT request. URL is null or undefined.');
-//     }
-//
-//     const cookies = new Cookies();
-//     const token = cookies.get('token') ? cookies.get('token') : null;
-//     const myHeaders = new Headers(headers);
-//     if (token) {
-//         myHeaders.append('Authorization', `Bearer ${token}`);
-//     }
-//
-//     if (jsonStringify) {
-//         data = JSON.stringify(data);
-//     }
-//
-//     return new Promise((resolve, reject) => {
-//         fetch(url, { method: 'PUT', headers: myHeaders, body: data })
-//             .then(response => {
-//                 if (!response.ok) {
-//                     const json = response.json();
-//                     if (json.then) {
-//                         json.then(reject);
-//                     } else {
-//                         reject(new Error(`Error response. (${response.status}) ${response.statusText}`));
-//                     }
-//                 } else {
-//                     if (response.status === 204) {
-//                         // HTTP 204 No Content success status
-//                         return resolve();
-//                     } else {
-//                         const json = response.json();
-//                         if (json.then) {
-//                             json.then(resolve).catch(reject);
-//                         } else {
-//                             return resolve(json);
-//                         }
-//                     }
-//                 }
-//             })
-//             .catch(reject);
-//     });
-// };
+    const myHeaders = new Headers(headers);
+
+    if (send_token) {
+        const cookies = new Cookies();
+        const token = cookies.get('token') ? cookies.get('token') : null;
+        if (token) {
+            myHeaders.append('Authorization', `Bearer ${token}`);
+        }
+    }
+
+    if (jsonStringify) {
+        data = JSON.stringify(data);
+    }
+
+    return new Promise((resolve, reject) => {
+        console.log(' creating stuff');
+        console.log('method: POST');
+        fetch(url, { method: 'POST', headers: myHeaders, body: data })
+            .then(response => {
+                if (!response.ok) {
+                    const json = response.json();
+                    if (json.then) {
+                        json.then(reject);
+                    } else {
+                        reject(new Error(`Error response. (${response.status}) ${response.statusText}`));
+                    }
+                } else {
+                    const json = response.json();
+                    if (json.then) {
+                        json.then(resolve).catch(reject);
+                    } else {
+                        return resolve(json);
+                    }
+                }
+            })
+            .catch(reject);
+    });
+};
+
+export const submitPutRequest = (url, headers, data, jsonStringify = true) => {
+    if (!url) {
+        throw new Error('Cannot submit PUT request. URL is null or undefined.');
+    }
+
+    const cookies = new Cookies();
+    const token = cookies.get('token') ? cookies.get('token') : null;
+    const myHeaders = new Headers(headers);
+    if (token) {
+        myHeaders.append('Authorization', `Bearer ${token}`);
+    }
+    console.log('Header', myHeaders);
+
+    if (jsonStringify) {
+        data = JSON.stringify(data);
+    }
+    console.log('WHATS THE BODY', data);
+    return new Promise((resolve, reject) => {
+        fetch(url, { method: 'PUT', headers: myHeaders, body: data })
+            .then(response => {
+                if (!response.ok) {
+                    const json = response.json();
+                    if (json.then) {
+                        json.then(reject);
+                    } else {
+                        reject(new Error(`Error response. (${response.status}) ${response.statusText}`));
+                    }
+                } else {
+                    if (response.status === 204) {
+                        // HTTP 204 No Content success status
+                        return resolve();
+                    } else {
+                        const json = response.json();
+                        if (json.then) {
+                            json.then(resolve).catch(reject);
+                        } else {
+                            return resolve(json);
+                        }
+                    }
+                }
+            })
+            .catch(reject);
+    });
+};
 //
 // export const submitDeleteRequest = (url, headers, data) => {
 //     if (!url) {

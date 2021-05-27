@@ -3,7 +3,7 @@ import React, { createRef, Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, Label, Input } from 'reactstrap';
 import ReactHtmlParser from 'react-html-parser';
-import { preInitializeOntologyUpload, uploadOntology } from '../network/ontologyIndexing';
+import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 
 export default class UploadOntology extends Component {
     constructor(props) {
@@ -15,11 +15,20 @@ export default class UploadOntology extends Component {
             ontologyDescription: '',
             waitingForResult: false,
             preInitResult: {},
-            errorInitialization: false
+            errorInitialization: false,
+            allows_upload: false
         };
 
         this.finishRef = createRef();
     }
+
+    componentDidUpdate = async prevProps => {
+        if (prevProps.showDialog === false && this.props.showDialog === true) {
+            // check if user is allowed to do uploads
+            const allows = await userIsAllowdToUploadOntology();
+            this.setState({ allows_upload: allows.result });
+        }
+    };
 
     resetStateObject = () => {
         this.setState({
@@ -108,7 +117,7 @@ export default class UploadOntology extends Component {
             name: this.state.ontologyName,
             description: this.state.ontologyDescription,
             lookup_type: 'local',
-            access_type: 'public',
+            access_type: 'private',
             lookup_path: 'internal',
             ontology_content: this.state.ontologyFileContent
         };
@@ -155,63 +164,70 @@ export default class UploadOntology extends Component {
                     Upload Ontology File
                 </ModalHeader>
                 <ModalBody id="ontologyUploadModalBody">
-                    <div>
-                        {!this.state.errorInitialization && (
-                            <Input type="file" name="file" onChange={this.handlePreview} disabled={this.state.waitingForResult} />
-                        )}
-                        {/*parser not successful*/}
-                        {!this.state.waitingForResult && this.state.preInitResult.parser === 'failed' && (
-                            <div>
-                                Parser error: <div> {this.state.preInitResult.parserError}</div>
-                            </div>
-                        )}
-                        {!this.state.waitingForResult && this.state.preInitResult.imports === 'failed' && (
-                            <div>
-                                Import Warning: <div> {this.state.preInitResult.importErrors}</div>
-                            </div>
-                        )}
-                        {!this.state.waitingForResult && this.state.preInitResult.validation === 'failed' && (
-                            <div>
-                                Validation Warning: <div> {ReactHtmlParser(this.state.preInitResult.validationErrors)}</div>
-                            </div>
-                        )}
-                        {this.state.hasContent && this.state.preInitResult.stats && this.renderStats()}
-                        {this.state.hasContent && !this.state.waitingForResult && !this.state.waitingForResult && (
-                            <div>
-                                <FormGroup>
-                                    <Label for="ontologyName">Name</Label>
-                                    <Input
-                                        type="text"
-                                        name="ontologyName"
-                                        id="ontologyName"
-                                        placeholder="Ontology Name"
-                                        value={this.state.ontologyName}
-                                        onChange={this.handleOnChangeName}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="ontologyDescription">Description</Label>
-                                    <Input
-                                        type="text"
-                                        name="ontologyDescription"
-                                        id="ontologyDescription"
-                                        placeholder="Ontology Description"
-                                        value={this.state.ontologyDescription}
-                                        onChange={this.handleOnChangeDesc}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="exampleText">Content</Label>
-                                    <Input type="textarea" readOnly name="text" id="ontologyContent" value={this.state.ontologyFileContent} />
-                                </FormGroup>
-                            </div>
-                        )}
-                        {!this.state.hasContent && !this.state.waitingForResult && !this.state.errorInitialization && (
-                            <div> Upload an ontology file</div>
-                        )}
-                        {this.state.waitingForResult && !this.state.errorInitialization && <div> LOADING...</div>}
-                        {this.state.errorInitialization && <div> Could not establish connection to ontology service.</div>}
-                    </div>
+                    {this.state.allows_upload ? (
+                        <div>
+                            {!this.state.errorInitialization && (
+                                <Input type="file" name="file" onChange={this.handlePreview} disabled={this.state.waitingForResult} />
+                            )}
+                            {/*parser not successful*/}
+                            {!this.state.waitingForResult && this.state.preInitResult.parser === 'failed' && (
+                                <div>
+                                    Parser error: <div> {this.state.preInitResult.parserError}</div>
+                                </div>
+                            )}
+                            {!this.state.waitingForResult && this.state.preInitResult.imports === 'failed' && (
+                                <div>
+                                    Import Warning: <div> {this.state.preInitResult.importErrors}</div>
+                                </div>
+                            )}
+                            {!this.state.waitingForResult && this.state.preInitResult.validation === 'failed' && (
+                                <div>
+                                    Validation Warning: <div> {ReactHtmlParser(this.state.preInitResult.validationErrors)}</div>
+                                </div>
+                            )}
+                            {this.state.hasContent && this.state.preInitResult.stats && this.renderStats()}
+                            {this.state.hasContent && !this.state.waitingForResult && !this.state.waitingForResult && (
+                                <div>
+                                    <FormGroup>
+                                        <Label for="ontologyName">Name</Label>
+                                        <Input
+                                            type="text"
+                                            name="ontologyName"
+                                            id="ontologyName"
+                                            placeholder="Ontology Name"
+                                            value={this.state.ontologyName}
+                                            onChange={this.handleOnChangeName}
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="ontologyDescription">Description</Label>
+                                        <Input
+                                            type="text"
+                                            name="ontologyDescription"
+                                            id="ontologyDescription"
+                                            placeholder="Ontology Description"
+                                            value={this.state.ontologyDescription}
+                                            onChange={this.handleOnChangeDesc}
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="exampleText">Content</Label>
+                                        <Input type="textarea" readOnly name="text" id="ontologyContent" value={this.state.ontologyFileContent} />
+                                    </FormGroup>
+                                </div>
+                            )}
+                            {!this.state.hasContent && !this.state.waitingForResult && !this.state.errorInitialization && (
+                                <div> Upload an ontology file</div>
+                            )}
+                            {this.state.waitingForResult && !this.state.errorInitialization && <div> LOADING...</div>}
+                            {this.state.errorInitialization && <div> Could not establish connection to ontology service.</div>}
+                        </div>
+                    ) : (
+                        <h1>
+                            Sorry, you are not allowed to upload ontologies yet!
+                            <br /> Only admins are allowed to do so in the current implementation.
+                        </h1>
+                    )}
                 </ModalBody>
                 <ModalFooter>
                     <div id="ontologyUploadModalFooter" className="d-flex" autofocus={true}>

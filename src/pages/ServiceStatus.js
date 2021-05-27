@@ -26,7 +26,7 @@ export default class ServiceStatus extends Component {
         this.setState({ frontendBuild: buildType.frontendBuild, loading_frontendBuild: false });
 
         // check if oauth is configured
-        if (buildType !== 'NodeJs -- Client only') {
+        if (buildType !== 'NodeJs -- Client only  !!!') {
             const oauth = await checkOAuth();
             this.setState({ oauthConfigured: oauth.oauth, loading_oauthConfigured: false });
         } else {

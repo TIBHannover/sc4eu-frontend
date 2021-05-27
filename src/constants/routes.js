@@ -5,7 +5,10 @@ export default {
     PAGEB: '/pageB',
     ONTOLOGY: '/ontology',
     VIEW_ONTOLOGY: '/view_ontology/:ontologyId',
+    USER_PROFILE: '/user/profile/:userId',
+    USER_SETTINGS: '/user/settings/',
     SERVICE_STATUS: '/servicesStatus',
+    ADMIN_DASHBOARD: '/admin/dashboard',
 
     LOGGED_IN: '/loggedIn/:accessToken'
 };
