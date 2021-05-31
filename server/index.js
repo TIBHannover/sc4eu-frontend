@@ -42,7 +42,6 @@ try {
             async function(accessToken, __refreshToken, profile, cb) {
                 const displayName = profile.displayName;
                 // this is where we try to get the email for the user
-
                 console.log('USER NAME:', displayName);
 
                 const options = {
@@ -87,20 +86,27 @@ try {
                             'Content-Type': 'application/json'
                         }
                     };
-
                     request(loginRequestOptions, function(error, response) {
-                        const result = JSON.parse(response.body);
-                        const local_accessToken = jwt.sign(
-                            {
-                                userId: result.user_id,
-                                bToken: result.bToken
-                            },
-                            process.env.JWT_SECRET,
-                            {
-                                expiresIn: '8h'
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                const local_accessToken = jwt.sign(
+                                    {
+                                        userId: result.user_id,
+                                        bToken: result.bToken
+                                    },
+                                    process.env.JWT_SECRET,
+                                    {
+                                        expiresIn: '8h'
+                                    }
+                                );
+                                cb(null, { jwt: local_accessToken }); // sends the local access token to the call back routine;
+                            } catch (e) {
+                                console.log(e);
                             }
-                        );
-                        cb(null, { jwt: local_accessToken }); // sends the local access token to the call back routine;
+                        } else {
+                            cb(null, { error: 'Could not login via GitHub' }); // sends the local access token to the call back routine;
+                        }
                     });
                 });
             }
