@@ -75,7 +75,7 @@ try {
                     // now this is goint to call find or create user
 
                     const loginRequestOptions = {
-                        uri: 'http://localhost:5000/users/login/',
+                        uri: `${process.env.BACKEND_SERVER_URL}/users/login/`,
                         body: JSON.stringify({
                             displayName: displayName,
                             email: userMail,
@@ -153,6 +153,25 @@ app.get('/oauthStatus', (req, res) => {
     }
 });
 
+app.get('/testConnection', (req, res) => {
+    const options = {
+        uri: `${process.env.BACKEND_SERVER_URL}/ontologyIndex/`,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    console.log('Requesting the following url', options.uri);
+    request(options, function(error, response) {
+        if (response && response.body) {
+            console.log(response.body);
+            res.json({ success: 'true' });
+        } else {
+            res.json({ error: 'network error' });
+        }
+    });
+});
+
 app.get('/dashboard', verifyToken, (req, res) => {
     console.log('Calling Admin dashBoard');
     if (req.token === null) {
@@ -164,7 +183,7 @@ app.get('/dashboard', verifyToken, (req, res) => {
             if (token) {
                 const userId = token.userId;
                 const options = {
-                    uri: `http://localhost:5000/admin/dashboard/?userId=${userId}&token=${token.bToken}`,
+                    uri: `${process.env.BACKEND_SERVER_URL}/admin/dashboard/?userId=${userId}&token=${token.bToken}`,
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -201,7 +220,7 @@ app.post('/uploadOntology', verifyToken, (req, res) => {
             const data = JSON.stringify(req.body);
             console.log(data);
             const upload_options = {
-                uri: `http://localhost:5000/upload_ontology/?userId=${userId}&token=${token.bToken}`,
+                uri: `${process.env.BACKEND_SERVER_URL}/upload_ontology/?userId=${userId}&token=${token.bToken}`,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -237,7 +256,7 @@ app.get('/allowed_upload_of_ontologies', verifyToken, (req, res) => {
             if (token) {
                 const userId = token.userId;
                 const options = {
-                    uri: `http://localhost:5000/allows_upload/?userId=${userId}&token=${token.bToken}`,
+                    uri: `${process.env.BACKEND_SERVER_URL}/allows_upload/?userId=${userId}&token=${token.bToken}`,
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -271,7 +290,7 @@ app.get('/user/header', verifyToken, (req, res) => {
             if (token) {
                 const userId = token.userId;
                 const options = {
-                    uri: `http://localhost:5000/users/header/?userId=${userId}&token=${token.bToken}`,
+                    uri: `${process.env.BACKEND_SERVER_URL}/users/header/?userId=${userId}&token=${token.bToken}`,
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -319,7 +338,7 @@ function verifyToken(req, res, next) {
 /** USER REGISTRATION VIA EMAIL and PWD**/
 app.post('/users/register', (req, res) => {
     const options = {
-        uri: 'http://localhost:5000/users/register/',
+        uri: `${process.env.BACKEND_SERVER_URL}/users/register/`,
         body: JSON.stringify({
             username: req.body.username,
             password: req.body.password,
@@ -355,10 +374,8 @@ app.post('/users/register', (req, res) => {
 
 /** TESTING EMAIL LOGIN **/
 app.post('/auth/email', (req, res) => {
-    console.log('We have some       stuff');
-    console.log(req.body);
     const options = {
-        uri: 'http://localhost:5000/users/login/',
+        uri: `${process.env.BACKEND_SERVER_URL}/users/login/`,
         body: JSON.stringify({
             username: req.body.username,
             password: req.body.password,
@@ -370,24 +387,27 @@ app.post('/auth/email', (req, res) => {
             'Content-Type': 'application/json'
         }
     };
-
     request(options, function(error, response) {
-        const result = JSON.parse(response.body);
-        if (result) {
-            if (result.error) {
-                return res.json(result);
+        if (response && response.body) {
+            const result = JSON.parse(response.body);
+            if (result) {
+                if (result.error) {
+                    return res.json(result);
+                }
+                const local_accessToken = jwt.sign(
+                    {
+                        userId: result.user_id,
+                        bToken: result.bToken
+                    },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '8h' }
+                );
+                res.json({ jwt: local_accessToken });
+            } else {
+                res.json({ error: 'Could not find user' });
             }
-            const local_accessToken = jwt.sign(
-                {
-                    userId: result.user_id,
-                    bToken: result.bToken
-                },
-                process.env.JWT_SECRET,
-                { expiresIn: '8h' }
-            );
-            res.json({ jwt: local_accessToken });
         } else {
-            res.json({ error: 'Could not find user' });
+            res.json({ error: 'Network Error' });
         }
     });
 });
@@ -397,7 +417,7 @@ app.get('/user/viewProfile/', (req, res) => {
         console.log(req.query);
         const userId = req.query.id;
         const options = {
-            uri: `http://localhost:5000/users/viewProfile/?userId=${userId}`,
+            uri: `${process.env.BACKEND_SERVER_URL}/users/viewProfile/?userId=${userId}`,
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -434,7 +454,7 @@ app.put('/user/updateSettings', verifyToken, (req, res) => {
                 console.log('data:', data);
 
                 const options = {
-                    uri: `http://localhost:5000/users/viewProfile/?userId=${userId}&token=${token.bToken}`,
+                    uri: `${process.env.BACKEND_SERVER_URL}/users/viewProfile/?userId=${userId}&token=${token.bToken}`,
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -472,7 +492,7 @@ app.get('/user/settings/', verifyToken, (req, res) => {
             if (token) {
                 const userId = token.userId;
                 const options = {
-                    uri: `http://localhost:5000/users/viewProfile/?userId=${userId}&token=${token.bToken}`,
+                    uri: `${process.env.BACKEND_SERVER_URL}/users/viewProfile/?userId=${userId}&token=${token.bToken}`,
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

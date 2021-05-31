@@ -1,6 +1,6 @@
 #!/bin/bash
 
-npm install && 
+npm install &&
 cd server 
 npm install && 
 echo "Done" 
