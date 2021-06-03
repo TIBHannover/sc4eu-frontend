@@ -15,7 +15,7 @@ export const getOntologyBy = id => {
 export const getJSON_ModelForOntology = ontologyData => {
     // we use parameters from env.
 
-    const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:12463' };
+    const postHeader = { 'Content-Type': 'application/json' };
 
     console.log('this is the data', ontologyData);
 

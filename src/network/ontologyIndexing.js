@@ -9,11 +9,12 @@ export const getAllOntologies = () => {
     console.log('IN network we want this page', URL_ONTOLOGYINDEXING);
 
     // todo: make flexible based on the env.file
-    return plainGetRequest(URL_ONTOLOGYINDEXING, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:5000' });
+    // return plainGetRequest(URL_ONTOLOGYINDEXING, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:5000' });
+    return plainGetRequest(URL_ONTOLOGYINDEXING, { 'Content-Type': 'application/json' });
 };
 
 export const uploadOntology = data => {
-    const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:9000' };
+    const postHeader = { 'Content-Type': 'application/json' };
     console.log('UPLOADING THE DATA ', data);
     return submitPostRequest(URL_INITIALIZE, postHeader, data);
 };
@@ -21,7 +22,8 @@ export const uploadOntology = data => {
 export const preInitializeOntologyUpload = data => {
     // content is the ontology file content.
 
-    const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:12463' };
+    // const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:12463' };
+    const postHeader = { 'Content-Type': 'application/json' };
 
     console.log('this is the data', data);
 

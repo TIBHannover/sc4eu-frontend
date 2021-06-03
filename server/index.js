@@ -532,6 +532,7 @@ app.get('/auth/github', passport.authenticate('github'));
 app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
     // TODO: implement the /login page for failureRedirect
     // Successful authentication, redirect home.
+    // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
     res.redirect(`http://localhost:9000/loggedIn/${req.user.jwt}`);
 });
 
