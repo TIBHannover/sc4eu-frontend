@@ -9,8 +9,10 @@ export const getAllOntologies = () => {
     console.log('IN network we want this page', URL_ONTOLOGYINDEXING);
 
     // todo: make flexible based on the env.file
-    // return plainGetRequest(URL_ONTOLOGYINDEXING, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:5000' });
-    return plainGetRequest(URL_ONTOLOGYINDEXING, { 'Content-Type': 'application/json' });
+    return plainGetRequest(URL_ONTOLOGYINDEXING, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    });
 };
 
 export const uploadOntology = data => {
@@ -22,8 +24,7 @@ export const uploadOntology = data => {
 export const preInitializeOntologyUpload = data => {
     // content is the ontology file content.
 
-    // const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'http://localhost:12463' };
-    const postHeader = { 'Content-Type': 'application/json' };
+    const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': `${process.env.REACT_APP_ONTOLOGY_SERVICE_BACKEND_URL}` };
 
     console.log('this is the data', data);
 
