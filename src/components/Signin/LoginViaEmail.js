@@ -62,6 +62,10 @@ class LoginViaEmail extends Component {
     };
 
     render() {
+        let disableRegisterAndGithub = false;
+        if (process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'True' || process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'true') {
+            disableRegisterAndGithub = true;
+        }
         return (
             <div>
                 {!this.state.loading ? (
@@ -83,9 +87,11 @@ class LoginViaEmail extends Component {
                             </Col>
                         </FormGroup>
                         <div style={{ display: 'flow-root' }}>
-                            <Button id="register" style={{ float: 'left' }} onClick={this.handleRegister}>
-                                Register
-                            </Button>
+                            {!disableRegisterAndGithub && (
+                                <Button id="register" style={{ float: 'left' }} onClick={this.handleRegister}>
+                                    Register
+                                </Button>
+                            )}
                             <Button id="loginWithMail" style={{ float: 'right' }} onClick={this.handleLogin}>
                                 Login
                             </Button>
