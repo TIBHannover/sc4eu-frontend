@@ -7,7 +7,7 @@ export const updateCookies = payload => dispatch => {
     console.log('WE HAVE A PAYLOAD', payload);
 
     console.log('THIS NOW CREATES AN EMPTY USER FOR THE SATE    THINGY, WE WILL THEN FILL IT WITH VALUES FROM BACKEND');
-    const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
+    const PUBLIC_URL = `${process.env.REACT_APP_PUBLIC_URL}`;
     console.log('path: ', PUBLIC_URL);
 
     const expiresIn = 8 * 60 * 60;
@@ -35,8 +35,8 @@ export const updateCookies = payload => dispatch => {
             }
         })
         .catch(() => {
-            cookies.remove('token', { path: `${process.env.PUBLIC_URL}` });
-            cookies.remove('token_expires_in', { path: `${process.env.PUBLIC_URL}` });
+            cookies.remove('token', { path: PUBLIC_URL });
+            cookies.remove('token_expires_in', { path: PUBLIC_URL });
             dispatch({
                 type: type.RESET_AUTH
             });
