@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const auth = require('./authCalls');
 const server = require('./serverCalls');
 const database = require('./databaseCalls');
+const processing = require('./ontologyProcessingCalls');
 
 auth.initializeAuth(app, passport);
 
@@ -68,6 +69,10 @@ auth.getUserSettings(app);
 
 database.uploadOntology(app);
 database.viewUserSettings(app);
+database.getOntologyIndex(app);
+database.getOntologyByID(app);
+
+processing.getJSONModelForOntologyID(app);
 
 /** GITHUB OAUTH STUFF**/
 app.get('/auth/github', passport.authenticate('github'));

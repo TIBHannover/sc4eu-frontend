@@ -39,9 +39,8 @@ module.exports = {
 
     adminDashBoard: function(app) {
         app.get('/dashboard', verifyToken, (req, res) => {
-            console.log('Calling Admin dashBoard');
             if (req.token === null) {
-                res.json({ error: 'You need to be logged i n to view this page' });
+                res.json({ error: 'You need to be logged in to view this page' });
             } else {
                 try {
                     const token = jwt.verify(req.token, process.env.JWT_SECRET);
@@ -60,7 +59,6 @@ module.exports = {
                             if (response && response.body) {
                                 try {
                                     const result = JSON.parse(response.body);
-                                    console.log('result', result);
                                     res.json(result);
                                 } catch (e) {
                                     res.json({ error: 'Network error occurred' });
@@ -77,7 +75,6 @@ module.exports = {
 
     allowUploads: function(app) {
         app.get('/allowed_upload_of_ontologies', verifyToken, (req, res) => {
-            console.log('Calling Admin dashBoard');
             if (req.token === null) {
                 res.json({ result: false });
             } else {
