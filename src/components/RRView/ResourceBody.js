@@ -23,6 +23,7 @@ class ResourceBody extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         // compute the refence height;
+        console.log(' Resource body updates');
     }
 
     render() {
