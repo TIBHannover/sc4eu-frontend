@@ -17,15 +17,25 @@ class SignIn extends Component {
 
     render() {
         const githubAuthURL = '/auth/github';
+        let disableRegisterAndGithub = false;
+        if (process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'True' || process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'true') {
+            disableRegisterAndGithub = true;
+        }
         return (
             <>
                 <div>
                     <LoginViaEmail toggleAuthDialog={this.props.toggleAuthDialog} callback={this.props.callback} />
                 </div>
                 <hr />
-                <div>We do not store any e-mail or password credentials. We will investigate further sign in methods like Google and twitter.</div>
-                <hr />
-                <div>However, we will create an account internally to ensure your access rights to the data stored in this project.</div>
+                {disableRegisterAndGithub && (
+                    <div>
+                        Registering and Login via OAuth <b>disabled</b> <br />
+                        Only admin login available.
+                    </div>
+                )}
+                {/*<div>We do not store any e-mail or password credentials. We will investigate further sign in methods like Google and twitter.</div>*/}
+                {/*<hr />*/}
+                {/*<div>However, we will create an account internally to ensure your access rights to the data stored in this project.</div>*/}
                 {/*<Form className="pl-3 pr-3 pt-2" onSubmit={this.signIn}>*/}
                 {/*    <Button type="submit" color="primary" className="mt-4 mb-2" block disabled={this.state.loading}>*/}
                 {/*        {!this.state.loading ? (*/}
@@ -41,9 +51,11 @@ class SignIn extends Component {
                 {/*<a href={URL_LOGIN_VIA_GITHUB}>Sign in with GitHub </a>*/}
 
                 {/*TODO: TEST IF WE CAN USE A BUTTON REDIRECT HERE */}
-                <a href={githubAuthURL} className="btn btn-primary">
-                    Sign in with GitHub
-                </a>
+                {!disableRegisterAndGithub && (
+                    <a href={githubAuthURL} className="btn btn-primary">
+                        Sign in with GitHub
+                    </a>
+                )}
             </>
         );
     }
