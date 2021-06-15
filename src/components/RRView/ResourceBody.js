@@ -29,7 +29,7 @@ class ResourceBody extends Component {
         const resDef = this.props.resourceContext;
         const content = transformResourceToTTL(resDef);
         const numRowsRequired = calculateBodyRows(content);
-        console.log('CONTENT', content, 'requires', numRowsRequired);
+        // console.log('CONTENT', content, 'requires', numRowsRequired);
         // check if we have a body;
         if (numRowsRequired === 0) {
             return <> </>;

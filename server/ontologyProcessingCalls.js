@@ -28,7 +28,7 @@ module.exports = {
                     try {
                         const result = JSON.parse(response.body);
                         const ontologyProcessing_options = {
-                            uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModel`,
+                            uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModelVOWL`,
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
