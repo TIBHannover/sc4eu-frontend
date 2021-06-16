@@ -30,12 +30,10 @@ class ViewOntology extends Component {
         // console.log(this.props.match.params.ontologyId);
         getOntologyBy(this.props.match.params.ontologyId).then(res => {
             if (res.ontology_data) {
-                getJSON_ModelForOntology({ ontologyData: res.ontology_data }).then(jsModel => {
-                    // create json obj from the string
-                    const parsedModel = JSON.parse(jsModel);
-                    this.props.initializeResourceRelationModel(parsedModel);
-                    this.setState({ isLoading: false, ontologyFileContent: jsModel });
-                });
+                // create json obj from the string
+                const parsedModel = res.ontology_data;
+                this.props.initializeResourceRelationModel(parsedModel);
+                this.setState({ isLoading: false, ontologyFileContent: 'not exported' });
             } else {
                 this.setState({ isLoading: false, error: true, errorMsg: 'Could not find this ontology' });
             }

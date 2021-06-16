@@ -16,8 +16,9 @@ class ResourceRenderer extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     renderAllResources = () => {
-        if (this.props.resources.length > 0) {
-            const mappedResources = this.props.resources.map((item, index) => {
+        if (this.props.resources && this.props.resources.length > 0) {
+            const cropped = this.props.resources.slice(0, 100);
+            const mappedResources = cropped.map((item, index) => {
                 // const mappedResources = testArray.map((item, index) => {
                 return this.renderSingleResource(item, index);
             });
@@ -35,7 +36,7 @@ class ResourceRenderer extends Component {
     };
 
     render() {
-        console.log(this.props);
+        console.log('RENDERING ALL RESOURCE');
 
         return <div style={{ height: '100%', overflow: 'auto' }}> {this.renderAllResources()} </div>;
     }

@@ -20,7 +20,8 @@ export const transformResourceToTTL = context => {
             // extract annotations;
             ttl_representation += extractAxioms(context.axioms);
         }
-
+        //adjust stuff;
+        ttl_representation = ttl_representation.slice(0, -3);
         return ttl_representation + ' .';
     }
 };
@@ -40,18 +41,42 @@ const extractAnnotations = annotationsOBJ => {
     const annotationsDef = keysArray.map(item => {
         const qStr = item;
         const values = annotationsOBJ[item];
-        const csvThing = values.map(v => {
-            return v + ',';
-        });
-        // as inline result;
-        let statement = csvThing.toString();
-        statement = statement.slice(0, -1);
-        // append ";"
-        statement += ' ; \n';
-        return qStr + ' ' + statement;
+        if (typeof values === 'object') {
+            // nested call;
+            const nestedKeys = Object.keys(values);
+            const mapped = nestedKeys.map(item => {
+                const __qStr = item;
+                const __values = values[item];
+                let resultingDefaultStr = ' ';
+                if (__qStr === 'default') {
+                    for (let i = 0; i < __values.length - 1; i++) {
+                        resultingDefaultStr += __values[i] + ', ';
+                    }
+                    resultingDefaultStr += __values[__values.length - 1] + '';
+                } else {
+                    for (let i = 0; i < __values.length - 1; i++) {
+                        resultingDefaultStr += '"' + __values[i] + '"@' + __qStr + ',';
+                    }
+                    resultingDefaultStr += '"' + __values[__values.length - 1] + '"@' + __qStr + '';
+                }
+                return resultingDefaultStr;
+            });
+            const unrolled = mapped.join('');
+            return qStr + ' ' + unrolled + '; \n';
+        } else {
+            const csvThing = values.map(v => {
+                return v + ',';
+            });
+            // as inline result;
+            let statement = csvThing.toString();
+            statement = statement.slice(0, -1);
+            // append ";"
+            statement += ' ; \n';
+            return qStr + ' ' + statement;
+        }
     });
 
-    return annotationsDef;
+    return annotationsDef.join('');
 };
 
 const extractAxioms = axiomsOBJ => {
@@ -69,7 +94,7 @@ const extractAxioms = axiomsOBJ => {
         csvThing += ' ; \n';
         axiomsDef += qStr + ' ' + csvThing;
     });
-    axiomsDef = axiomsDef.slice(0, -3); // remove the last ; \n
+    // axiomsDef = axiomsDef.slice(0, -3); // remove the last ; \n
 
     return axiomsDef;
 };

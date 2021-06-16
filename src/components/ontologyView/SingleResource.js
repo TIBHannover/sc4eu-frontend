@@ -36,7 +36,7 @@ class SingleResource extends Component {
 
         const content = transformResourceToTTL(this.props.resourceContext);
         const numRowsRequired = calculateBodyRows(content);
-        console.log('CONTENT', content, 'requires', numRowsRequired);
+        // console.log('CONTENT', content, 'requires', numRowsRequired);
 
         return (
             <div style={{ height: '100%', overflow: 'auto', paddingRight: '20px' }}>

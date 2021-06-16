@@ -1,0 +1,56 @@
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+const request = require('request');
+const verifyToken = require('./veryfyToken');
+
+module.exports = {
+    preInitialization: function(app) {
+        app.post('/preInitializeOntology', verifyToken, (req, res) => {
+            // this communicates with the Processing service;
+        });
+    },
+    getJSONModelForOntologyID: function(app) {
+        // TODO : this should only work when we have verified the token
+
+        app.get('/getJsonModelForId', (req, res) => {
+            const query = req.query;
+            const ontology_indexOptions = {
+                uri: `${process.env.BACKEND_SERVER_URL}/ontologyIndex/?ontology_id=${query['ontology_id']}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            // two nested requests, one fetches the data from backend, the other fetches the json model from processing
+
+            request(ontology_indexOptions, function(error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        const ontologyProcessing_options = {
+                            uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModelVOWL`,
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ ontologyData: result.ontology_data })
+                        };
+                        request(ontologyProcessing_options, function(error, response) {
+                            try {
+                                const jsonModel = JSON.parse(response.body);
+                                const resultingData = { ontology_data: jsonModel };
+                                res.json(resultingData);
+                            } catch (e) {
+                                res.json({ error: 'Something went wrong' });
+                            }
+                        });
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    }
+};

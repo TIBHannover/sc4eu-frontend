@@ -23,13 +23,14 @@ class ResourceBody extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         // compute the refence height;
+        console.log(' Resource body updates');
     }
 
     render() {
         const resDef = this.props.resourceContext;
         const content = transformResourceToTTL(resDef);
         const numRowsRequired = calculateBodyRows(content);
-        console.log('CONTENT', content, 'requires', numRowsRequired);
+        // console.log('CONTENT', content, 'requires', numRowsRequired);
         // check if we have a body;
         if (numRowsRequired === 0) {
             return <> </>;
