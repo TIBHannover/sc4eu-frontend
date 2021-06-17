@@ -13,19 +13,21 @@ const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
 
 const app = express(); // create express app
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+const router = express.Router();
+
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
 
 const auth = require('./authCalls');
 const server = require('./serverCalls');
 const database = require('./databaseCalls');
 const processing = require('./ontologyProcessingCalls');
 
-auth.initializeAuth(app, passport);
+auth.initializeAuth(router, passport);
 
 // add middle-ware
-app.use(express.static(path.join(__dirname, '..', 'build')));
-app.use(express.static('public'));
+router.use(express.static(path.join(__dirname, '..', 'build')));
+router.use(express.static('public'));
 
 // start express server on port
 app.listen(APPLICATION_PORT, () => {
@@ -43,46 +45,48 @@ app.listen(APPLICATION_PORT, () => {
 // );
 
 // THIS IS ONLY FOR DECOUPLED DEBUGING STUFF, means the react app runs on its own server e.g. localhost:3000
-app.use(
-    cors({
-        origin: 'http://localhost:3000', // allow to server to accept request from different origin
-        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-        credentials: true // allow session cookie from browser to pass through
-    })
-);
+// app.use(
+//     cors({
+//         origin: 'http://localhost:3000', // allow to server to accept request from different origin
+//         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//         credentials: true // allow session cookie from browser to pass through
+//     })
+// );
 
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+router.use(express.urlencoded({ extended: false }));
+router.use(cookieParser());
+router.use(express.static(path.join(__dirname, 'public')));
 
 // apply individual "endPoints"
-server.servicesStatus(app);
-server.testConnection(app);
-server.adminDashBoard(app);
-server.allowUploads(app);
-server.getUserHeader(app);
+server.servicesStatus(router);
+server.testConnection(router);
+server.adminDashBoard(router);
+server.allowUploads(router);
+server.getUserHeader(router);
 
-auth.registerUser(app);
-auth.loginViaEmail(app);
-auth.userSettings(app);
-auth.getUserSettings(app);
+auth.registerUser(router);
+auth.loginViaEmail(router);
+auth.userSettings(router);
+auth.getUserSettings(router);
 
-database.uploadOntology(app);
-database.viewUserSettings(app);
-database.getOntologyIndex(app);
-database.getOntologyByID(app);
+database.uploadOntology(router);
+database.viewUserSettings(router);
+database.getOntologyIndex(router);
+database.getOntologyByID(router);
 
-processing.getJSONModelForOntologyID(app);
+processing.getJSONModelForOntologyID(router);
 
 /** GITHUB OAUTH STUFF**/
-app.get('/auth/github', passport.authenticate('github'));
-app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
+router.get('/auth/github', passport.authenticate('github'));
+router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
     // TODO: implement the /login page for failureRedirect
     // Successful authentication, redirect home.
     // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
     res.redirect(`http://localhost:9000/loggedIn/${req.user.jwt}`);
 });
 
-app.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
+router.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, '..', 'build/sc3', 'index.html'));
 });
+
+app.use('/sc3', router);
