@@ -14,6 +14,26 @@ export default (state = initialState, action) => {
                 ...action.payload
             };
 
+        case type.ADD_NEW_RESOURCE: {
+            const resource = action.payload;
+            return {
+                ...state,
+                resources: [resource, ...state.resources]
+            };
+        }
+        case type.DELETE_RESOURCE: {
+            const resourceToDelete = action.payload;
+            const currentResource = [...state.resources];
+
+            const index = currentResource.findIndex(item => item.identifier === resourceToDelete.identifier);
+            currentResource.splice(index, 1);
+
+            return {
+                ...state,
+                resources: currentResource
+            };
+        }
+
         default: {
             return state;
         }

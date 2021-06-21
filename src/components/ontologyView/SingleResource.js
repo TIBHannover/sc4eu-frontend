@@ -7,6 +7,7 @@ import ResourceHeader from '../RRView/ResourceHeader';
 import ResourceBody from '../RRView/ResourceBody';
 import { calculateBodyRows, transformResourceToTTL } from '../../mappers/ResToTTL';
 import { Button } from 'reactstrap';
+import { redux_removeResource } from '../../redux/actions/rrm_actions';
 class SingleResource extends Component {
     constructor(props) {
         super(props);
@@ -22,6 +23,12 @@ class SingleResource extends Component {
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
+    deleteResource = () => {
+        console.log('I am delete button');
+        console.log(this.props.resourceContext);
+        const resource = this.props.resourceContext;
+        this.props.redux_removeResource(resource);
+    };
     render() {
         // check if we have a body;
         // const resDef = this.props.resourceContext;
@@ -36,14 +43,17 @@ class SingleResource extends Component {
 
         const content = transformResourceToTTL(this.props.resourceContext);
         const numRowsRequired = calculateBodyRows(content);
-        // console.log('CONTENT', content, 'requires', numRowsRequired);
+        console.log('CONTENT', content, 'requires', numRowsRequired);
 
+        const isFiltered = this.props.resourceContext.isFilteredOut;
+        const isVisible = isFiltered === true ? 'none' : 'block';
         return (
-            <div style={{ height: '100%', overflow: 'auto', paddingRight: '20px' }}>
+            <div style={{ height: '100%', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
                 <ResourceHeader
                     resourceContext={this.props.resourceContext}
                     isEditing={this.state.isEditing}
                     toggleEditButton={this.toggleEditButton}
+                    deleteResourceButton={this.deleteResource}
                 />
                 {numRowsRequired > 0 && (
                     <div id="bodyContainer" style={{ display: 'flex' }}>
@@ -80,9 +90,12 @@ const mapStateToProps = state => {
 };
 
 SingleResource.propTypes = {
-    resourceContext: PropTypes.object.isRequired
+    resourceContext: PropTypes.object.isRequired,
+    redux_removeResource: PropTypes.func.isRequired
 };
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+    redux_removeResource: data => dispatch(redux_removeResource(data))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleResource);

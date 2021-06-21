@@ -81,7 +81,7 @@ const mapStateToProps = state => {
     console.log(state);
     return {
         user: state.auth.user,
-        rrModel: state.resourceRelationModelReducer
+        rrModel: state.ResourceRelationModelReducer
     };
 };
 

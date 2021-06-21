@@ -6,13 +6,23 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Button, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 class ResourceHeader extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        // check if we have a body;
+        const resDef = this.props.resourceContext;
+        let headerTerminationToken = ';';
+        const anCount = Object.keys(resDef.annotations).length;
+        const axCount = Object.keys(resDef.axioms).length;
+        if (anCount === 0 && axCount === 0) {
+            headerTerminationToken = '.';
+        }
+        this.state = {
+            headerInputValue: this.props.resourceContext.identifier + ' rdf:type ' + this.props.resourceContext.type + ' ' + headerTerminationToken
+        };
     }
 
     componentDidMount() {}
@@ -21,6 +31,10 @@ class ResourceHeader extends Component {
 
     toggleEditButton = () => {
         this.props.toggleEditButton(!this.props.isEditing);
+    };
+
+    deleteResourceButton = () => {
+        console.log('Hello');
     };
 
     render() {
@@ -35,7 +49,10 @@ class ResourceHeader extends Component {
 
         const headerValue = this.props.resourceContext.identifier + ' rdf:type ' + this.props.resourceContext.type + ' ' + headerTerminationToken;
         return (
-            <StyledResourceHeader style={{ height: '100%', overflow: 'auto', display: 'flex' }}>
+            <StyledResourceHeader
+                isHighlighted={this.props.resourceContext.isHighlighted}
+                style={{ height: '100%', overflow: 'auto', display: 'flex' }}
+            >
                 {/*TODO add checkBox for 'selective filtering' */}
 
                 <Button color="white" size="sm" style={{ float: 'right', padding: '0px', paddingRight: '5px' }} onClick={this.toggleEditButton}>
@@ -44,10 +61,13 @@ class ResourceHeader extends Component {
                 {this.props.isEditing ? (
                     <HeaderValueInput
                         autoFocus={true}
-                        value={headerValue}
+                        value={this.state.headerInputValue}
                         // onChange={this.cellValueChanged}
                         // innerRef={inputRefs}
                         onKeyDown={e => e.keyCode === 13 && e.target.blur()} // Disable multiline Input
+                        onChange={e => {
+                            this.setState({ headerInputValue: e.target.value });
+                        }}
                         onBlur={e => {
                             // todo: do validation stuff
                             // props.data.setLabel(cellLabelValue);
@@ -66,6 +86,14 @@ class ResourceHeader extends Component {
                         {this.props.resourceContext.identifier} rdf:type {' ' + this.props.resourceContext.type + ' ' + headerTerminationToken}{' '}
                     </StyledContentView>
                 )}
+                <Button
+                    color="white"
+                    size="sm"
+                    onClick={this.props.deleteResourceButton}
+                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
+                >
+                    <Icon icon={faTrash} color={'white'} />
+                </Button>
 
                 {/*// add enable editing botton*/}
             </StyledResourceHeader>
@@ -83,7 +111,8 @@ const mapStateToProps = state => {
 ResourceHeader.propTypes = {
     resourceContext: PropTypes.object.isRequired,
     isEditing: PropTypes.bool.isRequired,
-    toggleEditButton: PropTypes.func.isRequired
+    toggleEditButton: PropTypes.func.isRequired,
+    deleteResourceButton: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
@@ -91,13 +120,12 @@ const mapDispatchToProps = dispatch => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(ResourceHeader);
 
 const StyledResourceHeader = styled.div`
-    background-color: red;
     padding: 5px;
     border-radius: 10px 10px 0 0;
     border: 1px solid black;
     padding: 5px;
     color: white;
-    background: #4388cc;
+    background-color: ${props => (props.isHighlighted === true ? '#000000' : '#4388cc')};
     :focus {
         outline: none;
     }

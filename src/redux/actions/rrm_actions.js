@@ -13,3 +13,17 @@ export const initializeResourceRelationModel = payload => dispatch => {
         payload: wrappedPayload
     });
 };
+
+export const redux_addResource = payload => dispatch => {
+    dispatch({
+        type: type.ADD_NEW_RESOURCE,
+        payload: payload
+    });
+};
+
+export const redux_removeResource = payload => dispatch => {
+    dispatch({
+        type: type.DELETE_RESOURCE,
+        payload: payload
+    });
+};
