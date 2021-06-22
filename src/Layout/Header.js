@@ -104,15 +104,9 @@ class Header extends Component {
     };
 
     render() {
-        console.log('Rendering Header');
-        console.log('PATH:', this.props.location.pathname);
-        console.log('Should Redirect', this.state.redirectOnAuthAction);
         if (this.state.redirectOnAuthAction === true) {
-            // redirect to current page
-            const path = this.props.location.pathname;
-
-            console.log('>>>>>>>>>>> EXECUTE THE REDIRECT!!!! ', path);
-
+            // TODO redirect to current page
+            // const path = this.props.location.pathname;
             // return <Redirect to={this.props.location.pathname} />;
             // return <Redirect to={ROUTES.USER_SETTINGS} />;
             return <Redirect to="/" />;
@@ -120,8 +114,6 @@ class Header extends Component {
 
         // this shall be a nav bar in the end
         const greeting = greetingTime(new Date());
-
-        console.log(' do we have a user ? ', this.props.user);
 
         return (
             <StyledTopBar>
