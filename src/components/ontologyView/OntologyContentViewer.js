@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ResourceRenderer from './ResourceRenderer';
+import RelationRenderer from './RelationRenderer';
 import { connect } from 'react-redux';
 
 class OntologyContentViewer extends Component {
@@ -19,7 +20,9 @@ class OntologyContentViewer extends Component {
                 <div style={{ width: '50%', backgroundColor: '#67a0d0', borderRight: '1px solid black' }}>
                     <ResourceRenderer />
                 </div>
-                <div style={{ width: '50%', backgroundColor: '#3dff3f' }}> Property Viewer </div>
+                <div style={{ width: '50%', backgroundColor: '#67a0d0' }}>
+                    <RelationRenderer />
+                </div>
             </div>
         );
     }

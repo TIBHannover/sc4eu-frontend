@@ -28,6 +28,7 @@ class ViewOntology extends Component {
     getOntologyFromBackend = () => {
         // console.log('fetching ontologies from backend');
         // console.log(this.props.match.params.ontologyId);
+        // TODO: refactor>? getOntologyByID -> getJSONMOdel For ontology ID
         getOntologyBy(this.props.match.params.ontologyId).then(res => {
             if (res.ontology_data) {
                 // create json obj from the string

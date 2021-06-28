@@ -27,6 +27,7 @@ class OntologyViewRoot extends Component {
     getOntologyFromBackend = () => {
         // console.log('fetching ontologies from backend');
         // console.log(this.props.match.params.ontologyId);
+        // TODO DEPRECATED
         getOntologyBy(this.props.match.params.ontologyId).then(res => {
             // console.log('we have the data!!!!!!', res);
             getJSON_ModelForOntology({ ontologyData: res.ontology_data }).then(jsModel => {

@@ -27,3 +27,31 @@ export const redux_removeResource = payload => dispatch => {
         payload: payload
     });
 };
+
+export const redux_editResource = payload => dispatch => {
+    dispatch({
+        type: type.EDIT_RESOURCE,
+        payload: payload
+    });
+};
+
+export const redux_addRelation = payload => dispatch => {
+    dispatch({
+        type: type.ADD_NEW_RELATION,
+        payload: payload
+    });
+};
+
+export const redux_removeRelation = payload => dispatch => {
+    dispatch({
+        type: type.DELETE_RELATION,
+        payload: payload
+    });
+};
+
+export const redux_editRelation = payload => dispatch => {
+    dispatch({
+        type: type.EDIT_RELATION,
+        payload: payload
+    });
+};

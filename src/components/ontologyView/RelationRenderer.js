@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-
 import PropTypes from 'prop-types';
-import SingleResource from './SingleResource';
-
+import { redux_addRelation } from '../../redux/actions/rrm_actions';
 import { connect } from 'react-redux';
-import { redux_addResource } from '../../redux/actions/rrm_actions';
+import SingleRelation from './SingleRelation';
 
-class ResourceRenderer extends Component {
+class RelationRenderer extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -18,34 +16,35 @@ class ResourceRenderer extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
-    renderAllResources = () => {
-        if (this.props.resources && this.props.resources.length > 0) {
-            const cropped = this.props.resources.slice(0, 100);
-            const mappedResources = cropped.map(item => {
-                return this.renderSingleResource(item);
+    renderAllRelations = () => {
+        if (this.props.relations && this.props.relations.length > 0) {
+            const cropped = this.props.relations.slice(0, 100);
+            const mappedRelations = cropped.map(item => {
+                // const mappedResources = testArray.map((item, index) => {
+                return this.renderSingleRelation(item);
             });
-            return mappedResources;
+            return mappedRelations;
         } else {
-            return <> No Classes Found </>;
+            return <> No Relations Found </>;
         }
     };
-    renderSingleResource = obj => {
+    renderSingleRelation = obj => {
         return (
-            <div key={'resourceIndexKey_' + obj.identifier} style={{ backgroundColor: 'gray', padding: '5px' }}>
-                <SingleResource resourceContext={obj} />
+            <div key={'relationIndexKey_' + obj.identifier} style={{ backgroundColor: 'gray', padding: '5px' }}>
+                <SingleRelation relationContext={obj} />
             </div>
         );
     };
 
     handleSearch = event => {
         const value = event.target.value;
-        const resources = this.props.resources;
-        resources.forEach(item => {
+        const relations = this.props.relations;
+        relations.forEach(item => {
             item.isHighlighted = false;
         });
 
         if (value !== '') {
-            const matchedResults = resources.filter(item => item.identifier.toLowerCase().includes(value.toLowerCase()));
+            const matchedResults = relations.filter(item => item.identifier.toLowerCase().includes(value.toLowerCase()));
             matchedResults.forEach(item => {
                 item.isHighlighted = true;
             });
@@ -56,8 +55,8 @@ class ResourceRenderer extends Component {
     handleFilter = event => {
         const filterValue = event.target.value;
         //set all filters to false
-        const resources = this.props.resources;
-        resources.forEach(item => {
+        const relations = this.props.relations;
+        relations.forEach(item => {
             item.isFilteredOut = false;
             if (filterValue !== '') {
                 item.isFilteredOut = true;
@@ -70,8 +69,8 @@ class ResourceRenderer extends Component {
     };
 
     handleAdd = () => {
-        const newResource = { identifier: 'foaf:', axioms: {}, annotations: {}, type: '' };
-        this.props.redux_addResource(newResource);
+        const newRelation = { identifier: 'foaf:', axioms: {}, annotations: {}, domainRangePairs: [], resourceURI: '', type: '' };
+        this.props.redux_addRelation(newRelation);
     };
 
     render() {
@@ -83,10 +82,10 @@ class ResourceRenderer extends Component {
                     <input type={'text'} placeholder={'filter...'} onChange={this.handleFilter} />
                     <input type="text" className="input" placeholder="search..." onChange={this.handleSearch} />
                 </div>
-                {/* REsources*/}
+                {/* Relations*/}
                 <div key={this.state.updateFlipFlop} style={{ height: '90%', overflow: 'auto' }}>
                     {' '}
-                    {this.renderAllResources()}{' '}
+                    {this.renderAllRelations()}{' '}
                 </div>
             </div>
         );
@@ -96,17 +95,17 @@ class ResourceRenderer extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        resources: state.ResourceRelationModelReducer.resources
+        relations: state.ResourceRelationModelReducer.relations
     };
 };
 
-ResourceRenderer.propTypes = {
-    resources: PropTypes.array.isRequired,
-    redux_addResource: PropTypes.func.isRequired
+RelationRenderer.propTypes = {
+    relations: PropTypes.array.isRequired,
+    redux_addRelation: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
-    redux_addResource: data => dispatch(redux_addResource(data))
+    redux_addRelation: data => dispatch(redux_addRelation(data))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResourceRenderer);
+export default connect(mapStateToProps, mapDispatchToProps)(RelationRenderer);
