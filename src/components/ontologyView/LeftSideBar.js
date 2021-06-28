@@ -37,7 +37,7 @@ export default class LeftSideBar extends Component {
                 expanded={this.state.expanded}
                 initialRendering={this.state.initialRendering}
                 width={this.props.width}
-                style={{ width: this.props.width, height: '200px', float: 'left', position: 'absolute' }}
+                style={{ width: this.props.width, height: this.props.height + 'px', float: 'left', position: 'absolute' }}
             >
                 <Container
                     className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
@@ -111,7 +111,8 @@ export default class LeftSideBar extends Component {
 LeftSideBar.propTypes = {
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
-    width: PropTypes.number.isRequired
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired
 };
 
 /** CREATE A GREEN LINE**/
