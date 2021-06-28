@@ -17,10 +17,10 @@ class OntologyContentViewer extends Component {
     render() {
         return (
             <div style={{ display: 'flex', marginTop: '0', height: '100%' }}>
-                <div style={{ width: '50%', backgroundColor: '#67a0d0', borderRight: '1px solid black' }}>
+                <div style={{ width: '50%', borderRight: '1px solid black' }}>
                     <ResourceRenderer />
                 </div>
-                <div style={{ width: '50%', backgroundColor: '#67a0d0' }}>
+                <div style={{ width: '50%' }}>
                     <RelationRenderer />
                 </div>
             </div>

@@ -30,7 +30,7 @@ class RelationRenderer extends Component {
     };
     renderSingleRelation = obj => {
         return (
-            <div key={'relationIndexKey_' + obj.identifier} style={{ backgroundColor: 'gray', padding: '5px' }}>
+            <div key={'relationIndexKey_' + obj.identifier} style={{ padding: '5px' }}>
                 <SingleRelation relationContext={obj} />
             </div>
         );
