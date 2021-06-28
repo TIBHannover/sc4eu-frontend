@@ -43,10 +43,10 @@ class ViewOntology extends Component {
     render() {
         // console.log(this.state);
         return (
-            <div>
+            <div style={{ height: '100%' }}>
                 <h1
                     className="noSelect pl-3 pr-3"
-                    style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center' }}
+                    style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center', height: '45px' }}
                     title={this.headerValue}
                 >
                     {this.headerValue}

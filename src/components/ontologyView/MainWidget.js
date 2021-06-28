@@ -43,7 +43,7 @@ export default class MainWidget extends Component {
                 initialRendering={this.state.initialRendering}
                 fullWidth={this.props.fullWidth}
                 style={{
-                    height: '300px',
+                    height: this.props.height + 'px',
                     position: 'relative'
                 }}
             >
