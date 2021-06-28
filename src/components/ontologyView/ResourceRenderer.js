@@ -80,7 +80,7 @@ class ResourceRenderer extends Component {
                 {/*    Controls*/}
                 <div>
                     <button onClick={this.handleAdd}> Add </button>
-                    <input type={'text'} placeholder={'filter...'} onChange={this.handleFilter} />
+                    <input type={'text'} placeholder={'filter...'} onChange={event => this.handleFilter(event)} />
                     <input type="text" className="input" placeholder="search..." onChange={this.handleSearch} />
                 </div>
                 {/* REsources*/}
