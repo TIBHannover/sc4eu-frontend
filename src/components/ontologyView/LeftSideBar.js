@@ -155,8 +155,8 @@ export class LeftSideBar extends Component {
                         color: 'black',
                         backgroundColor: '#ffffff',
                         marginTop: '-1px',
-                        position: 'relative',
-                        height: '100%', // todo make this using calc function off css or compute window size
+                        position: 'absolute',
+                        height: this.props.height + 'px',
                         overflow: 'auto'
                     }}
                 >
