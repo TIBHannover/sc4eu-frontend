@@ -33,11 +33,12 @@ export class LeftSideBar extends Component {
     };
 
     renderMetaInformation = () => {
+        //delete the line below in the new issue for MetaInformation rendering.
+        return <div style={{ textAlign: 'center' }}> Ontology Meta Information </div>;
+
         const metaInformation = this.props.metaInformation;
 
         const results = Object.keys(metaInformation).map(key => {
-            console.log('=====================');
-            console.log(metaInformation[key]);
             if (key === 'metaDescriptions') {
                 return this.renderMetaDescription(metaInformation[key]);
             } else if (key === 'prefixList') {
@@ -48,26 +49,6 @@ export class LeftSideBar extends Component {
         });
 
         return results;
-
-        // const metaDescriptions = metaInformation['metaDescriptions'];
-        // const prefixList = metaInformation['prefixList'];
-        // const shortToLong = prefixList['shortToLong'];
-        // const longToShort = prefixList['longToShort'];
-        //
-        // const exist = metaInformation.hasOwnProperty('prefixList'); // bool
-        // const exist2 = metaInformation['prefixList']; // undefined;
-        //
-        // //
-        // // const metaInformationKeyArray = Object.keys(metaInformation);
-        // const keysInMap = Object.keys(shortToLong);
-        // console.log(keysInMap);
-        // console.log(typeof keysInMap);
-        // const results = Object.keys(shortToLong).map(key => {
-        //     return this.renderHelloWorld(shortToLong[key]);
-        // });
-        // console.log('=====================');
-        // console.log(results);
-        // return results;
     };
 
     renderMetaDescription = obj => {
@@ -114,7 +95,7 @@ export class LeftSideBar extends Component {
                 expanded={this.state.expanded}
                 initialRendering={this.state.initialRendering}
                 width={this.props.width}
-                style={{ width: this.props.width, height: '200px', float: 'left', position: 'absolute' }}
+                style={{ width: this.props.width, height: this.props.height + 'px', float: 'left', position: 'absolute' }}
             >
                 <Container
                     className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
@@ -190,6 +171,7 @@ LeftSideBar.propTypes = {
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
     metaInformation: PropTypes.object
 };
 

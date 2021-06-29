@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SingleResource from './SingleResource';
 
+import { Input, Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import { redux_addResource } from '../../redux/actions/rrm_actions';
 
@@ -31,7 +32,7 @@ class ResourceRenderer extends Component {
     };
     renderSingleResource = obj => {
         return (
-            <div key={'resourceIndexKey_' + obj.identifier} style={{ backgroundColor: 'gray', padding: '5px' }}>
+            <div key={'resourceIndexKey_' + obj.identifier} style={{ padding: '5px' }}>
                 <SingleResource resourceContext={obj} />
             </div>
         );
@@ -78,15 +79,16 @@ class ResourceRenderer extends Component {
         return (
             <div style={{ height: '100%', overflow: 'hidden' }}>
                 {/*    Controls*/}
-                <div>
-                    <button onClick={this.handleAdd}> Add </button>
-                    <input type={'text'} placeholder={'filter...'} onChange={event => this.handleFilter(event)} />
-                    <input type="text" className="input" placeholder="search..." onChange={this.handleSearch} />
+                <div style={{ display: 'flex', height: '30px', margin: '5px' }}>
+                    <Button size="sm" color="primary" onClick={this.handleAdd}>
+                        Add
+                    </Button>
+                    <Input style={{ height: '30px' }} type="text" placeholder="filter..." onChange={this.handleFilter} />
+                    <Input style={{ height: '30px' }} type="text" className="input" placeholder="search..." onChange={this.handleSearch} />
                 </div>
-                {/* REsources*/}
+                {/* Resources*/}
                 <div key={this.state.updateFlipFlop} style={{ height: '90%', overflow: 'auto' }}>
-                    {' '}
-                    {this.renderAllResources()}{' '}
+                    {this.renderAllResources()}
                 </div>
             </div>
         );

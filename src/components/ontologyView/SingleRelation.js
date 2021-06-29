@@ -20,6 +20,7 @@ class SingleRelation extends Component {
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
@@ -32,20 +33,19 @@ class SingleRelation extends Component {
         }
         const currentRelationContext = this.props.relationContext;
 
-        const newResource = {
+        const newRelation = {
             axioms: currentRelationContext.axioms,
             annotations: currentRelationContext.annotations,
             domainRangePairs: currentRelationContext.domainRangePairs,
             identifier: inputArray[0],
             type: typeArray
         };
-        this.props.redux_editRelation({ updatedRelation: newResource, relationIdentifier: currentRelationContext.identifier });
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
     };
 
     deleteRelation = () => {
-        console.log(this.props.relationContext);
-        const resource = this.props.relationContext;
-        this.props.redux_removeRelation(resource);
+        const relation = this.props.relationContext;
+        this.props.redux_removeRelation(relation);
     };
     render() {
         // check if we have a body;

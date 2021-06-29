@@ -46,7 +46,7 @@ export default class RightSideBar extends Component {
                 expanded={this.state.expanded}
                 width={this.props.width}
                 initialRendering={this.state.initialRendering}
-                style={{ width: this.props.width, position: 'absolute', height: '200px' }}
+                style={{ width: this.props.width, position: 'absolute', height: this.props.height + 'px' }}
             >
                 <Container
                     className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
@@ -105,8 +105,8 @@ export default class RightSideBar extends Component {
                         color: 'black',
                         backgroundColor: '#ffffff',
                         marginTop: '-1px',
-                        height: '200px', // todo make this using calc function off css or compute window size
-                        position: 'relative'
+                        height: this.props.height + 'px',
+                        position: 'absolute'
                         // zIndex: -500
                     }}
                 >
@@ -121,7 +121,8 @@ RightSideBar.propTypes = {
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
     heightUpdateEvent: PropTypes.func.isRequired,
-    width: PropTypes.number.isRequired
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired
 };
 
 const expandButtonAnimation = ({ expanded, initialRendering }) => {

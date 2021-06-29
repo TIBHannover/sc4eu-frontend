@@ -20,6 +20,8 @@ class OntologyViewRoot extends Component {
             leftSidebarWidth: 400,
             rightSidebarWidth: 400
         };
+
+        this.sidebarHeightOffset = -40;
     }
 
     componentDidMount() {
@@ -49,7 +51,6 @@ class OntologyViewRoot extends Component {
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateDimensions);
-        this.updateDimensions();
     }
 
     leftSideBarUpdateEvent = expanded => {
@@ -90,6 +91,7 @@ class OntologyViewRoot extends Component {
     };
 
     updateDimensions = () => {
+        const containerHeight = document.getElementById('mainWidgetContainer').getBoundingClientRect().height;
         let result = window.innerWidth;
         if (this.state.leftSidebarExpanded) {
             result -= this.state.leftSidebarWidth;
@@ -103,14 +105,15 @@ class OntologyViewRoot extends Component {
             oldLeftSideState: this.state.leftSidebarExpanded,
             oldMainWidgetWidth: result,
             newMainWidgetWidth: result,
-            windowWidth: window.innerWidth
+            windowWidth: window.innerWidth,
+            containerHeight: containerHeight
         });
     };
 
     updateMainWidgetSize = () => {
         // get document by ids;
-        const leftSidebarHeight = parseInt(document.getElementById('LeftSidebarContainer').getBoundingClientRect().height);
-        const rightSidebarHeight = parseInt(document.getElementById('RightSidebarContainer').getBoundingClientRect().height);
+        const leftSidebarHeight = document.getElementById('LeftSidebarContainer').getBoundingClientRect().height;
+        const rightSidebarHeight = document.getElementById('RightSidebarContainer').getBoundingClientRect().height;
         const newHeight = Math.max(leftSidebarHeight, rightSidebarHeight);
         if (newHeight !== this.state.mainWidgetHeight) {
             this.setState({ mainWidgetHeight: newHeight });
@@ -119,7 +122,7 @@ class OntologyViewRoot extends Component {
 
     render() {
         return (
-            <div style={{ display: 'flex', marginTop: '5px', zIndex: 150 }}>
+            <div id="mainWidgetContainer" style={{ display: 'flex', marginTop: '5px', zIndex: 150, height: 'calc(100vh - 95px)' }}>
                 <MainWidget
                     leftSideBarExpanded={this.state.leftSidebarExpanded}
                     rightSideBarExpanded={this.state.rightSidebarExpanded}
@@ -129,17 +132,19 @@ class OntologyViewRoot extends Component {
                     newWidth={this.state.newMainWidgetWidth}
                     fullWidth={this.state.windowWidth}
                     oldLeftSidebarState={this.state.oldLeftSideState}
-                    height={this.state.mainWidgetHeight}
+                    height={this.state.containerHeight}
                     title="MAIN"
                 />
                 <LeftSideBar
                     width={this.state.leftSidebarWidth}
+                    height={this.state.containerHeight + this.sidebarHeightOffset}
                     title="Ontology Meta Information"
                     // loading={this.props.loading}
                     updateEvent={this.leftSideBarUpdateEvent}
                 />
                 <RightSideBar
                     width={this.state.rightSidebarWidth}
+                    height={this.state.containerHeight + this.sidebarHeightOffset}
                     title="Provenance Information"
                     updateEvent={this.rightSideBarUpdateEvent}
                     heightUpdateEvent={this.updateMainWidgetSize}

@@ -22,9 +22,11 @@ DefaultLayout.propTypes = {
 /** --- local scoped stuff --- **/
 
 const StyledBody = styled.div`
-    min-height: calc(100vh - 30px);
+    min-height: calc(100vh - 0px);
+    height: 100%;
 `;
 
 const StyledAppContent = styled.div`
     padding-top: 40px;
+    height: calc(100vh - 0px);
 `;
