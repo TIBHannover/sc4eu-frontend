@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { redux_addRelation } from '../../redux/actions/rrm_actions';
 import { connect } from 'react-redux';
 import SingleRelation from './SingleRelation';
+import { Button, Input } from 'reactstrap';
 
 class RelationRenderer extends Component {
     constructor(props) {
@@ -77,10 +78,12 @@ class RelationRenderer extends Component {
         return (
             <div style={{ height: '100%', overflow: 'hidden' }}>
                 {/*    Controls*/}
-                <div>
-                    <button onClick={this.handleAdd}> Add </button>
-                    <input type={'text'} placeholder={'filter...'} onChange={this.handleFilter} />
-                    <input type="text" className="input" placeholder="search..." onChange={this.handleSearch} />
+                <div style={{ display: 'flex', height: '30px', margin: '5px' }}>
+                    <Button size="sm" color="primary" onClick={this.handleAdd}>
+                        Add
+                    </Button>
+                    <Input style={{ height: '30px' }} type="text" placeholder="filter..." onChange={this.handleFilter} />
+                    <Input style={{ height: '30px' }} type="text" className="input" placeholder="search..." onChange={this.handleSearch} />
                 </div>
                 {/* Relations*/}
                 <div key={this.state.updateFlipFlop} style={{ height: '90%', overflow: 'auto' }}>
