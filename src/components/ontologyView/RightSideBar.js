@@ -106,7 +106,7 @@ export default class RightSideBar extends Component {
                         backgroundColor: '#ffffff',
                         marginTop: '-1px',
                         height: this.props.height + 'px',
-                        position: 'relative'
+                        position: 'absolute'
                         // zIndex: -500
                     }}
                 >

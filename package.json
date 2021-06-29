@@ -2,7 +2,7 @@
   "name": "sc3-demo-application",
   "version": "0.0.1",
   "private": true,
-  "homepage": "/sc3/sc3",
+  "homepage": "./sc3",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.24",
     "@fortawesome/free-brands-svg-icons": "^5.11.2",

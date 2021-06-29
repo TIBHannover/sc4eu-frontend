@@ -24,11 +24,11 @@ export const transformRelationToTTL = context => {
         }
 
         if (domainRangeCount > 0) {
-            ttl_representation += '# --- Domain Range Pairs --- \n';
+            ttl_representation += '# --- Property Restrictions --- \n';
             ttl_representation += extractDomainRangePairs(context.domainRangePairs);
         }
         //adjust stuff;
-        ttl_representation = ttl_representation.slice(0, -1);
+        ttl_representation = ttl_representation.slice(0, -3);
         return ttl_representation + ' .';
     }
 };
@@ -108,8 +108,26 @@ const extractAxioms = axiomsOBJ => {
 
 const extractDomainRangePairs = domainRangePairsOBJ => {
     let domainRangePairsDef = '';
+    let domainValue = '';
+    let rangeValue = '';
     domainRangePairsOBJ.forEach(item => {
-        domainRangePairsDef += 'rdfs:domain ' + item.domain + ' rdfs:range ' + item.range + '\n';
+        if (item.domain !== undefined) {
+            domainValue += '<' + item.domain + '> ,';
+        }
+        if (item.range !== undefined) {
+            rangeValue += '<' + item.range + '> ,';
+        }
     });
+    if (domainValue !== '') {
+        domainValue = domainValue.slice(0, -2);
+        domainValue += '; \n';
+        domainRangePairsDef += 'rdfs:domain ' + domainValue;
+    }
+    if (rangeValue !== '') {
+        rangeValue = rangeValue.slice(0, -2);
+        rangeValue += '; \n';
+        domainRangePairsDef += 'rdfs:range ' + rangeValue;
+    }
+
     return domainRangePairsDef;
 };
