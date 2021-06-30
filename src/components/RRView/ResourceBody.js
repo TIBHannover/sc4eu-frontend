@@ -28,7 +28,8 @@ class ResourceBody extends Component {
 
     render() {
         const resDef = this.props.resourceContext;
-        const content = transformResourceToTTL(resDef);
+        const prefixList = this.props.metaInformation.prefixList.longToShort;
+        const content = transformResourceToTTL(resDef, prefixList);
         const numRowsRequired = calculateBodyRows(content);
         // console.log('CONTENT', content, 'requires', numRowsRequired);
         // check if we have a body;
@@ -55,13 +56,15 @@ class ResourceBody extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        resources: state.ResourceRelationModelReducer.resources
+        resources: state.ResourceRelationModelReducer.resources,
+        metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
 
 ResourceBody.propTypes = {
     resourceContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired
+    isEditing: PropTypes.bool.isRequired,
+    metaInformation: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
