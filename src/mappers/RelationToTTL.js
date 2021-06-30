@@ -84,24 +84,22 @@ const extractDomainRangePairs = domainRangePairsOBJ => {
     let rangeValue = '';
     domainRangePairsOBJ.forEach(item => {
         if (item.domain !== undefined) {
-            domainValue += '<' + item.domain + '>, ';
+            domainValue += '<' + item.domain + '> ,';
         }
         if (item.range !== undefined) {
-            rangeValue += '<' + item.range + '>, ';
+            rangeValue += '<' + item.range + '> ,';
         }
     });
     if (domainValue !== '') {
         domainValue = domainValue.slice(0, -2);
-        domainValue += ' ; \n';
-        console.log(domainValue);
-        domainRangePairsDef += '\trdfs:domain ' + domainValue;
+        domainValue += '; \n';
+        domainRangePairsDef += 'rdfs:domain ' + domainValue;
     }
     if (rangeValue !== '') {
         rangeValue = rangeValue.slice(0, -2);
-        rangeValue += ' ; \n';
-        domainRangePairsDef += '\trdfs:range ' + rangeValue;
+        rangeValue += '; \n';
+        domainRangePairsDef += 'rdfs:range ' + rangeValue;
     }
-    console.log(domainRangePairsDef);
 
     return domainRangePairsDef;
 };
