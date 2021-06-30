@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faAlignJustify, faDownload, faBrain } from '@fortawesome/free-solid-svg-icons';
 import { getOntologyBy } from '../network/GetOntologyData';
 import { getJSON_ModelForOntology } from '../network/GetOntologyData';
-
 import { initializeResourceRelationModel } from 'redux/actions/rrm_actions';
+import { Button } from 'reactstrap';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import OntologyViewRoot from '../components/ontologyView/OntologyViewRoot';
+import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 
 class ViewOntology extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { isLoading: true, ontologyFileContent: undefined, error: false, errorMsg: '' };
+        this.state = { isLoading: true, ontologyFileContent: undefined, error: false, errorMsg: '', hybridModeActive: true, textModeActive: false };
         this.headerValue = 'This is the View of the Ontology Data ';
     }
 
@@ -28,6 +31,7 @@ class ViewOntology extends Component {
     getOntologyFromBackend = () => {
         // console.log('fetching ontologies from backend');
         // console.log(this.props.match.params.ontologyId);
+        // TODO: refactor>? getOntologyByID -> getJSONMOdel For ontology ID
         getOntologyBy(this.props.match.params.ontologyId).then(res => {
             if (res.ontology_data) {
                 // create json obj from the string
@@ -40,17 +44,62 @@ class ViewOntology extends Component {
         });
     };
 
+    selectHybridMode = () => {
+        this.setState({ hybridModeActive: true, textModeActive: false });
+    };
+    selectTextMode = () => {
+        this.setState({ hybridModeActive: false, textModeActive: true });
+    };
+
     render() {
         // console.log(this.state);
         return (
             <div style={{ height: '100%' }}>
-                <h1
-                    className="noSelect pl-3 pr-3"
-                    style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center', height: '45px' }}
-                    title={this.headerValue}
-                >
-                    {this.headerValue}
-                </h1>
+                {this.state.isLoading === false && (
+                    <div style={{ display: 'flex', paddingTop: '5px', paddingLeft: '5px' }}>
+                        <Tippy content="View hybrid modes of operations">
+                            <span>
+                                <Button
+                                    color={this.state.hybridModeActive ? 'primary' : 'secondary'}
+                                    size="sm"
+                                    className="mr-1"
+                                    onClick={this.selectHybridMode}
+                                >
+                                    <Icon icon={faBrain} />
+                                </Button>
+                            </span>
+                        </Tippy>
+
+                        <Tippy content="View ontology as TTL file">
+                            <span>
+                                <Button
+                                    color={this.state.textModeActive ? 'primary' : 'secondary'}
+                                    size="sm"
+                                    className="mr-1"
+                                    onClick={this.selectTextMode}
+                                >
+                                    <Icon icon={faAlignJustify} />
+                                </Button>
+                            </span>
+                        </Tippy>
+                        <Tippy content="Download ontology as TTL file">
+                            <span style={{ position: 'absolute', right: '5px' }}>
+                                <Button size="sm">
+                                    <Icon icon={faDownload} />
+                                </Button>
+                            </span>
+                        </Tippy>
+
+                        {/*<h1*/}
+                        {/*    className="noSelect pl-3 pr-3"*/}
+                        {/*    style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center', height: '45px' }}*/}
+                        {/*    title={this.headerValue}*/}
+                        {/*>*/}
+                        {/*    {this.headerValue}*/}
+                        {/*</h1>*/}
+                    </div>
+                )}
+
                 <div className="pl-1 pr-1">
                     {this.state.isLoading === true && (
                         <div className="text-center text-primary mt-4 mb-4">
@@ -65,7 +114,8 @@ class ViewOntology extends Component {
                         </div>
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && <OntologyViewRoot />}
+                    {this.state.isLoading === false && this.state.error === false && this.state.hybridModeActive === true && <OntologyViewRoot />}
+                    {this.state.isLoading === false && this.state.error === false && this.state.textModeActive === true && <OntologyViewAsTTL />}
                 </div>
             </div>
         );
@@ -73,7 +123,6 @@ class ViewOntology extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state);
     return {
         user: state.auth.user,
         rrModel: state.resourceRelationModelReducer

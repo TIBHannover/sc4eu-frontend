@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Input } from 'reactstrap';
 
-import { transformResourceToTTL, calculateBodyRows } from '../../mappers/ResToTTL';
+import { transformRelationToTTL, calculateBodyRows } from '../../mappers/RelationToTTL';
 
-class ResourceBody extends Component {
+class RelationBody extends Component {
     constructor(props) {
         super(props);
 
@@ -23,13 +23,12 @@ class ResourceBody extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         // compute the refence height;
-        console.log(' Resource body updates');
+        console.log(' Relation body updates');
     }
 
     render() {
-        const resDef = this.props.resourceContext;
-        const prefixList = this.props.metaInformation.prefixList.longToShort;
-        const content = transformResourceToTTL(resDef, prefixList);
+        const resDef = this.props.relationContext;
+        const content = transformRelationToTTL(resDef);
         const numRowsRequired = calculateBodyRows(content);
         // console.log('CONTENT', content, 'requires', numRowsRequired);
         // check if we have a body;
@@ -37,7 +36,7 @@ class ResourceBody extends Component {
             return <> </>;
         } else {
             return (
-                <StyledResourceBody ref={this.bodyRef}>
+                <StyledRelationBody ref={this.bodyRef}>
                     <StyledBodyInput
                         type="textarea"
                         readOnly
@@ -47,7 +46,7 @@ class ResourceBody extends Component {
                         value={content}
                         style={{ padding: '2px' }}
                     />
-                </StyledResourceBody>
+                </StyledRelationBody>
             );
         }
     }
@@ -56,22 +55,20 @@ class ResourceBody extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        resources: state.ResourceRelationModelReducer.resources,
-        metaInformation: state.ResourceRelationModelReducer.metaInformation
+        relations: state.ResourceRelationModelReducer.relations
     };
 };
 
-ResourceBody.propTypes = {
-    resourceContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired,
-    metaInformation: PropTypes.object.isRequired
+RelationBody.propTypes = {
+    relationContext: PropTypes.object.isRequired,
+    isEditing: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResourceBody);
+export default connect(mapStateToProps, mapDispatchToProps)(RelationBody);
 
-const StyledResourceBody = styled.div`
+const StyledRelationBody = styled.div`
     background-color: red;
     padding: 5px;
     border: 1px solid black;

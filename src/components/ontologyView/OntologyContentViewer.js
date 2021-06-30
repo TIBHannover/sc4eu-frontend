@@ -1,8 +1,9 @@
-import React, { PureComponent } from 'react';
-
+import React, { Component } from 'react';
 import ResourceRenderer from './ResourceRenderer';
+import RelationRenderer from './RelationRenderer';
 import { connect } from 'react-redux';
-class OntologyContentViewer extends PureComponent {
+
+class OntologyContentViewer extends Component {
     constructor(props) {
         super(props);
 
@@ -14,14 +15,14 @@ class OntologyContentViewer extends PureComponent {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     render() {
-        console.log(' RERENDERING CONTENT VIEWER');
         return (
             <div style={{ display: 'flex', marginTop: '0', height: '100%' }}>
-                <div style={{ width: '50%', backgroundColor: '#67a0d0', borderRight: '1px solid black' }}>
-                    {' '}
-                    <ResourceRenderer />{' '}
+                <div style={{ width: '50%', borderRight: '1px solid black' }}>
+                    <ResourceRenderer />
                 </div>
-                <div style={{ width: '50%', backgroundColor: '#3dff3f' }}> Property Viewer </div>
+                <div style={{ width: '50%' }}>
+                    <RelationRenderer />
+                </div>
             </div>
         );
     }
