@@ -27,7 +27,7 @@ export default class OntologyIndexInteractions extends Component {
         return (
             <div className="pl-1 pr-1 pb-2">
                 <StyledButton
-                    activeFeature={true}
+                    active={true}
                     onClick={() => {
                         console.log('Upload Button Triggered');
                         this.setState({ showUploadModal: true });

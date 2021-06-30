@@ -8,12 +8,12 @@ import { Button, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-class ResourceHeader extends Component {
+class RelationHeader extends Component {
     constructor(props) {
         super(props);
 
         // check if we have a body;
-        const resDef = this.props.resourceContext;
+        const resDef = this.props.relationContext;
         let headerTerminationToken = ';';
         const anCount = Object.keys(resDef.annotations).length;
         const axCount = Object.keys(resDef.axioms).length;
@@ -21,7 +21,7 @@ class ResourceHeader extends Component {
             headerTerminationToken = '.';
         }
         this.state = {
-            headerInputValue: this.props.resourceContext.identifier + ' rdf:type ' + this.props.resourceContext.type + ' ' + headerTerminationToken
+            headerInputValue: this.props.relationContext.identifier + ' rdf:type ' + this.props.relationContext.type + ' ' + headerTerminationToken
         };
     }
 
@@ -35,8 +35,8 @@ class ResourceHeader extends Component {
 
     render() {
         return (
-            <StyledResourceHeader
-                isHighlighted={this.props.resourceContext.isHighlighted}
+            <StyledRelationHeader
+                isHighlighted={this.props.relationContext.isHighlighted}
                 style={{ height: '100%', overflow: 'auto', display: 'flex' }}
             >
                 {/*TODO add checkBox for 'selective filtering' */}
@@ -55,7 +55,7 @@ class ResourceHeader extends Component {
                             this.setState({ headerInputValue: e.target.value });
                         }}
                         onBlur={e => {
-                            this.props.editResource(e.target.value);
+                            this.props.editRelation(e.target.value);
                             // todo: do validation stuff
                             // props.data.setLabel(cellLabelValue);
                             // props.tippySource.data.instance.enable();
@@ -76,14 +76,14 @@ class ResourceHeader extends Component {
                 <Button
                     color="white"
                     size="sm"
-                    onClick={this.props.deleteResource}
+                    onClick={this.props.deleteRelation}
                     style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
                 >
                     <Icon icon={faTrash} color={'white'} />
                 </Button>
 
                 {/*// add enable editing botton*/}
-            </StyledResourceHeader>
+            </StyledRelationHeader>
         );
     }
 }
@@ -91,23 +91,23 @@ class ResourceHeader extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        resources: state.ResourceRelationModelReducer.resources
+        relations: state.ResourceRelationModelReducer.relations
     };
 };
 
-ResourceHeader.propTypes = {
-    resourceContext: PropTypes.object.isRequired,
+RelationHeader.propTypes = {
+    relationContext: PropTypes.object.isRequired,
     isEditing: PropTypes.bool.isRequired,
     toggleEditButton: PropTypes.func.isRequired,
-    deleteResource: PropTypes.func.isRequired,
-    editResource: PropTypes.func.isRequired
+    deleteRelation: PropTypes.func.isRequired,
+    editRelation: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResourceHeader);
+export default connect(mapStateToProps, mapDispatchToProps)(RelationHeader);
 
-const StyledResourceHeader = styled.div`
+const StyledRelationHeader = styled.div`
     padding: 5px;
     border-radius: 10px 10px 0 0;
     border: 1px solid black;

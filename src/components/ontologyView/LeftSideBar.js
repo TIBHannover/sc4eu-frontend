@@ -1,12 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component, version } from 'react';
 import PropTypes from 'prop-types';
 import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import styled, { keyframes } from 'styled-components';
+import { connect } from 'react-redux';
+
 // import TabLikeHeader from './TabLikeHeader';
 
-export default class LeftSideBar extends Component {
+export class LeftSideBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -28,6 +30,62 @@ export default class LeftSideBar extends Component {
     collapseLeftSideBar = () => {
         this.props.updateEvent(!this.state.expanded);
         this.setState({ expanded: !this.state.expanded });
+    };
+
+    renderMetaInformation = () => {
+        //delete the line below in the new issue for MetaInformation rendering.
+        return <div style={{ textAlign: 'center' }}> Ontology Meta Information </div>;
+
+        const metaInformation = this.props.metaInformation;
+
+        const results = Object.keys(metaInformation).map(key => {
+            if (key === 'metaDescriptions') {
+                return this.renderMetaDescription(metaInformation[key]);
+            } else if (key === 'prefixList') {
+                return this.renderPrefixList(metaInformation[key]);
+            } else {
+                return <>No Meta Information Available</>;
+            }
+        });
+
+        return results;
+    };
+
+    renderMetaDescription = obj => {
+        const results = Object.keys(obj).map(itemKey => {
+            const metaDescriptionsItem = obj[itemKey];
+            if (itemKey === 'description' || itemKey === 'title') {
+                return Object.keys(metaDescriptionsItem).map(language => {
+                    const itemPerLan = itemKey + ':' + metaDescriptionsItem[language] + ' @' + language;
+                    return <div> {itemPerLan}</div>;
+                });
+            } else if (itemKey === 'iri' || itemKey === 'version') {
+                const item = itemKey + ':' + obj[itemKey];
+                return <div>{item}</div>;
+            }
+            return <></>;
+        });
+        return results;
+    };
+
+    renderPrefixList = obj => {
+        const results = Object.keys(obj).map(itemKey => {
+            const prefixList = obj[itemKey];
+            if (itemKey === 'longToShort') {
+                return Object.keys(prefixList).map(longKey => {
+                    const longToShort = longKey + ':' + prefixList[longKey];
+                    return <div>{longToShort}</div>;
+                });
+            } else if (itemKey === 'shortToLong') {
+                return Object.keys(prefixList).map(shortKey => {
+                    const shortToLong = shortKey + ':' + prefixList[shortKey];
+                    return <div>{shortToLong}</div>;
+                });
+            }
+            return <></>;
+        });
+
+        return results;
     };
 
     render() {
@@ -97,11 +155,12 @@ export default class LeftSideBar extends Component {
                         color: 'black',
                         backgroundColor: '#ffffff',
                         marginTop: '-1px',
-                        position: 'relative',
-                        height: '100%' // todo make this using calc function off css or compute window size
+                        position: 'absolute',
+                        height: this.props.height + 'px',
+                        overflow: 'auto'
                     }}
                 >
-                    <div style={{ width: this.props.width - 10, textAlign: 'center' }}>Left side meta info</div>
+                    <div style={{ width: this.props.width - 10, textAlign: 'left' }}> {this.renderMetaInformation()} </div>
                 </Container>
             </ContentContainer>
         );
@@ -112,8 +171,17 @@ LeftSideBar.propTypes = {
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired
+    height: PropTypes.number.isRequired,
+    metaInformation: PropTypes.object
 };
+
+const mapStateToProps = state => {
+    return {
+        metaInformation: state.ResourceRelationModelReducer.metaInformation
+    };
+};
+const mapDispatchToProps = dispatch => ({});
+export default connect(mapStateToProps, mapDispatchToProps)(LeftSideBar);
 
 /** CREATE A GREEN LINE**/
 /* gray */

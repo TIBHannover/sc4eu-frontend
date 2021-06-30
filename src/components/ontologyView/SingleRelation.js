@@ -3,12 +3,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import ResourceHeader from '../RRView/ResourceHeader';
-import ResourceBody from '../RRView/ResourceBody';
-import { calculateBodyRows, transformResourceToTTL } from '../../mappers/ResToTTL';
+import { calculateBodyRows, transformRelationToTTL } from '../../mappers/RelationToTTL';
 import { Button } from 'reactstrap';
-import { redux_editResource, redux_removeResource } from '../../redux/actions/rrm_actions';
-class SingleResource extends Component {
+import { redux_editRelation, redux_removeRelation } from '../../redux/actions/rrm_actions';
+import RelationHeader from '../RRView/RelationHeader';
+import RelationBody from '../RRView/RelationBody';
+class SingleRelation extends Component {
     constructor(props) {
         super(props);
 
@@ -20,24 +20,32 @@ class SingleResource extends Component {
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
 
-    editResource = inputHeaderString => {
+    editRelation = inputHeaderString => {
         const inputArray = inputHeaderString.split(' ');
         const typeArray = inputArray.slice(2, inputArray.length);
         if (typeArray[typeArray.length - 1] === '.' || typeArray[typeArray.length - 1] === ';') {
             typeArray.pop();
         }
-        const currentResource = this.props.resourceContext;
-        const newResource = { axioms: currentResource.axioms, annotations: currentResource.annotations, identifier: inputArray[0], type: typeArray };
-        this.props.redux_editResource({ updatedResource: newResource, resourceIdentifier: currentResource.identifier });
+        const currentRelationContext = this.props.relationContext;
+
+        const newRelation = {
+            axioms: currentRelationContext.axioms,
+            annotations: currentRelationContext.annotations,
+            domainRangePairs: currentRelationContext.domainRangePairs,
+            identifier: inputArray[0],
+            type: typeArray
+        };
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
     };
 
-    deleteResource = () => {
-        const resource = this.props.resourceContext;
-        this.props.redux_removeResource(resource);
+    deleteRelation = () => {
+        const relation = this.props.relationContext;
+        this.props.redux_removeRelation(relation);
     };
     render() {
         // check if we have a body;
@@ -51,24 +59,24 @@ class SingleResource extends Component {
         //     headerTerminationToken = '.';
         // }
 
-        const content = transformResourceToTTL(this.props.resourceContext);
+        const content = transformRelationToTTL(this.props.relationContext);
         const numRowsRequired = calculateBodyRows(content);
         //console.log('CONTENT', content, 'requires', numRowsRequired);
 
-        const isFiltered = this.props.resourceContext.isFilteredOut;
+        const isFiltered = this.props.relationContext.isFilteredOut;
         const isVisible = isFiltered === true ? 'none' : 'block';
         return (
             <div style={{ height: '100%', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
-                <ResourceHeader
-                    resourceContext={this.props.resourceContext}
+                <RelationHeader
+                    relationContext={this.props.relationContext}
                     isEditing={this.state.isEditing}
                     toggleEditButton={this.toggleEditButton}
-                    deleteResource={this.deleteResource}
-                    editResource={this.editResource}
+                    deleteRelation={this.deleteRelation}
+                    editRelation={this.editRelation}
                 />
                 {numRowsRequired > 0 && (
                     <div id="bodyContainer" style={{ display: 'flex' }}>
-                        <ResourceBody resourceContext={this.props.resourceContext} isEditing={this.state.isEditing} />
+                        <RelationBody relationContext={this.props.relationContext} isEditing={this.state.isEditing} />
                         <Button
                             style={{
                                 padding: 0,
@@ -100,15 +108,15 @@ const mapStateToProps = state => {
     };
 };
 
-SingleResource.propTypes = {
-    resourceContext: PropTypes.object.isRequired,
-    redux_removeResource: PropTypes.func.isRequired,
-    redux_editResource: PropTypes.func.isRequired
+SingleRelation.propTypes = {
+    relationContext: PropTypes.object.isRequired,
+    redux_removeRelation: PropTypes.func.isRequired,
+    redux_editRelation: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
-    redux_removeResource: data => dispatch(redux_removeResource(data)),
-    redux_editResource: data => dispatch(redux_editResource(data))
+    redux_removeRelation: data => dispatch(redux_removeRelation(data)),
+    redux_editRelation: data => dispatch(redux_editRelation(data))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleResource);
+export default connect(mapStateToProps, mapDispatchToProps)(SingleRelation);

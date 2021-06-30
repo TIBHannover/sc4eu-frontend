@@ -22,15 +22,13 @@ module.exports = {
                 }
             };
             // two nested requests, one fetches the data from backend, the other fetches the json model from processing
-	    console.log("REQUESTING DATA FROM BACKEND:",ontology_indexOptions.uri );
-	    
-	    
-	    
+            console.log('REQUESTING DATA FROM BACKEND:', ontology_indexOptions.uri);
+
             request(ontology_indexOptions, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
-			console.log("GOT SOME DATA FOR ID:",query['ontology_id'] );
+                        console.log('GOT SOME DATA FOR ID:', query['ontology_id']);
                         const ontologyProcessing_options = {
                             uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModelVOWL`,
                             method: 'POST',
@@ -39,8 +37,8 @@ module.exports = {
                             },
                             body: JSON.stringify({ ontologyData: result.ontology_data })
                         };
-			console.log("Requesting some data from processing service",ontologyProcessing_options.uri );
-			
+                        console.log('Requesting some data from processing service', ontologyProcessing_options.uri);
+
                         request(ontologyProcessing_options, function(error, response) {
                             try {
                                 const jsonModel = JSON.parse(response.body);
