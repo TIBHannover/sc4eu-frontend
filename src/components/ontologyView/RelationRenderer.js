@@ -189,7 +189,7 @@ class RelationRenderer extends Component {
         return (
             <div style={{ height: '100%', overflow: 'hidden' }}>
                 {/*    Controls*/}
-                <div style={{ display: 'flex', height: '30px', margin: '5px' }}>
+                <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
                     <Button size="sm" color="primary" style={{ height: '39px' }} onClick={this.handleAdd}>
                         Add
                     </Button>

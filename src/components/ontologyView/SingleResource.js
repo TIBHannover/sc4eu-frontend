@@ -90,7 +90,7 @@ class SingleResource extends Component {
         const isVisible = currentResource.isFilteredOut === true ? 'none' : 'block';
         this.props.arrayOfRef.push({ identifier: currentResource.identifier, ref: this.ref });
         return (
-            <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
+            <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '5px', display: isVisible }}>
                 {this.props.experimentalLayout && (
                     <ResourceController
                         resourceContext={this.props.resourceContext}
