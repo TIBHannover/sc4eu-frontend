@@ -16,16 +16,11 @@ export default class MainWidget extends Component {
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        this.setState({ initialRendering: false });
+    }
 
-    componentDidUpdate = (prevProps, prevState) => {
-        if (prevState.initialRendering === true) {
-            // make a timer for that;
-            setTimeout(() => {
-                this.setState({ initialRendering: false });
-            }, 400);
-        }
-    };
+    componentDidUpdate = (prevProps, prevState) => {};
 
     componentWillUnmount() {}
 
@@ -57,7 +52,7 @@ export default class MainWidget extends Component {
                         backgroundColor: '#f2f2f2'
                     }}
                 >
-                    <OntologyContentViewer />
+                    <OntologyContentViewer experimentalLayout={this.props.experimentalLayout} />
                 </div>
             </ContentContainer>
         );
@@ -74,7 +69,8 @@ MainWidget.propTypes = {
     rightSidebarWidth: PropTypes.number.isRequired,
     oldLeftSidebarState: PropTypes.bool.isRequired,
     leftSideBarExpanded: PropTypes.bool.isRequired,
-    rightSideBarExpanded: PropTypes.bool.isRequired
+    rightSideBarExpanded: PropTypes.bool.isRequired,
+    experimentalLayout: PropTypes.bool.isRequired
 };
 
 const expandContentContainerAnimation = ({ expandedLeft, oldLeftExpanded, newWidth, oldWidth, leftWidth, initialRendering, fullWidth }) => {
@@ -97,7 +93,6 @@ const expandContentContainerAnimation = ({ expandedLeft, oldLeftExpanded, newWid
     if (!initialRendering) {
         // Handing right sidebar collapse expand when left is open
         if (expandedLeft && oldLeftExpanded === true) {
-            // console.log('>>>>>>>> EXPANDING/Collapse RIGHT SIDE, when left is open [x]');
             return keyframes`
               from {
                 left: ${leftWidth}px;
@@ -111,7 +106,6 @@ const expandContentContainerAnimation = ({ expandedLeft, oldLeftExpanded, newWid
         }
 
         if (!expandedLeft && oldLeftExpanded === true) {
-            // console.log('>>>>>>>> COLLAPSE LEFT SIDE [x] ');
             return keyframes`
               from {
                 left: ${leftWidth}px;
@@ -125,7 +119,6 @@ const expandContentContainerAnimation = ({ expandedLeft, oldLeftExpanded, newWid
         }
 
         if (!expandedLeft && oldLeftExpanded === false) {
-            // console.log('>>>>>>>> EXPANDING/Collapse RIGHT SIDE, when left is closed  [x]');
             return keyframes`
               from {
                 left: ${0}px;
@@ -139,7 +132,6 @@ const expandContentContainerAnimation = ({ expandedLeft, oldLeftExpanded, newWid
         }
 
         if (expandedLeft && oldLeftExpanded === false) {
-            // console.log('>>>>>>>> EXPANDING LEFT SIDE  [x]');
             return keyframes`
               from {
                 left: ${0}px;

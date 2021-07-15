@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faAlignJustify, faDownload, faBrain } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faAlignJustify, faDownload, faBrain, faProjectDiagram, faHatWizard } from '@fortawesome/free-solid-svg-icons';
 import { getOntologyBy } from '../network/GetOntologyData';
 import { initializeResourceRelationModel } from 'redux/actions/rrm_actions';
 import { Button } from 'reactstrap';
@@ -11,13 +11,29 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import OntologyViewRoot from '../components/ontologyView/OntologyViewRoot';
 import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
+import PlayGroundUI from '../components/PlayGround/PlayGroundUi';
+import GraphVisUi from '../components/GraphVis/GraphVisUi';
+
+import { faGalacticRepublic } from '@fortawesome/free-brands-svg-icons/faGalacticRepublic';
+import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 
 class ViewOntology extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { isLoading: true, ontologyFileContent: undefined, error: false, errorMsg: '', hybridModeActive: true, textModeActive: false };
+        this.state = {
+            isLoading: true,
+            ontologyFileContent: undefined,
+            error: false,
+            errorMsg: '',
+            modeOfOperation: 'hybrid'
+            // Additional states
+        };
+
+        this.DonatelloGraph = new DonatelloGraph();
         this.headerValue = 'This is the View of the Ontology Data ';
+        this.leftSideExpanded = true;
+        this.rightSideExpanded = true;
     }
 
     componentDidMount() {
@@ -26,6 +42,14 @@ class ViewOntology extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    /** Functions forwarded to view Root for handling state Updates **/
+    setLeftSideExpanded = val => {
+        this.leftSideExpanded = val;
+    };
+    setRightSideExpanded = val => {
+        this.rightSideExpanded = val;
+    };
 
     getOntologyFromBackend = () => {
         // console.log('fetching ontologies from backend');
@@ -42,12 +66,10 @@ class ViewOntology extends Component {
             }
         });
     };
-
-    selectHybridMode = () => {
-        this.setState({ hybridModeActive: true, textModeActive: false });
-    };
-    selectTextMode = () => {
-        this.setState({ hybridModeActive: false, textModeActive: true });
+    selectModeOfOperation = val => {
+        this.setState({
+            modeOfOperation: val
+        });
     };
 
     render() {
@@ -59,31 +81,76 @@ class ViewOntology extends Component {
                         <Tippy content="View hybrid modes of operations">
                             <span>
                                 <Button
-                                    color={this.state.hybridModeActive ? 'primary' : 'secondary'}
+                                    color={this.state.modeOfOperation === 'hybrid' ? 'primary' : 'secondary'}
                                     size="sm"
                                     className="mr-1"
-                                    onClick={this.selectHybridMode}
+                                    onClick={() => this.selectModeOfOperation('hybrid')}
                                 >
                                     <Icon icon={faBrain} />
                                 </Button>
                             </span>
                         </Tippy>
-
+                        {/*TEXT VIEW*/}
                         <Tippy content="View ontology as TTL file">
                             <span>
                                 <Button
-                                    color={this.state.textModeActive ? 'primary' : 'secondary'}
+                                    color={this.state.modeOfOperation === 'text' ? 'primary' : 'secondary'}
                                     size="sm"
                                     className="mr-1"
-                                    onClick={this.selectTextMode}
+                                    onClick={() => this.selectModeOfOperation('text')}
                                 >
                                     <Icon icon={faAlignJustify} />
                                 </Button>
                             </span>
                         </Tippy>
-                        <Tippy content="Download ontology as TTL file">
+
+                        {/*Protege View*/}
+                        <Tippy content="Widget-based representation not available">
+                            <span>
+                                <Button
+                                    disabled={true}
+                                    color={this.state.modeOfOperation === 'protege' ? 'primary' : 'secondary'}
+                                    size="sm"
+                                    className="mr-1"
+                                    onClick={() => this.selectModeOfOperation('protege')}
+                                >
+                                    <Icon icon={faHatWizard} />
+                                </Button>
+                            </span>
+                        </Tippy>
+
+                        {/*Graph View*/}
+                        <Tippy content="Graph Visualization">
+                            <span>
+                                <Button
+                                    color={this.state.modeOfOperation === 'graph' ? 'primary' : 'secondary'}
+                                    size="sm"
+                                    className="mr-1"
+                                    onClick={() => this.selectModeOfOperation('graph')}
+                                >
+                                    <Icon icon={faProjectDiagram} />
+                                </Button>
+                            </span>
+                        </Tippy>
+
+                        {/*PlayGround View*/}
+                        <Tippy content="PlayGround (Temporary)">
+                            <span>
+                                <Button
+                                    color={this.state.modeOfOperation === 'playground' ? 'primary' : 'secondary'}
+                                    size="sm"
+                                    className="mr-1"
+                                    onClick={() => this.selectModeOfOperation('playground')}
+                                >
+                                    <Icon style={{ fontSize: '1.3em', verticalAlign: '-0.175em' }} icon={faGalacticRepublic} />
+                                </Button>
+                            </span>
+                        </Tippy>
+
+                        {/*DOWNLOAD BUTTON */}
+                        <Tippy content="Download ontology as TTL file (not implemented yet)">
                             <span style={{ position: 'absolute', right: '5px' }}>
-                                <Button size="sm">
+                                <Button size="sm" disabled={true}>
                                     <Icon icon={faDownload} />
                                 </Button>
                             </span>
@@ -113,8 +180,19 @@ class ViewOntology extends Component {
                         </div>
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && this.state.hybridModeActive === true && <OntologyViewRoot />}
-                    {this.state.isLoading === false && this.state.error === false && this.state.textModeActive === true && <OntologyViewAsTTL />}
+                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'hybrid' && (
+                        <OntologyViewRoot
+                            leftSideExpanded={this.leftSideExpanded}
+                            rightSideExpanded={this.rightSideExpanded}
+                            toggleLeftSideExpanded={this.setLeftSideExpanded}
+                            toggleRightSideExpanded={this.setRightSideExpanded}
+                        />
+                    )}
+                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'text' && <OntologyViewAsTTL />}
+                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'graph' && (
+                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} />
+                    )}
+                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'playground' && <PlayGroundUI />}
                 </div>
             </div>
         );
@@ -124,7 +202,7 @@ class ViewOntology extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        rrModel: state.resourceRelationModelReducer
+        rrModel: state.ResourceRelationModelReducer
     };
 };
 

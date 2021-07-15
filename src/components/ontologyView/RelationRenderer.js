@@ -190,9 +190,8 @@ class RelationRenderer extends Component {
                     </InputGroup>
                 </div>
                 {/* Relations*/}
-                <div key={this.state.updateFlipFlop} style={{ marginTop: '10px', height: '90%', overflow: 'auto' }}>
-                    {' '}
-                    {this.renderAllRelations()}{' '}
+                <div key={this.state.updateFlipFlop} style={{ marginTop: '10px', height: 'calc(100% - 40px)', overflow: 'auto' }}>
+                    {this.renderAllRelations()}
                 </div>
             </div>
         );

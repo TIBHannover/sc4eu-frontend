@@ -8,12 +8,23 @@ import { Button } from 'reactstrap';
 import { redux_editRelation, redux_removeRelation } from '../../redux/actions/rrm_actions';
 import RelationHeader from '../RRView/RelationHeader';
 import RelationBody from '../RRView/RelationBody';
+import CardGraphVis from '../GraphVis/CardGraphVis';
+import CardWidgetVis from './CardWidgetVis';
 class SingleRelation extends Component {
     constructor(props) {
         super(props);
         this.ref = React.createRef();
         this.state = {
             isEditing: false,
+
+            showingGraphVis: false,
+            showingWidgetVis: false,
+            showBody: false,
+
+            graphVisInitialRendering: true,
+            bodyInitialRendering: true,
+            widgetInitialRendering: true,
+
             forcedUpdate: false
         };
     }
@@ -33,6 +44,10 @@ class SingleRelation extends Component {
 
     toggleEditButton = val => {
         this.setState({ isEditing: val });
+    };
+
+    showBody = () => {
+        this.setState({ showBody: !this.state.showBody });
     };
 
     editRelation = inputHeaderString => {
@@ -69,24 +84,13 @@ class SingleRelation extends Component {
         this.props.redux_removeRelation(relation);
     };
     render() {
-        // check if we have a body;
-        // const resDef = this.props.resourceContext;
-        // console.log(resDef);
-        // let headerTerminationToken = ';';
-        // const anCount = Object.keys(resDef.annotations).length;
-        // const axCount = Object.keys(resDef.axioms).length;
-        // console.log('# # ', anCount, axCount);
-        // if (anCount === 0 && axCount === 0) {
-        //     headerTerminationToken = '.';
-        // }
-
         const content = transformRelationToTTL(this.props.relationContext);
         const currentRelation = this.props.relationContext;
         const numRowsRequired = calculateBodyRows(content);
-        //console.log('CONTENT', content, 'requires', numRowsRequired);
-        const isVisible = currentRelation.isFilteredOut === true ? 'none' : 'block';
-        //const refToMe = this.addToRefs(this.props.relationContext.identifier);
         this.props.arrayOfRef.push({ identifier: currentRelation.identifier, ref: this.ref });
+        const isFiltered = this.props.relationContext.isFilteredOut;
+        const isVisible = isFiltered === true ? 'none' : 'block';
+
         return (
             <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
                 <RelationHeader
@@ -96,29 +100,75 @@ class SingleRelation extends Component {
                     toggleEditButton={this.toggleEditButton}
                     deleteRelation={this.deleteRelation}
                     editRelation={this.editRelation}
+                    showBody={this.showBody}
+                    isBodyExpanded={this.state.showBody}
                 />
                 {numRowsRequired > 0 && (
                     <div id="bodyContainer" style={{ display: 'flex' }}>
-                        <RelationBody relationContext={this.props.relationContext} isEditing={this.state.isEditing} />
-                        <Button
-                            style={{
-                                padding: 0,
-                                float: 'right',
-                                width: '20px',
-                                backgroundColor: 'red',
-                                writingMode: 'tb',
-                                textAlign: 'center',
-                                clipPath: 'polygon(0 0, 0 100%, 100% 90%, 100% 10%, 0% 0)',
-                                position: 'relative',
-                                right: '-20px',
-                                marginLeft: '-20px'
-                            }}
-                        >
-                            Visualize
-                        </Button>
+                        <RelationBody
+                            relationContext={this.props.relationContext}
+                            isEditing={this.state.isEditing}
+                            isBodyExpanded={this.state.showBody}
+                            initialRendering={this.state.bodyInitialRendering}
+                        />
                     </div>
                 )}
-                {/*{this.props.resourceContext.identifier} rdf:type {' ' + this.props.resourceContext.type + ' ' + headerTerminationToken}{' '}*/}
+                <CardGraphVis
+                    isExpanded={this.state.showingGraphVis}
+                    itemIdentifier={this.props.relationContext.identifier}
+                    initialRendering={this.state.graphVisInitialRendering}
+                    itemType="Relation"
+                />
+                <CardWidgetVis
+                    isExpanded={this.state.showingWidgetVis}
+                    itemIdentifier={this.props.relationContext.identifier}
+                    initialRendering={this.state.widgetInitialRendering}
+                    itemType="Relation"
+                />
+
+                <Button
+                    style={{
+                        padding: 0,
+                        width: '49%',
+                        backgroundColor: '#ad2f38',
+                        textAlign: 'center',
+                        position: 'relative',
+                        borderRadius: '5px',
+                        marginTop: '-3px',
+                        marginRight: '1%',
+                        borderTopLeftRadius: '0',
+                        borderTopRightRadius: '0',
+                        borderTop: 'none',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis'
+                    }}
+                    onClick={() => {
+                        // this.createGraphVisForResource();
+                    }}
+                >
+                    Graph Vis
+                </Button>
+                <Button
+                    style={{
+                        padding: 0,
+                        width: '50%',
+                        backgroundColor: '#cccccc',
+                        color: 'black',
+                        textAlign: 'center',
+                        position: 'relative',
+                        borderRadius: '5px',
+                        marginTop: '-3px',
+                        borderTopLeftRadius: '0',
+                        borderTopRightRadius: '0',
+                        borderTop: 'none',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textOverflow: 'ellipsis'
+                    }}
+                >
+                    Widget-Based
+                </Button>
             </div>
         );
     }

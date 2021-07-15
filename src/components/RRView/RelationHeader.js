@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Button, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+
+import { faPen, faTrash, faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import { transformIdentifierToPrefixed } from '../../mappers/RelationToTTL';
 import Tippy from '@tippyjs/react';
 
@@ -62,6 +63,10 @@ class RelationHeader extends Component {
                 style={{ height: '100%', overflow: 'auto', display: 'flex', backgroundColor: this.getBackgroundColor() }}
             >
                 {/*TODO add checkBox for 'selective filtering' */}
+
+                <Button color="white" size="sm" style={{ float: 'right', padding: '0px', paddingRight: '5px' }} onClick={this.props.showBody}>
+                    {!this.props.isBodyExpanded ? <Icon icon={faCaretSquareDown} color="white" /> : <Icon icon={faCaretSquareUp} color="white" />}
+                </Button>
 
                 <Button
                     title="Edit Relation"
@@ -130,6 +135,9 @@ RelationHeader.propTypes = {
     toggleEditButton: PropTypes.func.isRequired,
     deleteRelation: PropTypes.func.isRequired,
     editRelation: PropTypes.func.isRequired,
+
+    showBody: PropTypes.func.isRequired,
+    isBodyExpanded: PropTypes.bool.isRequired,
     metaInformation: PropTypes.object.isRequired
 };
 

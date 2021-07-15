@@ -2,7 +2,7 @@ import React, { createRef, Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { Input } from 'reactstrap';
 
 import { transformRelationToTTL, calculateBodyRows } from '../../mappers/RelationToTTL';
@@ -28,22 +28,22 @@ class RelationBody extends Component {
         const prefixList = this.props.metaInformation.prefixList.longToShort;
         const content = transformRelationToTTL(resDef, prefixList);
         const numRowsRequired = calculateBodyRows(content);
-        // console.log('CONTENT', content, 'requires', numRowsRequired);
-        // check if we have a body;
         if (numRowsRequired === 0) {
             return <> </>;
         } else {
             return (
-                <StyledRelationBody ref={this.bodyRef}>
-                    <StyledBodyInput
-                        type="textarea"
-                        readOnly
-                        name="text"
-                        id="ontologyContent"
-                        rows={numRowsRequired}
-                        value={content}
-                        style={{ padding: '2px' }}
-                    />
+                <StyledRelationBody ref={this.bodyRef} isExpanded={this.props.isBodyExpanded} initialRendering={this.props.initialRendering}>
+                    {this.props.isBodyExpanded && (
+                        <StyledBodyInput
+                            type="textarea"
+                            readOnly
+                            name="text"
+                            id="ontologyContent"
+                            rows={numRowsRequired}
+                            value={content}
+                            style={{ padding: '2px' }}
+                        />
+                    )}
                 </StyledRelationBody>
             );
         }
@@ -61,6 +61,8 @@ const mapStateToProps = state => {
 RelationBody.propTypes = {
     relationContext: PropTypes.object.isRequired,
     isEditing: PropTypes.bool.isRequired,
+    isBodyExpanded: PropTypes.bool.isRequired,
+    initialRendering: PropTypes.bool.isRequired,
     metaInformation: PropTypes.object.isRequired
 };
 
@@ -68,12 +70,43 @@ const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(RelationBody);
 
+const expandContentContainerAnimation = ({ isExpanded, maxHeight, initialRendering, animationCompleted }) => {
+    //  TODO: add the animationCompleted Flag
+
+    if (initialRendering) {
+        return;
+    }
+    if (isExpanded) {
+        return keyframes`
+              from {
+                height: ${0}px;
+                padding: ${0}px;
+              }
+              to {
+                height: ${maxHeight}px;
+                padding: 5px;
+              }
+        `;
+    }
+    if (!isExpanded) {
+        return keyframes`
+              from {
+                height: ${maxHeight}px;
+                padding: 5px;            
+              }
+              to {
+                height: ${0}px;
+                padding: ${0}px;
+               
+              }
+        `;
+    }
+};
+
 const StyledRelationBody = styled.div`
     background-color: red;
-    padding: 5px;
     border: 1px solid black;
     border-top: none;
-    padding: 5px;
     color: black;
     width: 100%;
     background: white;
@@ -85,6 +118,14 @@ const StyledRelationBody = styled.div`
     }
     word-break: none;
     white-space: nowrap;
+
+    animation-name: ${expandContentContainerAnimation};
+
+    border-bottom: ${props => (props.isExpanded ? 1 : 0)}px solid black;
+    padding: ${props => (props.isExpanded ? 5 : 0)}px;
+    animation-duration: ${props => (props.initialRendering ? 0 : 400)}ms;
+
+    position: relative;
 `;
 
 export const StyledBodyInput = styled(Input)`

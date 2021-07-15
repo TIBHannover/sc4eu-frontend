@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Col, Container, Form, FormGroup, Input, Label, Button } from 'reactstrap';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { Col, Container, FormGroup, Input, Label, Button } from 'reactstrap';
+// import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+// import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyledGravatar } from '../styledComponents/styledComponents';

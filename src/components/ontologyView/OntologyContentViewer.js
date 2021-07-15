@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import ResourceRenderer from './ResourceRenderer';
 import RelationRenderer from './RelationRenderer';
 import { connect } from 'react-redux';
-
+import PropTypes from 'prop-types';
 class OntologyContentViewer extends Component {
     constructor(props) {
         super(props);
 
         this.state = {};
+        this.resourceViewer = React.createRef();
     }
 
     componentDidMount() {}
@@ -18,7 +19,7 @@ class OntologyContentViewer extends Component {
         return (
             <div style={{ display: 'flex', marginTop: '0', height: '100%' }}>
                 <div style={{ width: '50%', borderRight: '1px solid black' }}>
-                    <ResourceRenderer />
+                    <ResourceRenderer ref={this.resourceViewer} experimentalLayout={this.props.experimentalLayout} />
                 </div>
                 <div style={{ width: '50%' }}>
                     <RelationRenderer />
@@ -34,7 +35,9 @@ const mapStateToProps = state => {
     };
 };
 
-OntologyContentViewer.propTypes = {};
+OntologyContentViewer.propTypes = {
+    experimentalLayout: PropTypes.bool.isRequired
+};
 
 const mapDispatchToProps = dispatch => ({});
 

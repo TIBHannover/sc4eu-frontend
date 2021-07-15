@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { checkBuildType, checkOAuth, checkBackend, checkOntologyProcessing } from '../network/serviceStatusCalls';
 
 import { requestDashboard } from '../network/loginCalls';
 

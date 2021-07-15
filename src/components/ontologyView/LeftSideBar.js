@@ -16,7 +16,7 @@ export class LeftSideBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            expanded: true,
+            expanded: this.props.initialState,
             minHeight: 200,
             title: props.title,
             initialRendering: true,
@@ -265,6 +265,7 @@ export class LeftSideBar extends Component {
                     size="sm"
                     className="btn-primary"
                     expanded={this.state.expanded}
+                    initialRendering={this.state.initialRendering}
                     duration={500}
                     style={{
                         margin: '0 0',
@@ -318,6 +319,7 @@ export class LeftSideBar extends Component {
 LeftSideBar.propTypes = {
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
+    initialState: PropTypes.bool.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     metaInformation: PropTypes.object,
@@ -348,17 +350,8 @@ const expandButtonAnimation = ({ expanded, initialRendering }) => {
    
   }
 `;
-    }
-    if (initialRendering) {
-        return keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(0deg);
-   
-  }
-`;
+    } else {
+        return keyframes``;
     }
 };
 
@@ -369,8 +362,11 @@ const ButtonContainer = styled.div`
     cursor: pointer;
 `;
 
-const expandContentContainerAnimation = ({ expanded, width }) => {
-    return keyframes`
+const expandContentContainerAnimation = ({ expanded, width, initialRendering }) => {
+    if (initialRendering) {
+        return keyframes``;
+    } else {
+        return keyframes`
   from {
     left: ${expanded ? -width : 0}px;
   }
@@ -379,6 +375,7 @@ const expandContentContainerAnimation = ({ expanded, width }) => {
    
   }
 `;
+    }
 };
 
 const ContentContainer = styled.div`

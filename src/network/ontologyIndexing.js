@@ -1,5 +1,5 @@
 import { plainGetRequest, submitGetRequest, submitPostRequest } from './networkRequests';
-import { URL_ADMIN_DASHBOARD, URL_ONTOLOGYINDEXING, URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY } from 'constants/services';
+import { URL_ONTOLOGYINDEXING, URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY } from 'constants/services';
 import { URL_PRE_INIT } from 'constants/services';
 import { URL_INITIALIZE } from 'constants/services';
 
@@ -23,9 +23,8 @@ export const uploadOntology = data => {
 
 export const preInitializeOntologyUpload = data => {
     // content is the ontology file content.
-
+    // TODO: verify with the new network communications
     const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': `${process.env.REACT_APP_ONTOLOGY_SERVICE_BACKEND_URL}` };
-
     console.log('this is the data', data);
 
     return new Promise((resolve, reject) => {
@@ -56,6 +55,5 @@ export const preInitializeOntologyUpload = data => {
 
 export const userIsAllowdToUploadOntology = () => {
     const header = { 'Content-Type': 'application/json' };
-
     return submitGetRequest(URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY, header, true);
 };
