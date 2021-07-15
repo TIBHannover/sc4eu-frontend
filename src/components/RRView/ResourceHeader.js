@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import { Button, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { transformIdentifierToPrefixed } from '../../mappers/ResToTTL';
+import Tippy from '@tippyjs/react';
 
 class ResourceHeader extends Component {
     constructor(props) {
@@ -20,8 +22,14 @@ class ResourceHeader extends Component {
         if (anCount === 0 && axCount === 0) {
             headerTerminationToken = '.';
         }
+        const prefixList = this.props.metaInformation.prefixList.longToShort;
         this.state = {
-            headerInputValue: this.props.resourceContext.identifier + ' rdf:type ' + this.props.resourceContext.type + ' ' + headerTerminationToken
+            headerInputValue:
+                transformIdentifierToPrefixed(this.props.resourceContext.identifier, prefixList) +
+                ' rdf:type ' +
+                this.props.resourceContext.type +
+                ' ' +
+                headerTerminationToken
         };
     }
 
@@ -41,7 +49,13 @@ class ResourceHeader extends Component {
             >
                 {/*TODO add checkBox for 'selective filtering' */}
 
-                <Button color="white" size="sm" style={{ float: 'right', padding: '0px', paddingRight: '5px' }} onClick={this.toggleEditButton}>
+                <Button
+                    color="white"
+                    size="sm"
+                    title="Edit Resource"
+                    style={{ float: 'right', padding: '0px', paddingRight: '5px' }}
+                    onClick={this.toggleEditButton}
+                >
                     <Icon icon={faPen} color={this.state.isEditing ? 'red' : 'white'} />
                 </Button>
                 {this.props.isEditing ? (
@@ -68,14 +82,14 @@ class ResourceHeader extends Component {
                         // }
                     />
                 ) : (
-                    <StyledContentView>
-                        {/*  holds some styling for managing long texts;*/}
-                        {this.state.headerInputValue}
-                    </StyledContentView>
+                    <Tippy content={this.state.headerInputValue}>
+                        <StyledContentView>{this.state.headerInputValue}</StyledContentView>
+                    </Tippy>
                 )}
                 <Button
                     color="white"
                     size="sm"
+                    title="Delete Resource"
                     onClick={this.props.deleteResource}
                     style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
                 >
@@ -91,7 +105,8 @@ class ResourceHeader extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        resources: state.ResourceRelationModelReducer.resources
+        resources: state.ResourceRelationModelReducer.resources,
+        metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
 
@@ -100,7 +115,8 @@ ResourceHeader.propTypes = {
     isEditing: PropTypes.bool.isRequired,
     toggleEditButton: PropTypes.func.isRequired,
     deleteResource: PropTypes.func.isRequired,
-    editResource: PropTypes.func.isRequired
+    editResource: PropTypes.func.isRequired,
+    metaInformation: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});

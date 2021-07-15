@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import { Button, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { transformIdentifierToPrefixed } from '../../mappers/RelationToTTL';
+import Tippy from '@tippyjs/react';
 
 class RelationHeader extends Component {
     constructor(props) {
@@ -20,28 +22,54 @@ class RelationHeader extends Component {
         if (anCount === 0 && axCount === 0) {
             headerTerminationToken = '.';
         }
+
+        const prefixList = this.props.metaInformation.prefixList.longToShort;
         this.state = {
-            headerInputValue: this.props.relationContext.identifier + ' rdf:type ' + this.props.relationContext.type + ' ' + headerTerminationToken
+            headerInputValue:
+                transformIdentifierToPrefixed(this.props.relationContext.identifier, prefixList) +
+                ' rdf:type ' +
+                this.props.relationContext.type +
+                ' ' +
+                headerTerminationToken
         };
     }
 
     componentDidMount() {}
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // console.log('HEADER >>>>> I got updated');
+    }
 
     toggleEditButton = () => {
         this.props.toggleEditButton(!this.props.isEditing);
+    };
+
+    getBackgroundColor = () => {
+        if (this.props.relationContext.isHighlighted) {
+            return '#000000';
+        } else if (this.props.relationContext.type[0] === 'owl:objectProperty') {
+            return '#4388cc';
+        } else if (this.props.relationContext.type[0] === 'owl:datatypeProperty') {
+            return '#9c6';
+        }
+        return '#838a92';
     };
 
     render() {
         return (
             <StyledRelationHeader
                 isHighlighted={this.props.relationContext.isHighlighted}
-                style={{ height: '100%', overflow: 'auto', display: 'flex' }}
+                style={{ height: '100%', overflow: 'auto', display: 'flex', backgroundColor: this.getBackgroundColor() }}
             >
                 {/*TODO add checkBox for 'selective filtering' */}
 
-                <Button color="white" size="sm" style={{ float: 'right', padding: '0px', paddingRight: '5px' }} onClick={this.toggleEditButton}>
+                <Button
+                    title="Edit Relation"
+                    color="white"
+                    size="sm"
+                    style={{ float: 'right', padding: '0px', paddingRight: '5px' }}
+                    onClick={this.toggleEditButton}
+                >
                     <Icon icon={faPen} color={this.state.isEditing ? 'red' : 'white'} />
                 </Button>
                 {this.props.isEditing ? (
@@ -68,14 +96,14 @@ class RelationHeader extends Component {
                         // }
                     />
                 ) : (
-                    <StyledContentView>
-                        {/*  holds some styling for managing long texts;*/}
-                        {this.state.headerInputValue}
-                    </StyledContentView>
+                    <Tippy content={this.state.headerInputValue}>
+                        <StyledContentView>{this.state.headerInputValue}</StyledContentView>
+                    </Tippy>
                 )}
                 <Button
                     color="white"
                     size="sm"
+                    title="Delete Relation"
                     onClick={this.props.deleteRelation}
                     style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
                 >
@@ -91,7 +119,8 @@ class RelationHeader extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        relations: state.ResourceRelationModelReducer.relations
+        relations: state.ResourceRelationModelReducer.relations,
+        metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
 
@@ -100,7 +129,8 @@ RelationHeader.propTypes = {
     isEditing: PropTypes.bool.isRequired,
     toggleEditButton: PropTypes.func.isRequired,
     deleteRelation: PropTypes.func.isRequired,
-    editRelation: PropTypes.func.isRequired
+    editRelation: PropTypes.func.isRequired,
+    metaInformation: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});

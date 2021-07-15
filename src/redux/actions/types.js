@@ -12,6 +12,7 @@ export const EDIT_RESOURCE = 'EDIT_RESOURCE';
 export const ADD_NEW_RELATION = 'ADD_NEW_RELATION';
 export const DELETE_RELATION = 'DELETE_RELATION';
 export const EDIT_RELATION = 'EDIT_RELATION';
+export const EDIT_METAINFO = 'EDIT_METAINFO';
 
 // resource relation model
 

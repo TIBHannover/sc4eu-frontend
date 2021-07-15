@@ -1,10 +1,24 @@
-import { extractAnnotations_TTLView, transformItemTTL_TextView, extractAxioms, extractAnnotations, extractAxioms_TTLView } from './helperFunctions';
+// TODO: refactor code duplications
+
+import {
+    extractAnnotations_TTLView,
+    transformItemTTL_TextView,
+    extractDomainRangePairs_TTLView,
+    extractAxioms,
+    extractAnnotations,
+    extractAxioms_TTLView,
+    getAutoPrefix
+} from './helperFunctions';
 
 export const transformRelationToTTL_TextView = (context, prefixList) => {
     return transformItemTTL_TextView(context, prefixList, __extractBody);
 };
 
-export const transformRelationToTTL = context => {
+export const transformIdentifierToPrefixed = (identifier, prefixList) => {
+    return getAutoPrefix(identifier, prefixList);
+};
+
+export const transformRelationToTTL = (context, prefixList) => {
     // create a ttl representation
     const anCount = Object.keys(context.annotations).length;
     const axCount = Object.keys(context.axioms).length;
@@ -26,16 +40,16 @@ export const transformRelationToTTL = context => {
         if (axCount > 0) {
             ttl_representation += '# --- Axioms --- \n';
             // extract annotations;
-            ttl_representation += extractAxioms(context.axioms);
+            ttl_representation += extractAxioms(context.axioms, prefixList);
         }
 
         if (domainRangeCount > 0) {
             ttl_representation += '# --- Property Restrictions --- \n';
-            ttl_representation += extractDomainRangePairs(context.domainRangePairs);
+            ttl_representation += extractDomainRangePairs(context.domainRangePairs, prefixList);
         }
         //adjust stuff;
         ttl_representation = ttl_representation.slice(0, -3);
-        return ttl_representation + ' .';
+        return ttl_representation + '.';
     }
 };
 
@@ -53,16 +67,16 @@ const __extractBody = (context, prefixList) => {
 
         if (anCount > 0) {
             // extract annotations;
-            ttl_representation += extractAnnotations_TTLView(context.annotations);
+            ttl_representation += extractAnnotations_TTLView(context.annotations, prefixList);
         }
 
         if (axCount > 0) {
             // extract annotations;
-            ttl_representation += extractAxioms_TTLView(context.axioms);
+            ttl_representation += extractAxioms_TTLView(context.axioms, prefixList);
         }
 
         if (domainRangeCount > 0) {
-            ttl_representation += extractDomainRangePairs(context.domainRangePairs);
+            ttl_representation += extractDomainRangePairs_TTLView(context.domainRangePairs, prefixList);
         }
         //adjust stuff;
         ttl_representation = ttl_representation.slice(0, -3);
@@ -78,26 +92,28 @@ export const calculateBodyRows = inputString => {
     return numR + 1;
 };
 
-const extractDomainRangePairs = domainRangePairsOBJ => {
+const extractDomainRangePairs = (domainRangePairsOBJ, prefixList) => {
     let domainRangePairsDef = '';
     let domainValue = '';
     let rangeValue = '';
     domainRangePairsOBJ.forEach(item => {
         if (item.domain !== undefined) {
-            domainValue += '<' + item.domain + '> ,';
+            //domainValue += '<' + item.domain + '>, ';
+            domainValue += getAutoPrefix(item.domain, prefixList) + ', ';
         }
         if (item.range !== undefined) {
-            rangeValue += '<' + item.range + '> ,';
+            //rangeValue += '<' + item.range + '>, ';
+            rangeValue += getAutoPrefix(item.range, prefixList) + ', ';
         }
     });
     if (domainValue !== '') {
         domainValue = domainValue.slice(0, -2);
-        domainValue += '; \n';
+        domainValue += ' ; \n';
         domainRangePairsDef += 'rdfs:domain ' + domainValue;
     }
     if (rangeValue !== '') {
         rangeValue = rangeValue.slice(0, -2);
-        rangeValue += '; \n';
+        rangeValue += ' ; \n';
         domainRangePairsDef += 'rdfs:range ' + rangeValue;
     }
 

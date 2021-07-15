@@ -11,15 +11,25 @@ import RelationBody from '../RRView/RelationBody';
 class SingleRelation extends Component {
     constructor(props) {
         super(props);
-
+        this.ref = React.createRef();
         this.state = {
-            isEditing: false
+            isEditing: false,
+            forcedUpdate: false
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        // console.log('Mount');
+        this.props.registerToParent(this);
+    }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        //  console.log('Update');
+    }
+
+    forceRerendering = () => {
+        this.setState({ forcedUpdate: !this.state.forcedUpdate });
+    };
 
     toggleEditButton = val => {
         this.setState({ isEditing: val });
@@ -45,6 +55,17 @@ class SingleRelation extends Component {
 
     deleteRelation = () => {
         const relation = this.props.relationContext;
+        const index = this.props.arrayOfRef.findIndex(refItem => {
+            return refItem.identifier === relation.identifier;
+        });
+
+        if (index > -1) {
+            this.props.arrayOfRef.splice(index, 1);
+        }
+
+        this.props.unRegisterFromParent(this);
+        this.props.removeFromLookupList(relation.identifier);
+
         this.props.redux_removeRelation(relation);
     };
     render() {
@@ -60,16 +81,18 @@ class SingleRelation extends Component {
         // }
 
         const content = transformRelationToTTL(this.props.relationContext);
+        const currentRelation = this.props.relationContext;
         const numRowsRequired = calculateBodyRows(content);
         //console.log('CONTENT', content, 'requires', numRowsRequired);
-
-        const isFiltered = this.props.relationContext.isFilteredOut;
-        const isVisible = isFiltered === true ? 'none' : 'block';
+        const isVisible = currentRelation.isFilteredOut === true ? 'none' : 'block';
+        //const refToMe = this.addToRefs(this.props.relationContext.identifier);
+        this.props.arrayOfRef.push({ identifier: currentRelation.identifier, ref: this.ref });
         return (
-            <div style={{ height: '100%', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
+            <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
                 <RelationHeader
                     relationContext={this.props.relationContext}
                     isEditing={this.state.isEditing}
+                    forcedRerendering={this.state.forcedUpdate}
                     toggleEditButton={this.toggleEditButton}
                     deleteRelation={this.deleteRelation}
                     editRelation={this.editRelation}
@@ -111,7 +134,11 @@ const mapStateToProps = state => {
 SingleRelation.propTypes = {
     relationContext: PropTypes.object.isRequired,
     redux_removeRelation: PropTypes.func.isRequired,
-    redux_editRelation: PropTypes.func.isRequired
+    redux_editRelation: PropTypes.func.isRequired,
+    registerToParent: PropTypes.func.isRequired,
+    unRegisterFromParent: PropTypes.func.isRequired,
+    removeFromLookupList: PropTypes.func.isRequired,
+    arrayOfRef: PropTypes.array.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({

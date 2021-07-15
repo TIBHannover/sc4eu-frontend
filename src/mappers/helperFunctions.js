@@ -119,6 +119,34 @@ export const extractAxioms_TTLView = (axiomsOBJ, prefixMap) => {
     return axiomsDef;
 };
 
+export const extractDomainRangePairs_TTLView = (domainRangePairsOBJ, prefixList) => {
+    let domainRangePairsDef = '';
+    let domainValue = '';
+    let rangeValue = '';
+    domainRangePairsOBJ.forEach(item => {
+        if (item.domain !== undefined) {
+            //domainValue += '<' + item.domain + '>, ';
+            domainValue += getAutoPrefix(item.domain, prefixList) + ', ';
+        }
+        if (item.range !== undefined) {
+            //rangeValue += '<' + item.range + '>, ';
+            rangeValue += getAutoPrefix(item.range, prefixList) + ', ';
+        }
+    });
+    if (domainValue !== '') {
+        domainValue = domainValue.slice(0, -2);
+        domainValue += ' ; \n';
+        domainRangePairsDef += '\trdfs:domain ' + domainValue;
+    }
+    if (rangeValue !== '') {
+        rangeValue = rangeValue.slice(0, -2);
+        rangeValue += ' ; \n';
+        domainRangePairsDef += '\trdfs:range ' + rangeValue;
+    }
+
+    return domainRangePairsDef;
+};
+
 export const extractAxioms = (axiomsOBJ, prefixMap) => {
     // get keys;
     let axiomsDef = '';

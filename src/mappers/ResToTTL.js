@@ -1,7 +1,18 @@
-import { transformItemTTL_TextView, extractAnnotations, extractAxioms, extractAnnotations_TTLView, extractAxioms_TTLView } from './helperFunctions';
+import {
+    transformItemTTL_TextView,
+    extractAnnotations,
+    extractAxioms,
+    extractAnnotations_TTLView,
+    extractAxioms_TTLView,
+    getAutoPrefix
+} from './helperFunctions';
 
 export const transformResourceToTTL_TextView = (context, prefixList) => {
     return transformItemTTL_TextView(context, prefixList, __extractBody);
+};
+
+export const transformIdentifierToPrefixed = (identifier, prefixList) => {
+    return getAutoPrefix(identifier, prefixList);
 };
 
 export const transformResourceToTTL = (context, prefixList) => {
