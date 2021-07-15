@@ -76,16 +76,16 @@ export class LeftSideBar extends Component {
                 //return this.renderMetaDescription(metaInformation[key]);
             } else if (key === 'prefixList') {
                 return (
-                    <div key={'prefixList' + key} className="root" style={{ paddingLeft: '0px' }}>
+                    <div key={'prefixList' + key} className="root" style={{ padding: '0 10px' }}>
                         <Button color="primary" onClick={() => this.toggle()} style={{ marginTop: '5px', width: '100%', textAlign: 'left' }}>
                             <Icon icon={this.state.collapse ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                            Prefix
+                            Prefix List
                         </Button>
                         <Collapse isOpen={!this.state.collapse}>
-                            <Card>
-                                <CardBody style={{ paddingLeft: '5px', width: '100%', overflow: 'hidden' }}>
-                                    <table id="simple-board" style={{ backgroundColor: 'solid black' }}>
-                                        <tbody key={'prefixTable_' + key}>
+                            <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
+                                <CardBody style={{ padding: '0 5px', paddingBottom: '5px', width: '100%', overflow: 'hidden' }}>
+                                    <table id="simple-board" style={{ backgroundColor: 'solid black', width: '100%' }}>
+                                        <tbody key={'prefixTable_' + key} style={{}}>
                                             <tr key={'prefixRow_' + key}>
                                                 <td>
                                                     <b>Prefix</b>
