@@ -10,7 +10,7 @@ export default class RightSideBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            expanded: true,
+            expanded: this.props.initialState,
             minHeight: 200,
             title: props.title,
             initialRendering: true
@@ -18,7 +18,7 @@ export default class RightSideBar extends Component {
     }
 
     componentDidMount() {
-        document.body.style.overflowX = 'hidden';
+        document.body.style.overflowX = 'hidden'; // WHAT????
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -69,6 +69,7 @@ export default class RightSideBar extends Component {
                     size="sm"
                     className="btn-primary"
                     expanded={this.state.expanded}
+                    initialRendering={this.state.initialRendering}
                     duration={500}
                     style={{
                         margin: '0 0',
@@ -120,6 +121,7 @@ export default class RightSideBar extends Component {
 RightSideBar.propTypes = {
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
+    initialState: PropTypes.bool.isRequired,
     heightUpdateEvent: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired
@@ -138,15 +140,7 @@ const expandButtonAnimation = ({ expanded, initialRendering }) => {
 `;
     }
     if (initialRendering) {
-        return keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(0deg);
-   
-  }
-`;
+        return keyframes``;
     }
 };
 
@@ -157,8 +151,11 @@ const ButtonContainer = styled.div`
     transform: rotate(${props => (props.expanded ? 0 : 180)}deg);
 `;
 
-const expandContentContainerAnimation = ({ expanded, width }) => {
-    return keyframes`
+const expandContentContainerAnimation = ({ expanded, width, initialRendering }) => {
+    if (initialRendering) {
+        return keyframes``;
+    } else {
+        return keyframes`
   from {
     right: ${expanded ? -(width - 10) : 8}px;
   }
@@ -167,6 +164,7 @@ const expandContentContainerAnimation = ({ expanded, width }) => {
    
   }
 `;
+    }
 };
 
 const ContentContainer = styled.aside`

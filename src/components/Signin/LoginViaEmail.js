@@ -26,6 +26,8 @@ class LoginViaEmail extends Component {
         console.log('Register Event Triggered');
         this.setState({ loading: false });
         const result = await this.registerUserWithEmail();
+        console.log(result);
+        // TODO: handle errors depending on the success of the result
         this.setState({ loading: false });
     };
     handleLogin = async e => {

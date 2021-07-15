@@ -1,6 +1,6 @@
 import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } from 'constants/services';
 
-import { submitGetRequest, submitPostRequest, submitPutRequest } from './networkRequests';
+import { submitGetRequest, submitPutRequest } from './networkRequests';
 
 export const getUserProfile = payload => {
     console.log('PayLoad? ', payload);
@@ -12,19 +12,13 @@ export const getUserSettings = () => {
 };
 
 export const updateUserSettings = payload => {
-    // we want to call a put request on the backend
-    //
-    // console.log(payload);
+    // we a put request on the backend
+    // currently our data can only update the user name
 
     const data = {
         username: payload.name
     };
 
     const headers = { 'Content-Type': 'application/json' };
-
     return submitPutRequest(URL_UPDATE_USER_SETTING, headers, data);
-
-    //
-    // const data = { ...payload };
-    // return submitPutRequest(URL_UPDATE_USER_SETTING, headers, data);
 };

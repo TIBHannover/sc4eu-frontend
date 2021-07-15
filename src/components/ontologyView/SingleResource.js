@@ -8,12 +8,23 @@ import ResourceBody from '../RRView/ResourceBody';
 import { calculateBodyRows, transformResourceToTTL } from '../../mappers/ResToTTL';
 import { Button } from 'reactstrap';
 import { redux_editResource, redux_removeResource } from '../../redux/actions/rrm_actions';
+import CardGraphVis from '../GraphVis/CardGraphVis';
+import CardWidgetVis from '../ontologyView/CardWidgetVis';
+import ResourceController from '../RRView/ResourceController';
 class SingleResource extends Component {
     constructor(props) {
         super(props);
         this.ref = React.createRef();
         this.state = {
             isEditing: false,
+            showingGraphVis: false,
+            showingWidgetVis: false,
+            showBody: false,
+
+            graphVisInitialRendering: true,
+            bodyInitialRendering: true,
+            widgetInitialRendering: true,
+
             forcedUpdate: false
         };
     }
@@ -23,14 +34,25 @@ class SingleResource extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
     forceRerendering = () => {
         this.setState({ forcedUpdate: !this.state.forcedUpdate });
     };
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
+    showBody = () => {
+        this.setState({ showBody: !this.state.showBody, bodyInitialRendering: false });
+    };
+    showWidgetVis = () => {
+        this.setState({ showingWidgetVis: !this.state.showingWidgetVis, widgetInitialRendering: false });
+    };
+    createGraphVisForResource = () => {
+        this.setState({ showingGraphVis: !this.state.showingGraphVis, graphVisInitialRendering: false });
+    };
 
     editResource = inputHeaderString => {
+        console.log(inputHeaderString);
         const inputArray = inputHeaderString.split(' ');
         const typeArray = inputArray.slice(2, inputArray.length);
         if (typeArray[typeArray.length - 1] === '.' || typeArray[typeArray.length - 1] === ';') {
@@ -57,25 +79,29 @@ class SingleResource extends Component {
         this.props.redux_removeResource(resource);
     };
     render() {
-        // check if we have a body;
-        // const resDef = this.props.resourceContext;
-        // console.log(resDef);
-        // let headerTerminationToken = ';';
-        // const anCount = Object.keys(resDef.annotations).length;
-        // const axCount = Object.keys(resDef.axioms).length;
-        // console.log('# # ', anCount, axCount);
-        // if (anCount === 0 && axCount === 0) {
-        //     headerTerminationToken = '.';
-        // }
         const currentResource = this.props.resourceContext;
-        const content = transformResourceToTTL(currentResource);
 
+        const content = transformResourceToTTL(this.props.resourceContext);
         const numRowsRequired = calculateBodyRows(content);
-        //console.log('CONTENT', content, 'requires', numRowsRequired);
+        const isFiltered = this.props.resourceContext.isFilteredOut;
         const isVisible = currentResource.isFilteredOut === true ? 'none' : 'block';
         this.props.arrayOfRef.push({ identifier: currentResource.identifier, ref: this.ref });
         return (
             <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
+                {this.props.experimentalLayout && (
+                    <ResourceController
+                        resourceContext={this.props.resourceContext}
+                        isEditing={this.state.isEditing}
+                        isBodyExpanded={this.state.showBody}
+                        toggleEditButton={this.toggleEditButton}
+                        deleteResource={this.deleteResource}
+                        editResource={this.editResource}
+                        showBody={this.showBody}
+                        showGraphVis={this.createGraphVisForResource}
+                        showWidget={this.showWidgetVis}
+                    />
+                )}
+
                 <ResourceHeader
                     resourceContext={currentResource}
                     isEditing={this.state.isEditing}
@@ -83,29 +109,80 @@ class SingleResource extends Component {
                     toggleEditButton={this.toggleEditButton}
                     deleteResource={this.deleteResource}
                     editResource={this.editResource}
+                    showBody={this.showBody}
+                    isBodyExpanded={this.state.showBody}
+                    experimentalLayout={this.props.experimentalLayout}
                 />
-                {numRowsRequired > 0 && (
-                    <div id="bodyContainer" style={{ display: 'flex' }}>
-                        <ResourceBody resourceContext={this.props.resourceContext} isEditing={this.state.isEditing} />
+                <div id="bodyContainer" style={{ display: 'flex' }}>
+                    <ResourceBody
+                        resourceContext={this.props.resourceContext}
+                        isEditing={this.state.isEditing}
+                        isBodyExpanded={this.state.showBody}
+                        initialRendering={this.state.bodyInitialRendering}
+                    />
+                </div>
+                <CardGraphVis
+                    isExpanded={this.state.showingGraphVis}
+                    itemIdentifier={this.props.resourceContext.identifier}
+                    initialRendering={this.state.graphVisInitialRendering}
+                    itemType="Resource"
+                />
+                <CardWidgetVis
+                    isExpanded={this.state.showingWidgetVis}
+                    itemIdentifier={this.props.resourceContext.identifier}
+                    initialRendering={this.state.widgetInitialRendering}
+                    itemType="Resource"
+                />
+                {!this.props.experimentalLayout && (
+                    <>
                         <Button
                             style={{
                                 padding: 0,
-                                float: 'right',
-                                width: '20px',
-                                backgroundColor: 'red',
-                                writingMode: 'tb',
+                                width: '49%',
+                                backgroundColor: '#ad2f38',
                                 textAlign: 'center',
-                                clipPath: 'polygon(0 0, 0 100%, 100% 90%, 100% 10%, 0% 0)',
                                 position: 'relative',
-                                right: '-20px',
-                                marginLeft: '-20px'
+                                borderRadius: '5px',
+                                marginTop: '-3px',
+                                marginRight: '1%',
+                                borderTopLeftRadius: '0',
+                                borderTopRightRadius: '0',
+                                borderTop: 'none',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis'
+                            }}
+                            onClick={() => {
+                                this.createGraphVisForResource();
                             }}
                         >
-                            Visualize
+                            Graph Vis
                         </Button>
-                    </div>
+                        <Button
+                            style={{
+                                padding: 0,
+                                width: '50%',
+                                backgroundColor: '#cccccc',
+                                color: 'black',
+                                textAlign: 'center',
+                                position: 'relative',
+                                borderRadius: '5px',
+                                marginTop: '-3px',
+                                borderTopLeftRadius: '0',
+                                borderTopRightRadius: '0',
+                                borderTop: 'none',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis'
+                            }}
+                            onClick={() => {
+                                this.showWidgetVis();
+                            }}
+                        >
+                            Widget-Based
+                        </Button>
+                    </>
                 )}
-                {/*{this.props.resourceContext.identifier} rdf:type {' ' + this.props.resourceContext.type + ' ' + headerTerminationToken}{' '}*/}
             </div>
         );
     }
@@ -122,6 +199,7 @@ SingleResource.propTypes = {
     resourceContext: PropTypes.object.isRequired,
     redux_removeResource: PropTypes.func.isRequired,
     redux_editResource: PropTypes.func.isRequired,
+    experimentalLayout: PropTypes.bool.isRequired,
     registerToParent: PropTypes.func.isRequired,
     unRegisterFromParent: PropTypes.func.isRequired,
     removeFromLookupList: PropTypes.func.isRequired,

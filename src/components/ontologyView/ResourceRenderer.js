@@ -27,6 +27,10 @@ class ResourceRenderer extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
+    expandAllBodies = val => {
+        console.log('TRIGGERD EXPAND ALL BODIES', val);
+    };
+
     renderAllResources = () => {
         this.arrayOfRef = [];
         if (this.props.resources && this.props.resources.length > 0) {
@@ -74,14 +78,17 @@ class ResourceRenderer extends Component {
 
     renderSingleResource = obj => {
         return (
-            <SingleResource
-                arrayOfRef={this.arrayOfRef}
-                key={'resourceIndexKey_' + obj.identifier}
-                registerToParent={this.registerToParent}
-                unRegisterFromParent={this.unRegisterFromParent}
-                removeFromLookupList={this.removeFromLookupList}
-                resourceContext={obj}
-            />
+            <div key={'resourceIndexKey_' + obj.identifier} style={{ padding: '5px' }}>
+                <SingleResource
+                    arrayOfRef={this.arrayOfRef}
+                    key={'resourceIndexKey_' + obj.identifier}
+                    registerToParent={this.registerToParent}
+                    unRegisterFromParent={this.unRegisterFromParent}
+                    removeFromLookupList={this.removeFromLookupList}
+                    resourceContext={obj}
+                    experimentalLayout={this.props.experimentalLayout}
+                />
+            </div>
         );
     };
 
@@ -184,7 +191,13 @@ class ResourceRenderer extends Component {
                     </InputGroup>
                 </div>
                 {/* Resources*/}
-                <div key={this.state.updateFlipFlop} style={{ marginTop: '10px', height: '90%', overflow: 'auto' }}>
+
+                {/*WHY IS KEY A BOOL??? */}
+                <div
+                    id="resourceRendererContainer"
+                    key={this.state.updateFlipFlop}
+                    style={{ marginTop: '10px', height: 'calc(100% - 40px)', overflow: 'auto' }}
+                >
                     {this.renderAllResources()}
                 </div>
             </div>
@@ -196,13 +209,15 @@ const mapStateToProps = state => {
     return {
         user: state.auth.user,
         resources: state.ResourceRelationModelReducer.resources,
+        // resourcesExpanded: state.globalUIReducer.resources,
         metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
 
 ResourceRenderer.propTypes = {
     resources: PropTypes.array.isRequired,
-    redux_addResource: PropTypes.func.isRequired
+    redux_addResource: PropTypes.func.isRequired,
+    experimentalLayout: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
