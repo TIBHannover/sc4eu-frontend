@@ -95,7 +95,7 @@ class SingleRelation extends Component {
         const isVisible = isFiltered === true ? 'none' : 'block';
 
         return (
-            <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
+            <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '5px', display: isVisible }}>
                 <RelationHeader
                     relationContext={this.props.relationContext}
                     isEditing={this.state.isEditing}

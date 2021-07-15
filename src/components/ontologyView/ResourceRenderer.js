@@ -86,17 +86,15 @@ class ResourceRenderer extends Component {
 
     renderSingleResource = obj => {
         return (
-            <div key={'resourceIndexKey_' + obj.identifier} style={{ padding: '5px' }}>
-                <SingleResource
-                    arrayOfRef={this.arrayOfRef}
-                    key={'resourceIndexKey_' + obj.identifier}
-                    registerToParent={this.registerToParent}
-                    unRegisterFromParent={this.unRegisterFromParent}
-                    removeFromLookupList={this.removeFromLookupList}
-                    resourceContext={obj}
-                    experimentalLayout={this.props.experimentalLayout}
-                />
-            </div>
+            <SingleResource
+                arrayOfRef={this.arrayOfRef}
+                key={'resourceIndexKey_' + obj.identifier}
+                registerToParent={this.registerToParent}
+                unRegisterFromParent={this.unRegisterFromParent}
+                removeFromLookupList={this.removeFromLookupList}
+                resourceContext={obj}
+                experimentalLayout={this.props.experimentalLayout}
+            />
         );
     };
 
@@ -187,7 +185,7 @@ class ResourceRenderer extends Component {
         return (
             <div style={{ height: '100%', overflow: 'hidden' }}>
                 {/*    Controls*/}
-                <div style={{ display: 'flex', height: '30px', margin: '5px' }}>
+                <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
                     <Button size="sm" color="primary" style={{ height: '39px' }} onClick={this.handleAdd}>
                         Add
                     </Button>
