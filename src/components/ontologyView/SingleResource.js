@@ -41,6 +41,9 @@ class SingleResource extends Component {
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
+    setShowBody = val => {
+        this.setState({ showBody: val, bodyInitialRendering: false });
+    };
     showBody = () => {
         this.setState({ showBody: !this.state.showBody, bodyInitialRendering: false });
     };

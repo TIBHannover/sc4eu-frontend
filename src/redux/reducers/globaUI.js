@@ -8,9 +8,9 @@ const initialState = {
 export default (state = initialState, action) => {
     switch (action.type) {
         case type.EXPAND_ALL_RESOURCE_BODIES:
-            return { ...state, ui_all_resource_bodies_expanded: action.payload };
+            return { ...state, ...action.payload };
         case type.EXPAND_ALL_RELATION_BODIES:
-            return { ...state, ui_all_resource_bodies_expanded: action.payload };
+            return { ...state, ...action.payload };
         default: {
             return state;
         }

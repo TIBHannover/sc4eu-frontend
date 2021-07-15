@@ -25,10 +25,18 @@ class ResourceRenderer extends Component {
 
     componentDidMount() {}
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.resourcesExpanded !== prevProps.resourcesExpanded) {
+            this.expandAllBodies(this.props.resourcesExpanded);
+        }
+    }
 
     expandAllBodies = val => {
-        console.log('TRIGGERD EXPAND ALL BODIES', val);
+        this.arrayOfChildObjects.forEach(item => {
+            if (item) {
+                item.setShowBody(val);
+            }
+        });
     };
 
     renderAllResources = () => {
@@ -209,7 +217,7 @@ const mapStateToProps = state => {
     return {
         user: state.auth.user,
         resources: state.ResourceRelationModelReducer.resources,
-        // resourcesExpanded: state.globalUIReducer.resources,
+        resourcesExpanded: state.globalUIReducer.ui_all_resource_bodies_expanded,
         metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
@@ -217,7 +225,8 @@ const mapStateToProps = state => {
 ResourceRenderer.propTypes = {
     resources: PropTypes.array.isRequired,
     redux_addResource: PropTypes.func.isRequired,
-    experimentalLayout: PropTypes.bool.isRequired
+    experimentalLayout: PropTypes.bool.isRequired,
+    resourcesExpanded: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({

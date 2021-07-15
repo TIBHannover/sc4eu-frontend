@@ -5,6 +5,8 @@ import RightSideBar from './RightSideBar';
 import MainWidget from './MainWidget';
 import { Button } from 'reactstrap';
 import styled from 'styled-components';
+import { expandAllBodies } from '../../redux/actions/globalUI_actions';
+import { connect } from 'react-redux';
 
 class OntologyViewRoot extends Component {
     constructor(props) {
@@ -22,8 +24,6 @@ class OntologyViewRoot extends Component {
             leftSidebarWidth: 400,
             rightSidebarWidth: 400,
 
-            // other states;
-            allBodiesExpanded: false,
             experimentalLayout: false
         };
 
@@ -151,10 +151,13 @@ class OntologyViewRoot extends Component {
                     <ControlButton
                         onClick={() => {
                             // emit this as signal;
-                            this.setState({ allBodiesExpanded: !this.state.allBodiesExpanded });
+                            this.props.expandAllBodies({
+                                ui_all_resource_bodies_expanded: !this.props.globalUIReducer.ui_all_resource_bodies_expanded,
+                                ui_all_relation_bodies_expanded: !this.props.globalUIReducer.ui_all_relation_bodies_expanded
+                            });
                         }}
                     >
-                        {this.state.allBodiesExpanded ? 'Collapse' : 'Expand'} all bodies
+                        {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all bodies
                     </ControlButton>
                     <ControlButton
                         onClick={() => {
@@ -210,14 +213,25 @@ class OntologyViewRoot extends Component {
     }
 }
 
+// connect to redux
+const mapStateToProps = state => {
+    return {
+        globalUIReducer: state.globalUIReducer
+    };
+};
+const mapDispatchToProps = dispatch => ({
+    expandAllBodies: payload => dispatch(expandAllBodies(payload))
+});
+
 OntologyViewRoot.propTypes = {
+    globalUIReducer: PropTypes.object.isRequired,
     leftSideExpanded: PropTypes.bool.isRequired,
     rightSideExpanded: PropTypes.bool.isRequired,
     toggleLeftSideExpanded: PropTypes.func.isRequired,
-    toggleRightSideExpanded: PropTypes.func.isRequired
+    toggleRightSideExpanded: PropTypes.func.isRequired,
+    expandAllBodies: PropTypes.func.isRequired
 };
-
-export default OntologyViewRoot;
+export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);
 
 const ControlButton = styled(Button)`
     border-radius: 10px 10px;

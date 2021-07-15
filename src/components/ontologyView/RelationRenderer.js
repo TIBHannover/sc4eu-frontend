@@ -22,7 +22,19 @@ class RelationRenderer extends Component {
 
     componentDidMount() {}
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.relationsExpanded !== prevProps.relationsExpanded) {
+            this.expandAllBodies(this.props.relationsExpanded);
+        }
+    }
+
+    expandAllBodies = val => {
+        this.arrayOfChildObjects.forEach(item => {
+            if (item) {
+                item.setShowBody(val);
+            }
+        });
+    };
 
     renderAllRelations = () => {
         this.arrayOfRef = [];
@@ -202,13 +214,15 @@ const mapStateToProps = state => {
     return {
         user: state.auth.user,
         relations: state.ResourceRelationModelReducer.relations,
+        relationsExpanded: state.globalUIReducer.ui_all_relation_bodies_expanded,
         metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
 
 RelationRenderer.propTypes = {
     relations: PropTypes.array.isRequired,
-    redux_addRelation: PropTypes.func.isRequired
+    redux_addRelation: PropTypes.func.isRequired,
+    relationsExpanded: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
