@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faAlignJustify, faDownload, faBrain } from '@fortawesome/free-solid-svg-icons';
 import { getOntologyBy } from '../network/GetOntologyData';
-import { getJSON_ModelForOntology } from '../network/GetOntologyData';
 import { initializeResourceRelationModel } from 'redux/actions/rrm_actions';
 import { Button } from 'reactstrap';
 import Tippy from '@tippyjs/react';

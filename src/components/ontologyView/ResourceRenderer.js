@@ -3,15 +3,23 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SingleResource from './SingleResource';
 
-import { Input, Button } from 'reactstrap';
+import { Button, InputGroup } from 'reactstrap';
 import { connect } from 'react-redux';
 import { redux_addResource } from '../../redux/actions/rrm_actions';
+import SearchAutoComplete from './SearchAutoComplete';
 
 class ResourceRenderer extends Component {
     constructor(props) {
         super(props);
+        this.arrayOfChildObjects = [];
+
+        this.arrayOfRef = []; //  maybe investigate it in more details
+        this.lookupList = [];
+        this.cropped = [];
         this.state = {
-            updateFlipFlop: true
+            updateFlipFlop: true,
+            searchInput: false,
+            searchText: ''
         };
     }
 
@@ -20,9 +28,18 @@ class ResourceRenderer extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     renderAllResources = () => {
+        this.arrayOfRef = [];
         if (this.props.resources && this.props.resources.length > 0) {
-            const cropped = this.props.resources.slice(0, 100);
-            const mappedResources = cropped.map(item => {
+            this.cropped = this.props.resources.slice(0, 100);
+
+            const mappedResources = this.cropped.map(item => {
+                this.lookupList.push(
+                    item.identifier
+                        .split('/')
+                        .pop()
+                        .split('#')
+                        .pop()
+                );
                 return this.renderSingleResource(item);
             });
             return mappedResources;
@@ -30,35 +47,110 @@ class ResourceRenderer extends Component {
             return <> No Classes Found </>;
         }
     };
+
+    registerToParent = item => {
+        this.arrayOfChildObjects.push(item);
+    };
+
+    unRegisterFromParent = itemToRemove => {
+        const index = this.arrayOfChildObjects.findIndex(item => item === itemToRemove);
+        if (index > -1) {
+            this.arrayOfChildObjects.splice(index, 1);
+        }
+    };
+
+    removeFromLookupList = itemIdentifierToRemove => {
+        const itemToRemove = itemIdentifierToRemove
+            .split('/')
+            .pop()
+            .split('#')
+            .pop();
+
+        const index = this.lookupList.findIndex(item => item === itemToRemove);
+        if (index > -1) {
+            this.lookupList.splice(index, 1);
+        }
+    };
+
     renderSingleResource = obj => {
         return (
-            <div key={'resourceIndexKey_' + obj.identifier} style={{ padding: '5px' }}>
-                <SingleResource resourceContext={obj} />
-            </div>
+            <SingleResource
+                arrayOfRef={this.arrayOfRef}
+                key={'resourceIndexKey_' + obj.identifier}
+                registerToParent={this.registerToParent}
+                unRegisterFromParent={this.unRegisterFromParent}
+                removeFromLookupList={this.removeFromLookupList}
+                resourceContext={obj}
+            />
         );
     };
 
-    handleSearch = event => {
-        const value = event.target.value;
+    handleSearch = (value, counter) => {
+        this.arrayOfChildObjects.forEach(child => {
+            if (child.props.resourceContext.isHighlighted) {
+                child.props.resourceContext.isHighlighted = false;
+                child.forceRerendering();
+            }
+        });
+
+        if (value === '' || value === undefined) {
+            // scroll to top if nothing was found or empty string
+            this.arrayOfRef[0].ref.current.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
+        const found = this.cropped.filter(item => {
+            if (item.identifier.toLowerCase().includes(value.toLowerCase()) || this.searchInAnnotations(item.annotations, value)) {
+                const foundChild = this.arrayOfChildObjects.find(
+                    child => child.props.resourceContext.identifier.toLowerCase() === item.identifier.toLowerCase()
+                );
+                if (item.isFilteredOut) {
+                    return false;
+                }
+                if (!item.isHighlighted) {
+                    item.isHighlighted = true;
+                    if (foundChild) {
+                        foundChild.forceRerendering();
+                    }
+                }
+                return true;
+            }
+        });
+
+        if (found.length > 0) {
+            this.arrayOfRef.find(refItem => {
+                const itemNumber = counter % found.length;
+                if (refItem.identifier === found[itemNumber].identifier) {
+                    refItem.ref.current.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
+    };
+
+    searchInAnnotations = (annotations, value) => {
+        for (const item of Object.keys(annotations)) {
+            const itemValue = annotations[item];
+            for (const language of Object.keys(itemValue)) {
+                const itemValuePerLanguage = itemValue[language];
+                for (const it in itemValuePerLanguage) {
+                    return itemValuePerLanguage[it].toLowerCase().includes(value.toLowerCase());
+                }
+            }
+            return false;
+        }
+    };
+
+    clearSearch = () => {
         const resources = this.props.resources;
         resources.forEach(item => {
             item.isHighlighted = false;
         });
-
-        if (value !== '') {
-            const matchedResults = resources.filter(item => item.identifier.toLowerCase().includes(value.toLowerCase()));
-            matchedResults.forEach(item => {
-                item.isHighlighted = true;
-            });
-        }
-        this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+        this.setState({ searchText: '', searchInput: false, updateFlipFlop: !this.state.updateFlipFlop });
     };
 
-    handleFilter = event => {
-        const filterValue = event.target.value;
+    handleFilter = filterValue => {
         //set all filters to false
-        const resources = this.props.resources;
-        resources.forEach(item => {
+        this.cropped.forEach(item => {
             item.isFilteredOut = false;
             if (filterValue !== '') {
                 item.isFilteredOut = true;
@@ -67,7 +159,8 @@ class ResourceRenderer extends Component {
                 }
             }
         });
-        this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+
+        this.arrayOfChildObjects.forEach(childItem => childItem.forceRerendering());
     };
 
     handleAdd = () => {
@@ -80,14 +173,18 @@ class ResourceRenderer extends Component {
             <div style={{ height: '100%', overflow: 'hidden' }}>
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px' }}>
-                    <Button size="sm" color="primary" onClick={this.handleAdd}>
+                    <Button size="sm" color="primary" style={{ height: '39px' }} onClick={this.handleAdd}>
                         Add
                     </Button>
-                    <Input style={{ height: '30px' }} type="text" placeholder="filter..." onChange={this.handleFilter} />
-                    <Input style={{ height: '30px' }} type="text" className="input" placeholder="search..." onChange={this.handleSearch} />
+                    <InputGroup>
+                        <SearchAutoComplete placeholder={'Filter...'} lookupList={this.lookupList} handleSearch={this.handleFilter} />
+                    </InputGroup>
+                    <InputGroup>
+                        <SearchAutoComplete placeholder={'Search...'} lookupList={this.lookupList} handleSearch={this.handleSearch} />
+                    </InputGroup>
                 </div>
                 {/* Resources*/}
-                <div key={this.state.updateFlipFlop} style={{ height: '90%', overflow: 'auto' }}>
+                <div key={this.state.updateFlipFlop} style={{ marginTop: '10px', height: '90%', overflow: 'auto' }}>
                     {this.renderAllResources()}
                 </div>
             </div>
@@ -98,7 +195,8 @@ class ResourceRenderer extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        resources: state.ResourceRelationModelReducer.resources
+        resources: state.ResourceRelationModelReducer.resources,
+        metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
 

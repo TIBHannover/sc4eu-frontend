@@ -11,15 +11,21 @@ import { redux_editResource, redux_removeResource } from '../../redux/actions/rr
 class SingleResource extends Component {
     constructor(props) {
         super(props);
-
+        this.ref = React.createRef();
         this.state = {
-            isEditing: false
+            isEditing: false,
+            forcedUpdate: false
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        this.props.registerToParent(this);
+    }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+    forceRerendering = () => {
+        this.setState({ forcedUpdate: !this.state.forcedUpdate });
+    };
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
@@ -37,6 +43,17 @@ class SingleResource extends Component {
 
     deleteResource = () => {
         const resource = this.props.resourceContext;
+        const index = this.props.arrayOfRef.findIndex(refItem => {
+            return refItem.identifier === resource.identifier;
+        });
+
+        if (index > -1) {
+            this.props.arrayOfRef.splice(index, 1);
+        }
+
+        this.props.unRegisterFromParent(this);
+        this.props.removeFromLookupList(resource.identifier);
+
         this.props.redux_removeResource(resource);
     };
     render() {
@@ -50,18 +67,19 @@ class SingleResource extends Component {
         // if (anCount === 0 && axCount === 0) {
         //     headerTerminationToken = '.';
         // }
+        const currentResource = this.props.resourceContext;
+        const content = transformResourceToTTL(currentResource);
 
-        const content = transformResourceToTTL(this.props.resourceContext);
         const numRowsRequired = calculateBodyRows(content);
         //console.log('CONTENT', content, 'requires', numRowsRequired);
-
-        const isFiltered = this.props.resourceContext.isFilteredOut;
-        const isVisible = isFiltered === true ? 'none' : 'block';
+        const isVisible = currentResource.isFilteredOut === true ? 'none' : 'block';
+        this.props.arrayOfRef.push({ identifier: currentResource.identifier, ref: this.ref });
         return (
-            <div style={{ height: '100%', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
+            <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '20px', display: isVisible }}>
                 <ResourceHeader
-                    resourceContext={this.props.resourceContext}
+                    resourceContext={currentResource}
                     isEditing={this.state.isEditing}
+                    forcedRerendering={this.state.forcedUpdate}
                     toggleEditButton={this.toggleEditButton}
                     deleteResource={this.deleteResource}
                     editResource={this.editResource}
@@ -103,7 +121,11 @@ const mapStateToProps = state => {
 SingleResource.propTypes = {
     resourceContext: PropTypes.object.isRequired,
     redux_removeResource: PropTypes.func.isRequired,
-    redux_editResource: PropTypes.func.isRequired
+    redux_editResource: PropTypes.func.isRequired,
+    registerToParent: PropTypes.func.isRequired,
+    unRegisterFromParent: PropTypes.func.isRequired,
+    removeFromLookupList: PropTypes.func.isRequired,
+    arrayOfRef: PropTypes.array.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({

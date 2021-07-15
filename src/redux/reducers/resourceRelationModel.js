@@ -75,6 +75,13 @@ export default (state = initialState, action) => {
             };
         }
 
+        case type.EDIT_METAINFO: {
+            return {
+                ...state,
+                metaInformation: { ...state.metaInformation, ...action.payload }
+            };
+        }
+
         default: {
             return state;
         }

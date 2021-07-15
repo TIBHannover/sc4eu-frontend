@@ -4,7 +4,7 @@ import * as type from './types';
 
 export const initializeResourceRelationModel = payload => dispatch => {
     const wrappedPayload = {
-        originalModel: { ...payload }, // make a hard copy >> TODO Validate if this is correct assumption
+        originalModel: JSON.parse(JSON.stringify(payload)), // TODO make deep copy using lodash copy
         ...payload
     };
     console.log(wrappedPayload);
@@ -52,6 +52,13 @@ export const redux_removeRelation = payload => dispatch => {
 export const redux_editRelation = payload => dispatch => {
     dispatch({
         type: type.EDIT_RELATION,
+        payload: payload
+    });
+};
+
+export const redux_editMetaInfo = payload => dispatch => {
+    dispatch({
+        type: type.EDIT_METAINFO,
         payload: payload
     });
 };

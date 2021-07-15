@@ -21,14 +21,12 @@ class RelationBody extends Component {
 
     componentDidMount() {}
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        // compute the refence height;
-        console.log(' Relation body updates');
-    }
+    componentDidUpdate(prevProps, prevState, snapshot) {}
 
     render() {
         const resDef = this.props.relationContext;
-        const content = transformRelationToTTL(resDef);
+        const prefixList = this.props.metaInformation.prefixList.longToShort;
+        const content = transformRelationToTTL(resDef, prefixList);
         const numRowsRequired = calculateBodyRows(content);
         // console.log('CONTENT', content, 'requires', numRowsRequired);
         // check if we have a body;
@@ -55,13 +53,15 @@ class RelationBody extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        relations: state.ResourceRelationModelReducer.relations
+        relations: state.ResourceRelationModelReducer.relations,
+        metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
 
 RelationBody.propTypes = {
     relationContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired
+    isEditing: PropTypes.bool.isRequired,
+    metaInformation: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
