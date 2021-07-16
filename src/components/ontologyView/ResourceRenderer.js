@@ -202,7 +202,7 @@ class ResourceRenderer extends Component {
                 <div
                     id="resourceRendererContainer"
                     key={this.state.updateFlipFlop}
-                    style={{ marginTop: '10px', height: 'calc(100% - 40px)', overflow: 'auto' }}
+                    style={{ marginTop: '10px', height: 'calc(100% - 50px)', overflow: 'auto' }}
                 >
                     {this.renderAllResources()}
                 </div>

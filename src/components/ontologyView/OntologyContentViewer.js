@@ -8,7 +8,6 @@ class OntologyContentViewer extends Component {
         super(props);
 
         this.state = {};
-        this.resourceViewer = React.createRef();
     }
 
     componentDidMount() {}
@@ -19,7 +18,7 @@ class OntologyContentViewer extends Component {
         return (
             <div style={{ display: 'flex', marginTop: '0', height: '100%' }}>
                 <div style={{ width: '50%', borderRight: '1px solid black' }}>
-                    <ResourceRenderer ref={this.resourceViewer} experimentalLayout={this.props.experimentalLayout} />
+                    <ResourceRenderer experimentalLayout={this.props.experimentalLayout} />
                 </div>
                 <div style={{ width: '50%' }}>
                     <RelationRenderer />
