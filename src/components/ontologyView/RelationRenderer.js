@@ -42,6 +42,9 @@ class RelationRenderer extends Component {
             this.cropped = this.props.relations.slice(0, 100);
 
             this.cropped.sort((item1, item2) => {
+                if (item1.type.length === 0) {
+                    return item1;
+                }
                 return item1.type[0].localeCompare(item2.type[0]);
             });
 
@@ -181,7 +184,7 @@ class RelationRenderer extends Component {
     };
 
     handleAdd = () => {
-        const newRelation = { identifier: 'foaf:', axioms: {}, annotations: {}, domainRangePairs: [], resourceURI: '', type: '' };
+        const newRelation = { identifier: 'foaf:', axioms: {}, annotations: {}, domainRangePairs: [], resourceURI: '', type: [] };
         this.props.redux_addRelation(newRelation);
     };
 
