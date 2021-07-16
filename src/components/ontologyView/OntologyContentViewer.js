@@ -21,7 +21,7 @@ class OntologyContentViewer extends Component {
                     <ResourceRenderer experimentalLayout={this.props.experimentalLayout} />
                 </div>
                 <div style={{ width: '50%' }}>
-                    <RelationRenderer />
+                    <RelationRenderer experimentalLayout={this.props.experimentalLayout} />
                 </div>
             </div>
         );

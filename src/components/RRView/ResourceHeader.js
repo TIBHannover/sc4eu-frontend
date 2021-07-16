@@ -147,7 +147,9 @@ const StyledResourceHeader = styled.div`
     border: 1px solid black;
     padding: 5px;
     color: white;
-    background-color: ${props => (props.isHighlighted === true ? '#000000' : '#4388cc')};
+    //background-color: ${props => (props.isHighlighted === true ? '#000000' : '#4388cc')};
+    background-color: ${props => (props.experimentalLayout ? '#ccc' : props.isHighlighted === true ? '#000000' : '#4388cc')};
+    color:${props => (props.experimentalLayout ? 'black' : 'white')};
     :focus {
         outline: none;
     }

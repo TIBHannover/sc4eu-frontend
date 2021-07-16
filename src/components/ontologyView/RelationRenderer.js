@@ -100,6 +100,7 @@ class RelationRenderer extends Component {
                 unRegisterFromParent={this.unRegisterFromParent}
                 removeFromLookupList={this.removeFromLookupList}
                 relationContext={obj}
+                experimentalLayout={this.props.experimentalLayout}
             />
         );
     };
@@ -138,7 +139,7 @@ class RelationRenderer extends Component {
         });
 
         if (found.length > 0) {
-            this.arrayOfRef.find(refItem => {
+            this.arrayOfRef.forEach(refItem => {
                 const itemNumber = counter % found.length;
                 if (refItem.identifier === found[itemNumber].identifier) {
                     refItem.ref.current.scrollIntoView({ behavior: 'smooth' });
@@ -225,6 +226,7 @@ const mapStateToProps = state => {
 RelationRenderer.propTypes = {
     relations: PropTypes.array.isRequired,
     redux_addRelation: PropTypes.func.isRequired,
+    experimentalLayout: PropTypes.bool.isRequired,
     relationsExpanded: PropTypes.bool.isRequired
 };
 

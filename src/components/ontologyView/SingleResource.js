@@ -10,7 +10,7 @@ import { Button } from 'reactstrap';
 import { redux_editResource, redux_removeResource } from '../../redux/actions/rrm_actions';
 import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
-import ResourceController from '../RRView/ResourceController';
+import ItemController from '../RRView/ItemController';
 class SingleResource extends Component {
     constructor(props) {
         super(props);
@@ -90,10 +90,12 @@ class SingleResource extends Component {
         const isVisible = currentResource.isFilteredOut === true ? 'none' : 'block';
         this.props.arrayOfRef.push({ identifier: currentResource.identifier, ref: this.ref });
         return (
-            <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '5px', display: isVisible }}>
+            <div ref={this.ref} style={{ padding: '5px', overflow: 'none', paddingRight: '5px', display: isVisible }}>
                 {this.props.experimentalLayout && (
-                    <ResourceController
-                        resourceContext={this.props.resourceContext}
+                    <ItemController
+                        itemType="Resource"
+                        forcedReRendering={this.state.forcedUpdate}
+                        itemContext={this.props.resourceContext}
                         isEditing={this.state.isEditing}
                         isBodyExpanded={this.state.showBody}
                         toggleEditButton={this.toggleEditButton}
@@ -102,6 +104,9 @@ class SingleResource extends Component {
                         showBody={this.showBody}
                         showGraphVis={this.createGraphVisForResource}
                         showWidget={this.showWidgetVis}
+                        showingBody={this.state.showBody}
+                        showingWidget={this.state.showingWidgetVis}
+                        showingGraph={this.state.showingGraphVis}
                     />
                 )}
 
