@@ -59,24 +59,34 @@ class RelationHeader extends Component {
     render() {
         return (
             <StyledRelationHeader
+                experimentalLayout={this.props.experimentalLayout}
                 isHighlighted={this.props.relationContext.isHighlighted}
-                style={{ height: '100%', overflow: 'auto', display: 'flex', backgroundColor: this.getBackgroundColor() }}
+                typedBasedColor={this.getBackgroundColor()}
+                style={{ height: '100%', overflow: 'auto', display: 'flex' }}
             >
                 {/*TODO add checkBox for 'selective filtering' */}
+                {!this.props.experimentalLayout && (
+                    <>
+                        <Button color="white" size="sm" style={{ float: 'right', padding: '0px', paddingRight: '5px' }} onClick={this.props.showBody}>
+                            {!this.props.isBodyExpanded ? (
+                                <Icon icon={faCaretSquareDown} color="white" />
+                            ) : (
+                                <Icon icon={faCaretSquareUp} color="white" />
+                            )}
+                        </Button>
 
-                <Button color="white" size="sm" style={{ float: 'right', padding: '0px', paddingRight: '5px' }} onClick={this.props.showBody}>
-                    {!this.props.isBodyExpanded ? <Icon icon={faCaretSquareDown} color="white" /> : <Icon icon={faCaretSquareUp} color="white" />}
-                </Button>
+                        <Button
+                            title="Edit Relation"
+                            color="white"
+                            size="sm"
+                            style={{ float: 'right', padding: '0px', paddingRight: '5px' }}
+                            onClick={this.toggleEditButton}
+                        >
+                            <Icon icon={faPen} color={this.state.isEditing ? 'red' : 'white'} />
+                        </Button>
+                    </>
+                )}
 
-                <Button
-                    title="Edit Relation"
-                    color="white"
-                    size="sm"
-                    style={{ float: 'right', padding: '0px', paddingRight: '5px' }}
-                    onClick={this.toggleEditButton}
-                >
-                    <Icon icon={faPen} color={this.state.isEditing ? 'red' : 'white'} />
-                </Button>
                 {this.props.isEditing ? (
                     <HeaderValueInput
                         autoFocus={true}
@@ -105,15 +115,17 @@ class RelationHeader extends Component {
                         <StyledContentView>{this.state.headerInputValue}</StyledContentView>
                     </Tippy>
                 )}
-                <Button
-                    color="white"
-                    size="sm"
-                    title="Delete Relation"
-                    onClick={this.props.deleteRelation}
-                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                >
-                    <Icon icon={faTrash} color={'white'} />
-                </Button>
+                {!this.props.experimentalLayout && (
+                    <Button
+                        color="white"
+                        size="sm"
+                        title="Delete Relation"
+                        onClick={this.props.deleteRelation}
+                        style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
+                    >
+                        <Icon icon={faTrash} color={'white'} />
+                    </Button>
+                )}
 
                 {/*// add enable editing botton*/}
             </StyledRelationHeader>
@@ -135,7 +147,7 @@ RelationHeader.propTypes = {
     toggleEditButton: PropTypes.func.isRequired,
     deleteRelation: PropTypes.func.isRequired,
     editRelation: PropTypes.func.isRequired,
-
+    experimentalLayout: PropTypes.bool.isRequired,
     showBody: PropTypes.func.isRequired,
     isBodyExpanded: PropTypes.bool.isRequired,
     metaInformation: PropTypes.object.isRequired
@@ -147,11 +159,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(RelationHeader);
 
 const StyledRelationHeader = styled.div`
     padding: 5px;
-    border-radius: 10px 10px 0 0;
+    border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
     border: 1px solid black;
     padding: 5px;
     color: white;
-    background-color: ${props => (props.isHighlighted === true ? '#000000' : '#4388cc')};
+    background-color: ${props => (props.experimentalLayout ? '#ccc' : props.isHighlighted === true ? '#000000' : props.typedBasedColor)};
+    color: ${props => (props.experimentalLayout ? 'black' : 'white')};
     :focus {
         outline: none;
     }

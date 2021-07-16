@@ -131,7 +131,7 @@ class ResourceRenderer extends Component {
         });
 
         if (found.length > 0) {
-            this.arrayOfRef.find(refItem => {
+            this.arrayOfRef.forEach(refItem => {
                 const itemNumber = counter % found.length;
                 if (refItem.identifier === found[itemNumber].identifier) {
                     refItem.ref.current.scrollIntoView({ behavior: 'smooth' });
