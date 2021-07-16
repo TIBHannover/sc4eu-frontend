@@ -6,11 +6,9 @@ import { faAngleLeft, faCaretDown, faCaretRight, faPen } from '@fortawesome/free
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 
-import { Collapse, Button, Card, CardBody } from 'reactstrap';
+import { Collapse, Button, Card, CardBody, Input } from 'reactstrap';
 import { redux_editMetaInfo } from '../../redux/actions/rrm_actions';
 import Tippy from '@tippyjs/react';
-
-// import TabLikeHeader from './TabLikeHeader';
 
 export class LeftSideBar extends Component {
     constructor(props) {
@@ -50,10 +48,10 @@ export class LeftSideBar extends Component {
     renderMetaInformation = () => {
         const metaInformation = this.props.metaInformation;
 
-        const results = Object.keys(metaInformation).map(key => {
+        return Object.keys(metaInformation).map(key => {
             if (key === 'metaDescriptions') {
                 return (
-                    <div key={'metaInformatin_' + key} className="root" style={{ paddingLeft: '-5px' }}>
+                    <div key={'metaInformation_' + key} className="root" style={{ padding: '0 10px' }}>
                         <Button
                             color="primary"
                             onClick={() => this.toggleMetaInformation()}
@@ -63,9 +61,9 @@ export class LeftSideBar extends Component {
                             Meta Information
                         </Button>
                         <Collapse isOpen={!this.state.collapseMetaInfo}>
-                            <Card>
-                                <CardBody style={{ paddingLeft: '5px', width: '100%', overflow: 'hidden' }}>
-                                    <table>
+                            <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
+                                <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
+                                    <table style={{ width: '100%' }}>
                                         <tbody>{this.renderMetaDescription(metaInformation[key])}</tbody>
                                     </table>
                                 </CardBody>
@@ -107,19 +105,17 @@ export class LeftSideBar extends Component {
                 return <>No Meta Information Available</>;
             }
         });
-
-        return results;
     };
 
     updateText = (event, itemKey, language) => {
         const metaInformation = { ...this.props.metaInformation };
         if (itemKey === 'iri' || itemKey === 'version') {
-            metaInformation['metaDescriptions'][itemKey] = event.target.textContent;
+            metaInformation['metaDescriptions'][itemKey] = event.target.value;
             this.props.redux_editMetaInfo(metaInformation);
         } else if (itemKey === 'description' || itemKey === 'title') {
             //remove ' @en"
-            const text = event.target.textContent.slice(0, -4);
-            metaInformation['metaDescriptions'][itemKey][language] = text;
+            metaInformation['metaDescriptions'][itemKey][language] = event.target.value;
+            console.log('THIS SHOULD UPDATE THE REDUX', metaInformation);
             this.props.redux_editMetaInfo(metaInformation);
         }
     };
@@ -130,11 +126,12 @@ export class LeftSideBar extends Component {
 
     renderMetaDescription = obj => {
         let keyIndex = 0;
-        const results = Object.keys(obj).map(itemKey => {
+        return Object.keys(obj).map(itemKey => {
             const metaDescriptionsItem = obj[itemKey];
             if (itemKey === 'description' || itemKey === 'title') {
                 return Object.keys(metaDescriptionsItem).map(language => {
                     const itemPerLan = metaDescriptionsItem[language] + ' @' + language;
+                    const itemValueInLang = metaDescriptionsItem[language];
                     return (
                         <tr style={{ fontSize: '12px' }} key={'description_title_' + itemKey + keyIndex++}>
                             <td style={{ paddingRight: '5px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
@@ -158,7 +155,16 @@ export class LeftSideBar extends Component {
                                 contentEditable={this.state.isEditing[itemKey]}
                                 onBlur={event => this.updateText(event, itemKey, language)}
                             >
-                                {itemPerLan}
+                                {!this.state.isEditing[itemKey] ? (
+                                    itemPerLan
+                                ) : (
+                                    <Input
+                                        defaultValue={itemValueInLang}
+                                        onChange={event => {
+                                            this.updateText(event, itemKey, language);
+                                        }}
+                                    />
+                                )}
                             </td>
                         </tr>
                     );
@@ -187,52 +193,52 @@ export class LeftSideBar extends Component {
                             contentEditable={this.state.isEditing[itemKey]}
                             onBlur={event => this.updateText(event, itemKey)}
                         >
-                            {obj[itemKey]}
+                            {!this.state.isEditing[itemKey] ? (
+                                obj[itemKey]
+                            ) : (
+                                <Input
+                                    defaultValue={obj[itemKey]}
+                                    onChange={event => {
+                                        this.updateText(event, itemKey);
+                                    }}
+                                />
+                            )}
                         </td>
                     </tr>
                 );
             }
+            return <tr key={keyIndex + '_ERROR'}>{/*<td>ERROR HERE</td>*/}</tr>;
         });
-        return results;
     };
 
     renderPrefixList = obj => {
-        const results = Object.keys(obj).map(itemKey => {
-            const prefixList = obj[itemKey];
-            if (itemKey === 'shortToLong') {
-                return Object.keys(prefixList).map(shortKey => {
-                    const shortToLong = shortKey + ':' + prefixList[shortKey];
-                    return (
-                        <tr key={'prefix_' + shortKey} style={{ borderBottom: '1px solid', width: '100%', fontSize: '12px' }}>
-                            <td style={{ textAlign: 'left' }}>{shortKey}:</td>
-                            <Tippy content={prefixList[shortKey]}>
-                                <td
-                                    style={{
-                                        maxWidth: '94%',
-                                        whiteSpace: 'nowrap',
-                                        display: 'block',
-                                        paddingLeft: '10px',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis'
-                                    }}
-                                >
-                                    {prefixList[shortKey]}
-                                </td>
-                            </Tippy>
-                        </tr>
-                    );
-                });
-            }
-            /*else if (itemKey === 'longToShort') {
-                return Object.keys(prefixList).map(longKey => {
-                    const longToShort = longKey + ':' + prefixList[longKey];
-                    return <div>{longToShort}</div>;
-                });
-            }*/
-            //return <div key={'empty2_' + itemKey} />;
-        });
-
-        return results;
+        if (obj.hasOwnProperty('shortToLong')) {
+            const shortToLongValues = obj['shortToLong'];
+            return Object.keys(shortToLongValues).map(shortKey => {
+                // const shortToLong = shortKey + ':' + prefixList[shortKey];
+                return (
+                    <tr key={'prefix_' + shortKey} style={{ borderBottom: '1px solid', width: '100%', fontSize: '12px' }}>
+                        <td style={{ textAlign: 'left' }}>{shortKey}:</td>
+                        <Tippy content={shortToLongValues[shortKey]}>
+                            <td
+                                style={{
+                                    maxWidth: '94%',
+                                    whiteSpace: 'nowrap',
+                                    display: 'block',
+                                    paddingLeft: '10px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                }}
+                            >
+                                {shortToLongValues[shortKey]}
+                            </td>
+                        </Tippy>
+                    </tr>
+                );
+            });
+        } else {
+            return <div>No Prefix List provided :(</div>;
+        }
     };
 
     render() {
