@@ -8,9 +8,9 @@ const filter = createFilterOptions();
 
 class SearchAutocomplete extends Component {
     constructor(props) {
-        const value = '';
-        const count = 0;
         super(props);
+        this.value = '';
+        this.count = 0;
     }
 
     render() {
@@ -33,11 +33,16 @@ class SearchAutocomplete extends Component {
                         }
                     }}
                     onInputChange={(event, value) => {
+                        this.value = value;
                         if (event.type === 'click') {
                             return this.props.handleSearch(value, 0);
                         }
                     }}
                     filterOptions={(options, params) => {
+                        //strangly params.inputValue is empty when there there is value from selected option
+                        if (this.value !== '') {
+                            params.inputValue = this.value;
+                        }
                         const filtered = filter(options, params);
                         if (params.inputValue === undefined || params.inputValue === '') {
                             return [];
@@ -47,18 +52,10 @@ class SearchAutocomplete extends Component {
                         }
                         return filtered;
                     }}
-                    options={this.props.lookupList.map(option => option)}
-                    renderInput={params => {
-                        return (
-                            <TextField
-                                style={{ marginTop: '0px' }}
-                                placeholder={this.props.placeholder}
-                                {...params}
-                                margin="normal"
-                                variant="outlined"
-                            />
-                        );
-                    }}
+                    options={this.props.lookupList}
+                    renderInput={params => (
+                        <TextField style={{ marginTop: '0px' }} placeholder={this.props.placeholder} {...params} margin="normal" variant="outlined" />
+                    )}
                 />
             </div>
         );
