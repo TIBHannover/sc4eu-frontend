@@ -52,6 +52,7 @@ class SearchAutocomplete extends Component {
                         }
                         return filtered;
                     }}
+                    getOptionSelected={option => null}
                     options={this.props.lookupList}
                     renderInput={params => (
                         <TextField style={{ marginTop: '0px' }} placeholder={this.props.placeholder} {...params} margin="normal" variant="outlined" />
