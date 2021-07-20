@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import SingleRelation from './SingleRelation';
 import { Button, InputGroup } from 'reactstrap';
 import SearchAutoComplete from './SearchAutoComplete';
+import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
 
 class RelationRenderer extends Component {
     constructor(props) {
@@ -13,10 +14,10 @@ class RelationRenderer extends Component {
         this.arrayOfRef = [];
         this.lookupList = [];
         this.cropped = [];
+        this.searchText = this.props.globalUIReducer.ui_relation_search_value_preserved;
+        this.filterText = this.props.globalUIReducer.ui_relation_filter_value_preserved;
         this.state = {
-            updateFlipFlop: true,
-            searchInput: false,
-            searchText: ''
+            updateFlipFlop: true
         };
     }
 
@@ -76,7 +77,6 @@ class RelationRenderer extends Component {
     };
 
     removeFromLookupList = itemIdentifierToRemove => {
-        console.log(this.lookupList.length);
         const itemToRemove = itemIdentifierToRemove
             .split('/')
             .pop()
@@ -87,7 +87,6 @@ class RelationRenderer extends Component {
         if (index > -1) {
             this.lookupList.splice(index, 1);
         }
-        console.log(this.lookupList.length);
     };
 
     renderSingleRelation = obj => {
@@ -106,6 +105,8 @@ class RelationRenderer extends Component {
     };
 
     handleSearch = (value, counter) => {
+        this.searchText = value;
+        this.props.redux_preserveFilterSearch({ ui_relation_search_value_preserved: value });
         this.arrayOfChildObjects.forEach(child => {
             if (child.props.relationContext.isHighlighted) {
                 child.props.relationContext.isHighlighted = false;
@@ -161,15 +162,9 @@ class RelationRenderer extends Component {
         }
     };
 
-    clearSearch = () => {
-        const relations = this.props.relations;
-        relations.forEach(item => {
-            item.isHighlighted = false;
-        });
-        this.setState({ searchText: '', searchInput: false, updateFlipFlop: !this.state.updateFlipFlop });
-    };
-
     handleFilter = filterValue => {
+        this.filterText = filterValue;
+        this.props.redux_preserveFilterSearch({ ui_relation_filter_value_preserved: filterValue });
         //set all filters to false
         this.cropped.forEach(item => {
             item.isFilteredOut = false;
@@ -198,11 +193,21 @@ class RelationRenderer extends Component {
                         Add
                     </Button>
                     <InputGroup>
-                        <SearchAutoComplete placeholder={'Filter...'} lookupList={this.lookupList} handleSearch={this.handleFilter} />
+                        <SearchAutoComplete
+                            preservedSearchFilterValue={this.filterText}
+                            placeholder={'Filter...'}
+                            lookupList={this.lookupList}
+                            handleSearch={this.handleFilter}
+                        />
                     </InputGroup>
 
                     <InputGroup>
-                        <SearchAutoComplete placeholder={'Search...'} lookupList={this.lookupList} handleSearch={this.handleSearch} />
+                        <SearchAutoComplete
+                            preservedSearchFilterValue={this.searchText}
+                            placeholder={'Search...'}
+                            lookupList={this.lookupList}
+                            handleSearch={this.handleSearch}
+                        />
                     </InputGroup>
                 </div>
                 {/* Relations*/}
@@ -219,7 +224,8 @@ const mapStateToProps = state => {
         user: state.auth.user,
         relations: state.ResourceRelationModelReducer.relations,
         relationsExpanded: state.globalUIReducer.ui_all_relation_bodies_expanded,
-        metaInformation: state.ResourceRelationModelReducer.metaInformation
+        metaInformation: state.ResourceRelationModelReducer.metaInformation,
+        globalUIReducer: state.globalUIReducer
     };
 };
 
@@ -227,11 +233,14 @@ RelationRenderer.propTypes = {
     relations: PropTypes.array.isRequired,
     redux_addRelation: PropTypes.func.isRequired,
     experimentalLayout: PropTypes.bool.isRequired,
-    relationsExpanded: PropTypes.bool.isRequired
+    relationsExpanded: PropTypes.bool.isRequired,
+    globalUIReducer: PropTypes.object.isRequired,
+    redux_preserveFilterSearch: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
-    redux_addRelation: data => dispatch(redux_addRelation(data))
+    redux_addRelation: data => dispatch(redux_addRelation(data)),
+    redux_preserveFilterSearch: data => dispatch(redux_preserveFilterSearch(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RelationRenderer);

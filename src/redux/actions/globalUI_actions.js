@@ -6,3 +6,10 @@ export const expandAllBodies = payload => dispatch => {
         payload: payload
     });
 };
+
+export const redux_preserveFilterSearch = payload => dispatch => {
+    dispatch({
+        type: type.PRESERVE_FILTER_SEARCH,
+        payload: payload
+    });
+};

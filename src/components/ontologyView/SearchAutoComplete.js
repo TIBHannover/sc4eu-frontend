@@ -11,7 +11,15 @@ class SearchAutocomplete extends Component {
         const value = '';
         const count = 0;
         super(props);
+        this.state = {
+            preservedValue: ''
+        };
     }
+    componentDidMount() {
+        this.setState({ preservedValue: this.props.preservedSearchFilterValue });
+    }
+
+    handleChange = () => {};
 
     render() {
         return (
@@ -20,7 +28,9 @@ class SearchAutocomplete extends Component {
                     size={'small'}
                     id="free-solo-demo"
                     freeSolo
-                    onKeyPress={event => {
+                    value={this.state.preservedValue}
+                    onChange={this.handleChange}
+                    onKeyDown={event => {
                         const value = event.target.value;
                         if (event.key === 'Enter') {
                             if (value === this.value) {
@@ -33,6 +43,9 @@ class SearchAutocomplete extends Component {
                         }
                     }}
                     onInputChange={(event, value) => {
+                        if (event === null && this.state.preservedValue !== '') {
+                            return this.props.handleSearch(value, 0);
+                        }
                         if (event.type === 'click') {
                             return this.props.handleSearch(value, 0);
                         }
@@ -70,7 +83,8 @@ const mapStateToProps = state => ({});
 SearchAutocomplete.propTypes = {
     lookupList: PropTypes.array.isRequired,
     handleSearch: PropTypes.func.isRequired,
-    placeholder: PropTypes.string.isRequired
+    placeholder: PropTypes.string.isRequired,
+    preservedSearchFilterValue: PropTypes.string.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
