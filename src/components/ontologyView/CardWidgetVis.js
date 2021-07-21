@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 class CardWidgetVis extends Component {
     constructor(props) {
@@ -8,7 +7,6 @@ class CardWidgetVis extends Component {
         this.state = {
             updateFlipFlop: false
         };
-        this.initialRendering = true;
     }
 
     componentDidMount() {}
@@ -21,14 +19,9 @@ class CardWidgetVis extends Component {
 
     render() {
         return (
-            <CardWidgetVisCardContainer
-                isExpanded={this.props.isExpanded}
-                maxHeight={250}
-                initialRendering={this.props.initialRendering}
-                animationCompleted={this.animationCompleted}
-            >
+            <div style={{ backgroundColor: 'green', height: '250px', border: '1px solid black', borderTop: 'none' }}>
                 {this.props.isExpanded && <div>HELLLO000000000</div>}
-            </CardWidgetVisCardContainer>
+            </div>
         );
     }
 }
@@ -37,8 +30,7 @@ CardWidgetVis.propTypes = {
     itemIdentifier: PropTypes.string.isRequired,
     itemType: PropTypes.string.isRequired,
     rrModel: PropTypes.object.isRequired,
-    isExpanded: PropTypes.bool.isRequired,
-    initialRendering: PropTypes.bool.isRequired
+    isExpanded: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => {
@@ -50,42 +42,3 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardWidgetVis);
-
-const expandContentContainerAnimation = ({ isExpanded, maxHeight, initialRendering, animationCompleted }) => {
-    //  TODO: add the animationCompleted Flag
-
-    if (initialRendering) {
-        console.log('Rendering WIDGET CARD AS INIT RENDERING ');
-        return;
-    }
-    if (isExpanded) {
-        return keyframes`
-              from {
-                height: ${0}px;
-             
-              }
-              to {
-                height: ${maxHeight}px;
-              }
-        `;
-    }
-    if (!isExpanded) {
-        return keyframes`
-              from {
-                height: ${maxHeight}px;
-              }
-              to {
-                height: ${0}px;
-               
-              }
-        `;
-    }
-};
-
-const CardWidgetVisCardContainer = styled.div`
-    animation-name: ${expandContentContainerAnimation};
-    animation-duration: 400ms;
-    position: relative;
-    background-color: green;
-    height: ${props => (props.isExpanded ? props.maxHeight : 0)}px;
-`;
