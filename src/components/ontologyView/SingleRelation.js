@@ -10,6 +10,8 @@ import RelationHeader from '../RRView/RelationHeader';
 import RelationBody from '../RRView/RelationBody';
 import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from './CardWidgetVis';
+import ItemController from '../RRView/ItemController';
+
 class SingleRelation extends Component {
     constructor(props) {
         super(props);
@@ -47,10 +49,16 @@ class SingleRelation extends Component {
     };
 
     setShowBody = val => {
-        this.setState({ showBody: val });
+        this.setState({ showBody: val, bodyInitialRendering: false });
     };
     showBody = () => {
-        this.setState({ showBody: !this.state.showBody });
+        this.setState({ showBody: !this.state.showBody, bodyInitialRendering: false });
+    };
+    showWidgetVis = () => {
+        this.setState({ showingWidgetVis: !this.state.showingWidgetVis, widgetInitialRendering: false });
+    };
+    createGraphVisForRelation = () => {
+        this.setState({ showingGraphVis: !this.state.showingGraphVis, graphVisInitialRendering: false });
     };
 
     editRelation = inputHeaderString => {
@@ -95,7 +103,26 @@ class SingleRelation extends Component {
         const isVisible = isFiltered === true ? 'none' : 'block';
 
         return (
-            <div ref={this.ref} style={{ padding: '5px', overflow: 'auto', paddingRight: '5px', display: isVisible }}>
+            <div ref={this.ref} style={{ padding: '5px', overflow: 'none', paddingRight: '5px', display: isVisible }}>
+                {this.props.experimentalLayout && (
+                    <ItemController
+                        itemType="Relation"
+                        forcedReRendering={this.state.forcedUpdate}
+                        itemContext={this.props.relationContext}
+                        isEditing={this.state.isEditing}
+                        isBodyExpanded={this.state.showBody}
+                        toggleEditButton={this.toggleEditButton}
+                        deleteResource={this.deleteRelation}
+                        editResource={this.editRelation}
+                        showBody={this.showBody}
+                        showGraphVis={this.createGraphVisForRelation}
+                        showWidget={this.showWidgetVis}
+                        showingBody={this.state.showBody}
+                        showingWidget={this.state.showingWidgetVis}
+                        showingGraph={this.state.showingGraphVis}
+                    />
+                )}
+
                 <RelationHeader
                     relationContext={this.props.relationContext}
                     isEditing={this.state.isEditing}
@@ -105,6 +132,7 @@ class SingleRelation extends Component {
                     editRelation={this.editRelation}
                     showBody={this.showBody}
                     isBodyExpanded={this.state.showBody}
+                    experimentalLayout={this.props.experimentalLayout}
                 />
                 {numRowsRequired > 0 && (
                     <div id="bodyContainer" style={{ display: 'flex' }}>
@@ -128,50 +156,56 @@ class SingleRelation extends Component {
                     initialRendering={this.state.widgetInitialRendering}
                     itemType="Relation"
                 />
-
-                <Button
-                    style={{
-                        padding: 0,
-                        width: '49%',
-                        backgroundColor: '#ad2f38',
-                        textAlign: 'center',
-                        position: 'relative',
-                        borderRadius: '5px',
-                        marginTop: '-3px',
-                        marginRight: '1%',
-                        borderTopLeftRadius: '0',
-                        borderTopRightRadius: '0',
-                        borderTop: 'none',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis'
-                    }}
-                    onClick={() => {
-                        // this.createGraphVisForResource();
-                    }}
-                >
-                    Graph Vis
-                </Button>
-                <Button
-                    style={{
-                        padding: 0,
-                        width: '50%',
-                        backgroundColor: '#cccccc',
-                        color: 'black',
-                        textAlign: 'center',
-                        position: 'relative',
-                        borderRadius: '5px',
-                        marginTop: '-3px',
-                        borderTopLeftRadius: '0',
-                        borderTopRightRadius: '0',
-                        borderTop: 'none',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis'
-                    }}
-                >
-                    Widget-Based
-                </Button>
+                {!this.props.experimentalLayout && (
+                    <>
+                        <Button
+                            style={{
+                                padding: 0,
+                                width: '49%',
+                                backgroundColor: '#ad2f38',
+                                textAlign: 'center',
+                                position: 'relative',
+                                borderRadius: '5px',
+                                marginTop: '-3px',
+                                marginRight: '1%',
+                                borderTopLeftRadius: '0',
+                                borderTopRightRadius: '0',
+                                borderTop: 'none',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis'
+                            }}
+                            onClick={() => {
+                                this.createGraphVisForRelation();
+                            }}
+                        >
+                            Graph Vis
+                        </Button>
+                        <Button
+                            style={{
+                                padding: 0,
+                                width: '50%',
+                                backgroundColor: '#cccccc',
+                                color: 'black',
+                                textAlign: 'center',
+                                position: 'relative',
+                                borderRadius: '5px',
+                                marginTop: '-3px',
+                                borderTopLeftRadius: '0',
+                                borderTopRightRadius: '0',
+                                borderTop: 'none',
+                                overflow: 'hidden',
+                                whiteSpace: 'nowrap',
+                                textOverflow: 'ellipsis'
+                            }}
+                            onClick={() => {
+                                this.showWidgetVis();
+                            }}
+                        >
+                            Widget-Based
+                        </Button>
+                    </>
+                )}
             </div>
         );
     }
@@ -188,6 +222,7 @@ SingleRelation.propTypes = {
     relationContext: PropTypes.object.isRequired,
     redux_removeRelation: PropTypes.func.isRequired,
     redux_editRelation: PropTypes.func.isRequired,
+    experimentalLayout: PropTypes.bool.isRequired,
     registerToParent: PropTypes.func.isRequired,
     unRegisterFromParent: PropTypes.func.isRequired,
     removeFromLookupList: PropTypes.func.isRequired,

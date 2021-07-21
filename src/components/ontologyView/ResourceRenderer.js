@@ -7,6 +7,7 @@ import { Button, InputGroup } from 'reactstrap';
 import { connect } from 'react-redux';
 import { redux_addResource } from '../../redux/actions/rrm_actions';
 import SearchAutoComplete from './SearchAutoComplete';
+import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
 
 class ResourceRenderer extends Component {
     constructor(props) {
@@ -16,10 +17,10 @@ class ResourceRenderer extends Component {
         this.arrayOfRef = []; //  maybe investigate it in more details
         this.lookupList = [];
         this.cropped = [];
+        this.searchText = this.props.globalUIReducer.ui_resource_search_value_preserved;
+        this.filterText = this.props.globalUIReducer.ui_resource_filter_value_preserved;
         this.state = {
-            updateFlipFlop: true,
-            searchInput: false,
-            searchText: ''
+            updateFlipFlop: true
         };
     }
 
@@ -99,6 +100,8 @@ class ResourceRenderer extends Component {
     };
 
     handleSearch = (value, counter) => {
+        this.searchText = value;
+        this.props.redux_preserveFilterSearch({ ui_resource_search_value_preserved: value });
         this.arrayOfChildObjects.forEach(child => {
             if (child.props.resourceContext.isHighlighted) {
                 child.props.resourceContext.isHighlighted = false;
@@ -131,7 +134,7 @@ class ResourceRenderer extends Component {
         });
 
         if (found.length > 0) {
-            this.arrayOfRef.find(refItem => {
+            this.arrayOfRef.forEach(refItem => {
                 const itemNumber = counter % found.length;
                 if (refItem.identifier === found[itemNumber].identifier) {
                     refItem.ref.current.scrollIntoView({ behavior: 'smooth' });
@@ -153,15 +156,9 @@ class ResourceRenderer extends Component {
         }
     };
 
-    clearSearch = () => {
-        const resources = this.props.resources;
-        resources.forEach(item => {
-            item.isHighlighted = false;
-        });
-        this.setState({ searchText: '', searchInput: false, updateFlipFlop: !this.state.updateFlipFlop });
-    };
-
     handleFilter = filterValue => {
+        this.filterText = filterValue;
+        this.props.redux_preserveFilterSearch({ ui_resource_filter_value_preserved: filterValue });
         //set all filters to false
         this.cropped.forEach(item => {
             item.isFilteredOut = false;
@@ -190,10 +187,20 @@ class ResourceRenderer extends Component {
                         Add
                     </Button>
                     <InputGroup>
-                        <SearchAutoComplete placeholder={'Filter...'} lookupList={this.lookupList} handleSearch={this.handleFilter} />
+                        <SearchAutoComplete
+                            preservedSearchFilterValue={this.filterText}
+                            placeholder={'Filter...'}
+                            lookupList={this.lookupList}
+                            handleSearch={this.handleFilter}
+                        />
                     </InputGroup>
                     <InputGroup>
-                        <SearchAutoComplete placeholder={'Search...'} lookupList={this.lookupList} handleSearch={this.handleSearch} />
+                        <SearchAutoComplete
+                            preservedSearchFilterValue={this.searchText}
+                            placeholder={'Search...'}
+                            lookupList={this.lookupList}
+                            handleSearch={this.handleSearch}
+                        />
                     </InputGroup>
                 </div>
                 {/* Resources*/}
@@ -216,7 +223,8 @@ const mapStateToProps = state => {
         user: state.auth.user,
         resources: state.ResourceRelationModelReducer.resources,
         resourcesExpanded: state.globalUIReducer.ui_all_resource_bodies_expanded,
-        metaInformation: state.ResourceRelationModelReducer.metaInformation
+        metaInformation: state.ResourceRelationModelReducer.metaInformation,
+        globalUIReducer: state.globalUIReducer
     };
 };
 
@@ -224,11 +232,14 @@ ResourceRenderer.propTypes = {
     resources: PropTypes.array.isRequired,
     redux_addResource: PropTypes.func.isRequired,
     experimentalLayout: PropTypes.bool.isRequired,
-    resourcesExpanded: PropTypes.bool.isRequired
+    resourcesExpanded: PropTypes.bool.isRequired,
+    globalUIReducer: PropTypes.object.isRequired,
+    redux_preserveFilterSearch: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
-    redux_addResource: data => dispatch(redux_addResource(data))
+    redux_addResource: data => dispatch(redux_addResource(data)),
+    redux_preserveFilterSearch: data => dispatch(redux_preserveFilterSearch(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ResourceRenderer);
