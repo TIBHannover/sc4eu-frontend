@@ -104,7 +104,7 @@ class RelationRenderer extends Component {
         );
     };
 
-    handleSearch = (value, counter) => {
+    handleSearch = (value, counter = 0) => {
         this.searchText = value;
         this.props.redux_preserveFilterSearch({ ui_relation_search_value_preserved: value });
         this.arrayOfChildObjects.forEach(child => {

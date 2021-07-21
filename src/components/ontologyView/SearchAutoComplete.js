@@ -10,14 +10,12 @@ class SearchAutocomplete extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            preservedValue: ''
+            preservedValue: this.props.preservedSearchFilterValue
         };
+        this.count = 0;
+        this.value = '';
     }
-    componentDidMount() {
-        this.setState({ preservedValue: this.props.preservedSearchFilterValue });
-    }
-
-    handleChange = () => {};
+    componentDidMount() {}
 
     render() {
         return (
@@ -26,8 +24,8 @@ class SearchAutocomplete extends Component {
                     size={'small'}
                     id="free-solo-demo"
                     freeSolo
-                    value={this.state.preservedValue}
-                    onChange={this.handleChange}
+                    value={this.props.preservedSearchFilterValue}
+                    onChange={() => {}}
                     onKeyDown={event => {
                         const value = event.target.value;
                         if (event.key === 'Enter') {
@@ -41,6 +39,10 @@ class SearchAutocomplete extends Component {
                         }
                     }}
                     onInputChange={(event, value) => {
+                        this.value = value;
+                        if (event === null && value !== '') {
+                            return this.props.handleSearch(value, 0);
+                        }
                         if (event === null && this.state.preservedValue !== '') {
                             return this.props.handleSearch(value, 0);
                         }
@@ -49,14 +51,14 @@ class SearchAutocomplete extends Component {
                         }
                     }}
                     filterOptions={(options, params) => {
-                        //strangly params.inputValue is empty when there there is value from selected option
+                        //strangely params.inputValue is empty when there there is value from selected option
                         if (this.value !== '') {
                             params.inputValue = this.value;
                         }
-                        const filtered = filter(options, params);
                         if (params.inputValue === undefined || params.inputValue === '') {
                             return [];
                         }
+                        const filtered = filter(options, params);
                         if (filtered.length > 5) {
                             return filtered.slice(0, 5);
                         }

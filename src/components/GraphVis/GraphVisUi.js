@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import MapperModule from '../../GraphVisLib/implementation/MapperModule';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
+import { selectVisualNotation } from 'redux/actions/globalUI_actions';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -15,6 +16,19 @@ class GraphVisUi extends Component {
 
         this.graph = this.props.DonatelloGraph;
         this.mapperModule = new MapperModule();
+        this.mapperModule.setGraphReference(this.graph);
+
+        const modelAsJsonObject = { resources: this.props.resources, relations: this.props.relations };
+        this.currentResourceRelationModel = {
+            resultingModel: {
+                type: 'TYPE_RESOURCE_RELATION_MODEL',
+                modelAsJsonObject: modelAsJsonObject
+            }
+        };
+        this.currentResourceRelationModel.resultingModel.getResult = function() {
+            console.log(modelAsJsonObject);
+            return modelAsJsonObject;
+        };
 
         this.state = {
             notationSelectionOpen: false,
@@ -47,19 +61,8 @@ class GraphVisUi extends Component {
 
             // extract the resourceRelationModel;
             // wrapper object
-            const modelAsJsonObject = { resources: this.props.resources, relations: this.props.relations };
-            const currentResourceRelationModel = {
-                resultingModel: {
-                    type: 'TYPE_RESOURCE_RELATION_MODEL',
-                    modelAsJsonObject: modelAsJsonObject
-                }
-            };
-            currentResourceRelationModel.resultingModel.getResult = function() {
-                console.log(modelAsJsonObject);
-                return modelAsJsonObject;
-            };
 
-            this.mapperModule.setResourceRelationModelInput(currentResourceRelationModel);
+            this.mapperModule.setResourceRelationModelInput(this.currentResourceRelationModel);
             this.mapperModule.setGraphReference(this.graph);
             this.mapperModule.execute().then(model => {
                 this.graph.setModel(model);
@@ -72,14 +75,15 @@ class GraphVisUi extends Component {
         } else {
             // just rerender the graph as it is at the moment;
             //TODO  FOR NOW, user interactions can update the resourceRelation model later
+            this.mapperModule.setResourceRelationModelInput(this.currentResourceRelationModel);
             this.graph.fullRedrawGraph();
         }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevState.selectedNotation !== this.state.selectedNotation) {
-            console.log('UPDATING NOTATION : ', prevState.selectedNotation, '->', this.state.selectedNotation);
-            this.mapperModule.setNodeLinkType(this.state.selectedNotation);
+        if (prevProps.visualNotation !== this.props.visualNotation) {
+            console.log('UPDATING NOTATION : ', prevProps.visualNotation, '->', this.props.visualNotation);
+            this.mapperModule.setNodeLinkType(this.props.visualNotation);
             this.mapperModule.execute().then(model => {
                 this.graph.integrateUpdatedNodeLink(model);
             });
@@ -107,12 +111,15 @@ class GraphVisUi extends Component {
                     }}
                 >
                     <DropdownToggle caret color="primary" style={{ border: '1px solid black' }}>
-                        Notation: {this.state.selectedNotation}
+                        Notation: {this.props.visualNotation}
                     </DropdownToggle>
                     <DropdownMenu>
                         {this.possibleNotations.map((item, id) => {
                             return (
-                                <DropdownItem key={'graphNotationDropDown_' + id} onClick={() => this.setState({ selectedNotation: item })}>
+                                <DropdownItem
+                                    key={'graphNotationDropDown_' + id}
+                                    onClick={() => this.props.selectVisualNotation({ ui_visual_notation_selector: item })}
+                                >
                                     {item}
                                 </DropdownItem>
                             );
@@ -171,16 +178,21 @@ class GraphVisUi extends Component {
 const mapStateToProps = state => {
     return {
         resources: state.ResourceRelationModelReducer.resources,
-        relations: state.ResourceRelationModelReducer.relations
+        relations: state.ResourceRelationModelReducer.relations,
+        visualNotation: state.globalUIReducer.ui_visual_notation_selector
     };
 };
 
 GraphVisUi.propTypes = {
     resources: PropTypes.array.isRequired,
     relations: PropTypes.array.isRequired,
-    DonatelloGraph: PropTypes.object.isRequired
+    DonatelloGraph: PropTypes.object.isRequired,
+    visualNotation: PropTypes.string.isRequired,
+    selectVisualNotation: PropTypes.func.isRequired
 };
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+    selectVisualNotation: payload => dispatch(selectVisualNotation(payload))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphVisUi);

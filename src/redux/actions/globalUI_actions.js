@@ -7,6 +7,13 @@ export const expandAllBodies = payload => dispatch => {
     });
 };
 
+export const selectVisualNotation = payload => dispatch => {
+    dispatch({
+        type: type.SELECT_VISUAL_NOTATION,
+        payload: payload
+    });
+};
+
 export const redux_preserveFilterSearch = payload => dispatch => {
     dispatch({
         type: type.PRESERVE_FILTER_SEARCH,
