@@ -8,8 +8,6 @@ const filter = createFilterOptions();
 
 class SearchAutocomplete extends Component {
     constructor(props) {
-        const value = '';
-        const count = 0;
         super(props);
         this.state = {
             preservedValue: ''
@@ -51,6 +49,10 @@ class SearchAutocomplete extends Component {
                         }
                     }}
                     filterOptions={(options, params) => {
+                        //strangly params.inputValue is empty when there there is value from selected option
+                        if (this.value !== '') {
+                            params.inputValue = this.value;
+                        }
                         const filtered = filter(options, params);
                         if (params.inputValue === undefined || params.inputValue === '') {
                             return [];
@@ -60,18 +62,11 @@ class SearchAutocomplete extends Component {
                         }
                         return filtered;
                     }}
-                    options={this.props.lookupList.map(option => option)}
-                    renderInput={params => {
-                        return (
-                            <TextField
-                                style={{ marginTop: '0px' }}
-                                placeholder={this.props.placeholder}
-                                {...params}
-                                margin="normal"
-                                variant="outlined"
-                            />
-                        );
-                    }}
+                    getOptionSelected={option => null}
+                    options={this.props.lookupList}
+                    renderInput={params => (
+                        <TextField style={{ marginTop: '0px' }} placeholder={this.props.placeholder} {...params} margin="normal" variant="outlined" />
+                    )}
                 />
             </div>
         );
