@@ -5,12 +5,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ResourceHeader from '../RRView/ResourceHeader';
 import ResourceBody from '../RRView/ResourceBody';
-import { calculateBodyRows, transformResourceToTTL } from '../../mappers/ResToTTL';
-import { Button } from 'reactstrap';
 import { redux_editResource, redux_removeResource } from '../../redux/actions/rrm_actions';
 import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
 import ItemController from '../RRView/ItemController';
+import { GraphVisButton, WidgetVisButton, CollapsibleItem } from './StyledComponents';
 class SingleResource extends Component {
     constructor(props) {
         super(props);
@@ -83,10 +82,6 @@ class SingleResource extends Component {
     };
     render() {
         const currentResource = this.props.resourceContext;
-
-        const content = transformResourceToTTL(this.props.resourceContext);
-        const numRowsRequired = calculateBodyRows(content);
-        const isFiltered = this.props.resourceContext.isFilteredOut;
         const isVisible = currentResource.isFilteredOut === true ? 'none' : 'block';
         this.props.arrayOfRef.push({ identifier: currentResource.identifier, ref: this.ref });
         return (
@@ -121,75 +116,46 @@ class SingleResource extends Component {
                     isBodyExpanded={this.state.showBody}
                     experimentalLayout={this.props.experimentalLayout}
                 />
-                <div id="bodyContainer" style={{ display: 'flex' }}>
-                    <ResourceBody
-                        resourceContext={this.props.resourceContext}
-                        isEditing={this.state.isEditing}
-                        isBodyExpanded={this.state.showBody}
-                        initialRendering={this.state.bodyInitialRendering}
-                    />
+                <div style={{ display: 'flex' }}>
+                    <CollapsibleItem isOpen={this.state.showBody}>
+                        <ResourceBody
+                            resourceContext={this.props.resourceContext}
+                            isEditing={this.state.isEditing}
+                            isBodyExpanded={this.state.showBody}
+                        />
+                    </CollapsibleItem>
                 </div>
-                <CardGraphVis
-                    isExpanded={this.state.showingGraphVis}
-                    itemIdentifier={this.props.resourceContext.identifier}
-                    initialRendering={this.state.graphVisInitialRendering}
-                    itemType="Resource"
-                />
-                <CardWidgetVis
-                    isExpanded={this.state.showingWidgetVis}
-                    itemIdentifier={this.props.resourceContext.identifier}
-                    initialRendering={this.state.widgetInitialRendering}
-                    itemType="Resource"
-                />
+                <CollapsibleItem isOpen={this.state.showingGraphVis}>
+                    <CardGraphVis
+                        itemIdentifier={this.props.resourceContext.identifier}
+                        isExpanded={this.state.showingGraphVis}
+                        itemType="Resource"
+                    />
+                </CollapsibleItem>
+                <CollapsibleItem isOpen={this.state.showingWidgetVis}>
+                    <CardWidgetVis
+                        itemIdentifier={this.props.resourceContext.identifier}
+                        isExpanded={this.state.showingWidgetVis}
+                        itemType="Resource"
+                    />
+                </CollapsibleItem>
                 {!this.props.experimentalLayout && (
-                    <>
-                        <Button
-                            style={{
-                                padding: 0,
-                                width: '49%',
-                                backgroundColor: '#ad2f38',
-                                textAlign: 'center',
-                                position: 'relative',
-                                borderRadius: '5px',
-                                marginTop: '-3px',
-                                marginRight: '1%',
-                                borderTopLeftRadius: '0',
-                                borderTopRightRadius: '0',
-                                borderTop: 'none',
-                                overflow: 'hidden',
-                                whiteSpace: 'nowrap',
-                                textOverflow: 'ellipsis'
-                            }}
+                    <div style={{ display: 'flex', width: '100%' }}>
+                        <GraphVisButton
                             onClick={() => {
                                 this.createGraphVisForResource();
                             }}
                         >
                             Graph Vis
-                        </Button>
-                        <Button
-                            style={{
-                                padding: 0,
-                                width: '50%',
-                                backgroundColor: '#cccccc',
-                                color: 'black',
-                                textAlign: 'center',
-                                position: 'relative',
-                                borderRadius: '5px',
-                                marginTop: '-3px',
-                                borderTopLeftRadius: '0',
-                                borderTopRightRadius: '0',
-                                borderTop: 'none',
-                                overflow: 'hidden',
-                                whiteSpace: 'nowrap',
-                                textOverflow: 'ellipsis'
-                            }}
+                        </GraphVisButton>
+                        <WidgetVisButton
                             onClick={() => {
                                 this.showWidgetVis();
                             }}
                         >
                             Widget-Based
-                        </Button>
-                    </>
+                        </WidgetVisButton>
+                    </div>
                 )}
             </div>
         );

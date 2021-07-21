@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styled, { keyframes } from 'styled-components';
 import MapperModule from '../../GraphVisLib/implementation/MapperModule';
 import DonatelloGraph from '../../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -40,10 +39,6 @@ class CardGraphVis extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if (!this.props.isExpanded) {
-            return;
-        }
-
         if (!this.state.createdGraph) {
             // crateGraph and update the state;
             console.log('create sub resource relation model for the identifier', this.props.itemType);
@@ -180,34 +175,27 @@ class CardGraphVis extends Component {
 
     render() {
         return (
-            <GraphVisCardContainer
-                isExpanded={this.props.isExpanded}
-                maxHeight={250}
-                initialRendering={this.props.initialRendering}
-                animationCompleted={this.animationCompleted}
-            >
-                {this.props.isExpanded && (
-                    <div
-                        id={this.graphRenderingIdentifier}
-                        style={{
-                            width: '100%',
-                            height: '250px',
-                            border: '1px solid black',
-                            borderTop: 'none'
-                            // backgroundColor: '#0af225'
-                        }}
-                    >
-                        {!this.state.createdGraph && (
-                            <div style={{ width: '100%', margin: 'auto', textAlign: 'center' }}>
-                                <span>
-                                    <Icon icon={faSpinner} spin />
-                                </span>
-                                Loading
-                            </div>
-                        )}
-                    </div>
-                )}
-            </GraphVisCardContainer>
+            <div style={{ maxHeight: '250px' }}>
+                <div
+                    id={this.graphRenderingIdentifier}
+                    style={{
+                        width: '100%',
+                        height: '250px',
+                        border: '1px solid black',
+                        borderTop: 'none'
+                        // backgroundColor: '#0af225'
+                    }}
+                >
+                    {!this.state.createdGraph && (
+                        <div style={{ width: '100%', margin: 'auto', textAlign: 'center' }}>
+                            <span>
+                                <Icon icon={faSpinner} spin />
+                            </span>
+                            Loading
+                        </div>
+                    )}
+                </div>
+            </div>
         );
     }
 }
@@ -216,8 +204,7 @@ CardGraphVis.propTypes = {
     itemIdentifier: PropTypes.string.isRequired,
     itemType: PropTypes.string.isRequired,
     rrModel: PropTypes.object.isRequired,
-    isExpanded: PropTypes.bool.isRequired,
-    initialRendering: PropTypes.bool.isRequired
+    isExpanded: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => {
@@ -231,41 +218,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardGraphVis);
-
-const expandContentContainerAnimation = ({ isExpanded, maxHeight, initialRendering, animationCompleted }) => {
-    //  TODO: add the animationCompleted Flag
-
-    if (initialRendering) {
-        return;
-    }
-    if (isExpanded) {
-        return keyframes`
-              from {
-                height: ${0}px;
-             
-              }
-              to {
-                height: ${maxHeight}px;
-              }
-        `;
-    }
-    if (!isExpanded) {
-        return keyframes`
-              from {
-                height: ${maxHeight}px;
-              }
-              to {
-                height: ${0}px;
-               
-              }
-        `;
-    }
-};
-
-const GraphVisCardContainer = styled.div`
-    animation-name: ${expandContentContainerAnimation};
-    animation-duration: 400ms;
-    position: relative;
-
-    height: ${props => (props.isExpanded ? props.maxHeight : 0)}px;
-`;
