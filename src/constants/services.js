@@ -19,3 +19,10 @@ export const URL_UPDATE_USER_SETTING = `${process.env.REACT_APP_EXPRESS_BACKEND_
 
 export const URL_ADMIN_DASHBOARD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}dashboard`;
 export const URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}allowed_upload_of_ontologies`;
+
+// playground
+
+export const URL_PLAYGROUND_JSON_TRANSFORM = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}playground/transformVOWL_JSON`;
+export const URL_PLAYGROUND_TTL_TRANSFORM = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}/playground/transformTTL`;
+// export const URL_PLAYGROUND_JSON_TRANSFORM = `http://localhost:9000/sc3/playground/transformVOWL_JSON`;
+// export const URL_PLAYGROUND_TTL_TRANSFORM = `http://localhost:9000/sc3/playground/transformTTL`;

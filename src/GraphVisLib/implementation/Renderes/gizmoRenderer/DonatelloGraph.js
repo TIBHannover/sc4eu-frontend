@@ -221,7 +221,7 @@ export default class DonatelloGraph extends GraphRenderer {
         const linkPrimitive = new LinkPrimitive();
         linkPrimitive.id(link.__nodeLinkIdentifier);
         linkPrimitive.displayName(link.__displayName);
-
+        console.log(link);
         if (link.__linkType !== 'axiomLink') {
             linkPrimitive.renderingConfig(this.renderingConfig.getLinkConfigFromType(link.__linkType[0]));
         } else {

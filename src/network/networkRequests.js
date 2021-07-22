@@ -63,8 +63,6 @@ export const submitPostRequest = (url, headers, data, jsonStringify = true, send
     }
 
     return new Promise((resolve, reject) => {
-        console.log(' creating stuff');
-        console.log('method: POST');
         fetch(url, { method: 'POST', headers: myHeaders, body: data })
             .then(response => {
                 if (!response.ok) {

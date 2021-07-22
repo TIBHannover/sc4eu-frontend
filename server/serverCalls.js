@@ -149,5 +149,58 @@ module.exports = {
                 }
             }
         });
+    },
+
+    //TODO:  THESE FUNCTIONS NEED ADDITIONAL BACKEND COMMUNICATION FOR ONTOLOGY PROCESSING
+    transformVOWL_JSON: function(app) {
+        app.post('/playground/transformVOWL_JSON', (req, res) => {
+            const result = req.body;
+            const ontologyProcessing_options = {
+                uri: `${process.env.PROCESSING_SERVER_URL}/getModelFromJsonVOWL`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ontologyData: result })
+            };
+            // call processing service;
+            try {
+                request(ontologyProcessing_options, function(error, response) {
+                    try {
+                        const jsonModel = JSON.parse(response.body);
+                        const resultingData = { ontology_data: jsonModel };
+                        res.json(resultingData);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                });
+            } catch (e) {
+                res.json({ error: 'Something went wrong' });
+                console.log(e);
+            }
+        });
+    },
+    transformTTL: function(app) {
+        app.post('/playground/transformTTL', (req, res) => {
+            const ontologyData = req.body;
+            const dataToSend = ontologyData.ontologyData;
+            const ontologyProcessing_options = {
+                uri: `${process.env.PROCESSING_SERVER_URL}/getModelFromTTL`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/html'
+                },
+                body: dataToSend
+            };
+            request(ontologyProcessing_options, function(error, response) {
+                try {
+                    const jsonModel = JSON.parse(response.body);
+                    const resultingData = { ontology_data: jsonModel };
+                    res.json(resultingData);
+                } catch (e) {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
     }
 };
