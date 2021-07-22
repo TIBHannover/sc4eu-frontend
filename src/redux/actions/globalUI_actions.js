@@ -20,3 +20,9 @@ export const redux_preserveFilterSearch = payload => dispatch => {
         payload: payload
     });
 };
+
+export const changeVisualizationSelectionTab = () => dispatch => {
+    dispatch({
+        type: type.CHANGE_VISUALIZATION_SELECTION_TAB
+    });
+};

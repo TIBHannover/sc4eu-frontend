@@ -12,9 +12,9 @@ class ItemController extends Component {
         if (this.props.itemType === 'Relation') {
             if (this.props.itemContext.isHighlighted) {
                 return '#000000';
-            } else if (this.props.itemContext.type[0] === 'owl:objectProperty') {
+            } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
                 return '#4388cc';
-            } else if (this.props.itemContext.type[0] === 'owl:datatypeProperty') {
+            } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
                 return '#9c6';
             }
             return '#838a92';
@@ -27,9 +27,9 @@ class ItemController extends Component {
         if (this.props.itemType === 'Relation') {
             if (this.props.itemContext.isHighlighted) {
                 return '#ffffff';
-            } else if (this.props.itemContext.type[0] === 'owl:objectProperty') {
+            } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
                 return '#ffffff';
-            } else if (this.props.itemContext.type[0] === 'owl:datatypeProperty') {
+            } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
                 return '#000000';
             }
             return '#fff';

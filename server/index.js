@@ -63,6 +63,8 @@ server.testConnection(router);
 server.adminDashBoard(router);
 server.allowUploads(router);
 server.getUserHeader(router);
+server.transformTTL(router);
+server.transformVOWL_JSON(router);
 
 auth.registerUser(router);
 auth.loginViaEmail(router);
