@@ -44,13 +44,12 @@ export default class GraphRenderer {
         const backupTranslation = this.interactionHandler.graphInteractions.graphTranslation;
         const backupZoom = this.interactionHandler.graphInteractions.zoomFactor;
         this.initializeRenderingContainer();
-        this.redrawRenderingPrimitives();
+        this.redrawRenderingPrimitives(true);
         if (this.interactionHandler) {
             this.interactionHandler.applyInteractions(this);
         } else {
             console.log('No Interaction Handler set, the graph will be static!');
         }
-
         this.resetUserNavigation(backupTranslation, backupZoom);
         this.layoutHandler.initializeLayoutEngine();
     };
@@ -386,9 +385,9 @@ export default class GraphRenderer {
         }
     };
 
-    redrawRenderingPrimitives = () => {
-        this._drawRenderingPrimitivesForNodes();
-        this._drawRenderingPrimitivesForLinks();
+    redrawRenderingPrimitives = debug => {
+        this._drawRenderingPrimitivesForNodes(debug);
+        this._drawRenderingPrimitivesForLinks(debug);
     };
 
     drawRenderingPrimitives = paused => {
@@ -412,7 +411,7 @@ export default class GraphRenderer {
         }
     };
 
-    _drawRenderingPrimitivesForLinks = () => {
+    _drawRenderingPrimitivesForLinks = debug => {
         const linkContainer = d3.select('#' + this.divRoot + '_links');
         linkContainer.selectAll('g').remove();
         const propertyContainer = d3.select('#' + this.divRoot + '_properties');
@@ -423,8 +422,12 @@ export default class GraphRenderer {
 
         // execute the rendering function of the nodes;
         this.renderedLinks.each(function(item) {
+            console.log('Rendering LInk ', item.__displayName, item.visible());
             if (item.visible()) {
-                item.render(d3.select(this), propertyContainer, arrowContainer);
+                if (debug) {
+                    console.log('DEBUG:', ' rendering LINK ITEM');
+                }
+                item.render(d3.select(this), propertyContainer, arrowContainer, debug);
             } else {
                 d3.select(this).remove();
             }

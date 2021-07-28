@@ -24,18 +24,43 @@
     fill: #e5e3e4;
     stroke:#000;
     stroke-width: 1px;
+    cursor: auto;
 }
 
 .collapseExpandButton:hover{
     fill: #f00;
     stroke:#000;
     stroke-width: 1px;
+    cursor: pointer;
 }
 
 .collapseExpandButtonHovered{
     fill: #f00;
     stroke:#000;
     stroke-width: 1px;
+    cursor: pointer;
+}
+
+
+.hideNodeButton{
+    fill: #e5e3e4;
+    stroke:#000;
+    stroke-width: 1px;
+    cursor: auto;
+}
+
+.hideNodeButton:hover{
+    fill: #f00;
+    stroke:#000;
+    stroke-width: 1px;
+
+}
+
+.hideNodeButtonHovered{
+    fill: #f00;
+    stroke:#000;
+    stroke-width: 1px;
+    cursor: pointer;
 }
 
 @keyframes pulseAnimation {

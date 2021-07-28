@@ -115,7 +115,32 @@ export default class LinkPrimitive extends BasePrimitive {
                 this.__internalType,
                 this.renderingConfig().options.link_renderingType === 'curve'
             );
+        } else {
         }
+    };
+
+    resetRenderingData = () => {
+        // clear all the data; which is required for rendering elements;
+        // ABSTRACT FUNCTION
+        if (this.renderingLine) {
+            this.renderingLine.remove();
+            this.renderingLine = null;
+        }
+        this.propNodeData = this.getPropertNode();
+        if (this.propNodeData) {
+            this.removeAllRenderedElementsFromParent();
+        }
+        if (this.renderingShape) {
+            this.renderingShape.remove();
+            this.renderingShape = null;
+        }
+        if (this.groupRoot) {
+            this.groupRoot.remove();
+            this.groupRoot = null;
+            this.propertyContainer = null;
+            this.arrowContainer = null;
+        }
+        this.fixed = false;
     };
 
     resetPropertyPosition() {}
@@ -137,7 +162,7 @@ export default class LinkPrimitive extends BasePrimitive {
     }
 
     // this one will get the draw Functions replacement!
-    render = (groupRoot, propertyContainer, arrowContainer) => {
+    render = (groupRoot, propertyContainer, arrowContainer, debug = false) => {
         this.groupRoot = groupRoot;
         this.propertyContainer = propertyContainer;
         this.arrowContainer = arrowContainer;
@@ -160,6 +185,7 @@ export default class LinkPrimitive extends BasePrimitive {
             this.renderingConfig(),
             this
         );
+
         this.renderingLine = renderingElements.renderingLine;
         this.renderingShape = renderingElements.renderingShape;
         this.renderingText = renderingElements.renderingText;
@@ -208,7 +234,8 @@ export default class LinkPrimitive extends BasePrimitive {
     redraw = () => {
         this.removeAllRenderedElementsFromParent();
         if (this.groupRoot && this.propertyContainer && this.arrowContainer) {
-            this.render(this.groupRoot, this.propertyContainer, this.arrowContainer);
+        } else {
+            console.log('FAILED IN REDRAWING THE LINK ', this.displayName());
         }
     };
 }

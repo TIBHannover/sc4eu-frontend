@@ -3,7 +3,7 @@ import Interactions from './Interactions/interactions';
 import Animations from './Animations/Animations';
 import NodePrimitive from './renderingElements/NodePrimitive';
 import LinkPrimitive from './renderingElements/LinkPrimitive';
-// import * as d3 from 'd3';
+import * as d3 from 'd3';
 export default class DonatelloGraph extends GraphRenderer {
     constructor() {
         super();
@@ -14,7 +14,13 @@ export default class DonatelloGraph extends GraphRenderer {
         this.interactionHandler = new Interactions();
         this.animationsHandler = new Animations(that);
         this.layoutPaused = false;
+        this.itemOfInterest = null;
+        this.emitItemSelection = null;
     }
+
+    setSelectionPropagationFunction = func => {
+        this.emitItemSelection = func;
+    };
 
     createRenderingElements() {
         super.createRenderingElements();
@@ -81,29 +87,30 @@ export default class DonatelloGraph extends GraphRenderer {
         console.log('STARTING TO APPLY NOTATION CHANGES');
         this.applyNotationChanges().then(() => {
             console.log('APPLY NOTATION DONE');
+            //
             if (delNodes.length > 0) {
+                this.layoutHandler.pauseForceLayoutAnimation(true);
                 this.animationsHandler.collapseNodesAndLinksBeforeDelete(delNodes, () => {
                     this.layoutHandler.setForceAlpha(0.1);
                     this.layoutHandler.pauseForceLayoutAnimation(this.layoutPaused);
-                    this.drawRenderingPrimitives();
-                    this.resetUserNavigation(backupTranslation, backupZoom);
+                    this.bruteForceRedrawGraph();
                 });
             }
             if (addNodes.length > 0) {
                 // Expanding Items
-                this.drawRenderingPrimitives();
+                this.bruteForceRedrawGraph();
                 this.layoutHandler.pauseForceLayoutAnimation(true);
                 const newNodes = this.setNewNodesPositionsToParents(addNodes);
+
                 this.animationsHandler.expandNodesAndLinks(newNodes, () => {
                     this.layoutHandler.setForceAlpha(0.1);
                     this.layoutHandler.pauseForceLayoutAnimation(this.layoutPaused);
+                    this.bruteForceRedrawGraph(true);
                     if (!this.layoutPaused) {
                         this.layoutHandler.resumeForce();
                     }
-                    this.resetUserNavigation(backupTranslation, backupZoom);
                 });
             }
-
             this.resetUserNavigation(backupTranslation, backupZoom);
         });
     }
@@ -151,9 +158,11 @@ export default class DonatelloGraph extends GraphRenderer {
     removeLinks = links => {
         links.forEach(link => {
             const index = this.links.indexOf(link);
+            link.sourceNode.removeIncomingLink(link);
+            link.targetNode.removeOutgoingLink(link);
             this.links.splice(index, 1);
             this.linkMap[link.id] = null;
-            delete this.nodeMap[link.id()];
+            delete this.linkMap[link.id()];
         });
     };
 
@@ -161,8 +170,13 @@ export default class DonatelloGraph extends GraphRenderer {
         this.nodes.forEach(item => {
             item.applyNewVisualization();
         });
+        this.links.forEach(item => {
+            item.applyNewVisualization();
+        });
+
         const nodesToMorph = this.nodes.filter(item => item.renderingShape);
         const lengthOfNodes = nodesToMorph.length;
+        const lengthOfLinks = this.links.length;
         const lastItem = lengthOfNodes - 1;
 
         // create a propmise
@@ -180,31 +194,23 @@ export default class DonatelloGraph extends GraphRenderer {
                 });
             });
         });
-
         await nodeMorphing;
-
-        this.nodes.forEach((item, id) => {
-            this.animationsHandler.morphNode(null, item, id === lastItem, () => {
-                console.log('           CALLING THE REDRAW AND INTERACTION CALL BACK ');
-                this.nodes.forEach(renderingItem => {
-                    renderingItem.redraw();
-                    this.interactionHandler.nodeInteractions.reapplyNodeInteractions(renderingItem);
+        const lastLinkItem = lengthOfLinks - 1;
+        const linkMorphing = new Promise((resolve, reject) => {
+            that.links.forEach((item, id) => {
+                this.animationsHandler.morphLink(item, lastLinkItem === id, () => {
+                    console.log('ANIMATION HAS FINISHED!!!!!!!! WE NEED TO RERENDER THE LINKS OO ');
+                    // that.links.forEach(renderingItem => {
+                    //     renderingItem.redraw();
+                    //
+                    //     // TODO: check with links
+                    //     // this.interactionHandler.linkInteractions.reapplyLinkInteractions(renderingItem);
+                    // });
+                    resolve();
                 });
             });
         });
-
-        // todo make normal for loop for the links
-        const lengthOfLink = this.links.length - 1;
-        this.links.forEach((item, id) => {
-            item.applyNewVisualization();
-            this.animationsHandler.morphLink(item, lengthOfLink === id, () => {
-                this.links.forEach(renderingItem => {
-                    renderingItem.redraw();
-                    // TODO: check with links
-                    // this.interactionHandler.linkInteractions.reapplyLinkInteractions(renderingItem);
-                });
-            });
-        });
+        await linkMorphing;
     };
 
     getNodePrimitiveDefinition = node => {
@@ -242,35 +248,79 @@ export default class DonatelloGraph extends GraphRenderer {
     };
 
     drawForceNodes = nodes => {
-        // function createForceRenderingPrimitives(container, data, typeClass) {
-        //     console.log('WHATS IS MY CONTAINER? ', container);
-        //     return container
-        //         .selectAll('.' + typeClass)
-        //         .data(data)
-        //         .enter()
-        //         .append('g')
-        //         .classed(typeClass, true)
-        //         .attr('id', function(d) {
-        //             return d.id();
-        //         });
-        // }
-        //
-        // console.log('wants to draw the force nodes ', nodes);
-        // console.log();
-        // const f_nodeContainer = d3.select('#' + this.divRoot + '_forceNodes');
-        // f_nodeContainer.selectAll('g').remove();
-        // this.f_renderedNodes = createForceRenderingPrimitives(f_nodeContainer, nodes, 'FORCE_NODES');
-        //
-        // console.log(this.f_renderedNodes);
-        // // execute the rendering function of the nodes;
-        // const radius = 15;
-        // this.f_renderedNodes.each(function(item) {
-        //     d3.select(this)
-        //         .append('circle')
-        //         .attr('r', radius)
-        //         .attr('cx', 0)
-        //         .attr('cy', 0)
-        //         .attr('transform', 'translate(' + item.x + ',' + item.y + ')');
-        // });
+        function createForceRenderingPrimitives(container, data, typeClass) {
+            console.log('WHATS IS MY CONTAINER? ', container);
+            return container
+                .selectAll('.' + typeClass)
+                .data(data)
+                .enter()
+                .append('g')
+                .classed(typeClass, true)
+                .attr('id', function(d) {
+                    return d.id();
+                });
+        }
+
+        console.log('wants to draw the force nodes ', nodes);
+        console.log();
+        const f_nodeContainer = d3.select('#' + this.divRoot + '_forceNodes');
+        f_nodeContainer.selectAll('g').remove();
+        this.f_renderedNodes = createForceRenderingPrimitives(f_nodeContainer, nodes, 'FORCE_NODES');
+
+        console.log(this.f_renderedNodes);
+        // execute the rendering function of the nodes;
+        const radius = 15;
+        this.f_renderedNodes.each(function(item) {
+            d3.select(this)
+                .append('circle')
+                .attr('r', radius)
+                .attr('cx', 0)
+                .attr('cy', 0)
+                .attr('transform', 'translate(' + item.x + ',' + item.y + ')')
+                .style('opacity', 0.5);
+        });
+    };
+
+    selectItem = item => {
+        console.log('SELECTING ITEM ', item);
+        if (this.itemOfInterest === null) {
+            item.isSelected(true);
+            this.itemOfInterest = item;
+        } else {
+            if (item === this.itemOfInterest) {
+                item.isSelected(!item.isSelected());
+                if (!item.isSelected()) {
+                    this.itemOfInterest = null;
+                }
+            } else {
+                this.itemOfInterest.isSelected(false);
+                item.isSelected(true);
+                this.itemOfInterest = item;
+            }
+        }
+        this.emitItemSelection(this.itemOfInterest);
+    };
+
+    bruteForceRedrawGraph = () => {
+        this.nodeMap = {};
+        this.linkMap = {};
+
+        this.nodes.forEach(item => {
+            item.resetRenderingData();
+            this.nodeMap[item.id()] = item;
+        });
+        console.log(this.nodeMap);
+        this.links.forEach(item => {
+            item.resetRenderingData();
+            this.linkMap[item.id()] = item;
+            const srcId = item.sourceNode.__id;
+            const tarId = item.targetNode.__id;
+            item.setSourceNode(this.nodeMap[srcId]);
+            item.setTargetNode(this.nodeMap[tarId]);
+        });
+        // redraw
+        this.fullRedrawGraph();
+        // reinitialize the force directed layout
+        this.layoutHandler.createForceElements();
     };
 }

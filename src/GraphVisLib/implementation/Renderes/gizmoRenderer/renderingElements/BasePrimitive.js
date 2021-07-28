@@ -6,7 +6,7 @@ export default class BasePrimitive {
         this.__drawTools = undefined;
 
         this.__visible = true;
-
+        this.itemIsSelected = false;
         this.groupRoot = undefined;
     }
 
@@ -51,6 +51,11 @@ export default class BasePrimitive {
         console.log('This is abstract function!');
     }
 
+    resetRenderingData = () => {
+        // clear all the data; which is required for rendering elements;
+        // ABSTRACT FUNCTION
+    };
+
     integrateNewDepiction = depiction => {
         this.hasDepictionForAnimation = depiction;
     };
@@ -62,4 +67,12 @@ export default class BasePrimitive {
             this.hasDepictionForAnimation = null;
         }
     };
+
+    isSelected(val) {
+        if (!arguments.length) {
+            return this.itemIsSelected;
+        } else {
+            this.itemIsSelected = val;
+        }
+    }
 }

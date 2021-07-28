@@ -1,5 +1,43 @@
 import * as d3 from 'd3';
 
+export const hideSingleNodeAnimation = (node, parent, callback) => {
+    const animationDuration = 400;
+    if (node.incomingLinks.length > 0) {
+        // pick one;
+
+        node.groupRoot
+            .transition()
+            .tween('attr.translate', function() {
+                return function(t) {
+                    const tr = d3.transform(node.groupRoot.attr('transform'));
+                    node.x = tr.translate[0];
+                    node.y = tr.translate[1];
+                    node.px = node.x;
+                    node.py = node.y;
+                    node.updateRenderingPosition();
+                    node.incomingLinks.forEach(link => {
+                        link.updateRenderingPosition();
+                    });
+                };
+            })
+            .duration(animationDuration)
+            .attr('transform', 'translate(' + parent.x + ',' + parent.y + ')')
+            .each('end', function() {
+                console.log('ANIMATION END THINGY----------------------------');
+                console.log(node);
+                console.log(node.incomingLinks);
+                node.visible(false);
+                node.incomingLinks.forEach(link => {
+                    link.visible(false);
+                    console.log(link.__displayName, link.visible());
+
+                    console.log('ANIMATION END THINGY----------------------------');
+                });
+                callback();
+            });
+    }
+};
+
 export const collapseNodeAnimationForDelete = (node, last, callback) => {
     const animationDuration = 400;
 
@@ -16,25 +54,6 @@ export const collapseNodeAnimationForDelete = (node, last, callback) => {
             const f_y = parseFloat(parentPosition.y);
 
             // we only have one link at the moment;
-            const propertyNode = node.incomingLinks[0].getPropertNode();
-
-            propertyNode.groupRoot
-                .transition()
-                .tween('attr.translate', function() {
-                    return function(t) {
-                        const tr = d3.transform(propertyNode.groupRoot.attr('transform'));
-                        propertyNode.x = tr.translate[0];
-                        propertyNode.y = tr.translate[1];
-                        propertyNode.px = propertyNode.x;
-                        propertyNode.py = propertyNode.y;
-                        propertyNode.updateRenderingPosition();
-                    };
-                })
-                .duration(animationDuration)
-                .attr('transform', 'translate(' + f_x + ',' + f_y + ')')
-                .each('end', function() {
-                    propertyNode.ref.deleteVisualPrimitives();
-                });
 
             node.groupRoot
                 .transition()
@@ -51,7 +70,8 @@ export const collapseNodeAnimationForDelete = (node, last, callback) => {
                 .duration(animationDuration)
                 .attr('transform', 'translate(' + f_x + ',' + f_y + ')')
                 .each('end', function() {
-                    node.groupRoot.remove();
+                    node.visible(false);
+                    // node.incomingLinks[0].visible(false);
                     if (last) {
                         callback();
                     }
@@ -101,11 +121,7 @@ export const collapseNodeAnimation = (node, last, callback) => {
                 .tween('attr.translate', function() {
                     return function(t) {
                         const tr = d3.transform(node.groupRoot.attr('transform'));
-                        node.x = tr.translate[0];
-                        node.y = tr.translate[1];
-                        node.px = node.x;
-                        node.py = node.y;
-                        node.updateRenderingPosition();
+                        node.setPosition(tr.translate[0], tr.translate[1]);
                     };
                 })
                 .duration(animationDuration)

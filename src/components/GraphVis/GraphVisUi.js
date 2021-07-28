@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button } from 'reactstrap';
+import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input, Label } from 'reactstrap';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,6 +7,7 @@ import MapperModule from '../../GraphVisLib/implementation/MapperModule';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
 import { selectVisualNotation } from 'redux/actions/globalUI_actions';
+import styled, { keyframes } from 'styled-components';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -15,6 +16,7 @@ class GraphVisUi extends Component {
         this.possibleNotations = ['VOWL', 'UML'];
 
         this.graph = this.props.DonatelloGraph;
+        this.graph.setSelectionPropagationFunction(this.handleSelection);
         this.mapperModule = new MapperModule();
         this.mapperModule.setGraphReference(this.graph);
 
@@ -33,7 +35,10 @@ class GraphVisUi extends Component {
         this.state = {
             notationSelectionOpen: false,
             selectedNotation: 'VOWL',
-            layoutPlay: true
+            layoutPlay: true,
+            leftSideBarExpanded: false,
+            selectedItem: null,
+            updateFlipFlop: false
         };
     }
 
@@ -94,6 +99,10 @@ class GraphVisUi extends Component {
         this.graph.updateGraphSize();
     };
 
+    handleSelection = item => {
+        this.setState({ selectedItem: item });
+    };
+
     /** RENDERING FUNCTIONS **/
 
     createDropDownForNotations = () => {
@@ -126,6 +135,71 @@ class GraphVisUi extends Component {
                         })}
                     </DropdownMenu>
                 </Dropdown>
+            </div>
+        );
+    };
+    renderCustomizationOptions = () => {
+        const fontsize = this.state.selectedItem.renderingConfig().fontStyle.fontSize.split('px')[0];
+        const overwriteOffset = this.state.selectedItem.renderingConfig().options.overwriteOffset;
+        console.log('Given fontsize:', fontsize);
+        console.log('Given offset:', overwriteOffset);
+        const cfg = this.state.selectedItem.renderingConfig();
+        return (
+            <div>
+                <div>
+                    <div style={{ display: 'flex' }}>
+                        <div>Color:</div>{' '}
+                        <Input
+                            type="color"
+                            onChange={e => {
+                                cfg.style.bgColor = e.target.value;
+                                this.state.selectedItem.redraw();
+                                this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
+                                this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                            }}
+                            value={this.state.selectedItem.renderingConfig().style.bgColor}
+                        />
+                    </div>
+                </div>
+                <div style={{ display: 'flex', padding: '5px' }}>
+                    <div>Font Size: </div>
+                    <Input
+                        type="number"
+                        value={fontsize}
+                        onChange={e => {
+                            cfg.fontStyle.fontSize = e.target.value + 'px';
+                            this.state.selectedItem.redraw();
+                            this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
+                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                        }}
+                    />
+                </div>
+                <div style={{ display: 'flex', padding: '5px' }}>
+                    <input
+                        type="checkbox"
+                        onChange={e => {
+                            cfg.options.overwritesShapeSize = e.target.checked;
+                            this.state.selectedItem.redraw();
+                            this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
+                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                        }}
+                        checked={cfg.options.overwritesShapeSize}
+                    />
+                    Overwrite Shapesize
+                </div>
+                <div style={{ display: 'flex', padding: '5px' }}>
+                    <div>Offset: </div>
+                    <Input
+                        type="number"
+                        value={overwriteOffset}
+                        onChange={e => {
+                            cfg.options.overwriteOffset = e.target.value;
+                            this.state.selectedItem.redraw();
+                            this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
+                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                        }}
+                    />
+                </div>
             </div>
         );
     };
@@ -163,7 +237,32 @@ class GraphVisUi extends Component {
                         <Icon style={{ fontSize: '1.3em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
                     {this.createDropDownForNotations()}
+                    <Button
+                        onClick={() => {
+                            console.log('calling debug func');
+                            this.graph.bruteForceRedrawGraph(true);
+                            this.graph.pauseForceDirectedLayout(true);
+                        }}
+                    >
+                        Debug
+                    </Button>
                 </div>
+                <SelectionSideBar style={{ position: 'absolute', backgroundColor: 'white' }} expanded={this.state.leftSideBarExpanded} width={350}>
+                    <div style={{ position: 'relative', left: '345px' }}>
+                        <Button
+                            onClick={() => {
+                                this.setState({ leftSideBarExpanded: !this.state.leftSideBarExpanded });
+                            }}
+                        >
+                            {this.state.leftSideBarExpanded ? '<' : '>'}
+                        </Button>
+                    </div>
+                    <div style={{ position: 'relative', top: '-40px', padding: '5px' }}>
+                        <h3>Customization Options</h3>
+                        <div>Selected Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
+                        {this.state.selectedItem && this.renderCustomizationOptions()}
+                    </div>
+                </SelectionSideBar>
                 <Container
                     id="donatello_parent_container"
                     style={{ marginTop: '-5px', maxWidth: '100%', height: 'calc(100vh - 85px)', backgroundColor: '#eeeeee', padding: 0 }}
@@ -196,3 +295,38 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphVisUi);
+const expandContentContainerAnimation = ({ expanded, width }) => {
+    return keyframes`
+  from {
+    left: ${expanded ? -width : 0}px;
+  }
+  to {
+    left: ${expanded ? 0 : -width}px;
+   
+  }
+`;
+};
+export const SelectionSideBar = styled.div`
+    background-color: red;
+    border: 1px solid black;
+    color: black;
+    width: 350px;
+    height: calc(100% - 90px);
+    background: white;
+    :focus {
+        outline: none;
+    }
+    ::-moz-focus-inner {
+        border: 0;
+    }
+    word-break: none;
+    white-space: nowrap;
+
+    border-bottom: 1px solid black;
+    padding: 2px;
+    position: relative;
+    animation-name: ${expandContentContainerAnimation};
+    animation-duration: 400ms;
+    // opacity: 0.5;
+    left: ${props => (props.expanded ? 0 : -props.width)}px;
+`;

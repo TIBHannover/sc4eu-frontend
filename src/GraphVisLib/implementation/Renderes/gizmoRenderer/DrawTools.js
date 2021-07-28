@@ -389,11 +389,32 @@ export default class DrawTools {
         }
 
         // apply position changes after the whole stuff;
-        if (options.fontSizeOverWritesShapeSize === true) {
+        if (options.overwritesShapeSize === true) {
             const labelBBWidth = this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize);
 
-            shape.attr('x', -0.5 * (labelBBWidth + options.overwriteOffset));
-            shape.attr('width', labelBBWidth + options.overwriteOffset);
+            if (config.style.renderingType === 'circle') {
+                // get min value for circle radius;
+
+                const requestedWidth = labelBBWidth + parseInt(options.overwriteOffset);
+                console.log(requestedWidth);
+                const shapeWidth = parseInt(shape.attr('width'));
+                let newWidth = shapeWidth;
+                if (newWidth < requestedWidth) {
+                    newWidth = requestedWidth;
+                } else {
+                    newWidth = Math.min(requestedWidth, shapeWidth);
+                }
+
+                shape.attr('x', -0.5 * newWidth);
+                shape.attr('y', -0.5 * newWidth);
+                shape.attr('rx', 0.5 * newWidth);
+                shape.attr('ry', 0.5 * newWidth);
+                shape.attr('width', newWidth);
+                shape.attr('height', newWidth);
+            } else {
+                shape.attr('x', -0.5 * (labelBBWidth + options.overwriteOffset));
+                shape.attr('width', labelBBWidth + options.overwriteOffset);
+            }
         }
 
         if (options.cropLongText) {
