@@ -42,6 +42,7 @@ export default class LinkPrimitive extends BasePrimitive {
     setPosition = (x, y) => {
         this.x = x;
         this.y = y;
+        this.updateRenderingPosition();
     };
 
     getPropertNode() {
@@ -115,6 +116,9 @@ export default class LinkPrimitive extends BasePrimitive {
                 this.__internalType,
                 this.renderingConfig().options.link_renderingType === 'curve'
             );
+
+            this.propertyNodePostion = { x: this.renderingShape.data()[0].x, y: this.renderingShape.data()[0].y };
+            console.log(this.propertyNodePostion);
         } else {
         }
     };
@@ -169,13 +173,13 @@ export default class LinkPrimitive extends BasePrimitive {
 
         //rendering the link
 
-        let reloadPos = false;
-        if (this.renderingShape) {
-            reloadPos = true;
-            const oldPos = [this.renderingShape.data()[0].x, this.renderingShape.data()[0].y];
-
-            this.propertyNodePostion = { x: oldPos[0], y: oldPos[1] };
-        }
+        // let reloadPos = true;
+        // if (this.renderingShape) {
+        //     reloadPos = true;
+        //     const oldPos = [this.renderingShape.data()[0].x, this.renderingShape.data()[0].y];
+        //
+        //     this.propertyNodePostion = { x: oldPos[0], y: oldPos[1] };
+        // }
 
         // handle rendering based on the config;
         const renderingElements = this.drawTools().renderLink(
@@ -202,7 +206,7 @@ export default class LinkPrimitive extends BasePrimitive {
             }
         }
 
-        if (reloadPos) {
+        if (this.propertyNodePostion && this.renderingShape.data()[0]) {
             this.renderingShape.data()[0].x = this.propertyNodePostion.x;
             this.renderingShape.data()[0].px = this.propertyNodePostion.x;
             this.renderingShape.data()[0].y = this.propertyNodePostion.y;

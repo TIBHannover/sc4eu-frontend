@@ -115,6 +115,7 @@ export default class GraphRenderer {
         const zoom = state.graph_mouseZoom;
         const ctrlZoom = state.graph_ctrl_mouseZoom;
         const drag = state.graph_mouseDrag;
+        const nodeSelection = state.node_hasNodeSelection ? state.node_hasNodeSelection : false;
 
         if (!this.interactionHandler) {
             this.interactionHandler = new Interactions();
@@ -145,6 +146,7 @@ export default class GraphRenderer {
         this.interactionHandler.nodeInteractions.setNodeDoubleClickEnabled(nodeDoubleClick);
         this.interactionHandler.nodeInteractions.setHoverEnabled(nodeHover);
         this.interactionHandler.nodeInteractions.setDragEnabled(nodeDrag);
+        this.interactionHandler.nodeInteractions.setHasNodeSelection(nodeSelection);
 
         // link interactions
         if (!this.interactionHandler.linkInteractions) {
@@ -319,6 +321,8 @@ export default class GraphRenderer {
         nodePrimitive.refereceResource = node;
         nodePrimitive.drawTools(this.drawTools);
 
+        // TESTING DEFAULT NODE POSITIONS
+
         this.nodes.push(nodePrimitive);
         this.nodeMap[nodePrimitive.id()] = nodePrimitive;
     };
@@ -411,7 +415,7 @@ export default class GraphRenderer {
         }
     };
 
-    _drawRenderingPrimitivesForLinks = debug => {
+    _drawRenderingPrimitivesForLinks = () => {
         const linkContainer = d3.select('#' + this.divRoot + '_links');
         linkContainer.selectAll('g').remove();
         const propertyContainer = d3.select('#' + this.divRoot + '_properties');
@@ -422,12 +426,8 @@ export default class GraphRenderer {
 
         // execute the rendering function of the nodes;
         this.renderedLinks.each(function(item) {
-            console.log('Rendering LInk ', item.__displayName, item.visible());
             if (item.visible()) {
-                if (debug) {
-                    console.log('DEBUG:', ' rendering LINK ITEM');
-                }
-                item.render(d3.select(this), propertyContainer, arrowContainer, debug);
+                item.render(d3.select(this), propertyContainer, arrowContainer);
             } else {
                 d3.select(this).remove();
             }

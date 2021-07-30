@@ -28,13 +28,11 @@ class GraphVisUi extends Component {
             }
         };
         this.currentResourceRelationModel.resultingModel.getResult = function() {
-            console.log(modelAsJsonObject);
             return modelAsJsonObject;
         };
 
         this.state = {
             notationSelectionOpen: false,
-            selectedNotation: 'VOWL',
             layoutPlay: true,
             leftSideBarExpanded: false,
             selectedItem: null,
@@ -56,6 +54,7 @@ class GraphVisUi extends Component {
                 node_mouseHover: true,
                 node_mouseSingleClick: true,
                 node_mouseDoubleClick: true,
+                node_hasNodeSelection: true,
                 graphBgColor: '#eeeeee',
                 configSelected: 'Default',
                 link_mouseDrag: true,
@@ -69,6 +68,7 @@ class GraphVisUi extends Component {
 
             this.mapperModule.setResourceRelationModelInput(this.currentResourceRelationModel);
             this.mapperModule.setGraphReference(this.graph);
+            this.mapperModule.setNodeLinkType(this.props.visualNotation);
             this.mapperModule.execute().then(model => {
                 this.graph.setModel(model);
                 // do the rendering magic
@@ -79,15 +79,22 @@ class GraphVisUi extends Component {
             });
         } else {
             // just rerender the graph as it is at the moment;
-            //TODO  FOR NOW, user interactions can update the resourceRelation model later
             this.mapperModule.setResourceRelationModelInput(this.currentResourceRelationModel);
-            this.graph.fullRedrawGraph();
+            this.mapperModule.setNodeLinkType(this.props.visualNotation);
+            // this.mapperModule.execute().then(model => {
+            //     this.graph.setModel(model);
+            //     // do the rendering magic
+            //     this.graph.initializeRenderingContainer();
+            //     this.graph.createRenderingElements();
+            //     this.graph.drawRenderingPrimitives();
+            //     this.graph.setGraphInitialized(true);
+            // });
+            this.graph.bruteForceRedrawGraph();
         }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.visualNotation !== this.props.visualNotation) {
-            console.log('UPDATING NOTATION : ', prevProps.visualNotation, '->', this.props.visualNotation);
             this.mapperModule.setNodeLinkType(this.props.visualNotation);
             this.mapperModule.execute().then(model => {
                 this.graph.integrateUpdatedNodeLink(model);
@@ -141,8 +148,6 @@ class GraphVisUi extends Component {
     renderCustomizationOptions = () => {
         const fontsize = this.state.selectedItem.renderingConfig().fontStyle.fontSize.split('px')[0];
         const overwriteOffset = this.state.selectedItem.renderingConfig().options.overwriteOffset;
-        console.log('Given fontsize:', fontsize);
-        console.log('Given offset:', overwriteOffset);
         const cfg = this.state.selectedItem.renderingConfig();
         return (
             <div>
@@ -205,7 +210,6 @@ class GraphVisUi extends Component {
     };
 
     render() {
-        console.log('Layoout should play', this.state.layoutPlay);
         return (
             <div style={{ marginTop: '-25px' }}>
                 <div
@@ -230,7 +234,7 @@ class GraphVisUi extends Component {
                         className="mr-sm-1"
                         style={{ borderRadius: '20px', marginLeft: '-7px', marginTop: '7px', height: '20px', padding: 0 }}
                         onClick={() => {
-                            this.graph.pauseForceDirectedLayout(this.state.layoutPlay);
+                            this.graph.setForceLayoutPlayState(this.state.layoutPlay);
                             this.setState({ layoutPlay: !this.state.layoutPlay });
                         }}
                     >
@@ -239,7 +243,6 @@ class GraphVisUi extends Component {
                     {this.createDropDownForNotations()}
                     <Button
                         onClick={() => {
-                            console.log('calling debug func');
                             this.graph.bruteForceRedrawGraph(true);
                             this.graph.pauseForceDirectedLayout(true);
                         }}

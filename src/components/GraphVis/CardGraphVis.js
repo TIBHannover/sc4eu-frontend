@@ -15,7 +15,7 @@ class CardGraphVis extends Component {
             updateFlipFlop: false,
             createdGraph: false
         };
-        this.animationComplete = false;
+        this.eventListenerIsInjected = false;
         this.graphRenderingIdentifier =
             'cardRenderingIdentifier_' +
             getPrefixedVersion(this.props.itemIdentifier, this.props.rrModel.metaInformation.prefixList.longToShort).replace(':', '_');
@@ -27,9 +27,9 @@ class CardGraphVis extends Component {
     }
 
     componentDidMount() {
-        console.log('RESIZE EVENT SHOULD ONLY BE APPLIED WHEN THERE IS A DIV TO RENDER');
-        window.addEventListener('resize', this.updateDimensions);
-        this.updateDimensions();
+        if (this.props.isExpanded) {
+            this.injectEventListener();
+        }
 
         if (!this.state.createdGraph && this.props.isExpanded) {
             this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
@@ -39,6 +39,10 @@ class CardGraphVis extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
+        if (this.props.isExpanded && this.eventListenerIsInjected) {
+            this.injectEventListener();
+        }
+
         if (!this.state.createdGraph) {
             // crateGraph and update the state;
             console.log('create sub resource relation model for the identifier', this.props.itemType);
@@ -139,7 +143,7 @@ class CardGraphVis extends Component {
 
                     this.mapperModule.setResourceRelationModelInput(currentResourceRelationModel);
                     this.mapperModule.setGraphReference(this.graph);
-                    this.mapperModule.setNodeLinkType('VOWL');
+                    this.mapperModule.setNodeLinkType('VOWL'); // DEFAULT CARD RENDERING NOTATION
                     this.mapperModule.execute().then(model => {
                         this.graph.setModel(model);
                         // do the rendering magic
@@ -168,6 +172,13 @@ class CardGraphVis extends Component {
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateDimensions);
     }
+
+    injectEventListener = () => {
+        console.log('RESIZE EVENT SHOULD ONLY BE APPLIED WHEN THERE IS A DIV TO RENDER');
+        window.addEventListener('resize', this.updateDimensions);
+        this.updateDimensions();
+        this.eventListenerIsInjected = true;
+    };
 
     updateDimensions = () => {
         this.graph.updateGraphSize();

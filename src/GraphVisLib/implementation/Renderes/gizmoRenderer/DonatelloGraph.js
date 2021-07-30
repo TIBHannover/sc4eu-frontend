@@ -27,6 +27,12 @@ export default class DonatelloGraph extends GraphRenderer {
         this.createPrimitives();
     }
 
+    setForceLayoutPlayState = val => {
+        this.layoutPaused = val;
+        // apply;
+        this.layoutHandler.pauseForceLayoutAnimation(val);
+    };
+
     integrateUpdatedNodeLink(nodeLinkModel) {
         // create diff
         const addNodes = [];
@@ -68,11 +74,6 @@ export default class DonatelloGraph extends GraphRenderer {
             }
         });
 
-        // console.log('add Nodes', addNodes);
-        // console.log('add Links', addLinks);
-        // console.log('del Nodes', delNodes);
-        // console.log('del Links', delLinks);
-
         // add new nodes
         this.addNewNodes(addNodes);
         this.addNewLinks(addLinks);
@@ -84,15 +85,11 @@ export default class DonatelloGraph extends GraphRenderer {
         const backupZoom = this.interactionHandler.graphInteractions.zoomFactor;
 
         // Collapsing Items
-        console.log('STARTING TO APPLY NOTATION CHANGES');
         this.applyNotationChanges().then(() => {
-            console.log('APPLY NOTATION DONE');
-            //
             if (delNodes.length > 0) {
                 this.layoutHandler.pauseForceLayoutAnimation(true);
                 this.animationsHandler.collapseNodesAndLinksBeforeDelete(delNodes, () => {
                     this.layoutHandler.setForceAlpha(0.1);
-                    this.layoutHandler.pauseForceLayoutAnimation(this.layoutPaused);
                     this.bruteForceRedrawGraph();
                 });
             }
@@ -104,11 +101,7 @@ export default class DonatelloGraph extends GraphRenderer {
 
                 this.animationsHandler.expandNodesAndLinks(newNodes, () => {
                     this.layoutHandler.setForceAlpha(0.1);
-                    this.layoutHandler.pauseForceLayoutAnimation(this.layoutPaused);
-                    this.bruteForceRedrawGraph(true);
-                    if (!this.layoutPaused) {
-                        this.layoutHandler.resumeForce();
-                    }
+                    this.bruteForceRedrawGraph();
                 });
             }
             this.resetUserNavigation(backupTranslation, backupZoom);
@@ -185,7 +178,6 @@ export default class DonatelloGraph extends GraphRenderer {
         const nodeMorphing = new Promise((resolve, reject) => {
             that.nodes.forEach((item, id) => {
                 that.animationsHandler.morphNode(null, item, id === lastItem, () => {
-                    console.log('           CALLING THE REDRAW AND INTERACTION CALL BACK ');
                     that.nodes.forEach(renderingItem => {
                         renderingItem.redraw();
                         that.interactionHandler.nodeInteractions.reapplyNodeInteractions(renderingItem);
@@ -199,7 +191,6 @@ export default class DonatelloGraph extends GraphRenderer {
         const linkMorphing = new Promise((resolve, reject) => {
             that.links.forEach((item, id) => {
                 this.animationsHandler.morphLink(item, lastLinkItem === id, () => {
-                    console.log('ANIMATION HAS FINISHED!!!!!!!! WE NEED TO RERENDER THE LINKS OO ');
                     // that.links.forEach(renderingItem => {
                     //     renderingItem.redraw();
                     //
@@ -227,7 +218,6 @@ export default class DonatelloGraph extends GraphRenderer {
         const linkPrimitive = new LinkPrimitive();
         linkPrimitive.id(link.__nodeLinkIdentifier);
         linkPrimitive.displayName(link.__displayName);
-        console.log(link);
         if (link.__linkType !== 'axiomLink') {
             linkPrimitive.renderingConfig(this.renderingConfig.getLinkConfigFromType(link.__linkType[0]));
         } else {
@@ -249,7 +239,6 @@ export default class DonatelloGraph extends GraphRenderer {
 
     drawForceNodes = nodes => {
         function createForceRenderingPrimitives(container, data, typeClass) {
-            console.log('WHATS IS MY CONTAINER? ', container);
             return container
                 .selectAll('.' + typeClass)
                 .data(data)
@@ -261,13 +250,9 @@ export default class DonatelloGraph extends GraphRenderer {
                 });
         }
 
-        console.log('wants to draw the force nodes ', nodes);
-        console.log();
         const f_nodeContainer = d3.select('#' + this.divRoot + '_forceNodes');
         f_nodeContainer.selectAll('g').remove();
         this.f_renderedNodes = createForceRenderingPrimitives(f_nodeContainer, nodes, 'FORCE_NODES');
-
-        console.log(this.f_renderedNodes);
         // execute the rendering function of the nodes;
         const radius = 15;
         this.f_renderedNodes.each(function(item) {
@@ -282,7 +267,6 @@ export default class DonatelloGraph extends GraphRenderer {
     };
 
     selectItem = item => {
-        console.log('SELECTING ITEM ', item);
         if (this.itemOfInterest === null) {
             item.isSelected(true);
             this.itemOfInterest = item;
@@ -298,7 +282,13 @@ export default class DonatelloGraph extends GraphRenderer {
                 this.itemOfInterest = item;
             }
         }
-        this.emitItemSelection(this.itemOfInterest);
+        if (this.emitItemSelection) {
+            this.emitItemSelection(this.itemOfInterest);
+        }
+    };
+
+    reEvaluateLinkTypes = () => {
+        //TODO: evaluate if the link is a multi link or a single link
     };
 
     bruteForceRedrawGraph = () => {
@@ -309,7 +299,6 @@ export default class DonatelloGraph extends GraphRenderer {
             item.resetRenderingData();
             this.nodeMap[item.id()] = item;
         });
-        console.log(this.nodeMap);
         this.links.forEach(item => {
             item.resetRenderingData();
             this.linkMap[item.id()] = item;
@@ -318,9 +307,18 @@ export default class DonatelloGraph extends GraphRenderer {
             item.setSourceNode(this.nodeMap[srcId]);
             item.setTargetNode(this.nodeMap[tarId]);
         });
+
+        this.reEvaluateLinkTypes();
         // redraw
         this.fullRedrawGraph();
         // reinitialize the force directed layout
         this.layoutHandler.createForceElements();
+
+        // restore force layout state [play/pause]
+        if (!this.layoutPaused) {
+            this.layoutHandler.resumeForce();
+        } else {
+            this.layoutHandler.stopForce();
+        }
     };
 }

@@ -7,6 +7,7 @@ export default class NodeInteractions {
         this.hasNodeClick = true;
         this.hasNodeDobleClick = true;
         this.hasNodeHover = true;
+        this.hasNodeSelection = false;
         this.draggingChildren = [];
         this.nodeClick = this.nodeClick.bind(this);
     }
@@ -17,6 +18,9 @@ export default class NodeInteractions {
     setNodeClickEnabled = val => {
         this.hasNodeClick = val;
     };
+    setHasNodeSelection = val => {
+        this.hasNodeSelection = val;
+    };
     setNodeDoubleClickEnabled = val => {
         this.hasNodeDobleClick = val;
     };
@@ -25,7 +29,6 @@ export default class NodeInteractions {
     };
 
     applyNodeInteractions = () => {
-        console.log('APPLYING NODE INTERACTIONS !!!!!');
         if (!this.graphObject) {
             console.error('NO GRAPH OBJECT FOUND');
             return;
@@ -72,8 +75,10 @@ export default class NodeInteractions {
                 if (n.groupRoot) {
                     n.groupRoot.call(this.dragBehaviour);
                     n.groupRoot.call(this.hoverBehaviour);
-                    n.connectClickAction(this.nodeClick);
-                    n.connectDoubleClickAction(this.nodeDoubleClick);
+                    if (this.hasNodeSelection) {
+                        n.connectClickAction(this.nodeClick);
+                        n.connectDoubleClickAction(this.nodeDoubleClick);
+                    }
                     this.addCollapseExpandButton(n);
                     this.addHideNodeButton(n);
                 }
@@ -305,7 +310,6 @@ export default class NodeInteractions {
     };
 
     drag = d => {
-        console.log('NODE DRAG INTERACTION ');
         if (this.hasNodeDragEnabeld) {
             d3.event.sourceEvent.stopPropagation(); // Prevent panning
 
@@ -315,7 +319,7 @@ export default class NodeInteractions {
             d.setPosition(d3.event.x, d3.event.y);
             d.px = d3.event.x;
             d.py = d3.event.y;
-            d.updateRenderingPosition(true);
+            // d.updateRenderingPosition(true);
             // this.draggingChildren.forEach(child => {
             //     const currX = child.propertyNodePostion.x;
             //     const currY = child.propertyNodePostion.y;
@@ -342,11 +346,9 @@ export default class NodeInteractions {
             d.groupRoot.style('cursor', 'auto');
             this.draggingChildren = [];
             if (d.layoutHandlerReference && d.layoutHandlerReference.force) {
+                d.fixed = false;
                 if (d.layoutHandlerReference.forceLayoutPaused === false) {
                     d.layoutHandlerReference.resumeForce();
-                    d.fixed = false;
-                } else {
-                    d.fixed = true;
                 }
             }
         }

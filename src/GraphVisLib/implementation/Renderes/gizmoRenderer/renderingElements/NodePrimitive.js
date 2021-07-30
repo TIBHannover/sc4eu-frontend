@@ -29,7 +29,6 @@ export default class NodePrimitive extends BasePrimitive {
         if (this.__nodeClickAction) {
             if (this.groupRoot) {
                 this.groupRoot.on('click', this.__nodeClickAction);
-                console.log('INJECTED CLICK ACCTION');
             }
         }
     };
@@ -54,14 +53,12 @@ export default class NodePrimitive extends BasePrimitive {
         const found = this.incomingLinks.findIndex(item => item.__id === link.__id);
         if (found !== -1) {
             this.incomingLinks.slice(found, 1);
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>> REMOVING LINK (INCOMING ONE )');
         }
     };
     removeOutgoingLink = link => {
         const found = this.outgoingLinks.findIndex(item => item.__id === link.__id);
         if (found !== -1) {
             this.outgoingLinks.slice(found, 1);
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>> REMOVING LINK (OUTGOING ONE )');
         }
     };
 
@@ -96,6 +93,9 @@ export default class NodePrimitive extends BasePrimitive {
 
     updateRenderingPosition = (debug = false) => {
         if (this.groupRoot) {
+            if (isNaN(this.x) || isNaN(this.y)) {
+                console.log(this.displayName(), ' has nan positions');
+            }
             this.groupRoot.attr('transform', 'translate(' + this.x + ',' + this.y + ')');
         }
         // update all related links; (using concat as temp object to merge the links)
@@ -121,15 +121,8 @@ export default class NodePrimitive extends BasePrimitive {
 
     removeNestedGroupItems() {
         if (this.groupRoot) {
-            console.log('>>> REMOVING ALL GROUP ROUT ITEMS');
             this.groupRoot.selectAll('line').remove();
             this.groupRoot.selectAll('g').remove();
-            // this.groupRoot
-            //     .selectAll('g')
-            //     .selectAll('nestedGroupItem')
-            //     .remove();
-        } else {
-            console.log('>>> FAILED IN REMOVING ALL GROUP ROUT ITEMS');
         }
     }
 

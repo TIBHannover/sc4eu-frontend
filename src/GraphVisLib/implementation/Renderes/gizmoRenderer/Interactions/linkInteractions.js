@@ -129,6 +129,7 @@ export default class LinkInteractions {
             d3.event.sourceEvent.stopPropagation(); // Prevent panning
             d.fixed = true;
             d.groupRoot.style('cursor', 'pointer');
+            // console.log('[', d.x, ',', d.y, ']');
         }
     };
 

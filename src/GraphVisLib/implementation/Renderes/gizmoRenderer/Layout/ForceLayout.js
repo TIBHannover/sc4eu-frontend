@@ -66,7 +66,6 @@ export default class ForceLayout extends BaseLayoutComponent {
         this.force.stop();
         if (this.forceIsInitialized) {
             this.force.alpha(0.1);
-            console.log(this.force.alpha());
         }
         this.forceIsInitialized = true;
     }
@@ -94,7 +93,6 @@ export default class ForceLayout extends BaseLayoutComponent {
         if (this.graph.f_renderedNodes) {
             // if (debug) {
             this.graph.f_renderedNodes.each(function(item) {
-                // console.log(item);
                 d3.select(this)
                     .selectAll('circle')
                     .attr('transform', 'translate(' + item.x + ',' + item.y + ')');
@@ -131,17 +129,14 @@ export default class ForceLayout extends BaseLayoutComponent {
         this.force.nodes(this.forceNodes);
         this.force.links(this.forceLinks);
 
-        console.log('created force nodes and links');
-        console.log('number of nodes', this.force.nodes());
-        console.log('number of links', this.force.links());
         if (debug) {
             this.graph.drawForceNodes(this.forceNodes);
-            console.log(this.force);
         }
 
         // todo: this is a hard-coded random init
         this.forceNodes.forEach(node => {
             node.layoutHandlerReference = this;
+            //
             if (node.x === 0) {
                 node.x = Math.random() * this.layoutSize[0];
             }
