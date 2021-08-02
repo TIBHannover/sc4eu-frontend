@@ -8,6 +8,14 @@ export default class BasePrimitive {
         this.__visible = true;
         this.itemIsSelected = false;
         this.groupRoot = undefined;
+        this.__semanticReference = {};
+    }
+
+    semanticReference(ref) {
+        if (!arguments.length) {
+            return this.__semanticReference;
+        }
+        this.__semanticReference = ref;
     }
 
     visible(visible) {
@@ -63,7 +71,7 @@ export default class BasePrimitive {
     applyNewVisualization = () => {
         if (this.hasDepictionForAnimation) {
             this.renderingConfig(this.hasDepictionForAnimation.renderingConfig());
-            this.refereceResource = this.hasDepictionForAnimation.refereceResource;
+            this.__semanticReference = this.hasDepictionForAnimation.__semanticReference;
             this.hasDepictionForAnimation = null;
         }
     };

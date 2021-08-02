@@ -40,6 +40,14 @@ export const hideSingleNodeAnimation = (node, parent, callback) => {
 
 export const collapseNodeAnimationForDelete = (node, last, callback) => {
     const animationDuration = 400;
+    if (!node.groupRoot) {
+        node.visible(false);
+        node.removeAllRenderedElementsFromParent();
+        if (last) {
+            callback();
+        }
+        return;
+    }
 
     if (node.incomingLinks.length > 0) {
         // pick one;
@@ -54,7 +62,11 @@ export const collapseNodeAnimationForDelete = (node, last, callback) => {
             const f_y = parseFloat(parentPosition.y);
 
             // we only have one link at the moment;
-
+            if (!node.groupRoot) {
+                if (last) {
+                    callback();
+                }
+            }
             node.groupRoot
                 .transition()
                 .tween('attr.translate', function() {
@@ -81,6 +93,14 @@ export const collapseNodeAnimationForDelete = (node, last, callback) => {
 };
 export const collapseNodeAnimation = (node, last, callback) => {
     const animationDuration = 400;
+
+    if (!node.groupRoot) {
+        node.visible(false);
+        node.removeAllRenderedElementsFromParent();
+        if (last) {
+            callback();
+        }
+    }
 
     if (node.incomingLinks.length > 0) {
         // pick one;
@@ -139,6 +159,7 @@ export const collapseNodeAnimation = (node, last, callback) => {
 
 export const expandNodeAnimation = (node, targetPosition, last, callback) => {
     const animationDuration = 500;
+
     if (node.incomingLinks.length > 0) {
         // pick one;
         const parentPosition = node.incomingLinks[0].sourceNode.getPosition();

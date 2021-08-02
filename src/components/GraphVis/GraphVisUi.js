@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input, Label } from 'reactstrap';
+import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input } from 'reactstrap';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -243,6 +243,8 @@ class GraphVisUi extends Component {
                     {this.createDropDownForNotations()}
                     <Button
                         onClick={() => {
+                            console.log(this.graph.links);
+                            console.log(this.graph.nodes);
                             this.graph.bruteForceRedrawGraph(true);
                             this.graph.pauseForceDirectedLayout(true);
                         }}

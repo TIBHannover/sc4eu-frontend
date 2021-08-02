@@ -20,10 +20,16 @@ export default class LinkPrimitive extends BasePrimitive {
         // type can be loop, singleLink, multiLink ;
     }
 
+    collapseExpandMultiLinks = () => {
+        if (this.__internalType === 'multiLink') {
+            console.log('DO SOME OPERATIONS ON THAT');
+        }
+    };
+
     setTargetNode(node) {
         this.targetNode = node;
         node.addIncomingLink(this);
-        const targetType = node.refereceResource.__nodeType[0];
+        const targetType = node.semanticReference().__nodeType[0];
         if (targetType === 'rdfs:Literal') {
             this.propertyLinkType = 'datatypePropertyType';
         }
@@ -72,6 +78,17 @@ export default class LinkPrimitive extends BasePrimitive {
                 }
             ];
         }
+
+        if (this.__isHiddenML) {
+            return [
+                {
+                    source: this.sourceNode,
+                    target: this.targetNode,
+                    type: 'hiddenML'
+                }
+            ];
+        }
+
         // if (this.__internalType === "multiLink" ) {
         return [
             {

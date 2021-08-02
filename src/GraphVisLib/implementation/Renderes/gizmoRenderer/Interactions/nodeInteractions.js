@@ -347,7 +347,9 @@ export default class NodeInteractions {
             this.draggingChildren = [];
             if (d.layoutHandlerReference && d.layoutHandlerReference.force) {
                 d.fixed = false;
+                console.log('>>> PAUSE FORCE??? ', d.layoutHandlerReference.forceLayoutPaused);
                 if (d.layoutHandlerReference.forceLayoutPaused === false) {
+                    console.log('>>> RESUME FORCE');
                     d.layoutHandlerReference.resumeForce();
                 }
             }

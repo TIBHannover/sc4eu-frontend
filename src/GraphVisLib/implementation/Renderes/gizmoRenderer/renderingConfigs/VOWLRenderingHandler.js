@@ -360,6 +360,58 @@ export default class VOWLRenderingHandler {
                         drawArrowTail: false,
                         link_renderingType: 'line' // line or curve
                     }
+                },
+
+                multilink: {
+                    style: {
+                        link: {
+                            lineStyle: 'solid',
+                            lineWidth: '2px',
+                            lineColor: '#474747'
+                        },
+                        arrowHead: {
+                            renderingType: 'triangle',
+                            scaleFactor: 1,
+                            strokeWidth: '2px',
+                            strokeStyle: 'solid',
+                            strokeColor: '#000000',
+                            fillColor: '#ffffff'
+                        },
+
+                        propertyNode: {
+                            style: {
+                                renderingType: 'rect',
+                                bgColor: '#007bff',
+                                roundedCorner: '0,0',
+                                fontSizeOverWritesShapeSize: 'true',
+                                overWriteOffset: '5',
+                                strokeElement: 'false',
+                                radius: 50,
+                                width: 100,
+                                height: 25
+                            },
+                            fontStyle: {
+                                fontFamily: 'Helvetica,Arial,sans-serif',
+                                fontColor: '#000000',
+                                fontSize: '12px'
+                            },
+                            options: {
+                                drawDisplayName: true,
+                                cropLongText: true,
+                                addTitleForDisplayName: true,
+                                overwritesShapeSize: false,
+                                overwriteOffset: 0,
+                                fontPositionH: 'center',
+                                fontPositionV: 'center'
+                            }
+                        }
+                    },
+                    options: {
+                        drawPropertyNode: true,
+                        drawArrowHead: true,
+                        drawArrowTail: false,
+                        link_renderingType: 'line' // line or curve
+                    }
                 }
             }
         };

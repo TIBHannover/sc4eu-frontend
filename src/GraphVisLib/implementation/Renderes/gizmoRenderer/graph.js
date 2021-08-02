@@ -23,7 +23,9 @@ export default class GraphRenderer {
         this.links = [];
 
         this.nodeMap = {};
+        this.semanticNodeMap = {};
         this.linkMap = {};
+        this.semanticLinkMap = {};
 
         this.divRoot = null;
         this.svgRoot = null;
@@ -34,6 +36,8 @@ export default class GraphRenderer {
 
         this.graphBgColor = '#ECF0F1';
         this.showSubclassRelations = true;
+        this.linkCounter = 0;
+        this.nodeCounter = 0;
     }
 
     setGraphInitialized = val => {
@@ -180,18 +184,18 @@ export default class GraphRenderer {
         }
         if (!this.renderingConfig) {
             // create a default renderingConfigHandler;
-            console.warn('NO RENDERING CONFIG HANDLER SET ! WILL CREATE A DEFAULT ONE FOR YOU!');
+            console.warn('NO RENDERING CONFIG HANDLER SET! WILL CREATE A DEFAULT ONE FOR YOU!');
             this.renderingConfig = new BasicRenderingHandler();
         }
         if (!this.drawTools) {
             // create a default renderingConfigHandler;
-            console.warn('NO DRAWTOOLS  HANDLER SET ! WILL CREATE A DEFAULT ONE FOR YOU!');
+            console.warn('NO DRAWTOOLS  HANDLER SET! WILL CREATE A DEFAULT ONE FOR YOU!');
             this.drawTools = new DrawTools(this);
         }
 
         if (!this.layoutHandler) {
             // create a default renderingConfigHandler;
-            console.warn('NO LAYOUT  HANDLER SET ! WILL CREATE A DEFAULT ONE FOR YOU! << FORCE DIRECTED LAYOUT>>>');
+            console.warn('NO LAYOUT  HANDLER SET! WILL CREATE A DEFAULT ONE FOR YOU! << FORCE DIRECTED LAYOUT>>>');
             this.layoutHandler = new ForceLayout(this);
         }
     }
@@ -242,7 +246,6 @@ export default class GraphRenderer {
     };
 
     pauseForceDirectedLayout = val => {
-        console.log('Graph wants to be paused? ', val);
         this.layoutHandler.pauseForceLayoutAnimation(val);
     };
 
@@ -317,21 +320,23 @@ export default class GraphRenderer {
     // SOME RENDERING STUFF
     createNodePrimitive = node => {
         const nodePrimitive = new NodePrimitive();
-        nodePrimitive.id(node.__nodeLinkIdentifier);
+        nodePrimitive.id('NODE_' + this.nodeCounter++);
         nodePrimitive.displayName(node.__displayName);
         nodePrimitive.renderingConfig(this.renderingConfig.getNodeConfigFromType(node.__nodeType[0]));
-        nodePrimitive.refereceResource = node;
+        nodePrimitive.semanticReference(node);
         nodePrimitive.drawTools(this.drawTools);
 
         // TESTING DEFAULT NODE POSITIONS
 
         this.nodes.push(nodePrimitive);
         this.nodeMap[nodePrimitive.id()] = nodePrimitive;
+        this.semanticNodeMap[node.__nodeLinkIdentifier] = nodePrimitive;
     };
 
     createLinkPrimitive = link => {
         const linkPrimitive = new LinkPrimitive();
-        linkPrimitive.id(link.__nodeLinkIdentifier);
+
+        linkPrimitive.id('LINK_' + this.linkCounter++);
         linkPrimitive.displayName(link.__displayName);
 
         if (link.__linkType !== 'axiomLink') {
@@ -340,18 +345,20 @@ export default class GraphRenderer {
             linkPrimitive.renderingConfig(this.renderingConfig.getLinkConfigFromType(link.__linkAxiom));
         }
         linkPrimitive.drawTools(this.drawTools);
-
+        linkPrimitive.semanticReference(link);
         // fetch the source and target from the map;
-        linkPrimitive.setSourceNode(this.nodeMap[link.__source.__nodeLinkIdentifier]);
-        linkPrimitive.setTargetNode(this.nodeMap[link.__target.__nodeLinkIdentifier]);
 
-        if (this.nodeMap[link.__source.__nodeLinkIdentifier] === this.nodeMap[link.__target.__nodeLinkIdentifier]) {
+        linkPrimitive.setSourceNode(this.semanticNodeMap[link.__source.__nodeLinkIdentifier]);
+        linkPrimitive.setTargetNode(this.semanticNodeMap[link.__target.__nodeLinkIdentifier]);
+
+        if (this.nodeMap[linkPrimitive.sourceNode.id()] === this.nodeMap[linkPrimitive.targetNode.id()]) {
             linkPrimitive.setInternalType('loop');
-            const item = this.nodeMap[link.__source.__nodeLinkIdentifier];
+            const item = this.nodeMap[linkPrimitive.sourceNode.id()];
             item.numberOfLoops(item.numberOfLoops() + 1);
         }
         this.links.push(linkPrimitive);
         this.linkMap[linkPrimitive.id()] = linkPrimitive;
+        this.semanticLinkMap[link.__nodeLinkIdentifier] = linkPrimitive;
     };
 
     updateMultiLinkTypes = links => {
@@ -384,6 +391,17 @@ export default class GraphRenderer {
             });
             if (isMultiLink) {
                 link.setInternalType('multiLink');
+                const n1 = link.sourceNode;
+                const n2 = link.targetNode;
+                // give me all links that participate between this two nodes;
+                const n1_in_links = n1.incomingLinks.filter(item => {
+                    return item.sourceNode.id() === n2.id();
+                });
+                const n1_out_links = n1.outgoingLinks.filter(item => {
+                    return item.targetNode.id() === n2.id();
+                });
+                const links = [].concat(n1_out_links, n1_in_links).filter(item => item.visible());
+                this.createMultiLinkPrimitive(n1, n2, links);
             }
 
             // kill multiLink if we have no label to draw!;
@@ -391,6 +409,46 @@ export default class GraphRenderer {
                 link.setInternalType('singleLink');
             }
         });
+    };
+
+    createMultiLinkPrimitive = (n1, n2, links) => {
+        // sort them to create only one;
+        const left = n1.id() < n2.id() ? n1.id() : n2.id();
+        const right = n1.id() > n2.id() ? n1.id() : n2.id();
+        const mlLinkId = left + '__' + right;
+
+        if (this.linkMap[mlLinkId] === undefined) {
+            // create the linkPrimitive;
+            const linkPrimitive = new LinkPrimitive();
+            linkPrimitive.id(mlLinkId);
+            linkPrimitive.displayName(links.length);
+            linkPrimitive.renderingConfig(this.renderingConfig.getLinkConfigFromType('multilink'));
+            linkPrimitive.drawTools(this.drawTools);
+
+            // fetch the source and target from the map;
+            linkPrimitive.setSourceNode(n1);
+            linkPrimitive.setTargetNode(n2);
+            linkPrimitive.setInternalType('singleLink');
+            linkPrimitive.visible(false);
+
+            linkPrimitive.__isHiddenML = true;
+
+            linkPrimitive.__linkGroup = links;
+            this.links.push(linkPrimitive);
+            this.linkMap[mlLinkId] = linkPrimitive;
+        }
+    };
+
+    showML_renderingPrimitive = groupRepresentative => {
+        const n1 = groupRepresentative.sourceNode;
+        const n2 = groupRepresentative.targetNode;
+
+        const left = n1.id() < n2.id() ? n1.id() : n2.id();
+        const right = n1.id() > n2.id() ? n1.id() : n2.id();
+        const mlLinkId = left + '__' + right;
+        if (this.linkMap[mlLinkId]) {
+            this.linkMap[mlLinkId].visible(true);
+        }
     };
 
     redrawRenderingPrimitives = debug => {

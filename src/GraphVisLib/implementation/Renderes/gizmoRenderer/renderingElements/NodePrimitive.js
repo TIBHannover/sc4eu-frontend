@@ -94,7 +94,7 @@ export default class NodePrimitive extends BasePrimitive {
     updateRenderingPosition = (debug = false) => {
         if (this.groupRoot) {
             if (isNaN(this.x) || isNaN(this.y)) {
-                console.log(this.displayName(), ' has nan positions');
+                // console.log(this.displayName(), ' has nan positions');
             }
             this.groupRoot.attr('transform', 'translate(' + this.x + ',' + this.y + ')');
         }

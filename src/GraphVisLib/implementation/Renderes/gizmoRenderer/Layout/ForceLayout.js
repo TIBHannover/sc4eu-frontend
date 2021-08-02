@@ -34,6 +34,7 @@ export default class ForceLayout extends BaseLayoutComponent {
         this.force.alpha(val);
     };
     resumeForce() {
+        this.forceLayoutPaused = false;
         if (this.force) {
             this.force.resume();
         }
@@ -122,6 +123,9 @@ export default class ForceLayout extends BaseLayoutComponent {
                 this.forceLinks = this.forceLinks.concat(this.renderedLinks[i].getForceLink());
                 this.forceNodes = this.forceNodes.concat(this.renderedLinks[i].getForceNode());
             }
+            if (this.renderedLinks[i].__isHiddenML && this.renderedLinks[i].visible() === false) {
+                this.forceLinks = this.forceLinks.concat(this.renderedLinks[i].getForceLink());
+            }
         }
 
         this.force.nodes([]);
@@ -151,11 +155,7 @@ export default class ForceLayout extends BaseLayoutComponent {
 
         this.distanceValue = 400;
         this.force
-            .charge(function(/*element*/) {
-                // element can have charge value
-                // here constant
-                return -400;
-            })
+            .charge(this.computeComputeCharge)
             .linkDistance(this.computeLinkDistance) // just make sure that our links are not to long.
             .linkStrength(1.5)
             .size([that.layoutSize[0], that.layoutSize[1]])
@@ -175,5 +175,18 @@ export default class ForceLayout extends BaseLayoutComponent {
         if (link.type === 'mlPart') {
             return 200;
         }
+        if (link.type === 'hiddenML') {
+            return 400;
+        }
+    }
+
+    computeComputeCharge(item) {
+        if (item.__internalObjectType === 'node') {
+            return -400;
+        }
+        if (item.__internalObjectType === 'propertyNode') {
+            return -800;
+        }
+        return -1000;
     }
 } // end of class definition

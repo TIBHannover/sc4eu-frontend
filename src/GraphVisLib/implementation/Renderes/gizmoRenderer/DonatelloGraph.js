@@ -41,17 +41,18 @@ export default class DonatelloGraph extends GraphRenderer {
         const delLinks = [];
 
         nodeLinkModel.nodes.forEach(node => {
-            const found = this.nodes.find(item => item.__id === node.__nodeLinkIdentifier);
+            const found = this.nodes.find(item => item.semanticReference().__nodeLinkIdentifier === node.__nodeLinkIdentifier);
             if (!found) {
                 addNodes.push(node);
             } else {
                 const nodePrem = this.getNodePrimitiveDefinition(node);
+
                 found.integrateNewDepiction(nodePrem);
             }
         });
 
         nodeLinkModel.links.forEach(link => {
-            const found = this.links.find(item => item.__id === link.__nodeLinkIdentifier);
+            const found = this.links.find(item => item.semanticReference().__nodeLinkIdentifier === link.__nodeLinkIdentifier);
             if (!found) {
                 addLinks.push(link);
             } else {
@@ -61,20 +62,23 @@ export default class DonatelloGraph extends GraphRenderer {
         });
 
         this.nodes.forEach(node => {
-            const found = nodeLinkModel.nodes.find(item => item.__nodeLinkIdentifier === node.__id);
+            const found = nodeLinkModel.nodes.find(item => item.__nodeLinkIdentifier === node.semanticReference().__nodeLinkIdentifier);
             if (!found) {
                 delNodes.push(node);
             }
         });
 
         this.links.forEach(link => {
-            const found = nodeLinkModel.links.find(item => item.__nodeLinkIdentifier === link.__id);
-            if (!found) {
+            const found = nodeLinkModel.links.find(item => item.__nodeLinkIdentifier === link.semanticReference().__nodeLinkIdentifier);
+            if (!found && !link.__isHiddenML) {
                 delLinks.push(link);
+            }
+            if (link.__isHiddenML) {
+                link.renderingConfig(this.renderingConfig.getLinkConfigFromType('multilink'));
             }
         });
 
-        // add new nodes
+        // apply graph structure modifications
         this.addNewNodes(addNodes);
         this.addNewLinks(addLinks);
         this.removeNodes(delNodes);
@@ -95,10 +99,9 @@ export default class DonatelloGraph extends GraphRenderer {
             }
             if (addNodes.length > 0) {
                 // Expanding Items
+                const newNodes = this.setNewNodesPositionsToParents(addNodes);
                 this.bruteForceRedrawGraph();
                 this.layoutHandler.pauseForceLayoutAnimation(true);
-                const newNodes = this.setNewNodesPositionsToParents(addNodes);
-
                 this.animationsHandler.expandNodesAndLinks(newNodes, () => {
                     this.layoutHandler.setForceAlpha(0.1);
                     this.bruteForceRedrawGraph();
@@ -111,16 +114,12 @@ export default class DonatelloGraph extends GraphRenderer {
     setNewNodesPositionsToParents = nodes => {
         const renderingItems = [];
         nodes.forEach(node => {
-            const renderedNode = this.nodes.find(item => item.__id === node.__nodeLinkIdentifier);
+            const renderedNode = this.semanticNodeMap[node.__nodeLinkIdentifier];
             if (renderedNode) {
                 renderingItems.push(renderedNode);
-                if (renderedNode.incomingLinks.length === 1) {
-                    const parentPos = renderedNode.incomingLinks[0].sourceNode.getPosition();
-                    renderedNode.setPosition(parentPos.x, parentPos.y);
-                    renderedNode.updateRenderingPosition();
-                    renderedNode.incomingLinks[0].getPropertNode().setPosition(parentPos.x, parentPos.y);
-                    renderedNode.incomingLinks[0].getPropertNode().updateRenderingPosition();
-                }
+                // we know it because we are a literal
+                const parentItem = renderedNode.incomingLinks[0].sourceNode;
+                renderedNode.setPosition(parentItem.x, parentItem.y);
             }
         });
         return renderingItems;
@@ -206,17 +205,17 @@ export default class DonatelloGraph extends GraphRenderer {
 
     getNodePrimitiveDefinition = node => {
         const nodePrimitive = new NodePrimitive();
-        nodePrimitive.id(node.__nodeLinkIdentifier);
+        nodePrimitive.id('NODE_' + this.nodeCounter++);
         nodePrimitive.displayName(node.__displayName);
         nodePrimitive.renderingConfig(this.renderingConfig.getNodeConfigFromType(node.__nodeType[0]));
-        nodePrimitive.refereceResource = node;
+        nodePrimitive.semanticReference(node);
         nodePrimitive.drawTools(this.drawTools);
         return nodePrimitive;
     };
 
     getLinkPrimitiveDefinition = link => {
         const linkPrimitive = new LinkPrimitive();
-        linkPrimitive.id(link.__nodeLinkIdentifier);
+        linkPrimitive.id('LINK_' + this.linkCounter++);
         linkPrimitive.displayName(link.__displayName);
         if (link.__linkType !== 'axiomLink') {
             linkPrimitive.renderingConfig(this.renderingConfig.getLinkConfigFromType(link.__linkType[0]));
@@ -224,14 +223,15 @@ export default class DonatelloGraph extends GraphRenderer {
             linkPrimitive.renderingConfig(this.renderingConfig.getLinkConfigFromType(link.__linkAxiom));
         }
         linkPrimitive.drawTools(this.drawTools);
+        linkPrimitive.semanticReference(link);
 
         // fetch the source and target from the map;
-        linkPrimitive.setSourceNode(this.nodeMap[link.__source.__nodeLinkIdentifier]);
-        linkPrimitive.setTargetNode(this.nodeMap[link.__target.__nodeLinkIdentifier]);
+        linkPrimitive.setSourceNode(this.semanticNodeMap[link.__source.__nodeLinkIdentifier]);
+        linkPrimitive.setTargetNode(this.semanticNodeMap[link.__target.__nodeLinkIdentifier]);
 
-        if (this.nodeMap[link.__source.__nodeLinkIdentifier] === this.nodeMap[link.__target.__nodeLinkIdentifier]) {
+        if (this.nodeMap[linkPrimitive.sourceNode.id()] === this.nodeMap[linkPrimitive.targetNode.id()]) {
             linkPrimitive.setInternalType('loop');
-            const item = this.nodeMap[link.__source.__nodeLinkIdentifier];
+            const item = this.nodeMap[linkPrimitive.sourceNode.id()];
             item.numberOfLoops(item.numberOfLoops() + 1);
         }
         return linkPrimitive;
@@ -287,9 +287,7 @@ export default class DonatelloGraph extends GraphRenderer {
         }
     };
 
-    reEvaluateLinkTypes = () => {
-        //TODO: evaluate if the link is a multi link or a single link
-    };
+    reEvaluateLinkTypes = () => {};
 
     bruteForceRedrawGraph = () => {
         this.nodeMap = {};

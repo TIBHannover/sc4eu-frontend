@@ -15,8 +15,8 @@ export const getParentNodesForExpanding = nodes => {
 
 export const smartExpandingLiterals = (node, last, callback) => {
     const datatypeLinks = node.outgoingLinks.filter(item => item.propertyLinkType === 'datatypePropertyType');
-    const otherOutgoingLinks = node.outgoingLinks.filter(item => item.propertyLinkType !== 'datatypePropertyType');
-    const incommingLinks = node.incomingLinks;
+    const otherOutgoingLinks = node.outgoingLinks.filter(item => item.propertyLinkType !== 'datatypePropertyType' && item.visible());
+    const incommingLinks = node.incomingLinks.filter(item => !item.__isHiddenML);
     const allLinks = [].concat(otherOutgoingLinks, incommingLinks);
     let nAngle, nPos;
 

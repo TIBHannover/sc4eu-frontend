@@ -1,6 +1,6 @@
 import { collapseNodeAnimationForDelete, collapseNodeAnimation, hideSingleNodeAnimation } from './collapseNodeAnimation';
 import { smartExpandingLiterals, getParentNodesForExpanding } from './SmartExanding';
-
+import { collapsePropertyNodesAnimations, expandPropertyNodesAnimations } from './collapseExpandLinkAnimations';
 export default class Animations {
     constructor(graph) {
         this.graphObject = graph;
@@ -57,7 +57,9 @@ export default class Animations {
         this.graphObject.interactionHandler.nodeInteractions.reapplyNodeInteractions(node);
         this.graphObject.pauseForceDirectedLayout(true);
         // collect the nodes we need to exapand in order to draw them first;
-        const hiddenLinks = node.outgoingLinks.filter(item => item.visible() === false);
+        const hiddenLinks = node.outgoingLinks.filter(
+            item => item.visible() === false && !item.__isHiddenML && item.propertyLinkType === 'datatypePropertyType'
+        );
         console.log('hiddenLinks', hiddenLinks);
         hiddenLinks.forEach(link => {
             link.setPosition(link.sourceNode.x, link.sourceNode.x);
@@ -176,5 +178,55 @@ export default class Animations {
         //                 }
         //             });
         //     }
+    };
+
+    collapseExpandMultiLinks = link => {
+        const that = this;
+        if (link.__internalType !== 'multiLink' && link.__linkGroup === undefined) {
+            return;
+        }
+        this.graphObject.pauseForceDirectedLayout(true);
+        const backupTranslation = this.graphObject.interactionHandler.graphInteractions.graphTranslation;
+        const backupZoom = this.graphObject.interactionHandler.graphInteractions.zoomFactor;
+
+        if (link.__internalType === 'singleLink' && link.__linkGroup) {
+            const cx = link.sourceNode.x + 0.5 * (link.targetNode.x - link.sourceNode.x);
+            const cy = link.sourceNode.y + 0.5 * (link.targetNode.y - link.sourceNode.y);
+            const parentPos = { x: cx, y: cy };
+            link.visible(false);
+            link.__linkGroup.forEach(item => {
+                item.setPosition({ x: cx, y: cy });
+                item.propertyNodePostion = { x: cx, y: cy };
+                item.visible(true);
+            });
+            that.graphObject.bruteForceRedrawGraph();
+            that.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+            this.graphObject.pauseForceDirectedLayout(true);
+            expandPropertyNodesAnimations(link, parentPos, function() {
+                console.log('THIS SHOULD EXPAND IT ');
+                that.graphObject.bruteForceRedrawGraph();
+                that.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+            });
+        } else {
+            const n1 = link.sourceNode;
+            const n2 = link.targetNode;
+            // give me all links that participate between this two nodes;
+            const n1_in_links = n1.incomingLinks.filter(item => {
+                return item.sourceNode.id() === n2.id();
+            });
+            const n1_out_links = n1.outgoingLinks.filter(item => {
+                return item.targetNode.id() === n2.id();
+            });
+            const links = [].concat(n1_out_links, n1_in_links).filter(item => item.visible());
+            collapsePropertyNodesAnimations(n1, n2, links, () => {
+                links.forEach(l => {
+                    l.visible(false);
+                });
+                // and we create a multilink primitive;
+                this.graphObject.showML_renderingPrimitive(link);
+                this.graphObject.bruteForceRedrawGraph();
+                this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+            });
+        }
     };
 }
