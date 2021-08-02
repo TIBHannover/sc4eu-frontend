@@ -171,6 +171,8 @@ export default class GraphRenderer {
         this.model.links.forEach(link => {
             this.createLinkPrimitive(link);
         });
+
+        this.updateMultiLinkTypes(this.links);
     }
     createRenderingElements() {
         if (!this.model) {
@@ -352,41 +354,43 @@ export default class GraphRenderer {
         this.linkMap[linkPrimitive.id()] = linkPrimitive;
     };
 
-    updateMultiLinkTypes = link => {
-        if (link.__internalType === 'loop') {
-            return;
-        }
-        const src = link.sourceNode;
-        const tar = link.targetNode;
-
-        // this is a pair;
-        // lets see if we have multi link;
-        let isMultiLink = false;
-        src.outgoingLinks.forEach(out => {
-            if (out.__internalType === 'loop' || out.id() === link.id()) {
+    updateMultiLinkTypes = links => {
+        links.forEach(link => {
+            if (link.__internalType === 'loop') {
                 return;
             }
-            if (out.targetNode.id() === tar.id()) {
-                isMultiLink = true;
+            const src = link.sourceNode;
+            const tar = link.targetNode;
+
+            // this is a pair;
+            // lets see if we have multi link;
+            let isMultiLink = false;
+            src.outgoingLinks.forEach(out => {
+                if (out.__internalType === 'loop' || out.id() === link.id()) {
+                    return;
+                }
+                if (out.targetNode.id() === tar.id()) {
+                    isMultiLink = true;
+                }
+            });
+
+            tar.outgoingLinks.forEach(out => {
+                if (out.__internalType === 'loop' || out.id() === link.id()) {
+                    return;
+                }
+                if (out.targetNode.id() === src.id()) {
+                    isMultiLink = true;
+                }
+            });
+            if (isMultiLink) {
+                link.setInternalType('multiLink');
+            }
+
+            // kill multiLink if we have no label to draw!;
+            if (link.renderingConfig().options.drawPropertyNode === false) {
+                link.setInternalType('singleLink');
             }
         });
-
-        tar.outgoingLinks.forEach(out => {
-            if (out.__internalType === 'loop' || out.id() === link.id()) {
-                return;
-            }
-            if (out.targetNode.id() === src.id()) {
-                isMultiLink = true;
-            }
-        });
-        if (isMultiLink) {
-            link.setInternalType('multiLink');
-        }
-
-        // kill multiLink if we have no label to draw!;
-        if (link.renderingConfig().options.drawPropertyNode === false) {
-            link.setInternalType('singleLink');
-        }
     };
 
     redrawRenderingPrimitives = debug => {

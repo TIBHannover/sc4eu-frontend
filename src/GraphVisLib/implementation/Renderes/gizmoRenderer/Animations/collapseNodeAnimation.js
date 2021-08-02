@@ -150,30 +150,10 @@ export const expandNodeAnimation = (node, targetPosition, last, callback) => {
             const f_x = parseFloat(targetPosition.x);
             const f_y = parseFloat(targetPosition.y);
 
-            const h_x = node.x + 0.5 * (f_x - node.x);
-            const h_y = node.y + 0.5 * (f_y - node.y);
-
             // set node and propertyNode to parent position;
             node.setPosition(parentPosition.x, parentPosition.y);
             const propertyNode = node.incomingLinks[0].getPropertNode();
             propertyNode.setPosition(parentPosition.x, parentPosition.y);
-
-            // this has to be halfed
-            propertyNode.groupRoot
-                .transition()
-                .tween('attr.translate', function() {
-                    return function(t) {
-                        const tr = d3.transform(propertyNode.groupRoot.attr('transform'));
-                        propertyNode.x = tr.translate[0];
-                        propertyNode.y = tr.translate[1];
-                        propertyNode.px = propertyNode.x;
-                        propertyNode.py = propertyNode.y;
-                        propertyNode.updateRenderingPosition();
-                    };
-                })
-                .duration(animationDuration)
-                .attr('transform', 'translate(' + h_x + ',' + h_y + ')')
-                .each('end', function() {});
 
             node.groupRoot
                 .transition()

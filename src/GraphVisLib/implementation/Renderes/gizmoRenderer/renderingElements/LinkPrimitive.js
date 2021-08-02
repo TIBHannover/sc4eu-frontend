@@ -118,8 +118,6 @@ export default class LinkPrimitive extends BasePrimitive {
             );
 
             this.propertyNodePostion = { x: this.renderingShape.data()[0].x, y: this.renderingShape.data()[0].y };
-            console.log(this.propertyNodePostion);
-        } else {
         }
     };
 

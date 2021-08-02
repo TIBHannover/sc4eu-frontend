@@ -71,9 +71,8 @@ export default class Animations {
 
         smartExpandingLiterals(node, true, () => {
             this.graphObject.interactionHandler.applyInteractions(this.graphObject, true);
-            this.graphObject.fullRedrawGraph();
+            this.graphObject.bruteForceRedrawGraph();
             this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
-            this.graphObject.pauseForceDirectedLayout(false);
         });
     };
     collapseNode = node => {
@@ -85,13 +84,13 @@ export default class Animations {
             itemsToCollapse.push(link.targetNode);
         });
         const lengthOfItems = itemsToCollapse.length - 1;
+
         this.graphObject.pauseForceDirectedLayout(true);
         itemsToCollapse.forEach((item, id) => {
             collapseNodeAnimation(item, lengthOfItems === id, () => {
                 node.status = 'collapsed';
-                this.graphObject.fullRedrawGraph();
+                this.graphObject.bruteForceRedrawGraph();
                 this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
-                this.graphObject.pauseForceDirectedLayout(false);
             });
         });
     };
