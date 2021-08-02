@@ -249,6 +249,107 @@ export default class GraphRenderer {
         this.layoutHandler.pauseForceLayoutAnimation(val);
     };
 
+    zoomToExtent = (waitTime = 0) => {
+        if (waitTime === 0) {
+            this.executeZoom();
+        } else {
+            setTimeout(this.executeZoom, waitTime);
+        }
+    };
+
+    executeZoom = () => {
+        // get the rendering dom elements
+        const bbox = this.graphRoot.node().getBoundingClientRect();
+        const svgBbox = this.svgRoot.node().getBoundingClientRect();
+        const graphTranslation = this.interactionHandler.graphInteractions.graphTranslation;
+        const zoomFactor = this.interactionHandler.graphInteractions.zoomFactor;
+
+        // get the graph coordinates
+        const bboxOffset = 20; // default radius of a node;
+        const topLeft = this.getWorldPosFromScreen(bbox.left - svgBbox.left, bbox.top - svgBbox.top, graphTranslation, zoomFactor);
+        const botRight = this.getWorldPosFromScreen(bbox.right - svgBbox.left, bbox.bottom - svgBbox.top, graphTranslation, zoomFactor);
+
+        // get svg size;
+        const w = svgBbox.width;
+        const h = svgBbox.height;
+
+        // reduce the graph viewport by bboxOffset ; >> used for scaleFactor computations
+        topLeft.x += bboxOffset;
+        topLeft.y -= bboxOffset;
+        botRight.x -= bboxOffset;
+        botRight.y += bboxOffset;
+
+        // gets the graph viewport size
+        const g_w = botRight.x - topLeft.x;
+        const g_h = botRight.y - topLeft.y;
+
+        // position in word coords where we want to zoom to;
+        const posX = 0.5 * (topLeft.x + botRight.x);
+        const posY = 0.5 * (topLeft.y + botRight.y);
+
+        // zoom factor calculations and fail safes;
+        let newZoomFactor;
+        //get the smaller one
+        const a = w / g_w;
+        const b = h / g_h;
+        if (a <= b) {
+            newZoomFactor = a;
+        } else {
+            newZoomFactor = b;
+        }
+        // fail saves
+        if (newZoomFactor > this.interactionHandler.graphInteractions.zoom.scaleExtent()[1]) {
+            newZoomFactor = this.interactionHandler.graphInteractions.zoom.scaleExtent()[1];
+        }
+        if (newZoomFactor < this.interactionHandler.graphInteractions.zoom.scaleExtent()[0]) {
+            newZoomFactor = this.interactionHandler.graphInteractions.zoom.scaleExtent()[0];
+        }
+
+        // center point of the svg element
+        const cx = 0.5 * w;
+        const cy = 0.5 * h;
+
+        const cp = this.getWorldPosFromScreen(cx, cy, graphTranslation, zoomFactor);
+
+        // apply Zooming
+        const sP = [cp.x, cp.y, h / zoomFactor];
+        const eP = [posX, posY, h / newZoomFactor];
+
+        // interpolation function
+        const pos_interpolation = d3.interpolateZoom(sP, eP);
+
+        let lenAnimation = pos_interpolation.duration;
+        if (lenAnimation > 2500) {
+            // fix duration to be max 2.5 sec
+            lenAnimation = 2500;
+        }
+        const that = this;
+        // apply the interpolation
+        that.graphRoot
+            .attr('transform', that.transform(sP, cx, cy, this))
+            .transition()
+            .duration(lenAnimation)
+            .attrTween('transform', function() {
+                return function(t) {
+                    return that.transform(pos_interpolation(t), cx, cy, that);
+                };
+            })
+            .each('end', function() {
+                if (that.interactionHandler.graphInteractions.zoom) {
+                    that.graphRoot.attr(
+                        'transform',
+                        'translate(' +
+                            that.interactionHandler.graphInteractions.graphTranslation +
+                            ')scale(' +
+                            that.interactionHandler.graphInteractions.zoomFactor +
+                            ')'
+                    );
+                    that.interactionHandler.graphInteractions.zoom.translate(that.interactionHandler.graphInteractions.graphTranslation);
+                    that.interactionHandler.graphInteractions.zoom.scale(that.interactionHandler.graphInteractions.zoomFactor);
+                }
+            });
+    };
+
     updateGraphSize = () => {
         const divNode = d3.select('#' + this.divRoot);
         if (divNode && this.svgRoot && this.layoutHandler && divNode.node()) {
@@ -524,5 +625,47 @@ export default class GraphRenderer {
             .attr('id', function(d) {
                 return d.id();
             });
+    }
+
+    /** Helper functions **/
+    getWorldPosFromScreen(x, y, translate, scale) {
+        // have to check if scale is array or value >> temp variable
+        const temp = scale[0];
+        let xn, yn;
+        if (temp) {
+            xn = (x - translate[0]) / temp;
+            yn = (y - translate[1]) / temp;
+        } else {
+            xn = (x - translate[0]) / scale;
+            yn = (y - translate[1]) / scale;
+        }
+        return { x: xn, y: yn };
+    }
+
+    getScreenCoords = (x, y) => {
+        return {
+            x: this.interactionHandler.graphTranslation[0] + x * this.interactionHandler.zoomFactor,
+            y: this.interactionHandler.graphTranslation[1] + y * this.interactionHandler.zoomFactor
+        };
+    };
+
+    transform(p, cx, cy, parent) {
+        if (parent) {
+            // one iteration step for the locate target animation
+            parent.interactionHandler.graphInteractions.zoomFactor = parent.svgRoot.node().getBoundingClientRect().height / p[2];
+            parent.interactionHandler.graphInteractions.graphTranslation = [
+                cx - p[0] * parent.interactionHandler.graphInteractions.zoomFactor,
+                cy - p[1] * parent.interactionHandler.graphInteractions.zoomFactor
+            ];
+            parent.interactionHandler.graphInteractions.zoom.translate(parent.interactionHandler.graphInteractions.graphTranslation);
+            parent.interactionHandler.graphInteractions.zoom.scale(parent.interactionHandler.graphInteractions.zoomFactor);
+            return (
+                'translate(' +
+                parent.interactionHandler.graphInteractions.graphTranslation +
+                ')scale(' +
+                parent.interactionHandler.graphInteractions.zoomFactor +
+                ')'
+            );
+        }
     }
 }

@@ -152,6 +152,7 @@ class CardGraphVis extends Component {
                         this.graph.createRenderingElements();
                         this.graph.drawRenderingPrimitives();
                         this.graph.setGraphInitialized(true);
+                        this.graph.zoomToExtent(400);
                         this.setState({ createdGraph: true });
                     });
                 }

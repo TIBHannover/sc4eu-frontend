@@ -251,6 +251,13 @@ class GraphVisUi extends Component {
                     >
                         Debug
                     </Button>
+                    <Button
+                        onClick={() => {
+                            this.graph.zoomToExtent();
+                        }}
+                    >
+                        ZoomTest
+                    </Button>
                 </div>
                 <SelectionSideBar style={{ position: 'absolute', backgroundColor: 'white' }} expanded={this.state.leftSideBarExpanded} width={350}>
                     <div style={{ position: 'relative', left: '345px' }}>

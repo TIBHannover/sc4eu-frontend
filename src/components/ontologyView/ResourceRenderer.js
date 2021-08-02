@@ -43,7 +43,8 @@ class ResourceRenderer extends Component {
     renderAllResources = () => {
         this.arrayOfRef = [];
         if (this.props.resources && this.props.resources.length > 0) {
-            this.cropped = this.props.resources.slice(0, 100);
+            const items = this.props.resources.filter(item => item.resourceURI !== 'http://www.w3.org/2000/01/rdf-schema#Literal');
+            this.cropped = items.slice(0, 100);
 
             const mappedResources = this.cropped.map(item => {
                 this.lookupList.push(
