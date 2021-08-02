@@ -3,9 +3,45 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getPrefixedVersion } from '../../mappers/helperFunctions';
 import { transformIdentifierToPrefixed, transformRelationToTTL } from '../../mappers/RelationToTTL';
-import { Button, Card, CardBody, Collapse, Popover, PopoverHeader, PopoverBody, CustomInput, Input } from 'reactstrap';
+import {
+    Button,
+    Card,
+    CardBody,
+    Collapse,
+    Popover,
+    PopoverHeader,
+    PopoverBody,
+    CustomInput,
+    Input,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Label,
+    Container,
+    Row,
+    Col,
+    Nav,
+    NavItem,
+    NavLink
+} from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight, faPlusCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { CSSTransition } from 'react-transition-group';
+import styled from 'styled-components';
+import { redux_editRelation } from '../../redux/actions/rrm_actions';
+
+const AnimationContainer = styled(CSSTransition)`
+    &.fadeIn-enter {
+        opacity: 0;
+    }
+
+    &.fadeIn-enter.fadeIn-enter-active {
+        opacity: 1;
+        transition: 1s opacity;
+    }
+`;
+
 class CardWidgetVis extends Component {
     constructor(props) {
         super(props);
@@ -18,6 +54,22 @@ class CardWidgetVis extends Component {
             checkedItems: new Map()
         };
         this.characteristics = ['Functional', 'Inverse functional', 'Transitive', 'Symmetric', 'Asymmetric', 'Reflexive', 'Irreflexive'];
+        this.annotationNames = [
+            'dc:description',
+            'dc:title',
+            'owl:backwardCompatibleWith',
+            'owl:deprecated',
+            'owl:incompatibleWith',
+            'owl:priorVersion',
+            'owl:versionInfo',
+            'rdfs:comment',
+            'rdfs:isDefinedBy',
+            'rdfs:label',
+            'rdfs:seeAlso'
+        ];
+
+        this.languages = ['en', 'de', 'fr', 'es', 'pt'];
+        this.types = ['owl:rational', 'rdf:PlainLiteral', 'rdf:XMLLiteral', 'rdfs:Literal']; //TODO add all types
         this.prefixList = this.props.rrModel.metaInformation.prefixList.longToShort;
         this.widgetRenderingIdentifier =
             'widgetRenderingIdentifier_' +
@@ -47,13 +99,14 @@ class CardWidgetVis extends Component {
         this.setState({ collapseDescription: !this.state.collapseDescription });
     };
 
-    addAnnotation = event => {
+    toggleAddAnnotation = event => {
         event.stopPropagation();
-    };
-
-    toggle = () => {
         this.setState({ popoverOpen: !this.state.popoverOpen });
     };
+
+    // toggle = () => {
+    //     this.setState({ popoverOpen: !this.state.popoverOpen });
+    // };
 
     renderRelationWidget = () => {
         const itemIdentifier = this.props.itemIdentifier;
@@ -68,14 +121,70 @@ class CardWidgetVis extends Component {
                         Annotations
                         <Icon
                             id="Popover1"
-                            onClick={this.addAnnotation}
+                            onClick={this.toggleAddAnnotation}
                             icon={faPlusCircle}
                             style={{ float: 'right', marginTop: '3px', marginRight: '5px', color: 'white' }}
                         />
-                        <Popover placement="bottom" isOpen={this.state.popoverOpen} target="Popover1" toggle={this.toggle}>
-                            <PopoverHeader>Add Annotation</PopoverHeader>
-                            <PopoverBody> (In Progress) annotation to be selected and added here</PopoverBody>
-                        </Popover>
+                        <Modal size="lg" isOpen={this.state.popoverOpen} toggle={this.toggleAddAnnotation} target="Popover1">
+                            <ModalHeader toggle={this.toggleAddAnnotation}>Add Annotation</ModalHeader>
+                            <ModalBody style={{ padding: '0' }}>
+                                <Container>
+                                    <Row>
+                                        <Col xs="6" style={{ height: '100%', maxWidth: '30%', border: '1px gray', padding: '0 0 0 0' }}>
+                                            <Nav tabs vertical pills style={{ overflow: 'hidden' }}>
+                                                {this.annotationNames.map(item => {
+                                                    return (
+                                                        <NavItem key={'NavKey_' + item}>
+                                                            <NavLink style={{ padding: '0 1rem', font: 'black' }}>{item}</NavLink>
+                                                        </NavItem>
+                                                    );
+                                                })}
+                                            </Nav>
+                                            {/*<ListGroup style={{ overflow: 'hidden' }}>*/}
+                                            {/*    {this.annotationNames.map(item => (*/}
+                                            {/*        <ListGroupItem key={'ListKey_' + item} style={{ fontSize: '14px', padding: '0.1rem 0 0 0.3rem' }}>*/}
+                                            {/*            {item}*/}
+                                            {/*        </ListGroupItem>*/}
+                                            {/*    ))}*/}
+                                            {/*</ListGroup>*/}
+                                        </Col>
+                                        <Col style={{ height: '100%', border: '1px gray' }}>
+                                            <Row style={{ height: '90%', width: '100%' }}>
+                                                <Input type="textarea" name="text" id="exampleText" />
+                                            </Row>
+                                            <Row style={{ height: '10%', position: 'absolute', bottom: '0' }}>
+                                                <div style={{ float: 'left' }}>
+                                                    <Label>Type</Label>
+                                                    <Input type="select" id="select">
+                                                        <option key={'types_none'}>{''}</option>
+                                                        {this.types.map(item => {
+                                                            return <option key={'typesKey_' + item}>{item}</option>;
+                                                        })}
+                                                    </Input>
+                                                </div>
+                                                <div style={{ float: 'right' }}>
+                                                    <Label>Lang</Label>
+                                                    <Input type="select" id="select">
+                                                        <option key={'languageKey_none'}>{''}</option>
+                                                        {this.languages.map(item => {
+                                                            return <option key={'languageKey_' + item}>{item}</option>;
+                                                        })}
+                                                    </Input>
+                                                </div>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+                                </Container>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="primary" onClick={this.toggleAddAnnotation}>
+                                    OK
+                                </Button>{' '}
+                                <Button color="secondary" onClick={this.toggleAddAnnotation}>
+                                    Cancel
+                                </Button>
+                            </ModalFooter>
+                        </Modal>
                     </Button>
                     <Collapse isOpen={!this.state.collapseAnnotations}>
                         <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
@@ -109,9 +218,31 @@ class CardWidgetVis extends Component {
         );
     };
 
-    deleteItem = (event, item) => {
+    deleteAnnotationItem = (event, item) => {
         event.stopPropagation();
-        console.log('To be deleted ', item);
+        const currentRelationContext = this.props.itemContext;
+
+        const currentAnnotations = JSON.parse(JSON.stringify(currentRelationContext.annotations));
+
+        Object.keys(currentAnnotations).map(annotationKey => {
+            if (annotationKey === item.prefix) {
+                //now we need to check for each language
+                Object.keys(currentAnnotations[annotationKey]).map(languageKey => {
+                    const listOfTypes = currentAnnotations[annotationKey][languageKey];
+                    if (listOfTypes.length == 1) {
+                        delete currentAnnotations[annotationKey][languageKey];
+                        //the parent may have become an empty object, in that case delete that too.
+                        if (Object.keys(currentAnnotations[annotationKey]).length == 0) {
+                            delete currentAnnotations[annotationKey];
+                        }
+                    } else {
+                        listOfTypes.splice(listOfTypes.indexOf(item.type), 1);
+                    }
+                });
+            }
+        });
+        const newRelation = { ...currentRelationContext, annotations: currentAnnotations };
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
     };
 
     renderAnnotations = itemOfInterest => {
@@ -140,8 +271,8 @@ class CardWidgetVis extends Component {
                 >
                     <Icon
                         icon={faTimesCircle}
-                        onClick={e => {
-                            this.deleteItem(e, item);
+                        onClick={event => {
+                            this.deleteAnnotationItem(event, item);
                         }}
                         style={{ marginRight: '5px', float: 'right' }}
                     />
@@ -167,7 +298,6 @@ class CardWidgetVis extends Component {
 
     renderCharacteristics = itemOfInterest => {
         const typeOfRelation = itemOfInterest.type[0].split(':')[1];
-        console.log(typeOfRelation);
         if (typeOfRelation === 'DatatypeProperty') {
             return (
                 <div>
@@ -313,7 +443,8 @@ CardWidgetVis.propTypes = {
     itemType: PropTypes.string.isRequired,
     rrModel: PropTypes.object.isRequired,
     itemContext: PropTypes.object.isRequired,
-    isExpanded: PropTypes.bool.isRequired
+    isExpanded: PropTypes.bool.isRequired,
+    redux_editRelation: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
@@ -322,6 +453,8 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+    redux_editRelation: data => dispatch(redux_editRelation(data))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardWidgetVis);
