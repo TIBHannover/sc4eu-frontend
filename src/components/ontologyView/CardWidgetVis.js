@@ -438,6 +438,34 @@ class CardWidgetVis extends Component {
         event.target.style.color = 'gray';
     };
 
+    deleteDomain = (event, domainItem) => {
+        const currentRelationContext = this.props.itemContext;
+        const currentDomainRangePairs = JSON.parse(JSON.stringify(currentRelationContext.domainRangePairs));
+
+        currentDomainRangePairs.forEach(domainRangePair => {
+            const prefixedDomain = getPrefixedVersion(domainRangePair.domain, this.prefixList);
+            if (prefixedDomain === domainItem) {
+                domainRangePair.domain = 'http://www.w3.org/2002/07/owl#Thing'; //TODO use shortToLong here instead
+            }
+        });
+        const newRelation = { ...currentRelationContext, domainRangePairs: currentDomainRangePairs };
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
+    };
+
+    deleteRange = (event, rangeItem) => {
+        const currentRelationContext = this.props.itemContext;
+        const currentDomainRangePairs = JSON.parse(JSON.stringify(currentRelationContext.domainRangePairs));
+
+        currentDomainRangePairs.forEach(domainRangePair => {
+            const prefixedRange = getPrefixedVersion(domainRangePair.range, this.prefixList);
+            if (prefixedRange === rangeItem) {
+                domainRangePair.range = 'http://www.w3.org/2002/07/owl#Thing'; //TODO use shortToLong here instead
+            }
+        });
+        const newRelation = { ...currentRelationContext, domainRangePairs: currentDomainRangePairs };
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
+    };
+
     renderDescription = itemOfInterest => {
         let domains = [];
         let ranges = [];
@@ -472,9 +500,7 @@ class CardWidgetVis extends Component {
                         {domain}
                         <Icon
                             icon={faTimesCircle}
-                            onClick={e => {
-                                console.log('Delete Domain');
-                            }}
+                            onClick={event => this.deleteDomain(event, domain)}
                             style={{ marginRight: '5px', float: 'right' }}
                         />
                         <hr style={{ marginTop: 0 }} />
@@ -495,13 +521,7 @@ class CardWidgetVis extends Component {
                 {ranges.map(range => (
                     <div key={'domainKey_' + range} style={{ marginLeft: '1rem' }}>
                         {range}
-                        <Icon
-                            icon={faTimesCircle}
-                            onClick={e => {
-                                console.log('Delete Range');
-                            }}
-                            style={{ marginRight: '5px', float: 'right' }}
-                        />
+                        <Icon icon={faTimesCircle} onClick={event => this.deleteRange(event, range)} style={{ marginRight: '5px', float: 'right' }} />
                         <hr style={{ marginTop: 0 }} />
                     </div>
                 ))}
