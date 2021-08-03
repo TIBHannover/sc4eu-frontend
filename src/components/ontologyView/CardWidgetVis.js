@@ -51,6 +51,10 @@ class CardWidgetVis extends Component {
             collapseDescription: true,
             popoverOpen: false,
             popoverCharacteristicsOpen: false,
+            selectedPrefix: '',
+            annotationType: '',
+            annotationLang: '',
+            modelTextareaValue: '',
             checkedItems: new Map()
         };
         this.characteristics = ['Functional', 'Inverse functional', 'Transitive', 'Symmetric', 'Asymmetric', 'Reflexive', 'Irreflexive'];
@@ -104,9 +108,38 @@ class CardWidgetVis extends Component {
         this.setState({ popoverOpen: !this.state.popoverOpen });
     };
 
-    // toggle = () => {
-    //     this.setState({ popoverOpen: !this.state.popoverOpen });
-    // };
+    handleTextareaChange = event => {
+        this.setState({ modelTextareaValue: event.target.value });
+    };
+
+    addAnnotation = event => {
+        const annotationPrefix = this.state.selectedPrefix;
+        const annotationLang = this.state.annotationLang === '' ? 'default' : this.state.annotationLang;
+        const annotationValue = this.state.modelTextareaValue;
+
+        const currentRelationContext = this.props.itemContext;
+
+        let currentAnnotations = JSON.parse(JSON.stringify(currentRelationContext.annotations));
+
+        if (currentAnnotations[annotationPrefix] !== undefined) {
+            if (currentAnnotations[annotationPrefix][annotationLang] !== undefined) {
+                currentAnnotations[annotationPrefix][annotationLang].push(annotationValue);
+            } else {
+                //add Language as well as value
+                const obj = { [annotationLang]: [annotationValue] };
+                currentAnnotations[annotationPrefix] = { ...currentAnnotations[annotationPrefix], ...obj };
+            }
+        } else {
+            const obj = { [annotationPrefix]: { [annotationLang]: [annotationValue] } };
+            currentAnnotations = { ...currentAnnotations, ...obj };
+        }
+
+        const newRelation = { ...currentRelationContext, annotations: currentAnnotations };
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
+
+        event.stopPropagation();
+        this.setState({ popoverOpen: !this.state.popoverOpen, selectedPrefix: '', annotationType: '', annotationLang: '', modelTextareaValue: '' });
+    };
 
     renderRelationWidget = () => {
         const itemIdentifier = this.props.itemIdentifier;
@@ -125,17 +158,32 @@ class CardWidgetVis extends Component {
                             icon={faPlusCircle}
                             style={{ float: 'right', marginTop: '3px', marginRight: '5px', color: 'white' }}
                         />
-                        <Modal size="lg" isOpen={this.state.popoverOpen} toggle={this.toggleAddAnnotation} target="Popover1">
-                            <ModalHeader toggle={this.toggleAddAnnotation}>Add Annotation</ModalHeader>
-                            <ModalBody style={{ padding: '0' }}>
-                                <Container>
-                                    <Row>
-                                        <Col xs="6" style={{ height: '100%', maxWidth: '30%', border: '1px gray', padding: '0 0 0 0' }}>
+                        <Modal
+                            style={{ height: '100%' }}
+                            size="lg"
+                            isOpen={this.state.popoverOpen}
+                            toggle={this.toggleAddAnnotation}
+                            target="Popover1"
+                        >
+                            <ModalHeader toggle={this.toggleAddAnnotation} style={{ marginTop: '1px', marginBottom: '0px', padding: '0rem 0rem' }}>
+                                <label style={{ marginLeft: '5px' }}>Add Annotation</label>
+                            </ModalHeader>
+                            <ModalBody style={{ padding: '0', height: '100%' }}>
+                                <Container style={{ paddingLeft: '0px', paddingRight: '0px', height: '100%' }}>
+                                    <Row style={{ margin: '0 0 0 0' }}>
+                                        <Col xs="6" style={{ height: '100%', maxWidth: '30%', padding: '0 0 0 0' }}>
                                             <Nav tabs vertical pills style={{ overflow: 'hidden' }}>
                                                 {this.annotationNames.map(item => {
                                                     return (
                                                         <NavItem key={'NavKey_' + item}>
-                                                            <NavLink style={{ padding: '0 1rem', font: 'black' }}>{item}</NavLink>
+                                                            <NavLink
+                                                                onClick={() => {
+                                                                    this.setState({ selectedPrefix: item });
+                                                                }}
+                                                                style={{ padding: '0 1rem', color: 'black', fontSize: '14px' }}
+                                                            >
+                                                                {item}
+                                                            </NavLink>
                                                         </NavItem>
                                                     );
                                                 })}
@@ -148,23 +196,53 @@ class CardWidgetVis extends Component {
                                             {/*    ))}*/}
                                             {/*</ListGroup>*/}
                                         </Col>
-                                        <Col style={{ height: '100%', border: '1px gray' }}>
-                                            <Row style={{ height: '90%', width: '100%' }}>
-                                                <Input type="textarea" name="text" id="exampleText" />
+                                        <Col
+                                            style={{
+                                                maxWidth: '70%',
+                                                maxHeight: '100%',
+                                                border: '1px gray',
+                                                padding: '0 0 0 0'
+                                            }}
+                                        >
+                                            <Row style={{ height: '85%', margin: '0 0 0 0' }}>
+                                                <Label style={{ marginTop: '-30px' }}>{this.state.selectedPrefix}</Label>
+                                                <Input
+                                                    style={{ height: '100%', padding: '0 0 0 0' }}
+                                                    value={this.state.modelTextareaValue}
+                                                    autoFocus={true}
+                                                    onChange={this.handleTextareaChange}
+                                                    type="textarea"
+                                                    name="text"
+                                                    id="exampleText"
+                                                />
                                             </Row>
-                                            <Row style={{ height: '10%', position: 'absolute', bottom: '0' }}>
-                                                <div style={{ float: 'left' }}>
-                                                    <Label>Type</Label>
-                                                    <Input type="select" id="select">
+                                            <Row style={{ marginLeft: '0px', height: '15%', bottom: '0px' }}>
+                                                <Label style={{ fontSize: '14px', marginTop: '5px' }}>Type</Label>
+                                                <div style={{ float: 'left', marginTop: '1px', paddingLeft: '5px', paddingRight: '15px' }}>
+                                                    <Input
+                                                        style={{ fontSize: '14px' }}
+                                                        onChange={event => {
+                                                            this.setState({ annotationType: event.target.value });
+                                                        }}
+                                                        type="select"
+                                                        id="select"
+                                                    >
                                                         <option key={'types_none'}>{''}</option>
                                                         {this.types.map(item => {
                                                             return <option key={'typesKey_' + item}>{item}</option>;
                                                         })}
                                                     </Input>
                                                 </div>
-                                                <div style={{ float: 'right' }}>
-                                                    <Label>Lang</Label>
-                                                    <Input type="select" id="select">
+                                                <Label style={{ fontSize: '14px', marginTop: '5px' }}>Lang</Label>
+                                                <div style={{ float: 'right', marginTop: '1px', paddingLeft: '5px' }}>
+                                                    <Input
+                                                        style={{ fontSize: '14px' }}
+                                                        onChange={event => {
+                                                            this.setState({ annotationLang: event.target.value });
+                                                        }}
+                                                        type="select"
+                                                        id="select"
+                                                    >
                                                         <option key={'languageKey_none'}>{''}</option>
                                                         {this.languages.map(item => {
                                                             return <option key={'languageKey_' + item}>{item}</option>;
@@ -176,8 +254,8 @@ class CardWidgetVis extends Component {
                                     </Row>
                                 </Container>
                             </ModalBody>
-                            <ModalFooter>
-                                <Button color="primary" onClick={this.toggleAddAnnotation}>
+                            <ModalFooter style={{ padding: '0rem' }}>
+                                <Button color="primary" onClick={this.addAnnotation}>
                                     OK
                                 </Button>{' '}
                                 <Button color="secondary" onClick={this.toggleAddAnnotation}>
