@@ -113,6 +113,10 @@ class CardWidgetVis extends Component {
     };
 
     addAnnotation = event => {
+        if (this.state.selectedPrefix === '') {
+            alert('please select prefix');
+            return;
+        }
         const annotationPrefix = this.state.selectedPrefix;
         const annotationLang = this.state.annotationLang === '' ? 'default' : this.state.annotationLang;
         const annotationValue = this.state.modelTextareaValue;
