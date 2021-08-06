@@ -668,4 +668,28 @@ export default class GraphRenderer {
             );
         }
     }
+
+    updateColorOfNodesWithPrefix = (uriPrefix, color) => {
+        this.nodes.forEach(node => {
+            if (node.__semanticReference.__nodeLinkIdentifier.startsWith(uriPrefix)) {
+                const cfg = node.renderingConfig();
+                cfg.style.bgColor = color;
+                node.redraw();
+                this.interactionHandler.nodeInteractions.reapplyNodeInteractions(node);
+            }
+        });
+    };
+    updateColorOfObjectPropsWithPrefix = (uriPrefix, color) => {
+        this.links.forEach(link => {
+            if (link.__semanticReference && link.__semanticReference.__nodeLinkIdentifier) {
+                const nlId = link.__semanticReference.__nodeLinkIdentifier;
+                if (link.__semanticReference.__linkType && link.__semanticReference.__linkType[0] === 'owl:ObjectProperty') {
+                    if (nlId.startsWith(uriPrefix)) {
+                        link.renderingConfig().style.propertyNode.style.bgColor = color;
+                        link.redraw();
+                    }
+                }
+            }
+        });
+    };
 }

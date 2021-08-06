@@ -253,6 +253,7 @@ export default class LinkPrimitive extends BasePrimitive {
     redraw = () => {
         this.removeAllRenderedElementsFromParent();
         if (this.groupRoot && this.propertyContainer && this.arrowContainer) {
+            this.render(this.groupRoot, this.propertyContainer, this.arrowContainer);
         } else {
             console.log('FAILED IN REDRAWING THE LINK ', this.displayName());
         }

@@ -57,7 +57,7 @@ class GraphVisUi extends Component {
                 node_mouseSingleClick: true,
                 node_mouseDoubleClick: true,
                 node_hasNodeSelection: true,
-                graphBgColor: '#eeeeee',
+                graphBgColor: '#eeeeee', // could be customizable
                 configSelected: 'Default',
                 link_mouseDrag: true,
                 link_mouseHover: true
@@ -112,7 +112,124 @@ class GraphVisUi extends Component {
         this.setState({ selectedItem: item });
     };
 
+    // helper:
+    getPrefixOfURI = uri => {
+        const lastIndexOfHash = uri.lastIndexOf('#');
+        const lastIndexOfSlash = uri.lastIndexOf('/');
+        let prefixUri = '';
+        if (lastIndexOfHash > lastIndexOfSlash) {
+            prefixUri = uri.substring(0, lastIndexOfHash + 1);
+        } else {
+            prefixUri = uri.substring(0, lastIndexOfSlash + 1);
+        }
+        return prefixUri;
+    };
+
     /** RENDERING FUNCTIONS **/
+
+    renderGlobalCustomizationOptions = () => {
+        // lets try for nodes first;
+        const usedPrefixesNodes = [];
+        const usedPrefixesOProps = [];
+        this.props.resources.forEach(resource => {
+            const res = this.getPrefixOfURI(resource.resourceURI);
+            if (usedPrefixesNodes.indexOf(res) === -1) {
+                usedPrefixesNodes.push(res);
+            }
+        });
+        this.props.relations
+            .filter(item => item.type[0] === 'owl:ObjectProperty')
+            .forEach(relation => {
+                const res = this.getPrefixOfURI(relation.resourceURI);
+                if (usedPrefixesOProps.indexOf(res) === -1) {
+                    usedPrefixesOProps.push(res);
+                }
+            });
+        // TODO: improve the default colors based on types:
+        const confNodes = this.graph.renderingConfig.getNodeConfigFromType('owl:class');
+        let defaultValue = '#000';
+        if (confNodes) {
+            defaultValue = confNodes.style.bgColor;
+        }
+        if (!this.updateColorValuesNodes) {
+            this.updateColorValuesNodes = {};
+            usedPrefixesNodes.forEach(item => {
+                this.updateColorValuesNodes[item] = defaultValue;
+            });
+        }
+
+        if (!this.updateColorValuesOProps) {
+            this.updateColorValuesOProps = {};
+            usedPrefixesOProps.forEach(item => {
+                this.updateColorValuesOProps[item] = defaultValue;
+            });
+        }
+
+        const colorOptionsNodes = usedPrefixesNodes.map((item, index) => {
+            let prefixLabel = '';
+            if (this.props.prefixList.longToShort[item]) {
+                prefixLabel = this.props.prefixList.longToShort[item];
+            } else {
+                prefixLabel = item;
+            }
+
+            // fetch default color using owl:class selector from a rendering config;
+
+            return (
+                <div style={{ display: 'flex', marginBottom: '5px' }} key={'__key_colorSelector_' + index}>
+                    <Input
+                        style={{ width: '50px', minWidth: '50px', height: '25px', marginRight: '5px' }}
+                        type="color"
+                        onChange={e => {
+                            this.graph.updateColorOfNodesWithPrefix(item, e.target.value);
+                            this.updateColorValuesNodes[item] = e.target.value;
+                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                        }}
+                        value={this.updateColorValuesNodes[item]}
+                    />
+                    {prefixLabel}:
+                </div>
+            );
+        });
+        const colorOptionsObjectProps = usedPrefixesOProps.map((item, index) => {
+            let prefixLabel = '';
+            if (this.props.prefixList.longToShort[item]) {
+                prefixLabel = this.props.prefixList.longToShort[item];
+            } else {
+                prefixLabel = item;
+            }
+
+            // fetch default color using owl:class selector from a rendering config;
+
+            return (
+                <div style={{ display: 'flex', marginBottom: '5px' }} key={'__key_colorSelector_' + index}>
+                    <Input
+                        style={{ width: '50px', minWidth: '50px', height: '25px', marginRight: '5px' }}
+                        type="color"
+                        onChange={e => {
+                            this.graph.updateColorOfObjectPropsWithPrefix(item, e.target.value);
+                            this.updateColorValuesOProps[item] = e.target.value;
+                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                        }}
+                        value={this.updateColorValuesOProps[item]}
+                        onBlur={() => {
+                            this.graph.bruteForceRedrawGraph();
+                        }}
+                    />
+                    {prefixLabel}:
+                </div>
+            );
+        });
+
+        return (
+            <div>
+                Color nodes by prefix:
+                <div>{colorOptionsNodes}</div>
+                Color object properties by prefix:
+                <div>{colorOptionsObjectProps}</div>
+            </div>
+        );
+    };
 
     createDropDownForNotations = () => {
         return (
@@ -298,7 +415,7 @@ class GraphVisUi extends Component {
                                 {this.state.rightSideBarExpanded ? '>' : '<'}
                             </Button>
                         </div>
-                        <div style={{ position: 'relative', top: '-40px', padding: '5px' }}>HELLO</div>
+                        <div style={{ position: 'relative', top: '-40px', padding: '5px' }}>{this.renderGlobalCustomizationOptions()}</div>
                     </SelectionRightSidebar>
 
                     <Container
@@ -324,6 +441,7 @@ const mapStateToProps = state => {
     return {
         resources: state.ResourceRelationModelReducer.resources,
         relations: state.ResourceRelationModelReducer.relations,
+        prefixList: state.ResourceRelationModelReducer.metaInformation.prefixList,
         visualNotation: state.globalUIReducer.ui_visual_notation_selector
     };
 };
@@ -331,6 +449,7 @@ const mapStateToProps = state => {
 GraphVisUi.propTypes = {
     resources: PropTypes.array.isRequired,
     relations: PropTypes.array.isRequired,
+    prefixList: PropTypes.object.isRequired,
     DonatelloGraph: PropTypes.object.isRequired,
     visualNotation: PropTypes.string.isRequired,
     selectVisualNotation: PropTypes.func.isRequired
