@@ -18,7 +18,7 @@ export default class RightSideBar extends Component {
     }
 
     componentDidMount() {
-        document.body.style.overflowX = 'hidden'; // WHAT????
+        document.body.style.overflowX = 'hidden';
     }
 
     componentDidUpdate = (prevProps, prevState) => {

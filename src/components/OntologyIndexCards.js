@@ -26,7 +26,11 @@ class OntologyIndexCards extends Component {
     }
 
     render() {
-        return <div className="pl-1 pr-1">{this.renderOntologyCards()}</div>;
+        return (
+            <div className="pl-1 pr-1" style={{ overflow: 'auto' }}>
+                {this.renderOntologyCards()}
+            </div>
+        );
     }
 }
 

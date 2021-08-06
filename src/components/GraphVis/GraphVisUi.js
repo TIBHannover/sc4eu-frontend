@@ -35,12 +35,14 @@ class GraphVisUi extends Component {
             notationSelectionOpen: false,
             layoutPlay: true,
             leftSideBarExpanded: false,
+            rightSideBarExpanded: false,
             selectedItem: null,
             updateFlipFlop: false
         };
     }
 
     componentDidMount() {
+        document.body.style.overflowX = 'hidden';
         // add resize event
         window.addEventListener('resize', this.updateDimensions);
         this.updateDimensions();
@@ -259,28 +261,60 @@ class GraphVisUi extends Component {
                         ZoomTest
                     </Button>
                 </div>
-                <SelectionSideBar style={{ position: 'absolute', backgroundColor: 'white' }} expanded={this.state.leftSideBarExpanded} width={350}>
-                    <div style={{ position: 'relative', left: '345px' }}>
-                        <Button
-                            onClick={() => {
-                                this.setState({ leftSideBarExpanded: !this.state.leftSideBarExpanded });
-                            }}
-                        >
-                            {this.state.leftSideBarExpanded ? '<' : '>'}
-                        </Button>
-                    </div>
-                    <div style={{ position: 'relative', top: '-40px', padding: '5px' }}>
-                        <h3>Customization Options</h3>
-                        <div>Selected Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
-                        {this.state.selectedItem && this.renderCustomizationOptions()}
-                    </div>
-                </SelectionSideBar>
-                <Container
-                    id="donatello_parent_container"
-                    style={{ marginTop: '-5px', maxWidth: '100%', height: 'calc(100vh - 85px)', backgroundColor: '#eeeeee', padding: 0 }}
-                >
-                    <div id="donatello_rendering_div" style={{ height: '100%', overflow: 'auto' }} />
-                </Container>
+
+                <div id="MainRenderingContainer">
+                    <SelectionSideBar
+                        style={{ position: 'absolute', backgroundColor: 'white' }}
+                        expanded={this.state.leftSideBarExpanded}
+                        width={350}
+                    >
+                        <div style={{ position: 'relative', left: '345px' }}>
+                            <Button
+                                onClick={() => {
+                                    this.setState({ leftSideBarExpanded: !this.state.leftSideBarExpanded });
+                                }}
+                            >
+                                {this.state.leftSideBarExpanded ? '<' : '>'}
+                            </Button>
+                        </div>
+                        <div style={{ position: 'relative', top: '-40px', padding: '5px' }}>
+                            <h3>Customization Options</h3>
+                            <div>Selected Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
+                            {this.state.selectedItem && this.renderCustomizationOptions()}
+                        </div>
+                    </SelectionSideBar>
+
+                    <SelectionRightSidebar
+                        style={{ position: 'absolute', backgroundColor: 'white' }}
+                        expanded={this.state.rightSideBarExpanded}
+                        width={350}
+                    >
+                        <div style={{ position: 'relative', right: '35px' }}>
+                            <Button
+                                onClick={() => {
+                                    this.setState({ rightSideBarExpanded: !this.state.rightSideBarExpanded });
+                                }}
+                            >
+                                {this.state.rightSideBarExpanded ? '>' : '<'}
+                            </Button>
+                        </div>
+                        <div style={{ position: 'relative', top: '-40px', padding: '5px' }}>HELLO</div>
+                    </SelectionRightSidebar>
+
+                    <Container
+                        id="donatello_parent_container"
+                        style={{
+                            marginTop: '-5px',
+                            maxWidth: '100%',
+                            height: 'calc(100vh - 85px)',
+                            backgroundColor: '#eeeeee',
+                            padding: 0,
+                            overflow: 'hidden'
+                        }}
+                    >
+                        <div id="donatello_rendering_div" style={{ height: '100%', overflow: 'hidden' }} />
+                    </Container>
+                </div>
             </div>
         );
     }
@@ -318,6 +352,18 @@ const expandContentContainerAnimation = ({ expanded, width }) => {
   }
 `;
 };
+
+const expandContentContainerAnimationRight = ({ expanded, width }) => {
+    return keyframes`
+  from {
+    right: ${expanded ? -width : 0}px;
+  }
+  to {
+    right: ${expanded ? 0 : -width}px;
+   
+  }
+`;
+};
 export const SelectionSideBar = styled.div`
     background-color: red;
     border: 1px solid black;
@@ -341,4 +387,28 @@ export const SelectionSideBar = styled.div`
     animation-duration: 400ms;
     // opacity: 0.5;
     left: ${props => (props.expanded ? 0 : -props.width)}px;
+`;
+export const SelectionRightSidebar = styled.div`
+    background-color: red;
+    border: 1px solid black;
+    color: black;
+    width: 350px;
+    height: calc(100% - 90px);
+    background: white;
+    :focus {
+        outline: none;
+    }
+    ::-moz-focus-inner {
+        border: 0;
+    }
+    word-break: none;
+    white-space: nowrap;
+
+    border-bottom: 1px solid black;
+    padding: 2px;
+    position: relative;
+    animation-name: ${expandContentContainerAnimationRight};
+    animation-duration: 400ms;
+    // opacity: 0.5;
+    right: ${props => (props.expanded ? 0 : -props.width)}px;
 `;
