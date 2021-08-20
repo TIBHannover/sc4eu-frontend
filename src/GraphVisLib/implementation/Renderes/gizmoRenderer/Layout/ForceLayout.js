@@ -34,6 +34,7 @@ export default class ForceLayout extends BaseLayoutComponent {
         this.force.alpha(val);
     };
     resumeForce() {
+        this.forceLayoutPaused = false;
         if (this.force) {
             this.force.resume();
         }
@@ -53,7 +54,7 @@ export default class ForceLayout extends BaseLayoutComponent {
         }
     }
 
-    initializeLayoutEngine() {
+    initializeLayoutEngine(debug = false) {
         this.updateLayoutSize();
         this.renderedNodes = this.graph.nodes;
         this.renderedLinks = this.graph.links;
@@ -61,12 +62,11 @@ export default class ForceLayout extends BaseLayoutComponent {
         if (this.force) {
             this.force.stop();
         }
-        this.createForceElements();
+        this.createForceElements(debug);
         this.force.start();
         this.force.stop();
         if (this.forceIsInitialized) {
             this.force.alpha(0.1);
-            console.log(this.force.alpha());
         }
         this.forceIsInitialized = true;
     }
@@ -82,7 +82,7 @@ export default class ForceLayout extends BaseLayoutComponent {
         this.layoutSize[1] = bb.height;
     }
 
-    recalculatePositions = () => {
+    recalculatePositions = (debug = false) => {
         this.renderedNodes.forEach(node => {
             node.updateRenderingPosition();
         });
@@ -90,15 +90,19 @@ export default class ForceLayout extends BaseLayoutComponent {
             link.updateRenderingPosition();
         });
 
-        // this.graph.f_renderedNodes.each(function(item) {
-        //     // console.log(item);
-        //     d3.select(this)
-        //         .selectAll('circle')
-        //         .attr('transform', 'translate(' + item.x + ',' + item.y + ')');
-        // });
+        // todo : make this flag based enabled
+        if (this.graph.f_renderedNodes) {
+            // if (debug) {
+            this.graph.f_renderedNodes.each(function(item) {
+                d3.select(this)
+                    .selectAll('circle')
+                    .attr('transform', 'translate(' + item.x + ',' + item.y + ')');
+            });
+            // }
+        }
     };
 
-    createForceElements = () => {
+    createForceElements = debug => {
         const that = this;
         if (this.force === undefined) {
             this.force = d3.layout.force();
@@ -119,6 +123,9 @@ export default class ForceLayout extends BaseLayoutComponent {
                 this.forceLinks = this.forceLinks.concat(this.renderedLinks[i].getForceLink());
                 this.forceNodes = this.forceNodes.concat(this.renderedLinks[i].getForceNode());
             }
+            if (this.renderedLinks[i].__isHiddenML && this.renderedLinks[i].visible() === false) {
+                this.forceLinks = this.forceLinks.concat(this.renderedLinks[i].getForceLink());
+            }
         }
 
         this.force.nodes([]);
@@ -126,14 +133,14 @@ export default class ForceLayout extends BaseLayoutComponent {
         this.force.nodes(this.forceNodes);
         this.force.links(this.forceLinks);
 
-        console.log('created force nodes and links');
-        console.log('number of nodes', this.force.nodes());
-        console.log('number of links', this.force.links());
-        this.graph.drawForceNodes(this.forceNodes);
-        console.log(this.force);
+        if (debug) {
+            this.graph.drawForceNodes(this.forceNodes);
+        }
 
+        // todo: this is a hard-coded random init
         this.forceNodes.forEach(node => {
             node.layoutHandlerReference = this;
+            //
             if (node.x === 0) {
                 node.x = Math.random() * this.layoutSize[0];
             }
@@ -148,11 +155,7 @@ export default class ForceLayout extends BaseLayoutComponent {
 
         this.distanceValue = 400;
         this.force
-            .charge(function(/*element*/) {
-                // element can have charge value
-                // here constant
-                return -400;
-            })
+            .charge(this.computeComputeCharge)
             .linkDistance(this.computeLinkDistance) // just make sure that our links are not to long.
             .linkStrength(1.5)
             .size([that.layoutSize[0], that.layoutSize[1]])
@@ -172,5 +175,18 @@ export default class ForceLayout extends BaseLayoutComponent {
         if (link.type === 'mlPart') {
             return 200;
         }
+        if (link.type === 'hiddenML') {
+            return 400;
+        }
+    }
+
+    computeComputeCharge(item) {
+        if (item.__internalObjectType === 'node') {
+            return -400;
+        }
+        if (item.__internalObjectType === 'propertyNode') {
+            return -800;
+        }
+        return -1000;
     }
 } // end of class definition

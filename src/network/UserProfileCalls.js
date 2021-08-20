@@ -3,7 +3,6 @@ import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } 
 import { submitGetRequest, submitPutRequest } from './networkRequests';
 
 export const getUserProfile = payload => {
-    console.log('PayLoad? ', payload);
     return submitGetRequest(`${URL_GET_USER_PROFILE}/?id=${payload.user}`, {}, false);
 };
 

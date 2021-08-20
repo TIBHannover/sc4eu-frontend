@@ -197,7 +197,6 @@ module.exports = {
                     if (token) {
                         const userId = token.userId;
                         const data = JSON.stringify({ username: req.body.username });
-                        console.log('data:', data);
 
                         const options = {
                             uri: `${process.env.BACKEND_SERVER_URL}/users/viewProfile/?userId=${userId}&token=${token.bToken}`,
@@ -210,9 +209,6 @@ module.exports = {
                         request(options, function(error, response) {
                             if (response && response.body) {
                                 const result = JSON.parse(response.body);
-                                console.log('-----------------');
-                                console.log(result);
-                                console.log('-----------------');
                                 if (result) {
                                     res.json(response);
                                 } else {
@@ -249,7 +245,6 @@ module.exports = {
                         request(options, function(error, response) {
                             if (response && response.body) {
                                 const result = JSON.parse(response.body);
-                                console.log(result);
                                 if (result) {
                                     res.json(response);
                                 } else {

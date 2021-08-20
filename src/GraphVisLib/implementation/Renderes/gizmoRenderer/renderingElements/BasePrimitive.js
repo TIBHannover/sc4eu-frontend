@@ -6,8 +6,16 @@ export default class BasePrimitive {
         this.__drawTools = undefined;
 
         this.__visible = true;
-
+        this.itemIsSelected = false;
         this.groupRoot = undefined;
+        this.__semanticReference = {};
+    }
+
+    semanticReference(ref) {
+        if (!arguments.length) {
+            return this.__semanticReference;
+        }
+        this.__semanticReference = ref;
     }
 
     visible(visible) {
@@ -51,6 +59,11 @@ export default class BasePrimitive {
         console.log('This is abstract function!');
     }
 
+    resetRenderingData = () => {
+        // clear all the data; which is required for rendering elements;
+        // ABSTRACT FUNCTION
+    };
+
     integrateNewDepiction = depiction => {
         this.hasDepictionForAnimation = depiction;
     };
@@ -58,8 +71,16 @@ export default class BasePrimitive {
     applyNewVisualization = () => {
         if (this.hasDepictionForAnimation) {
             this.renderingConfig(this.hasDepictionForAnimation.renderingConfig());
-            this.refereceResource = this.hasDepictionForAnimation.refereceResource;
+            this.__semanticReference = this.hasDepictionForAnimation.__semanticReference;
             this.hasDepictionForAnimation = null;
         }
     };
+
+    isSelected(val) {
+        if (!arguments.length) {
+            return this.itemIsSelected;
+        } else {
+            this.itemIsSelected = val;
+        }
+    }
 }

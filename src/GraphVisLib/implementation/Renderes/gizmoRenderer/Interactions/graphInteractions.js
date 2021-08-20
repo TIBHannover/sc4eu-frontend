@@ -219,7 +219,6 @@ export default class GraphInteractions {
                 // could also apply while moving
 
                 selectedElements.forEach(item => {
-                    console.log(item);
                     if (item.groupRoot.nodeHoverIn) {
                         item.nodeHoverIn(item);
                     }

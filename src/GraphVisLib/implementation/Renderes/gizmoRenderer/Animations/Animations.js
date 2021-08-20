@@ -1,13 +1,30 @@
-import { collapseNodeAnimationForDelete, collapseNodeAnimation } from './collapseNodeAnimation';
+import { collapseNodeAnimationForDelete, collapseNodeAnimation, hideSingleNodeAnimation } from './collapseNodeAnimation';
 import { smartExpandingLiterals, getParentNodesForExpanding } from './SmartExanding';
-
+import { collapsePropertyNodesAnimations, expandPropertyNodesAnimations } from './collapseExpandLinkAnimations';
 export default class Animations {
     constructor(graph) {
         this.graphObject = graph;
     }
+
+    hideNode = node => {
+        if (node.outgoingLinks.length === 0) {
+            // select a parent;
+            if (node.incomingLinks.length >= 1) {
+                const parentNode = node.incomingLinks[0].sourceNode;
+                this.graphObject.pauseForceDirectedLayout(true);
+                hideSingleNodeAnimation(node, parentNode, () => {
+                    const backupTranslation = this.graphObject.interactionHandler.graphInteractions.graphTranslation;
+                    const backupZoom = this.graphObject.interactionHandler.graphInteractions.zoomFactor;
+                    this.graphObject.fullRedrawGraph();
+                    this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+                    this.graphObject.pauseForceDirectedLayout(true);
+                });
+            }
+        }
+    };
+
     collapseNodesAndLinksBeforeDelete = (nodes, callback) => {
         // we get the links for the node itself
-
         const last = nodes.length - 1;
         nodes.forEach((node, index) => {
             collapseNodeAnimationForDelete(node, index === last, callback);
@@ -16,7 +33,6 @@ export default class Animations {
 
     expandNodesAndLinks = (nodes, callback) => {
         const nodesToExpand = getParentNodesForExpanding(nodes);
-        // console.log('Nodes to expand? ', nodesToExpand);
         const last = nodesToExpand.length - 1;
         nodesToExpand.forEach((node, index) => {
             smartExpandingLiterals(node, index === last, callback);
@@ -30,8 +46,9 @@ export default class Animations {
         this.graphObject.interactionHandler.nodeInteractions.reapplyNodeInteractions(node);
         this.graphObject.pauseForceDirectedLayout(true);
         // collect the nodes we need to exapand in order to draw them first;
-        const hiddenLinks = node.outgoingLinks.filter(item => item.visible() === false);
-        console.log('hiddenLinks', hiddenLinks);
+        const hiddenLinks = node.outgoingLinks.filter(
+            item => item.visible() === false && !item.__isHiddenML && item.propertyLinkType === 'datatypePropertyType'
+        );
         hiddenLinks.forEach(link => {
             link.setPosition(link.sourceNode.x, link.sourceNode.x);
             link.visible(true);
@@ -44,9 +61,8 @@ export default class Animations {
 
         smartExpandingLiterals(node, true, () => {
             this.graphObject.interactionHandler.applyInteractions(this.graphObject, true);
-            this.graphObject.fullRedrawGraph();
+            this.graphObject.bruteForceRedrawGraph();
             this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
-            this.graphObject.pauseForceDirectedLayout(false);
         });
     };
     collapseNode = node => {
@@ -58,13 +74,13 @@ export default class Animations {
             itemsToCollapse.push(link.targetNode);
         });
         const lengthOfItems = itemsToCollapse.length - 1;
+
         this.graphObject.pauseForceDirectedLayout(true);
         itemsToCollapse.forEach((item, id) => {
             collapseNodeAnimation(item, lengthOfItems === id, () => {
                 node.status = 'collapsed';
-                this.graphObject.fullRedrawGraph();
+                this.graphObject.bruteForceRedrawGraph();
                 this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
-                this.graphObject.pauseForceDirectedLayout(false);
             });
         });
     };
@@ -112,40 +128,91 @@ export default class Animations {
 
     morphLink = (link, last, callback) => {
         //TODO
-        callback();
-        // const morphParameters = link.drawTools().getMorphParameters(link.renderingConfig(), link);
-        // const morphDuration = 500;
-        // if (n.renderingShape) {
-        //     n.removeNestedGroupItems();
-        //     if (n.renderingText) {
-        //         n.renderingText
+        if (last) {
+            callback();
+        }
+        //     const morphParameters = link.drawTools().getMorphParameters(link.renderingConfig(), link);
+        //     const morphDuration = 500;
+        //     if (n.renderingShape) {
+        //         n.removeNestedGroupItems();
+        //         if (n.renderingText) {
+        //             n.renderingText
+        //                 .transition()
+        //                 .duration(morphDuration)
+        //                 // TODO : font size and style morphing
+        //                 // .attr('style', morphParameters.textParameters['style'])
+        //                 .attr('dx', morphParameters.textParameters['dx'])
+        //                 .attr('dy', morphParameters.textParameters['dy']);
+        //         }
+        //         n.renderingShape
         //             .transition()
         //             .duration(morphDuration)
-        //             // TODO : font size and style morphing
-        //             // .attr('style', morphParameters.textParameters['style'])
-        //             .attr('dx', morphParameters.textParameters['dx'])
-        //             .attr('dy', morphParameters.textParameters['dy']);
+        //             .attr('x', morphParameters.baseShapeParameters['x'])
+        //             .attr('y', morphParameters.baseShapeParameters['y'])
+        //             .attr('width', morphParameters.baseShapeParameters['width'])
+        //             .attr('height', morphParameters.baseShapeParameters['height'])
+        //             .attr('rx', morphParameters.baseShapeParameters['rx'])
+        //             .attr('ry', morphParameters.baseShapeParameters['ry'])
+        //             .attr('fill', morphParameters.shapeStyleParameters['fill'])
+        //             .attr('stroke', morphParameters.shapeStyleParameters['stroke'])
+        //             .attr('stroke-width', morphParameters.shapeStyleParameters['stroke-width'])
+        //             .attr('stroke-dasharray', morphParameters.shapeStyleParameters['stroke-dasharray'])
+        //             .each('end', function() {
+        //                 n.redraw();
+        //                 // current preparations to handle sequential graph animations
+        //                 if (last && callback) {
+        //                     callback();
+        //                 }
+        //             });
         //     }
-        //     n.renderingShape
-        //         .transition()
-        //         .duration(morphDuration)
-        //         .attr('x', morphParameters.baseShapeParameters['x'])
-        //         .attr('y', morphParameters.baseShapeParameters['y'])
-        //         .attr('width', morphParameters.baseShapeParameters['width'])
-        //         .attr('height', morphParameters.baseShapeParameters['height'])
-        //         .attr('rx', morphParameters.baseShapeParameters['rx'])
-        //         .attr('ry', morphParameters.baseShapeParameters['ry'])
-        //         .attr('fill', morphParameters.shapeStyleParameters['fill'])
-        //         .attr('stroke', morphParameters.shapeStyleParameters['stroke'])
-        //         .attr('stroke-width', morphParameters.shapeStyleParameters['stroke-width'])
-        //         .attr('stroke-dasharray', morphParameters.shapeStyleParameters['stroke-dasharray'])
-        //         .each('end', function() {
-        //             n.redraw();
-        //             // current preparations to handle sequential graph animations
-        //             if (last && callback) {
-        //                 callback();
-        //             }
-        //         });
-        // }
+    };
+
+    collapseExpandMultiLinks = link => {
+        const that = this;
+        if (link.__internalType !== 'multiLink' && link.__linkGroup === undefined) {
+            return;
+        }
+        this.graphObject.pauseForceDirectedLayout(true);
+        const backupTranslation = this.graphObject.interactionHandler.graphInteractions.graphTranslation;
+        const backupZoom = this.graphObject.interactionHandler.graphInteractions.zoomFactor;
+
+        if (link.__internalType === 'singleLink' && link.__linkGroup) {
+            const cx = link.sourceNode.x + 0.5 * (link.targetNode.x - link.sourceNode.x);
+            const cy = link.sourceNode.y + 0.5 * (link.targetNode.y - link.sourceNode.y);
+            const parentPos = { x: cx, y: cy };
+            link.visible(false);
+            link.__linkGroup.forEach(item => {
+                item.setPosition({ x: cx, y: cy });
+                item.propertyNodePostion = { x: cx, y: cy };
+                item.visible(true);
+            });
+            that.graphObject.bruteForceRedrawGraph();
+            that.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+            this.graphObject.pauseForceDirectedLayout(true);
+            expandPropertyNodesAnimations(link, parentPos, function() {
+                that.graphObject.bruteForceRedrawGraph();
+                that.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+            });
+        } else {
+            const n1 = link.sourceNode;
+            const n2 = link.targetNode;
+            // give me all links that participate between this two nodes;
+            const n1_in_links = n1.incomingLinks.filter(item => {
+                return item.sourceNode.id() === n2.id();
+            });
+            const n1_out_links = n1.outgoingLinks.filter(item => {
+                return item.targetNode.id() === n2.id();
+            });
+            const links = [].concat(n1_out_links, n1_in_links).filter(item => item.visible());
+            collapsePropertyNodesAnimations(n1, n2, links, () => {
+                links.forEach(l => {
+                    l.visible(false);
+                });
+                // and we create a multilink primitive;
+                this.graphObject.showML_renderingPrimitive(link);
+                this.graphObject.bruteForceRedrawGraph();
+                this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+            });
+        }
     };
 }

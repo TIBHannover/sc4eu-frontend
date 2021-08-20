@@ -28,7 +28,6 @@ export default class Dashboard extends Component {
         const parameterOrder = ['uuid', 'display_name', 'auth_type', 'email_valid'];
         // try to use predefined order
         const keys = Object.keys(input);
-        console.log(keys);
 
         const correctParamOrder = [];
         const missedParams = [];
@@ -41,8 +40,6 @@ export default class Dashboard extends Component {
                 missedParams.push(val);
             }
         }
-        console.log(correctParamOrder);
-        console.log(missedParams);
 
         const orderdArray = [].concat(correctParamOrder, missedParams);
 

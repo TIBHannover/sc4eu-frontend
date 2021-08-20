@@ -4,8 +4,8 @@ export default class LinkInteractions {
     constructor(graph) {
         this.graphObject = graph;
         this.dragBehaviour = null;
-        this.hasNodeClick = false; //TODO
-        this.hasNodeDobleClick = false; // TODO
+        this.hasNodeClick = true; //TODO
+        this.hasNodeDobleClick = true; // TODO
         this.hasLinkHover = true;
         this.hasPropertyHover = true;
     }
@@ -70,7 +70,12 @@ export default class LinkInteractions {
                             const shapeRoot = d3.select(parentNode);
                             if (shapeRoot) {
                                 shapeRoot.call(this.propertyHoverBehaviour);
-                                // shapeRoot.call(this.doubleClickBehavoir);
+                                if (this.hasNodeClick) {
+                                    shapeRoot.call(this.propertyClick);
+                                }
+                                if (this.hasNodeDobleClick) {
+                                    shapeRoot.call(this.propertyDoubleClick);
+                                }
                                 shapeRoot.call(this.dragBehaviour);
                             }
                         }
@@ -115,12 +120,20 @@ export default class LinkInteractions {
         d.mouseEntered = false;
     }
 
-    nodeDoubleClick(d) {
+    propertyDoubleClick = d => {
         // add Handlers
-        console.log('DoubleClick Action');
-    }
-    nodeClick(d) {
-        // add handers; >> this is where we want to overwrite something;
+        const that = this;
+        d.on('dblclick', function(item) {
+            d3.event.stopPropagation();
+            d3.event.preventDefault();
+            that.graphObject.animationsHandler.collapseExpandMultiLinks(item.ref);
+        });
+    };
+    propertyClick(d) {
+        d.on('click', function(item) {
+            d3.event.stopPropagation();
+            d3.event.preventDefault();
+        });
     }
 
     // split the dragger functions for better reuse;
@@ -129,6 +142,7 @@ export default class LinkInteractions {
             d3.event.sourceEvent.stopPropagation(); // Prevent panning
             d.fixed = true;
             d.groupRoot.style('cursor', 'pointer');
+            // console.log('[', d.x, ',', d.y, ']');
         }
     };
 

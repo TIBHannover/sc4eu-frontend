@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 export default function DefaultLayout(props) {
     return (
-        <StyledBody className="body">
+        <StyledBody>
             <div>
                 <Header />
                 <StyledAppContent>{props.children}</StyledAppContent>
@@ -24,6 +24,7 @@ DefaultLayout.propTypes = {
 const StyledBody = styled.div`
     min-height: calc(100vh - 0px);
     height: 100%;
+    overflow: hidden;
 `;
 
 const StyledAppContent = styled.div`

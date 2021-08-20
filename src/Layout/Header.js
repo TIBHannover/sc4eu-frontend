@@ -35,16 +35,16 @@ class Header extends Component {
 
     componentDidMount() {
         // headers component mounts, so lets try to see if we have a user;
-        console.log('USER: ', this.props.user);
+        // console.log('USER: ', this.props.user);
         document.addEventListener('mousedown', this.handleClickOutside);
         if (this.props.user === 0) {
             // make a call to redux to look into the cookie jar
-            console.log('User is NULL, >> FIRST LOAD');
+            // console.log('User is NULL, >> FIRST LOAD');
             this.props.firstLoad();
         } else {
-            console.log('we do have some user');
+            // console.log('we do have some user');
             if (!this.props.user.displayName || !this.props.user.gravatarId) {
-                console.log('This should fetch some data');
+                // console.log('This should fetch some data');
                 this.props.firstLoad();
             }
         }
@@ -56,7 +56,6 @@ class Header extends Component {
                 isHomePageStyle: this.props.location.pathname === ROUTES.HOME
             });
         }
-        console.log('HEADER UPDATED: THIS IS STATE', this.state);
         if (this.state.redirectOnAuthAction) {
             this.setState({
                 redirectOnAuthAction: false
@@ -91,7 +90,6 @@ class Header extends Component {
     };
 
     handleSignOut = async () => {
-        console.log(' handling sign out');
         await this.props.resetAuth();
         this.toggleUserTooltip();
         this.setState({
