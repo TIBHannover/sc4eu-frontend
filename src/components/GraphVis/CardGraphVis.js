@@ -43,22 +43,21 @@ class CardGraphVis extends Component {
             this.injectEventListener();
         }
 
-        if (!this.state.createdGraph) {
+        if (!this.state.createdGraph && this.props.isExpanded) {
             // crateGraph and update the state;
-            console.log('create sub resource relation model for the identifier', this.props.itemType);
+            // console.log('create sub resource relation model for the identifier', this.props.itemType);
             const graphContainer = document.getElementById(this.graphRenderingIdentifier);
             if (graphContainer) {
-                console.log(graphContainer);
                 this.parentDivObserver.observe(graphContainer, { subtree: false, childList: true });
             }
             if (this.props.itemType === 'Resource') {
-                console.log('>>> CREATE THE SUB GRAPH FROM A RESOURCE');
+                // console.log('>>> CREATE THE SUB GRAPH FROM A RESOURCE');
 
                 const resources = this.props.rrModel.resources;
                 const relations = this.props.rrModel.relations;
 
                 const itemOfInterest = resources.find(item => item.identifier === this.props.itemIdentifier);
-                console.log('itemOfInterest ', itemOfInterest);
+                // console.log('itemOfInterest ', itemOfInterest);
 
                 if (itemOfInterest) {
                     const sub_resources = [];
@@ -108,11 +107,6 @@ class CardGraphVis extends Component {
                         });
                     });
 
-                    // make unique;
-
-                    console.log('subResources,', sub_resources);
-                    console.log('subRelations,', sub_relations);
-
                     const config = {
                         graph_mouseZoom: false,
                         graph_ctrl_mouseZoom: true,
@@ -137,7 +131,6 @@ class CardGraphVis extends Component {
                         }
                     };
                     currentResourceRelationModel.resultingModel.getResult = function() {
-                        console.log(modelAsJsonObject);
                         return modelAsJsonObject;
                     };
 
@@ -159,12 +152,14 @@ class CardGraphVis extends Component {
             }
 
             if (this.props.itemType === 'Relation') {
-                console.log('>>> CREATE THE SUB GRAPH FROM A RELATION');
+                //TODO: create a subgraph for the selected relation
             }
         } else {
             // mostlikely we need to redraw the full graph since there is no div items;
-            this.updateDimensions();
-            this.graph.fullRedrawGraph();
+            if (this.props.isExpanded) {
+                this.updateDimensions();
+                this.graph.fullRedrawGraph();
+            }
         }
 
         // we initialize the card based on the target item id for rendering
@@ -175,14 +170,17 @@ class CardGraphVis extends Component {
     }
 
     injectEventListener = () => {
-        console.log('RESIZE EVENT SHOULD ONLY BE APPLIED WHEN THERE IS A DIV TO RENDER');
-        window.addEventListener('resize', this.updateDimensions);
-        this.updateDimensions();
-        this.eventListenerIsInjected = true;
+        if (this.props.isExpanded) {
+            window.addEventListener('resize', this.updateDimensions);
+            this.updateDimensions();
+            this.eventListenerIsInjected = true;
+        }
     };
 
     updateDimensions = () => {
-        this.graph.updateGraphSize();
+        if (this.props.isExpanded) {
+            this.graph.updateGraphSize();
+        }
     };
 
     render() {

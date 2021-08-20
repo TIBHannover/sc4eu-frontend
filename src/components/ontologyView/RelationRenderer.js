@@ -137,6 +137,7 @@ class RelationRenderer extends Component {
                 }
                 return true;
             }
+            return false;
         });
 
         if (found.length > 0) {
@@ -189,7 +190,8 @@ class RelationRenderer extends Component {
             <div style={{ height: '100%', overflow: 'hidden' }}>
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
-                    <Button size="sm" color="primary" style={{ height: '39px' }} onClick={this.handleAdd}>
+                    {/*TODO: fix add relation functionality*/}
+                    <Button size="sm" color="primary" style={{ height: '39px' }} disabled={true} onClick={this.handleAdd}>
                         Add
                     </Button>
                     <InputGroup>

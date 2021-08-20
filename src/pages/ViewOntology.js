@@ -16,7 +16,6 @@ import GraphVisUi from '../components/GraphVis/GraphVisUi';
 
 import { faGalacticRepublic } from '@fortawesome/free-brands-svg-icons/faGalacticRepublic';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
-import globalUIReducer from '../redux/reducers/globaUI';
 
 class ViewOntology extends Component {
     constructor(props) {
@@ -195,7 +194,7 @@ class ViewOntology extends Component {
                     )}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'text' && <OntologyViewAsTTL />}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'graph' && (
-                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} />
+                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperation === 'graph'} />
                     )}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'playground' && <PlayGroundUI />}
                 </div>

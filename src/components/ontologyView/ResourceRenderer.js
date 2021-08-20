@@ -132,6 +132,7 @@ class ResourceRenderer extends Component {
                 }
                 return true;
             }
+            return false;
         });
 
         if (found.length > 0) {

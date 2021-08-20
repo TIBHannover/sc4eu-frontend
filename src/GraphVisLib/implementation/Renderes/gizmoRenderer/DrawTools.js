@@ -397,7 +397,6 @@ export default class DrawTools {
                 // get min value for circle radius;
 
                 const requestedWidth = labelBBWidth + parseInt(options.overwriteOffset);
-                console.log(requestedWidth);
                 const shapeWidth = parseInt(shape.attr('width'));
                 let newWidth = shapeWidth;
                 if (newWidth < requestedWidth) {

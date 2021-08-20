@@ -27,7 +27,7 @@ class App extends Component {
     }
 
     render() {
-        console.log(this.props.history);
+        // console.log(this.props.history);
         // return <div> Hello2 </div>;
 
         return (

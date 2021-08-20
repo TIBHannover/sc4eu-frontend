@@ -7,23 +7,14 @@ export default class Animations {
     }
 
     hideNode = node => {
-        console.log('Wants to hide the node', node);
         if (node.outgoingLinks.length === 0) {
-            console.log('cool', ' that should be easy');
-
             // select a parent;
             if (node.incomingLinks.length >= 1) {
                 const parentNode = node.incomingLinks[0].sourceNode;
-                console.log('has parent', parentNode);
                 this.graphObject.pauseForceDirectedLayout(true);
                 hideSingleNodeAnimation(node, parentNode, () => {
-                    console.log('ANIMATION IS DONE');
                     const backupTranslation = this.graphObject.interactionHandler.graphInteractions.graphTranslation;
                     const backupZoom = this.graphObject.interactionHandler.graphInteractions.zoomFactor;
-
-                    console.log(node.incomingLinks);
-                    console.log('^^^^^^^^^^^^^^^^^^^^^');
-
                     this.graphObject.fullRedrawGraph();
                     this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
                     this.graphObject.pauseForceDirectedLayout(true);
@@ -34,7 +25,6 @@ export default class Animations {
 
     collapseNodesAndLinksBeforeDelete = (nodes, callback) => {
         // we get the links for the node itself
-
         const last = nodes.length - 1;
         nodes.forEach((node, index) => {
             collapseNodeAnimationForDelete(node, index === last, callback);
@@ -43,7 +33,6 @@ export default class Animations {
 
     expandNodesAndLinks = (nodes, callback) => {
         const nodesToExpand = getParentNodesForExpanding(nodes);
-        // console.log('Nodes to expand? ', nodesToExpand);
         const last = nodesToExpand.length - 1;
         nodesToExpand.forEach((node, index) => {
             smartExpandingLiterals(node, index === last, callback);
@@ -60,7 +49,6 @@ export default class Animations {
         const hiddenLinks = node.outgoingLinks.filter(
             item => item.visible() === false && !item.__isHiddenML && item.propertyLinkType === 'datatypePropertyType'
         );
-        console.log('hiddenLinks', hiddenLinks);
         hiddenLinks.forEach(link => {
             link.setPosition(link.sourceNode.x, link.sourceNode.x);
             link.visible(true);
@@ -143,7 +131,6 @@ export default class Animations {
         if (last) {
             callback();
         }
-
         //     const morphParameters = link.drawTools().getMorphParameters(link.renderingConfig(), link);
         //     const morphDuration = 500;
         //     if (n.renderingShape) {
@@ -203,7 +190,6 @@ export default class Animations {
             that.graphObject.resetUserNavigation(backupTranslation, backupZoom);
             this.graphObject.pauseForceDirectedLayout(true);
             expandPropertyNodesAnimations(link, parentPos, function() {
-                console.log('THIS SHOULD EXPAND IT ');
                 that.graphObject.bruteForceRedrawGraph();
                 that.graphObject.resetUserNavigation(backupTranslation, backupZoom);
             });

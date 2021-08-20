@@ -23,15 +23,9 @@ export const hideSingleNodeAnimation = (node, parent, callback) => {
             .duration(animationDuration)
             .attr('transform', 'translate(' + parent.x + ',' + parent.y + ')')
             .each('end', function() {
-                console.log('ANIMATION END THINGY----------------------------');
-                console.log(node);
-                console.log(node.incomingLinks);
                 node.visible(false);
                 node.incomingLinks.forEach(link => {
                     link.visible(false);
-                    console.log(link.__displayName, link.visible());
-
-                    console.log('ANIMATION END THINGY----------------------------');
                 });
                 callback();
             });

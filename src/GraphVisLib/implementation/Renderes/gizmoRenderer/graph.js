@@ -59,7 +59,6 @@ export default class GraphRenderer {
     };
 
     filterSubClassRelations = val => {
-        console.log('wants to filter the subclass types', val);
         const scoAr = this.links.filter(item => item.__displayName === 'Subclass of');
         scoAr.forEach(item => {
             item.visible(val);
@@ -69,7 +68,6 @@ export default class GraphRenderer {
     };
 
     filterDisjointRelations = val => {
-        console.log('wants to filter the disjoint thingy types', val);
         const scoAr = this.links.filter(item => item.__displayName === 'Disjoint With');
         scoAr.forEach(item => {
             item.visible(val);

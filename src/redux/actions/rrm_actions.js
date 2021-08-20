@@ -7,7 +7,6 @@ export const initializeResourceRelationModel = payload => dispatch => {
         originalModel: JSON.parse(JSON.stringify(payload)), // TODO make deep copy using lodash copy
         ...payload
     };
-    console.log(wrappedPayload);
     dispatch({
         type: type.INITIALIZE_RESOURCE_RELATION_MODEL,
         payload: wrappedPayload

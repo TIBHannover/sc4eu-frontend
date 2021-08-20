@@ -133,7 +133,6 @@ export default class LinkInteractions {
         d.on('click', function(item) {
             d3.event.stopPropagation();
             d3.event.preventDefault();
-            console.log('SINGLE CLICK >> should be used for selecting an element ');
         });
     }
 

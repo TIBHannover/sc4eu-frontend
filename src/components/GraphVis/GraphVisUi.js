@@ -42,6 +42,11 @@ class GraphVisUi extends Component {
     }
 
     componentDidMount() {
+        // add a flag to check if the tab is actually active
+        if (this.props.visualizationTabIsActive === false) {
+            return;
+        }
+
         document.body.style.overflowX = 'hidden';
         // add resize event
         window.addEventListener('resize', this.updateDimensions);
@@ -329,6 +334,10 @@ class GraphVisUi extends Component {
     };
 
     render() {
+        if (this.props.visualizationTabIsActive === false) {
+            return <div>This should never be visible</div>;
+        }
+
         return (
             <div style={{ marginTop: '-25px' }}>
                 <div
@@ -447,6 +456,7 @@ const mapStateToProps = state => {
 };
 
 GraphVisUi.propTypes = {
+    visualizationTabIsActive: PropTypes.bool.isRequired,
     resources: PropTypes.array.isRequired,
     relations: PropTypes.array.isRequired,
     prefixList: PropTypes.object.isRequired,
