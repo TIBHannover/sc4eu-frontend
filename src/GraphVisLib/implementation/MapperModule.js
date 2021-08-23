@@ -19,8 +19,6 @@ export default class MapperModule {
     }
 
     setResourceRelationModelInput = model => {
-        console.log('RECEIVED RMM MODEL FOR MAPPER MODULE');
-        console.log(model);
         this.rrm_input = model;
     };
     setGraphReference = graph => {
@@ -50,7 +48,6 @@ export default class MapperModule {
             await umlMapper.execute();
             nodeLinkModel = umlMapper.getResult().resultingModel.getResult();
         }
-        console.log('>>>>>>>>>>>>>', nodeLinkModel);
         return nodeLinkModel;
     };
 

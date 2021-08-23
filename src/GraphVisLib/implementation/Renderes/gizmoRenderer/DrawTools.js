@@ -101,6 +101,7 @@ export default class DrawTools {
             y: link.y,
             __id: itemId,
             ref: link,
+            __internalObjectType: 'propertyNode',
             groupRoot: groupContainer
         };
         groupContainer.node().__data__ = dataObj;
@@ -322,9 +323,9 @@ export default class DrawTools {
 
         if (
             config.options.drawNestedAttributes === true &&
-            node.refereceResource &&
-            node.refereceResource.__aggregatedLink &&
-            node.refereceResource.__aggregatedLink.length > 0
+            node.semanticReference() &&
+            node.semanticReference().__aggregatedLink &&
+            node.semanticReference().__aggregatedLink.length > 0
         ) {
             // fetch aggregated links from resource;
             const height = shape['height'];
@@ -355,12 +356,12 @@ export default class DrawTools {
         }
         if (
             options.drawNestedAttributes === true &&
-            node.refereceResource &&
-            node.refereceResource.__aggregatedLink &&
-            node.refereceResource.__aggregatedLink.length > 0
+            node.semanticReference() &&
+            node.semanticReference().__aggregatedLink &&
+            node.semanticReference().__aggregatedLink.length > 0
         ) {
             // fetch aggregated links from resource;
-            const nestedLinks = node.refereceResource.__aggregatedLink;
+            const nestedLinks = node.semanticReference().__aggregatedLink;
 
             const width = 220;
             const height = parseFloat(shape['height']) + nestedLinks.length * 35;
@@ -389,11 +390,31 @@ export default class DrawTools {
         }
 
         // apply position changes after the whole stuff;
-        if (options.fontSizeOverWritesShapeSize === true) {
+        if (options.overwritesShapeSize === true) {
             const labelBBWidth = this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize);
 
-            shape.attr('x', -0.5 * (labelBBWidth + options.overwriteOffset));
-            shape.attr('width', labelBBWidth + options.overwriteOffset);
+            if (config.style.renderingType === 'circle') {
+                // get min value for circle radius;
+
+                const requestedWidth = labelBBWidth + parseInt(options.overwriteOffset);
+                const shapeWidth = parseInt(shape.attr('width'));
+                let newWidth = shapeWidth;
+                if (newWidth < requestedWidth) {
+                    newWidth = requestedWidth;
+                } else {
+                    newWidth = Math.min(requestedWidth, shapeWidth);
+                }
+
+                shape.attr('x', -0.5 * newWidth);
+                shape.attr('y', -0.5 * newWidth);
+                shape.attr('rx', 0.5 * newWidth);
+                shape.attr('ry', 0.5 * newWidth);
+                shape.attr('width', newWidth);
+                shape.attr('height', newWidth);
+            } else {
+                shape.attr('x', -0.5 * (labelBBWidth + options.overwriteOffset));
+                shape.attr('width', labelBBWidth + options.overwriteOffset);
+            }
         }
 
         if (options.cropLongText) {
@@ -406,12 +427,12 @@ export default class DrawTools {
 
         if (
             options.drawNestedAttributes === true &&
-            node.refereceResource &&
-            node.refereceResource.__aggregatedLink &&
-            node.refereceResource.__aggregatedLink.length > 0
+            node.semanticReference() &&
+            node.semanticReference().__aggregatedLink &&
+            node.semanticReference().__aggregatedLink.length > 0
         ) {
             // fetch aggregated links from resource;
-            const nestedLinks = node.refereceResource.__aggregatedLink;
+            const nestedLinks = node.semanticReference().__aggregatedLink;
 
             const width = 220;
             const height = parseFloat(shape.attr('height')) + nestedLinks.length * 35;
@@ -478,7 +499,7 @@ export default class DrawTools {
 
         if (
             (!options.drawNestedAttributes ||
-                (node.refereceResource && node.refereceResource.__aggregatedLink && node.refereceResource.__aggregatedLink.length === 0)) &&
+                (node.semanticReference() && node.semanticReference().__aggregatedLink && node.semanticReference().__aggregatedLink.length === 0)) &&
             options.fontPositionV &&
             options.fontPositionV === 'center'
         ) {

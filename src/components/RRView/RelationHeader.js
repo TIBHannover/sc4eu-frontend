@@ -48,9 +48,9 @@ class RelationHeader extends Component {
     getBackgroundColor = () => {
         if (this.props.relationContext.isHighlighted) {
             return '#000000';
-        } else if (this.props.relationContext.type[0] === 'owl:objectProperty') {
+        } else if (this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
             return '#4388cc';
-        } else if (this.props.relationContext.type[0] === 'owl:datatypeProperty') {
+        } else if (this.props.relationContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
             return '#9c6';
         }
         return '#838a92';

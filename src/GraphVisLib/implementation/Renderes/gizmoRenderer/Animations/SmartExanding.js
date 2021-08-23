@@ -15,15 +15,16 @@ export const getParentNodesForExpanding = nodes => {
 
 export const smartExpandingLiterals = (node, last, callback) => {
     const datatypeLinks = node.outgoingLinks.filter(item => item.propertyLinkType === 'datatypePropertyType');
-    const otherOutgoingLinks = node.outgoingLinks.filter(item => item.propertyLinkType !== 'datatypePropertyType');
-    const incommingLinks = node.incomingLinks;
+    const otherOutgoingLinks = node.outgoingLinks.filter(item => item.propertyLinkType !== 'datatypePropertyType' && item.visible());
+    const incommingLinks = node.incomingLinks.filter(item => !item.__isHiddenML);
     const allLinks = [].concat(otherOutgoingLinks, incommingLinks);
     let nAngle, nPos;
 
     const angularSpace = [];
     for (let i = 0; i < allLinks.length; i++) {
-        const oX = allLinks[i].targetNode.x - node.x;
-        const oY = allLinks[i].targetNode.y - node.y;
+        const nodeOfInterest = allLinks[i].targetNode.id() === node.id() ? allLinks[i].sourceNode : allLinks[i].targetNode;
+        const oX = nodeOfInterest.x - node.x;
+        const oY = nodeOfInterest.y - node.y;
         angularSpace.push(angleFromVector(oX, oY));
     }
     const newItemPositions = [];
@@ -37,7 +38,7 @@ export const smartExpandingLiterals = (node, last, callback) => {
 
     if (angularSpace.length === 1) {
         // use a simple heuristic;
-        sAngle = angularSpace[0] + 180 - 45;
+        sAngle = angularSpace[0] + 180 - 90;
         sOffset = 90 / datatypeLinks.length;
     }
 
@@ -58,9 +59,8 @@ export const smartExpandingLiterals = (node, last, callback) => {
                 indexInSpace = i;
             }
         }
-
         sAngle = 0;
-        sOffset = maxDistance / (allLinks.length + 1);
+        sOffset = maxDistance / allLinks.length;
         if (indexInSpace === angularDistances.length - 1) {
             sAngle = angularSpace[angularSpace.length - 1];
         } else {
@@ -73,7 +73,6 @@ export const smartExpandingLiterals = (node, last, callback) => {
         if (nAngle > 360) {
             nAngle -= 360;
         }
-        // console.log("Current angle=" + nAngle);
         nPos = angle2NormedVec(nAngle);
         newItemPositions.push({ x: node.x + nPos.x * distOffset, y: node.y + nPos.y * distOffset });
     });

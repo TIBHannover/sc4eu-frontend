@@ -41,7 +41,11 @@ class ViewOntology extends Component {
         this.getOntologyFromBackend();
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.ui_tab_selectorChanges !== this.props.ui_tab_selectorChanges) {
+            this.setState({ modeOfOperation: 'hybrid' });
+        }
+    }
 
     /** Functions forwarded to view Root for handling state Updates **/
     setLeftSideExpanded = val => {
@@ -190,7 +194,7 @@ class ViewOntology extends Component {
                     )}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'text' && <OntologyViewAsTTL />}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'graph' && (
-                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} />
+                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperation === 'graph'} />
                     )}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'playground' && <PlayGroundUI />}
                 </div>
@@ -202,7 +206,8 @@ class ViewOntology extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        rrModel: state.ResourceRelationModelReducer
+        rrModel: state.ResourceRelationModelReducer,
+        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges
     };
 };
 
@@ -212,7 +217,8 @@ ViewOntology.propTypes = {
             ontologyId: PropTypes.string.isRequired
         }).isRequired
     }).isRequired,
-    initializeResourceRelationModel: PropTypes.func.isRequired
+    initializeResourceRelationModel: PropTypes.func.isRequired,
+    ui_tab_selectorChanges: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({

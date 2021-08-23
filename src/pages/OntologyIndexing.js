@@ -39,7 +39,10 @@ export default class OntologyIndexing extends Component {
 
     render() {
         return (
-            <Container className="box pt-2 pb-2 pl-0 pr-0" style={{ backgroundColor: 'white', border: '1px solid black', borderTop: 'none' }}>
+            <Container
+                className="box pt-2 pb-2 pl-0 pr-0"
+                style={{ backgroundColor: 'white', border: '1px solid black', borderTop: 'none', overflow: 'auto' }}
+            >
                 <h1
                     className="noSelect pl-3 pr-3"
                     style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center' }}

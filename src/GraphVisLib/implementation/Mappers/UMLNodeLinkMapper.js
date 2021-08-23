@@ -40,7 +40,7 @@ export default class NodeLinkMapper extends BaseNodeLinkMapper {
             },
             nodeMerge: [{}],
             nodeSplit: [{}],
-            aggregate: ['owl:datatypeProperty'],
+            aggregate: ['owl:DatatypeProperty'],
             auxiliaryNodes: [] // here empty
         };
     }

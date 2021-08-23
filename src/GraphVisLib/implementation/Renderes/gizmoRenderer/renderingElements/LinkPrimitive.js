@@ -20,10 +20,16 @@ export default class LinkPrimitive extends BasePrimitive {
         // type can be loop, singleLink, multiLink ;
     }
 
+    collapseExpandMultiLinks = () => {
+        if (this.__internalType === 'multiLink') {
+            console.log('DO SOME OPERATIONS ON THAT');
+        }
+    };
+
     setTargetNode(node) {
         this.targetNode = node;
         node.addIncomingLink(this);
-        const targetType = node.refereceResource.__nodeType[0];
+        const targetType = node.semanticReference().__nodeType[0];
         if (targetType === 'rdfs:Literal') {
             this.propertyLinkType = 'datatypePropertyType';
         }
@@ -42,6 +48,7 @@ export default class LinkPrimitive extends BasePrimitive {
     setPosition = (x, y) => {
         this.x = x;
         this.y = y;
+        this.updateRenderingPosition();
     };
 
     getPropertNode() {
@@ -71,6 +78,17 @@ export default class LinkPrimitive extends BasePrimitive {
                 }
             ];
         }
+
+        if (this.__isHiddenML) {
+            return [
+                {
+                    source: this.sourceNode,
+                    target: this.targetNode,
+                    type: 'hiddenML'
+                }
+            ];
+        }
+
         // if (this.__internalType === "multiLink" ) {
         return [
             {
@@ -115,7 +133,33 @@ export default class LinkPrimitive extends BasePrimitive {
                 this.__internalType,
                 this.renderingConfig().options.link_renderingType === 'curve'
             );
+
+            this.propertyNodePostion = { x: this.renderingShape.data()[0].x, y: this.renderingShape.data()[0].y };
         }
+    };
+
+    resetRenderingData = () => {
+        // clear all the data; which is required for rendering elements;
+        // ABSTRACT FUNCTION
+        if (this.renderingLine) {
+            this.renderingLine.remove();
+            this.renderingLine = null;
+        }
+        this.propNodeData = this.getPropertNode();
+        if (this.propNodeData) {
+            this.removeAllRenderedElementsFromParent();
+        }
+        if (this.renderingShape) {
+            this.renderingShape.remove();
+            this.renderingShape = null;
+        }
+        if (this.groupRoot) {
+            this.groupRoot.remove();
+            this.groupRoot = null;
+            this.propertyContainer = null;
+            this.arrowContainer = null;
+        }
+        this.fixed = false;
     };
 
     resetPropertyPosition() {}
@@ -137,20 +181,20 @@ export default class LinkPrimitive extends BasePrimitive {
     }
 
     // this one will get the draw Functions replacement!
-    render = (groupRoot, propertyContainer, arrowContainer) => {
+    render = (groupRoot, propertyContainer, arrowContainer, debug = false) => {
         this.groupRoot = groupRoot;
         this.propertyContainer = propertyContainer;
         this.arrowContainer = arrowContainer;
 
         //rendering the link
 
-        let reloadPos = false;
-        if (this.renderingShape) {
-            reloadPos = true;
-            const oldPos = [this.renderingShape.data()[0].x, this.renderingShape.data()[0].y];
-
-            this.propertyNodePostion = { x: oldPos[0], y: oldPos[1] };
-        }
+        // let reloadPos = true;
+        // if (this.renderingShape) {
+        //     reloadPos = true;
+        //     const oldPos = [this.renderingShape.data()[0].x, this.renderingShape.data()[0].y];
+        //
+        //     this.propertyNodePostion = { x: oldPos[0], y: oldPos[1] };
+        // }
 
         // handle rendering based on the config;
         const renderingElements = this.drawTools().renderLink(
@@ -160,6 +204,7 @@ export default class LinkPrimitive extends BasePrimitive {
             this.renderingConfig(),
             this
         );
+
         this.renderingLine = renderingElements.renderingLine;
         this.renderingShape = renderingElements.renderingShape;
         this.renderingText = renderingElements.renderingText;
@@ -176,7 +221,7 @@ export default class LinkPrimitive extends BasePrimitive {
             }
         }
 
-        if (reloadPos) {
+        if (this.propertyNodePostion && this.renderingShape.data()[0]) {
             this.renderingShape.data()[0].x = this.propertyNodePostion.x;
             this.renderingShape.data()[0].px = this.propertyNodePostion.x;
             this.renderingShape.data()[0].y = this.propertyNodePostion.y;
@@ -209,6 +254,8 @@ export default class LinkPrimitive extends BasePrimitive {
         this.removeAllRenderedElementsFromParent();
         if (this.groupRoot && this.propertyContainer && this.arrowContainer) {
             this.render(this.groupRoot, this.propertyContainer, this.arrowContainer);
+        } else {
+            console.log('FAILED IN REDRAWING THE LINK ', this.displayName());
         }
     };
 }

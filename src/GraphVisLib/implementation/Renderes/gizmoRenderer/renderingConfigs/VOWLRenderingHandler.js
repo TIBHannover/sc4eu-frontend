@@ -2,7 +2,7 @@ export default class VOWLRenderingHandler {
     constructor() {
         this.renderingConfigObject = {
             nodes: {
-                'owl:Thing': {
+                'owl:thing': {
                     style: {
                         renderingType: 'circle',
                         bgColor: '#ffffff',
@@ -32,7 +32,7 @@ export default class VOWLRenderingHandler {
                     }
                 },
 
-                'owl:Class': {
+                'owl:class': {
                     style: {
                         renderingType: 'circle',
                         bgColor: '#aaccff',
@@ -62,7 +62,7 @@ export default class VOWLRenderingHandler {
                     }
                 },
 
-                'owl:equivalentClass': {
+                'owl:equivalentclass': {
                     style: {
                         renderingType: 'circle',
                         bgColor: '#aaccff',
@@ -93,7 +93,7 @@ export default class VOWLRenderingHandler {
                     }
                 },
 
-                'rdfs:Literal': {
+                'rdfs:literal': {
                     style: {
                         renderingType: 'rect',
                         bgColor: '#FFCC33',
@@ -123,7 +123,7 @@ export default class VOWLRenderingHandler {
                     }
                 },
 
-                Literal: {
+                literal: {
                     style: {
                         renderingType: 'rect',
                         bgColor: '#FFCC33',
@@ -154,7 +154,7 @@ export default class VOWLRenderingHandler {
                 }
             },
             links: {
-                'owl:datatypeProperty': {
+                'owl:datatypeproperty': {
                     style: {
                         link: {
                             lineStyle: 'solid',
@@ -206,7 +206,7 @@ export default class VOWLRenderingHandler {
                     }
                 },
 
-                'rdfs:subClassOf': {
+                'rdfs:subclassof': {
                     style: {
                         link: {
                             lineStyle: 'dashed',
@@ -258,7 +258,7 @@ export default class VOWLRenderingHandler {
                     }
                 },
 
-                'owl:equivalentClass': {
+                'owl:equivalentclass': {
                     style: {
                         link: {
                             lineStyle: 'dashed',
@@ -310,7 +310,7 @@ export default class VOWLRenderingHandler {
                     }
                 },
 
-                'owl:objectProperty': {
+                'owl:objectproperty': {
                     style: {
                         link: {
                             lineStyle: 'solid',
@@ -330,6 +330,58 @@ export default class VOWLRenderingHandler {
                             style: {
                                 renderingType: 'rect',
                                 bgColor: '#aaccff',
+                                roundedCorner: '0,0',
+                                fontSizeOverWritesShapeSize: 'true',
+                                overWriteOffset: '5',
+                                strokeElement: 'false',
+                                radius: 50,
+                                width: 100,
+                                height: 25
+                            },
+                            fontStyle: {
+                                fontFamily: 'Helvetica,Arial,sans-serif',
+                                fontColor: '#000000',
+                                fontSize: '12px'
+                            },
+                            options: {
+                                drawDisplayName: true,
+                                cropLongText: true,
+                                addTitleForDisplayName: true,
+                                overwritesShapeSize: false,
+                                overwriteOffset: 0,
+                                fontPositionH: 'center',
+                                fontPositionV: 'center'
+                            }
+                        }
+                    },
+                    options: {
+                        drawPropertyNode: true,
+                        drawArrowHead: true,
+                        drawArrowTail: false,
+                        link_renderingType: 'line' // line or curve
+                    }
+                },
+
+                multilink: {
+                    style: {
+                        link: {
+                            lineStyle: 'solid',
+                            lineWidth: '2px',
+                            lineColor: '#474747'
+                        },
+                        arrowHead: {
+                            renderingType: 'triangle',
+                            scaleFactor: 1,
+                            strokeWidth: '2px',
+                            strokeStyle: 'solid',
+                            strokeColor: '#000000',
+                            fillColor: '#ffffff'
+                        },
+
+                        propertyNode: {
+                            style: {
+                                renderingType: 'rect',
+                                bgColor: '#007bff',
                                 roundedCorner: '0,0',
                                 fontSizeOverWritesShapeSize: 'true',
                                 overWriteOffset: '5',
@@ -456,16 +508,30 @@ export default class VOWLRenderingHandler {
         };
     }
     getNodeConfigFromType = type => {
-        if (!this.renderingConfigObject.nodes.hasOwnProperty(type)) {
+        let qType = '';
+        if (typeof type === 'object') {
+            qType = type[0];
+        } else {
+            qType = type;
+        }
+        const rType = qType.toLowerCase();
+        if (!this.renderingConfigObject.nodes.hasOwnProperty(rType)) {
             return this.defaultNodeCFG;
         }
-        return this.renderingConfigObject.nodes[type];
+        return this.renderingConfigObject.nodes[rType];
     };
 
     getLinkConfigFromType = type => {
-        if (!this.renderingConfigObject.links.hasOwnProperty(type)) {
+        let qType = '';
+        if (typeof type === 'object') {
+            qType = type[0];
+        } else {
+            qType = type;
+        }
+        const rType = qType.toLowerCase();
+        if (!this.renderingConfigObject.links.hasOwnProperty(rType)) {
             return this.defaultLinkCFG;
         }
-        return this.renderingConfigObject.links[type];
+        return this.renderingConfigObject.links[rType];
     };
 }

@@ -12,7 +12,26 @@ export default class NodePrimitive extends BasePrimitive {
         this.__internalObjectType = 'node';
         this.__hasDepictionForAnimation = null;
         this.__transition_animationDuration = 500; // default value;
+
+        this.__nodeClickAction = null;
+        this.__nodeDoubleClickAction = null;
     }
+
+    connectClickAction = callBack => {
+        this.__nodeClickAction = callBack;
+        this.applyNodeClickActions();
+    };
+    connectDoubleClickAction = callBack => {
+        this.__nodeDoubleClickAction = callBack;
+    };
+
+    applyNodeClickActions = () => {
+        if (this.__nodeClickAction) {
+            if (this.groupRoot) {
+                this.groupRoot.on('click', this.__nodeClickAction);
+            }
+        }
+    };
 
     addIncomingLink = link => {
         const found = this.incomingLinks.findIndex(item => item.__id === link.__id);
@@ -28,6 +47,18 @@ export default class NodePrimitive extends BasePrimitive {
             this.outgoingLinks.push(link);
         } else {
             this.outgoingLinks[found] = link;
+        }
+    };
+    removeIncomingLink = link => {
+        const found = this.incomingLinks.findIndex(item => item.__id === link.__id);
+        if (found !== -1) {
+            this.incomingLinks.slice(found, 1);
+        }
+    };
+    removeOutgoingLink = link => {
+        const found = this.outgoingLinks.findIndex(item => item.__id === link.__id);
+        if (found !== -1) {
+            this.outgoingLinks.slice(found, 1);
         }
     };
 
@@ -48,12 +79,31 @@ export default class NodePrimitive extends BasePrimitive {
         this.__numberOfLoops = val;
     }
 
-    updateRenderingPosition = () => {
+    resetRenderingData = () => {
+        this.outgoingLinks = [];
+        this.incomingLinks = [];
         if (this.groupRoot) {
+            this.groupRoot.remove();
+            this.groupRoot = null;
+            this.renderingShape = null;
+            this.renderingText = null;
+        }
+        this.fixed = false;
+    };
+
+    updateRenderingPosition = (debug = false) => {
+        if (this.groupRoot) {
+            if (isNaN(this.x) || isNaN(this.y)) {
+                // console.log(this.displayName(), ' has nan positions');
+            }
             this.groupRoot.attr('transform', 'translate(' + this.x + ',' + this.y + ')');
         }
         // update all related links; (using concat as temp object to merge the links)
-        this.incomingLinks.concat(this.outgoingLinks).forEach(l => {
+        this.incomingLinks.forEach(l => {
+            l.updateRenderingPosition();
+        });
+
+        this.outgoingLinks.forEach(l => {
             l.updateRenderingPosition();
         });
     };
@@ -71,15 +121,8 @@ export default class NodePrimitive extends BasePrimitive {
 
     removeNestedGroupItems() {
         if (this.groupRoot) {
-            console.log('>>> REMOVING ALL GROUP ROUT ITEMS');
             this.groupRoot.selectAll('line').remove();
             this.groupRoot.selectAll('g').remove();
-            // this.groupRoot
-            //     .selectAll('g')
-            //     .selectAll('nestedGroupItem')
-            //     .remove();
-        } else {
-            console.log('>>> FAILED IN REMOVING ALL GROUP ROUT ITEMS');
         }
     }
 
@@ -100,5 +143,6 @@ export default class NodePrimitive extends BasePrimitive {
         this.renderingText = renderingElements.renderingText;
 
         this.updateRenderingPosition();
+        this.applyNodeClickActions();
     };
 }
