@@ -7,6 +7,14 @@ export const initializeResourceRelationModel = payload => dispatch => {
         originalModel: JSON.parse(JSON.stringify(payload)), // TODO make deep copy using lodash copy
         ...payload
     };
+    const thing = {
+        annotations: {},
+        axioms: {},
+        identifier: 'http://www.w3.org/2002/07/owl#Thing',
+        resourceURI: 'http://www.w3.org/2002/07/owl#Thing',
+        type: ['owl:Class']
+    };
+    wrappedPayload.resources.push(thing);
     console.log(wrappedPayload);
     dispatch({
         type: type.INITIALIZE_RESOURCE_RELATION_MODEL,

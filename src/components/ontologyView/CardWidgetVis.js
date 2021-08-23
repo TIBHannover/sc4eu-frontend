@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getPrefixedVersion } from '../../mappers/helperFunctions';
+import { getLongVersion, getPrefixedVersion } from '../../mappers/helperFunctions';
 import { transformIdentifierToPrefixed, transformRelationToTTL } from '../../mappers/RelationToTTL';
 import {
     Button,
@@ -51,13 +51,23 @@ class CardWidgetVis extends Component {
             collapseDescription: true,
             popoverOpen: false,
             popoverCharacteristicsOpen: false,
+            popoverDomainRangePairsOpen: false,
+            popoverRange: false,
             selectedPrefix: '',
             annotationType: '',
             annotationLang: '',
             modelTextareaValue: '',
             checkedItems: new Map()
         };
-        this.characteristics = ['Functional', 'Inverse functional', 'Transitive', 'Symmetric', 'Asymmetric', 'Reflexive', 'Irreflexive'];
+        this.characteristics = [
+            'owl:Functional',
+            'owl:Inverse functional',
+            'owl:Transitive',
+            'owl:Symmetric',
+            'owl:Asymmetric',
+            'owl:Reflexive',
+            'owl:Irreflexive'
+        ];
         this.annotationNames = [
             'dc:description',
             'dc:title',
@@ -72,9 +82,24 @@ class CardWidgetVis extends Component {
             'rdfs:seeAlso'
         ];
 
+        this.dataTypeRestrictions = [
+            'rdfs:Literal',
+            'xsd:anyURI',
+            'xsd:boolean',
+            'xsd:byte',
+            'xsd:data',
+            'xsd;dateTime',
+            'xsd:double',
+            'xsd:float',
+            'xsd:duration'
+        ]; //TODO complete this list
+
+        this.objectTypeRestrictions = ['foaf:Agent', 'foaf:Document', 'foaf:Person', 'foaf:organization']; //Todo complete the list
+
         this.languages = ['en', 'de', 'fr', 'es', 'pt'];
         this.types = ['owl:rational', 'rdf:PlainLiteral', 'rdf:XMLLiteral', 'rdfs:Literal']; //TODO add all types
         this.prefixList = this.props.rrModel.metaInformation.prefixList.longToShort;
+        this.prefixToLongList = this.props.rrModel.metaInformation.prefixList.shortToLong;
         this.widgetRenderingIdentifier =
             'widgetRenderingIdentifier_' +
             getPrefixedVersion(this.props.itemIdentifier, this.props.rrModel.metaInformation.prefixList.longToShort).replace(':', '_');
@@ -346,7 +371,7 @@ class CardWidgetVis extends Component {
             return (
                 <div
                     key={'itemId_' + item.prefix + item.type}
-                    style={{ display: 'block' }}
+                    style={{ display: 'block', overflow: 'hidden' }}
                     onClick={event => {
                         console.log('Improvement: Maybe change background color to show it as selected');
                     }}
@@ -371,10 +396,21 @@ class CardWidgetVis extends Component {
         this.setState({ popoverCharacteristicsOpen: !this.state.popoverCharacteristicsOpen });
     };
 
-    handleCheck = (event, item) => {
+    handleCharacteristicsChecked = (event, item) => {
         const isChecked = event.target.checked;
-        console.log(item);
-        console.log(isChecked);
+        const currentTypes = [...this.props.itemContext.type];
+
+        if (isChecked === true && !currentTypes.includes(item)) {
+            currentTypes.push(item);
+        } else if (isChecked === false) {
+            const index = currentTypes.indexOf(item);
+            if (index !== -1) {
+                currentTypes.splice(index, 1);
+            }
+        }
+        const currentRelationContext = this.props.itemContext;
+        const newRelation = { ...currentRelationContext, type: currentTypes };
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
         this.setState(prevState => ({ checkedItems: prevState.checkedItems.set(item, isChecked) }));
     };
 
@@ -383,9 +419,16 @@ class CardWidgetVis extends Component {
         if (typeOfRelation === 'DatatypeProperty') {
             return (
                 <div>
-                    Characteristics (0/1)
+                    Characteristics ({itemOfInterest.type.length - 1}/1)
                     <div style={{ float: 'right' }}>
-                        <CustomInput id={'checkbox'} type={'checkbox'}>
+                        <CustomInput
+                            id={'checkbox'}
+                            type={'checkbox'}
+                            checked={itemOfInterest.type.length > 1 ? true : false}
+                            onChange={event => {
+                                this.handleCharacteristicsChecked(event, 'Functional');
+                            }}
+                        >
                             Functional
                         </CustomInput>
                     </div>
@@ -394,14 +437,9 @@ class CardWidgetVis extends Component {
         } else if (typeOfRelation === 'ObjectProperty') {
             return (
                 <div>
-                    Characteristics (0/1)
+                    Characteristics ({itemOfInterest.type.length - 1}/{this.characteristics.length})
                     <div style={{ float: 'right' }}>
-                        <Icon
-                            id="Popover2"
-                            onClick={this.addAnnotation}
-                            icon={faPlusCircle}
-                            style={{ float: 'right', marginTop: '3px', marginRight: '5px', color: 'white' }}
-                        />
+                        <Icon id="Popover2" icon={faPlusCircle} style={{ float: 'right', marginTop: '3px', marginRight: '5px', color: 'white' }} />
                         <Popover
                             placement="bottom"
                             isOpen={this.state.popoverCharacteristicsOpen}
@@ -417,12 +455,18 @@ class CardWidgetVis extends Component {
                                             id={'checkbox_' + item}
                                             checked={this.state.checkedItems.get(item) || false}
                                             type={'checkbox'}
-                                            onChange={event => this.handleCheck(event, item)}
+                                            onChange={event => this.handleCharacteristicsChecked(event, item)}
                                         >
                                             {item}
                                         </CustomInput>
                                     );
                                 })}
+                                <Button
+                                    style={{ padding: '0.1em 1em', background: '#0069d9', borderColor: '#0069d9', marginTop: '5px' }}
+                                    onClick={this.toggleCharacteristics}
+                                >
+                                    Ok
+                                </Button>
                             </PopoverBody>
                         </Popover>
                     </div>
@@ -436,6 +480,24 @@ class CardWidgetVis extends Component {
     };
     onMouseLeave = event => {
         event.target.style.color = 'gray';
+    };
+
+    addDomain = event => {
+        const currentRelationContext = this.props.itemContext;
+        const currentDomainRangePairs = [...currentRelationContext.domainRangePairs];
+
+        const newDomains = [...this.state.checkedItems];
+        newDomains.forEach(domainItem => {
+            const longVersion = getLongVersion(domainItem[0], this.prefixToLongList); //TODO implement gtLongVersion
+            currentDomainRangePairs.push({ domain: domainItem[0] });
+        });
+
+        const newRelation = { ...currentRelationContext, domainRangePairs: currentDomainRangePairs };
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
+
+        //const prefix = domainItem.split(':')[0];
+        //const longVersion = getLongVersion(prefix, this.prefixToLongList);
+        this.setState({ popoverDomainRangePairsOpen: !this.state.popoverDomainRangePairsOpen, checkedItems: new Map() });
     };
 
     deleteDomain = (event, domainItem) => {
@@ -452,6 +514,24 @@ class CardWidgetVis extends Component {
         this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
     };
 
+    addRange = event => {
+        const currentRelationContext = this.props.itemContext;
+        const currentDomainRangePairs = [...currentRelationContext.domainRangePairs];
+
+        const newRanges = [...this.state.checkedItems];
+        newRanges.forEach(rangeItem => {
+            const longVersion = getLongVersion(rangeItem[0], this.prefixToLongList); //TODO implement gtLongVersion
+            currentDomainRangePairs.push({ range: rangeItem[0] });
+        });
+
+        const newRelation = { ...currentRelationContext, domainRangePairs: currentDomainRangePairs };
+        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
+
+        //const prefix = domainItem.split(':')[0];
+        //const longVersion = getLongVersion(prefix, this.prefixToLongList);
+        this.setState({ popoverDomainRangePairsOpen: !this.state.popoverDomainRangePairsOpen });
+    };
+
     deleteRange = (event, rangeItem) => {
         const currentRelationContext = this.props.itemContext;
         const currentDomainRangePairs = JSON.parse(JSON.stringify(currentRelationContext.domainRangePairs));
@@ -466,7 +546,22 @@ class CardWidgetVis extends Component {
         this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
     };
 
+    showPopup = () => {
+        this.setState({ popoverDomainRangePairsOpen: !this.state.popoverDomainRangePairsOpen });
+    };
+    showPopupRange = () => {
+        this.setState({ popoverRange: !this.state.popoverRange });
+    };
+
+    handleCheck = (event, item) => {
+        const isChecked = event.target.checked;
+        this.setState(prevState => ({ checkedItems: prevState.checkedItems.set(item, isChecked) }));
+    };
+
     renderDescription = itemOfInterest => {
+        const typeOfItemOfInterest = itemOfInterest.type[0].split(':')[1];
+
+        const typeRestrictions = typeOfItemOfInterest === 'ObjectProperty' ? [...this.objectTypeRestrictions] : [...this.dataTypeRestrictions];
         let domains = [];
         let ranges = [];
         const domainRangePairs = itemOfInterest.domainRangePairs;
@@ -486,14 +581,39 @@ class CardWidgetVis extends Component {
                 <div>
                     Domains{'  '}
                     <Icon
-                        onClick={() => {
-                            alert('Great things will happen here');
-                        }}
+                        id={'PopoverDomain' + itemOfInterest.itemIdentifier}
                         icon={faPlusCircle}
                         onMouseEnter={this.onMouseEnter}
                         onMouseLeave={this.onMouseLeave}
                         style={{ marginRight: '5px', color: 'gray' }}
                     />
+                    <div>
+                        <Popover
+                            placement="bottom"
+                            isOpen={this.state.popoverDomainRangePairsOpen}
+                            target={'PopoverDomain' + itemOfInterest.itemIdentifier}
+                            toggle={this.showPopup}
+                        >
+                            <PopoverHeader>Add Domain</PopoverHeader>
+                            <PopoverBody>
+                                {typeRestrictions.map(item => {
+                                    return (
+                                        <CustomInput
+                                            key={'checkBoxKey_' + item}
+                                            id={'checkbox_' + item}
+                                            checked={this.state.checkedItems.get(item) || false}
+                                            type={'checkbox'}
+                                            onChange={event => this.handleCheck(event, item)}
+                                        >
+                                            {item}
+                                        </CustomInput>
+                                    );
+                                })}
+                                <Button onClick={this.addDomain}>Ok</Button>
+                                <Button onClick={this.showPopup}>Cancel</Button>
+                            </PopoverBody>
+                        </Popover>
+                    </div>
                 </div>
                 {domains.map(domain => (
                     <div key={'domainKey_' + domain} style={{ marginLeft: '1rem' }}>
@@ -509,14 +629,39 @@ class CardWidgetVis extends Component {
                 <div>
                     Ranges{'  '}
                     <Icon
-                        onClick={() => {
-                            alert('Great things will happen here');
-                        }}
+                        id={'PopoverRange' + itemOfInterest.itemIdentifier}
                         icon={faPlusCircle}
                         onMouseEnter={this.onMouseEnter}
                         onMouseLeave={this.onMouseLeave}
                         style={{ marginRight: '5px', color: 'gray' }}
                     />
+                    <div>
+                        <Popover
+                            placement="bottom"
+                            isOpen={this.state.popoverRange}
+                            target={'PopoverRange' + itemOfInterest.itemIdentifier}
+                            toggle={this.showPopupRange}
+                        >
+                            <PopoverHeader>Add Range</PopoverHeader>
+                            <PopoverBody>
+                                {typeRestrictions.map(item => {
+                                    return (
+                                        <CustomInput
+                                            key={'checkBoxKey_' + item}
+                                            id={'checkbox_' + item}
+                                            checked={this.state.checkedItems.get(item) || false}
+                                            type={'checkbox'}
+                                            onChange={event => this.handleCheck(event, item)}
+                                        >
+                                            {item}
+                                        </CustomInput>
+                                    );
+                                })}
+                                <Button onClick={this.addRange}>Ok</Button>
+                                <Button onClick={this.showPopupRange}>Cancel</Button>
+                            </PopoverBody>
+                        </Popover>
+                    </div>
                 </div>
                 {ranges.map(range => (
                     <div key={'domainKey_' + range} style={{ marginLeft: '1rem' }}>
