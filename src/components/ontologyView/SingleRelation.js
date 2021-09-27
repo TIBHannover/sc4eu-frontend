@@ -157,6 +157,7 @@ class SingleRelation extends Component {
                     <CardWidgetVis
                         isExpanded={this.state.showingWidgetVis}
                         itemIdentifier={this.props.relationContext.identifier}
+                        itemContext={this.props.relationContext}
                         itemType="Relation"
                     />
                 </CollapsibleItem>

@@ -135,6 +135,7 @@ class SingleResource extends Component {
                 <CollapsibleItem isOpen={this.state.showingWidgetVis}>
                     <CardWidgetVis
                         itemIdentifier={this.props.resourceContext.identifier}
+                        itemContext={this.props.resourceContext}
                         isExpanded={this.state.showingWidgetVis}
                         itemType="Resource"
                     />

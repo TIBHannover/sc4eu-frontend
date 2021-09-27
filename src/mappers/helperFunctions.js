@@ -43,6 +43,10 @@ export const getPrefixedVersion = (long, prefixMap) => {
     }
 };
 
+export const getLongVersion = (short, prefixMap) => {
+    console.log(prefixMap[short]);
+};
+
 export const getAutoPrefix = (long, prefixList) => {
     if (prefixList === undefined) {
         return long;
