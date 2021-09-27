@@ -25,13 +25,9 @@ class RelationHeader extends Component {
         }
 
         const prefixList = this.props.metaInformation.prefixList.longToShort;
+        const prefixedIdentifier = transformIdentifierToPrefixed(this.props.relationContext.identifier, prefixList);
         this.state = {
-            headerInputValue:
-                transformIdentifierToPrefixed(this.props.relationContext.identifier, prefixList) +
-                ' rdf:type ' +
-                this.props.relationContext.type +
-                ' ' +
-                headerTerminationToken
+            headerInputValue: prefixedIdentifier + ' rdf:type ' + this.props.relationContext.type + ' ' + headerTerminationToken
         };
     }
 
@@ -39,6 +35,21 @@ class RelationHeader extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         // console.log('HEADER >>>>> I got updated');
+        if (prevProps.relationContext.type !== this.props.relationContext.type) {
+            const resDef = this.props.relationContext;
+            let headerTerminationToken = ';';
+            const anCount = Object.keys(resDef.annotations).length;
+            const axCount = Object.keys(resDef.axioms).length;
+            if (anCount === 0 && axCount === 0) {
+                headerTerminationToken = '.';
+            }
+
+            const prefixList = this.props.metaInformation.prefixList.longToShort;
+            const prefixedIdentifier = transformIdentifierToPrefixed(this.props.relationContext.identifier, prefixList);
+            this.setState({
+                headerInputValue: prefixedIdentifier + ' rdf:type ' + this.props.relationContext.type + ' ' + headerTerminationToken
+            });
+        }
     }
 
     toggleEditButton = () => {

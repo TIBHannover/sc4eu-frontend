@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getLongVersion, getPrefixedVersion } from '../../mappers/helperFunctions';
-import { transformIdentifierToPrefixed, transformRelationToTTL } from '../../mappers/RelationToTTL';
+import { getPrefixedVersion } from '../../mappers/helperFunctions';
+import { transformIdentifierToPrefixed } from '../../mappers/RelationToTTL';
 import {
     Button,
     Card,
@@ -172,7 +172,7 @@ class CardWidgetVis extends Component {
 
     renderRelationWidget = () => {
         const itemIdentifier = this.props.itemIdentifier;
-        const prefixedItemIdentifier = transformIdentifierToPrefixed(this.props.itemIdentifier, this.prefixList);
+        //const prefixedItemIdentifier = transformIdentifierToPrefixed(this.props.itemIdentifier, this.prefixList);
         const itemOfInterest = this.props.itemContext;
 
         return (
@@ -336,17 +336,19 @@ class CardWidgetVis extends Component {
                 //now we need to check for each language
                 Object.keys(currentAnnotations[annotationKey]).map(languageKey => {
                     const listOfTypes = currentAnnotations[annotationKey][languageKey];
-                    if (listOfTypes.length == 1) {
+                    if (listOfTypes.length === 1) {
                         delete currentAnnotations[annotationKey][languageKey];
                         //the parent may have become an empty object, in that case delete that too.
-                        if (Object.keys(currentAnnotations[annotationKey]).length == 0) {
+                        if (Object.keys(currentAnnotations[annotationKey]).length === 0) {
                             delete currentAnnotations[annotationKey];
                         }
                     } else {
                         listOfTypes.splice(listOfTypes.indexOf(item.type), 1);
                     }
+                    return currentAnnotations[annotationKey];
                 });
             }
+            return currentAnnotations;
         });
         const newRelation = { ...currentRelationContext, annotations: currentAnnotations };
         this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
@@ -426,7 +428,7 @@ class CardWidgetVis extends Component {
                             type={'checkbox'}
                             checked={itemOfInterest.type.length > 1 ? true : false}
                             onChange={event => {
-                                this.handleCharacteristicsChecked(event, 'Functional');
+                                this.handleCharacteristicsChecked(event, 'owl:Functional');
                             }}
                         >
                             Functional
@@ -488,7 +490,7 @@ class CardWidgetVis extends Component {
 
         const newDomains = [...this.state.checkedItems];
         newDomains.forEach(domainItem => {
-            const longVersion = getLongVersion(domainItem[0], this.prefixToLongList); //TODO implement gtLongVersion
+            //const longVersion = getLongVersion(domainItem[0], this.prefixToLongList); //TODO implement gtLongVersion
             currentDomainRangePairs.push({ domain: domainItem[0] });
         });
 
@@ -520,7 +522,7 @@ class CardWidgetVis extends Component {
 
         const newRanges = [...this.state.checkedItems];
         newRanges.forEach(rangeItem => {
-            const longVersion = getLongVersion(rangeItem[0], this.prefixToLongList); //TODO implement gtLongVersion
+            //const longVersion = getLongVersion(rangeItem[0], this.prefixToLongList); //TODO implement gtLongVersion
             currentDomainRangePairs.push({ range: rangeItem[0] });
         });
 
