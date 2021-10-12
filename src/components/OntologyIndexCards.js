@@ -20,7 +20,15 @@ class OntologyIndexCards extends Component {
         } else if (this.props.ontologies.length > 0) {
             //  render the cards;
             return this.props.ontologies.map((item, index) => {
-                return <OntologyCard key={'OntologyCard_' + index} inputData={item} />;
+                return (
+                    <OntologyCard
+                        key={'OntologyCard_' + index}
+                        inputData={item}
+                        callback={param => {
+                            this.props.reloadAfterDelete(param);
+                        }}
+                    />
+                );
             });
         }
     }
@@ -35,7 +43,8 @@ class OntologyIndexCards extends Component {
 }
 
 OntologyIndexCards.propTypes = {
-    ontologies: PropTypes.array.isRequired
+    ontologies: PropTypes.array.isRequired,
+    reloadAfterDelete: PropTypes.func.isRequired
 };
 
 export default withCookies(OntologyIndexCards);

@@ -57,6 +57,50 @@ module.exports = {
         });
     },
 
+    deleteOntology: function(app) {
+        app.post('/deleteOntology', verifyToken, (req, res) => {
+            console.log('Deleting Ontology as POST ');
+            const token = jwt.verify(req.token, process.env.JWT_SECRET);
+            const userId = token.userId;
+            const data = JSON.stringify(req.body);
+            console.log(userId);
+            console.log(data);
+            const delete_options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/delete_ontology/?userId=${userId}&token=${token.bToken}`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            };
+
+            console.log('about to send request to the backend to delete', delete_options);
+            try {
+                request(delete_options, function(error, response) {
+                    if (response && response.body) {
+                        console.log('has response', response.body);
+                        try {
+                            const result = JSON.parse(response.body);
+                            console.log('result', result);
+                            res.json(result);
+                        } catch (e) {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    } else {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+            // 1) send to backend url
+            // 2) backedn impletementation
+            // 3) return the result of it
+            // console.log('DOE WE BREAK HERE????');
+            // res.json({ delete_successful: 'unknown' });
+        });
+    },
+
     uploadOntology: function(app) {
         app.post('/uploadOntology', verifyToken, (req, res) => {
             console.log('Wants to upload the ontology');
@@ -95,6 +139,7 @@ module.exports = {
             }
         });
     },
+
     viewUserSettings: function(app) {
         app.get('/user/viewProfile/', (req, res) => {
             try {

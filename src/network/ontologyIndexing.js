@@ -1,7 +1,8 @@
 import { plainGetRequest, submitGetRequest, submitPostRequest } from './networkRequests';
-import { URL_ONTOLOGYINDEXING, URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY } from 'constants/services';
+import { URL_ONTOLOGYINDEXING, URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY, URL_DELETEONTOLOGY } from 'constants/services';
 import { URL_PRE_INIT } from 'constants/services';
 import { URL_INITIALIZE } from 'constants/services';
+import { Cookies } from 'react-cookie';
 
 export const getAllOntologies = () => {
     // we use parameters from env.
@@ -14,6 +15,11 @@ export const getAllOntologies = () => {
         'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
     });
 };
+export const deleteOntology = ontology_id => {
+    const postHeader = { 'Content-Type': 'application/json' };
+    console.log('Deleting Ontology: ', { ontologyIdToDelete: ontology_id });
+    return submitPostRequest(URL_DELETEONTOLOGY, postHeader, { ontologyIdToDelete: ontology_id });
+};
 
 export const uploadOntology = data => {
     const postHeader = { 'Content-Type': 'application/json' };
@@ -23,9 +29,20 @@ export const uploadOntology = data => {
 
 export const preInitializeOntologyUpload = data => {
     // content is the ontology file content.
+
+    // HAVE A CLOSER LOOK AT THAT , should be similar to uploadOntology , w.r.t access tokens stuff.
+
     // TODO: verify with the new network communications
     const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': `${process.env.REACT_APP_ONTOLOGY_SERVICE_BACKEND_URL}` };
     console.log('this is the data', data);
+    const send_token = false;
+    if (send_token) {
+        const cookies = new Cookies();
+        const token = cookies.get('token') ? cookies.get('token') : null;
+        if (token) {
+            postHeader.append('Authorization', `Bearer ${token}`);
+        }
+    }
 
     return new Promise((resolve, reject) => {
         fetch(URL_PRE_INIT, { method: 'POST', headers: postHeader, body: JSON.stringify(data) })

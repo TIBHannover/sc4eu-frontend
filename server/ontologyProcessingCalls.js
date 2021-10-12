@@ -9,6 +9,40 @@ module.exports = {
             // this communicates with the Processing service;
         });
     },
+
+    initializeOntology: function(app) {
+        app.post('/initializeOntology', (req, res) => {
+            // this communicates with the Processing service;
+            console.log('Wants to preInitialize ONtolog  y:');
+
+            const preInitialize_ontology = {
+                uri: `${process.env.PROCESSING_SERVER_URL}/initializeOntology/`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(req.body)
+            };
+
+            //console.log('PreInitialize_ontology', preInitialize_ontology);
+            try {
+                request(preInitialize_ontology, function(error, response) {
+                    try {
+                        console.log('Inside preInitialize_ontology ', response.body);
+                        // const resultingData = { ontology_data: jsonModel };
+                        res.json(response.body);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                });
+            } catch (e) {
+                res.json({ error: 'Something went wrong' });
+            }
+
+            //get preinit task from processing service
+        });
+    },
+
     getJSONModelForOntologyID: function(app) {
         // TODO : this should only work when we have verified the token
 

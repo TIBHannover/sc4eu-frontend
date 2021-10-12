@@ -72,11 +72,13 @@ auth.userSettings(router);
 auth.getUserSettings(router);
 
 database.uploadOntology(router);
+database.deleteOntology(router);
 database.viewUserSettings(router);
 database.getOntologyIndex(router);
 database.getOntologyByID(router);
 
 processing.getJSONModelForOntologyID(router);
+processing.initializeOntology(router);
 
 /** GITHUB OAUTH STUFF**/
 router.get('/auth/github', passport.authenticate('github'));
