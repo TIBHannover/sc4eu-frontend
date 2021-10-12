@@ -33,7 +33,12 @@ export default class OntologyIndexing extends Component {
     };
 
     reloadAfterUpdate = () => {
-        this.setState({ isLoading: false, results: true });
+        this.setState({ isLoading: false });
+        this.getOntologiesFromBackend();
+    };
+
+    reloadAfterDelete = () => {
+        this.setState({ isLoading: false });
         this.getOntologiesFromBackend();
     };
 
@@ -71,7 +76,12 @@ export default class OntologyIndexing extends Component {
                                 }}
                             />
                             <hr className="mt-0 mb-2" />
-                            <OntologyIndexCards ontologies={this.state.results} />
+                            <OntologyIndexCards
+                                ontologies={this.state.results}
+                                reloadAfterDelete={() => {
+                                    this.reloadAfterDelete();
+                                }}
+                            />
                         </div>
                     )}
                 </div>

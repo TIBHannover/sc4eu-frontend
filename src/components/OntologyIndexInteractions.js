@@ -17,7 +17,7 @@ export default class OntologyIndexInteractions extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     ontologyUploadComplete(param) {
-        if (param.success === true) {
+        if (param.result === true) {
             this.setState({ showUploadModal: false });
             this.props.reloadAfterUpdate();
         }

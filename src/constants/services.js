@@ -3,6 +3,7 @@
 export const URL_ONTOLOGYINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}ontologyIndex/`;
 export const URL_VIEWONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelForId/`;
 export const URL_INITIALIZE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}uploadOntology`;
+export const URL_DELETEONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}deleteOntology`;
 export const URL_PRE_INIT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}initializeOntology/`;
 export const URL_GET_JSON_MODEL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelVOWL`;
 

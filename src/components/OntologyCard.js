@@ -4,13 +4,41 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faUnlockAlt, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faUnlockAlt, faCheck, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
+import { Button } from 'reactstrap';
+import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 
 export default class OntologyIndexCards extends Component {
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    deleteOntology = async event => {
+        event.preventDefault();
+
+        const isConfirmed = window.confirm('Are you sure you want to Delete this ontology?');
+        if (!isConfirmed) {
+            return;
+        }
+
+        try {
+            const allows = await userIsAllowdToUploadOntology();
+            if (allows.result === true) {
+                console.log(this.props.inputData.uuid);
+
+                deleteOntology(this.props.inputData.uuid).then(res => {
+                    if (res.success === true) {
+                        this.props.callback(res.result);
+                    }
+                });
+            } else {
+                alert('You are not authorized to delete this ontology');
+            }
+        } catch (rejectedValue) {
+            console.log(rejectedValue);
+        }
+    };
 
     render() {
         return (
@@ -30,6 +58,15 @@ export default class OntologyIndexCards extends Component {
                                 <div>
                                     <Icon className="ml-1" icon={faCheck} />
                                 </div>
+                                <Button
+                                    color="white"
+                                    size="sm"
+                                    title="Delete Ontology"
+                                    onClick={this.deleteOntology}
+                                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
+                                >
+                                    <Icon icon={faTrash} color={'white'} />
+                                </Button>
                             </div>
                         </StyledLink>
                     </StyledCardHeader>
@@ -44,7 +81,8 @@ export default class OntologyIndexCards extends Component {
 }
 
 OntologyIndexCards.propTypes = {
-    inputData: PropTypes.object.isRequired
+    inputData: PropTypes.object.isRequired,
+    callback: PropTypes.func.isRequired
 };
 
 const StyledCard = styled.div`

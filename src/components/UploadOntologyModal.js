@@ -80,9 +80,9 @@ export default class UploadOntology extends Component {
 
             // create network request to owl-api
             try {
-                const pre_result = await preInitializeOntologyUpload({ ontologyData: reader.result });
+                const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: reader.result });
                 // const pre_result = await preInitializeOntologyUpload({ ontologyData: 'hello' });
-
+                const pre_result = JSON.parse(pre_result_asString);
                 console.log(pre_result);
 
                 // using the name and description we can fill in the values; also we need to make sure the values are not null
@@ -117,7 +117,7 @@ export default class UploadOntology extends Component {
             name: this.state.ontologyName,
             description: this.state.ontologyDescription,
             lookup_type: 'local',
-            access_type: 'private',
+            access_type: 'public',
             lookup_path: 'internal',
             ontology_content: this.state.ontologyFileContent
         };
@@ -230,7 +230,7 @@ export default class UploadOntology extends Component {
                     )}
                 </ModalBody>
                 <ModalFooter>
-                    <div id="ontologyUploadModalFooter" className="d-flex" autofocus={true}>
+                    <div id="ontologyUploadModalFooter" className="d-flex" autoFocus={true}>
                         {/*{this.state.hasContent && (*/}
                         {/*    <div style={{ position: 'absolute', left: '10px' }}>*/}
                         {/*        <div>Errors: 0</div>*/}
@@ -250,7 +250,7 @@ export default class UploadOntology extends Component {
                             onClick={() => {
                                 this.executeUpload();
                             }}
-                            autofocus={true}
+                            autoFocus={true}
                         >
                             Finish
                         </Button>
