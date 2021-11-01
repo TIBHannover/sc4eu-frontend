@@ -152,7 +152,75 @@ class CardGraphVis extends Component {
             }
 
             if (this.props.itemType === 'Relation') {
-                //TODO: create a subgraph for the selected relation
+                // console.log('>>> CREATE THE SUB GRAPH FROM A RESOURCE');
+
+                const resources = this.props.rrModel.resources;
+                const relations = this.props.rrModel.relations;
+
+                const itemOfInterest = relations.find(item => item.identifier === this.props.itemIdentifier);
+
+                if (itemOfInterest) {
+                    const sub_resources = [];
+                    const sub_relations = [];
+                    //sub_relations.push(itemOfInterest);
+                    relations.forEach(relation => {
+                        if (relation.identifier === this.props.itemIdentifier) {
+                            sub_relations.push(relation);
+                            relation.domainRangePairs.forEach(pair => {
+                                const rangeResource = resources.find(range => range.identifier === pair.range);
+                                const domainResource = resources.find(domain => domain.identifier === pair.domain);
+                                if (rangeResource) {
+                                    sub_resources.push(rangeResource);
+                                }
+                                if (domainResource) {
+                                    sub_resources.push(domainResource);
+                                }
+                            });
+                        }
+                    });
+
+                    const config = {
+                        graph_mouseZoom: false,
+                        graph_ctrl_mouseZoom: true,
+                        graph_mouseDrag: true,
+                        node_mouseDrag: true,
+                        node_mouseHover: true,
+                        node_mouseSingleClick: true,
+                        node_mouseDoubleClick: true,
+                        graphBgColor: '#eeeeee',
+                        configSelected: 'Default',
+                        link_mouseDrag: true,
+                        link_mouseHover: true
+                    };
+                    this.graph.setRenderingContainer(this.graphRenderingIdentifier);
+                    this.graph.configureGraphInteractions(config);
+
+                    const modelAsJsonObject = { resources: sub_resources, relations: sub_relations };
+                    const currentResourceRelationModel = {
+                        resultingModel: {
+                            type: 'TYPE_RESOURCE_RELATION_MODEL',
+                            modelAsJsonObject: modelAsJsonObject
+                        }
+                    };
+                    currentResourceRelationModel.resultingModel.getResult = function() {
+                        return modelAsJsonObject;
+                    };
+
+                    this.mapperModule.setResourceRelationModelInput(currentResourceRelationModel);
+                    this.mapperModule.setGraphReference(this.graph);
+                    this.mapperModule.setNodeLinkType('VOWL'); // DEFAULT CARD RENDERING NOTATION
+                    this.mapperModule.execute().then(model => {
+                        this.graph.setModel(model);
+                        // do the rendering magic
+                        this.graph.initializeRenderingContainer();
+                        this.updateDimensions();
+                        this.graph.createRenderingElements();
+                        this.graph.drawRenderingPrimitives();
+                        this.graph.setGraphInitialized(true);
+                        this.graph.zoomToExtent(400);
+                        this.setState({ createdGraph: true });
+                    });
+                }
             }
         } else {
             // mostlikely we need to redraw the full graph since there is no div items;
@@ -214,7 +282,8 @@ CardGraphVis.propTypes = {
     itemIdentifier: PropTypes.string.isRequired,
     itemType: PropTypes.string.isRequired,
     rrModel: PropTypes.object.isRequired,
-    isExpanded: PropTypes.bool.isRequired
+    isExpanded: PropTypes.bool.isRequired,
+    callback: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {

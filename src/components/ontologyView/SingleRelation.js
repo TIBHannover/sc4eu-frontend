@@ -26,7 +26,8 @@ class SingleRelation extends Component {
             bodyInitialRendering: true,
             widgetInitialRendering: true,
 
-            forcedUpdate: false
+            forcedUpdate: false,
+            updateSiblings: false
         };
     }
 
@@ -36,8 +37,12 @@ class SingleRelation extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        //  console.log('Update');
+        console.log('am I Updated?');
     }
+
+    updateSiblings = () => {
+        this.setState({ updateSiblings: !this.state.updateSiblings });
+    };
 
     forceRerendering = () => {
         this.setState({ forcedUpdate: !this.state.forcedUpdate });
@@ -150,7 +155,9 @@ class SingleRelation extends Component {
                     <CardGraphVis
                         isExpanded={this.state.showingGraphVis}
                         itemIdentifier={this.props.relationContext.identifier}
+                        itemContext={this.props.relationContext}
                         itemType="Relation"
+                        callback={this.updateSiblings}
                     />
                 </CollapsibleItem>
                 <CollapsibleItem isOpen={this.state.showingWidgetVis}>
@@ -159,6 +166,7 @@ class SingleRelation extends Component {
                         itemIdentifier={this.props.relationContext.identifier}
                         itemContext={this.props.relationContext}
                         itemType="Relation"
+                        callback={this.updateSiblings}
                     />
                 </CollapsibleItem>
                 {!this.props.experimentalLayout && (
