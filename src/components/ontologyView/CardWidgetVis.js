@@ -3,44 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getPrefixedVersion } from '../../mappers/helperFunctions';
 import { transformIdentifierToPrefixed } from '../../mappers/RelationToTTL';
-import {
-    Button,
-    Card,
-    CardBody,
-    Collapse,
-    Popover,
-    PopoverHeader,
-    PopoverBody,
-    CustomInput,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Label,
-    Container,
-    Row,
-    Col,
-    Nav,
-    NavItem,
-    NavLink
-} from 'reactstrap';
+import { Button, Card, CardBody, Collapse, Popover, PopoverHeader, PopoverBody, CustomInput } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight, faPlusCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import { CSSTransition } from 'react-transition-group';
-import styled from 'styled-components';
-import { redux_editRelation } from '../../redux/actions/rrm_actions';
-
-const AnimationContainer = styled(CSSTransition)`
-    &.fadeIn-enter {
-        opacity: 0;
-    }
-
-    &.fadeIn-enter.fadeIn-enter-active {
-        opacity: 1;
-        transition: 1s opacity;
-    }
-`;
+import { redux_editRelation, redux_editResource } from '../../redux/actions/rrm_actions';
+import AnnotationsDropDown from './AnnotationsDropDown';
 
 class CardWidgetVis extends Component {
     constructor(props) {
@@ -49,9 +16,11 @@ class CardWidgetVis extends Component {
             updateFlipFlop: false,
             collapseAnnotations: true,
             collapseDescription: true,
+            collapseResourceDescription: true,
             popoverOpen: false,
             popoverCharacteristicsOpen: false,
             popoverDomainRangePairsOpen: false,
+            popoverResourceTypeOpen: false,
             popoverRange: false,
             selectedPrefix: '',
             annotationType: '',
@@ -68,19 +37,8 @@ class CardWidgetVis extends Component {
             'owl:Reflexive',
             'owl:Irreflexive'
         ];
-        this.annotationNames = [
-            'dc:description',
-            'dc:title',
-            'owl:backwardCompatibleWith',
-            'owl:deprecated',
-            'owl:incompatibleWith',
-            'owl:priorVersion',
-            'owl:versionInfo',
-            'rdfs:comment',
-            'rdfs:isDefinedBy',
-            'rdfs:label',
-            'rdfs:seeAlso'
-        ];
+
+        this.resourceTypes = ['owl:Class', 'rdfs:Class', 'owl:DeprecatedClass', 'owl:Thing', 'rdfs:Resource'];
 
         this.dataTypeRestrictions = [
             'rdfs:Literal',
@@ -94,7 +52,7 @@ class CardWidgetVis extends Component {
             'xsd:duration'
         ]; //TODO complete this list
 
-        this.objectTypeRestrictions = ['foaf:Agent', 'foaf:Document', 'foaf:Person', 'foaf:organization']; //Todo complete the list
+        this.objectTypeRestrictions = ['foaf:Agent', 'foaf:Document', 'foaf:Person', 'foaf:organization']; //Todo complete the list, I think this should come from resources
 
         this.languages = ['en', 'de', 'fr', 'es', 'pt'];
         this.types = ['owl:rational', 'rdf:PlainLiteral', 'rdf:XMLLiteral', 'rdfs:Literal']; //TODO add all types
@@ -121,53 +79,47 @@ class CardWidgetVis extends Component {
         }
     };
 
-    toggleAnnotation = () => {
-        this.setState({ collapseAnnotations: !this.state.collapseAnnotations });
-    };
-    toggleDescription = () => {
-        this.setState({ collapseDescription: !this.state.collapseDescription });
-    };
+    renderResourceWidget = () => {
+        const itemIdentifier = this.props.itemIdentifier;
+        //const prefixedItemIdentifier = transformIdentifierToPrefixed(this.props.itemIdentifier, this.prefixList);
+        const itemOfInterest = this.props.itemContext;
 
-    toggleAddAnnotation = event => {
-        event.stopPropagation();
-        this.setState({ popoverOpen: !this.state.popoverOpen });
-    };
+        const props = {
+            itemType: this.props.itemType,
+            itemIdentifier: this.props.itemIdentifier,
+            itemOfInterest: this.props.itemContext,
+            callback: this.props.callback
+        };
 
-    handleTextareaChange = event => {
-        this.setState({ modelTextareaValue: event.target.value });
-    };
+        return (
+            <div>
+                <AnnotationsDropDown {...props} />
 
-    addAnnotation = event => {
-        if (this.state.selectedPrefix === '') {
-            alert('please select prefix');
-            return;
-        }
-        const annotationPrefix = this.state.selectedPrefix;
-        const annotationLang = this.state.annotationLang === '' ? 'default' : this.state.annotationLang;
-        const annotationValue = this.state.modelTextareaValue;
+                <div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>
+                    <Button
+                        color="primary"
+                        onClick={() => this.toggleResourceDescription()}
+                        style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}
+                    >
+                        <Icon icon={this.state.collapseResourceDescription ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                        Description
+                    </Button>
+                    <Collapse isOpen={!this.state.collapseResourceDescription}>
+                        <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
+                            <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
+                                {this.renderResourceDescription(itemOfInterest)}
+                            </CardBody>
+                        </Card>
+                    </Collapse>
+                </div>
 
-        const currentRelationContext = this.props.itemContext;
-
-        let currentAnnotations = JSON.parse(JSON.stringify(currentRelationContext.annotations));
-
-        if (currentAnnotations[annotationPrefix] !== undefined) {
-            if (currentAnnotations[annotationPrefix][annotationLang] !== undefined) {
-                currentAnnotations[annotationPrefix][annotationLang].push(annotationValue);
-            } else {
-                //add Language as well as value
-                const obj = { [annotationLang]: [annotationValue] };
-                currentAnnotations[annotationPrefix] = { ...currentAnnotations[annotationPrefix], ...obj };
-            }
-        } else {
-            const obj = { [annotationPrefix]: { [annotationLang]: [annotationValue] } };
-            currentAnnotations = { ...currentAnnotations, ...obj };
-        }
-
-        const newRelation = { ...currentRelationContext, annotations: currentAnnotations };
-        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
-
-        event.stopPropagation();
-        this.setState({ popoverOpen: !this.state.popoverOpen, selectedPrefix: '', annotationType: '', annotationLang: '', modelTextareaValue: '' });
+                <div style={{ padding: '2px 5px' }}>
+                    <Button color="primary" style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
+                        {this.renderResourceType(itemOfInterest)}
+                    </Button>
+                </div>
+            </div>
+        );
     };
 
     renderRelationWidget = () => {
@@ -175,133 +127,16 @@ class CardWidgetVis extends Component {
         //const prefixedItemIdentifier = transformIdentifierToPrefixed(this.props.itemIdentifier, this.prefixList);
         const itemOfInterest = this.props.itemContext;
 
+        const props = {
+            itemType: this.props.itemType,
+            itemIdentifier: this.props.itemIdentifier,
+            itemOfInterest: this.props.itemContext,
+            callback: this.props.callback
+        };
+
         return (
             <div>
-                <div key={'annotaions_' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>
-                    <Button color="primary" onClick={() => this.toggleAnnotation()} style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
-                        <Icon icon={this.state.collapseAnnotations ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                        Annotations
-                        <Icon
-                            id="Popover1"
-                            onClick={this.toggleAddAnnotation}
-                            icon={faPlusCircle}
-                            style={{ float: 'right', marginTop: '3px', marginRight: '5px', color: 'white' }}
-                        />
-                        <Modal
-                            style={{ height: '100%' }}
-                            size="lg"
-                            isOpen={this.state.popoverOpen}
-                            toggle={this.toggleAddAnnotation}
-                            target="Popover1"
-                        >
-                            <ModalHeader toggle={this.toggleAddAnnotation} style={{ marginTop: '1px', marginBottom: '0px', padding: '0rem 0rem' }}>
-                                <label style={{ marginLeft: '5px' }}>Add Annotation</label>
-                            </ModalHeader>
-                            <ModalBody style={{ padding: '0', height: '100%' }}>
-                                <Container style={{ paddingLeft: '0px', paddingRight: '0px', height: '100%' }}>
-                                    <Row style={{ margin: '0 0 0 0' }}>
-                                        <Col xs="6" style={{ height: '100%', maxWidth: '30%', padding: '0 0 0 0' }}>
-                                            <Nav tabs vertical pills style={{ overflow: 'hidden' }}>
-                                                {this.annotationNames.map(item => {
-                                                    return (
-                                                        <NavItem key={'NavKey_' + item}>
-                                                            <NavLink
-                                                                onClick={() => {
-                                                                    this.setState({ selectedPrefix: item });
-                                                                }}
-                                                                style={{ padding: '0 1rem', color: 'black', fontSize: '14px' }}
-                                                            >
-                                                                {item}
-                                                            </NavLink>
-                                                        </NavItem>
-                                                    );
-                                                })}
-                                            </Nav>
-                                            {/*<ListGroup style={{ overflow: 'hidden' }}>*/}
-                                            {/*    {this.annotationNames.map(item => (*/}
-                                            {/*        <ListGroupItem key={'ListKey_' + item} style={{ fontSize: '14px', padding: '0.1rem 0 0 0.3rem' }}>*/}
-                                            {/*            {item}*/}
-                                            {/*        </ListGroupItem>*/}
-                                            {/*    ))}*/}
-                                            {/*</ListGroup>*/}
-                                        </Col>
-                                        <Col
-                                            style={{
-                                                maxWidth: '70%',
-                                                maxHeight: '100%',
-                                                border: '1px gray',
-                                                padding: '0 0 0 0'
-                                            }}
-                                        >
-                                            <Row style={{ height: '85%', margin: '0 0 0 0' }}>
-                                                <Label style={{ marginTop: '-30px' }}>{this.state.selectedPrefix}</Label>
-                                                <Input
-                                                    style={{ height: '100%', padding: '0 0 0 0' }}
-                                                    value={this.state.modelTextareaValue}
-                                                    autoFocus={true}
-                                                    onChange={this.handleTextareaChange}
-                                                    type="textarea"
-                                                    name="text"
-                                                    id="exampleText"
-                                                />
-                                            </Row>
-                                            <Row style={{ marginLeft: '0px', height: '15%', bottom: '0px' }}>
-                                                <Label style={{ fontSize: '14px', marginTop: '5px' }}>Type</Label>
-                                                <div style={{ float: 'left', marginTop: '1px', paddingLeft: '5px', paddingRight: '15px' }}>
-                                                    <Input
-                                                        style={{ fontSize: '14px' }}
-                                                        onChange={event => {
-                                                            this.setState({ annotationType: event.target.value });
-                                                        }}
-                                                        type="select"
-                                                        id="select"
-                                                    >
-                                                        <option key={'types_none'}>{''}</option>
-                                                        {this.types.map(item => {
-                                                            return <option key={'typesKey_' + item}>{item}</option>;
-                                                        })}
-                                                    </Input>
-                                                </div>
-                                                <Label style={{ fontSize: '14px', marginTop: '5px' }}>Lang</Label>
-                                                <div style={{ float: 'right', marginTop: '1px', paddingLeft: '5px' }}>
-                                                    <Input
-                                                        style={{ fontSize: '14px' }}
-                                                        onChange={event => {
-                                                            this.setState({ annotationLang: event.target.value });
-                                                        }}
-                                                        type="select"
-                                                        id="select"
-                                                    >
-                                                        <option key={'languageKey_none'}>{''}</option>
-                                                        {this.languages.map(item => {
-                                                            return <option key={'languageKey_' + item}>{item}</option>;
-                                                        })}
-                                                    </Input>
-                                                </div>
-                                            </Row>
-                                        </Col>
-                                    </Row>
-                                </Container>
-                            </ModalBody>
-                            <ModalFooter style={{ padding: '0rem' }}>
-                                <Button color="primary" onClick={this.addAnnotation}>
-                                    OK
-                                </Button>{' '}
-                                <Button color="secondary" onClick={this.toggleAddAnnotation}>
-                                    Cancel
-                                </Button>
-                            </ModalFooter>
-                        </Modal>
-                    </Button>
-                    <Collapse isOpen={!this.state.collapseAnnotations}>
-                        <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
-                            <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
-                                {this.renderAnnotations(itemOfInterest)}
-                            </CardBody>
-                        </Card>
-                    </Collapse>
-                </div>
-
+                <AnnotationsDropDown {...props} />
                 <div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>
                     <Button color="primary" onClick={() => this.toggleDescription()} style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
                         <Icon icon={this.state.collapseDescription ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
@@ -315,7 +150,6 @@ class CardWidgetVis extends Component {
                         </Card>
                     </Collapse>
                 </div>
-
                 <div style={{ padding: '2px 5px' }}>
                     <Button color="primary" style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
                         {this.renderCharacteristics(itemOfInterest)}
@@ -325,77 +159,20 @@ class CardWidgetVis extends Component {
         );
     };
 
-    deleteAnnotationItem = (event, item) => {
-        event.stopPropagation();
-        const currentRelationContext = this.props.itemContext;
-
-        const currentAnnotations = JSON.parse(JSON.stringify(currentRelationContext.annotations));
-
-        Object.keys(currentAnnotations).map(annotationKey => {
-            if (annotationKey === item.prefix) {
-                //now we need to check for each language
-                Object.keys(currentAnnotations[annotationKey]).map(languageKey => {
-                    const listOfTypes = currentAnnotations[annotationKey][languageKey];
-                    if (listOfTypes.length === 1) {
-                        delete currentAnnotations[annotationKey][languageKey];
-                        //the parent may have become an empty object, in that case delete that too.
-                        if (Object.keys(currentAnnotations[annotationKey]).length === 0) {
-                            delete currentAnnotations[annotationKey];
-                        }
-                    } else {
-                        listOfTypes.splice(listOfTypes.indexOf(item.type), 1);
-                    }
-                    return currentAnnotations[annotationKey];
-                });
-            }
-            return currentAnnotations;
-        });
-        const newRelation = { ...currentRelationContext, annotations: currentAnnotations };
-        this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
+    toggleDescription = () => {
+        this.setState({ collapseDescription: !this.state.collapseDescription });
     };
 
-    renderAnnotations = itemOfInterest => {
-        const allAnnotations = [];
-        for (const annotation in itemOfInterest.annotations) {
-            if (itemOfInterest.annotations.hasOwnProperty(annotation)) {
-                const subAnnotation = itemOfInterest.annotations[annotation];
-                for (const sub in subAnnotation) {
-                    if (subAnnotation.hasOwnProperty(sub)) {
-                        subAnnotation[sub].forEach(item => {
-                            allAnnotations.push({ prefix: annotation, type: item });
-                        });
-                    }
-                }
-            }
-        }
-
-        const mappedAnnotations = allAnnotations.map(item => {
-            return (
-                <div
-                    key={'itemId_' + item.prefix + item.type}
-                    style={{ display: 'block', overflow: 'hidden' }}
-                    onClick={event => {
-                        console.log('Improvement: Maybe change background color to show it as selected');
-                    }}
-                >
-                    <Icon
-                        icon={faTimesCircle}
-                        onClick={event => {
-                            this.deleteAnnotationItem(event, item);
-                        }}
-                        style={{ marginRight: '5px', float: 'right' }}
-                    />
-                    <div>{item.prefix}</div>
-                    <div>{item.type}</div>
-                </div>
-            );
-        });
-
-        return mappedAnnotations;
+    toggleResourceDescription = () => {
+        this.setState({ collapseResourceDescription: !this.state.collapseResourceDescription });
     };
 
     toggleCharacteristics = () => {
         this.setState({ popoverCharacteristicsOpen: !this.state.popoverCharacteristicsOpen });
+    };
+
+    toggleResourceType = () => {
+        this.setState({ popoverResourceTypeOpen: !this.state.popoverResourceTypeOpen });
     };
 
     handleCharacteristicsChecked = (event, item) => {
@@ -414,6 +191,69 @@ class CardWidgetVis extends Component {
         const newRelation = { ...currentRelationContext, type: currentTypes };
         this.props.redux_editRelation({ updatedRelation: newRelation, relationIdentifier: currentRelationContext.identifier });
         this.setState(prevState => ({ checkedItems: prevState.checkedItems.set(item, isChecked) }));
+    };
+
+    handleResourceCharacteristicsChecked = (event, item) => {
+        const isChecked = event.target.checked;
+        const currentTypes = [...this.props.itemContext.type];
+
+        if (isChecked === true && !currentTypes.includes(item)) {
+            currentTypes.push(item);
+        } else if (isChecked === false) {
+            const index = currentTypes.indexOf(item);
+            if (index !== -1) {
+                currentTypes.splice(index, 1);
+            }
+        }
+        const currentResourceContext = this.props.itemContext;
+        const newResource = { ...currentResourceContext, type: currentTypes };
+        this.props.redux_editResource({ updatedResource: newResource, resourceIdentifier: currentResourceContext.identifier });
+        this.setState(prevState => ({ checkedItems: prevState.checkedItems.set(item, isChecked) }));
+    };
+
+    renderResourceType = itemOfInterest => {
+        const typeOfResource = itemOfInterest.type[0].split(':')[1];
+        return (
+            <div>
+                Characteristics
+                <div style={{ float: 'right' }}>
+                    <Icon
+                        id="PopoverResourceType"
+                        icon={faPlusCircle}
+                        style={{ float: 'right', marginTop: '3px', marginRight: '5px', color: 'white' }}
+                    />
+                    <Popover
+                        placement="bottom"
+                        isOpen={this.state.popoverResourceTypeOpen}
+                        target="PopoverResourceType"
+                        toggle={this.toggleResourceType}
+                    >
+                        <PopoverHeader>Add resource type</PopoverHeader>
+                        <PopoverBody>
+                            {this.resourceTypes.map(item => {
+                                return (
+                                    <CustomInput
+                                        key={'checkBoxKey_' + item}
+                                        id={'checkbox_' + item}
+                                        checked={this.state.checkedItems.get(item) || false}
+                                        type={'checkbox'}
+                                        onChange={event => this.handleResourceCharacteristicsChecked(event, item)}
+                                    >
+                                        {item}
+                                    </CustomInput>
+                                );
+                            })}
+                            <Button
+                                style={{ padding: '0.1em 1em', background: '#0069d9', borderColor: '#0069d9', marginTop: '5px' }}
+                                onClick={this.toggleResourceType}
+                            >
+                                Ok
+                            </Button>
+                        </PopoverBody>
+                    </Popover>
+                </div>
+            </div>
+        );
     };
 
     renderCharacteristics = itemOfInterest => {
@@ -560,6 +400,78 @@ class CardWidgetVis extends Component {
         this.setState(prevState => ({ checkedItems: prevState.checkedItems.set(item, isChecked) }));
     };
 
+    addAxiom = () => {
+        //TODO add axiom to particular type and then render the Relation
+        console.log('axioms needs to be added to its particular type here');
+        this.showPopup();
+    };
+
+    renderResourceDescription = itemOfInterest => {
+        return (
+            <div>
+                {Object.keys(itemOfInterest.axioms).length > 0 ? (
+                    Object.keys(itemOfInterest.axioms).map(axiom => {
+                        return (
+                            <div key={itemOfInterest.itemIdentifier + axiom}>
+                                <div>
+                                    {axiom.split(':')[1]}
+                                    {'   '}
+                                    <Icon
+                                        id={'PopoverAxiom' + itemOfInterest.itemIdentifier}
+                                        icon={faPlusCircle}
+                                        onMouseEnter={this.onMouseEnter}
+                                        onMouseLeave={this.onMouseLeave}
+                                        style={{ marginRight: '5px', color: 'gray' }}
+                                    />
+                                    <div>
+                                        <Popover
+                                            placement="bottom"
+                                            isOpen={this.state.popoverDomainRangePairsOpen}
+                                            target={'PopoverAxiom' + itemOfInterest.itemIdentifier}
+                                            toggle={this.showPopup}
+                                        >
+                                            <PopoverHeader>Add {axiom}</PopoverHeader>
+                                            <PopoverBody>
+                                                {this.objectTypeRestrictions.map(item => {
+                                                    return (
+                                                        <CustomInput
+                                                            key={'checkBoxKey_' + item}
+                                                            id={'checkbox_' + item}
+                                                            checked={this.state.checkedItems.get(item) || false}
+                                                            type={'checkbox'}
+                                                            onChange={event => this.handleCheck(event, item)}
+                                                        >
+                                                            {item}
+                                                        </CustomInput>
+                                                    );
+                                                })}
+                                                <Button onClick={this.addAxiom}>Ok</Button>
+                                                <Button onClick={this.showPopup}>Cancel</Button>
+                                            </PopoverBody>
+                                        </Popover>
+                                    </div>
+                                </div>
+                                <div>
+                                    {Object.keys(itemOfInterest.axioms[axiom]).map(item => {
+                                        {
+                                            return (
+                                                <div key={itemOfInterest.itemIdentifier + axiom + item} style={{ marginLeft: '1rem' }}>
+                                                    {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}
+                                                </div>
+                                            );
+                                        }
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div>No Description Available</div>
+                )}
+            </div>
+        );
+    };
+
     renderDescription = itemOfInterest => {
         const typeOfItemOfInterest = itemOfInterest.type[0].split(':')[1];
 
@@ -676,11 +588,9 @@ class CardWidgetVis extends Component {
         );
     };
 
-    renderResourceWidget = () => {};
-
     render() {
         return (
-            <div style={{ backgroundColor: 'white', height: '250px', border: '1px solid black', borderTop: 'none' }}>
+            <div style={{ backgroundColor: 'white', height: '250px', border: '1px solid black', borderTop: 'none', overflow: 'auto' }}>
                 {this.props.isExpanded && <div style={{ display: 'block' }}>{this.renderWidget()}</div>}
             </div>
         );
@@ -693,7 +603,9 @@ CardWidgetVis.propTypes = {
     rrModel: PropTypes.object.isRequired,
     itemContext: PropTypes.object.isRequired,
     isExpanded: PropTypes.bool.isRequired,
-    redux_editRelation: PropTypes.func.isRequired
+    callback: PropTypes.func.isRequired,
+    redux_editRelation: PropTypes.func.isRequired,
+    redux_editResource: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
@@ -703,7 +615,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    redux_editRelation: data => dispatch(redux_editRelation(data))
+    redux_editRelation: data => dispatch(redux_editRelation(data)),
+    redux_editResource: data => dispatch(redux_editResource(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardWidgetVis);

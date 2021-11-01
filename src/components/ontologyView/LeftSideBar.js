@@ -207,7 +207,7 @@ export class LeftSideBar extends Component {
                     </tr>
                 );
             }
-            return <tr key={keyIndex + '_ERROR'}>{/*<td>ERROR HERE</td>*/}</tr>;
+            return <tr key={itemKey + keyIndex + '_ERROR'}>{/*<td>ERROR HERE</td>*/}</tr>;
         });
     };
 

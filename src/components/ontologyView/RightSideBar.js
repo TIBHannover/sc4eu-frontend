@@ -111,7 +111,7 @@ export default class RightSideBar extends Component {
                         // zIndex: -500
                     }}
                 >
-                    <div style={{ width: this.props.width - 10, textAlign: 'center' }}>hello</div>
+                    <div style={{ width: this.props.width - 10, textAlign: 'center' }}>All changes will appear here [Not Implemented Yet]</div>
                 </Container>
             </ContentContainer>
         );

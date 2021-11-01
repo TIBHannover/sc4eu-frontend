@@ -23,6 +23,7 @@ class SingleResource extends Component {
             graphVisInitialRendering: true,
             bodyInitialRendering: true,
             widgetInitialRendering: true,
+            updateSiblings: false,
 
             forcedUpdate: false
         };
@@ -33,6 +34,10 @@ class SingleResource extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    updateSiblings = () => {
+        this.setState({ updateSiblings: !this.state.updateSiblings });
+    };
 
     forceRerendering = () => {
         this.setState({ forcedUpdate: !this.state.forcedUpdate });
@@ -130,6 +135,7 @@ class SingleResource extends Component {
                         itemIdentifier={this.props.resourceContext.identifier}
                         isExpanded={this.state.showingGraphVis}
                         itemType="Resource"
+                        callback={this.updateSiblings}
                     />
                 </CollapsibleItem>
                 <CollapsibleItem isOpen={this.state.showingWidgetVis}>
@@ -138,6 +144,7 @@ class SingleResource extends Component {
                         itemContext={this.props.resourceContext}
                         isExpanded={this.state.showingWidgetVis}
                         itemType="Resource"
+                        callback={this.updateSiblings}
                     />
                 </CollapsibleItem>
                 {!this.props.experimentalLayout && (

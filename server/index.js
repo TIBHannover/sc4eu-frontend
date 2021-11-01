@@ -53,6 +53,8 @@ app.use(
     })
 );
 
+app.use(bodyParser.json({ limit: '10mb' }));
+
 router.use(express.urlencoded({ extended: false }));
 router.use(cookieParser());
 router.use(express.static(path.join(__dirname, 'public')));
