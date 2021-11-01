@@ -28,7 +28,6 @@ export default class RightSideBar extends Component {
 
         // check required height TODO
         this.props.heightUpdateEvent();
-        //Just a comment
     };
 
     componentWillUnmount() {
