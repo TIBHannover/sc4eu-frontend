@@ -54,6 +54,7 @@ app.use(
 );
 
 app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: false, parameterLimit: 50000 }));
 
 router.use(express.urlencoded({ extended: false }));
 router.use(cookieParser());
