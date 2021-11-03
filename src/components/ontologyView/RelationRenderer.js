@@ -191,7 +191,7 @@ class RelationRenderer extends Component {
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
                     {/*TODO: fix add relation functionality*/}
-                    <Button size="sm" color="primary" style={{ height: '39px' }} disabled={true} onClick={this.handleAdd}>
+                    <Button size="sm" color="primary" style={{ height: '39px' }} disabled={false} onClick={this.handleAdd}>
                         Add
                     </Button>
                     <InputGroup>
