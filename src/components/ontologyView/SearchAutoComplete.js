@@ -41,12 +41,15 @@ class SearchAutocomplete extends Component {
                     onInputChange={(event, value) => {
                         this.value = value;
                         if (event === null && value !== '') {
+                            this.count = 0;
                             return this.props.handleSearch(value, 0);
                         }
                         if (event === null && this.state.preservedValue !== '') {
+                            this.count = 0;
                             return this.props.handleSearch(value, 0);
                         }
                         if (event.type === 'click') {
+                            this.count = 0;
                             return this.props.handleSearch(value, 0);
                         }
                     }}
@@ -59,10 +62,11 @@ class SearchAutocomplete extends Component {
                             return [];
                         }
                         const filtered = filter(options, params);
-                        if (filtered.length > 5) {
-                            return filtered.slice(0, 5);
+                        const uniqueFiltered = [...new Set(filtered)];
+                        if (uniqueFiltered.length > 5) {
+                            return uniqueFiltered.slice(0, 5);
                         }
-                        return filtered;
+                        return uniqueFiltered;
                     }}
                     getOptionSelected={option => null}
                     options={this.props.lookupList}

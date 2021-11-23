@@ -101,6 +101,7 @@ class ResourceRenderer extends Component {
     };
 
     handleSearch = (value, counter) => {
+        this.lookupList = [];
         this.searchText = value;
         this.props.redux_preserveFilterSearch({ ui_resource_search_value_preserved: value });
         this.arrayOfChildObjects.forEach(child => {
