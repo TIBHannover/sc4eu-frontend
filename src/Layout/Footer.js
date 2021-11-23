@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TIB_Logo_en from 'assets/images/TIB_Logo_en.png';
 import eu_logo from 'assets/images/eu_logo.jpg';
 import eu_logo2 from 'assets/images/eu_logo2.jpg';
-import dfg_logo from 'assets/images/dfg_logo.png';
+import ECSEL_logo from 'assets/images/ECSEL_logo.jpg';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 const Image = styled.img``;
@@ -24,23 +24,20 @@ export default class Footer extends Component {
                 }}
             >
                 <div>
-                    <Image src={eu_logo2} alt="EU Logo2" style={{ height: 70 }} />
-                </div>
-                <div>
                     <Image src={eu_logo} alt="EU Logo" style={{ height: 30, marginTop: '10px' }} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <div style={{ display: 'flex', flexDirection: 'row', position: 'absolute', right: 5, bottom: 5 }}>
-                        <div>
-                            <div style={{ color: '#777', fontSize: '24px' }}> Maintainer: </div>
-                            <a href={'https://www.tib.eu/de/'}>
-                                <Image src={TIB_Logo_en} alt="TIB Logo" style={{ height: 100, paddingTop: '15px' }} />
-                            </a>
-                        </div>
+                        {/*<div>*/}
+                        {/*    <div style={{ color: '#777', fontSize: '24px' }}> Maintainer: </div>*/}
+                        {/*    <a href={'https://www.tib.eu/de/'}>*/}
+                        {/*        <Image src={TIB_Logo_en} alt="TIB Logo" style={{ height: 100, paddingTop: '15px' }} />*/}
+                        {/*    </a>*/}
+                        {/*</div>*/}
                         <div>
                             <div style={{ color: '#777', fontSize: '24px' }}> Funding: </div>
                             <a href={'https://www.dfg.de/'}>
-                                <Image src={dfg_logo} alt="DFG Logo" style={{ height: 100 }} />
+                                <Image src={ECSEL_logo} alt="DFG Logo" style={{ height: 100 }} />
                             </a>
                         </div>
                     </div>
