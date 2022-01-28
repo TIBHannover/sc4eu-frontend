@@ -167,11 +167,22 @@ export default class GraphRenderer {
     createPrimitives() {
         // create the primitives;
         this.model.nodes.forEach(node => {
-            this.createNodePrimitive(node);
+            if (node) {
+                //TODO this is not a fix, check why node is undefined
+                this.createNodePrimitive(node);
+            }
         });
 
         this.model.links.forEach(link => {
-            this.createLinkPrimitive(link);
+            console.log('link: ', link);
+            if (link) {
+                //TODO this is nto a fix, check why node is undefined
+                const targetNode = this.semanticNodeMap[link.__target.__nodeLinkIdentifier];
+                const sourceNode = this.semanticNodeMap[link.__source.__nodeLinkIdentifier];
+                if (targetNode && sourceNode) {
+                    this.createLinkPrimitive(link);
+                }
+            }
         });
 
         this.updateMultiLinkTypes(this.links);
