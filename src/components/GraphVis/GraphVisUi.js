@@ -119,6 +119,10 @@ class GraphVisUi extends Component {
 
     // helper:
     getPrefixOfURI = uri => {
+        //TODO this needs to be fixed properly, check why the uir is empty
+        if (!uri) {
+            return;
+        }
         const lastIndexOfHash = uri.lastIndexOf('#');
         const lastIndexOfSlash = uri.lastIndexOf('/');
         let prefixUri = '';
