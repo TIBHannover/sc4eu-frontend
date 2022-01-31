@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { FormGroup, Label, Input } from 'reactstrap';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-
 export default class UploadOntology extends Component {
     constructor(props) {
         super(props);
@@ -113,6 +112,20 @@ export default class UploadOntology extends Component {
 
     executeUpload = () => {
         console.log('Executing Upload to backend!');
+
+        if (!this.state.ontologyName && !this.state.ontologyDescription) {
+            alert('Please provide name and description for the ontology');
+            return;
+        }
+        if (!this.state.ontologyName) {
+            alert('Please provide name for the ontology');
+            return;
+        }
+        if (!this.state.ontologyDescription) {
+            alert('Please provide description for the ontology');
+            return;
+        }
+
         const objToSent = {
             name: this.state.ontologyName,
             description: this.state.ontologyDescription,

@@ -31,7 +31,10 @@ class OntologyViewAsTTL extends Component {
             '#   Ontology \n' +
             '#################################################################\n';
         ontologyPreamble += '<' + this.props.metaInformation.metaDescriptions.iri + '> rdf:type owl:Ontology ; \n';
-        ontologyPreamble += '\t\t\t dc:description "' + this.props.metaInformation.metaDescriptions.description.en + '" .\n';
+        if (this.props.metaInformation.metaDescriptions.description) {
+            ontologyPreamble += '\t\t\t dc:description "' + this.props.metaInformation.metaDescriptions.description.en + '" .\n';
+        }
+
         // TODO ^^^^ the above is just a testing example. not fully working yet, termination tokens and values need to be extracted
 
         // extract annotation Properties (yet missing in the transformation model TODO
