@@ -18,7 +18,18 @@ class CardGraphVis extends Component {
         this.eventListenerIsInjected = false;
         this.graphRenderingIdentifier =
             'cardRenderingIdentifier_' +
-            getPrefixedVersion(this.props.itemIdentifier, this.props.rrModel.metaInformation.prefixList.longToShort).replace(':', '_');
+            getPrefixedVersion(this.props.itemIdentifier, this.props.rrModel.metaInformation.prefixList.longToShort)
+                .replace(':', '_')
+                .replaceAll('.', '_')
+                .replaceAll('&', '_');
+
+        if (this.graphRenderingIdentifier.includes('#')) {
+            this.graphRenderingIdentifier = this.graphRenderingIdentifier.split('#')[1];
+        }
+        //TODO: identifiers which are not prefixed have problem with forwardslashes
+        if (this.graphRenderingIdentifier.includes('/')) {
+            this.graphRenderingIdentifier = this.graphRenderingIdentifier.replaceAll('/', '');
+        }
         this.graph = new DonatelloGraph();
         this.mapperModule = new MapperModule();
         this.parentDivObserver = new ResizeObserver(() => {

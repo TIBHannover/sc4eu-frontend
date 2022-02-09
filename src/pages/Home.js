@@ -46,12 +46,13 @@ export default class Home extends Component {
                     <div
                         style={{
                             backgroundImage: `url(${background})`,
-                            backgroundSize: '65% 60%',
+                            //backgroundSize: '40% 65%',
                             opacity: '0.2',
                             width: '100%',
                             height: '100%',
                             position: 'fixed',
-                            backgroundRepeat: 'repeat-x'
+                            backgroundPositionX: 'center',
+                            backgroundRepeat: 'no-repeat'
                         }}
                     />
                     <div
