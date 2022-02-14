@@ -15,6 +15,7 @@ export default class OntologyIndexCards extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     deleteOntology = async event => {
+        //delete Ontology
         event.preventDefault();
 
         const isConfirmed = window.confirm('Are you sure you want to Delete this ontology?');
