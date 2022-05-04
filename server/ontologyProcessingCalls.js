@@ -75,12 +75,11 @@ module.exports = {
 
                         request(ontologyProcessing_options, function(error, response) {
                             try {
-                                console.log(response.body);
                                 const jsonModel = JSON.parse(response.body);
                                 const resultingData = { ontology_data: jsonModel };
                                 res.json(resultingData);
                             } catch (e) {
-                                res.json({ error: 'Something went wrong in request' });
+                                res.json({ error: 'Something went wrong in request' + response.body });
                             }
                         });
                     } catch (e) {
