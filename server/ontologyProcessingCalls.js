@@ -79,14 +79,14 @@ module.exports = {
                                 const resultingData = { ontology_data: jsonModel };
                                 res.json(resultingData);
                             } catch (e) {
-                                res.json({ error: 'Something went wrong' });
+                                res.json({ error: 'Something went wrong in request' });
                             }
                         });
                     } catch (e) {
-                        res.json({ error: 'Something went wrong' });
+                        res.json({ error: 'Something went wrong in try' });
                     }
                 } else {
-                    res.json({ error: 'Something went wrong' });
+                    res.json({ error: 'Something went wrong in response' });
                 }
             });
         });
