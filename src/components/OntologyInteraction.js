@@ -31,7 +31,7 @@ class OntologyViewRoot extends Component {
         getOntologyBy(this.props.match.params.ontologyId).then(res => {
             // console.log('we have the data!!!!!!', res);
             getJSON_ModelForOntology({ ontologyData: res.ontology_data }).then(jsModel => {
-                console.log('>>> should call that redux function');
+                console.log('>>> should call that redux function ');
                 // create json obj from the string
                 const parsedModel = JSON.parse(jsModel);
                 this.props.initializeResourceRelationModel(parsedModel);
