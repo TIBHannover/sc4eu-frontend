@@ -9,11 +9,11 @@ import { transformRelationToTTL_TextView } from '../../mappers/RelationToTTL';
 class OntologyViewAsTTL extends Component {
     constructor(props) {
         super(props);
-        this.ref = React.createRef();
         this.state = {
             ontologyAsTTL: 'This is some text here a'
         };
     }
+
     componentDidMount() {
         const prefixList = this.props.metaInformation.prefixList.shortToLong;
 
@@ -44,6 +44,7 @@ class OntologyViewAsTTL extends Component {
             '#################################################################\n\n';
 
         const resources = this.props.resources;
+        const relations = this.props.relations;
 
         resources.forEach(resource => {
             if (resource.resourceURI === 'http://www.w3.org/2000/01/rdf-schema#Literal') {
@@ -58,9 +59,8 @@ class OntologyViewAsTTL extends Component {
             '#     Data properties\n' +
             '#################################################################\n\n';
 
-        const relations = this.props.relations;
-        const dataProperties = relations.filter(data => data.type[0] === 'owl:DatatypeProperty');
-        dataProperties.map(relation => {
+        const dataProperties = relations.filter(item => item.type[0] === 'owl:DatatypeProperty');
+        dataProperties.forEach(relation => {
             datatypePropertyDefinitions += transformRelationToTTL_TextView(relation, this.props.metaInformation.prefixList.longToShort) + '\n\n';
         });
 
@@ -70,8 +70,8 @@ class OntologyViewAsTTL extends Component {
             '#    Object Properties\n' +
             '#################################################################\n\n';
 
-        const objectProperties = relations.filter(object => object.type[0] === 'owl:ObjectProperty');
-        objectProperties.map(relation => {
+        const objectProperties = relations.filter(item => item.type[0] === 'owl:ObjectProperty');
+        objectProperties.forEach(relation => {
             objectPropertyDefinitions += transformRelationToTTL_TextView(relation, this.props.metaInformation.prefixList.longToShort) + '\n\n';
         });
 
@@ -88,6 +88,7 @@ class OntologyViewAsTTL extends Component {
 
         this.setState({ ontologyAsTTL: fullData });
     }
+
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     render() {
@@ -114,4 +115,5 @@ OntologyViewAsTTL.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => ({});
+
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewAsTTL);
