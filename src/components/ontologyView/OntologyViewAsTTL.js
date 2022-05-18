@@ -56,11 +56,11 @@ class OntologyViewAsTTL extends Component {
         //extract datatypeProperties
         let datatypePropertyDefinitions =
             '#################################################################\n' +
-            '#     Data properties\n' +
+            '#     Datatype properties\n' +
             '#################################################################\n\n';
 
-        const dataProperties = relations.filter(item => item.type[0] === 'owl:DatatypeProperty');
-        dataProperties.forEach(relation => {
+        const datatypeProperties = relations.filter(item => item.type[0] === 'owl:DatatypeProperty');
+        datatypeProperties.forEach(relation => {
             datatypePropertyDefinitions += transformRelationToTTL_TextView(relation, this.props.metaInformation.prefixList.longToShort) + '\n\n';
         });
 
