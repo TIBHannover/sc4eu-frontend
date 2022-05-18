@@ -3,10 +3,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Container, Input } from 'reactstrap';
-
-import { transformResourceToTTL_TextView } from 'mappers/ResToTTL';
-import { transformRelationToTTL_TextView } from 'mappers/RelationToTTL';
-// import transformRelationToTTL from '/mappers/RelationToTTL';
+import { transformResourceToTTL_TextView } from '../../mappers/ResToTTL';
+import { transformRelationToTTL_TextView } from '../../mappers/RelationToTTL';
 
 class OntologyViewAsTTL extends Component {
     constructor(props) {
@@ -58,21 +56,21 @@ class OntologyViewAsTTL extends Component {
         //extract datatypeProperties
         let datatypePropertyDefinitions =
             '#################################################################\n' +
-            '#     Data properties\n' +
+            '#     Datatype properties\n' +
             '#################################################################\n\n';
 
-        // extract objectProperties
-        const datatypesProps = relations.filter(item => item.type[0] === 'owl:datatypeProperty');
-        datatypesProps.forEach(relation => {
+        const datatypeProperties = relations.filter(item => item.type[0] === 'owl:DatatypeProperty');
+        datatypeProperties.forEach(relation => {
             datatypePropertyDefinitions += transformRelationToTTL_TextView(relation, this.props.metaInformation.prefixList.longToShort) + '\n\n';
         });
 
+        // extract objectProperties
         let objectPropertyDefinitions =
             '#################################################################\n' +
             '#    Object Properties\n' +
             '#################################################################\n\n';
 
-        const objectProperties = relations.filter(item => item.type[0] === 'owl:objectProperty');
+        const objectProperties = relations.filter(item => item.type[0] === 'owl:ObjectProperty');
         objectProperties.forEach(relation => {
             objectPropertyDefinitions += transformRelationToTTL_TextView(relation, this.props.metaInformation.prefixList.longToShort) + '\n\n';
         });
