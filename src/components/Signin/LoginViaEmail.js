@@ -27,6 +27,7 @@ class LoginViaEmail extends Component {
         this.setState({ loading: false });
         const result = await this.registerUserWithEmail();
         console.log(result);
+        this.props.callback();
         // TODO: handle errors depending on the success of the result
         this.setState({ loading: false });
     };
