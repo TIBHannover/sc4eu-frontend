@@ -25,7 +25,7 @@ export default class Footer extends Component {
                     left: 0,
                     bottom: 0,
                     right: 0,
-                    height: '150px'
+                    height: '15%'
                 }}
             >
                 <div>
