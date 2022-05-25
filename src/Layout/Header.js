@@ -141,8 +141,11 @@ class Header extends Component {
                     <Link style={LinkStyle} to={ROUTES.ONTOLOGY} onDragStart={this.preventDraggingOfItem}>
                         Ontologies
                     </Link>
-                    <Link style={LinkStyle} to={ROUTES.HOME} onDragStart={this.preventDraggingOfItem}>
-                        Documents
+                    <Link style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
+                        Documentations
+                    </Link>
+                    <Link style={LinkStyle} to={ROUTES.Dataprotections} onDragStart={this.preventDraggingOfItem}>
+                        Data Policy
                     </Link>
 
                     <div
@@ -179,7 +182,7 @@ class Header extends Component {
                                                     style={{ border: '3px solid #fff' }}
                                                     md5={this.props.user.gravatarId}
                                                     size={64}
-                                                    id="TooltipExamplee"
+                                                    id="TooltipExample"
                                                 />
                                             </Link>
                                         </div>

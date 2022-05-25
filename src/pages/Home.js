@@ -17,7 +17,7 @@ export default class Home extends Component {
         };
     }
 
-    Onclickreacdmore = () => {
+    toggleReadmore = () => {
         this.setState({ isreadmore: !this.state.isreadmore });
     };
 
@@ -143,16 +143,14 @@ export default class Home extends Component {
                             <p style={{ textAlign: 'justify' }}>{this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 200)}</p>
                             <button
                                 style={{ backgroundColor: 'transparent', border: 'none', color: 'blue', fontWeight: 600 }}
-                                onClick={this.Onclickreacdmore}
+                                onClick={this.toggleReadmore}
                             >
                                 {this.state.isreadmore ? 'Read Less' : ' Read More'}
                             </button>
                         </div>
                     </div>
                 </div>
-                <div style={{ overflow: 'hidden' }}>
-                    <Footer />
-                </div>
+                <Footer />
             </div>
         );
     }
