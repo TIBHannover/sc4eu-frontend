@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Footer from '../Layout/Footer';
 
 class Documentations extends Component {
     constructor(props) {
@@ -24,8 +25,8 @@ class Documentations extends Component {
             'Since the created ontologies and their conceptualizations thrive from discussions and joint agreement upon their definitions and their usage, block chain technologies providing the means for versioning and history of changes should be part of the solution. Integrating them with ontology development will foster trust and validation of ontologies and enable long term support for downward compatible systems using old ontology versions”.\n';
 
         return (
-            <div>
-                <div>
+            <div style={{ width: '100%', height: '100%' }}>
+                <div style={{ width: '100%', height: '85%', overflowY: 'scroll', paddingBottom: '30px' }}>
                     <h1 style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '10px' }}>What Portal will do for you</h1>
                     <div style={{ paddingLeft: '300px', paddingRight: '300px' }}>
                         <h3>Connecting domain experts with knowledge engineers</h3>
@@ -60,6 +61,7 @@ class Documentations extends Component {
                         />
                     </div>
                 </div>
+                <Footer />
             </div>
         );
     }
