@@ -18,7 +18,7 @@ import greetingTime from 'greeting-time';
 import { Button, ButtonGroup, Row, Navbar } from 'reactstrap';
 import SignInModal from '../components/Signin/SignInModal';
 
-import { StyledLink, StyledAuthTooltip, StyledGravatar, StyledTopBar } from 'styledComponents/styledComponents';
+import { StyledAuthTooltip, StyledGravatar, StyledTopBar } from 'styledComponents/styledComponents';
 
 class Header extends Component {
     constructor(props) {
@@ -113,21 +113,51 @@ class Header extends Component {
         // this shall be a nav bar in the end
         const greeting = greetingTime(new Date());
 
+        const LinkStyle = {
+            color: '#ffff',
+            display: 'flex',
+            paddingRight: '20px',
+            alignItems: 'center',
+            height: '100%',
+            cursor: 'pointer',
+            float: 'left',
+            fontWeight: 700
+        };
+
         return (
             <StyledTopBar>
-                <Navbar className="navBar" expand="md" fixed="top" id="main-navbar" style={{ borderBottom: '1px solid black' }}>
-                    <StyledLink to={ROUTES.HOME} className="mr-4 p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
+                <Navbar
+                    expand="md"
+                    fixed="top"
+                    id="main-navbar"
+                    style={{ borderBottom: '1px solid black', background: '#007bff', display: 'block', height: '40px' }}
+                >
+                    <Link style={Object.assign({ marginTop: '5px' }, LinkStyle)} to={ROUTES.HOME} onDragStart={this.preventDraggingOfItem}>
                         <Logo />
-                    </StyledLink>
-
-                    <StyledLink to={ROUTES.ONTOLOGY} className="mr-4 p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
+                    </Link>
+                    <Link style={LinkStyle} to={ROUTES.HOME} onDragStart={this.preventDraggingOfItem}>
+                        Home
+                    </Link>
+                    <Link style={LinkStyle} to={ROUTES.ONTOLOGY} onDragStart={this.preventDraggingOfItem}>
                         Ontologies
-                    </StyledLink>
-                    {/*<StyledLink to={ROUTES.PAGEB} className="mr-4 p-0 noSelect" onDragStart={this.preventDraggingOfItem}>*/}
-                    {/*    Page B*/}
-                    {/*</StyledLink>*/}
+                    </Link>
+                    <Link style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
+                        Documentations
+                    </Link>
+                    <Link style={LinkStyle} to={ROUTES.Dataprotections} onDragStart={this.preventDraggingOfItem}>
+                        Data Policy
+                    </Link>
 
-                    <div style={{ display: 'flex', float: 'right', marginTop: '-8px' }}>
+                    <div
+                        style={{
+                            color: '#fff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            height: '100%',
+                            cursor: 'pointer',
+                            float: 'right'
+                        }}
+                    >
                         {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
                             <div>
                                 <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
@@ -180,7 +210,7 @@ class Header extends Component {
                             </div>
                         ) : (
                             <Button
-                                color="link"
+                                style={{ backgroundColor: '#000000' }}
                                 className="clearfix"
                                 onClick={() => {
                                     console.log('SING IN ACTION ');
