@@ -17,11 +17,6 @@ class Dataprotections extends Component {
                 >
                     <h2
                         style={{
-                            lineHeight: 1.4,
-                            marginBottom: '0.5rem',
-                            fontWeight: 400,
-                            color: 'rgb(0,124,130)',
-                            fontSize: '2rem',
                             marginTop: '20px'
                         }}
                     >

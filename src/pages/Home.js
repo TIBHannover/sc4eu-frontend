@@ -48,7 +48,7 @@ export default class Home extends Component {
                                 fontWeight: 600
                             }}
                         >
-                            The Semantically Coordinated Semiconductor Supply Chains (SC3) Portal for a collaborative Ontology Development.
+                            The Semantically Connencted Semiconductor Supply Chains (SC3) Portal for a collaborative Ontology Development.
                         </div>
                         {/*<div style={{ margin: 'auto', fontSize: 'large', textAlign: 'center', color: '#0056b3' }}>*/}
                         {/*    Please sign in to view or upload an Ontology*/}
@@ -140,13 +140,12 @@ export default class Home extends Component {
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '20px', marginRight: '20px' }}>
                             <img src={guidance} width="70" height="70" style={{ alignSelf: 'center' }} />
                             <h5>Framework for collaborative ontology development</h5>
-                            <p style={{ textAlign: 'justify' }}>{this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 200)}</p>
-                            <button
-                                style={{ backgroundColor: 'transparent', border: 'none', color: 'blue', fontWeight: 600 }}
-                                onClick={this.toggleReadmore}
-                            >
-                                {this.state.isreadmore ? 'Read Less' : ' Read More'}
-                            </button>
+                            <p style={{ textAlign: 'justify', cursor: 'pointer' }}>
+                                {this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 200)}
+                                <span style={{ color: 'blue', fontWeight: 600 }} onClick={this.toggleReadmore}>
+                                    {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
+                                </span>
+                            </p>
                         </div>
                     </div>
                 </div>
