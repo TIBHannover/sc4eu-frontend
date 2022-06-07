@@ -144,9 +144,6 @@ class Header extends Component {
                     <Link style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
                         Documentations
                     </Link>
-                    <Link style={LinkStyle} to={ROUTES.Dataprotections} onDragStart={this.preventDraggingOfItem}>
-                        Data Policy
-                    </Link>
 
                     <div
                         style={{
