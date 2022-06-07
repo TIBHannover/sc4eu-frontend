@@ -43,7 +43,7 @@ class Documentations extends Component {
                             representations to their needs, flexible and adjustable techniques are required.
                         </p>
                         <h3>Hybrid modes of operation</h3>
-                        <p style={{ whiteSpace: 'pre-wrap' }}>
+                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer' }}>
                             {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
                             <span style={{ color: 'blue', fontWeight: 600 }} onClick={this.toggleReadmore}>
                                 {this.state.isreadmore ? 'Read Less' : ' ...Read More'}
