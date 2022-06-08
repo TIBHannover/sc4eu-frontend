@@ -32,6 +32,8 @@ export default class Dashboard extends Component {
 
         //request user roles
         getAllRoles().then(roles => {
+            console.log('rolllllllllllllllles');
+            console.log(roles);
             this.setState({ userRoles: roles });
         });
 
