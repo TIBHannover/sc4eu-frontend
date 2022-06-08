@@ -4,18 +4,16 @@ import ROUTES from 'constants/routes';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import { reverse } from 'named-urls';
-import { Redirect } from 'react-router-dom';
 
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import Logo from 'components/Logo';
 
-import { openAuthDialog } from '../redux/actions/auth';
-import { firstLoad, resetAuth, toggleAuthDialog, closeAuthDialog } from '../redux/actions/auth';
+import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth, toggleAuthDialog } from '../redux/actions/auth';
 import greetingTime from 'greeting-time';
-import { Button, ButtonGroup, Row, Navbar } from 'reactstrap';
+import { Button, ButtonGroup, Navbar, Row } from 'reactstrap';
 import SignInModal from '../components/Signin/SignInModal';
 
 import { StyledAuthTooltip, StyledGravatar, StyledTopBar } from 'styledComponents/styledComponents';
@@ -35,7 +33,7 @@ class Header extends Component {
 
     componentDidMount() {
         // headers component mounts, so lets try to see if we have a user;
-        // console.log('USER: ', this.props.user);
+        //console.log('USER: ', this.props.user);
         document.addEventListener('mousedown', this.handleClickOutside);
         if (this.props.user === 0) {
             // make a call to redux to look into the cookie jar
@@ -81,6 +79,16 @@ class Header extends Component {
         this.setState({
             userTooltipOpen: !this.state.userTooltipOpen
         });
+    };
+
+    showDashboard = () => {
+        if (this.props.user.displayName === 'System ADMIN') {
+            return (
+                <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.ADMIN_DASHBOARD}>
+                    Dashboard
+                </Button>
+            );
+        }
     };
 
     handleClickOutside = event => {
@@ -188,6 +196,7 @@ class Header extends Component {
                                                 {greeting} {this.props.user.displayName}
                                             </span>
                                             <ButtonGroup className="mt-2" size="sm">
+                                                {this.showDashboard()}
                                                 <Button
                                                     color="secondary"
                                                     onClick={this.toggleUserTooltip}
