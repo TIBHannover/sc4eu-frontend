@@ -25,8 +25,6 @@ export default class Dashboard extends Component {
     };
 
     getBackendData = () => {
-        console.log('Requesting backend data');
-        alert('Requesting Dashboard');
         // request dashboard content from Users
         requestDashboard().then(userFromBackend => {
             this.setState({ loading: false, users: userFromBackend });
@@ -34,8 +32,6 @@ export default class Dashboard extends Component {
 
         //request user roles
         getAllRoles().then(roles => {
-            console.log('rolllllllllllllllles');
-            console.log(roles);
             this.setState({ userRoles: roles });
         });
 
