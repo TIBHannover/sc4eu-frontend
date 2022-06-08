@@ -4,23 +4,45 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import { requestDashboard } from '../network/loginCalls';
+import { getAllRoles } from '../network/UserProfileCalls';
+import { getAllOntologies } from '../network/ontologyIndexing';
+import DashboardItem from '../components/DashboardItem';
 
 export default class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userWithAdminRoleExists: 'unknown',
             loading: true,
-            data: undefined
+            users: undefined,
+            userRoles: [],
+            ontologies: []
         };
-
         this.parameterOrder = [];
     }
 
     componentDidMount = async () => {
-        // request dashboard content from backend
-        requestDashboard().then(data => {
-            this.setState({ loading: false, data: data });
+        this.getBackendData();
+    };
+
+    getBackendData = () => {
+        // request dashboard content from Users
+        requestDashboard().then(userFromBackend => {
+            this.setState({ loading: false, users: userFromBackend });
+        });
+
+        //request user roles
+        getAllRoles().then(roles => {
+            this.setState({ userRoles: roles });
+        });
+
+        //request ontologies
+        getAllOntologies().then(ontologiesFromBackend => {
+            const ontologyLabels = [];
+
+            ontologiesFromBackend.forEach(ontology => {
+                ontologyLabels.push({ value: ontology.name, label: ontology.name });
+            });
+            this.setState({ ontologies: ontologyLabels });
         });
     };
 
@@ -41,58 +63,51 @@ export default class Dashboard extends Component {
             }
         }
 
-        const orderdArray = [].concat(correctParamOrder, missedParams);
+        const orderedArray = [].concat(correctParamOrder, missedParams);
 
-        this.parameterOrder = orderdArray;
-        return orderdArray.map((item, index) => {
+        this.parameterOrder = orderedArray;
+        return orderedArray.map((item, index) => {
             return <th key={'key_header' + index}>{item}</th>;
         });
     };
 
-    extractBodyInformation = data => {
-        return data.map((item, index) => {
-            return <tr key={'row_item' + index}>{this.extractRow(data[index])}</tr>;
-        });
-    };
-
-    extractRow = itemData => {
-        return this.parameterOrder.map((selector, index) => {
-            let res = itemData[selector];
-            if (typeof res === 'boolean') {
-                if (res) {
-                    res = 'True';
-                } else {
-                    res = 'False';
-                }
-            }
-
-            return <td key={'td_' + index}>{res}</td>;
+    dashBoardRowItem = () => {
+        return this.state.users.map(rowItem => {
+            return (
+                <DashboardItem
+                    key={'row_item' + rowItem['uuid']}
+                    userData={rowItem}
+                    roleOptions={this.state.userRoles}
+                    ontologies={this.state.ontologies}
+                    callback={this.getBackendData}
+                    parameterOrder={this.parameterOrder}
+                />
+            );
         });
     };
 
     renderUserInformation = data => {
         // create a table
         // extract header information
-
         return (
             <table style={{ width: '100%' }}>
                 <thead>
                     <tr>{this.extractHeaderInformation(data[0])}</tr>
                 </thead>
-                <tbody>{this.extractBodyInformation(data)}</tbody>
+                <tbody>{this.dashBoardRowItem()}</tbody>
             </table>
         );
     };
 
     renderDashboard = () => {
-        if (this.state.data) {
-            if (this.state.data.error) {
-                return <h1>{this.state.data.error}</h1>;
+        if (this.state.users) {
+            if (this.state.users.error) {
+                return <h1>{this.state.users.error}</h1>;
             } else {
                 return (
                     <div>
                         <h1>USER INFORMATION </h1>
-                        {this.renderUserInformation(this.state.data)}
+                        {this.renderUserInformation(this.state.users)}
                     </div>
                 );
             }
@@ -112,8 +127,7 @@ export default class Dashboard extends Component {
                         </h2>
                     </div>
                 )}
-
-                {!this.state.loading && <div>{this.renderDashboard()} </div>}
+                {!this.state.loading && this.renderDashboard()}
             </Container>
         );
     }

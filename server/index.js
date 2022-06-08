@@ -64,8 +64,10 @@ router.use(express.static(path.join(__dirname, 'public')));
 server.servicesStatus(router);
 server.testConnection(router);
 server.adminDashBoard(router);
+server.allRoles(router);
 server.allowUploads(router);
 server.getUserHeader(router);
+server.deleteUser(router);
 server.transformTTL(router);
 server.transformVOWL_JSON(router);
 
