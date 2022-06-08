@@ -36,7 +36,7 @@ class Footer extends Component {
                     <div className="">
                         <h5 style={{ color: '#777' }}>About the service:</h5>
                     </div>
-                     <div>
+                    <div>
                         <Link to={ROUTES.Imprint}>Imprint</Link>
                     </div>
                     <div>
