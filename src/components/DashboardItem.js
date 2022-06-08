@@ -25,7 +25,6 @@ export default class DashboardItem extends Component {
 
         this.state = {
             data: undefined,
-            roleOptions: [],
             ontologies: [],
             userDeleted: false,
             roleValue: '',
