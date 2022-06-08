@@ -32,8 +32,6 @@ export default class DashboardItem extends Component {
             toggleEdit: false,
             optionSelected: null
         };
-
-        //this.parameterOrder = [];
     }
 
     deleteUser = item => {
@@ -58,23 +56,15 @@ export default class DashboardItem extends Component {
     };
 
     editUser = item => {
-        console.log('item ', item.uuid);
         if (this.state.toggleEdit) {
             //TODO UpdateUserRole in the database
-            //TODO Update the list of ontolgies this user is part of
+            //TODO Update the list of ontologies this user is part of
             //TODO call the callback
-            alert(this.state.roleValue);
-            console.log('Save this User');
-            //this.props.callback();
-            //Fine role id
-            const found = this.props.roleOptions.findIndex(item => item.role === this.state.roleValue);
-            let role_id;
-            if (found) {
-                console.log(this.props.roleOptions[found]);
-            }
+            const foundIndex = this.props.roleOptions.findIndex(item => item.role === this.state.roleValue);
+
             const newRole = {
                 user_id: item.uuid,
-                user_role: this.props.roleOptions[found]
+                user_role: this.props.roleOptions[foundIndex]
             };
             updateUserRole(newRole).then(() => {
                 this.props.callback();

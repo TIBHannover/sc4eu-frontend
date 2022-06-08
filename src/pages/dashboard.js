@@ -8,17 +8,6 @@ import { getAllRoles } from '../network/UserProfileCalls';
 import { getAllOntologies } from '../network/ontologyIndexing';
 import DashboardItem from '../components/DashboardItem';
 
-// const Option = props => {
-//     return (
-//         <div>
-//             <components.Option {...props}>
-//                 {/* eslint-disable-next-line react/prop-types */}
-//                 <input type="checkbox" checked={props.isSelected} onChange={() => null} /> <label>{props.label}</label>
-//             </components.Option>
-//         </div>
-//     );
-// };
-
 export default class Dashboard extends Component {
     constructor(props) {
         super(props);
@@ -43,10 +32,6 @@ export default class Dashboard extends Component {
 
         //request user roles
         getAllRoles().then(roles => {
-            //const rolesList = roles.map(role => role.role);
-            //console.log(rolesList[0]);
-            console.log('rollllllllllllllllllllll');
-            console.log(roles);
             this.setState({ userRoles: roles });
         });
 
@@ -65,8 +50,6 @@ export default class Dashboard extends Component {
         const parameterOrder = ['uuid', 'display_name', 'auth_type', 'email_valid'];
         // try to use predefined order
         const keys = Object.keys(input);
-        console.log('==============');
-        console.log(keys);
 
         const correctParamOrder = [];
         const missedParams = [];
