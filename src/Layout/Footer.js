@@ -25,23 +25,23 @@ export default class Footer extends Component {
                     left: 0,
                     bottom: 0,
                     right: 0,
-                    height: '150px'
+                    height: '15%'
                 }}
             >
                 <div>
-                    <Image src={eu_logo} alt="EU Logo" style={{ height: 50, marginTop: '10px' }} />
+                    <Image src={eu_logo} alt="EU Logo" style={{ height: 50, marginTop: '10px', marginRight: '10px' }} />
                 </div>
                 <div>
-                    <Image src={infinion_logo} alt="Infinion Logo" style={{ height: 50, marginTop: '10px' }} />
+                    <Image src={infinion_logo} alt="Infinion Logo" style={{ height: 50, marginTop: '10px', marginRight: '15px' }} />
                 </div>
                 <div>
-                    <Image src={tib_logo} alt="TIB Logo" style={{ height: 50, marginTop: '10px' }} />
+                    <Image src={tib_logo} alt="TIB Logo" style={{ height: 50, marginTop: '10px', marginRight: '15px' }} />
                 </div>
                 <div>
                     <Image src={ftk_logo} alt="FTK Logo" style={{ height: 50, marginTop: '10px' }} />
                 </div>
                 <div>
-                    <Image src={bosch_logo} alt="Bosch Logo" style={{ height: 50, marginTop: '10px' }} />
+                    <Image src={bosch_logo} alt="Bosch Logo" style={{ height: 50, marginTop: '10px', marginRight: '10px' }} />
                 </div>
                 <div>
                     <Image src={mines_logo} alt="Mines Logo" style={{ height: 50, marginTop: '10px' }} />
@@ -55,9 +55,13 @@ export default class Footer extends Component {
                         {/*    </a>*/}
                         {/*</div>*/}
                         <div>
-                            <div style={{ color: '#777', fontSize: '24px' }}> Funding: </div>
+                            <div style={{ color: '#777', fontSize: '20px' }}> Funding: </div>
                             <a href={'https://www.dfg.de/'}>
-                                <Image src={ECSEL_logo} alt="DFG Logo" style={{ height: 100 }} />
+                                <Image
+                                    src={ECSEL_logo}
+                                    alt="DFG Logo"
+                                    style={{ height: 80, width: 260, paddingRight: '20px', paddingBottom: '15px' }}
+                                />
                             </a>
                         </div>
                     </div>

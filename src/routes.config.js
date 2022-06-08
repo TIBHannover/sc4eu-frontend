@@ -11,6 +11,8 @@ import UserSettings from './pages/UserSettings';
 import ROUTES from './constants/routes';
 import OntologyIndexing from './pages/OntologyIndexing';
 import ViewOntology from './pages/ViewOntology';
+import Documentations from './pages/Documentations';
+import Dataprotections from './pages/Dataprotections';
 
 const routes = [
     {
@@ -70,6 +72,16 @@ const routes = [
         path: ROUTES.ONTOLOGY,
         exact: true,
         component: OntologyIndexing
+    },
+    {
+        path: ROUTES.Documentations,
+        exact: true,
+        component: Documentations
+    },
+    {
+        path: ROUTES.Dataprotections,
+        exact: true,
+        component: Dataprotections
     },
 
     {

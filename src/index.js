@@ -11,6 +11,16 @@ import rootReducer from './redux/rootReducer';
 import { CookiesProvider } from 'react-cookie';
 import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import ReactPiwik from 'react-piwik';
+
+// To connect Matomo Use React library react-piwik
+
+const piwik = new ReactPiwik({
+    url: 'https://support.tib.eu/piwik/',
+    siteId: 40
+});
+
+ReactPiwik.push(['trackEvent', 'trackPageView']);
 
 const store = configureStore();
 const render = () => {
@@ -18,7 +28,7 @@ const render = () => {
         <DndProvider backend={HTML5Backend}>
             <CookiesProvider>
                 <Provider store={store}>
-                    <App history={history} />
+                    <App history={piwik.connectToHistory(history)} />
                 </Provider>
             </CookiesProvider>
         </DndProvider>,
