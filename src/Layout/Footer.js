@@ -9,7 +9,7 @@ import ftk_logo from '../assets/images/FTK.png';
 import bosch_logo from '../assets/images/Bosch.png';
 import mines_logo from '../assets/images/MINES.png';
 import styled from 'styled-components';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import ROUTES from 'constants/routes';
 
 const Image = styled.img``;
@@ -36,11 +36,11 @@ class Footer extends Component {
                     <div className="">
                         <h5 style={{ color: '#777' }}>About the service:</h5>
                     </div>
-                    <div>
-                        <a href={ROUTES.Imprint}>Imprint</a>
+                     <div>
+                        <Link to={ROUTES.Imprint}>Imprint</Link>
                     </div>
                     <div>
-                        <a href={ROUTES.Dataprotections}>Data Protection</a>
+                        <Link to={ROUTES.Dataprotections}>Data Policy</Link>
                     </div>
                     <br />
                 </div>
