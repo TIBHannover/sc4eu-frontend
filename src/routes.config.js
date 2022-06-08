@@ -13,6 +13,7 @@ import OntologyIndexing from './pages/OntologyIndexing';
 import ViewOntology from './pages/ViewOntology';
 import Documentations from './pages/Documentations';
 import Dataprotections from './pages/Dataprotections';
+import Imprint from './pages/Imprint';
 
 const routes = [
     {
@@ -82,6 +83,11 @@ const routes = [
         path: ROUTES.Dataprotections,
         exact: true,
         component: Dataprotections
+    },
+    {
+        path: ROUTES.Imprint,
+        exact: true,
+        component: Imprint
     },
 
     {
