@@ -224,6 +224,44 @@ module.exports = {
                 }
             }
         });
+
+        app.put('/user/updateUserRole', verifyToken, (req, res) => {
+            console.log('Body', req.body);
+            if (req.token === null || req.token === undefined) {
+                res.send(JSON.stringify({ result: 'empty' }));
+            } else {
+                try {
+                    const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                    if (token) {
+                        const userId = token.userId;
+                        const data = JSON.stringify({ userId: req.body.userId, userRole: req.body.userRole });
+
+                        const options = {
+                            uri: `${process.env.BACKEND_SERVER_URL}/users/updateUserRole/?userId=${userId}&token=${token.bToken}`,
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: data
+                        };
+                        request(options, function(error, response) {
+                            if (response && response.body) {
+                                const result = JSON.parse(response.body);
+                                if (result) {
+                                    res.json(response);
+                                } else {
+                                    res.json({ error: 'error while updating user role' });
+                                }
+                            } else {
+                                res.json({ error: 'Network Error' });
+                            }
+                        });
+                    }
+                } catch (e) {
+                    res.send(JSON.stringify({ error: 'Could not update ' }));
+                }
+            }
+        });
     },
     getUserSettings: function(app) {
         app.get('/user/settings/', verifyToken, (req, res) => {

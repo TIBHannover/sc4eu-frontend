@@ -17,8 +17,11 @@ export const URL_EXPRESS_SERVER = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
 export const URL_GET_USER_PROFILE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/viewProfile`;
 export const URL_GET_USER_SETTINGS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/settings/`;
 export const URL_UPDATE_USER_SETTING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/updateSettings`;
+export const URL_UPDATE_USER_ROLE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/updateUserRole`;
+export const URL_DELETE_USER = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/deleteUser`;
+export const URL_GET_ALL_ROLES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}roles/all`;
 
-export const URL_ADMIN_DASHBOARD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}dashboard`;
+export const URL_ADMIN_DASHBOARD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}admin/dashboard`;
 export const URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}allowed_upload_of_ontologies`;
 
 // playground
