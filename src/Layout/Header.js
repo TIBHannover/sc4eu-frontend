@@ -35,7 +35,7 @@ class Header extends Component {
 
     componentDidMount() {
         // headers component mounts, so lets try to see if we have a user;
-        // console.log('USER: ', this.props.user);
+        //console.log('USER: ', this.props.user);
         document.addEventListener('mousedown', this.handleClickOutside);
         if (this.props.user === 0) {
             // make a call to redux to look into the cookie jar
@@ -188,6 +188,9 @@ class Header extends Component {
                                                 {greeting} {this.props.user.displayName}
                                             </span>
                                             <ButtonGroup className="mt-2" size="sm">
+                                                <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.ADMIN_DASHBOARD}>
+                                                    Dashboard
+                                                </Button>
                                                 <Button
                                                     color="secondary"
                                                     onClick={this.toggleUserTooltip}
