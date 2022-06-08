@@ -22,7 +22,7 @@ export const getAllRoles = () => {
     };
     console.log('>>>>> REQUESTING All Roles');
 
-    return submitGetRequest(URL_GET_ALL_ROLES, headers, true);
+    return submitGetRequest(`${URL_GET_ALL_ROLES}`, headers, true);
 };
 
 export const updateUserSettings = payload => {
