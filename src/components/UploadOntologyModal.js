@@ -236,10 +236,10 @@ export default class UploadOntology extends Component {
                             {this.state.errorInitialization && <div> Could not establish connection to ontology service.</div>}
                         </div>
                     ) : (
-                        <h1>
+                        <h2>
                             Sorry, you are not allowed to upload ontologies yet!
-                            <br /> Only admins are allowed to do so in the current implementation.
-                        </h1>
+                            <br /> Only System Admin, Project Admin and Member are allowed to do so in the current implementation.
+                        </h2>
                     )}
                 </ModalBody>
                 <ModalFooter>

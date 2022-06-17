@@ -1,5 +1,9 @@
 // import env from '@beam-australia/react-env';
 
+export const URL_PROJECTINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}projectIndex/`;
+export const URL_CREATE_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}createProject`;
+export const URL_DELETE_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}deleteProject`;
+
 export const URL_ONTOLOGYINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}ontologyIndex/`;
 export const URL_VIEWONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelForId/`;
 export const URL_INITIALIZE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}uploadOntology`;

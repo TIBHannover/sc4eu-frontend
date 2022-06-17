@@ -6,13 +6,17 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { getAllOntologies } from '../network/ontologyIndexing';
 import OntologyIndexCards from '../components/OntologyIndexCards';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
+import { ProjectsSideBar } from '../components/ProjectsSideBar';
 
 export default class OntologyIndexing extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { isLoading: true };
-        this.headerValue = 'Browse Ontologies of the SemiConductor Domain';
+        this.state = {
+            isLoading: true,
+            leftSidebarWidth: 450,
+            headerValue: 'You are current viewing Index of Ontologies for Default Project'
+        };
     }
 
     componentDidMount() {
@@ -42,50 +46,75 @@ export default class OntologyIndexing extends Component {
         this.getOntologiesFromBackend();
     };
 
+    updateHeaderValue = headerValue => {
+        if (headerValue) {
+            const headerTitle = 'You are current viewing Index of Ontologies for ' + headerValue + ' Project';
+            this.setState({ headerValue: headerTitle });
+        }
+    };
+
     render() {
         return (
-            <Container
-                className="box pt-2 pb-2 pl-0 pr-0"
-                style={{ backgroundColor: 'white', border: '1px solid black', borderTop: 'none', overflow: 'auto' }}
-            >
-                <h1
-                    className="noSelect pl-3 pr-3"
-                    style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center' }}
-                    title={this.headerValue}
+            <>
+                <ProjectsSideBar
+                    width={this.state.leftSidebarWidth}
+                    initialState={true}
+                    height={this.state.containerHeight - 40}
+                    title="Projects"
+                    updateHeaderValueCallback={this.updateHeaderValue}
+                    // loading={this.props.loading}
+                    //updateEvent={this.leftSideBarUpdateEvent}
+                />
+                <Container
+                    className="box pt-2 pb-2 pl-0 pr-0"
+                    style={{
+                        backgroundColor: 'white',
+                        border: '1px solid black',
+                        borderTop: 'none',
+                        overflow: 'auto',
+                        float: 'left',
+                        position: 'relative'
+                    }}
                 >
-                    {this.headerValue}
-                </h1>
-                <hr className="mt-0 mb-2" />
-                <div className="pl-1 pr-1">
-                    {this.state.isLoading ? (
-                        <div className="text-center text-primary mt-4 mb-4">
-                            {/*using a manual fixed scale value for the spinner scale! */}
+                    <h2
+                        className="noSelect pl-3 pr-3 pb-3"
+                        style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center' }}
+                        title={this.state.headerValue}
+                    >
+                        {this.state.headerValue}
+                    </h2>
+                    <hr className="mt-0 mb-2" />
+                    <div className="pl-1 pr-1">
+                        {this.state.isLoading ? (
+                            <div className="text-center text-primary mt-4 mb-4">
+                                {/*using a manual fixed scale value for the spinner scale! */}
 
-                            <h2 className="h5">
-                                <span>
-                                    <Icon icon={faSpinner} spin />
-                                </span>{' '}
-                                Loading
-                            </h2>
-                        </div>
-                    ) : (
-                        <div>
-                            <OntologyIndexInteractions
-                                reloadAfterUpdate={() => {
-                                    this.reloadAfterUpdate();
-                                }}
-                            />
-                            <hr className="mt-0 mb-2" />
-                            <OntologyIndexCards
-                                ontologies={this.state.results}
-                                reloadAfterDelete={() => {
-                                    this.reloadAfterDelete();
-                                }}
-                            />
-                        </div>
-                    )}
-                </div>
-            </Container>
+                                <h2 className="h5">
+                                    <span>
+                                        <Icon icon={faSpinner} spin />
+                                    </span>{' '}
+                                    Loading
+                                </h2>
+                            </div>
+                        ) : (
+                            <div>
+                                <OntologyIndexInteractions
+                                    reloadAfterUpdate={() => {
+                                        this.reloadAfterUpdate();
+                                    }}
+                                />
+                                <hr className="mt-0 mb-2" />
+                                <OntologyIndexCards
+                                    ontologies={this.state.results}
+                                    reloadAfterDelete={() => {
+                                        this.reloadAfterDelete();
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </Container>
+            </>
         );
     }
 }

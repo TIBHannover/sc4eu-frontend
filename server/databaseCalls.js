@@ -4,6 +4,110 @@ const request = require('request');
 const verifyToken = require('./veryfyToken');
 
 module.exports = {
+    getProjectIndex: function(app) {
+        app.get('/projectIndex', (req, res) => {
+            console.log('Requesting Project Index', `${process.env.BACKEND_SERVER_URL}/projectIndex`);
+            const project_indexOptions = {
+                uri: `${process.env.BACKEND_SERVER_URL}/projectIndex`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(project_indexOptions, function(error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    },
+
+    createProject: function(app) {
+        app.post('/createProject', verifyToken, (req, res) => {
+            console.log('Wants to create the Project');
+            if (req.token === null) {
+                res.json({ result: false });
+            } else {
+                const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                console.log(token);
+                if (token) {
+                    const userId = token.userId;
+                    const projectData = JSON.stringify(req.body);
+                    console.log(projectData);
+                    const project_options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/create_new_project/?userId=${userId}&token=${token.bToken}`,
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: projectData
+                    };
+
+                    request(project_options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                console.log('result', result);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Something went wrong' });
+                            }
+                        } else {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+    deleteProject: function(app) {
+        app.post('/deleteProject', verifyToken, (req, res) => {
+            console.log('Deleting Project as POST ');
+            const token = jwt.verify(req.token, process.env.JWT_SECRET);
+            const userId = token.userId;
+            const data = JSON.stringify(req.body);
+            console.log(userId);
+            console.log(data);
+            const delete_options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/delete_project/?userId=${userId}&token=${token.bToken}`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            };
+
+            console.log('about to send request to the backend to delete', delete_options);
+            try {
+                request(delete_options, function(error, response) {
+                    if (response && response.body) {
+                        console.log('has response', response.body);
+                        try {
+                            const result = JSON.parse(response.body);
+                            console.log('result', result);
+                            res.json(result);
+                        } catch (e) {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    } else {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    },
+
     getOntologyIndex: function(app) {
         app.get('/ontologyIndex', (req, res) => {
             console.log('Requesting Ontology Index', `${process.env.BACKEND_SERVER_URL}/ontologyIndex`);
