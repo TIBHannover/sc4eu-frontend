@@ -63,7 +63,7 @@ class Dataprotections extends Component {
                         <br />
                         Phone: +49 511 762-8138
                         <br />
-                        Email: <a href="mailto:datenschutz@tib.eu">datenschutz@tib.eu</a>
+                        Email: <a href="mailto:datenschutz@tib.eu">datenschutz(AT)tib.eu</a>
                         <br />
                     </p>
                     <h4>Postal Address:</h4>
