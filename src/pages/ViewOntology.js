@@ -109,7 +109,7 @@ class ViewOntology extends Component {
                         </Tippy>
 
                         {/*Protege View*/}
-                        <Tippy content="Widget-based representation not available">
+                        {/*<Tippy content="Widget-based representation not available">
                             <span>
                                 <Button
                                     disabled={true}
@@ -121,7 +121,7 @@ class ViewOntology extends Component {
                                     <Icon icon={faHatWizard} />
                                 </Button>
                             </span>
-                        </Tippy>
+                        </Tippy>*/}
 
                         {/*Graph View*/}
                         <Tippy content="Graph Visualization">
