@@ -17,10 +17,10 @@ class DigitalReferenceDocumentation extends Component {
     }
 
     componentDidMount() {
-        this.GetDR();
+        this.getDRDocumentation();
     }
 
-    GetDR = () => {
+    getDRDocumentation = () => {
         // TODO: Make available in firefox browser also.
         // currently this methode is working only in Chrome browser
         const browser = detect();
