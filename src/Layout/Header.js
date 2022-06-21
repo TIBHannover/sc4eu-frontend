@@ -150,7 +150,10 @@ class Header extends Component {
                         Ontologies
                     </Link>
                     <Link style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
-                        Documentations
+                        Documentation
+                    </Link>
+                    <Link style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
+                        Digital Reference
                     </Link>
 
                     <div

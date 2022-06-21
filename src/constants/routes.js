@@ -14,5 +14,6 @@ export default {
     LOGGED_IN: '/loggedIn/:accessToken',
     Documentations: '/Documentations',
     Dataprotections: '/Dataprotections',
-    Imprint: '/Imprint'
+    Imprint: '/Imprint',
+    DigitalReferenceDocumentation: '/DigitalReferenceDocumentation'
 };
