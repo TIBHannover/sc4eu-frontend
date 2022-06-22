@@ -15,6 +15,7 @@ import Documentations from './pages/Documentations';
 import Dataprotections from './pages/Dataprotections';
 import Imprint from './pages/Imprint';
 import DigitalReferenceDocumentation from './pages/DigitalReferenceDocumentation';
+import FAQ from './pages/FAQ';
 
 const routes = [
     {
@@ -94,6 +95,11 @@ const routes = [
         path: ROUTES.DigitalReferenceDocumentation,
         exact: true,
         component: DigitalReferenceDocumentation
+    },
+    {
+        path: ROUTES.FAQ,
+        exact: true,
+        component: FAQ
     },
 
     {

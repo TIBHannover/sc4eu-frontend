@@ -147,13 +147,16 @@ class Header extends Component {
                         Home
                     </Link>
                     <Link style={LinkStyle} to={ROUTES.ONTOLOGY} onDragStart={this.preventDraggingOfItem}>
-                        Ontologies
+                        Ontology Editor
+                    </Link>
+                    <Link style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
+                        DR Specification
                     </Link>
                     <Link style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
                         Documentation
                     </Link>
-                    <Link style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
-                        Digital Reference
+                    <Link style={LinkStyle} to={ROUTES.FAQ} onDragStart={this.preventDraggingOfItem}>
+                        FAQ
                     </Link>
 
                     <div
