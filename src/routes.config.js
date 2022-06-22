@@ -14,6 +14,7 @@ import ViewOntology from './pages/ViewOntology';
 import Documentations from './pages/Documentations';
 import Dataprotections from './pages/Dataprotections';
 import Imprint from './pages/Imprint';
+import DigitalReferenceDocumentation from './pages/DigitalReferenceDocumentation';
 
 const routes = [
     {
@@ -88,6 +89,11 @@ const routes = [
         path: ROUTES.Imprint,
         exact: true,
         component: Imprint
+    },
+    {
+        path: ROUTES.DigitalReferenceDocumentation,
+        exact: true,
+        component: DigitalReferenceDocumentation
     },
 
     {

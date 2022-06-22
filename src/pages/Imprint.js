@@ -46,7 +46,7 @@ class Imprint extends Component {
                             <br />
                             Fax: +49 511 762-4076
                             <br />
-                            Email: <a href="mailto:information@tib.eu">information@tib.eu</a>
+                            Email: <a href="mailto:information@tib.eu">information(AT)tib.eu</a>
                             <br />
                         </p>
 
@@ -57,9 +57,9 @@ class Imprint extends Component {
                         <h3>Editorial Office:</h3>
 
                         <p>
-                            Axel Klinger
+                            Felix Engel
                             <br />
-                            Email: <a href="mailto:axel.klinger@tib.eu">axel.klinger@tib.eu</a>
+                            Email: <a href="mailto:felix.engel@tib.eu">felix.engel(AT)tib.eu</a>
                             <br />
                         </p>
 

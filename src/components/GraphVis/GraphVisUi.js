@@ -373,7 +373,7 @@ class GraphVisUi extends Component {
                         <Icon style={{ fontSize: '1.3em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
                     {this.createDropDownForNotations()}
-                    <Button
+                    {/*<Button
                         onClick={() => {
                             console.log(this.graph.links);
                             console.log(this.graph.nodes);
@@ -382,7 +382,7 @@ class GraphVisUi extends Component {
                         }}
                     >
                         Debug
-                    </Button>
+                    </Button> */}
                     <Button
                         onClick={() => {
                             this.graph.zoomToExtent();
