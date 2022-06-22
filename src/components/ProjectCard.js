@@ -40,10 +40,10 @@ export default class ProjectIndexCards extends Component {
 
     showOntologies = () => {
         //TODO Get all ontologies related Only to this Project
-        const projectName = this.props.inputData.name;
+        const project = this.props.inputData;
         //change color of select card
         //StyledCardHeader.backgroundColor = 'black';
-        this.props.updateHeaderValueCallback(projectName);
+        this.props.updateHeaderValueCallback(project);
     };
 
     render() {

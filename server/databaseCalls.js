@@ -110,9 +110,10 @@ module.exports = {
 
     getOntologyIndex: function(app) {
         app.get('/ontologyIndex', (req, res) => {
-            console.log('Requesting Ontology Index', `${process.env.BACKEND_SERVER_URL}/ontologyIndex`);
+            const query = req.query;
+            console.log('Requesting Ontology Index', `${process.env.BACKEND_SERVER_URL}/ontologyIndex?project_id=${query['project_id']}`);
             const ontology_indexOptions = {
-                uri: `${process.env.BACKEND_SERVER_URL}/ontologyIndex`,
+                uri: `${process.env.BACKEND_SERVER_URL}/ontologyIndex/?project_id=${query['project_id']}`,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

@@ -12,6 +12,7 @@ export default class UploadOntology extends Component {
             ontologyFileContent: null,
             ontologyName: '',
             ontologyDescription: '',
+            project_id: '',
             waitingForResult: false,
             preInitResult: {},
             errorInitialization: false,
@@ -132,7 +133,8 @@ export default class UploadOntology extends Component {
             lookup_type: 'local',
             access_type: 'public',
             lookup_path: 'internal',
-            ontology_content: this.state.ontologyFileContent
+            ontology_content: this.state.ontologyFileContent,
+            project_id: this.props.project_id
         };
         console.log(objToSent);
 
@@ -277,5 +279,6 @@ export default class UploadOntology extends Component {
 UploadOntology.propTypes = {
     showDialog: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
-    callback: PropTypes.func.isRequired
+    callback: PropTypes.func.isRequired,
+    project_id: PropTypes.string.isRequired
 };

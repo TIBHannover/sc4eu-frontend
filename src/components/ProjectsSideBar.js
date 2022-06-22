@@ -123,44 +123,8 @@ this.setState({ expanded: !this.state.expanded });
                                 this.projectCreated(param);
                             }}
                         />
-                        {/*                        <Button
-                            style={{ float: 'right' }}
-                            onClick={() => {
-                                alert('popup for creating new project');
-                            }}
-                        >
-                            New Project
-                        </Button>*/}
                     </div>
                 </Container>
-                {/*<ButtonContainer
-                    size="sm"
-                    className="btn-primary"
-                    expanded={this.state.expanded}
-                    initialRendering={this.state.initialRendering}
-                    duration={500}
-                    style={{
-                        margin: '0 0',
-                        flexGrow: '1',
-                        display: 'flex',
-                        alignSelf: 'center',
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '30px',
-                        padding: 0,
-                        border: 'solid 1px',
-                        borderColor: '#525252',
-                        backgroundColor: '#8a8a8a',
-                        float: 'right',
-                        position: 'relative',
-                        top: '-11px',
-                        left: '19px',
-                        zIndex: 100
-                    }}
-                    onClick={this.collapseLeftSideBar}
-                >
-                    <Icon icon={faAngleLeft} className="align-self-center" style={{ marginLeft: '5px', fontSize: '28px' }} />
-                </ButtonContainer>*/}
                 <Container
                     id="leftBodyContainer"
                     className="pr-md-5 pt-sm-2 pb-sm-2 pl-0 pr-sm-2 clearfix"
@@ -192,7 +156,9 @@ this.setState({ expanded: !this.state.expanded });
                                           callback={param => {
                                               this.reloadAfterUpdate(param);
                                           }}
-                                          updateHeaderValueCallback={this.props.updateHeaderValueCallback}
+                                          updateHeaderValueCallback={param => {
+                                              this.props.updateHeaderValueCallback(param);
+                                          }}
                                       />
                                   );
                               })

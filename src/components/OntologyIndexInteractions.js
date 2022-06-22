@@ -38,6 +38,7 @@ export default class OntologyIndexInteractions extends Component {
                 <StyledButton disabled={true}> Filter </StyledButton>
                 <StyledButton disabled={true}> Search </StyledButton>
                 <UploadOntologyModal
+                    project_id={this.props.project_id}
                     showDialog={this.state.showUploadModal}
                     toggle={() => {
                         this.setState({ showUploadModal: !this.state.showUploadModal });
@@ -52,7 +53,8 @@ export default class OntologyIndexInteractions extends Component {
 }
 
 OntologyIndexInteractions.propTypes = {
-    reloadAfterUpdate: PropTypes.func.isRequired
+    reloadAfterUpdate: PropTypes.func.isRequired,
+    project_id: PropTypes.string.isRequired
 };
 
 const StyledButton = styled(Button)`

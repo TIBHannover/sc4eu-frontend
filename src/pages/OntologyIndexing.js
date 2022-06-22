@@ -15,7 +15,9 @@ export default class OntologyIndexing extends Component {
         this.state = {
             isLoading: true,
             leftSidebarWidth: 450,
-            headerValue: 'You are current viewing Index of Ontologies for Default Project'
+            //headerValue: 'You are current viewing Index of Ontologies for Default Project',
+            headerValue: 'Please select a project to view its ontologies',
+            selectedProject: false //Maybe get the uuid for the Default Project here.
         };
     }
 
@@ -24,14 +26,21 @@ export default class OntologyIndexing extends Component {
         this.getOntologiesFromBackend();
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevState.selectedProject !== this.state.selectedProject) {
+            this.getOntologiesFromBackend();
+        }
+    }
 
     getOntologiesFromBackend = () => {
-        console.log('fetching ontologies from backend');
+        console.log('fetching ontologies from backend', this.state.selectedProject);
         // TODO : this component will need a connection to the redux state for the users;
-
-        getAllOntologies().then(res => {
-            console.log('hasResults:', res);
+        // TODO: check if the current user is allowed to view ontologies for this project
+        getAllOntologies(this.state.selectedProject.uuid).then(res => {
+            //There is a chance that the project do not have any ontologies.
+            if (res.ontologyIndex === 'Undefined') {
+                res = false;
+            }
             this.setState({ isLoading: false, results: res });
         });
     };
@@ -46,9 +55,11 @@ export default class OntologyIndexing extends Component {
         this.getOntologiesFromBackend();
     };
 
-    updateHeaderValue = headerValue => {
-        if (headerValue) {
-            const headerTitle = 'You are current viewing Index of Ontologies for ' + headerValue + ' Project';
+    updateHeaderValue = projectSelected => {
+        console.log(projectSelected.uuid);
+        this.setState({ selectedProject: projectSelected });
+        if (projectSelected) {
+            const headerTitle = 'You are currently viewing index of ontologies for ' + projectSelected.name + ' project';
             this.setState({ headerValue: headerTitle });
         }
     };
@@ -61,9 +72,9 @@ export default class OntologyIndexing extends Component {
                     initialState={true}
                     height={this.state.containerHeight - 40}
                     title="Projects"
-                    updateHeaderValueCallback={this.updateHeaderValue}
-                    // loading={this.props.loading}
-                    //updateEvent={this.leftSideBarUpdateEvent}
+                    updateHeaderValueCallback={params => {
+                        this.updateHeaderValue(params);
+                    }}
                 />
                 <Container
                     className="box pt-2 pb-2 pl-0 pr-0"
@@ -96,21 +107,28 @@ export default class OntologyIndexing extends Component {
                                     Loading
                                 </h2>
                             </div>
-                        ) : (
+                        ) : this.state.selectedProject ? (
                             <div>
                                 <OntologyIndexInteractions
+                                    project_id={this.state.selectedProject.uuid}
                                     reloadAfterUpdate={() => {
                                         this.reloadAfterUpdate();
                                     }}
                                 />
                                 <hr className="mt-0 mb-2" />
-                                <OntologyIndexCards
-                                    ontologies={this.state.results}
-                                    reloadAfterDelete={() => {
-                                        this.reloadAfterDelete();
-                                    }}
-                                />
+                                {this.state.results ? (
+                                    <OntologyIndexCards
+                                        ontologies={this.state.results}
+                                        reloadAfterDelete={() => {
+                                            this.reloadAfterDelete();
+                                        }}
+                                    />
+                                ) : (
+                                    <div> No ontologies found in this project </div>
+                                )}
                             </div>
+                        ) : (
+                            <div />
                         )}
                     </div>
                 </Container>
