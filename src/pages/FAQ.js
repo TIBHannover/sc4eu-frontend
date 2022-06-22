@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Footer from '../Layout/Footer';
-import { Button, Collapse } from 'react-bootstrap';
-import { faCaretDown, faCaretLeft } from '@fortawesome/free-solid-svg-icons';
+import { Collapse, Button } from 'reactstrap';
+import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 
 class Faq extends Component {
@@ -62,14 +62,14 @@ class Faq extends Component {
             <div style={{ width: '100%', height: '85%', overflowY: 'scroll' }}>
                 <div className="container">
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start' }}
+                        style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: '#007bff' }}
                         className="btn"
                         onClick={this.toggleUserRole}
                     >
+                        <Icon icon={!this.state.collapseUserRole ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
                         Definition of User Roles
-                        <Icon icon={!this.state.collapseUserRole ? faCaretLeft : faCaretDown} style={{ marginLeft: '80%' }} />
                     </Button>
-                    <Collapse in={this.state.collapseUserRole}>
+                    <Collapse isOpen={this.state.collapseUserRole}>
                         <table style={{ marginTop: '20px' }} className="table table-bordered ">
                             <thead>
                                 <tr>
