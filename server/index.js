@@ -81,6 +81,9 @@ database.deleteOntology(router);
 database.viewUserSettings(router);
 database.getOntologyIndex(router);
 database.getOntologyByID(router);
+database.getProjectIndex(router);
+database.createProject(router);
+database.deleteProject(router);
 
 processing.getJSONModelForOntologyID(router);
 processing.initializeOntology(router);

@@ -1,16 +1,13 @@
 import { plainGetRequest, submitGetRequest, submitPostRequest } from './networkRequests';
-import { URL_ONTOLOGYINDEXING, URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY, URL_DELETEONTOLOGY } from 'constants/services';
-import { URL_PRE_INIT } from 'constants/services';
-import { URL_INITIALIZE } from 'constants/services';
+import { URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY, URL_DELETEONTOLOGY, URL_INITIALIZE, URL_ONTOLOGYINDEXING, URL_PRE_INIT } from 'constants/services';
 import { Cookies } from 'react-cookie';
 
-export const getAllOntologies = () => {
+export const getAllOntologies = project_id => {
     // we use parameters from env.
-
-    console.log('IN network we want this page', URL_ONTOLOGYINDEXING);
+    console.log('IN network we want this page', URL_ONTOLOGYINDEXING + '?project_id=' + project_id);
 
     // todo: make flexible based on the env.file
-    return plainGetRequest(URL_ONTOLOGYINDEXING, {
+    return plainGetRequest(URL_ONTOLOGYINDEXING + '?project_id=' + project_id, {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
     });
@@ -33,7 +30,10 @@ export const preInitializeOntologyUpload = data => {
     // HAVE A CLOSER LOOK AT THAT , should be similar to uploadOntology , w.r.t access tokens stuff.
 
     // TODO: verify with the new network communications
-    const postHeader = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': `${process.env.REACT_APP_ONTOLOGY_SERVICE_BACKEND_URL}` };
+    const postHeader = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_ONTOLOGY_SERVICE_BACKEND_URL}`
+    };
     console.log('this is the data', data);
     const send_token = false;
     if (send_token) {
