@@ -43,6 +43,10 @@ class CreateProject extends Component {
         });
     };
     createProject = () => {
+        if (!this.state.allowedToCreateProjects) {
+            this.props.toggle();
+            return;
+        }
         console.log('Creating New Project');
 
         if (!this.state.projectName && !this.state.projectDescription) {
