@@ -7,6 +7,8 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Button } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
+import { reverse } from 'named-urls';
+import ROUTES from '../constants/routes';
 
 export default class ProjectIndexCards extends Component {
     componentDidMount() {}
@@ -16,6 +18,7 @@ export default class ProjectIndexCards extends Component {
     deleteProject = async event => {
         //delete Project...
         event.preventDefault();
+        event.stopPropagation();
 
         const isConfirmed = window.confirm('Are you sure you want to Delete this ontology?');
         if (!isConfirmed) {
@@ -51,7 +54,12 @@ export default class ProjectIndexCards extends Component {
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        <StyledLink onClick={this.showOntologies} className="p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
+                        <StyledLink
+                            to={reverse(ROUTES.ONTOLOGY)}
+                            onClick={this.showOntologies}
+                            className="p-0 noSelect"
+                            onDragStart={this.preventDraggingOfItem}
+                        >
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
                                 <div> {this.props.inputData.name} </div>
                                 <Button
