@@ -59,7 +59,11 @@ export default class OntologyIndexing extends Component {
         console.log(projectSelected.uuid);
         this.setState({ selectedProject: projectSelected });
         if (projectSelected) {
-            const headerTitle = 'You are currently viewing index of ontologies for ' + projectSelected.name + ' project';
+            const headerTitle = (
+                <p>
+                    You are currently viewing index of ontologies for <b> {projectSelected.name} </b> project
+                </p>
+            );
             this.setState({ headerValue: headerTitle });
         }
     };
