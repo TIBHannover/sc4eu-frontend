@@ -24,7 +24,7 @@ class OntologyViewRoot extends Component {
             leftSidebarWidth: 400,
             rightSidebarWidth: 400,
 
-            experimentalLayout: false
+            experimentalLayout: true
         };
 
         this.sidebarHeightOffset = -40;
@@ -159,13 +159,14 @@ class OntologyViewRoot extends Component {
                     >
                         {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all bodies
                     </ControlButton>
-                    <ControlButton
+                    {/*Temporarily disabling default layout*/}
+                    {/*                    <ControlButton
                         onClick={() => {
                             this.setState({ experimentalLayout: !this.state.experimentalLayout });
                         }}
                     >
                         Use {this.state.experimentalLayout ? 'default' : 'experimental'} layout
-                    </ControlButton>
+                    </ControlButton>*/}
                 </div>
             </div>
         );
