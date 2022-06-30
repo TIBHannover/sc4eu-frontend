@@ -1,7 +1,14 @@
 import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } from 'constants/services';
 
 import { submitGetRequest, submitPutRequest } from './networkRequests';
-import { URL_DELETE_USER, URL_GET_ALL_ROLES, URL_UPDATE_USER_ROLE } from '../constants/services';
+import {
+    URL_DELETE_USER,
+    URL_GET_ALL_ROLES,
+    URL_GET_USER_PROJECT,
+    URL_GET_USER_ROLE,
+    URL_UPDATE_USER_PROJECTS,
+    URL_UPDATE_USER_ROLE
+} from '../constants/services';
 
 export const getUserProfile = payload => {
     return submitGetRequest(`${URL_GET_USER_PROFILE}/?id=${payload.user}`, {}, false);
@@ -20,9 +27,16 @@ export const getAllRoles = () => {
     const headers = {
         'Content-Type': 'application/json'
     };
-    console.log('>>>>> REQUESTING All Roles');
 
     return submitGetRequest(`${URL_GET_ALL_ROLES}`, headers, true);
+};
+
+export const getUserRole = userId => {
+    return submitGetRequest(`${URL_GET_USER_ROLE}/?userId=${userId}`, {}, false);
+};
+
+export const getUserProjects = userId => {
+    return submitGetRequest(`${URL_GET_USER_PROJECT}/?userId=${userId}`, {}, false);
 };
 
 export const updateUserSettings = payload => {
@@ -42,8 +56,25 @@ export const updateUserRole = payload => {
     //send a put request to backend
     const data = {
         userId: payload.user_id,
-        userRole: payload.user_role
+        userRole: payload.role_id
     };
-    const headers = { 'Content-Type': 'application/json' };
+
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    };
     return submitPutRequest(URL_UPDATE_USER_ROLE, headers, data);
+};
+
+export const updateUserProjects = payload => {
+    //Send a put request to backend
+    const data = {
+        userId: payload.user_id,
+        projectsId: payload.projects_id
+    };
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    };
+    return submitPutRequest(URL_UPDATE_USER_PROJECTS, headers, data);
 };

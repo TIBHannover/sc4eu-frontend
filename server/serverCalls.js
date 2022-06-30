@@ -73,6 +73,73 @@ module.exports = {
         });
     },
 
+    userRole: function(app) {
+        app.get('/user/role', (req, res) => {
+            const query = req.query;
+
+            if (req.token === null) {
+                res.json({ error: 'You need to be logged in to view this page' });
+            } else {
+                try {
+                    const userId = query['userId'];
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/user/role/?userId=${userId}`,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Network error occurred' });
+                            }
+                        }
+                    });
+                } catch (e) {
+                    res.json({ error: 'Getting User Role: You dont have access to view this page' });
+                }
+            }
+        });
+    },
+
+    userProject: function(app) {
+        app.get('/user/projects', (req, res) => {
+            const query = req.query;
+            if (req.token === null) {
+                res.json({ error: 'You need to be logged in to view this page' });
+            } else {
+                try {
+                    const userId = query['userId'];
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/user/projects/?userId=${userId}`,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Network error occurred' });
+                            }
+                        }
+                    });
+                } catch (e) {
+                    res.json({ error: 'Getting User Role: You dont have access to view this page' });
+                }
+            }
+        });
+    },
+
     adminDashBoard: function(app) {
         app.get('/admin/dashboard', verifyToken, (req, res) => {
             if (req.token === null) {
@@ -149,13 +216,11 @@ module.exports = {
     deleteUser: function(app) {
         app.get('/user/deleteUser', (req, res) => {
             const query = req.query;
-            console.log('Hello from deleteUser', query['userId']);
 
             if (req.token === null) {
                 console.log('No token');
                 res.send(JSON.stringify({ result: 'empty' }));
             } else {
-                console.log('Inside server, Preparing for backend');
                 const userId = query['userId'];
                 const options = {
                     uri: `${process.env.BACKEND_SERVER_URL}/users/delete/?userId=${userId}`,

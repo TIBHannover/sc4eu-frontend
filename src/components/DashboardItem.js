@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
 import { components, default as ReactSelect } from 'react-select';
-import { deleteUser, updateUserRole } from '../network/UserProfileCalls';
+import { deleteUser, getUserProjects, getUserRole, updateUserProjects, updateUserRole } from '../network/UserProfileCalls';
 import PropTypes from 'prop-types';
 
 const Option = props => {
     return (
         <div>
             <components.Option {...props}>
-                <input type="checkbox" checked={props.isSelected} onChange={() => null} /> <label>{props.label}</label>
+                <input key={props.label} type="checkbox" checked={props.isSelected} onChange={() => null} /> <label>{props.label}</label>
             </components.Option>
         </div>
     );
@@ -19,35 +19,74 @@ Option.propTypes = {
     label: PropTypes.string.isRequired
 };
 
+const RoleOption = props => {
+    return (
+        <div>
+            <components.RoleOption {...props}>
+                <label>{props.label}</label>
+            </components.RoleOption>
+        </div>
+    );
+};
+
+RoleOption.propTypes = {
+    isSelected: PropTypes.bool.isRequired,
+    label: PropTypes.string.isRequired
+};
+
 export default class DashboardItem extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             data: undefined,
-            ontologies: [],
             userDeleted: false,
-            roleValue: '',
-            toggleEdit: false,
-            optionSelected: null
+            roleValue: null,
+            shouldEdit: false,
+            selectedProjectOptions: []
         };
     }
 
-    deleteUser = item => {
-        const userInfo = this.getUser(item);
-        const user_role = userInfo[5];
-        const user_uuid = userInfo[0];
-        console.log('Delete this user ', userInfo);
+    componentDidMount = () => {
+        console.log('componentDidMount');
+        //Get Current role and Current Projects for this user
+        this.getRoleForUser();
+        this.getProjectsForUser();
+    };
 
-        const isConfirmed = window.confirm('Are you sure you want to delete ' + userInfo[1]);
+    getRoleForUser = () => {
+        const user = this.props.userData;
+        getUserRole(user.uuid).then(userRoleFromBackend => {
+            const index = this.props.roleOptions.findIndex(item => item.value === userRoleFromBackend);
+            this.setState({ roleValue: this.props.roleOptions[index] });
+        });
+    };
+
+    getProjectsForUser = () => {
+        const user = this.props.userData;
+
+        const thisUserProjects = [];
+        getUserProjects(user.uuid).then(userProjectsUUID => {
+            userProjectsUUID.forEach(uuid => {
+                const foundIndex = this.props.projects.findIndex(item => item.projectUUID === uuid);
+                if (foundIndex !== undefined) {
+                    thisUserProjects.push(this.props.projects[foundIndex]);
+                }
+            });
+            this.setState({ selectedProjectOptions: thisUserProjects });
+        });
+    };
+
+    deleteUser = item => {
+        const user = this.props.userData;
+        const isConfirmed = window.confirm('Are you sure you want to delete ' + user.display_name);
         if (isConfirmed) {
-            if (user_role === 'System Admin') {
+            if (user.role === 'System Admin') {
                 alert('Not allowed to delete System Admin');
                 return;
             } else {
                 //Delete User
-                deleteUser(user_uuid).then(data => {
-                    // TODO: return all users from the deleteUser, so we don't have to call reqeustDashboard.
+                deleteUser(user.uuid).then(() => {
                     this.props.callback();
                 });
             }
@@ -55,94 +94,94 @@ export default class DashboardItem extends Component {
     };
 
     editUser = item => {
-        if (this.state.toggleEdit) {
-            //TODO UpdateUserRole in the database
-            //TODO Update the list of ontologies this user is part of
-            //TODO call the callback
-            const foundIndex = this.props.roleOptions.findIndex(item => item.role === this.state.roleValue);
+        const projects_id = [];
+        this.state.selectedProjectOptions.forEach(project => {
+            projects_id.push(project.projectUUID);
+        });
 
+        if (this.state.shouldEdit) {
             const newRole = {
                 user_id: item.uuid,
-                user_role: this.props.roleOptions[foundIndex]
+                role_id: this.state.roleValue.roleId
             };
+
+            const newProjects = {
+                user_id: item.uuid,
+                projects_id: projects_id
+            };
+
             updateUserRole(newRole).then(() => {
-                this.props.callback();
+                updateUserProjects(newProjects).then(() => {
+                    this.props.callback();
+                });
             });
         }
-        this.setState({ toggleEdit: !this.state.toggleEdit, editThisUser: item.uuid, roleValue: 'Fawad' });
+        this.setState({ shouldEdit: !this.state.shouldEdit, editThisUser: item.uuid });
     };
 
-    getUser = itemData => {
-        return this.props.parameterOrder.map((selector, index) => {
-            let res = itemData[selector];
-            if (typeof res === 'boolean') {
-                if (res) {
-                    res = 'True';
-                } else {
-                    res = 'False';
-                }
-            }
-
-            return res;
-        });
-    };
-
-    handleChange = selected => {
+    handleProjectChange = projectSelected => {
         this.setState({
-            optionSelected: selected
+            selectedProjectOptions: projectSelected
         });
     };
 
-    handleRoleChange = event => {
-        this.setState({ roleValue: event.target.value });
+    handleRoleChange = roleSelected => {
+        this.setState({ roleValue: roleSelected });
     };
 
-    extractRow = itemData => {
-        const row = this.props.parameterOrder.map((selector, index) => {
-            let res = itemData[selector];
-            if (typeof res === 'boolean') {
-                if (res) {
-                    res = 'True';
-                } else {
-                    res = 'False';
-                }
-            }
+    extractRow = () => {
+        const user = this.props.userData;
 
-            if (selector === 'role' && res !== 'System Admin' && this.state.toggleEdit && this.state.editThisUser === itemData['uuid']) {
+        const row = this.props.parameterOrder.map((selector, index) => {
+            if (selector === 'role' && user[selector] !== 'System Admin') {
                 return (
-                    <td key={'td_' + index}>
-                        <select //TODO change this with ReactSelect
-                            defaultValue={res}
-                            //value={this.state.roleValue}
-                            onChange={event => {
-                                this.handleRoleChange(event);
+                    <td key={'td_' + user.uuid + '_' + index}>
+                        <ReactSelect
+                            key={'td_role_' + user.uuid}
+                            value={this.state.roleValue}
+                            isDisabled={!this.state.shouldEdit}
+                            onChange={value => this.handleRoleChange(value)}
+                            options={this.props.roleOptions}
+                            components={{
+                                RoleOption
                             }}
-                        >
-                            {this.props.roleOptions.map(item => (
-                                <option key={'option_' + item.role} value={item.role ?? ''}>
-                                    {item.role}
-                                </option>
-                            ))}
-                        </select>
+                        />
+
+                        {/*<select //TODO change this with ReactSelect*/}
+                        {/*    defaultValue={this.props.roleOptions[2]}*/}
+                        {/*    //value={this.state.roleValue}*/}
+                        {/*    onChange={event => {*/}
+                        {/*        this.handleRoleChange(event);*/}
+                        {/*    }}*/}
+                        {/*    disabled={!this.state.shouldEdit}*/}
+                        {/*>*/}
+                        {/*    {this.props.roleOptions.map(item => (*/}
+                        {/*        <option key={'option_' + item.role} value={item.role ?? ''}>*/}
+                        {/*            {item.role}*/}
+                        {/*        </option>*/}
+                        {/*    ))}*/}
+                        {/*</select>*/}
                     </td>
                 );
             }
-            return <td key={'td_' + index}>{res}</td>;
+            return <td key={'td_' + index}>{user[selector]}</td>;
         });
         return row;
     };
 
-    extractRowItem = () => {
-        const data = this.props.userData;
+    render() {
+        const thisUser = this.props.userData;
+        let counter = 0;
+
         return (
-            <tr key={'row_item' + data['uuid']}>
-                {this.extractRow(data)}
-                {data['role'] === 'System Admin' ? (
+            <tr key={'row_item' + thisUser.uuid}>
+                {this.extractRow()}
+                {thisUser['role'] === 'System Admin' ? (
                     <td />
                 ) : (
                     <>
                         {
-                            <td key={'td_' + data['uuid']}>
+                            <td key={'td_' + thisUser.uuid}>
                                 <span
                                     className="d-inline-block"
                                     data-toggle="popover"
@@ -151,21 +190,21 @@ export default class DashboardItem extends Component {
                                     width="100px"
                                 >
                                     <ReactSelect
-                                        key={'td_' + data['uuid']}
-                                        defaultValue={this.state.optionSelected}
-                                        options={this.props.ontologies}
+                                        key={'rs_projects_' + thisUser.uuid + counter++}
+                                        value={this.state.selectedProjectOptions}
                                         isMulti
                                         closeMenuOnSelect={false}
                                         hideSelectedOptions={false}
-                                        isDisabled={!(this.state.toggleEdit && this.state.editThisUser === data['uuid'])}
-                                        placeholder={'Select ontologies'}
+                                        isDisabled={!(this.state.shouldEdit && this.state.editThisUser === thisUser.uuid)}
+                                        placeholder={'Select projects'}
                                         size="lg"
                                         components={{
                                             Option
                                         }}
-                                        onChange={this.handleChange}
+                                        onChange={value => this.handleProjectChange(value)}
+                                        options={this.props.projects}
                                         allowSelectAll={true}
-                                        //value={this.state.optionSelected}
+                                        //value={this.state.selectedProjectOptions}
                                     />
                                 </span>
                             </td>
@@ -173,16 +212,16 @@ export default class DashboardItem extends Component {
                         <td>
                             <Button
                                 onClick={() => {
-                                    this.editUser(data);
+                                    this.editUser(thisUser);
                                 }}
                             >
-                                {this.state.toggleEdit && this.state.editThisUser === data['uuid'] ? 'Save' : 'Edit'}
+                                {this.state.shouldEdit && this.state.editThisUser === thisUser['uuid'] ? 'Save' : 'Edit'}
                             </Button>
                         </td>
                         <td>
                             <Button
                                 onClick={() => {
-                                    this.deleteUser(data);
+                                    this.deleteUser(thisUser);
                                 }}
                             >
                                 Delete
@@ -192,15 +231,11 @@ export default class DashboardItem extends Component {
                 )}
             </tr>
         );
-    };
-
-    render() {
-        return this.extractRowItem();
     }
 }
 
 DashboardItem.propTypes = {
-    ontologies: PropTypes.array.isRequired,
+    projects: PropTypes.array.isRequired,
     userData: PropTypes.object.isRequired,
     roleOptions: PropTypes.array.isRequired,
     callback: PropTypes.func.isRequired,

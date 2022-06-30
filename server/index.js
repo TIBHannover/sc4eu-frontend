@@ -65,6 +65,8 @@ server.servicesStatus(router);
 server.testConnection(router);
 server.adminDashBoard(router);
 server.allRoles(router);
+server.userRole(router);
+server.userProject(router);
 server.allowUploads(router);
 server.getUserHeader(router);
 server.deleteUser(router);

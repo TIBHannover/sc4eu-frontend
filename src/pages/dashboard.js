@@ -5,8 +5,8 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import { requestDashboard } from '../network/loginCalls';
 import { getAllRoles } from '../network/UserProfileCalls';
-import { getAllOntologies } from '../network/ontologyIndexing';
 import DashboardItem from '../components/DashboardItem';
+import { getAllProjects } from '../network/projectIndexing';
 
 export default class Dashboard extends Component {
     constructor(props) {
@@ -15,7 +15,8 @@ export default class Dashboard extends Component {
             loading: true,
             users: undefined,
             userRoles: [],
-            ontologies: []
+            ontologies: [],
+            projects: []
         };
         this.parameterOrder = [];
     }
@@ -32,17 +33,31 @@ export default class Dashboard extends Component {
 
         //request user roles
         getAllRoles().then(roles => {
-            this.setState({ userRoles: roles });
+            const roleLabels = [];
+            roles.forEach(role => {
+                roleLabels.push({ value: role.role, label: role.role, roleId: role.role_id });
+            });
+            this.setState({ userRoles: roleLabels });
         });
 
         //request ontologies
-        getAllOntologies().then(ontologiesFromBackend => {
-            const ontologyLabels = [];
+        // getAllOntologies().then(ontologiesFromBackend => {
+        //     const ontologyLabels = [];
+        //     console.log(ontologiesFromBackend);
+        //     ontologiesFromBackend.forEach(ontology => {
+        //         ontologyLabels.push({ value: ontology.name, label: ontology.name });
+        //     });
+        //     this.setState({ ontologies: ontologyLabels });
+        // });
 
-            ontologiesFromBackend.forEach(ontology => {
-                ontologyLabels.push({ value: ontology.name, label: ontology.name });
+        //request projects
+        getAllProjects().then(getProjectsFromBackend => {
+            const projectsLabels = [];
+
+            getProjectsFromBackend.forEach(project => {
+                projectsLabels.push({ value: project.name, label: project.name, projectUUID: project.uuid });
             });
-            this.setState({ ontologies: ontologyLabels });
+            this.setState({ projects: projectsLabels });
         });
     };
 
@@ -78,7 +93,7 @@ export default class Dashboard extends Component {
                     key={'row_item' + rowItem['uuid']}
                     userData={rowItem}
                     roleOptions={this.state.userRoles}
-                    ontologies={this.state.ontologies}
+                    projects={this.state.projects}
                     callback={this.getBackendData}
                     parameterOrder={this.parameterOrder}
                 />
