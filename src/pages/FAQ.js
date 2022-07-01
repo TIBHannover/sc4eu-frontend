@@ -9,7 +9,9 @@ class Faq extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            collapseUserRole: false
+            collapseUserRole: false,
+            collapseIssueManagement: false,
+            collapseWebProtege: false
         };
     }
 
@@ -19,6 +21,14 @@ class Faq extends Component {
 
     toggleUserRole = () => {
         this.setState({ collapseUserRole: !this.state.collapseUserRole });
+    };
+
+    toggleIssueManagement = () => {
+        this.setState({ collapseIssueManagement: !this.state.collapseIssueManagement });
+    };
+
+    toggleWebProtege = () => {
+        this.setState({ collapseWebProtege: !this.state.collapseWebProtege });
     };
 
     render() {
@@ -86,6 +96,42 @@ class Faq extends Component {
                                 ))}
                             </tbody>
                         </table>
+                    </Collapse>
+                    <Button
+                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: '#007bff' }}
+                        className="btn"
+                        onClick={this.toggleIssueManagement}
+                    >
+                        <Icon icon={!this.state.collapseIssueManagement ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                        Issue Management
+                    </Button>
+                    <Collapse isOpen={this.state.collapseIssueManagement}>
+                        <p style={{ marginTop: '30px' }}>
+                            If you face any problems with our portal, face any issues with our running system or if you have any further questions,
+                            please get in contact with us via our issue management system that you will find here:
+                            <a href="https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues">
+                                https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues
+                            </a>
+                        </p>
+                    </Collapse>
+                    <Button
+                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: '#007bff' }}
+                        className="btn"
+                        onClick={this.toggleWebProtege}
+                    >
+                        <Icon icon={!this.state.collapseWebProtege ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                        WebProtege
+                    </Button>
+                    <Collapse isOpen={this.state.collapseWebProtege}>
+                        <p style={{ marginTop: '30px' }}>
+                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC3 Platform
+                            Visualization <a href="https://service.tib.eu/sc3/ontology"> ( https://service.tib.eu/sc3/ontology ) </a>
+                            and WebProtege <a href="https://service.tib.eu/sc3/webprotege"> ( https://service.tib.eu/sc3/webprotege ) </a> are only
+                            loosely coupled. Both have their own authentication solutions and data management systems. It is therefore not yet
+                            possible to access WebProtege content directly from the Visualization tab. A workaround is to first work collaboratively
+                            Web-protege. Then download the ontology from WebProtege and from there into the and from there into the visualization
+                            tool. A more integrated solution is coming.
+                        </p>
                     </Collapse>
                 </div>
                 <Footer />
