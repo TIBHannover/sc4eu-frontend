@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Footer from '../Layout/Footer';
+import { Link } from 'react-router-dom';
 
 class Documentations extends Component {
     constructor(props) {
@@ -41,6 +42,15 @@ class Documentations extends Component {
                             exploration and comprehension. As a result, they lower the entry barrier to ontology modeling Visualizations that are
                             appropriate for specific use cases and user groups are, nevertheless, very dependent. To allow users to adapt visual
                             representations to their needs, flexible and adjustable techniques are required.
+                        </p>
+                        <h3>Be part of the SC3 Community and collaborate with us </h3>
+                        <p>
+                            SC3 is an ECSEL funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone
+                            are invited to participate in the project development.
+                            <br />I Would like to setup your own SC3 Portal or if you like to contribute to our codebase, please visit:
+                            <a href="https://gitlab.com/TIBHannover/sc3-project/"> https://gitlab.com/TIBHannover/sc3-project/</a>
+                            <br />
+                            You will find all our code under a MIT licence, instructions. Check it out!
                         </p>
                         <h3>Hybrid modes of operation</h3>
                         <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer' }}>
