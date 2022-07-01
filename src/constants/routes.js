@@ -16,5 +16,6 @@ export default {
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
     DigitalReferenceDocumentation: '/DigitalReferenceDocumentation',
-    FAQ: '/FAQ'
+    FAQ: '/FAQ',
+    WEBPROTEGE: '/WEBPROTEGE'
 };

@@ -147,7 +147,10 @@ class Header extends Component {
                         Home
                     </Link>
                     <Link style={LinkStyle} to={ROUTES.ONTOLOGY} onDragStart={this.preventDraggingOfItem}>
-                        Ontology Editor
+                        Management & Visualization
+                    </Link>
+                    <Link style={LinkStyle} to={ROUTES.WEBPROTEGE} onDragStart={this.preventDraggingOfItem}>
+                        WebProtege
                     </Link>
                     <Link style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
                         DR Specification
@@ -158,7 +161,6 @@ class Header extends Component {
                     <Link style={LinkStyle} to={ROUTES.FAQ} onDragStart={this.preventDraggingOfItem}>
                         FAQ
                     </Link>
-
                     <div
                         style={{
                             color: '#fff',
