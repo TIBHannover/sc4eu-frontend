@@ -16,6 +16,7 @@ import Dataprotections from './pages/Dataprotections';
 import Imprint from './pages/Imprint';
 import DigitalReferenceDocumentation from './pages/DigitalReferenceDocumentation';
 import FAQ from './pages/FAQ';
+import WebProtege from './pages/WebProtege';
 
 const routes = [
     {
@@ -33,6 +34,12 @@ const routes = [
         path: ROUTES.ADMIN_DASHBOARD,
         exact: true,
         component: Dashboard
+    },
+
+    {
+        path: ROUTES.WEBPROTEGE,
+        exact: true,
+        component: WebProtege
     },
 
     {
