@@ -83,13 +83,13 @@ class AnnotationsDropDown extends Component {
                         console.log('Improvement: Maybe change background color to show it as selected');
                     }}
                 >
-                    <Icon
+                    {/*   <Icon
                         icon={faTimesCircle}
                         onClick={event => {
                             this.deleteAnnotationItem(event, item);
                         }}
                         style={{ marginRight: '5px', float: 'right' }}
-                    />
+                    />*/}
                     <div>{item.prefix}</div>
                     <div style={{ marginLeft: '1rem' }}>{item.type}</div>
                 </div>
@@ -188,12 +188,12 @@ class AnnotationsDropDown extends Component {
                 <Button color="primary" onClick={() => this.toggleAnnotation()} style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
                     <Icon icon={this.state.collapseAnnotations ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
                     Annotations
-                    <Icon
+                    {/*<Icon
                         id="PopoverAnnotation"
                         onClick={this.toggleAddAnnotation}
                         icon={faPlusCircle}
                         style={{ float: 'right', marginTop: '3px', marginRight: '5px', color: 'white' }}
-                    />
+                    /> */}
                     <Modal
                         style={{ height: '100%' }}
                         size="lg"

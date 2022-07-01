@@ -122,8 +122,8 @@ class OntologyViewRoot extends Component {
     updateMainWidgetSize = () => {
         // get document by ids;
         const leftSidebarHeight = document.getElementById('LeftSidebarContainer').getBoundingClientRect().height;
-        const rightSidebarHeight = document.getElementById('RightSidebarContainer').getBoundingClientRect().height;
-        const newHeight = Math.max(leftSidebarHeight, rightSidebarHeight);
+        //const rightSidebarHeight = document.getElementById('RightSidebarContainer').getBoundingClientRect().height;
+        const newHeight = Math.max(leftSidebarHeight);
         if (newHeight !== this.state.mainWidgetHeight) {
             this.setState({ mainWidgetHeight: newHeight });
         }
@@ -200,14 +200,14 @@ class OntologyViewRoot extends Component {
                         // loading={this.props.loading}
                         updateEvent={this.leftSideBarUpdateEvent}
                     />
-                    <RightSideBar
+                    {/*<RightSideBar
                         width={this.state.rightSidebarWidth}
                         initialState={this.props.rightSideExpanded}
                         height={this.state.containerHeight + this.sidebarHeightOffset}
                         title="Provenance Information"
                         updateEvent={this.rightSideBarUpdateEvent}
                         heightUpdateEvent={this.updateMainWidgetSize}
-                    />
+                    />*/}
                 </div>
             </>
         );

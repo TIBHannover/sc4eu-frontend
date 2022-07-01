@@ -138,7 +138,7 @@ class ViewOntology extends Component {
                         </Tippy>
 
                         {/*PlayGround View*/}
-                        <Tippy content="PlayGround (Temporary)">
+                        {/*  <Tippy content="PlayGround (Temporary)">
                             <span>
                                 <Button
                                     color={this.state.modeOfOperation === 'playground' ? 'primary' : 'secondary'}
@@ -149,7 +149,7 @@ class ViewOntology extends Component {
                                     <Icon style={{ fontSize: '1.3em', verticalAlign: '-0.175em' }} icon={faGalacticRepublic} />
                                 </Button>
                             </span>
-                        </Tippy>
+                        </Tippy>*/}
 
                         {/*DOWNLOAD BUTTON */}
                         <Tippy content="Download ontology as TTL file (not implemented yet)">

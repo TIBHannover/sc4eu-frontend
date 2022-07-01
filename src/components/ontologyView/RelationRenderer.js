@@ -181,10 +181,10 @@ class RelationRenderer extends Component {
         this.arrayOfChildObjects.forEach(childItem => childItem.forceRerendering());
     };
 
-    handleAdd = () => {
+    /* handleAdd = () => {
         const newRelation = { identifier: 'foaf:', axioms: {}, annotations: {}, domainRangePairs: [], resourceURI: '', type: [] };
         this.props.redux_addRelation(newRelation);
-    };
+    };*/
 
     render() {
         return (
@@ -192,9 +192,9 @@ class RelationRenderer extends Component {
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
                     {/*TODO: fix add relation functionality*/}
-                    <Button size="sm" color="primary" style={{ height: '39px' }} disabled={false} onClick={this.handleAdd}>
+                    {/*<Button size="sm" color="primary" style={{ height: '39px' }} disabled={false} onClick={this.handleAdd}>
                         Add
-                    </Button>
+                    </Button>*/}
                     <InputGroup>
                         <SearchAutoComplete
                             preservedSearchFilterValue={this.filterText}

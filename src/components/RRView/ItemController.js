@@ -13,7 +13,7 @@ class ItemController extends Component {
             if (this.props.itemContext.isHighlighted) {
                 return '#000000';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return '#4388cc';
+                return '#8585e0';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
                 return '#9c6';
             }
@@ -74,7 +74,7 @@ class ItemController extends Component {
                 {/*--------CONTROLS  (FLOAT RIGHT reverses the order of items )*/}
                 <div style={{ width: '250px', minWidth: '100px', float: 'right' }}>
                     {/*DELETE*/}
-                    <ControlButton
+                    {/* <ControlButton
                         size="sm"
                         color="primary"
                         type="control"
@@ -82,9 +82,9 @@ class ItemController extends Component {
                         onClick={this.props.deleteResource}
                     >
                         <Icon icon={faTrash} />
-                    </ControlButton>
+                    </ControlButton>*/}
                     {/* EDIT  */}
-                    <ControlButton
+                    {/* <ControlButton
                         size="sm"
                         color="primary"
                         type="control"
@@ -94,11 +94,11 @@ class ItemController extends Component {
                         }}
                     >
                         <Icon icon={faPen} />
-                    </ControlButton>
+                    </ControlButton>*/}
                     {/* EDIT  */}
-                    <ControlButton size="sm" color="primary" type="control" style={{ float: 'right' }}>
+                    {/*<ControlButton size="sm" color="primary" type="control" style={{ float: 'right' }}>
                         <Icon icon={faEyeSlash} />
-                    </ControlButton>
+                    </ControlButton>*/}
                 </div>
             </StyledController>
         );
