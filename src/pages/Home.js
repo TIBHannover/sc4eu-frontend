@@ -116,7 +116,27 @@ export default class Home extends Component {
                                 SC3 establishes a standard language for comprehensive collaboration between humans and machines, as well as all other
                                 partners.The key objective of this platform is to implement data documentation of an actionable ontology-based
                                 ecosystem that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by new ones
-                                for other subdomains to ensure interoperability of data.
+                                for other subdomains to ensure interoperability of data. "Further information about the project you can find on our
+                                &nbsp;
+                                <a target="_blank" rel="noopener noreferrer" href="https://sc3-project.automotive.oth-aw.de/">
+                                    SC3 webpage
+                                </a>
+                                , on our&nbsp;
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
+                                >
+                                    YouTube chanel
+                                </a>
+                                , or&nbsp;
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
+                                >
+                                    via LinkedIn.
+                                </a>
                             </p>
                         </div>
                         <div
