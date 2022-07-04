@@ -44,7 +44,7 @@ class Footer extends Component {
                             <Link to={ROUTES.Dataprotections}>Data Policy</Link>
                         </div>
                         <div>
-                            <p style={{ fontSize: '13px' }}>
+                            <p style={{ fontSize: '13px', color: 'red' }}>
                                 Note : This is a Minimal Viable Product of the SC3 project.
                                 <br /> I.e., we dont provide any backup solution yet.
                             </p>
