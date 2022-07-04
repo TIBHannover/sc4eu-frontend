@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Container } from 'reactstrap';
+import { Container, Form, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faCaretDown, faCaretRight, faPen } from '@fortawesome/free-solid-svg-icons';
 import styled, { keyframes } from 'styled-components';
@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { Collapse, Button, Card, CardBody, Input } from 'reactstrap';
 import { redux_editMetaInfo } from '../../redux/actions/rrm_actions';
 import Tippy from '@tippyjs/react';
+//import $ from 'lodash/core';
 
 export class LeftSideBar extends Component {
     constructor(props) {
@@ -21,6 +22,9 @@ export class LeftSideBar extends Component {
             collapse: true,
             collapseMetaInfo: true,
             isEditing: { description: false, title: false, version: false, iri: false }
+            //addIrIModal: false,
+            //prefix: '',
+            //iri: ''
         };
     }
 
@@ -45,8 +49,39 @@ export class LeftSideBar extends Component {
         this.setState({ collapseMetaInfo: !this.state.collapseMetaInfo });
     };
 
+    /* reverselongtoShort(obj) {
+         const values = Object.values(obj);
+         const keys = Object.keys(obj);
+         const result = {};
+         values.forEach((value, index) => {
+             if (!result.hasOwnProperty(value)) {
+                 // create new entry
+                 result[value] = keys[index];
+             } else {
+                 // duplicate property, create array
+                 const temp = [];
+                 // get first value
+                 temp.push(result[value]);
+                 // add second value
+                 temp.push(keys[index]);
+                 // set value
+                 result[value] = temp;
+             }
+         });
+         console.log(result);
+         return result;
+     }
+  handleAddIrI = () => {
+         const newShortToLong = { shortToLong: { [this.state.prefix]: this.state.iri } };
+         const newLongToShort = { longToShort: this.reverselongtoShort(newShortToLong.shortToLong) };
+         const newprefixList = $.extend({}, newShortToLong, newLongToShort);
+         const newMetaInformation = { metaDescriptions: {}, prefixList: newprefixList };
+         this.props.redux_addMetaInfo(newMetaInformation);
+     }; */
+
     renderMetaInformation = () => {
         const metaInformation = this.props.metaInformation;
+        //const addIrItoggle = () => this.setState({ addIrIModal: !this.state.addIrIModal });
 
         return Object.keys(metaInformation).map(key => {
             if (key === 'metaDescriptions') {
@@ -82,6 +117,40 @@ export class LeftSideBar extends Component {
                         <Collapse isOpen={!this.state.collapse}>
                             <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
                                 <CardBody style={{ padding: '0 5px', paddingBottom: '5px', width: '100%', overflow: 'hidden' }}>
+                                    {/*  <Button style={{ float: 'right', marginTop: '10px' }} color="primary" onClick={addIrItoggle}>
+                                         Add IRI
+                                     </Button>
+                                     <Modal isOpen={this.state.addIrIModal} toggle={addIrItoggle}>
+                                         <ModalHeader toggle={addIrItoggle}>Add New IRI</ModalHeader>
+                                         <ModalBody>
+                                             <Form>
+                                                 <label>Prefix</label>
+                                                 <Input
+                                                     type="text"
+                                                     placeholder="ex"
+                                                     name="prefix"
+                                                     value={this.state.prefix}
+                                                     onChange={event => this.setState({ prefix: event.target.value })}
+                                                 />
+                                                 <label>IRI</label>
+                                                 <Input
+                                                     type="text"
+                                                     placeholder="http://purl.org/dc/elements/1.1/"
+                                                     name="iri"
+                                                     value={this.state.iri}
+                                                     onChange={event => this.setState({ iri: event.target.value })}
+                                                 />
+                                             </Form>
+                                         </ModalBody>
+                                         <ModalFooter>
+                                             <Button color="primary" onClick={this.handleAddIrI}>
+                                                 Add
+                                             </Button>
+                                             <Button color="primary" onClick={addIrItoggle}>
+                                                 Close
+                                             </Button>
+                                         </ModalFooter>
+                                     </Modal>*/}
                                     <table id="simple-board" style={{ backgroundColor: 'solid black', width: '100%' }}>
                                         <tbody key={'prefixTable_' + key} style={{}}>
                                             <tr key={'prefixRow_' + key}>
@@ -136,7 +205,7 @@ export class LeftSideBar extends Component {
                         <tr style={{ fontSize: '12px' }} key={'description_title_' + itemKey + keyIndex++}>
                             <td style={{ paddingRight: '5px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                                 <div style={{ float: 'left' }}>
-                                    <Button
+                                    {/*  <Button
                                         title="Edit Relation"
                                         color="black"
                                         size="sm"
@@ -146,7 +215,7 @@ export class LeftSideBar extends Component {
                                         }}
                                     >
                                         <Icon icon={faPen} color={this.state.isEditing[itemKey] ? 'black' : 'gray'} />
-                                    </Button>
+                                    </Button> */}
                                     <b>{itemKey}:</b>
                                 </div>
                             </td>
@@ -174,7 +243,7 @@ export class LeftSideBar extends Component {
                     <tr style={{ fontSize: '12px' }} key={'iri_version_' + itemKey + keyIndex++}>
                         <td style={{ paddingRight: '5px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                             <div style={{ float: 'left' }}>
-                                <Button
+                                {/*  <Button
                                     title="Edit Relation"
                                     color="black"
                                     size="sm"
@@ -184,7 +253,7 @@ export class LeftSideBar extends Component {
                                     }}
                                 >
                                     <Icon icon={faPen} color={this.state.isEditing[itemKey] ? 'black' : 'gray'} />
-                                </Button>
+                                </Button>*/}
                                 <b>{itemKey}:</b>
                             </div>
                         </td>
@@ -330,6 +399,7 @@ LeftSideBar.propTypes = {
     height: PropTypes.number.isRequired,
     metaInformation: PropTypes.object,
     redux_editMetaInfo: PropTypes.func.isRequired
+    //redux_addMetaInfo: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
@@ -339,6 +409,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => ({
     redux_editMetaInfo: data => dispatch(redux_editMetaInfo(data))
+    //redux_addMetaInfo: data => dispatch(redux_addMetaInfo(data))
 });
 export default connect(mapStateToProps, mapDispatchToProps)(LeftSideBar);
 

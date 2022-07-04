@@ -60,7 +60,7 @@ class ResourceHeader extends Component {
                                 <Icon icon={faCaretSquareUp} color="white" />
                             )}
                         </Button>
-                        <Button
+                        {/*<Button
                             color="white"
                             size="sm"
                             title="Edit Resource"
@@ -68,7 +68,7 @@ class ResourceHeader extends Component {
                             onClick={this.toggleEditButton}
                         >
                             <Icon icon={faPen} color={this.state.isEditing ? 'red' : 'white'} />
-                        </Button>
+                        </Button>*/}
                     </>
                 )}
 

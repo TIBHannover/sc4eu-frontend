@@ -114,9 +114,9 @@ class CardWidgetVis extends Component {
                 </div>
 
                 <div style={{ padding: '2px 5px' }}>
-                    <Button color="primary" style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
+                    {/* <Button color="primary" style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
                         {this.renderResourceType(itemOfInterest)}
-                    </Button>
+                    </Button>*/}
                 </div>
             </div>
         );
@@ -151,9 +151,9 @@ class CardWidgetVis extends Component {
                     </Collapse>
                 </div>
                 <div style={{ padding: '2px 5px' }}>
-                    <Button color="primary" style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
+                    {/* <Button color="primary" style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
                         {this.renderCharacteristics(itemOfInterest)}
-                    </Button>
+                    </Button>*/}
                 </div>
             </div>
         );
@@ -217,7 +217,7 @@ class CardWidgetVis extends Component {
             <div>
                 Characteristics
                 <div style={{ float: 'right' }}>
-                    <Icon
+                    {/* <Icon
                         id="PopoverResourceType"
                         icon={faPlusCircle}
                         style={{ float: 'right', marginTop: '3px', marginRight: '5px', color: 'white' }}
@@ -250,7 +250,7 @@ class CardWidgetVis extends Component {
                                 Ok
                             </Button>
                         </PopoverBody>
-                    </Popover>
+                    </Popover>*/}
                 </div>
             </div>
         );
@@ -416,7 +416,7 @@ class CardWidgetVis extends Component {
                                 <div>
                                     {axiom.split(':')[1]}
                                     {'   '}
-                                    <Icon
+                                    {/*<Icon
                                         id={'PopoverAxiom' + itemOfInterest.itemIdentifier}
                                         icon={faPlusCircle}
                                         onMouseEnter={this.onMouseEnter}
@@ -449,7 +449,7 @@ class CardWidgetVis extends Component {
                                                 <Button onClick={this.showPopup}>Cancel</Button>
                                             </PopoverBody>
                                         </Popover>
-                                    </div>
+                                    </div>*/}
                                 </div>
                                 <div>
                                     {Object.keys(itemOfInterest.axioms[axiom]).map(item => {
@@ -494,7 +494,7 @@ class CardWidgetVis extends Component {
             <div style={{ overflow: 'hidden' }}>
                 <div>
                     Domains{'  '}
-                    <Icon
+                    {/* <Icon
                         id={'PopoverDomain' + itemOfInterest.itemIdentifier}
                         icon={faPlusCircle}
                         onMouseEnter={this.onMouseEnter}
@@ -527,22 +527,22 @@ class CardWidgetVis extends Component {
                                 <Button onClick={this.showPopup}>Cancel</Button>
                             </PopoverBody>
                         </Popover>
-                    </div>
+                    </div>*/}
                 </div>
                 {domains.map(domain => (
                     <div key={'domainKey_' + domain} style={{ marginLeft: '1rem' }}>
                         {domain}
-                        <Icon
+                        {/* <Icon
                             icon={faTimesCircle}
                             onClick={event => this.deleteDomain(event, domain)}
                             style={{ marginRight: '5px', float: 'right' }}
-                        />
+                        />*/}
                         <hr style={{ marginTop: 0 }} />
                     </div>
                 ))}
                 <div>
                     Ranges{'  '}
-                    <Icon
+                    {/* <Icon
                         id={'PopoverRange' + itemOfInterest.itemIdentifier}
                         icon={faPlusCircle}
                         onMouseEnter={this.onMouseEnter}
@@ -575,15 +575,15 @@ class CardWidgetVis extends Component {
                                 <Button onClick={this.showPopupRange}>Cancel</Button>
                             </PopoverBody>
                         </Popover>
-                    </div>
+                    </div>*/}
                 </div>
-                {ranges.map(range => (
-                    <div key={'domainKey_' + range} style={{ marginLeft: '1rem' }}>
+                {/*{ranges.map(range => (
+                     <div key={'domainKey_' + range} style={{ marginLeft: '1rem' }}>
                         {range}
                         <Icon icon={faTimesCircle} onClick={event => this.deleteRange(event, range)} style={{ marginRight: '5px', float: 'right' }} />
                         <hr style={{ marginTop: 0 }} />
                     </div>
-                ))}
+                ))}*/}
             </div>
         );
     };
