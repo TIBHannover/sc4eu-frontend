@@ -152,9 +152,9 @@ class Header extends Component {
                     <Link style={LinkStyle} to={ROUTES.WEBPROTEGE} onDragStart={this.preventDraggingOfItem}>
                         WebProtege
                     </Link>
-                    <Link style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
+                    {/*<Link style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
                         DR Specification
-                    </Link>
+                    </Link>*/}
                     <Link style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
                         Documentation
                     </Link>
