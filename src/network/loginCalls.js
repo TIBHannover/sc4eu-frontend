@@ -20,7 +20,7 @@ export const loginViaEmail = (email, password) => {
     };
 
     const data = {
-        username: email,
+        email,
         password
     };
 
@@ -31,17 +31,18 @@ export const loginViaEmail = (email, password) => {
     return submitPostRequest(URL_LOGIN_VIA_EMAIL, headers, formBody, false, false);
 };
 
-export const regsiterViaEmail = (email, password) => {
+export const regsiterViaEmail = (displayName, username, email, password) => {
     // we use parameters from env.
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     const data = {
-        username: email,
+        displayName,
+        username,
+        email,
         password
     };
-
     const formBody = Object.keys(data)
         .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
         .join('&');
@@ -49,6 +50,7 @@ export const regsiterViaEmail = (email, password) => {
     return submitPostRequest(URL_REGISTER_VIA_EMAIL, headers, formBody, false, false);
 };
 
+console.log('this' + regsiterViaEmail);
 export const requestDashboard = () => {
     const headers = {
         'Content-Type': 'application/json'

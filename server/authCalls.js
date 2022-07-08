@@ -113,7 +113,9 @@ module.exports = {
             const options = {
                 uri: `${process.env.BACKEND_SERVER_URL}/users/register/`,
                 body: JSON.stringify({
+                    displayName: req.body.displayName,
                     username: req.body.username,
+                    email: req.body.email,
                     password: req.body.password,
                     auth_type: 'AUTH_LOCAL',
                     token: 'undefined'
@@ -123,6 +125,7 @@ module.exports = {
                     'Content-Type': 'application/json'
                 }
             };
+            console.log('Got body:', options.body);
 
             request(options, function(error, response) {
                 const result = JSON.parse(response.body);
@@ -151,7 +154,7 @@ module.exports = {
             const options = {
                 uri: `${process.env.BACKEND_SERVER_URL}/users/login/`,
                 body: JSON.stringify({
-                    username: req.body.username,
+                    email: req.body.email,
                     password: req.body.password,
                     auth_type: 'AUTH_LOCAL',
                     token: 'undefined'
@@ -168,6 +171,8 @@ module.exports = {
                         if (result.error) {
                             return res.json(result);
                         }
+                        console.log(result);
+                        console.log('==========================');
                         const local_accessToken = jwt.sign(
                             {
                                 userId: result.user_id,
