@@ -113,6 +113,7 @@ module.exports = {
             const options = {
                 uri: `${process.env.BACKEND_SERVER_URL}/users/register/`,
                 body: JSON.stringify({
+                    displayName: req.body.displayName,
                     username: req.body.username,
                     password: req.body.password,
                     auth_type: 'AUTH_LOCAL',

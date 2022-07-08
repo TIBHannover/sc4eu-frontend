@@ -51,11 +51,11 @@ class SignIn extends Component {
                 {/*<a href={URL_LOGIN_VIA_GITHUB}>Sign in with GitHub </a>*/}
 
                 {/*TODO: TEST IF WE CAN USE A BUTTON REDIRECT HERE */}
-                {!disableRegisterAndGithub && (
+                {/*{!disableRegisterAndGithub && (
                     <a href={githubAuthURL} className="btn btn-primary">
                         Sign in with GitHub
                     </a>
-                )}
+                )}*/}
             </>
         );
     }

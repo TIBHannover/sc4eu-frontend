@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Col, Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Col, Button, Form, FormGroup, Label, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { connect } from 'react-redux';
 import { openAuthDialog, toggleAuthDialog, updateAuth, updateCookies } from '../../redux/actions/auth';
 import { compose } from 'redux';
 import { loginViaEmail, regsiterViaEmail } from '../../network/loginCalls';
+import { Link } from 'react-router-dom';
 
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
@@ -14,7 +15,12 @@ class LoginViaEmail extends Component {
 
         this.state = {
             loading: false,
-            errors: null
+            errors: null,
+            signupModal: false,
+            resetPasswordModel: false,
+            emailError: '',
+            passwordError: '',
+            passwordMatchError: ''
         };
     }
 
@@ -27,7 +33,9 @@ class LoginViaEmail extends Component {
         this.setState({ loading: false });
         const result = await this.registerUserWithEmail();
         console.log(result);
-        this.props.callback();
+        if (this.fieldValidation()) {
+            this.props.callback();
+        }
         // TODO: handle errors depending on the success of the result
         this.setState({ loading: false });
     };
@@ -54,14 +62,53 @@ class LoginViaEmail extends Component {
     };
 
     registerUserWithEmail = async () => {
-        console.log(' We need email and pwd from user ');
-        const pwd = document.getElementById('examplePassword').value;
-        const email = document.getElementById('exampleEmail').value;
-        const token = await regsiterViaEmail(email, pwd);
-        console.log('result', token);
-        if (token && token.jwt) {
-            this.props.updateCookies({ token: token.jwt });
+        if (this.fieldValidation()) {
+            console.log(' We need email and pwd from user ');
+            const displayName = document.getElementById('displayName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const token = await regsiterViaEmail(displayName, email, password);
+            console.log('result', token);
+            if (token && token.jwt) {
+                this.props.updateCookies({ token: token.jwt });
+            }
         }
+    };
+
+    toggleSignupModel = () => {
+        this.setState({ signupModal: !this.state.signupModal });
+    };
+
+    toggleResetPasswordModel = () => {
+        this.setState({ resetPasswordModel: !this.state.resetPasswordModel });
+    };
+
+    fieldValidation = () => {
+        const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmpassword = document.getElementById('confirm-Password').value;
+        // eslint-disable-next-line no-unused-vars
+        const minLength = 5;
+
+        if (!email || regex.test(email) === false) {
+            this.setState({
+                emailError: 'Email is not a valid'
+            });
+            console.log('email is not valid');
+            return false;
+        } else if (password.length < 5) {
+            this.setState({
+                passwordError: 'Password cannot be less than 5 characters'
+            });
+            return false;
+        } else if (password !== confirmpassword) {
+            this.setState({
+                passwordMatchError: 'Password and Confirm Password does not match.'
+            });
+            return false;
+        }
+        return true;
     };
 
     render() {
@@ -78,7 +125,7 @@ class LoginViaEmail extends Component {
                                 Email
                             </Label>
                             <Col sm={10}>
-                                <Input type="email" name="email" id="exampleEmail" placeholder="with a placeholder" />
+                                <Input type="email" name="email" id="exampleEmail" placeholder="Enter email" />
                             </Col>
                         </FormGroup>
                         <FormGroup row>
@@ -86,19 +133,131 @@ class LoginViaEmail extends Component {
                                 Password
                             </Label>
                             <Col sm={10}>
-                                <Input type="password" name="password" id="examplePassword" placeholder="password placeholder" />
+                                <Input type="password" name="password" id="examplePassword" placeholder="Enter password" />
                             </Col>
                         </FormGroup>
-                        <div style={{ display: 'flow-root' }}>
-                            {!disableRegisterAndGithub && (
-                                <Button id="register" style={{ float: 'left' }} onClick={this.handleRegister}>
-                                    Register
-                                </Button>
-                            )}
-                            <Button id="loginWithMail" style={{ float: 'right' }} onClick={this.handleLogin}>
-                                Login
-                            </Button>
+                        <div>
+                            <p className="mt-3">
+                                Don't have an account? <Link onClick={this.toggleSignupModel}>Sign Up</Link>
+                            </p>
+                            <Modal style={{ maxWidth: '700px', width: '100%' }} isOpen={this.state.signupModal} toggle={this.toggleSignupModel}>
+                                <ModalHeader toggle={this.toggleSignupModel}>Sign Up</ModalHeader>
+                                <ModalBody>
+                                    <div className="container">
+                                        <Form>
+                                            <FormGroup row>
+                                                <Label for="displayName" sm={2}>
+                                                    Name
+                                                </Label>
+                                                <Col sm={10}>
+                                                    <Input type="text" name="displayName" id="displayName" placeholder="Enter Name" />
+                                                </Col>
+                                            </FormGroup>
+                                            <FormGroup row>
+                                                <Label for="email" sm={2}>
+                                                    Email
+                                                </Label>
+                                                <Col sm={10}>
+                                                    <Input type="email" name="email" id="email" placeholder="Enter Email Address" />
+                                                </Col>
+                                                <span style={{ marginLeft: '130px' }} className="text-danger">
+                                                    {this.state.emailError}
+                                                </span>
+                                            </FormGroup>
+                                            <FormGroup row>
+                                                <Label for="password" sm={2}>
+                                                    Password
+                                                </Label>
+                                                <Col sm={10}>
+                                                    <Input type="password" name="password" id="password" placeholder="Enter Password " />
+                                                </Col>
+                                                <span style={{ marginLeft: '130px' }} className="text-danger">
+                                                    {this.state.passwordError}
+                                                </span>
+                                            </FormGroup>
+                                            <FormGroup row>
+                                                <Label for="confirm-Password" sm={2}>
+                                                    Confirm Password
+                                                </Label>
+                                                <Col sm={10}>
+                                                    <Input
+                                                        type="password"
+                                                        name="confirm-Password"
+                                                        id="confirm-Password"
+                                                        placeholder="Re-Enter Password"
+                                                    />
+                                                </Col>
+                                                <span style={{ marginLeft: '130px', marginTop: '-20px' }} className="text-danger">
+                                                    {this.state.passwordMatchError}
+                                                </span>
+                                            </FormGroup>
+                                        </Form>
+                                    </div>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="primary" onClick={this.handleRegister}>
+                                        Register
+                                    </Button>
+                                    <Button color="primary" onClick={this.toggleSignupModel}>
+                                        Cancel
+                                    </Button>
+                                </ModalFooter>
+                            </Modal>
                         </div>
+                        <div>
+                            {/*<p className="mt-3">
+                                Forgot your Password? <Link onClick={this.toggleResetPasswordModel}>Reset Password</Link>
+                            </p>*/}
+                            <Modal isOpen={this.state.resetPasswordModel} toggle={this.toggleResetPasswordModel}>
+                                <ModalHeader toggle={this.toggleResetPasswordModel}>Reset Password</ModalHeader>
+                                <ModalBody>
+                                    <div className="container">
+                                        <Form>
+                                            <FormGroup row>
+                                                <Label for="exampleEmail" sm={2}>
+                                                    Email
+                                                </Label>
+                                                <Col sm={10}>
+                                                    <Input type="email" name="email" id="email" placeholder="Enter Email Address" />
+                                                </Col>
+                                            </FormGroup>
+                                            <FormGroup row>
+                                                <Label for="examplePassword" sm={2}>
+                                                    Password
+                                                </Label>
+                                                <Col sm={10}>
+                                                    <Input type="password" name="password" id="password" placeholder="Enter Password " />
+                                                </Col>
+                                            </FormGroup>
+                                            <FormGroup row>
+                                                <Label for="confirm-Password" sm={2}>
+                                                    Confirm Password
+                                                </Label>
+                                                <Col sm={10}>
+                                                    <Input
+                                                        type="password"
+                                                        name="confirm-password"
+                                                        id="confirm-Password"
+                                                        placeholder="Re-Enter Password"
+                                                    />
+                                                </Col>
+                                            </FormGroup>
+                                        </Form>
+                                    </div>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="primary" onClick={this.toggleResetPasswordModel}>
+                                        Reset
+                                    </Button>
+                                    <Button color="primary" onClick={this.toggleResetPasswordModel}>
+                                        Cancel
+                                    </Button>
+                                </ModalFooter>
+                            </Modal>
+                        </div>
+                        <Button color="primary" id="loginWithMail" style={{ float: 'right', marginTop: '12px' }} onClick={this.handleLogin}>
+                            Login
+                        </Button>
                     </Form>
                 ) : (
                     <div>Processing...</div>

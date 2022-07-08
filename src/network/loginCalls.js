@@ -31,13 +31,14 @@ export const loginViaEmail = (email, password) => {
     return submitPostRequest(URL_LOGIN_VIA_EMAIL, headers, formBody, false, false);
 };
 
-export const regsiterViaEmail = (email, password) => {
+export const regsiterViaEmail = (displayName, email, password) => {
     // we use parameters from env.
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     const data = {
+        displayName,
         username: email,
         password
     };
