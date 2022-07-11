@@ -43,7 +43,7 @@ export class ProjectsSideBar extends Component {
         getAllProjects().then(res => {
             console.log('getAllProjects hasResults:', res);
             console.log('results ', res[0].name);
-            this.setState({ results: res });
+            this.setState({ results: res.reverse() });
         });
     };
 
@@ -69,6 +69,7 @@ this.setState({ expanded: !this.state.expanded });
 
     reloadAfterUpdate = () => {
         this.setState({ isLoading: false });
+        this.props.updateHeaderValueCallback(false);
         this.getProjectsFromBackend();
     };
 
@@ -127,7 +128,7 @@ this.setState({ expanded: !this.state.expanded });
                 </Container>
                 <Container
                     id="leftBodyContainer"
-                    className="pr-md-5 pt-sm-2 pb-sm-2 pl-0 pr-sm-2 clearfix"
+                    className="pr-md-5 pt-sm-10 pb-sm-2 pl-0 pr-sm-2 clearfix"
                     style={{
                         borderRadius: '10px',
                         borderWidth: '1px',
@@ -138,14 +139,13 @@ this.setState({ expanded: !this.state.expanded });
                         marginLeft: '5px',
                         color: 'black',
                         backgroundColor: '#ffffff',
-                        marginTop: '-1px',
                         position: 'absolute',
                         height: this.props.height + 'px',
                         overflowY: 'auto',
                         overflowX: 'hidden'
                     }}
                 >
-                    <div style={{ width: this.props.width - 2, textAlign: 'left' }}>
+                    <div style={{ width: this.props.width - 2, textAlign: 'left', overflowY: 'auto', height: '90vh' }}>
                         {this.state.results
                             ? this.state.results.map(item => {
                                   //return <div key={item.name}>{item.name}</div>;
