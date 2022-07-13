@@ -9,7 +9,9 @@ import { connect } from 'react-redux';
 import { Collapse, Button, Card, CardBody, Input } from 'reactstrap';
 import { redux_editMetaInfo } from '../../redux/actions/rrm_actions';
 import Tippy from '@tippyjs/react';
-//import $ from 'lodash/core';
+import { reverse } from 'named-urls';
+import { Link } from 'react-router-dom';
+import ROUTES from '../../constants/routes';
 
 export class LeftSideBar extends Component {
     constructor(props) {
@@ -310,6 +312,31 @@ export class LeftSideBar extends Component {
         }
     };
 
+    renderCurrentProjectAndOntology = () => {
+        const openProject = this.props.projectName;
+        const openOntology = this.props.ontologyName;
+        return (
+            <div>
+                <table className="table table-bordered hover">
+                    <thead>
+                        <tr>
+                            <th>Current Project Name</th>
+                            <th>Current Ontology Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <Link to={reverse(ROUTES.ONTOLOGY)}>{openProject}</Link>
+                            </td>
+                            <td>{openOntology}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
+
     render() {
         return (
             <ContentContainer
@@ -384,6 +411,9 @@ export class LeftSideBar extends Component {
                         overflowX: 'hidden'
                     }}
                 >
+                    <div style={{ marginTop: '20px', width: '106%', textAlign: 'left', marginLeft: '15px' }}>
+                        <div>{this.renderCurrentProjectAndOntology()}</div>
+                    </div>
                     <div style={{ width: this.props.width - 2, textAlign: 'left' }}>{this.renderMetaInformation()}</div>
                 </Container>
             </ContentContainer>
@@ -392,6 +422,8 @@ export class LeftSideBar extends Component {
 }
 
 LeftSideBar.propTypes = {
+    projectName: PropTypes.string.isRequired,
+    ontologyName: PropTypes.string.isRequired,
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
     initialState: PropTypes.bool.isRequired,
@@ -424,7 +456,7 @@ const expandButtonAnimation = ({ expanded, initialRendering }) => {
   }
   to {
     transform: rotate(${expanded ? 0 : -180}deg);
-   
+
   }
 `;
     } else {
@@ -449,7 +481,7 @@ const expandContentContainerAnimation = ({ expanded, width, initialRendering }) 
   }
   to {
     left: ${expanded ? 0 : -width}px;
-   
+
   }
 `;
     }

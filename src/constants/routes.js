@@ -4,7 +4,7 @@ export default {
     PAGEA: '/pageA',
     PAGEB: '/pageB',
     ONTOLOGY: '/ontology',
-    VIEW_ONTOLOGY: '/view_ontology/:ontologyId',
+    VIEW_ONTOLOGY: '/view_ontology/:projectName/:ontologyName/:ontologyId',
     DELETE_ONTOLOGY: '/delete_ontology/:ontologyId',
     USER_PROFILE: '/user/profile/:userId',
     USER_SETTINGS: '/user/settings/',

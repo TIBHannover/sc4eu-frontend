@@ -56,16 +56,16 @@ export default class OntologyIndexing extends Component {
     };
 
     updateHeaderValue = projectSelected => {
+        console.log(projectSelected.uuid);
         this.setState({ selectedProject: projectSelected });
-        let headerTitle = 'Please select a project to view its ontologies';
         if (projectSelected) {
-            headerTitle = (
+            const headerTitle = (
                 <p>
                     You are currently viewing index of ontologies for <b> {projectSelected.name} </b> project
                 </p>
             );
+            this.setState({ headerValue: headerTitle });
         }
-        this.setState({ headerValue: headerTitle });
     };
 
     render() {
@@ -122,6 +122,7 @@ export default class OntologyIndexing extends Component {
                                 <hr className="mt-0 mb-2" />
                                 {this.state.results ? (
                                     <OntologyIndexCards
+                                        projectName={this.state.selectedProject.name}
                                         ontologies={this.state.results}
                                         reloadAfterDelete={() => {
                                             this.reloadAfterDelete();

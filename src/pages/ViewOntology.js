@@ -186,6 +186,8 @@ class ViewOntology extends Component {
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'hybrid' && (
                         <OntologyViewRoot
+                            projectName={this.props.match.params.projectName}
+                            ontologyName={this.props.match.params.ontologyName}
                             leftSideExpanded={this.leftSideExpanded}
                             rightSideExpanded={this.rightSideExpanded}
                             toggleLeftSideExpanded={this.setLeftSideExpanded}
@@ -214,7 +216,9 @@ const mapStateToProps = state => {
 ViewOntology.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.shape({
-            ontologyId: PropTypes.string.isRequired
+            ontologyId: PropTypes.string.isRequired,
+            ontologyName: PropTypes.string.isRequired,
+            projectName: PropTypes.string.isRequired
         }).isRequired
     }).isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
