@@ -286,7 +286,7 @@ module.exports = {
                         request(options, function(error, response) {
                             if (response && response.body) {
                                 const result = JSON.parse(response.body);
-                                if (result) {
+                                if (result.success) {
                                     res.json(response);
                                 } else {
                                     res.json({ error: 'error while updating user projects' });

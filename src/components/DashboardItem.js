@@ -111,7 +111,13 @@ export default class DashboardItem extends Component {
             };
 
             updateUserRole(newRole).then(() => {
-                updateUserProjects(newProjects).then(() => {
+                updateUserProjects(newProjects).then(response => {
+                    const result = JSON.parse(response.body);
+                    if (result.success) {
+                        console.info('Projects updated successfully');
+                    } else {
+                        console.warn(result.error);
+                    }
                     this.props.callback();
                 });
             });
