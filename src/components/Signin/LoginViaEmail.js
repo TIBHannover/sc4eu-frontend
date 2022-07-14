@@ -28,7 +28,7 @@ class LoginViaEmail extends Component {
             passwordError: '',
             passwordMatchError: '',
             emailtakenError: '',
-            emailNotFoundError: ''
+            WrongEmailorPasswordError: ''
         };
     }
 
@@ -60,7 +60,7 @@ class LoginViaEmail extends Component {
         const token = await loginViaEmail(this.state.email, this.state.password);
         if (token.error) {
             this.setState({
-                emailNotFoundError: token.error
+                WrongEmailorPasswordError: token.error
             });
         } else {
             this.props.callback();
@@ -108,12 +108,6 @@ class LoginViaEmail extends Component {
         return true;
     };
 
-    inputValueChanged = event => {
-        const field = this.state;
-        field[event.target.name] = event.target.value;
-        this.setState({ field: field });
-    };
-
     render() {
         let disableRegisterAndGithub = false;
         if (process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'True' || process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'true') {
@@ -123,6 +117,9 @@ class LoginViaEmail extends Component {
             <div>
                 {!this.state.loading ? (
                     <Form onSubmit={this.handleSubmit}>
+                        <p style={{ marginLeft: '150px' }} className="text-danger">
+                            {this.state.WrongEmailorPasswordError}
+                        </p>
                         <FormGroup row>
                             <Label for="exampleEmail" sm={2}>
                                 Email
@@ -133,12 +130,9 @@ class LoginViaEmail extends Component {
                                     name="email"
                                     placeholder="Enter email"
                                     value={this.state.email}
-                                    onChange={this.inputValueChanged}
+                                    onChange={event => this.setState({ email: event.target.value })}
                                 />
                             </Col>
-                            <span style={{ marginLeft: '100px' }} className="text-danger">
-                                {this.state.emailNotFoundError}
-                            </span>
                         </FormGroup>
                         <FormGroup row>
                             <Label for="examplePassword" sm={2}>
@@ -150,7 +144,7 @@ class LoginViaEmail extends Component {
                                     name="password"
                                     placeholder="Enter password"
                                     value={this.state.password}
-                                    onChange={this.inputValueChanged}
+                                    onChange={event => this.setState({ password: event.target.value })}
                                 />
                             </Col>
                         </FormGroup>
@@ -176,7 +170,7 @@ class LoginViaEmail extends Component {
                                                         name="displayName"
                                                         placeholder="Enter Name"
                                                         value={this.state.displayName}
-                                                        onChange={this.inputValueChanged}
+                                                        onChange={event => this.setState({ displayName: event.target.value })}
                                                     />
                                                 </Col>
                                                 <span style={{ marginLeft: '130px' }} className="text-danger">
@@ -193,7 +187,7 @@ class LoginViaEmail extends Component {
                                                         name="email"
                                                         placeholder="Enter Email Address"
                                                         value={this.state.email}
-                                                        onChange={this.inputValueChanged}
+                                                        onChange={event => this.setState({ email: event.target.value })}
                                                     />
                                                 </Col>
                                                 <span style={{ marginLeft: '130px' }} className="text-danger">
@@ -211,7 +205,7 @@ class LoginViaEmail extends Component {
                                                         name="password"
                                                         placeholder="Enter Password "
                                                         value={this.state.password}
-                                                        onChange={this.inputValueChanged}
+                                                        onChange={event => this.setState({ password: event.target.value })}
                                                     />
                                                 </Col>
                                                 <span style={{ marginLeft: '130px' }} className="text-danger">
@@ -228,7 +222,7 @@ class LoginViaEmail extends Component {
                                                         name="confirmPassword"
                                                         placeholder="Re-Enter Password"
                                                         value={this.state.confirmPassword}
-                                                        onChange={this.inputValueChanged}
+                                                        onChange={event => this.setState({ confirmPassword: event.target.value })}
                                                     />
                                                 </Col>
                                                 <span style={{ marginLeft: '130px', marginTop: '-20px' }} className="text-danger">
@@ -267,7 +261,7 @@ class LoginViaEmail extends Component {
                                                         name="email"
                                                         placeholder="Enter Email Address"
                                                         value={this.state.email}
-                                                        onChange={this.inputValueChanged}
+                                                        onChange={event => this.setState({ email: event.target.value })}
                                                     />
                                                 </Col>
                                             </FormGroup>
@@ -281,7 +275,7 @@ class LoginViaEmail extends Component {
                                                         name="password"
                                                         placeholder="Enter Password "
                                                         value={this.state.password}
-                                                        onChange={this.inputValueChanged}
+                                                        onChange={event => this.setState({ password: event.target.value })}
                                                     />
                                                 </Col>
                                             </FormGroup>
@@ -295,7 +289,7 @@ class LoginViaEmail extends Component {
                                                         name="confirmPassword"
                                                         placeholder="Re-Enter Password"
                                                         value={this.state.confirmPassword}
-                                                        onChange={this.inputValueChanged}
+                                                        onChange={event => this.setState({ confirmPassword: event.target.value })}
                                                     />
                                                 </Col>
                                             </FormGroup>
