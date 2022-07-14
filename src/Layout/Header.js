@@ -82,7 +82,7 @@ class Header extends Component {
     };
 
     showDashboard = () => {
-        if (this.props.user.displayName === 'System ADMIN') {
+        if (this.props.user.role.toLowerCase() === 'System ADMIN'.toLowerCase()) {
             return (
                 <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.ADMIN_DASHBOARD}>
                     Dashboard

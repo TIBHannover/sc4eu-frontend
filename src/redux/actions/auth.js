@@ -26,6 +26,7 @@ export const updateCookies = payload => dispatch => {
                             displayName: userData.displayName,
                             gravatarId: userData.gravatarId,
                             userId: userData.userId,
+                            role: userData.role,
                             token: payload.token,
                             tokenExpire: token_expires_in
                         }
@@ -96,6 +97,7 @@ export function firstLoad() {
                                 displayName: userData.displayName,
                                 gravatarId: userData.gravatarId,
                                 userId: userData.userId,
+                                role: userData.role,
                                 token: token,
                                 tokenExpire: token_expires_in
                             }
