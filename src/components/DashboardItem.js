@@ -3,6 +3,8 @@ import { Button } from 'reactstrap';
 import { components, default as ReactSelect } from 'react-select';
 import { deleteUser, getUserProjects, getUserRole, updateUserProjects, updateUserRole } from '../network/UserProfileCalls';
 import PropTypes from 'prop-types';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 const Option = props => {
     return (
@@ -34,7 +36,7 @@ RoleOption.propTypes = {
     label: PropTypes.string.isRequired
 };
 
-export default class DashboardItem extends Component {
+class DashboardItem extends Component {
     constructor(props) {
         super(props);
 
@@ -132,6 +134,10 @@ export default class DashboardItem extends Component {
     };
 
     handleRoleChange = roleSelected => {
+        if (this.props.user.userId === this.props.userData.uuid) {
+            alert('A Project Admin can not change its own role');
+            return;
+        }
         this.setState({ roleValue: roleSelected });
     };
 
@@ -152,21 +158,6 @@ export default class DashboardItem extends Component {
                                 RoleOption
                             }}
                         />
-
-                        {/*<select //TODO change this with ReactSelect*/}
-                        {/*    defaultValue={this.props.roleOptions[2]}*/}
-                        {/*    //value={this.state.roleValue}*/}
-                        {/*    onChange={event => {*/}
-                        {/*        this.handleRoleChange(event);*/}
-                        {/*    }}*/}
-                        {/*    disabled={!this.state.shouldEdit}*/}
-                        {/*>*/}
-                        {/*    {this.props.roleOptions.map(item => (*/}
-                        {/*        <option key={'option_' + item.role} value={item.role ?? ''}>*/}
-                        {/*            {item.role}*/}
-                        {/*        </option>*/}
-                        {/*    ))}*/}
-                        {/*</select>*/}
                     </td>
                 );
             }
@@ -245,5 +236,12 @@ DashboardItem.propTypes = {
     userData: PropTypes.object.isRequired,
     roleOptions: PropTypes.array.isRequired,
     callback: PropTypes.func.isRequired,
-    parameterOrder: PropTypes.array.isRequired
+    parameterOrder: PropTypes.array.isRequired,
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
+
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+export default compose(connect(mapStateToProps))(DashboardItem);
