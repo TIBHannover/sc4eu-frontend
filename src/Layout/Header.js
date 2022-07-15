@@ -4,7 +4,7 @@ import ROUTES from 'constants/routes';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Link, Redirect, withRouter } from 'react-router-dom';
+import { Link, NavLink, Redirect, withRouter } from 'react-router-dom';
 import { reverse } from 'named-urls';
 
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -17,6 +17,7 @@ import { Button, ButtonGroup, Navbar, Row } from 'reactstrap';
 import SignInModal from '../components/Signin/SignInModal';
 
 import { StyledAuthTooltip, StyledGravatar, StyledTopBar } from 'styledComponents/styledComponents';
+import '../assets/scss/DefaultLayout.scss';
 
 class Header extends Component {
     constructor(props) {
@@ -123,12 +124,7 @@ class Header extends Component {
 
         const LinkStyle = {
             color: '#ffff',
-            display: 'flex',
-            paddingRight: '20px',
-            alignItems: 'center',
-            height: '100%',
-            cursor: 'pointer',
-            float: 'left',
+            marginRight: '20px',
             fontWeight: 700
         };
 
@@ -138,29 +134,38 @@ class Header extends Component {
                     expand="md"
                     fixed="top"
                     id="main-navbar"
-                    style={{ borderBottom: '1px solid black', background: '#007bff', display: 'block', height: '40px' }}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        flexWrap: 'nowrap',
+                        background: '#007bff',
+                        height: '40px',
+                        justifyContent: 'space-between'
+                    }}
                 >
-                    <Link style={Object.assign({ marginTop: '5px' }, LinkStyle)} to={ROUTES.HOME} onDragStart={this.preventDraggingOfItem}>
-                        <Logo />
-                    </Link>
-                    <Link style={LinkStyle} to={ROUTES.HOME} onDragStart={this.preventDraggingOfItem}>
-                        Home
-                    </Link>
-                    <Link style={LinkStyle} to={ROUTES.ONTOLOGY} onDragStart={this.preventDraggingOfItem}>
-                        Management & Visualization
-                    </Link>
-                    <Link style={LinkStyle} to={ROUTES.WEBPROTEGE} onDragStart={this.preventDraggingOfItem}>
-                        WebProtege
-                    </Link>
-                    {/*<Link style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
+                    <div style={{ alignItems: 'center' }}>
+                        <Link style={LinkStyle} to={ROUTES.HOME} onDragStart={this.preventDraggingOfItem}>
+                            <Logo />
+                        </Link>
+                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.HOME} exact onDragStart={this.preventDraggingOfItem}>
+                            Home
+                        </NavLink>
+                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.ONTOLOGY} onDragStart={this.preventDraggingOfItem}>
+                            Management & Visualization
+                        </NavLink>
+                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.WEBPROTEGE} onDragStart={this.preventDraggingOfItem}>
+                            WebProtege
+                        </NavLink>
+                        {/*<NavLink activeClassName="active" style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
                         DR Specification
-                    </Link>*/}
-                    <Link style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
-                        Documentation
-                    </Link>
-                    <Link style={LinkStyle} to={ROUTES.FAQ} onDragStart={this.preventDraggingOfItem}>
-                        FAQ
-                    </Link>
+                    </NavLink>*/}
+                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
+                            Documentation
+                        </NavLink>
+                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.FAQ} onDragStart={this.preventDraggingOfItem}>
+                            FAQ
+                        </NavLink>
+                    </div>
                     <div
                         style={{
                             color: '#fff',
