@@ -7,10 +7,12 @@
   background: #b6b4b8;
   display:block;
   height:40px;
-
-
 }
 
+.active{
+  background-color: black;
+  padding: 11px;
+}
 
 .noSelect {
   -webkit-touch-callout: none; /* iOS Safari */
