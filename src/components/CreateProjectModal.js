@@ -13,6 +13,7 @@ class CreateProject extends Component {
         this.state = {
             projectName: '',
             projectDescription: '',
+            accessType: '',
             allowedToCreateProjects: false
         };
     }
@@ -34,6 +35,10 @@ class CreateProject extends Component {
     };
     handleOnChangeDesc = event => {
         this.setState({ projectDescription: event.target.value });
+    };
+
+    handleOnChangeAccess = event => {
+        this.setState({ accessType: event.target.value });
     };
 
     resetStateObject = () => {
@@ -62,11 +67,17 @@ class CreateProject extends Component {
             return;
         }
 
+        if (!this.state.accessType) {
+            alert('Please select access type for the project');
+            return;
+        }
+
         console.log(this.props.user.displayName);
 
         const objToSent = {
             name: this.state.projectName,
             description: this.state.projectDescription,
+            accessType: this.state.accessType,
             //Get currently Logged in User Name
             createdBy: this.props.user.displayName,
             creationDate: new Date().toLocaleString()
@@ -74,6 +85,7 @@ class CreateProject extends Component {
 
         createProject(objToSent).then(res => {
             this.props.callback(res);
+            console.log(res);
         });
         //this.props.callback({ result: true });
     };
@@ -117,6 +129,20 @@ class CreateProject extends Component {
                                     value={this.state.projectDescription}
                                     onChange={this.handleOnChangeDesc}
                                 />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="accessType">Access Type</Label>
+                                <Input
+                                    type="select"
+                                    name="select"
+                                    id="exampleSelect"
+                                    value={this.state.accessType}
+                                    onChange={this.handleOnChangeAccess}
+                                >
+                                    <option disabled>Select Access Type....</option>
+                                    <option>Public</option>
+                                    <option>Private</option>
+                                </Input>
                             </FormGroup>
                         </div>
                     ) : (
