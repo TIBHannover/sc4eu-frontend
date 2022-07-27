@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
 import ProjectCard from './ProjectCard';
+import { getUserProjects } from '../network/UserProfileCalls';
 
-export class ProjectsSideBar extends Component {
+class ProjectsSideBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,6 +21,7 @@ export class ProjectsSideBar extends Component {
             showCreateProjectModal: false,
             results: '',
             isLoading: true,
+            usersProject: [],
             isEditing: { description: false, title: false, version: false, iri: false }
         };
     }
@@ -35,10 +37,26 @@ export class ProjectsSideBar extends Component {
         if (prevState.expanded !== this.state.expanded) {
             this.setState({ initialRendering: false });
         }
+        if (prevProps.user !== this.props.user) {
+            console.log('Get User after Refresh the Page');
+            this.getProjectsFromBackend();
+        }
     };
 
     getProjectsFromBackend = () => {
         console.log('fetching projects from backend');
+
+        const user = this.props.user;
+
+        if (this.props.user) {
+            getUserProjects(user.userId).then(userProjectsUUID => {
+                const userProjects = [];
+                userProjectsUUID.forEach(project => {
+                    userProjects.push({ usersProjectUUID: project });
+                });
+                this.setState({ usersProject: userProjects });
+            });
+        }
 
         getAllProjects().then(res => {
             console.log('getAllProjects hasResults:', res);
@@ -153,6 +171,7 @@ this.setState({ expanded: !this.state.expanded });
                                       <ProjectCard
                                           key={'ProjectCard_' + item.name}
                                           inputData={item}
+                                          unlock={this.state.usersProject}
                                           callback={param => {
                                               this.reloadAfterUpdate(param);
                                           }}
@@ -171,17 +190,22 @@ this.setState({ expanded: !this.state.expanded });
     }
 }
 
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+const mapDispatchToProps = dispatch => ({});
+
 ProjectsSideBar.propTypes = {
     title: PropTypes.string,
     //updateEvent: PropTypes.func.isRequired,
     initialState: PropTypes.bool.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    updateHeaderValueCallback: PropTypes.func.isRequired
+    updateHeaderValueCallback: PropTypes.func.isRequired,
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 
-const mapStateToProps = state => {};
-const mapDispatchToProps = dispatch => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectsSideBar);
 
 /** CREATE A GREEN LINE**/

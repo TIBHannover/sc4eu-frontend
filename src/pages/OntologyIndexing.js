@@ -6,7 +6,8 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { getAllOntologies } from '../network/ontologyIndexing';
 import OntologyIndexCards from '../components/OntologyIndexCards';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
-import { ProjectsSideBar } from '../components/ProjectsSideBar';
+import ProjectsSideBar from '../components/ProjectsSideBar';
+import '../assets/scss/CustomBootstrap.scss';
 
 export default class OntologyIndexing extends Component {
     constructor(props) {
@@ -80,19 +81,21 @@ export default class OntologyIndexing extends Component {
                         this.updateHeaderValue(params);
                     }}
                 />
-                <Container
+                <div
                     className="box pt-2 pb-2 pl-0 pr-0"
                     style={{
+                        width: '60vw',
                         backgroundColor: 'white',
                         border: '1px solid black',
                         borderTop: 'none',
                         overflow: 'auto',
                         float: 'left',
-                        position: 'relative'
+                        position: 'fixed',
+                        marginLeft: '460px'
                     }}
                 >
                     <h2
-                        className="noSelect pl-3 pr-3 pb-3"
+                        className="title"
                         style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center' }}
                         title={this.state.headerValue}
                     >
@@ -112,7 +115,7 @@ export default class OntologyIndexing extends Component {
                                 </h2>
                             </div>
                         ) : this.state.selectedProject ? (
-                            <div>
+                            <div className="ontologyShow">
                                 <OntologyIndexInteractions
                                     project_id={this.state.selectedProject.uuid}
                                     reloadAfterUpdate={() => {
@@ -135,7 +138,7 @@ export default class OntologyIndexing extends Component {
                             <div />
                         )}
                     </div>
-                </Container>
+                </div>
             </>
         );
     }

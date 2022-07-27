@@ -3,14 +3,15 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faUnlockAlt, faLock } from '@fortawesome/free-solid-svg-icons';
 import { Button } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
+import { connect } from 'react-redux';
 
-export default class ProjectIndexCards extends Component {
+class ProjectIndexCards extends Component {
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
@@ -43,10 +44,25 @@ export default class ProjectIndexCards extends Component {
 
     showOntologies = () => {
         //TODO Get all ontologies related Only to this Project
-        const project = this.props.inputData;
-        //change color of select card
-        //StyledCardHeader.backgroundColor = 'black';
-        this.props.updateHeaderValueCallback(project);
+        if (!this.props.user) {
+            if (this.props.inputData.access_type.toLowerCase() === 'Public'.toLowerCase()) {
+                const project = this.props.inputData;
+                this.props.updateHeaderValueCallback(project);
+            } else {
+                alert('This is Private Project You can not open it');
+            }
+        } else {
+            if (
+                this.props.inputData.access_type.toLowerCase() === 'Public'.toLowerCase() ||
+                this.props.user.role.toLowerCase() === 'System ADMIN'.toLowerCase() ||
+                Object.values(this.props.unlock).find(id => id.usersProjectUUID === this.props.inputData.uuid)
+            ) {
+                const project = this.props.inputData;
+                this.props.updateHeaderValueCallback(project);
+            } else {
+                alert('This is Private Project You can not open it');
+            }
+        }
     };
 
     render() {
@@ -60,7 +76,34 @@ export default class ProjectIndexCards extends Component {
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
-                            <div style={{ display: 'flex', paddingRight: '5px' }}>
+                            <div style={{ display: 'flex', paddingRight: '10px' }}>
+                                {!this.props.user ? (
+                                    <>
+                                        {this.props.inputData.access_type === 'Public' ? (
+                                            <div>
+                                                <Icon className="mr-1" icon={faUnlockAlt} />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <Icon className="mr-1" icon={faLock} />
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        {this.props.inputData.access_type.toLowerCase() === 'Public'.toLowerCase() ||
+                                        this.props.user.role.toLowerCase() === 'System ADMIN'.toLowerCase() ||
+                                        Object.values(this.props.unlock).find(id => id.usersProjectUUID === this.props.inputData.uuid) ? (
+                                            <div>
+                                                <Icon className="mr-1" icon={faUnlockAlt} />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <Icon className="mr-1" icon={faLock} />
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                                 <div> {this.props.inputData.name} </div>
                                 <Button
                                     color="white"
@@ -84,11 +127,21 @@ export default class ProjectIndexCards extends Component {
     }
 }
 
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+const mapDispatchToProps = dispatch => ({});
+
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
+    unlock: PropTypes.array.isRequired,
     callback: PropTypes.func.isRequired,
-    updateHeaderValueCallback: PropTypes.func.isRequired
+    updateHeaderValueCallback: PropTypes.func.isRequired,
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectIndexCards);
 
 const StyledCard = styled.div`
     margin: 5px;
