@@ -28,12 +28,20 @@ class ProjectIndexCards extends Component {
 
         try {
             const allows = await userIsAllowdToUploadOntology();
+            // system admin can delete all projects and project admin can delete only his own projects
             if (allows.result === true) {
-                deleteProject(this.props.inputData.uuid).then(res => {
-                    if (res.success === true) {
-                        this.props.callback(res.result);
-                    }
-                });
+                if (
+                    Object.values(this.props.unlock).find(id => id.usersProjectUUID === this.props.inputData.uuid) ||
+                    this.props.user.role.toLowerCase() === 'System ADMIN'.toLowerCase()
+                ) {
+                    deleteProject(this.props.inputData.uuid).then(res => {
+                        if (res.success === true) {
+                            this.props.callback(res.result);
+                        }
+                    });
+                } else {
+                    alert('You are not authorized to delete this project');
+                }
             } else {
                 alert('You are not authorized to delete this project');
             }
