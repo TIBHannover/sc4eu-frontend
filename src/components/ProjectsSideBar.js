@@ -21,7 +21,7 @@ class ProjectsSideBar extends Component {
             showCreateProjectModal: false,
             results: '',
             isLoading: true,
-            usersProject: [],
+            usersProjectsId: [],
             isEditing: { description: false, title: false, version: false, iri: false }
         };
     }
@@ -30,6 +30,7 @@ class ProjectsSideBar extends Component {
         //Get the current User from Redux State
         //TODO Retrive all the project for the current User
         //this.getProjectsFromBackend();
+        this.getuserProjectFromBackend();
         this.getProjectsFromBackend();
     }
 
@@ -39,29 +40,47 @@ class ProjectsSideBar extends Component {
         }
         if (prevProps.user !== this.props.user) {
             console.log('Get User after Refresh the Page');
-            this.getProjectsFromBackend();
+            this.getuserProjectFromBackend();
+            // The main purpose of the setTimeout is that first need to execute the above function than the below function should execute
+            window.setTimeout(() => {
+                this.getProjectsFromBackend();
+            }, 100);
+        }
+    };
+
+    getuserProjectFromBackend = () => {
+        const user = this.props.user;
+        if (this.props.user) {
+            getUserProjects(user.userId).then(userProjectsUUID => {
+                this.setState({ usersProjectsId: userProjectsUUID });
+            });
         }
     };
 
     getProjectsFromBackend = () => {
-        console.log('fetching projects from backend');
-
-        const user = this.props.user;
-
-        if (this.props.user) {
-            getUserProjects(user.userId).then(userProjectsUUID => {
-                const userProjects = [];
-                userProjectsUUID.forEach(project => {
-                    userProjects.push({ usersProjectUUID: project });
-                });
-                this.setState({ usersProject: userProjects });
+        getAllProjects().then(allProjects => {
+            const allProjectsWithUnlock = allProjects.map(projects => ({
+                ...projects,
+                unlock: false
+            }));
+            const projectsResults = [];
+            allProjectsWithUnlock.reverse().forEach(allProjects => {
+                if (!this.props.user) {
+                    if (allProjects.access_type === 'Public') {
+                        allProjects.unlock = true;
+                    }
+                } else {
+                    if (
+                        allProjects.access_type === 'Public' ||
+                        this.state.usersProjectsId.find(userProjectId => userProjectId === allProjects.uuid) ||
+                        this.props.user.role === 'System Admin'
+                    ) {
+                        allProjects.unlock = true;
+                    }
+                }
+                projectsResults.push(allProjects);
             });
-        }
-
-        getAllProjects().then(res => {
-            console.log('getAllProjects hasResults:', res);
-            console.log('results ', res[0].name);
-            this.setState({ results: res.reverse() });
+            this.setState({ results: projectsResults });
         });
     };
 
@@ -88,7 +107,10 @@ this.setState({ expanded: !this.state.expanded });
     reloadAfterUpdate = () => {
         this.setState({ isLoading: false });
         this.props.updateHeaderValueCallback(false);
-        this.getProjectsFromBackend();
+        this.getuserProjectFromBackend();
+        window.setTimeout(() => {
+            this.getProjectsFromBackend();
+        }, 100);
     };
 
     render() {

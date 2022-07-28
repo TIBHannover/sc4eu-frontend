@@ -9,9 +9,8 @@ import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
-import { connect } from 'react-redux';
 
-class ProjectIndexCards extends Component {
+export default class ProjectIndexCards extends Component {
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
@@ -28,12 +27,8 @@ class ProjectIndexCards extends Component {
 
         try {
             const allows = await userIsAllowdToUploadOntology();
-            // system admin can delete all projects and project admin can delete only his own projects
             if (allows.result === true) {
-                if (
-                    Object.values(this.props.unlock).find(id => id.usersProjectUUID === this.props.inputData.uuid) ||
-                    this.props.user.role.toLowerCase() === 'System ADMIN'.toLowerCase()
-                ) {
+                if (this.props.inputData.unlock === true) {
                     deleteProject(this.props.inputData.uuid).then(res => {
                         if (res.success === true) {
                             this.props.callback(res.result);
@@ -52,24 +47,13 @@ class ProjectIndexCards extends Component {
 
     showOntologies = () => {
         //TODO Get all ontologies related Only to this Project
-        if (!this.props.user) {
-            if (this.props.inputData.access_type.toLowerCase() === 'Public'.toLowerCase()) {
-                const project = this.props.inputData;
-                this.props.updateHeaderValueCallback(project);
-            } else {
-                alert('This is Private Project You can not open it');
-            }
+        if (this.props.inputData.unlock === true) {
+            const project = this.props.inputData;
+            //change color of select card
+            //StyledCardHeader.backgroundColor = 'black';
+            this.props.updateHeaderValueCallback(project);
         } else {
-            if (
-                this.props.inputData.access_type.toLowerCase() === 'Public'.toLowerCase() ||
-                this.props.user.role.toLowerCase() === 'System ADMIN'.toLowerCase() ||
-                Object.values(this.props.unlock).find(id => id.usersProjectUUID === this.props.inputData.uuid)
-            ) {
-                const project = this.props.inputData;
-                this.props.updateHeaderValueCallback(project);
-            } else {
-                alert('This is Private Project You can not open it');
-            }
+            alert('This is Private Project You can not open it');
         }
     };
 
@@ -84,33 +68,15 @@ class ProjectIndexCards extends Component {
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
-                            <div style={{ display: 'flex', paddingRight: '10px' }}>
-                                {!this.props.user ? (
-                                    <>
-                                        {this.props.inputData.access_type === 'Public' ? (
-                                            <div>
-                                                <Icon className="mr-1" icon={faUnlockAlt} />
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <Icon className="mr-1" icon={faLock} />
-                                            </div>
-                                        )}
-                                    </>
+                            <div style={{ display: 'flex', paddingRight: '5px' }}>
+                                {this.props.inputData.unlock === true ? (
+                                    <div>
+                                        <Icon className="mr-1" icon={faUnlockAlt} />
+                                    </div>
                                 ) : (
-                                    <>
-                                        {this.props.inputData.access_type.toLowerCase() === 'Public'.toLowerCase() ||
-                                        this.props.user.role.toLowerCase() === 'System ADMIN'.toLowerCase() ||
-                                        Object.values(this.props.unlock).find(id => id.usersProjectUUID === this.props.inputData.uuid) ? (
-                                            <div>
-                                                <Icon className="mr-1" icon={faUnlockAlt} />
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <Icon className="mr-1" icon={faLock} />
-                                            </div>
-                                        )}
-                                    </>
+                                    <div>
+                                        <Icon className="mr-1" icon={faLock} />
+                                    </div>
                                 )}
                                 <div> {this.props.inputData.name} </div>
                                 <Button
@@ -135,21 +101,11 @@ class ProjectIndexCards extends Component {
     }
 }
 
-const mapStateToProps = state => ({
-    user: state.auth.user
-});
-
-const mapDispatchToProps = dispatch => ({});
-
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
-    unlock: PropTypes.array.isRequired,
     callback: PropTypes.func.isRequired,
-    updateHeaderValueCallback: PropTypes.func.isRequired,
-    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+    updateHeaderValueCallback: PropTypes.func.isRequired
 };
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectIndexCards);
 
 const StyledCard = styled.div`
     margin: 5px;

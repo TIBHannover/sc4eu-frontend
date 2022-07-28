@@ -85,7 +85,6 @@ class CreateProject extends Component {
 
         createProject(objToSent).then(res => {
             this.props.callback(res);
-            console.log(res);
         });
         //this.props.callback({ result: true });
     };
