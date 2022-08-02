@@ -21,66 +21,61 @@ class ProjectsSideBar extends Component {
             showCreateProjectModal: false,
             results: '',
             isLoading: true,
-            usersProjectsId: [],
+            flipflop: false,
             isEditing: { description: false, title: false, version: false, iri: false }
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         //Get the current User from Redux State
         //TODO Retrive all the project for the current User
         //this.getProjectsFromBackend();
-        this.getuserProjectFromBackend();
-        this.getProjectsFromBackend();
+        this.getProjectsFromBackend().then(() => this.getuserProjectFromBackend());
     }
 
     componentDidUpdate = (prevProps, prevState) => {
         if (prevState.expanded !== this.state.expanded) {
             this.setState({ initialRendering: false });
         }
-        if (prevProps.user !== this.props.user) {
+        if (prevProps.user !== this.props.user && this.props.user) {
             console.log('Get User after Refresh the Page');
-            this.getuserProjectFromBackend();
-            // The main purpose of the setTimeout is that first need to execute the above function than the below function should execute
-            window.setTimeout(() => {
-                this.getProjectsFromBackend();
-            }, 100);
+            this.getProjectsFromBackend().then(() => this.getuserProjectFromBackend());
         }
     };
 
     getuserProjectFromBackend = () => {
-        const user = this.props.user;
-        if (this.props.user) {
-            getUserProjects(user.userId).then(userProjectsUUID => {
-                this.setState({ usersProjectsId: userProjectsUUID });
-            });
-        }
+        return new Promise(resolve => {
+            const user = this.props.user;
+            if (this.props.user) {
+                getUserProjects(user.userId).then(userProjects => {
+                    userProjects.forEach(userProject => {
+                        const index = this.state.results.findIndex(project => project.uuid === userProject);
+                        this.state.results[index].unlock = true;
+                    });
+                    this.setState({ flipflop: true });
+                });
+            }
+            resolve();
+        });
     };
 
     getProjectsFromBackend = () => {
-        getAllProjects().then(allProjects => {
-            const allProjectsWithUnlock = allProjects.map(projects => ({
-                ...projects,
-                unlock: false
-            }));
-            const projectsResults = [];
-            allProjectsWithUnlock.reverse().forEach(allProjects => {
-                if (!this.props.user) {
-                    if (allProjects.access_type === 'Public') {
-                        allProjects.unlock = true;
+        return new Promise(resolve => {
+            getAllProjects().then(allProjects => {
+                allProjects.reverse().forEach(singleProject => {
+                    if (!this.props.user) {
+                        if (singleProject.access_type === 'Public') {
+                            singleProject.unlock = true;
+                        }
+                    } else {
+                        if (singleProject.access_type === 'Public' || this.props.user.role === 'System Admin') {
+                            singleProject.unlock = true;
+                        }
                     }
-                } else {
-                    if (
-                        allProjects.access_type === 'Public' ||
-                        this.state.usersProjectsId.find(userProjectId => userProjectId === allProjects.uuid) ||
-                        this.props.user.role === 'System Admin'
-                    ) {
-                        allProjects.unlock = true;
-                    }
-                }
-                projectsResults.push(allProjects);
+                });
+                this.setState({ results: allProjects });
             });
-            this.setState({ results: projectsResults });
+            resolve();
         });
     };
 
@@ -100,17 +95,14 @@ this.setState({ expanded: !this.state.expanded });
     projectCreated = param => {
         if (param.result === true) {
             this.setState({ showCreateProjectModal: false });
-            this.reloadAfterUpdate();
+            this.reloadAfterUpdate().then();
         }
     };
 
-    reloadAfterUpdate = () => {
+    reloadAfterUpdate = async () => {
         this.setState({ isLoading: false });
         this.props.updateHeaderValueCallback(false);
-        this.getuserProjectFromBackend();
-        window.setTimeout(() => {
-            this.getProjectsFromBackend();
-        }, 100);
+        this.getProjectsFromBackend().then(() => this.getuserProjectFromBackend());
     };
 
     render() {
@@ -193,7 +185,6 @@ this.setState({ expanded: !this.state.expanded });
                                       <ProjectCard
                                           key={'ProjectCard_' + item.name}
                                           inputData={item}
-                                          unlock={this.state.usersProject}
                                           callback={param => {
                                               this.reloadAfterUpdate(param);
                                           }}

@@ -138,7 +138,7 @@ class CreateProject extends Component {
                                     value={this.state.accessType}
                                     onChange={this.handleOnChangeAccess}
                                 >
-                                    <option disabled>Select Access Type....</option>
+                                    <option>Select Access Type....</option>
                                     <option>Public</option>
                                     <option>Private</option>
                                 </Input>
