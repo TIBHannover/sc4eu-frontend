@@ -26,11 +26,11 @@ class ProjectsSideBar extends Component {
         };
     }
 
-    async componentDidMount() {
+    componentDidMount() {
         //Get the current User from Redux State
         //TODO Retrive all the project for the current User
         //this.getProjectsFromBackend();
-        this.getProjectsFromBackend().then(() => this.getuserProjectFromBackend());
+        this.getProjectsFromBackend();
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -38,44 +38,35 @@ class ProjectsSideBar extends Component {
             this.setState({ initialRendering: false });
         }
         if (prevProps.user !== this.props.user && this.props.user) {
-            console.log('Get User after Refresh the Page');
-            this.getProjectsFromBackend().then(() => this.getuserProjectFromBackend());
+            this.getProjectsFromBackend();
         }
     };
 
-    getuserProjectFromBackend = () => {
-        return new Promise(resolve => {
-            const user = this.props.user;
-            if (this.props.user) {
-                getUserProjects(user.userId).then(userProjects => {
-                    userProjects.forEach(userProject => {
-                        const index = this.state.results.findIndex(project => project.uuid === userProject);
-                        this.state.results[index].unlock = true;
-                    });
-                    this.setState({ flipflop: true });
-                });
-            }
-            resolve();
-        });
-    };
-
     getProjectsFromBackend = () => {
-        return new Promise(resolve => {
-            getAllProjects().then(allProjects => {
-                allProjects.reverse().forEach(singleProject => {
-                    if (!this.props.user) {
-                        if (singleProject.access_type === 'Public') {
-                            singleProject.unlock = true;
-                        }
-                    } else {
-                        if (singleProject.access_type === 'Public' || this.props.user.role === 'System Admin') {
-                            singleProject.unlock = true;
-                        }
+        getAllProjects().then(allProjects => {
+            allProjects.reverse().forEach(singleProject => {
+                if (this.props.user) {
+                    getUserProjects(this.props.user.userId).then(userProjectsUUID => {
+                        // SingleProject is an Object So it is converted in to the Array That's why created new variable singleProjectArray
+                        const singleProjectArray = [singleProject];
+                        userProjectsUUID.forEach(userProjectID => {
+                            if (
+                                singleProject.access_type === 'Public' ||
+                                this.props.user.role === 'System Admin' ||
+                                singleProjectArray.find(project => project.uuid === userProjectID)
+                            ) {
+                                singleProject.unlock = true;
+                            }
+                        });
+                        this.setState({ flipflop: !this.state.flipflop });
+                    });
+                } else {
+                    if (singleProject.access_type === 'Public') {
+                        singleProject.unlock = true;
                     }
-                });
-                this.setState({ results: allProjects });
+                }
             });
-            resolve();
+            this.setState({ results: allProjects });
         });
     };
 
@@ -95,14 +86,14 @@ this.setState({ expanded: !this.state.expanded });
     projectCreated = param => {
         if (param.result === true) {
             this.setState({ showCreateProjectModal: false });
-            this.reloadAfterUpdate().then();
+            this.reloadAfterUpdate();
         }
     };
 
-    reloadAfterUpdate = async () => {
+    reloadAfterUpdate = () => {
         this.setState({ isLoading: false });
         this.props.updateHeaderValueCallback(false);
-        this.getProjectsFromBackend().then(() => this.getuserProjectFromBackend());
+        this.getProjectsFromBackend();
     };
 
     render() {
