@@ -200,6 +200,21 @@ class ResourceRenderer extends Component {
 
         return (
             <div style={{ height: '100%', overflow: 'hidden' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        height: '50px',
+                        background: '#67a0d0',
+                        margin: '10px',
+                        border: '1px outset #dbdde5',
+                        borderRadius: '7px 7px 7px 7px',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        textColor: 'white'
+                    }}
+                >
+                    <h4 style={{ color: '#ffffff' }}>Resources</h4>
+                </div>
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
                     {/* <Button size="sm" color="primary" style={{ height: '39px' }} onClick={addResourcestoggle}>
@@ -257,7 +272,7 @@ class ResourceRenderer extends Component {
                 <div
                     id="resourceRendererContainer"
                     key={this.state.updateFlipFlop}
-                    style={{ marginTop: '10px', height: 'calc(100% - 50px)', overflow: 'auto' }}
+                    style={{ marginTop: '10px', height: 'calc(100% - 120px)', overflow: 'auto' }}
                 >
                     {this.renderAllResources()}
                 </div>
