@@ -6,7 +6,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { getAllOntologies } from '../network/ontologyIndexing';
 import OntologyIndexCards from '../components/OntologyIndexCards';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
-import { ProjectsSideBar } from '../components/ProjectsSideBar';
+import ProjectsSideBar from '../components/ProjectsSideBar';
 import '../assets/scss/CustomBootstrap.scss';
 
 export default class OntologyIndexing extends Component {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faUnlockAlt, faLock } from '@fortawesome/free-solid-svg-icons';
 import { Button } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
@@ -28,11 +28,15 @@ export default class ProjectIndexCards extends Component {
         try {
             const allows = await userIsAllowdToUploadOntology();
             if (allows.result === true) {
-                deleteProject(this.props.inputData.uuid).then(res => {
-                    if (res.success === true) {
-                        this.props.callback(res.result);
-                    }
-                });
+                if (this.props.inputData.unlock === true) {
+                    deleteProject(this.props.inputData.uuid).then(res => {
+                        if (res.success === true) {
+                            this.props.callback(res.result);
+                        }
+                    });
+                } else {
+                    alert('You are not authorized to delete this project');
+                }
             } else {
                 alert('You are not authorized to delete this project');
             }
@@ -43,10 +47,14 @@ export default class ProjectIndexCards extends Component {
 
     showOntologies = () => {
         //TODO Get all ontologies related Only to this Project
-        const project = this.props.inputData;
-        //change color of select card
-        //StyledCardHeader.backgroundColor = 'black';
-        this.props.updateHeaderValueCallback(project);
+        if (this.props.inputData.unlock === true) {
+            const project = this.props.inputData;
+            //change color of select card
+            //StyledCardHeader.backgroundColor = 'black';
+            this.props.updateHeaderValueCallback(project);
+        } else {
+            alert('This is Private Project You can not open it');
+        }
     };
 
     render() {
@@ -61,6 +69,15 @@ export default class ProjectIndexCards extends Component {
                             onDragStart={this.preventDraggingOfItem}
                         >
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
+                                {this.props.inputData.unlock === true ? (
+                                    <div>
+                                        <Icon className="mr-1" icon={faUnlockAlt} />
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <Icon className="mr-1" icon={faLock} />
+                                    </div>
+                                )}
                                 <div> {this.props.inputData.name} </div>
                                 <Button
                                     color="white"
