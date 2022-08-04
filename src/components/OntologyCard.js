@@ -10,7 +10,9 @@ import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 
 export default class OntologyIndexCards extends Component {
-    componentDidMount() {}
+    componentDidMount() {
+        window.localStorage.clear();
+    }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
@@ -47,7 +49,13 @@ export default class OntologyIndexCards extends Component {
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
                         <StyledLink
-                            to={reverse(ROUTES.VIEW_ONTOLOGY, { ontologyId: this.props.inputData.uuid })}
+                            to={{
+                                pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
+                                    ontologyId: this.props.inputData.uuid
+                                }),
+                                project: this.props.project,
+                                ontologyName: this.props.inputData.name
+                            }}
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
@@ -82,6 +90,7 @@ export default class OntologyIndexCards extends Component {
 }
 
 OntologyIndexCards.propTypes = {
+    project: PropTypes.object.isRequired,
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired
 };

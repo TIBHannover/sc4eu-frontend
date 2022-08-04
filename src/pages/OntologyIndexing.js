@@ -7,7 +7,7 @@ import { getAllOntologies } from '../network/ontologyIndexing';
 import OntologyIndexCards from '../components/OntologyIndexCards';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import ProjectsSideBar from '../components/ProjectsSideBar';
-import '../assets/scss/CustomBootstrap.scss';
+import PropTypes from 'prop-types';
 
 export default class OntologyIndexing extends Component {
     constructor(props) {
@@ -24,6 +24,10 @@ export default class OntologyIndexing extends Component {
 
     componentDidMount() {
         // on mount we fetch all Ontologies
+        if (this.props.location.project) {
+            this.updateHeaderValue(this.props.location.project);
+            this.setState({ selectedProject: this.props.location.project });
+        }
         this.getOntologiesFromBackend();
     }
 
@@ -57,6 +61,7 @@ export default class OntologyIndexing extends Component {
     };
 
     updateHeaderValue = projectSelected => {
+        console.log(projectSelected.uuid);
         this.setState({ selectedProject: projectSelected });
         let headerTitle = 'Please select a project to view its ontologies';
         if (projectSelected) {
@@ -81,21 +86,19 @@ export default class OntologyIndexing extends Component {
                         this.updateHeaderValue(params);
                     }}
                 />
-                <div
+                <Container
                     className="box pt-2 pb-2 pl-0 pr-0"
                     style={{
-                        width: '60vw',
                         backgroundColor: 'white',
                         border: '1px solid black',
                         borderTop: 'none',
                         overflow: 'auto',
                         float: 'left',
-                        position: 'fixed',
-                        marginLeft: '460px'
+                        position: 'relative'
                     }}
                 >
                     <h2
-                        className="title"
+                        className="noSelect pl-3 pr-3 pb-3"
                         style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center' }}
                         title={this.state.headerValue}
                     >
@@ -115,7 +118,7 @@ export default class OntologyIndexing extends Component {
                                 </h2>
                             </div>
                         ) : this.state.selectedProject ? (
-                            <div className="ontologyShow">
+                            <div>
                                 <OntologyIndexInteractions
                                     project_id={this.state.selectedProject.uuid}
                                     reloadAfterUpdate={() => {
@@ -125,6 +128,7 @@ export default class OntologyIndexing extends Component {
                                 <hr className="mt-0 mb-2" />
                                 {this.state.results ? (
                                     <OntologyIndexCards
+                                        project={this.state.selectedProject}
                                         ontologies={this.state.results}
                                         reloadAfterDelete={() => {
                                             this.reloadAfterDelete();
@@ -138,8 +142,12 @@ export default class OntologyIndexing extends Component {
                             <div />
                         )}
                     </div>
-                </div>
+                </Container>
             </>
         );
     }
 }
+
+OntologyIndexing.propTypes = {
+    location: PropTypes.object.isRequired
+};

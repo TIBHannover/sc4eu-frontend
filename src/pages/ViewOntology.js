@@ -186,6 +186,8 @@ class ViewOntology extends Component {
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'hybrid' && (
                         <OntologyViewRoot
+                            project={this.props.location.project}
+                            ontologyName={this.props.location.ontologyName}
                             leftSideExpanded={this.leftSideExpanded}
                             rightSideExpanded={this.rightSideExpanded}
                             toggleLeftSideExpanded={this.setLeftSideExpanded}
@@ -217,6 +219,7 @@ ViewOntology.propTypes = {
             ontologyId: PropTypes.string.isRequired
         }).isRequired
     }).isRequired,
+    location: PropTypes.object.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
     ui_tab_selectorChanges: PropTypes.bool.isRequired
 };

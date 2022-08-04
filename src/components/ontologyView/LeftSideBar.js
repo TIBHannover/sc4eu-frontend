@@ -1,34 +1,38 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Form, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { Button, Card, CardBody, Collapse, Container, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faCaretDown, faCaretRight, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
-
-import { Collapse, Button, Card, CardBody, Input } from 'reactstrap';
 import { redux_editMetaInfo } from '../../redux/actions/rrm_actions';
 import Tippy from '@tippyjs/react';
-//import $ from 'lodash/core';
+import { reverse } from 'named-urls';
+import { Link } from 'react-router-dom';
+import ROUTES from '../../constants/routes';
 
 export class LeftSideBar extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            expanded: this.props.initialState,
+        this.state = JSON.parse(window.localStorage.getItem('state')) || {
+            expanded: props.initialState,
             minHeight: 200,
             title: props.title,
             initialRendering: true,
             collapse: true,
             collapseMetaInfo: true,
-            isEditing: { description: false, title: false, version: false, iri: false }
+            isEditing: { description: false, title: false, version: false, iri: false },
+            openProject: props.project,
+            openOntology: props.ontologyName
             //addIrIModal: false,
             //prefix: '',
             //iri: ''
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        window.localStorage.setItem('state', JSON.stringify(this.state));
+    }
 
     componentDidUpdate = (prevProps, prevState) => {
         if (prevState.expanded !== this.state.expanded) {
@@ -50,34 +54,34 @@ export class LeftSideBar extends Component {
     };
 
     /* reverselongtoShort(obj) {
-         const values = Object.values(obj);
-         const keys = Object.keys(obj);
-         const result = {};
-         values.forEach((value, index) => {
-             if (!result.hasOwnProperty(value)) {
-                 // create new entry
-                 result[value] = keys[index];
-             } else {
-                 // duplicate property, create array
-                 const temp = [];
-                 // get first value
-                 temp.push(result[value]);
-                 // add second value
-                 temp.push(keys[index]);
-                 // set value
-                 result[value] = temp;
-             }
-         });
-         console.log(result);
-         return result;
-     }
-  handleAddIrI = () => {
-         const newShortToLong = { shortToLong: { [this.state.prefix]: this.state.iri } };
-         const newLongToShort = { longToShort: this.reverselongtoShort(newShortToLong.shortToLong) };
-         const newprefixList = $.extend({}, newShortToLong, newLongToShort);
-         const newMetaInformation = { metaDescriptions: {}, prefixList: newprefixList };
-         this.props.redux_addMetaInfo(newMetaInformation);
-     }; */
+const values = Object.values(obj);
+const keys = Object.keys(obj);
+const result = {};
+values.forEach((value, index) => {
+if (!result.hasOwnProperty(value)) {
+ // create new entry
+ result[value] = keys[index];
+} else {
+ // duplicate property, create array
+ const temp = [];
+ // get first value
+ temp.push(result[value]);
+ // add second value
+ temp.push(keys[index]);
+ // set value
+ result[value] = temp;
+}
+});
+console.log(result);
+return result;
+}
+handleAddIrI = () => {
+const newShortToLong = { shortToLong: { [this.state.prefix]: this.state.iri } };
+const newLongToShort = { longToShort: this.reverselongtoShort(newShortToLong.shortToLong) };
+const newprefixList = $.extend({}, newShortToLong, newLongToShort);
+const newMetaInformation = { metaDescriptions: {}, prefixList: newprefixList };
+this.props.redux_addMetaInfo(newMetaInformation);
+}; */
 
     renderMetaInformation = () => {
         const metaInformation = this.props.metaInformation;
@@ -310,6 +314,38 @@ export class LeftSideBar extends Component {
         }
     };
 
+    renderCurrentProjectAndOntology = () => {
+        const openProject = this.state.openProject;
+        const openOntology = this.state.openOntology;
+        return (
+            <div>
+                <table className="table table-bordered hover">
+                    <thead>
+                        <tr>
+                            <th>Current Project Name</th>
+                            <th>Current Ontology Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <Link
+                                    to={{
+                                        pathname: reverse(ROUTES.ONTOLOGY),
+                                        project: openProject
+                                    }}
+                                >
+                                    {openProject.name}
+                                </Link>
+                            </td>
+                            <td>{openOntology}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
+
     render() {
         return (
             <ContentContainer
@@ -384,6 +420,9 @@ export class LeftSideBar extends Component {
                         overflowX: 'hidden'
                     }}
                 >
+                    <div style={{ marginTop: '20px', width: '106%', textAlign: 'left', marginLeft: '15px' }}>
+                        <div>{this.renderCurrentProjectAndOntology()}</div>
+                    </div>
                     <div style={{ width: this.props.width - 2, textAlign: 'left' }}>{this.renderMetaInformation()}</div>
                 </Container>
             </ContentContainer>
@@ -392,6 +431,8 @@ export class LeftSideBar extends Component {
 }
 
 LeftSideBar.propTypes = {
+    project: PropTypes.object,
+    ontologyName: PropTypes.string,
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
     initialState: PropTypes.bool.isRequired,
@@ -424,7 +465,7 @@ const expandButtonAnimation = ({ expanded, initialRendering }) => {
   }
   to {
     transform: rotate(${expanded ? 0 : -180}deg);
-   
+
   }
 `;
     } else {
@@ -449,7 +490,7 @@ const expandContentContainerAnimation = ({ expanded, width, initialRendering }) 
   }
   to {
     left: ${expanded ? 0 : -width}px;
-   
+
   }
 `;
     }
