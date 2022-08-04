@@ -6,6 +6,7 @@ import { openAuthDialog, toggleAuthDialog, updateAuth, updateCookies } from '../
 import { compose } from 'redux';
 import { loginViaEmail, regsiterViaEmail } from '../../network/loginCalls';
 import { Link } from 'react-router-dom';
+import { minLengthPassword } from '../../constants/globalConstants';
 
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
@@ -18,9 +19,16 @@ class LoginViaEmail extends Component {
             errors: null,
             signupModal: false,
             resetPasswordModel: false,
+            displayName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            nameError: '',
             emailError: '',
             passwordError: '',
-            passwordMatchError: ''
+            passwordMatchError: '',
+            emailtakenError: '',
+            WrongEmailorPasswordError: ''
         };
     }
 
@@ -29,50 +37,40 @@ class LoginViaEmail extends Component {
     };
 
     handleRegister = async e => {
-        console.log('Register Event Triggered');
-        this.setState({ loading: false });
-        const result = await this.registerUserWithEmail();
-        console.log(result);
-        if (this.fieldValidation()) {
-            this.props.callback();
+        if (this.isfieldValid()) {
+            this.setState({ loading: false });
+            const registerToken = await regsiterViaEmail(this.state.displayName, this.state.email, this.state.password);
+            if (registerToken.error) {
+                this.setState({
+                    emailtakenError: registerToken.error
+                });
+            } else {
+                this.props.callback();
+            }
+            console.log('result', registerToken);
+            if (registerToken && registerToken.jwt) {
+                this.props.updateCookies({ token: registerToken.jwt });
+            }
+            this.setState({ loading: false });
+            return true;
         }
-        // TODO: handle errors depending on the success of the result
-        this.setState({ loading: false });
     };
     handleLogin = async e => {
-        console.log('Login Event Triggered');
-
         this.setState({ loading: false });
-        await this.loginUser();
-        this.setState({ loading: false });
-        console.log('WANNT TO EXECUTE THE CALLBACK');
-        this.props.callback();
-        console.log('DONE');
-    };
-
-    loginUser = async () => {
-        console.log(' We need email an  d pwd from user ');
-        const pwd = document.getElementById('examplePassword').value;
-        const email = document.getElementById('exampleEmail').value;
-        const token = await loginViaEmail(email, pwd);
+        const token = await loginViaEmail(this.state.email, this.state.password);
+        if (token.error) {
+            this.setState({
+                WrongEmailorPasswordError: token.error
+            });
+        } else {
+            this.props.callback();
+        }
         console.log('result', token);
         if (token && token.jwt) {
             this.props.updateCookies({ token: token.jwt });
         }
-    };
-
-    registerUserWithEmail = async () => {
-        if (this.fieldValidation()) {
-            console.log(' We need email and pwd from user ');
-            const displayName = document.getElementById('displayName').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const token = await regsiterViaEmail(displayName, email, password);
-            console.log('result', token);
-            if (token && token.jwt) {
-                this.props.updateCookies({ token: token.jwt });
-            }
-        }
+        this.setState({ loading: false });
+        return true;
     };
 
     toggleSignupModel = () => {
@@ -83,26 +81,25 @@ class LoginViaEmail extends Component {
         this.setState({ resetPasswordModel: !this.state.resetPasswordModel });
     };
 
-    fieldValidation = () => {
-        const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmpassword = document.getElementById('confirm-Password').value;
-        // eslint-disable-next-line no-unused-vars
-        const minLength = 5;
+    isfieldValid = () => {
+        const regexEmailValidation = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        if (!email || regex.test(email) === false) {
+        if (!this.state.displayName) {
+            this.setState({
+                nameError: 'Name can not be empty'
+            });
+            return false;
+        } else if (!this.state.email || regexEmailValidation.test(this.state.email) === false) {
             this.setState({
                 emailError: 'Email is not a valid'
             });
-            console.log('email is not valid');
             return false;
-        } else if (password.length < 5) {
+        } else if (this.state.password.length < minLengthPassword) {
             this.setState({
                 passwordError: 'Password cannot be less than 5 characters'
             });
             return false;
-        } else if (password !== confirmpassword) {
+        } else if (this.state.password !== this.state.confirmPassword) {
             this.setState({
                 passwordMatchError: 'Password and Confirm Password does not match.'
             });
@@ -120,12 +117,21 @@ class LoginViaEmail extends Component {
             <div>
                 {!this.state.loading ? (
                     <Form onSubmit={this.handleSubmit}>
+                        <p style={{ marginLeft: '150px' }} className="text-danger">
+                            {this.state.WrongEmailorPasswordError}
+                        </p>
                         <FormGroup row>
                             <Label for="exampleEmail" sm={2}>
                                 Email
                             </Label>
                             <Col sm={10}>
-                                <Input type="email" name="email" id="exampleEmail" placeholder="Enter email" />
+                                <Input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Enter email"
+                                    value={this.state.email}
+                                    onChange={event => this.setState({ email: event.target.value })}
+                                />
                             </Col>
                         </FormGroup>
                         <FormGroup row>
@@ -133,43 +139,74 @@ class LoginViaEmail extends Component {
                                 Password
                             </Label>
                             <Col sm={10}>
-                                <Input type="password" name="password" id="examplePassword" placeholder="Enter password" />
+                                <Input
+                                    type="password"
+                                    name="password"
+                                    placeholder="Enter password"
+                                    value={this.state.password}
+                                    onChange={event => this.setState({ password: event.target.value })}
+                                />
                             </Col>
                         </FormGroup>
                         <div>
                             <p className="mt-3">
-                                Don't have an account? <Link onClick={this.toggleSignupModel}>Sign Up</Link>
+                                Don't have an account? &nbsp;
+                                <Link to="" onClick={this.toggleSignupModel}>
+                                    Sign Up
+                                </Link>
                             </p>
                             <Modal style={{ maxWidth: '700px', width: '100%' }} isOpen={this.state.signupModal} toggle={this.toggleSignupModel}>
                                 <ModalHeader toggle={this.toggleSignupModel}>Sign Up</ModalHeader>
                                 <ModalBody>
                                     <div className="container">
-                                        <Form>
+                                        <Form onSubmit={this.handleSubmit}>
                                             <FormGroup row>
                                                 <Label for="displayName" sm={2}>
                                                     Name
                                                 </Label>
                                                 <Col sm={10}>
-                                                    <Input type="text" name="displayName" id="displayName" placeholder="Enter Name" />
+                                                    <Input
+                                                        type="text"
+                                                        name="displayName"
+                                                        placeholder="Enter Name"
+                                                        value={this.state.displayName}
+                                                        onChange={event => this.setState({ displayName: event.target.value })}
+                                                    />
                                                 </Col>
+                                                <span style={{ marginLeft: '130px' }} className="text-danger">
+                                                    {this.state.nameError}
+                                                </span>
                                             </FormGroup>
                                             <FormGroup row>
                                                 <Label for="email" sm={2}>
                                                     Email
                                                 </Label>
                                                 <Col sm={10}>
-                                                    <Input type="email" name="email" id="email" placeholder="Enter Email Address" />
+                                                    <Input
+                                                        type="email"
+                                                        name="email"
+                                                        placeholder="Enter Email Address"
+                                                        value={this.state.email}
+                                                        onChange={event => this.setState({ email: event.target.value })}
+                                                    />
                                                 </Col>
                                                 <span style={{ marginLeft: '130px' }} className="text-danger">
                                                     {this.state.emailError}
                                                 </span>
+                                                <span className="text-danger">{this.state.emailtakenError}</span>
                                             </FormGroup>
                                             <FormGroup row>
                                                 <Label for="password" sm={2}>
                                                     Password
                                                 </Label>
                                                 <Col sm={10}>
-                                                    <Input type="password" name="password" id="password" placeholder="Enter Password " />
+                                                    <Input
+                                                        type="password"
+                                                        name="password"
+                                                        placeholder="Enter Password "
+                                                        value={this.state.password}
+                                                        onChange={event => this.setState({ password: event.target.value })}
+                                                    />
                                                 </Col>
                                                 <span style={{ marginLeft: '130px' }} className="text-danger">
                                                     {this.state.passwordError}
@@ -182,9 +219,10 @@ class LoginViaEmail extends Component {
                                                 <Col sm={10}>
                                                     <Input
                                                         type="password"
-                                                        name="confirm-Password"
-                                                        id="confirm-Password"
+                                                        name="confirmPassword"
                                                         placeholder="Re-Enter Password"
+                                                        value={this.state.confirmPassword}
+                                                        onChange={event => this.setState({ confirmPassword: event.target.value })}
                                                     />
                                                 </Col>
                                                 <span style={{ marginLeft: '130px', marginTop: '-20px' }} className="text-danger">
@@ -206,19 +244,25 @@ class LoginViaEmail extends Component {
                         </div>
                         <div>
                             {/*<p className="mt-3">
-                                Forgot your Password? <Link onClick={this.toggleResetPasswordModel}>Reset Password</Link>
+                                Forgot your Password? <Link to="" onClick={this.toggleResetPasswordModel}>Reset Password</Link>
                             </p>*/}
                             <Modal isOpen={this.state.resetPasswordModel} toggle={this.toggleResetPasswordModel}>
                                 <ModalHeader toggle={this.toggleResetPasswordModel}>Reset Password</ModalHeader>
                                 <ModalBody>
                                     <div className="container">
-                                        <Form>
+                                        <Form onSubmit={this.handleSubmit}>
                                             <FormGroup row>
                                                 <Label for="exampleEmail" sm={2}>
                                                     Email
                                                 </Label>
                                                 <Col sm={10}>
-                                                    <Input type="email" name="email" id="email" placeholder="Enter Email Address" />
+                                                    <Input
+                                                        type="email"
+                                                        name="email"
+                                                        placeholder="Enter Email Address"
+                                                        value={this.state.email}
+                                                        onChange={event => this.setState({ email: event.target.value })}
+                                                    />
                                                 </Col>
                                             </FormGroup>
                                             <FormGroup row>
@@ -226,7 +270,13 @@ class LoginViaEmail extends Component {
                                                     Password
                                                 </Label>
                                                 <Col sm={10}>
-                                                    <Input type="password" name="password" id="password" placeholder="Enter Password " />
+                                                    <Input
+                                                        type="password"
+                                                        name="password"
+                                                        placeholder="Enter Password "
+                                                        value={this.state.password}
+                                                        onChange={event => this.setState({ password: event.target.value })}
+                                                    />
                                                 </Col>
                                             </FormGroup>
                                             <FormGroup row>
@@ -236,9 +286,10 @@ class LoginViaEmail extends Component {
                                                 <Col sm={10}>
                                                     <Input
                                                         type="password"
-                                                        name="confirm-password"
-                                                        id="confirm-Password"
+                                                        name="confirmPassword"
                                                         placeholder="Re-Enter Password"
+                                                        value={this.state.confirmPassword}
+                                                        onChange={event => this.setState({ confirmPassword: event.target.value })}
                                                     />
                                                 </Col>
                                             </FormGroup>

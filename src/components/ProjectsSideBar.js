@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
 import ProjectCard from './ProjectCard';
+import { getUserProjects } from '../network/UserProfileCalls';
 
-export class ProjectsSideBar extends Component {
+class ProjectsSideBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,6 +21,7 @@ export class ProjectsSideBar extends Component {
             showCreateProjectModal: false,
             results: '',
             isLoading: true,
+            flipflop: false,
             isEditing: { description: false, title: false, version: false, iri: false }
         };
     }
@@ -35,15 +37,36 @@ export class ProjectsSideBar extends Component {
         if (prevState.expanded !== this.state.expanded) {
             this.setState({ initialRendering: false });
         }
+        if (prevProps.user !== this.props.user && this.props.user) {
+            this.getProjectsFromBackend();
+        }
     };
 
     getProjectsFromBackend = () => {
-        console.log('fetching projects from backend');
-
-        getAllProjects().then(res => {
-            console.log('getAllProjects hasResults:', res);
-            console.log('results ', res[0].name);
-            this.setState({ results: res.reverse() });
+        getAllProjects().then(allProjects => {
+            allProjects.reverse().forEach(singleProject => {
+                if (this.props.user) {
+                    getUserProjects(this.props.user.userId).then(userProjectsUUID => {
+                        // SingleProject is an Object So it is converted in to the Array That's why created new variable singleProjectArray
+                        const singleProjectArray = [singleProject];
+                        userProjectsUUID.forEach(userProjectID => {
+                            if (
+                                singleProject.access_type === 'Public' ||
+                                this.props.user.role === 'System Admin' ||
+                                singleProjectArray.find(project => project.uuid === userProjectID)
+                            ) {
+                                singleProject.unlock = true;
+                            }
+                        });
+                        this.setState({ flipflop: !this.state.flipflop });
+                    });
+                } else {
+                    if (singleProject.access_type === 'Public') {
+                        singleProject.unlock = true;
+                    }
+                }
+            });
+            this.setState({ results: allProjects });
         });
     };
 
@@ -171,17 +194,22 @@ this.setState({ expanded: !this.state.expanded });
     }
 }
 
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+const mapDispatchToProps = dispatch => ({});
+
 ProjectsSideBar.propTypes = {
     title: PropTypes.string,
     //updateEvent: PropTypes.func.isRequired,
     initialState: PropTypes.bool.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    updateHeaderValueCallback: PropTypes.func.isRequired
+    updateHeaderValueCallback: PropTypes.func.isRequired,
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 
-const mapStateToProps = state => {};
-const mapDispatchToProps = dispatch => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectsSideBar);
 
 /** CREATE A GREEN LINE**/

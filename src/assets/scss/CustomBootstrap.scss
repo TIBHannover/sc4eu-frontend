@@ -7,10 +7,23 @@
   background: #b6b4b8;
   display:block;
   height:40px;
-
-
 }
 
+.active{
+  background-color: black;
+  padding: 11px;
+}
+
+@media (max-width: 1400px) {
+  .title{
+    font-size: 20px;
+    width:100%;
+    text-align: left
+  }
+  .ontologyShow {
+    width: 50vw;
+  }
+}
 
 .noSelect {
   -webkit-touch-callout: none; /* iOS Safari */

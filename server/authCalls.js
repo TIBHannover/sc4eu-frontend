@@ -165,10 +165,10 @@ module.exports = {
             request(options, function(error, response) {
                 if (response && response.body) {
                     const result = JSON.parse(response.body);
-                    if (result) {
-                        if (result.error) {
-                            return res.json(result);
-                        }
+                    if (result.success) {
+                        // if (result.error) {
+                        //     return res.json(result);
+                        // }
                         const local_accessToken = jwt.sign(
                             {
                                 userId: result.user_id,
@@ -179,7 +179,7 @@ module.exports = {
                         );
                         res.json({ jwt: local_accessToken });
                     } else {
-                        res.json({ error: 'Could not find user' });
+                        res.json({ error: result.error });
                     }
                 } else {
                     res.json({ error: 'Network Error' });
@@ -286,7 +286,7 @@ module.exports = {
                         request(options, function(error, response) {
                             if (response && response.body) {
                                 const result = JSON.parse(response.body);
-                                if (result) {
+                                if (result.success) {
                                     res.json(response);
                                 } else {
                                     res.json({ error: 'error while updating user projects' });

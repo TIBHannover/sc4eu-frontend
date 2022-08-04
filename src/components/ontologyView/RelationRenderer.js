@@ -189,6 +189,21 @@ class RelationRenderer extends Component {
     render() {
         return (
             <div style={{ height: '100%', overflow: 'hidden' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        height: '50px',
+                        background: '#67a0d0',
+                        margin: '10px',
+                        border: '1px outset #dbdde5',
+                        borderRadius: '7px 7px 7px 7px',
+                        position: 'relative',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <h4 style={{ color: '#ffffff' }}>Properties</h4>
+                </div>
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
                     {/*TODO: fix add relation functionality*/}
@@ -214,7 +229,7 @@ class RelationRenderer extends Component {
                     </InputGroup>
                 </div>
                 {/* Relations*/}
-                <div key={this.state.updateFlipFlop} style={{ marginTop: '10px', height: 'calc(100% - 50px)', overflow: 'auto' }}>
+                <div key={this.state.updateFlipFlop} style={{ marginTop: '10px', height: 'calc(100% - 120px)', overflow: 'auto' }}>
                     {this.renderAllRelations()}
                 </div>
             </div>

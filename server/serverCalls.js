@@ -278,7 +278,7 @@ module.exports = {
                                     if (result.error) {
                                         return res.json(result);
                                     }
-                                    res.json({ displayName: result.displayName, gravatarId: result.gravatarId, userId: result.userId });
+                                    res.json({ displayName: result.displayName, gravatarId: result.gravatarId, userId: result.userId, role: result.role });
                                 } else {
                                     res.json({ error: 'Could not find user' });
                                 }
