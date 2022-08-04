@@ -193,7 +193,7 @@ class OntologyViewRoot extends Component {
                         experimentalLayout={this.state.experimentalLayout}
                     />
                     <LeftSideBar
-                        projectName={this.props.projectName}
+                        project={this.props.project}
                         ontologyName={this.props.ontologyName}
                         width={this.state.leftSidebarWidth}
                         initialState={this.props.leftSideExpanded}
@@ -227,8 +227,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 OntologyViewRoot.propTypes = {
-    projectName: PropTypes.string.isRequired,
-    ontologyName: PropTypes.string.isRequired,
+    project: PropTypes.object,
+    ontologyName: PropTypes.string,
     globalUIReducer: PropTypes.object.isRequired,
     leftSideExpanded: PropTypes.bool.isRequired,
     rightSideExpanded: PropTypes.bool.isRequired,

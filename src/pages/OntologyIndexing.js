@@ -7,6 +7,7 @@ import { getAllOntologies } from '../network/ontologyIndexing';
 import OntologyIndexCards from '../components/OntologyIndexCards';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import { ProjectsSideBar } from '../components/ProjectsSideBar';
+import PropTypes from 'prop-types';
 
 export default class OntologyIndexing extends Component {
     constructor(props) {
@@ -23,6 +24,10 @@ export default class OntologyIndexing extends Component {
 
     componentDidMount() {
         // on mount we fetch all Ontologies
+        if (this.props.location.project) {
+            this.updateHeaderValue(this.props.location.project);
+            this.setState({ selectedProject: this.props.location.project });
+        }
         this.getOntologiesFromBackend();
     }
 
@@ -58,14 +63,15 @@ export default class OntologyIndexing extends Component {
     updateHeaderValue = projectSelected => {
         console.log(projectSelected.uuid);
         this.setState({ selectedProject: projectSelected });
+        let headerTitle = 'Please select a project to view its ontologies';
         if (projectSelected) {
-            const headerTitle = (
+            headerTitle = (
                 <p>
                     You are currently viewing index of ontologies for <b> {projectSelected.name} </b> project
                 </p>
             );
-            this.setState({ headerValue: headerTitle });
         }
+        this.setState({ headerValue: headerTitle });
     };
 
     render() {
@@ -122,7 +128,7 @@ export default class OntologyIndexing extends Component {
                                 <hr className="mt-0 mb-2" />
                                 {this.state.results ? (
                                     <OntologyIndexCards
-                                        projectName={this.state.selectedProject.name}
+                                        project={this.state.selectedProject}
                                         ontologies={this.state.results}
                                         reloadAfterDelete={() => {
                                             this.reloadAfterDelete();
@@ -141,3 +147,7 @@ export default class OntologyIndexing extends Component {
         );
     }
 }
+
+OntologyIndexing.propTypes = {
+    location: PropTypes.object.isRequired
+};

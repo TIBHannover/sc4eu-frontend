@@ -22,7 +22,7 @@ class OntologyIndexCards extends Component {
             return this.props.ontologies.map((item, index) => {
                 return (
                     <OntologyCard
-                        projectName={this.props.projectName}
+                        project={this.props.project}
                         key={'OntologyCard_' + index}
                         inputData={item}
                         callback={param => {
@@ -44,7 +44,7 @@ class OntologyIndexCards extends Component {
 }
 
 OntologyIndexCards.propTypes = {
-    projectName: PropTypes.string.isRequired,
+    project: PropTypes.object.isRequired,
     ontologies: PropTypes.array.isRequired,
     reloadAfterDelete: PropTypes.func.isRequired
 };

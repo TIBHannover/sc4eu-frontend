@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Form, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { Button, Card, CardBody, Collapse, Container, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faCaretDown, faCaretRight, faPen } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
-
-import { Collapse, Button, Card, CardBody, Input } from 'reactstrap';
 import { redux_editMetaInfo } from '../../redux/actions/rrm_actions';
 import Tippy from '@tippyjs/react';
 import { reverse } from 'named-urls';
@@ -16,21 +14,25 @@ import ROUTES from '../../constants/routes';
 export class LeftSideBar extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            expanded: this.props.initialState,
+        this.state = JSON.parse(window.localStorage.getItem('state')) || {
+            expanded: props.initialState,
             minHeight: 200,
             title: props.title,
             initialRendering: true,
             collapse: true,
             collapseMetaInfo: true,
-            isEditing: { description: false, title: false, version: false, iri: false }
+            isEditing: { description: false, title: false, version: false, iri: false },
+            openProject: props.project,
+            openOntology: props.ontologyName
             //addIrIModal: false,
             //prefix: '',
             //iri: ''
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        window.localStorage.setItem('state', JSON.stringify(this.state));
+    }
 
     componentDidUpdate = (prevProps, prevState) => {
         if (prevState.expanded !== this.state.expanded) {
@@ -52,34 +54,34 @@ export class LeftSideBar extends Component {
     };
 
     /* reverselongtoShort(obj) {
-         const values = Object.values(obj);
-         const keys = Object.keys(obj);
-         const result = {};
-         values.forEach((value, index) => {
-             if (!result.hasOwnProperty(value)) {
-                 // create new entry
-                 result[value] = keys[index];
-             } else {
-                 // duplicate property, create array
-                 const temp = [];
-                 // get first value
-                 temp.push(result[value]);
-                 // add second value
-                 temp.push(keys[index]);
-                 // set value
-                 result[value] = temp;
-             }
-         });
-         console.log(result);
-         return result;
-     }
-  handleAddIrI = () => {
-         const newShortToLong = { shortToLong: { [this.state.prefix]: this.state.iri } };
-         const newLongToShort = { longToShort: this.reverselongtoShort(newShortToLong.shortToLong) };
-         const newprefixList = $.extend({}, newShortToLong, newLongToShort);
-         const newMetaInformation = { metaDescriptions: {}, prefixList: newprefixList };
-         this.props.redux_addMetaInfo(newMetaInformation);
-     }; */
+const values = Object.values(obj);
+const keys = Object.keys(obj);
+const result = {};
+values.forEach((value, index) => {
+if (!result.hasOwnProperty(value)) {
+ // create new entry
+ result[value] = keys[index];
+} else {
+ // duplicate property, create array
+ const temp = [];
+ // get first value
+ temp.push(result[value]);
+ // add second value
+ temp.push(keys[index]);
+ // set value
+ result[value] = temp;
+}
+});
+console.log(result);
+return result;
+}
+handleAddIrI = () => {
+const newShortToLong = { shortToLong: { [this.state.prefix]: this.state.iri } };
+const newLongToShort = { longToShort: this.reverselongtoShort(newShortToLong.shortToLong) };
+const newprefixList = $.extend({}, newShortToLong, newLongToShort);
+const newMetaInformation = { metaDescriptions: {}, prefixList: newprefixList };
+this.props.redux_addMetaInfo(newMetaInformation);
+}; */
 
     renderMetaInformation = () => {
         const metaInformation = this.props.metaInformation;
@@ -313,8 +315,8 @@ export class LeftSideBar extends Component {
     };
 
     renderCurrentProjectAndOntology = () => {
-        const openProject = this.props.projectName;
-        const openOntology = this.props.ontologyName;
+        const openProject = this.state.openProject;
+        const openOntology = this.state.openOntology;
         return (
             <div>
                 <table className="table table-bordered hover">
@@ -327,7 +329,14 @@ export class LeftSideBar extends Component {
                     <tbody>
                         <tr>
                             <td>
-                                <Link to={reverse(ROUTES.ONTOLOGY)}>{openProject}</Link>
+                                <Link
+                                    to={{
+                                        pathname: reverse(ROUTES.ONTOLOGY),
+                                        project: openProject
+                                    }}
+                                >
+                                    {openProject.name}
+                                </Link>
                             </td>
                             <td>{openOntology}</td>
                         </tr>
@@ -422,8 +431,8 @@ export class LeftSideBar extends Component {
 }
 
 LeftSideBar.propTypes = {
-    projectName: PropTypes.string.isRequired,
-    ontologyName: PropTypes.string.isRequired,
+    project: PropTypes.object,
+    ontologyName: PropTypes.string,
     title: PropTypes.string,
     updateEvent: PropTypes.func.isRequired,
     initialState: PropTypes.bool.isRequired,

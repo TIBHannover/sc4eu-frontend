@@ -10,7 +10,9 @@ import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 
 export default class OntologyIndexCards extends Component {
-    componentDidMount() {}
+    componentDidMount() {
+        window.localStorage.clear();
+    }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
@@ -47,24 +49,16 @@ export default class OntologyIndexCards extends Component {
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
                         <StyledLink
-                            to={reverse(ROUTES.VIEW_ONTOLOGY, {
-                                projectName: this.props.projectName,
-                                ontologyName: this.props.inputData.name,
-                                ontologyId: this.props.inputData.uuid
-                            })}
-                            params={this.props.inputData.name}
+                            to={{
+                                pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
+                                    ontologyId: this.props.inputData.uuid
+                                }),
+                                project: this.props.project,
+                                ontologyName: this.props.inputData.name
+                            }}
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
-                            {/*  <Link
-                                to={{
-                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, { ontologyId: this.props.inputData.uuid }),
-                                    state: {
-                                        ontologyName: this.props.inputData.name,
-                                        projectName: this.props.projectName
-                                    }
-                                }}
-                            >*/}
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
                                 <div>
                                     <Icon className="mr-1" icon={faUnlockAlt} />
@@ -96,7 +90,7 @@ export default class OntologyIndexCards extends Component {
 }
 
 OntologyIndexCards.propTypes = {
-    projectName: PropTypes.string.isRequired,
+    project: PropTypes.object.isRequired,
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired
 };
