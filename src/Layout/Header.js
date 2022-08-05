@@ -128,6 +128,7 @@ class Header extends Component {
         const LinkStyle = {
             color: '#ffff',
             marginRight: '20px',
+            fontSize: '17px',
             fontWeight: 700
         };
 

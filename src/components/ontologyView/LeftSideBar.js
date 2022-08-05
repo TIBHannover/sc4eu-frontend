@@ -94,7 +94,7 @@ this.props.redux_addMetaInfo(newMetaInformation);
                         <Button
                             color="primary"
                             onClick={() => this.toggleMetaInformation()}
-                            style={{ marginTop: '5px', width: '100%', textAlign: 'left' }}
+                            style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold' }}
                         >
                             <Icon icon={this.state.collapseMetaInfo ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
                             Meta Information
@@ -114,7 +114,11 @@ this.props.redux_addMetaInfo(newMetaInformation);
             } else if (key === 'prefixList') {
                 return (
                     <div key={'prefixList' + key} className="root" style={{ padding: '0 10px' }}>
-                        <Button color="primary" onClick={() => this.toggle()} style={{ marginTop: '5px', width: '100%', textAlign: 'left' }}>
+                        <Button
+                            color="primary"
+                            onClick={() => this.toggle()}
+                            style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold' }}
+                        >
                             <Icon icon={this.state.collapse ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
                             Prefix List
                         </Button>
@@ -322,8 +326,8 @@ this.props.redux_addMetaInfo(newMetaInformation);
                 <table className="table table-bordered hover">
                     <thead>
                         <tr>
-                            <th>Current Project Name</th>
-                            <th>Current Ontology Name</th>
+                            <th style={{ background: '#007bff', color: '#ffffff' }}>Project </th>
+                            <th style={{ background: '#007bff', color: '#ffffff' }}>Ontology </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -370,7 +374,7 @@ this.props.redux_addMetaInfo(newMetaInformation);
                         backgroundColor: '#67a0d0'
                     }}
                 >
-                    <div style={{ width: this.props.width - 10, textAlign: 'center' }}>{this.state.title}</div>
+                    <div style={{ width: this.props.width - 10, textAlign: 'center', fontWeight: 'bold' }}>{this.state.title}</div>
                 </Container>
                 <ButtonContainer
                     size="sm"
