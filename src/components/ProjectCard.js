@@ -55,6 +55,7 @@ export default class ProjectIndexCards extends Component {
     projectEdited = param => {
         if (param.result === true) {
             this.setState({ showEditProjectModal: false });
+            this.props.callback();
         }
     };
 
@@ -103,6 +104,7 @@ export default class ProjectIndexCards extends Component {
                                     </Button>
                                     <EditProjectModal
                                         showDialog={this.state.showEditProjectModal}
+                                        unlock={this.props.inputData.unlock}
                                         uuid={this.props.inputData.uuid}
                                         callback={param => {
                                             this.projectEdited(param);

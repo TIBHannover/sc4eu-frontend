@@ -33,7 +33,6 @@ export default class EditProjectModal extends Component {
     handleOnChangeDesc = event => {
         this.setState({ projectDescription: event.target.value });
     };
-
     handleOnChangeAccess = selectedOption => {
         this.setState({ accessType: selectedOption.value });
     };
@@ -55,7 +54,7 @@ export default class EditProjectModal extends Component {
     };
 
     editProject = () => {
-        if (!this.state.allowedToEditProjects) {
+        if (!this.state.allowedToEditProjects && !this.props.unlock) {
             this.props.toggle();
             return;
         }
@@ -66,9 +65,6 @@ export default class EditProjectModal extends Component {
             project_description: this.state.projectDescription,
             project_accesstype: this.state.accessType
         };
-        console.log(objToSent);
-
-        console.log(this.removeEmptyField(objToSent));
 
         editProject(this.removeEmptyField(objToSent)).then(res => {
             this.props.callback(res);
@@ -94,7 +90,7 @@ export default class EditProjectModal extends Component {
                     Edit Project
                 </ModalHeader>
                 <ModalBody id="createProjectBody">
-                    {this.state.allowedToEditProjects ? (
+                    {this.state.allowedToEditProjects && this.props.unlock ? (
                         <div>
                             <FormGroup>
                                 <Label for="projectName">Name</Label>
@@ -157,5 +153,6 @@ EditProjectModal.propTypes = {
     showDialog: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
     uuid: PropTypes.string.isRequired,
-    callback: PropTypes.func.isRequired
+    callback: PropTypes.func.isRequired,
+    unlock: PropTypes.bool
 };
