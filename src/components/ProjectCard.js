@@ -93,30 +93,6 @@ export default class ProjectIndexCards extends Component {
                                     </div>
                                 )}
                                 <div> {this.props.inputData.name} </div>
-                                <div style={{ float: 'right', marginLeft: 'auto' }}>
-                                    <Button
-                                        onClick={() => {
-                                            this.setState({ showEditProjectModal: true });
-                                        }}
-                                        style={{ background: 'none', border: 'none', height: '25px' }}
-                                    >
-                                        <Icon icon={faPen} color="black" style={{ marginBottom: '20px' }} />
-                                    </Button>
-                                    <EditProjectModal
-                                        showDialog={this.state.showEditProjectModal}
-                                        unlock={this.props.inputData.unlock}
-                                        uuid={this.props.inputData.uuid}
-                                        callback={param => {
-                                            this.projectEdited(param);
-                                        }}
-                                        toggle={() => {
-                                            this.setState({ showEditProjectModal: !this.state.showEditProjectModal });
-                                        }}
-                                    />
-                                    <Button color="white" size="sm" title="Delete Project" onClick={this.deleteProject}>
-                                        <Icon icon={faTrash} color={'black'} />
-                                    </Button>
-                                </div>
                             </div>
                         </StyledLink>
                     </StyledCardHeader>
@@ -124,6 +100,30 @@ export default class ProjectIndexCards extends Component {
                     <StyledCardBody>
                         {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
                     </StyledCardBody>
+                    <div style={{ float: 'right', marginTop: '-70px' }}>
+                        <Button
+                            onClick={() => {
+                                this.setState({ showEditProjectModal: true });
+                            }}
+                            style={{ background: 'none', border: 'none', height: '25px', width: '35px' }}
+                        >
+                            <Icon icon={faPen} color="black" style={{ marginBottom: '20px' }} />
+                        </Button>
+                        <EditProjectModal
+                            showDialog={this.state.showEditProjectModal}
+                            unlock={this.props.inputData.unlock}
+                            uuid={this.props.inputData.uuid}
+                            callback={param => {
+                                this.projectEdited(param);
+                            }}
+                            toggle={() => {
+                                this.setState({ showEditProjectModal: !this.state.showEditProjectModal });
+                            }}
+                        />
+                        <Button color="white" size="sm" title="Delete Project" onClick={this.deleteProject}>
+                            <Icon icon={faTrash} color={'black'} />
+                        </Button>
+                    </div>
                 </StyledCard>
             </div>
         );

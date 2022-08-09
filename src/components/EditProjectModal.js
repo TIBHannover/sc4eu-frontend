@@ -133,16 +133,20 @@ export default class EditProjectModal extends Component {
                     )}
                 </ModalBody>
                 <ModalFooter>
-                    <Button
-                        color="primary"
-                        id="finishButton"
-                        onClick={() => {
-                            this.editProject();
-                        }}
-                        autoFocus={true}
-                    >
-                        Submit
-                    </Button>
+                    {this.state.allowedToEditProjects && this.props.unlock ? (
+                        <Button
+                            color="primary"
+                            id="finishButton"
+                            onClick={() => {
+                                this.editProject();
+                            }}
+                            autoFocus={true}
+                        >
+                            Submit
+                        </Button>
+                    ) : (
+                        <p />
+                    )}
                 </ModalFooter>
             </Modal>
         );
