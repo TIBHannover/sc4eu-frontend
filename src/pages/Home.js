@@ -112,7 +112,8 @@ export default class Home extends Component {
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingRight: '20px' }}>
                             <img src={AboutSC3} width="70" height="70" style={{ alignSelf: 'center' }} />
                             <h5>About SC3</h5>
-                            <p style={{ textAlign: 'justify' }}>
+                            <p />
+                            <p style={{ textAlign: 'justify', marginTop: '8px', fontFamily: 'normal', fontSize: '18px' }}>
                                 SC3 establishes a standard language for comprehensive collaboration between humans and machines, as well as all other
                                 partners.The key objective of this platform is to implement data documentation of an actionable ontology-based
                                 ecosystem that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by new ones
@@ -150,7 +151,7 @@ export default class Home extends Component {
                         >
                             <img src={Usecase} width="70" height="70" style={{ alignSelf: 'center' }} />
                             <h5 style={{ paddingBottom: '10px' }}>What the portal can do for you</h5>
-                            <p style={{ textAlign: 'justify' }}>
+                            <p style={{ textAlign: 'justify', marginTop: '15px', fontFamily: 'normal', fontSize: '18px' }}>
                                 We identified that the most crucial requirement for ontology development is to serve users' needs from various
                                 audiences with diverse backgrounds and in different contexts. We have therefore introduced several modes of
                                 operations.
@@ -160,8 +161,8 @@ export default class Home extends Component {
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '20px', marginRight: '20px' }}>
                             <img src={guidance} width="70" height="70" style={{ alignSelf: 'center' }} />
                             <h5>Framework for collaborative ontology development</h5>
-                            <p style={{ textAlign: 'justify', cursor: 'pointer' }}>
-                                {this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 200)}
+                            <p style={{ textAlign: 'justify', cursor: 'pointer', fontFamily: 'normal', fontSize: '18px' }}>
+                                {this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 500)}
                                 <span style={{ color: 'blue', fontWeight: 600 }} onClick={this.toggleReadmore}>
                                     {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
                                 </span>
