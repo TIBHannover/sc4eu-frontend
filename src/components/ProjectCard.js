@@ -111,8 +111,7 @@ export default class ProjectIndexCards extends Component {
                         </Button>
                         <EditProjectModal
                             showDialog={this.state.showEditProjectModal}
-                            unlock={this.props.inputData.unlock}
-                            uuid={this.props.inputData.uuid}
+                            projectData={this.props.inputData}
                             callback={param => {
                                 this.projectEdited(param);
                             }}

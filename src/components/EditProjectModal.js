@@ -2,22 +2,33 @@ import { Button, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHe
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { withRouter } from 'react-router-dom';
 import { editProject } from '../network/projectIndexing';
-import Select from 'react-select';
 
 export default class EditProjectModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            projectName: '',
-            projectDescription: '',
-            accessType: '',
+            projectItems: {
+                uuid: '',
+                projectName: '',
+                projectDescription: '',
+                accessType: ''
+            },
             allowedToEditProjects: false
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        const projectData = this.props.projectData;
+        this.setState({
+            projectItems: {
+                uuid: projectData.uuid,
+                projectName: projectData.name,
+                projectDescription: projectData.description,
+                accessType: projectData.access_type
+            }
+        });
+    }
 
     componentDidUpdate = async prevProps => {
         if (prevProps.showDialog === false && this.props.showDialog === true) {
@@ -27,14 +38,12 @@ export default class EditProjectModal extends Component {
         }
     };
 
-    handleOnChangeName = event => {
-        this.setState({ projectName: event.target.value });
-    };
-    handleOnChangeDesc = event => {
-        this.setState({ projectDescription: event.target.value });
-    };
-    handleOnChangeAccess = selectedOption => {
-        this.setState({ accessType: selectedOption.value });
+    handelOnChange = event => {
+        const newProjectItems = { ...this.state.projectItems };
+        newProjectItems[event.target.name] = event.target.value.toLowerCase();
+        this.setState({
+            projectItems: newProjectItems
+        });
     };
 
     resetStateObject = () => {
@@ -44,38 +53,18 @@ export default class EditProjectModal extends Component {
         });
     };
 
-    removeEmptyField = object => {
-        for (const stateName in object) {
-            if (object[stateName] === null || object[stateName] === undefined || object[stateName] === '') {
-                delete object[stateName];
-            }
-        }
-        return object;
-    };
-
     editProject = () => {
-        if (!this.state.allowedToEditProjects && !this.props.unlock) {
+        if (!this.state.allowedToEditProjects && !this.props.projectData.unlock) {
             this.props.toggle();
             return;
         }
 
-        const objToSent = {
-            uuid: this.props.uuid,
-            project_name: this.state.projectName,
-            project_description: this.state.projectDescription,
-            project_accesstype: this.state.accessType
-        };
-
-        editProject(this.removeEmptyField(objToSent)).then(res => {
+        editProject(this.state.projectItems).then(res => {
             this.props.callback(res);
         });
     };
 
     render() {
-        const AccessTypeOptions = [
-            { value: 'Public', label: 'Public' },
-            { value: 'Private', label: 'Private' }
-        ];
         return (
             <Modal
                 style={{ width: '80%', maxWidth: '50%' }}
@@ -90,17 +79,16 @@ export default class EditProjectModal extends Component {
                     Edit Project
                 </ModalHeader>
                 <ModalBody id="createProjectBody">
-                    {this.state.allowedToEditProjects && this.props.unlock ? (
+                    {this.state.allowedToEditProjects && this.props.projectData.unlock ? (
                         <div>
                             <FormGroup>
                                 <Label for="projectName">Name</Label>
                                 <Input
                                     type="text"
                                     name="projectName"
-                                    id="projectNameName"
-                                    placeholder="Project Name"
-                                    value={this.state.projectName}
-                                    onChange={this.handleOnChangeName}
+                                    id="projectName"
+                                    defaultValue={this.state.projectItems.projectName}
+                                    onChange={this.handelOnChange}
                                 />
                             </FormGroup>
                             <FormGroup>
@@ -109,20 +97,25 @@ export default class EditProjectModal extends Component {
                                     type="textarea"
                                     name="projectDescription"
                                     id="projectDescription"
-                                    width="100%"
-                                    placeholder="Project Description"
-                                    value={this.state.projectDescription}
-                                    onChange={this.handleOnChangeDesc}
+                                    defaultValue={this.state.projectItems.projectDescription}
+                                    onChange={this.handelOnChange}
                                 />
                             </FormGroup>
                             <FormGroup>
                                 <Label for="accessType">Access Type</Label>
-                                <Select
+                                <Input
+                                    type="select"
                                     name="accessType"
-                                    onChange={this.handleOnChangeAccess}
-                                    placeholder="Select Access Type..."
-                                    options={AccessTypeOptions}
-                                />
+                                    id="accessType"
+                                    defaultValue={this.props.projectData.access_type}
+                                    onChange={this.handelOnChange}
+                                >
+                                    <option defaultValue={this.props.projectData.access_type} disabled>
+                                        {this.props.projectData.access_type}
+                                    </option>
+                                    <option>Public</option>
+                                    <option>Private</option>
+                                </Input>
                             </FormGroup>
                         </div>
                     ) : (
@@ -133,7 +126,7 @@ export default class EditProjectModal extends Component {
                     )}
                 </ModalBody>
                 <ModalFooter>
-                    {this.state.allowedToEditProjects && this.props.unlock ? (
+                    {this.state.allowedToEditProjects && this.props.projectData.unlock ? (
                         <Button
                             color="primary"
                             id="finishButton"
@@ -156,7 +149,6 @@ export default class EditProjectModal extends Component {
 EditProjectModal.propTypes = {
     showDialog: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
-    uuid: PropTypes.string.isRequired,
     callback: PropTypes.func.isRequired,
-    unlock: PropTypes.bool
+    projectData: PropTypes.object.isRequired
 };
