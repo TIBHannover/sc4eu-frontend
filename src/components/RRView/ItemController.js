@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash, faProjectDiagram, faAlignJustify, faJedi, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import Tippy from '@tippyjs/react';
 
 class ItemController extends Component {
     getBackgroundColor = () => {
@@ -66,9 +67,15 @@ class ItemController extends Component {
                     </ControlButton>
                 </div>
                 <div style={{ width: '100%', float: 'center' }}>
-                    <LabelDiv isHighlighted={itemHighlighted} typedBasedColor={this.getBackgroundColor()} typedBasedFontColor={this.getFontColor()}>
-                        {itemLabel}
-                    </LabelDiv>
+                    <Tippy content={itemLabel}>
+                        <LabelDiv
+                            isHighlighted={itemHighlighted}
+                            typedBasedColor={this.getBackgroundColor()}
+                            typedBasedFontColor={this.getFontColor()}
+                        >
+                            {itemLabel}
+                        </LabelDiv>
+                    </Tippy>
                 </div>
 
                 {/*--------CONTROLS  (FLOAT RIGHT reverses the order of items )*/}
@@ -148,6 +155,10 @@ const StyledController = styled.div`
     }
 `;
 const LabelDiv = styled.div`
+    overflow: hidden;
+    max-width: 260px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     padding: 5px;
     border-radius: 10px 10px 0 0;
     border: 1px solid black;
