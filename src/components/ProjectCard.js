@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faTrash, faUnlockAlt, faLock, faPen } from '@fortawesome/free-solid-svg-icons';
-import { Button, Container } from 'reactstrap';
+import { faCaretDown, faCaretRight, faLock, faPen, faTrash, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { Button, Collapse } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
@@ -15,9 +15,11 @@ export default class ProjectIndexCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showEditProjectModal: false
+            showEditProjectModal: false,
+            collapseDescription: true
         };
     }
+
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
@@ -71,11 +73,24 @@ export default class ProjectIndexCards extends Component {
         }
     };
 
+    toggleProjectBody = event => {
+        event.preventDefault();
+        this.setState({ collapseDescription: !this.state.collapseDescription });
+    };
+
     render() {
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
+                        <Button
+                            color="none"
+                            title="Expand/Collapse Description"
+                            onClick={this.toggleProjectBody}
+                            style={{ float: 'left', padding: '0px', paddingRight: '10px', marginLeft: '1px' }}
+                        >
+                            <Icon icon={this.state.collapseDescription ? faCaretRight : faCaretDown} style={{ marginRight: '0px' }} />
+                        </Button>
                         <StyledLink
                             to={reverse(ROUTES.ONTOLOGY)}
                             onClick={this.showOntologies}
@@ -83,23 +98,24 @@ export default class ProjectIndexCards extends Component {
                             onDragStart={this.preventDraggingOfItem}
                         >
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
+                                <div> {this.props.inputData.name} </div>
                                 {this.props.inputData.unlock === true ? (
                                     <div>
-                                        <Icon className="mr-1" icon={faUnlockAlt} />
+                                        <Icon className="ml-2 mr-1" icon={faUnlockAlt} />
                                     </div>
                                 ) : (
                                     <div>
-                                        <Icon className="mr-1" icon={faLock} />
+                                        <Icon className="ml-2 mr-1" icon={faLock} />
                                     </div>
                                 )}
-                                <div> {this.props.inputData.name} </div>
                             </div>
                         </StyledLink>
                     </StyledCardHeader>
-
-                    <StyledCardBody>
-                        {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                    </StyledCardBody>
+                    <Collapse isOpen={!this.state.collapseDescription}>
+                        <StyledCardBody>
+                            {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                        </StyledCardBody>
+                    </Collapse>
                     <div style={{ float: 'right', marginTop: '-70px' }}>
                         <Button
                             onClick={() => {
