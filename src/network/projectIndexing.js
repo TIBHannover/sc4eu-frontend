@@ -1,4 +1,4 @@
-import { plainGetRequest, submitPatchRequest, submitPostRequest } from './networkRequests';
+import { plainGetRequest, submitPostRequest } from './networkRequests';
 import { URL_DELETE_PROJECT, URL_EDIT_PROJECT, URL_PROJECTINDEXING } from '../constants/services';
 import { URL_CREATE_PROJECT } from '../constants/services';
 
@@ -28,7 +28,7 @@ export const createProject = project => {
 export const editProject = project => {
     const patchHeader = { 'Content-Type': 'application/json' };
     console.log('Edit the Project ', project);
-    return submitPatchRequest(URL_EDIT_PROJECT, patchHeader, project);
+    return submitPostRequest(URL_EDIT_PROJECT, patchHeader, project);
 };
 
 // TODO we will check who can create projects

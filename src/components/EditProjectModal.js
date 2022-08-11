@@ -32,7 +32,6 @@ export default class EditProjectModal extends Component {
 
     componentDidUpdate = async prevProps => {
         if (prevProps.showDialog === false && this.props.showDialog === true) {
-            // check if user is allowed to do uploads
             const allows = await userIsAllowdToUploadOntology();
             this.setState({ allowedToEditProjects: allows.result });
         }
@@ -43,13 +42,6 @@ export default class EditProjectModal extends Component {
         newProjectItems[event.target.name] = event.target.value.toLowerCase();
         this.setState({
             projectItems: newProjectItems
-        });
-    };
-
-    resetStateObject = () => {
-        this.setState({
-            projectName: '',
-            projectDescription: ''
         });
     };
 
@@ -66,15 +58,7 @@ export default class EditProjectModal extends Component {
 
     render() {
         return (
-            <Modal
-                style={{ width: '80%', maxWidth: '50%' }}
-                isOpen={this.props.showDialog}
-                toggle={this.props.toggle}
-                autoFocus={false}
-                onOpened={() => {
-                    this.resetStateObject();
-                }}
-            >
+            <Modal style={{ width: '80%', maxWidth: '50%' }} isOpen={this.props.showDialog} toggle={this.props.toggle} autoFocus={false}>
                 <ModalHeader toggle={this.props.toggle} autoFocus={false}>
                     Edit Project
                 </ModalHeader>

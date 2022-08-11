@@ -129,48 +129,6 @@ export const submitPutRequest = (url, headers, data, jsonStringify = true) => {
             .catch(reject);
     });
 };
-
-export const submitPatchRequest = (url, headers, data, jsonStringify = true, send_token = true) => {
-    if (!url) {
-        throw new Error('Cannot submit POST request. URL is null or undefined.');
-    }
-
-    const myHeaders = new Headers(headers);
-
-    if (send_token) {
-        const cookies = new Cookies();
-        const token = cookies.get('token') ? cookies.get('token') : null;
-        if (token) {
-            myHeaders.append('Authorization', `Bearer ${token}`);
-        }
-    }
-
-    if (jsonStringify) {
-        data = JSON.stringify(data);
-    }
-
-    return new Promise((resolve, reject) => {
-        fetch(url, { method: 'PATCH', headers: myHeaders, body: data })
-            .then(response => {
-                if (!response.ok) {
-                    const json = response.json();
-                    if (json.then) {
-                        json.then(reject);
-                    } else {
-                        reject(new Error(`Error response. (${response.status}) ${response.statusText}`));
-                    }
-                } else {
-                    const json = response.json();
-                    if (json.then) {
-                        json.then(resolve).catch(reject);
-                    } else {
-                        return resolve(json);
-                    }
-                }
-            })
-            .catch(reject);
-    });
-};
 //
 // export const submitDeleteRequest = (url, headers, data) => {
 //     if (!url) {
