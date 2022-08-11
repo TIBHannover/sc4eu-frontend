@@ -3,14 +3,21 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faTrash, faUnlockAlt, faLock } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
+import { faTrash, faUnlockAlt, faLock, faPen } from '@fortawesome/free-solid-svg-icons';
+import { Button, Container } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
+import EditProjectModal from './EditProjectModal';
 
 export default class ProjectIndexCards extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showEditProjectModal: false
+        };
+    }
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
@@ -42,6 +49,13 @@ export default class ProjectIndexCards extends Component {
             }
         } catch (rejectedValue) {
             console.log(rejectedValue);
+        }
+    };
+
+    projectEdited = param => {
+        if (param.result === true) {
+            this.setState({ showEditProjectModal: false });
+            this.props.callback();
         }
     };
 
@@ -79,15 +93,6 @@ export default class ProjectIndexCards extends Component {
                                     </div>
                                 )}
                                 <div> {this.props.inputData.name} </div>
-                                <Button
-                                    color="white"
-                                    size="sm"
-                                    title="Delete Project"
-                                    onClick={this.deleteProject}
-                                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                                >
-                                    <Icon icon={faTrash} color={'black'} />
-                                </Button>
                             </div>
                         </StyledLink>
                     </StyledCardHeader>
@@ -95,6 +100,29 @@ export default class ProjectIndexCards extends Component {
                     <StyledCardBody>
                         {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
                     </StyledCardBody>
+                    <div style={{ float: 'right', marginTop: '-70px' }}>
+                        <Button
+                            onClick={() => {
+                                this.setState({ showEditProjectModal: true });
+                            }}
+                            style={{ background: 'none', border: 'none', height: '25px', width: '35px' }}
+                        >
+                            <Icon icon={faPen} color="black" style={{ marginBottom: '20px' }} />
+                        </Button>
+                        <EditProjectModal
+                            showDialog={this.state.showEditProjectModal}
+                            projectData={this.props.inputData}
+                            callback={param => {
+                                this.projectEdited(param);
+                            }}
+                            toggle={() => {
+                                this.setState({ showEditProjectModal: !this.state.showEditProjectModal });
+                            }}
+                        />
+                        <Button color="white" size="sm" title="Delete Project" onClick={this.deleteProject}>
+                            <Icon icon={faTrash} color={'black'} />
+                        </Button>
+                    </div>
                 </StyledCard>
             </div>
         );

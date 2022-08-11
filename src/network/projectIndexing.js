@@ -1,5 +1,5 @@
 import { plainGetRequest, submitPostRequest } from './networkRequests';
-import { URL_DELETE_PROJECT, URL_PROJECTINDEXING } from '../constants/services';
+import { URL_DELETE_PROJECT, URL_EDIT_PROJECT, URL_PROJECTINDEXING } from '../constants/services';
 import { URL_CREATE_PROJECT } from '../constants/services';
 
 export const getAllProjects = () => {
@@ -23,6 +23,12 @@ export const createProject = project => {
     const postHeader = { 'Content-Type': 'application/json' };
     console.log('Creating the Project ', project);
     return submitPostRequest(URL_CREATE_PROJECT, postHeader, project);
+};
+
+export const editProject = project => {
+    const patchHeader = { 'Content-Type': 'application/json' };
+    console.log('Edit the Project ', project);
+    return submitPostRequest(URL_EDIT_PROJECT, patchHeader, project);
 };
 
 // TODO we will check who can create projects
