@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, CardBody, Collapse, Container, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faCaretDown, faCaretRight, faChevronCircleDown, faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 import { redux_editMetaInfo } from '../../redux/actions/rrm_actions';
@@ -96,7 +96,7 @@ this.props.redux_addMetaInfo(newMetaInformation);
                             onClick={() => this.toggleMetaInformation()}
                             style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold' }}
                         >
-                            <Icon icon={this.state.collapseMetaInfo ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                            <Icon icon={this.state.collapseMetaInfo ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
                             Meta Information
                         </Button>
                         <Collapse isOpen={!this.state.collapseMetaInfo}>
@@ -119,7 +119,7 @@ this.props.redux_addMetaInfo(newMetaInformation);
                             onClick={() => this.toggle()}
                             style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold' }}
                         >
-                            <Icon icon={this.state.collapse ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                            <Icon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
                             Prefix List
                         </Button>
                         <Collapse isOpen={!this.state.collapse}>
@@ -424,7 +424,7 @@ this.props.redux_addMetaInfo(newMetaInformation);
                         overflowX: 'hidden'
                     }}
                 >
-                    <div style={{ marginTop: '20px', width: '106%', textAlign: 'left', marginLeft: '15px' }}>
+                    <div style={{ marginTop: '20px', width: '106%', textAlign: 'left', marginLeft: '10px' }}>
                         <div>{this.renderCurrentProjectAndOntology()}</div>
                     </div>
                     <div style={{ width: this.props.width - 2, textAlign: 'left' }}>{this.renderMetaInformation()}</div>
