@@ -91,39 +91,25 @@ export default class ProjectIndexCards extends Component {
                         >
                             <Icon icon={this.state.collapseDescription ? faCaretRight : faCaretDown} style={{ marginRight: '0px' }} />
                         </Button>
-                        <StyledLink
-                            to={reverse(ROUTES.ONTOLOGY)}
-                            onClick={this.showOntologies}
-                            className="p-0 noSelect"
-                            onDragStart={this.preventDraggingOfItem}
-                        >
-                            <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div> {this.props.inputData.name} </div>
-                                {this.props.inputData.unlock === true ? (
-                                    <div>
-                                        <Icon className="ml-2 mr-1" icon={faUnlockAlt} />
-                                    </div>
-                                ) : (
-                                    <div>
-                                        <Icon className="ml-2 mr-1" icon={faLock} />
-                                    </div>
-                                )}
-                            </div>
-                        </StyledLink>
-                    </StyledCardHeader>
-                    <Collapse isOpen={!this.state.collapseDescription}>
-                        <StyledCardBody>
-                            {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                        </StyledCardBody>
-                    </Collapse>
-                    <div style={{ float: 'right', marginTop: '-70px' }}>
                         <Button
+                            color="white"
+                            size="sm"
+                            title="Delete Project"
+                            onClick={this.deleteProject}
+                            style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
+                        >
+                            <Icon icon={faTrash} color={'black'} />
+                        </Button>
+                        <Button
+                            color="white"
+                            size="sm"
+                            title="Edit Project"
                             onClick={() => {
                                 this.setState({ showEditProjectModal: true });
                             }}
-                            style={{ background: 'none', border: 'none', height: '25px', width: '35px' }}
+                            style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto', marginRight: '5px' }}
                         >
-                            <Icon icon={faPen} color="black" style={{ marginBottom: '20px' }} />
+                            <Icon icon={faPen} color="black" />
                         </Button>
                         <EditProjectModal
                             showDialog={this.state.showEditProjectModal}
@@ -135,10 +121,33 @@ export default class ProjectIndexCards extends Component {
                                 this.setState({ showEditProjectModal: !this.state.showEditProjectModal });
                             }}
                         />
-                        <Button color="white" size="sm" title="Delete Project" onClick={this.deleteProject}>
-                            <Icon icon={faTrash} color={'black'} />
-                        </Button>
-                    </div>
+                        <div color="white" style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}>
+                            {this.props.inputData.unlock === true ? (
+                                <div>
+                                    <Icon className="ml-2 mr-1" icon={faUnlockAlt} color="black" />
+                                </div>
+                            ) : (
+                                <div>
+                                    <Icon className="ml-2 mr-1" icon={faLock} color="black" />
+                                </div>
+                            )}
+                        </div>
+                        <StyledLink
+                            to={reverse(ROUTES.ONTOLOGY)}
+                            onClick={this.showOntologies}
+                            className="p-0 noSelect"
+                            onDragStart={this.preventDraggingOfItem}
+                        >
+                            <div style={{ display: 'flex', paddingRight: '5px' }}>
+                                <div style={{ overflowWrap: 'break-word' }}> {this.props.inputData.name} </div>
+                            </div>
+                        </StyledLink>
+                    </StyledCardHeader>
+                    <Collapse isOpen={!this.state.collapseDescription}>
+                        <StyledCardBody>
+                            {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                        </StyledCardBody>
+                    </Collapse>
                 </StyledCard>
             </div>
         );

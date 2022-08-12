@@ -39,7 +39,7 @@ export default class EditProjectModal extends Component {
 
     handelOnChange = event => {
         const newProjectItems = { ...this.state.projectItems };
-        newProjectItems[event.target.name] = event.target.value.toLowerCase();
+        newProjectItems[event.target.name] = event.target.value;
         this.setState({
             projectItems: newProjectItems
         });
@@ -91,11 +91,11 @@ export default class EditProjectModal extends Component {
                                     type="select"
                                     name="accessType"
                                     id="accessType"
-                                    defaultValue={this.props.projectData.access_type}
+                                    defaultValue={this.state.projectItems.accessType || 'Select Access Type...'}
                                     onChange={this.handelOnChange}
                                 >
-                                    <option defaultValue={this.props.projectData.access_type} disabled>
-                                        {this.props.projectData.access_type}
+                                    <option defaultValue={this.state.projectItems.accessType || 'Select Access Type...'} disabled>
+                                        {this.state.projectItems.accessType || 'Select Access Type...'}
                                     </option>
                                     <option>Public</option>
                                     <option>Private</option>
