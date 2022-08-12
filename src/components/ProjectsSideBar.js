@@ -45,11 +45,11 @@ class ProjectsSideBar extends Component {
     getProjectsFromBackend = () => {
         getAllProjects().then(allProjects => {
             allProjects.reverse().forEach(singleProject => {
-                if (singleProject.access_type.toLowerCase() === 'Public'.toLowerCase()) {
+                if (singleProject.access_type === 'Public' || singleProject.access_type === 'public') {
                     singleProject.unlock = true;
                 }
                 if (this.props.user) {
-                    if (this.props.user.role.toLowerCase() === 'System Admin'.toLowerCase()) {
+                    if (this.props.user.role === 'System Admin' || this.props.user.role === 'system admin') {
                         singleProject.unlock = true;
                     }
                     getUserProjects(this.props.user.userId).then(userProjectsUUID => {
