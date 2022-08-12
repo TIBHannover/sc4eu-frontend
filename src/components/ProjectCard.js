@@ -3,7 +3,16 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretRight, faLock, faPen, faTrash, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCaretDown,
+    faCaretRight,
+    faLock,
+    faPen,
+    faTrash,
+    faUnlockAlt,
+    faChevronCircleRight,
+    faChevronCircleDown
+} from '@fortawesome/free-solid-svg-icons';
 import { Button, Collapse } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
@@ -78,39 +87,50 @@ export default class ProjectIndexCards extends Component {
         this.setState({ collapseDescription: !this.state.collapseDescription });
     };
 
+    helloMouse = event => {
+        event.target.style.background = 'red';
+        console.log(event.target);
+    };
+
     render() {
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        <Button
+                        <StyledButton
                             color="none"
                             title="Expand/Collapse Description"
                             onClick={this.toggleProjectBody}
                             style={{ float: 'left', padding: '0px', paddingRight: '10px', marginLeft: '1px' }}
                         >
-                            <Icon icon={this.state.collapseDescription ? faCaretRight : faCaretDown} style={{ marginRight: '0px' }} />
-                        </Button>
-                        <Button
-                            color="white"
+                            <Icon icon={this.state.collapseDescription ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '0px' }} />
+                        </StyledButton>
+                        <StyledButton
+                            color="none"
                             size="sm"
                             title="Delete Project"
                             onClick={this.deleteProject}
                             style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
                         >
-                            <Icon icon={faTrash} color={'black'} />
-                        </Button>
-                        <Button
+                            <Icon icon={faTrash} />
+                        </StyledButton>
+                        <StyledButton
                             color="white"
                             size="sm"
                             title="Edit Project"
                             onClick={() => {
                                 this.setState({ showEditProjectModal: true });
                             }}
-                            style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto', marginRight: '5px' }}
+                            style={{
+                                float: 'right',
+                                padding: '0px',
+                                paddingLeft: '5px',
+                                marginLeft: 'auto',
+                                marginRight: '5px'
+                            }}
                         >
-                            <Icon icon={faPen} color="black" />
-                        </Button>
+                            <Icon icon={faPen} />
+                        </StyledButton>
                         <EditProjectModal
                             showDialog={this.state.showEditProjectModal}
                             projectData={this.props.inputData}
@@ -159,6 +179,12 @@ ProjectIndexCards.propTypes = {
     callback: PropTypes.func.isRequired,
     updateHeaderValueCallback: PropTypes.func.isRequired
 };
+
+const StyledButton = styled(Button)`
+    :hover {
+        color: #ffffff;
+    }
+`;
 
 const StyledCard = styled.div`
     margin: 5px;
