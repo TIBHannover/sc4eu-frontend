@@ -5,6 +5,8 @@ import { deleteUser, getUserProjects, getUserRole, updateUserProjects, updateUse
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { faTrash, faPen } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 
 const Option = props => {
     return (
@@ -147,18 +149,20 @@ class DashboardItem extends Component {
         const row = this.props.parameterOrder.map((selector, index) => {
             if (selector === 'role' && user[selector] !== 'System Admin') {
                 return (
-                    <td key={'td_' + user.uuid + '_' + index}>
-                        <ReactSelect
-                            key={'td_role_' + user.uuid}
-                            value={this.state.roleValue}
-                            isDisabled={!this.state.shouldEdit}
-                            onChange={value => this.handleRoleChange(value)}
-                            options={this.props.roleOptions}
-                            components={{
-                                RoleOption
-                            }}
-                        />
-                    </td>
+                    <table style={{ border: 'none' }} width="180">
+                        <td style={{ border: 'none' }} key={'td_' + user.uuid + '_' + index}>
+                            <ReactSelect
+                                key={'td_role_' + user.uuid}
+                                value={this.state.roleValue}
+                                isDisabled={!this.state.shouldEdit}
+                                onChange={value => this.handleRoleChange(value)}
+                                options={this.props.roleOptions}
+                                components={{
+                                    RoleOption
+                                }}
+                            />
+                        </td>
+                    </table>
                 );
             }
             return <td key={'td_' + index}>{user[selector]}</td>;
@@ -184,7 +188,9 @@ class DashboardItem extends Component {
                                     data-toggle="popover"
                                     data-trigger="focus"
                                     data-content="Please select ontologies"
-                                    width="100px"
+                                    style={{
+                                        width: '200px'
+                                    }}
                                 >
                                     <ReactSelect
                                         key={'rs_projects_' + thisUser.uuid + counter++}
@@ -207,22 +213,30 @@ class DashboardItem extends Component {
                             </td>
                         }
                         <td>
-                            <Button
-                                onClick={() => {
-                                    this.editUser(thisUser);
-                                }}
-                            >
-                                {this.state.shouldEdit && this.state.editThisUser === thisUser['uuid'] ? 'Save' : 'Edit'}
-                            </Button>
-                        </td>
-                        <td>
-                            <Button
-                                onClick={() => {
-                                    this.deleteUser(thisUser);
-                                }}
-                            >
-                                Delete
-                            </Button>
+                            <div className="btn-group">
+                                <Button
+                                    style={{ backgroundColor: '#0057B8', marginRight: '10px', borderRadius: '4px 4px 4px 4px' }}
+                                    onClick={() => {
+                                        this.editUser(thisUser);
+                                    }}
+                                >
+                                    {this.state.shouldEdit && this.state.editThisUser === thisUser['uuid'] ? (
+                                        'Save'
+                                    ) : (
+                                        <Icon icon={faPen} color="black" />
+                                    )}
+                                </Button>
+
+                                <Button
+                                    className="btn btn-danger"
+                                    style={{ borderRadius: '4px 4px 4px 4px' }}
+                                    onClick={() => {
+                                        this.deleteUser(thisUser);
+                                    }}
+                                >
+                                    <Icon icon={faTrash} color={'black'} />
+                                </Button>
+                            </div>
                         </td>
                     </>
                 )}
