@@ -67,7 +67,7 @@ export default class OntologyIndexing extends Component {
         if (projectSelected) {
             headerTitle = (
                 <p>
-                    You are currently viewing index of ontologies for <b> {projectSelected.name} </b> project
+                    <b> {projectSelected.name} </b> project
                 </p>
             );
         }
@@ -87,62 +87,73 @@ export default class OntologyIndexing extends Component {
                     }}
                 />
                 <Container
-                    className="box pt-2 pb-2 pl-0 pr-0"
                     style={{
-                        backgroundColor: 'white',
+                        width: '50%',
+                        backgroundColor: 'rgb(103, 160, 208)',
                         border: '1px solid black',
                         borderTop: 'none',
-                        overflow: 'auto',
-                        float: 'left',
-                        position: 'relative'
+                        height: '50px',
+                        overflow: 'hidden',
+                        position: 'fixed',
+                        marginLeft: '460px',
+                        textAlign: 'center'
                     }}
                 >
-                    <h2
-                        className="noSelect pl-3 pr-3 pb-3"
-                        style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center' }}
-                        title={this.state.headerValue}
+                    <h4 style={{ marginTop: '7px', display: 'inline-block', color: 'white' }}>{this.state.headerValue}</h4>
+                    {this.state.selectedProject ? (
+                        <div style={{ float: 'right', marginRight: '-19px' }}>
+                            <OntologyIndexInteractions
+                                project_id={this.state.selectedProject.uuid}
+                                reloadAfterUpdate={() => {
+                                    this.reloadAfterUpdate();
+                                }}
+                            />
+                        </div>
+                    ) : (
+                        <div />
+                    )}
+                </Container>
+                {this.state.isLoading ? (
+                    <div className="text-center text-primary mt-4 mb-4">
+                        {/*using a manual fixed scale value for the spinner scale! */}
+                        <h2 className="h5">
+                            <span>
+                                <Icon icon={faSpinner} spin />
+                            </span>
+                            Loading
+                        </h2>
+                    </div>
+                ) : this.state.selectedProject ? (
+                    <Container
+                        className="box pt-2 pb-2 pl-0 pr-0"
+                        style={{
+                            width: '50%',
+                            backgroundColor: 'white',
+                            border: '1px solid black',
+                            overflow: 'auto',
+                            float: 'left',
+                            position: 'fixed',
+                            marginLeft: '460px',
+                            marginTop: '55px'
+                        }}
                     >
-                        {this.state.headerValue}
-                    </h2>
-                    <hr className="mt-0 mb-2" />
-                    <div className="pl-1 pr-1">
-                        {this.state.isLoading ? (
-                            <div className="text-center text-primary mt-4 mb-4">
-                                {/*using a manual fixed scale value for the spinner scale! */}
-
-                                <h2 className="h5">
-                                    <span>
-                                        <Icon icon={faSpinner} spin />
-                                    </span>{' '}
-                                    Loading
-                                </h2>
-                            </div>
-                        ) : this.state.selectedProject ? (
-                            <div>
-                                <OntologyIndexInteractions
-                                    project_id={this.state.selectedProject.uuid}
-                                    reloadAfterUpdate={() => {
-                                        this.reloadAfterUpdate();
+                        <div>
+                            {this.state.results ? (
+                                <OntologyIndexCards
+                                    project={this.state.selectedProject}
+                                    ontologies={this.state.results}
+                                    reloadAfterDelete={() => {
+                                        this.reloadAfterDelete();
                                     }}
                                 />
-                                <hr className="mt-0 mb-2" />
-                                {this.state.results ? (
-                                    <OntologyIndexCards
-                                        project={this.state.selectedProject}
-                                        ontologies={this.state.results}
-                                        reloadAfterDelete={() => {
-                                            this.reloadAfterDelete();
-                                        }}
-                                    />
-                                ) : (
-                                    <div> No ontologies found in this project </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div />
-                        )}
-                    </div>
-                </Container>
+                            ) : (
+                                <div> No ontologies found in this project </div>
+                            )}
+                        </div>
+                    </Container>
+                ) : (
+                    <div />
+                )}
             </>
         );
     }

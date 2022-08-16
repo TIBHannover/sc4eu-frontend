@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-
+import { faUpload, faFileUpload, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { Button } from 'reactstrap';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import UploadOntologyModal from './UploadOntologyModal';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import Tippy from '@tippyjs/react';
 // import { preInitializeOntologyUpload } from '../network/ontologyIndexing';
 
 export default class OntologyIndexInteractions extends Component {
@@ -26,17 +28,27 @@ export default class OntologyIndexInteractions extends Component {
     render() {
         return (
             <div className="pl-1 pr-1 pb-2">
-                <StyledButton
-                    active={true}
-                    onClick={() => {
-                        console.log('Upload Button Triggered');
-                        this.setState({ showUploadModal: true });
-                    }}
-                >
-                    Upload
-                </StyledButton>
-                <StyledButton disabled={true}> Filter </StyledButton>
-                <StyledButton disabled={true}> Search </StyledButton>
+                <Tippy content="Upload Ontology">
+                    <span>
+                        <StyledButton
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: 'black',
+                                height: '50px',
+                                width: '40px'
+                            }}
+                            active={true}
+                            onClick={() => {
+                                console.log('Upload Button Triggered');
+                                this.setState({ showUploadModal: true });
+                            }}
+                        >
+                            <Icon icon={faFileUpload} color={'white'} size="lg" />
+                        </StyledButton>
+                    </span>
+                </Tippy>
                 <UploadOntologyModal
                     project_id={this.props.project_id}
                     showDialog={this.state.showUploadModal}
@@ -58,6 +70,5 @@ OntologyIndexInteractions.propTypes = {
 };
 
 const StyledButton = styled(Button)`
-    margin-right: 10px;
     background-color: ${props => (props.activeFeature ? '#006500' : 'red')};
 `;

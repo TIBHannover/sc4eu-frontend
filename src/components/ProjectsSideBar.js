@@ -7,6 +7,9 @@ import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
 import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faFileUpload, faPlus } from '@fortawesome/free-solid-svg-icons';
+import Tippy from '@tippyjs/react';
 
 class ProjectsSideBar extends Component {
     constructor(props) {
@@ -108,32 +111,40 @@ this.setState({ expanded: !this.state.expanded });
                 }}
             >
                 <Container
-                    className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
                     style={{
-                        borderRadius: '10px',
                         borderWidth: '1px',
-                        borderColor: 'rgb(219,221,229)',
+                        border: '1px solid black',
                         borderStyle: 'solid',
-                        borderBottomRightRadius: '0',
-                        borderBottomLeftRadius: '0',
-                        height: '40px',
+                        height: '50px',
+                        borderTop: 'none',
                         marginLeft: '5px',
                         color: 'white',
-                        backgroundColor: '#67a0d0'
+                        backgroundColor: 'rgb(103, 160, 208)'
                     }}
                 >
                     <div style={{ width: this.props.width - 10, textAlign: 'center' }}>
-                        {this.state.title}
-                        <Button
-                            variant="outline-primary"
-                            style={{ float: 'right', marginTop: '-8px' }}
-                            onClick={() => {
-                                //TODO check if this user is allowed to create Projects
-                                this.setState({ showCreateProjectModal: true });
-                            }}
-                        >
-                            New Project
-                        </Button>{' '}
+                        <h4 style={{ display: 'inline-block', marginTop: '7px' }}>{this.state.title}</h4>
+                        <Tippy content="Add New Projects">
+                            <span style={{ float: 'right' }}>
+                                <Button
+                                    style={{
+                                        display: 'flex',
+                                        marginRight: '7px',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        backgroundColor: 'black',
+                                        height: '50px',
+                                        width: '40px'
+                                    }}
+                                    onClick={() => {
+                                        //TODO check if this user is allowed to create Projects
+                                        this.setState({ showCreateProjectModal: true });
+                                    }}
+                                >
+                                    <Icon icon={faPlus} color={'white'} size="sm" />
+                                </Button>
+                            </span>
+                        </Tippy>
                         <CreateProjectModal
                             showDialog={this.state.showCreateProjectModal}
                             toggle={() => {
