@@ -17,6 +17,7 @@ import Imprint from './pages/Imprint';
 import DigitalReferenceDocumentation from './pages/DigitalReferenceDocumentation';
 import FAQ from './pages/FAQ';
 import WebProtege from './pages/WebProtege';
+import ManagementView from './pages/ManagementView';
 
 const routes = [
     {
@@ -58,6 +59,12 @@ const routes = [
         path: ROUTES.PAGEA,
         exact: true,
         component: PageA
+    },
+
+    {
+        path: ROUTES.VIEW_MANAGEMENT,
+        exact: true,
+        component: ManagementView
     },
 
     {

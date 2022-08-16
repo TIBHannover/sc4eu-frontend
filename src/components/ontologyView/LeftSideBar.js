@@ -425,9 +425,9 @@ this.props.redux_addMetaInfo(newMetaInformation);
                     }}
                 >
                     <div style={{ marginTop: '20px', width: '106%', textAlign: 'left', marginLeft: '10px' }}>
-                        <div>{this.renderCurrentProjectAndOntology()}</div>
+                        {/*<div>{this.renderCurrentProjectAndOntology()}</div>*/}
                     </div>
-                    <div style={{ width: this.props.width - 2, textAlign: 'left' }}>{this.renderMetaInformation()}</div>
+                    {/*<div style={{ width: this.props.width - 2, textAlign: 'left' }}>{this.renderMetaInformation()}</div>*/}
                 </Container>
             </ContentContainer>
         );

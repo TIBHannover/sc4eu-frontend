@@ -3,6 +3,7 @@ export default {
     // dummy use cases
     PAGEA: '/pageA',
     PAGEB: '/pageB',
+    VIEW_MANAGEMENT: '/view_managment',
     ONTOLOGY: '/ontology',
     VIEW_ONTOLOGY: '/view_ontology/:ontologyId',
     DELETE_ONTOLOGY: '/delete_ontology/:ontologyId',

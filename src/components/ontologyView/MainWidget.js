@@ -52,7 +52,7 @@ export default class MainWidget extends Component {
                         backgroundColor: '#f2f2f2'
                     }}
                 >
-                    <OntologyContentViewer experimentalLayout={this.props.experimentalLayout} />
+                    {/*<OntologyContentViewer experimentalLayout={this.props.experimentalLayout} />*/}
                 </div>
             </ContentContainer>
         );

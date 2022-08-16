@@ -169,6 +169,9 @@ class Header extends Component {
                         <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.FAQ} onDragStart={this.preventDraggingOfItem}>
                             FAQ
                         </NavLink>
+                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.VIEW_MANAGEMENT} onDragStart={this.preventDraggingOfItem}>
+                            Management
+                        </NavLink>
                     </div>
                     <div
                         style={{
