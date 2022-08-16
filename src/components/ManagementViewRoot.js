@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'reactstrap';
 import styled from 'styled-components';
-import LeftSideBar from '../components/ontologyView/LeftSideBar';
+import LeftSideBarManagment from '../components/ontologyView/LeftSideBarManagment';
 import RightSideBar from '../components/ontologyView/RightSideBar';
 import MainWidget from '../components/ontologyView/MainWidget';
 
@@ -145,7 +145,7 @@ export default class ManagementViewRoot extends Component {
                     experimentalLayout={this.state.experimentalLayout}
                 />
 
-                <LeftSideBar
+                <LeftSideBarManagment
                     width={this.state.leftSidebarWidth}
                     initialState={this.props.leftSideExpanded}
                     height={this.state.containerHeight + this.sidebarHeightOffset}
