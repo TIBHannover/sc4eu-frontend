@@ -202,14 +202,15 @@ class OntologyViewRoot extends Component {
                         // loading={this.props.loading}
                         updateEvent={this.leftSideBarUpdateEvent}
                     />
-                    {/*<RightSideBar
+                    <RightSideBar
                         width={this.state.rightSidebarWidth}
+                        ontologyName={this.props.ontologyName}
                         initialState={this.props.rightSideExpanded}
                         height={this.state.containerHeight + this.sidebarHeightOffset}
                         title="Provenance Information"
                         updateEvent={this.rightSideBarUpdateEvent}
                         heightUpdateEvent={this.updateMainWidgetSize}
-                    />*/}
+                    />
                 </div>
             </>
         );
