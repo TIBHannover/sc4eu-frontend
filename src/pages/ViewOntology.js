@@ -59,7 +59,7 @@ class ViewOntology extends Component {
         // console.log('fetching ontologies from backend');
         // console.log(this.props.match.params.ontologyId);
         // TODO: refactor>? getOntologyByID -> getJSONMOdel For ontology ID
-        getOntologyBy(this.props.match.params.ontologyId).then(res => {
+        getOntologyBy(this.props.ontologyId).then(res => {
             if (res.ontology_data) {
                 // create json obj from the string
                 const parsedModel = res.ontology_data;
@@ -77,7 +77,6 @@ class ViewOntology extends Component {
     };
 
     render() {
-        // console.log(this.state);
         return (
             <div style={{ height: '100%' }}>
                 {this.state.isLoading === false && (
@@ -107,23 +106,6 @@ class ViewOntology extends Component {
                                 </Button>
                             </span>
                         </Tippy>
-
-                        {/*Protege View*/}
-                        {/*<Tippy content="Widget-based representation not available">
-                            <span>
-                                <Button
-                                    disabled={true}
-                                    color={this.state.modeOfOperation === 'protege' ? 'primary' : 'secondary'}
-                                    size="sm"
-                                    className="mr-1"
-                                    onClick={() => this.selectModeOfOperation('protege')}
-                                >
-                                    <Icon icon={faHatWizard} />
-                                </Button>
-                            </span>
-                        </Tippy>*/}
-
-                        {/*Graph View*/}
                         <Tippy content="Graph Visualization">
                             <span>
                                 <Button
@@ -136,22 +118,6 @@ class ViewOntology extends Component {
                                 </Button>
                             </span>
                         </Tippy>
-
-                        {/*PlayGround View*/}
-                        {/*  <Tippy content="PlayGround (Temporary)">
-                            <span>
-                                <Button
-                                    color={this.state.modeOfOperation === 'playground' ? 'primary' : 'secondary'}
-                                    size="sm"
-                                    className="mr-1"
-                                    onClick={() => this.selectModeOfOperation('playground')}
-                                >
-                                    <Icon style={{ fontSize: '1.3em', verticalAlign: '-0.175em' }} icon={faGalacticRepublic} />
-                                </Button>
-                            </span>
-                        </Tippy>*/}
-
-                        {/*DOWNLOAD BUTTON */}
                         <Tippy content="Download ontology as TTL file (not implemented yet)">
                             <span style={{ position: 'absolute', right: '5px' }}>
                                 <Button size="sm" disabled={true}>
@@ -159,22 +125,12 @@ class ViewOntology extends Component {
                                 </Button>
                             </span>
                         </Tippy>
-
-                        {/*<h1*/}
-                        {/*    className="noSelect pl-3 pr-3"*/}
-                        {/*    style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center', height: '45px' }}*/}
-                        {/*    title={this.headerValue}*/}
-                        {/*>*/}
-                        {/*    {this.headerValue}*/}
-                        {/*</h1>*/}
                     </div>
                 )}
 
                 <div className="pl-1 pr-1">
                     {this.state.isLoading === true && (
                         <div className="text-center text-primary mt-4 mb-4">
-                            {/*using a manual fixed scale value for the spinner scale! */}
-
                             <h2 className="h5">
                                 <span>
                                     <Icon icon={faSpinner} spin />
@@ -185,14 +141,7 @@ class ViewOntology extends Component {
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'hybrid' && (
-                        <OntologyViewRoot
-                            project={this.props.location.project}
-                            ontologyName={this.props.location.ontologyName}
-                            leftSideExpanded={this.leftSideExpanded}
-                            rightSideExpanded={this.rightSideExpanded}
-                            toggleLeftSideExpanded={this.setLeftSideExpanded}
-                            toggleRightSideExpanded={this.setRightSideExpanded}
-                        />
+                        <OntologyViewRoot toggleLeftSideExpanded={this.setLeftSideExpanded} toggleRightSideExpanded={this.setRightSideExpanded} />
                     )}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'text' && <OntologyViewAsTTL />}
                     {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'graph' && (
@@ -214,12 +163,7 @@ const mapStateToProps = state => {
 };
 
 ViewOntology.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            ontologyId: PropTypes.string.isRequired
-        }).isRequired
-    }).isRequired,
-    location: PropTypes.object.isRequired,
+    ontologyId: PropTypes.string.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
     ui_tab_selectorChanges: PropTypes.bool.isRequired
 };

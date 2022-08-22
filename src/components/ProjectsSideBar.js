@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Container } from 'reactstrap';
+import { Button } from 'reactstrap';
 import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
@@ -94,98 +94,49 @@ this.setState({ expanded: !this.state.expanded });
 
     render() {
         return (
-            <ContentContainer
-                id="ProjectLeftSidebarContainer"
-                expanded={this.state.expanded}
-                initialRendering={this.state.initialRendering}
-                width={this.props.width}
-                style={{
-                    width: this.props.width,
-                    height: this.props.height + 'px',
-                    float: 'left',
-                    position: 'relative',
-                    marginRight: '6px'
-                }}
-            >
-                <Container
-                    className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
-                    style={{
-                        borderRadius: '10px',
-                        borderWidth: '1px',
-                        borderColor: 'rgb(219,221,229)',
-                        borderStyle: 'solid',
-                        borderBottomRightRadius: '0',
-                        borderBottomLeftRadius: '0',
-                        height: '40px',
-                        marginLeft: '5px',
-                        color: 'white',
-                        backgroundColor: '#67a0d0'
+            <div>
+                <h1 style={{ textAlign: 'center' }}>{this.state.title}</h1>
+                <hr className="mt-0 mb-2" />
+                <Button
+                    color="primary"
+                    style={{ margin: '0px 0px 10px 10px' }}
+                    onClick={() => {
+                        this.setState({ showCreateProjectModal: true });
                     }}
                 >
-                    <div style={{ width: this.props.width - 10, textAlign: 'center' }}>
-                        {this.state.title}
-                        <Button
-                            variant="outline-primary"
-                            style={{ float: 'right', marginTop: '-8px' }}
-                            onClick={() => {
-                                //TODO check if this user is allowed to create Projects
-                                this.setState({ showCreateProjectModal: true });
-                            }}
-                        >
-                            New Project
-                        </Button>{' '}
-                        <CreateProjectModal
-                            showDialog={this.state.showCreateProjectModal}
-                            toggle={() => {
-                                this.setState({ showCreateProjectModal: !this.state.showCreateProjectModal });
-                            }}
-                            callback={param => {
-                                this.projectCreated(param);
-                            }}
-                        />
-                    </div>
-                </Container>
-                <Container
-                    id="leftBodyContainer"
-                    className="pr-md-5 pt-sm-10 pb-sm-2 pl-0 pr-sm-2 clearfix"
-                    style={{
-                        borderRadius: '10px',
-                        borderWidth: '1px',
-                        borderColor: 'rgb(219,221,229)',
-                        borderStyle: 'solid',
-                        borderTopRightRadius: '0',
-                        borderTopLeftRadius: '0',
-                        marginLeft: '5px',
-                        color: 'black',
-                        backgroundColor: '#ffffff',
-                        position: 'absolute',
-                        height: this.props.height + 'px',
-                        overflowY: 'auto',
-                        overflowX: 'hidden'
+                    Add New Project
+                </Button>
+                <CreateProjectModal
+                    showDialog={this.state.showCreateProjectModal}
+                    toggle={() => {
+                        this.setState({ showCreateProjectModal: !this.state.showCreateProjectModal });
                     }}
-                >
-                    <div style={{ width: this.props.width - 2, textAlign: 'left', overflowY: 'auto', height: '90vh' }}>
-                        {this.state.results
-                            ? this.state.results.map(item => {
-                                  //return <div key={item.name}>{item.name}</div>;
-                                  return (
-                                      <ProjectCard
-                                          key={'ProjectCard_' + item.name}
-                                          inputData={item}
-                                          callback={param => {
-                                              this.reloadAfterUpdate(param);
-                                          }}
-                                          updateHeaderValueCallback={param => {
-                                              this.props.updateHeaderValueCallback(param);
-                                          }}
-                                      />
-                                  );
-                              })
-                            : 'Still Loading'}
-                        {/*{this.state.results[0].name}*/}
-                    </div>
-                </Container>
-            </ContentContainer>
+                    callback={param => {
+                        this.projectCreated(param);
+                    }}
+                />
+                <hr className="mt-0 mb-2" />
+                <div style={{ width: this.props.width - 2, textAlign: 'left', overflowY: 'auto', height: '90vh' }}>
+                    {this.state.results
+                        ? this.state.results.map(item => {
+                              //return <div key={item.name}>{item.name}</div>;
+                              return (
+                                  <ProjectCard
+                                      key={'ProjectCard_' + item.name}
+                                      inputData={item}
+                                      callback={param => {
+                                          this.reloadAfterUpdate(param);
+                                      }}
+                                      updateHeaderValueCallback={param => {
+                                          this.props.updateHeaderValueCallback(param);
+                                      }}
+                                  />
+                              );
+                          })
+                        : 'Still Loading'}
+                    {/*{this.state.results[0].name}*/}
+                </div>
+            </div>
         );
     }
 }

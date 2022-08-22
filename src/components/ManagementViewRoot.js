@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Button } from 'reactstrap';
 import styled from 'styled-components';
 import LeftSideBarManagment from '../components/ontologyView/LeftSideBarManagment';
-import RightSideBar from '../components/ontologyView/RightSideBar';
-import MainWidget from '../components/ontologyView/MainWidget';
+import RightSideBarManagment from './ontologyView/RightSideBarManagment';
+import MainViewWidget from './ontologyView/MainViewWidget';
 
 export default class ManagementViewRoot extends Component {
     constructor(props) {
@@ -130,7 +130,7 @@ export default class ManagementViewRoot extends Component {
     render() {
         return (
             <div id="mainWidgetContainer" style={{ display: 'flex', marginTop: '5px', zIndex: 150, height: 'calc(100vh - 95px)' }}>
-                <MainWidget
+                <MainViewWidget
                     ref={this._refMainWidget}
                     leftSideBarExpanded={this.state.leftSidebarExpanded}
                     rightSideBarExpanded={this.state.rightSidebarExpanded}
@@ -152,7 +152,7 @@ export default class ManagementViewRoot extends Component {
                     title="Project Management"
                     updateEvent={this.leftSideBarUpdateEvent}
                 />
-                <RightSideBar
+                <RightSideBarManagment
                     width={this.state.rightSidebarWidth}
                     initialState={this.props.rightSideExpanded}
                     height={this.state.containerHeight + this.sidebarHeightOffset}

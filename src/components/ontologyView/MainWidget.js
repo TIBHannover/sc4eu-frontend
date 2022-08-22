@@ -26,50 +26,21 @@ export default class MainWidget extends Component {
 
     render() {
         return (
-            <ContentContainer
-                id="MainWidget"
-                expandedLeft={this.props.leftSideBarExpanded}
-                expandedRight={this.props.rightSideBarExpanded}
-                oldWidth={this.props.oldWidth}
-                newWidth={this.props.newWidth}
-                leftWidth={this.props.leftSidebarWidth}
-                rightWidth={this.props.rightSidebarWidth}
-                oldLeftExpanded={this.props.oldLeftSidebarState}
-                initialRendering={this.state.initialRendering}
-                fullWidth={this.props.fullWidth}
+            <div
                 style={{
-                    height: this.props.height + 'px',
-                    position: 'relative'
+                    width: '100%',
+                    border: '1px solid black',
+                    backgroundColor: '#f2f2f2'
                 }}
             >
-                <div
-                    style={{
-                        width: '90%',
-                        height: '100%',
-                        border: '1px solid black',
-                        position: 'relative',
-                        left: '5%',
-                        backgroundColor: '#f2f2f2'
-                    }}
-                >
-                    {/*<OntologyContentViewer experimentalLayout={this.props.experimentalLayout} />*/}
-                </div>
-            </ContentContainer>
+                <OntologyContentViewer experimentalLayout={this.props.experimentalLayout} />
+            </div>
         );
     }
 }
 
 MainWidget.propTypes = {
     title: PropTypes.string,
-    oldWidth: PropTypes.number,
-    newWidth: PropTypes.number,
-    height: PropTypes.number,
-    fullWidth: PropTypes.number,
-    leftSidebarWidth: PropTypes.number.isRequired,
-    rightSidebarWidth: PropTypes.number.isRequired,
-    oldLeftSidebarState: PropTypes.bool.isRequired,
-    leftSideBarExpanded: PropTypes.bool.isRequired,
-    rightSideBarExpanded: PropTypes.bool.isRequired,
     experimentalLayout: PropTypes.bool.isRequired
 };
 

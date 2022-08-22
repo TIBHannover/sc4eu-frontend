@@ -153,7 +153,7 @@ export default class ProjectIndexCards extends Component {
                             )}
                         </div>
                         <StyledLink
-                            to={reverse(ROUTES.ONTOLOGY)}
+                            to={reverse(ROUTES.VIEW_MANAGEMENT)}
                             onClick={this.showOntologies}
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}

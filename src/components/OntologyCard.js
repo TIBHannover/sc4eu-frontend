@@ -10,6 +10,14 @@ import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 
 export default class OntologyIndexCards extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            shown: false
+        };
+    }
+
     componentDidMount() {
         window.localStorage.clear();
     }
@@ -43,47 +51,41 @@ export default class OntologyIndexCards extends Component {
         }
     };
 
+    onclick = () => {
+        this.props.getSelectedOntology({ shown: true, ontologyId: this.props.inputData.uuid });
+    };
+
     render() {
         return (
             <div>
-                <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
-                    <StyledCardHeader>
-                        <StyledLink
-                            to={{
-                                pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                    ontologyId: this.props.inputData.uuid
-                                }),
-                                project: this.props.project,
-                                ontologyName: this.props.inputData.name
-                            }}
-                            className="p-0 noSelect"
-                            onDragStart={this.preventDraggingOfItem}
-                        >
-                            <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div>
-                                    <Icon className="mr-1" icon={faUnlockAlt} />
+                <div>
+                    <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
+                        <StyledCardHeader>
+                            <StyledLink className="p-0 noSelect" onDragStart={this.preventDraggingOfItem} onClick={this.onclick}>
+                                <div style={{ display: 'flex', paddingRight: '5px' }}>
+                                    <> {this.props.inputData.name} </>
+                                    <div>
+                                        <Icon className="ml-1" icon={faCheck} />
+                                    </div>
+                                    <Button
+                                        color="white"
+                                        size="sm"
+                                        title="Delete Ontology"
+                                        onClick={this.deleteOntology}
+                                        style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
+                                    >
+                                        <Icon icon={faTrash} color={'white'} />
+                                    </Button>
                                 </div>
-                                <div> {this.props.inputData.name} </div>
-                                <div>
-                                    <Icon className="ml-1" icon={faCheck} />
-                                </div>
-                                <Button
-                                    color="white"
-                                    size="sm"
-                                    title="Delete Ontology"
-                                    onClick={this.deleteOntology}
-                                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                                >
-                                    <Icon icon={faTrash} color={'white'} />
-                                </Button>
-                            </div>
-                        </StyledLink>
-                    </StyledCardHeader>
+                            </StyledLink>
+                            {/*<ViewOntology ontologyId={this.props.inputData.uuid} />*/}
+                        </StyledCardHeader>
 
-                    <StyledCardBody>
-                        {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                    </StyledCardBody>
-                </StyledCard>
+                        <StyledCardBody>
+                            {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                        </StyledCardBody>
+                    </StyledCard>
+                </div>
             </div>
         );
     }
@@ -92,7 +94,8 @@ export default class OntologyIndexCards extends Component {
 OntologyIndexCards.propTypes = {
     project: PropTypes.object.isRequired,
     inputData: PropTypes.object.isRequired,
-    callback: PropTypes.func.isRequired
+    callback: PropTypes.func.isRequired,
+    getSelectedOntology: PropTypes.func.isRequired
 };
 
 const StyledCard = styled.div`

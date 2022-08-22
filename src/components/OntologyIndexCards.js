@@ -3,11 +3,25 @@ import PropTypes from 'prop-types';
 
 import OntologyCard from './OntologyCard';
 import { withCookies } from 'react-cookie';
+import ViewOntology from '../pages/ViewOntology';
 
 class OntologyIndexCards extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            shown: false,
+            ontologyUUID: ''
+        };
+    }
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    getSelectedOntology = param => {
+        this.setState({ shown: param.shown });
+        this.setState({ ontologyUUID: param.ontologyId });
+    };
 
     renderOntologyCards() {
         console.log('rendering Cards?');
@@ -19,18 +33,29 @@ class OntologyIndexCards extends Component {
             );
         } else if (this.props.ontologies.length > 0) {
             //  render the cards;
-            return this.props.ontologies.map((item, index) => {
-                return (
-                    <OntologyCard
-                        project={this.props.project}
-                        key={'OntologyCard_' + index}
-                        inputData={item}
-                        callback={param => {
-                            this.props.reloadAfterDelete(param);
-                        }}
-                    />
-                );
-            });
+            return (
+                <div>
+                    {this.state.shown === false ? (
+                        this.props.ontologies.map((item, index) => (
+                            <div>
+                                <OntologyCard
+                                    project={this.props.project}
+                                    key={'OntologyCard_' + index}
+                                    inputData={item}
+                                    getSelectedOntology={param => {
+                                        this.getSelectedOntology(param);
+                                    }}
+                                    callback={param => {
+                                        this.props.reloadAfterDelete(param);
+                                    }}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <ViewOntology ontologyId={this.state.ontologyUUID} />
+                    )}
+                </div>
+            );
         }
     }
 

@@ -1,0 +1,174 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Container } from 'reactstrap';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+
+import styled, { keyframes } from 'styled-components';
+
+export default class RightSideBarManagment extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            expanded: this.props.initialState,
+            minHeight: 200,
+            title: props.title,
+            initialRendering: true
+        };
+    }
+
+    componentDidMount() {
+        document.body.style.overflowX = 'hidden';
+    }
+
+    componentDidUpdate = (prevProps, prevState) => {
+        if (prevState.expanded !== this.state.expanded) {
+            this.setState({ initialRendering: false });
+        }
+
+        // check required height TODO
+        this.props.heightUpdateEvent();
+    };
+
+    componentWillUnmount() {
+        document.body.style.overflowX = 'auto';
+    }
+
+    collapseSidebar = () => {
+        this.props.updateEvent(!this.state.expanded);
+        this.setState({ expanded: !this.state.expanded });
+    };
+
+    render() {
+        return (
+            <ContentContainer
+                id="RightSidebarContainer"
+                expanded={this.state.expanded}
+                width={this.props.width}
+                initialRendering={this.state.initialRendering}
+                style={{ width: this.props.width, position: 'absolute', height: this.props.height + 'px' }}
+            >
+                <Container
+                    className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
+                    style={{
+                        borderRadius: '10px',
+                        borderWidth: '1px',
+                        borderColor: 'rgb(219,221,229)',
+                        borderStyle: 'solid',
+                        borderBottomRightRadius: '0',
+                        borderBottomLeftRadius: '0',
+                        height: '40px',
+                        marginLeft: '5px',
+                        color: 'white',
+                        backgroundColor: '#67a0d0'
+                    }}
+                >
+                    <div style={{ width: this.props.width - 10, textAlign: 'center' }}>{this.state.title}</div>
+                </Container>
+                <ButtonContainer
+                    size="sm"
+                    className="btn-primary"
+                    expanded={this.state.expanded}
+                    initialRendering={this.state.initialRendering}
+                    duration={500}
+                    style={{
+                        margin: '0 0',
+                        flexGrow: '1',
+                        display: 'flex',
+                        alignSelf: 'center',
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '30px',
+                        padding: 0,
+                        border: 'solid 1px',
+                        borderColor: '#525252',
+                        backgroundColor: '#8a8a8a',
+                        float: 'left',
+                        position: 'relative',
+                        top: '-15px',
+                        left: '-8px',
+                        zIndex: 100
+                    }}
+                    onClick={this.collapseSidebar}
+                >
+                    <Icon icon={faAngleLeft} rotation={180} className="align-self-center" style={{ marginLeft: '7px', fontSize: '28px' }} />
+                </ButtonContainer>
+                <Container
+                    className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
+                    style={{
+                        borderRadius: '10px',
+                        borderWidth: '1px',
+                        borderColor: 'rgb(219,221,229)',
+                        borderStyle: 'solid',
+                        borderTopRightRadius: '0',
+                        borderTopLeftRadius: '0',
+                        marginLeft: '5px',
+                        color: 'black',
+                        backgroundColor: '#ffffff',
+                        marginTop: '-1px',
+                        height: this.props.height + 'px',
+                        position: 'absolute'
+                        // zIndex: -500
+                    }}
+                >
+                    <div style={{ width: this.props.width - 10, textAlign: 'center' }}>All changes will appear here [Not Implemented Yet]</div>
+                </Container>
+            </ContentContainer>
+        );
+    }
+}
+
+RightSideBarManagment.propTypes = {
+    title: PropTypes.string,
+    updateEvent: PropTypes.func.isRequired,
+    initialState: PropTypes.bool.isRequired,
+    heightUpdateEvent: PropTypes.func.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired
+};
+
+const expandButtonAnimation = ({ expanded, initialRendering }) => {
+    if (!initialRendering) {
+        return keyframes`
+  from {
+    transform: rotate(${expanded ? -180 : 0}deg);
+  }
+  to {
+    transform: rotate(${expanded ? 0 : 180}deg);
+   
+  }
+`;
+    }
+    if (initialRendering) {
+        return keyframes``;
+    }
+};
+
+const ButtonContainer = styled.div`
+    animation-name: ${expandButtonAnimation};
+    animation-duration: 1000ms;
+    cursor: pointer;
+    transform: rotate(${props => (props.expanded ? 0 : 180)}deg);
+`;
+
+const expandContentContainerAnimation = ({ expanded, width, initialRendering }) => {
+    if (initialRendering) {
+        return keyframes``;
+    } else {
+        return keyframes`
+  from {
+    right: ${expanded ? -(width - 10) : 8}px;
+  }
+  to {
+    right: ${expanded ? 8 : -(width - 10)}px;
+   
+  }
+`;
+    }
+};
+
+const ContentContainer = styled.aside`
+    animation-name: ${expandContentContainerAnimation};
+    animation-duration: 400ms;
+    right: ${props => (props.expanded ? 8 : -(props.width - 10))}px;
+`;
