@@ -125,136 +125,86 @@ class Header extends Component {
         // this shall be a nav bar in the end
         const greeting = greetingTime(new Date());
 
-        const LinkStyle = {
-            color: '#ffff',
-            marginRight: '20px',
-            fontSize: '17px',
-            fontWeight: 700
-        };
-
         return (
-            <StyledTopBar>
-                <Navbar
-                    expand="md"
-                    fixed="top"
-                    id="main-navbar"
+            <div>
+                <div
                     style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        flexWrap: 'nowrap',
-                        background: '#007bff',
-                        height: '40px',
-                        justifyContent: 'space-between'
+                        color: '#fff',
+                        height: '100%',
+                        cursor: 'pointer',
+                        float: 'right',
+                        marginRight: '10px',
+                        marginTop: '-40px'
                     }}
                 >
-                    <div style={{ alignItems: 'center' }}>
-                        <Link style={LinkStyle} to={ROUTES.HOME} onDragStart={this.preventDraggingOfItem}>
-                            <Logo />
-                        </Link>
-                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.HOME} exact onDragStart={this.preventDraggingOfItem}>
-                            Home
-                        </NavLink>
-                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.ONTOLOGY} onDragStart={this.preventDraggingOfItem}>
-                            Management & Visualization
-                        </NavLink>
-                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.WEBPROTEGE} onDragStart={this.preventDraggingOfItem}>
-                            WebProtege
-                        </NavLink>
-                        {/*<NavLink activeClassName="active" style={LinkStyle} to={ROUTES.DigitalReferenceDocumentation} onDragStart={this.preventDraggingOfItem}>
-                        DR Specification
-                    </NavLink>*/}
-                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.Documentations} onDragStart={this.preventDraggingOfItem}>
-                            Documentation
-                        </NavLink>
-                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.FAQ} onDragStart={this.preventDraggingOfItem}>
-                            FAQ
-                        </NavLink>
-                        <NavLink activeClassName="active" style={LinkStyle} to={ROUTES.VIEW_MANAGEMENT} onDragStart={this.preventDraggingOfItem}>
-                            Management
-                        </NavLink>
-                    </div>
-                    <div
-                        style={{
-                            color: '#fff',
-                            display: 'flex',
-                            alignItems: 'center',
-                            height: '100%',
-                            cursor: 'pointer',
-                            float: 'right'
-                        }}
-                    >
-                        {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
-                            <div>
-                                <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
-                                <StyledAuthTooltip
-                                    fade={false}
-                                    trigger="click"
-                                    innerClassName="pr-3 pl-3 pt-3 pb-3 clearfix"
-                                    placement="bottom-end"
-                                    isOpen={this.state.userTooltipOpen}
-                                    target="TooltipExample"
-                                    toggle={this.toggleUserTooltip}
-                                    innerRef={this.userPopup}
-                                >
-                                    <Row>
-                                        <div className="col-3 text-center">
-                                            <Link
+                    {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
+                        <div>
+                            <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
+                            <StyledAuthTooltip
+                                fade={false}
+                                trigger="click"
+                                innerClassName="pr-3 pl-3 pt-3 pb-3 clearfix"
+                                placement="bottom-end"
+                                isOpen={this.state.userTooltipOpen}
+                                target="TooltipExample"
+                                toggle={this.toggleUserTooltip}
+                                innerRef={this.userPopup}
+                            >
+                                <Row>
+                                    <div className="col-3 text-center">
+                                        <Link onClick={this.toggleUserTooltip} to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}>
+                                            <StyledGravatar
+                                                className="rounded-circle"
+                                                style={{ border: '3px solid #fff' }}
+                                                md5={this.props.user.gravatarId}
+                                                size={64}
+                                                id="TooltipExample"
+                                            />
+                                        </Link>
+                                    </div>
+                                    <div className="col-9 text-left">
+                                        <span className="ml-1">
+                                            {greeting} {this.props.user.displayName}
+                                        </span>
+                                        <ButtonGroup className="mt-2" size="sm">
+                                            {this.showDashboard()}
+                                            <Button
+                                                color="secondary"
                                                 onClick={this.toggleUserTooltip}
+                                                tag={Link}
                                                 to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
                                             >
-                                                <StyledGravatar
-                                                    className="rounded-circle"
-                                                    style={{ border: '3px solid #fff' }}
-                                                    md5={this.props.user.gravatarId}
-                                                    size={64}
-                                                    id="TooltipExample"
-                                                />
-                                            </Link>
-                                        </div>
-                                        <div className="col-9 text-left">
-                                            <span className="ml-1">
-                                                {greeting} {this.props.user.displayName}
-                                            </span>
-                                            <ButtonGroup className="mt-2" size="sm">
-                                                {this.showDashboard()}
-                                                <Button
-                                                    color="secondary"
-                                                    onClick={this.toggleUserTooltip}
-                                                    tag={Link}
-                                                    to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
-                                                >
-                                                    Profile
-                                                </Button>
-                                                <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.USER_SETTINGS}>
-                                                    Settings
-                                                </Button>
-                                                <Button onClick={this.handleSignOut}>Sign out</Button>
-                                            </ButtonGroup>
-                                        </div>
-                                    </Row>
-                                </StyledAuthTooltip>
-                            </div>
-                        ) : (
-                            <Button
-                                style={{ backgroundColor: '#000000' }}
-                                className="clearfix"
-                                onClick={() => {
-                                    console.log('SING IN ACTION ');
-                                    console.log('location:', this.props.location);
-                                    // push that to the redux state so that the user is rederected to its prev location;
-                                    this.props.openAuthDialog({
-                                        action: 'signin',
-                                        redirectRoute: this.props.location.pathname
-                                    });
-                                }}
-                            >
-                                <Icon className="mr-1" icon={faUser} /> Sign in
-                            </Button>
-                        )}
-                    </div>
-                </Navbar>
+                                                Profile
+                                            </Button>
+                                            <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.USER_SETTINGS}>
+                                                Settings
+                                            </Button>
+                                            <Button onClick={this.handleSignOut}>Sign out</Button>
+                                        </ButtonGroup>
+                                    </div>
+                                </Row>
+                            </StyledAuthTooltip>
+                        </div>
+                    ) : (
+                        <Button
+                            style={{ backgroundColor: '#000000' }}
+                            className="clearfix"
+                            onClick={() => {
+                                console.log('SING IN ACTION ');
+                                console.log('location:', this.props.location);
+                                // push that to the redux state so that the user is rederected to its prev location;
+                                this.props.openAuthDialog({
+                                    action: 'signin',
+                                    redirectRoute: this.props.location.pathname
+                                });
+                            }}
+                        >
+                            <Icon className="mr-1" icon={faUser} /> Sign in
+                        </Button>
+                    )}
+                </div>
                 <SignInModal callback={this.loginCallback} />
-            </StyledTopBar>
+            </div>
         );
     }
 }

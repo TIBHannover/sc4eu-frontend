@@ -3,11 +3,15 @@ import styled from 'styled-components';
 
 import Header from './Header';
 import PropTypes from 'prop-types';
+import SideBar from '../components/SideBar';
+import SideBarLayout from './SideBarLayout';
+import { Button } from 'reactstrap';
 
 export default function DefaultLayout(props) {
     return (
         <StyledBody>
             <div>
+                <SideBarLayout />
                 <Header />
                 <StyledAppContent>{props.children}</StyledAppContent>
             </div>
@@ -28,6 +32,5 @@ const StyledBody = styled.div`
 `;
 
 const StyledAppContent = styled.div`
-    padding-top: 40px;
     height: calc(100vh - 0px);
 `;
