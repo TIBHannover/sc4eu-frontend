@@ -10,6 +10,8 @@ import styled from 'styled-components';
 import { Button } from 'reactstrap';
 import ROUTES from 'constants/routes';
 import { Link } from 'react-router-dom';
+import { redux_navigateOntologyView } from '../redux/actions/rrm_actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 const StyledText = styled.text`
     margin-left: 20px;
@@ -41,18 +43,14 @@ const StyledButton = styled(Button)`
 `;
 
 const SideBar = () => {
-    const [isOpen, setIsOpen] = React.useState(false);
-    const [modeOfOperation, setmodeOfOperation] = React.useState('hybrid');
+    const modeOfOperations = useSelector(state => state.ResourceRelationModelReducer.modeOfOperation);
     const [isOntologyVisible, setIsOntologyVisible] = React.useState(false);
     const [isModeOfOperationVisible, setIsModeOfOperationVisible] = React.useState(false);
-    const toggleDrawer = () => {
-        setIsOpen(prevState => !prevState);
-    };
+
+    const counter = useDispatch();
 
     const selectModeOfOperation = val => {
-        setmodeOfOperation(val);
-        console.log(val);
-        console.log(modeOfOperation);
+        counter(redux_navigateOntologyView(val));
     };
 
     return (
@@ -75,15 +73,15 @@ const SideBar = () => {
                     </StyledButton>
                     {isModeOfOperationVisible === false ? (
                         <div style={{ marginLeft: '30px' }}>
-                            <StyledButton size="lg" title="Open Manu">
+                            <StyledButton style={{ backgroundColor: modeOfOperations === 'hybrid' ? '#90c8ac' : null }} size="lg" title="Open Manu">
                                 <Icon icon={faBrain} />
                                 <StyledLink onClick={() => selectModeOfOperation('hybrid')}>Hybrid</StyledLink>
                             </StyledButton>
-                            <StyledButton size="lg" title="Open Manu">
+                            <StyledButton style={{ backgroundColor: modeOfOperations === 'graph' ? '#90c8ac' : null }} size="lg" title="Open Manu">
                                 <Icon icon={faProjectDiagram} />
                                 <StyledLink onClick={() => selectModeOfOperation('graph')}>Graph</StyledLink>
                             </StyledButton>
-                            <StyledButton size="lg" title="Open Manu">
+                            <StyledButton style={{ backgroundColor: modeOfOperations === 'text' ? '#90c8ac' : null }} size="lg" title="Open Manu">
                                 <Icon icon={faAlignJustify} />
                                 <StyledLink onClick={() => selectModeOfOperation('text')}>Text</StyledLink>
                             </StyledButton>
@@ -99,7 +97,7 @@ const SideBar = () => {
             </StyledButton>
 
             <StyledButton size="lg" title="Open Manu">
-                <Icon icon={faBook} onClick={toggleDrawer} />
+                <Icon icon={faBook} />
                 <StyledLink to={ROUTES.Documentations}>Documentation</StyledLink>
             </StyledButton>
 

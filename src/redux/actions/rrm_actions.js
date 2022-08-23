@@ -70,3 +70,10 @@ export const redux_editMetaInfo = payload => dispatch => {
         payload: payload
     });
 };
+
+export const redux_navigateOntologyView = payload => dispatch => {
+    dispatch({
+        type: type.NAVIGATE_ONTOLOGY_VIEW,
+        payload: payload
+    });
+};

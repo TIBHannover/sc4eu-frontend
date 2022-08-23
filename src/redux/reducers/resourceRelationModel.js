@@ -4,7 +4,8 @@ const initialState = {
     originalModel: null, // this is the json we get from backend
     resources: null,
     relations: null,
-    metaInformation: null
+    metaInformation: null,
+    modeOfOperation: 'hybrid'
 };
 
 export default (state = initialState, action) => {
@@ -80,6 +81,12 @@ export default (state = initialState, action) => {
                 ...state,
                 metaInformation: { ...state.metaInformation, ...action.payload }
             };
+        }
+
+        case type.NAVIGATE_ONTOLOGY_VIEW: {
+            const newState = Object.assign({}, state, { modeOfOperation: action.payload });
+            console.log(newState);
+            return newState;
         }
 
         default: {

@@ -79,54 +79,54 @@ class ViewOntology extends Component {
     render() {
         return (
             <div style={{ height: '100%' }}>
-                {this.state.isLoading === false && (
-                    <div style={{ display: 'flex', paddingTop: '5px', paddingLeft: '5px' }}>
-                        <Tippy content="View hybrid modes of operations">
-                            <span>
-                                <Button
-                                    color={this.state.modeOfOperation === 'hybrid' ? 'primary' : 'secondary'}
-                                    size="sm"
-                                    className="mr-1"
-                                    onClick={() => this.selectModeOfOperation('hybrid')}
-                                >
-                                    <Icon icon={faBrain} />
-                                </Button>
-                            </span>
-                        </Tippy>
-                        {/*TEXT VIEW*/}
-                        <Tippy content="View ontology as TTL file">
-                            <span>
-                                <Button
-                                    color={this.state.modeOfOperation === 'text' ? 'primary' : 'secondary'}
-                                    size="sm"
-                                    className="mr-1"
-                                    onClick={() => this.selectModeOfOperation('text')}
-                                >
-                                    <Icon icon={faAlignJustify} />
-                                </Button>
-                            </span>
-                        </Tippy>
-                        <Tippy content="Graph Visualization">
-                            <span>
-                                <Button
-                                    color={this.state.modeOfOperation === 'graph' ? 'primary' : 'secondary'}
-                                    size="sm"
-                                    className="mr-1"
-                                    onClick={() => this.selectModeOfOperation('graph')}
-                                >
-                                    <Icon icon={faProjectDiagram} />
-                                </Button>
-                            </span>
-                        </Tippy>
-                        <Tippy content="Download ontology as TTL file (not implemented yet)">
-                            <span style={{ position: 'absolute', right: '5px' }}>
-                                <Button size="sm" disabled={true}>
-                                    <Icon icon={faDownload} />
-                                </Button>
-                            </span>
-                        </Tippy>
-                    </div>
-                )}
+                {/*{this.state.isLoading === false && (*/}
+                {/*    <div style={{ display: 'flex', paddingTop: '5px', paddingLeft: '5px', marginTop: '40px' }}>*/}
+                {/*        <Tippy content="View hybrid modes of operations">*/}
+                {/*            <span>*/}
+                {/*                <Button*/}
+                {/*                    color={this.state.modeOfOperation === 'hybrid' ? 'primary' : 'secondary'}*/}
+                {/*                    size="sm"*/}
+                {/*                    className="mr-1"*/}
+                {/*                    onClick={() => this.selectModeOfOperation('hybrid')}*/}
+                {/*                >*/}
+                {/*                    <Icon icon={faBrain} />*/}
+                {/*                </Button>*/}
+                {/*            </span>*/}
+                {/*        </Tippy>*/}
+                {/*        TEXT VIEW*/}
+                {/*        <Tippy content="View ontology as TTL file">*/}
+                {/*            <span>*/}
+                {/*                <Button*/}
+                {/*                    color={this.state.modeOfOperation === 'text' ? 'primary' : 'secondary'}*/}
+                {/*                    size="sm"*/}
+                {/*                    className="mr-1"*/}
+                {/*                    onClick={() => this.selectModeOfOperation('text')}*/}
+                {/*                >*/}
+                {/*                    <Icon icon={faAlignJustify} />*/}
+                {/*                </Button>*/}
+                {/*            </span>*/}
+                {/*        </Tippy>*/}
+                {/*        <Tippy content="Graph Visualization">*/}
+                {/*            <span>*/}
+                {/*                <Button*/}
+                {/*                    color={this.state.modeOfOperation === 'graph' ? 'primary' : 'secondary'}*/}
+                {/*                    size="sm"*/}
+                {/*                    className="mr-1"*/}
+                {/*                    onClick={() => this.selectModeOfOperation('graph')}*/}
+                {/*                >*/}
+                {/*                    <Icon icon={faProjectDiagram} />*/}
+                {/*                </Button>*/}
+                {/*            </span>*/}
+                {/*        </Tippy>*/}
+                {/*        <Tippy content="Download ontology as TTL file (not implemented yet)">*/}
+                {/*            <span style={{ position: 'absolute', right: '5px' }}>*/}
+                {/*                <Button size="sm" disabled={true}>*/}
+                {/*                    <Icon icon={faDownload} />*/}
+                {/*                </Button>*/}
+                {/*            </span>*/}
+                {/*        </Tippy>*/}
+                {/*    </div>*/}
+                {/*)}*/}
 
                 <div className="pl-1 pr-1">
                     {this.state.isLoading === true && (
@@ -140,14 +140,14 @@ class ViewOntology extends Component {
                         </div>
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'hybrid' && (
+                    {this.state.isLoading === false && this.state.error === false && this.props.modeOfOperation === 'hybrid' && (
                         <OntologyViewRoot toggleLeftSideExpanded={this.setLeftSideExpanded} toggleRightSideExpanded={this.setRightSideExpanded} />
                     )}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'text' && <OntologyViewAsTTL />}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'graph' && (
-                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperation === 'graph'} />
+                    {this.state.isLoading === false && this.state.error === false && this.props.modeOfOperation === 'text' && <OntologyViewAsTTL />}
+                    {this.state.isLoading === false && this.state.error === false && this.props.modeOfOperation === 'graph' && (
+                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.props.modeOfOperation === 'graph'} />
                     )}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'playground' && <PlayGroundUI />}
+                    {/*{this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'playground' && <PlayGroundUI />}*/}
                 </div>
             </div>
         );
@@ -158,14 +158,16 @@ const mapStateToProps = state => {
     return {
         user: state.auth.user,
         rrModel: state.ResourceRelationModelReducer,
-        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges
+        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges,
+        modeOfOperation: state.ResourceRelationModelReducer.modeOfOperation
     };
 };
 
 ViewOntology.propTypes = {
     ontologyId: PropTypes.string.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
-    ui_tab_selectorChanges: PropTypes.bool.isRequired
+    ui_tab_selectorChanges: PropTypes.bool.isRequired,
+    modeOfOperation: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
