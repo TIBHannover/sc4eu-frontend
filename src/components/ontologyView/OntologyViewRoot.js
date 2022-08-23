@@ -82,23 +82,10 @@ class OntologyViewRoot extends Component {
     renderControls() {
         return (
             // TODO: make better ui layout
-            <div style={{ marginTop: '-25px' }}>
-                <div
-                    style={{
-                        display: 'flex',
-                        width: 'auto',
-                        marginLeft: '200px',
-                        marginRight: '50px',
-                        paddingLeft: '10px',
-                        paddingRight: '10px',
-                        background: 'white',
-                        border: '1px solid #ccc',
-                        position: 'relative',
-                        top: '-6px',
-                        height: '32px'
-                    }}
-                >
+            <div style={{ marginBottom: '10px' }}>
+                <div>
                     <ControlButton
+                        color={'primary'}
                         onClick={() => {
                             // emit this as signal;
                             this.props.expandAllBodies({
@@ -109,14 +96,6 @@ class OntologyViewRoot extends Component {
                     >
                         {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all bodies
                     </ControlButton>
-                    {/*Temporarily disabling default layout*/}
-                    {/*                    <ControlButton
-                        onClick={() => {
-                            this.setState({ experimentalLayout: !this.state.experimentalLayout });
-                        }}
-                    >
-                        Use {this.state.experimentalLayout ? 'default' : 'experimental'} layout
-                    </ControlButton>*/}
                 </div>
             </div>
         );
@@ -124,22 +103,20 @@ class OntologyViewRoot extends Component {
 
     render() {
         return (
-            <>
+            <div>
                 {this.renderControls()}
-
-                <div id="mainWidgetContainer" style={{ display: 'flex', marginTop: '5px', zIndex: 150, height: 'calc(100vh - 95px)' }}>
-                    <MainWidget title="main" experimentalLayout={this.state.experimentalLayout} />
-                    {/*<LeftSideBar*/}
-                    {/*    project={this.props.project}*/}
-                    {/*    ontologyName={this.props.ontologyName}*/}
-                    {/*    width={this.state.leftSidebarWidth}*/}
-                    {/*    initialState={this.props.leftSideExpanded}*/}
-                    {/*    height={this.state.containerHeight + this.sidebarHeightOffset}*/}
-                    {/*    title="Ontology Meta Information"*/}
-                    {/*    // loading={this.props.loading}*/}
-                    {/*    updateEvent={this.leftSideBarUpdateEvent}*/}
-                    {/*/>*/}
-                    {/*<RightSideBar
+                <MainWidget title="main" experimentalLayout={this.state.experimentalLayout} />
+                {/*<LeftSideBar*/}
+                {/*    project={this.props.project}*/}
+                {/*    ontologyName={this.props.ontologyName}*/}
+                {/*    width={this.state.leftSidebarWidth}*/}
+                {/*    initialState={this.props.leftSideExpanded}*/}
+                {/*    height={this.state.containerHeight + this.sidebarHeightOffset}*/}
+                {/*    title="Ontology Meta Information"*/}
+                {/*    // loading={this.props.loading}*/}
+                {/*    updateEvent={this.leftSideBarUpdateEvent}*/}
+                {/*/>*/}
+                {/*<RightSideBar
                         width={this.state.rightSidebarWidth}
                         initialState={this.props.rightSideExpanded}
                         height={this.state.containerHeight + this.sidebarHeightOffset}
@@ -147,8 +124,7 @@ class OntologyViewRoot extends Component {
                         updateEvent={this.rightSideBarUpdateEvent}
                         heightUpdateEvent={this.updateMainWidgetSize}
                     />*/}
-                </div>
-            </>
+            </div>
         );
     }
 }
@@ -172,16 +148,15 @@ OntologyViewRoot.propTypes = {
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);
 
 const ControlButton = styled(Button)`
-    border-radius: 10px 10px;
-    // border: 1px solid black;
+    border-radius: 5px 5px;
     padding: 0;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: -5px;
-    height: 25px;
+    height: 40px;
     margin-top: 2px;
     margin-right: 3px;
-    font-size: 12px;
+    font-size: 16px;
     color: white;
     :focus {
         outline: none;

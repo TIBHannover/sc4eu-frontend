@@ -10,14 +10,6 @@ import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 
 export default class OntologyIndexCards extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            shown: false
-        };
-    }
-
     componentDidMount() {
         window.localStorage.clear();
     }
@@ -52,7 +44,7 @@ export default class OntologyIndexCards extends Component {
     };
 
     onclick = () => {
-        this.props.getSelectedOntology({ shown: true, ontologyId: this.props.inputData.uuid });
+        this.props.getSelectedOntology({ isOntologyVisible: true, ontologyId: this.props.inputData.uuid });
     };
 
     render() {

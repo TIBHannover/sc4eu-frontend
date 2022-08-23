@@ -43,8 +43,6 @@ export default class MainViewWidget extends Component {
 
     getOntologiesFromBackend = () => {
         console.log('fetching ontologies from backend', this.state.selectedProject);
-        // TODO : this component will need a connection to the redux state for the users;
-        // TODO: check if the current user is allowed to view ontologies for this project
         getAllOntologies(this.state.selectedProject.uuid).then(res => {
             //There is a chance that the project do not have any ontologies.
             if (res.ontologyIndex === 'Undefined') {
@@ -100,7 +98,8 @@ export default class MainViewWidget extends Component {
                 fullWidth={this.props.fullWidth}
                 style={{
                     height: this.props.height + 'px',
-                    position: 'relative'
+                    position: 'relative',
+                    overflow: 'auto'
                 }}
             >
                 <div
@@ -132,12 +131,14 @@ export default class MainViewWidget extends Component {
                         </div>
                     ) : this.state.selectedProject ? (
                         <div>
-                            <OntologyIndexInteractions
-                                project_id={this.state.selectedProject.uuid}
-                                reloadAfterUpdate={() => {
-                                    this.reloadAfterUpdate();
-                                }}
-                            />
+                            {this.state.ontologyUploadIsShown === false ? (
+                                <OntologyIndexInteractions
+                                    project_id={this.state.selectedProject.uuid}
+                                    reloadAfterUpdate={() => {
+                                        this.reloadAfterUpdate();
+                                    }}
+                                />
+                            ) : null}
                             <hr className="mt-0 mb-2" />
                             {this.state.results ? (
                                 <OntologyIndexCards

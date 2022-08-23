@@ -343,18 +343,17 @@ class GraphVisUi extends Component {
         }
 
         return (
-            <div style={{ marginTop: '-25px' }}>
+            <div style={{ marginTop: '10px' }}>
                 <div
                     style={{
                         display: 'flex',
                         width: 'auto',
-                        marginLeft: '200px',
+                        marginBottom: '20px',
                         marginRight: '50px',
                         paddingLeft: '10px',
                         paddingRight: '10px',
                         background: '#6c757d',
                         position: 'relative',
-                        top: '-5px',
                         borderTopLeftRadius: '10px',
                         borderTopRightRadius: '10px',
                         height: '35px'

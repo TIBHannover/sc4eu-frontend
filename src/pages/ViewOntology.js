@@ -25,8 +25,7 @@ class ViewOntology extends Component {
             isLoading: true,
             ontologyFileContent: undefined,
             error: false,
-            errorMsg: '',
-            modeOfOperation: 'hybrid'
+            errorMsg: ''
             // Additional states
         };
 
@@ -70,15 +69,10 @@ class ViewOntology extends Component {
             }
         });
     };
-    selectModeOfOperation = val => {
-        this.setState({
-            modeOfOperation: val
-        });
-    };
 
     render() {
         return (
-            <div style={{ height: '100%' }}>
+            <div>
                 {/*{this.state.isLoading === false && (*/}
                 {/*    <div style={{ display: 'flex', paddingTop: '5px', paddingLeft: '5px', marginTop: '40px' }}>*/}
                 {/*        <Tippy content="View hybrid modes of operations">*/}
@@ -167,7 +161,7 @@ ViewOntology.propTypes = {
     ontologyId: PropTypes.string.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
     ui_tab_selectorChanges: PropTypes.bool.isRequired,
-    modeOfOperation: PropTypes.object.isRequired
+    modeOfOperation: PropTypes.string.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({

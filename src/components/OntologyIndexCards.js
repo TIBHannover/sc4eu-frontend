@@ -10,7 +10,7 @@ class OntologyIndexCards extends Component {
         super(props);
 
         this.state = {
-            shown: false,
+            isOntologyVisible: false,
             ontologyUUID: ''
         };
     }
@@ -19,8 +19,9 @@ class OntologyIndexCards extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     getSelectedOntology = param => {
-        this.setState({ shown: param.shown });
+        this.setState({ isOntologyVisible: param.isOntologyVisible });
         this.setState({ ontologyUUID: param.ontologyId });
+        this.props.ontologyUploadIsShownCallback(param.isOntologyVisible);
     };
 
     renderOntologyCards() {
@@ -35,7 +36,7 @@ class OntologyIndexCards extends Component {
             //  render the cards;
             return (
                 <div>
-                    {this.state.shown === false ? (
+                    {this.state.isOntologyVisible === false ? (
                         this.props.ontologies.map((item, index) => (
                             <div>
                                 <OntologyCard
@@ -71,7 +72,8 @@ class OntologyIndexCards extends Component {
 OntologyIndexCards.propTypes = {
     project: PropTypes.object.isRequired,
     ontologies: PropTypes.array.isRequired,
-    reloadAfterDelete: PropTypes.func.isRequired
+    reloadAfterDelete: PropTypes.func.isRequired,
+    ontologyUploadIsShownCallback: PropTypes.func.isRequired
 };
 
 export default withCookies(OntologyIndexCards);
