@@ -3,12 +3,14 @@ import styled from 'styled-components';
 
 import Header from './Header';
 import PropTypes from 'prop-types';
+import SideBarLayout from './SideBarLayout';
 
 export default function DefaultLayout(props) {
     return (
         <StyledBody>
             <div>
-                <Header />
+                <SideBarLayout />
+                {/*<Header />*/}
                 <StyledAppContent>{props.children}</StyledAppContent>
             </div>
         </StyledBody>
