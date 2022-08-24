@@ -9,18 +9,32 @@ import { faHome, faBook, faQuestion, faAlignJustify, faBrain, faProjectDiagram, 
 import styled from 'styled-components';
 import { Button } from 'reactstrap';
 import ROUTES from 'constants/routes';
-import { Link } from 'react-router-dom';
-import { redux_navigateOntologyView } from '../redux/actions/rrm_actions';
+import { Link, NavLink } from 'react-router-dom';
+import { redux_navigateOntologyView, redux_OntologyTabIsVisible } from '../redux/actions/rrm_actions';
 import { useDispatch, useSelector } from 'react-redux';
+// import '../assets/scss/CustomBootstrap.scss';
 
 const StyledText = styled.text`
     margin-left: 20px;
 `;
-const StyledLink = styled(Link)`
-    margin-left: 20px;
+const StyledLink = styled(NavLink)`
+    width: 100%;
+    height: 50px;
+    display: inline-block;
+    border-radius: 4px;
+    padding: 10px;
+    border: 1px;
+    background: transparent;
     color: black;
-    width: 100vw;
-    height: 100vh;
+    text-decoration: none;
+    text-decoration: none !important;
+    font-size: 20px;
+    :hover {
+        background-color: #90c8ac;
+        color: black;
+        text-color: black;
+        padding: 11px;
+    }
 `;
 
 const StyledHr = styled.hr`
@@ -34,56 +48,95 @@ const StyledButton = styled(Button)`
     height: 50px;
     text-align: left;
     text-color: black;
+    font-size: 20px;
     color: black;
     background-color: transparent;
     border: none;
     :hover {
         background-color: #90c8ac;
+        color: black;
+        text-color: black;
     }
 `;
 
 const SideBar = () => {
     const modeOfOperations = useSelector(state => state.ResourceRelationModelReducer.modeOfOperation);
-    const [isOntologyVisible, setIsOntologyVisible] = React.useState(false);
-    const [isModeOfOperationVisible, setIsModeOfOperationVisible] = React.useState(false);
+    const OntologyTabIsVisible = useSelector(state => state.ResourceRelationModelReducer.OntologyTabAndOptionIsVisible);
+    const modeOfOperationsDispatch = useDispatch();
 
-    const counter = useDispatch();
+    const handleClick = event => {
+        modeOfOperationsDispatch(redux_OntologyTabIsVisible({ OntologyTabIsVisible: false, ontologyViewOptionIsVisible: false }));
+    };
 
     const selectModeOfOperation = val => {
-        counter(redux_navigateOntologyView(val));
+        modeOfOperationsDispatch(redux_navigateOntologyView(val));
     };
 
     return (
         <div style={{ background: '#5f7c9d' }}>
-            <StyledButton size="lg" title="Go Home">
+            {/*<StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to="adw">*/}
+            {/*    <Icon icon={faHome} />*/}
+            {/*    <StyledText>Home</StyledText>*/}
+            {/*</StyledLink>*/}
+            <StyledLink exact activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} onClick={handleClick} size="lg" activeClassName="active">
                 <Icon icon={faHome} />
-                <StyledLink to={ROUTES.HOME}>Home</StyledLink>
-            </StyledButton>
+                <StyledText>Home</StyledText>
+            </StyledLink>
             <StyledHr />
             <StyledText>Management & Visualization</StyledText>
-            <StyledButton size="lg" title="Open Manu">
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.VIEW_MANAGEMENT} onClick={handleClick}>
                 <Icon icon={faHome} />
-                <StyledLink to={ROUTES.VIEW_MANAGEMENT}>Projects</StyledLink>
-            </StyledButton>
-            {isOntologyVisible === false ? (
+                <StyledText>Projects</StyledText>
+            </StyledLink>
+            {OntologyTabIsVisible.OntologyTabIsVisible === true ? (
                 <div style={{ marginLeft: '30px' }}>
-                    <StyledButton size="lg" title="Open Manu">
+                    <StyledLink
+                        to={''}
+                        style={{
+                            backgroundColor: OntologyTabIsVisible.OntologyTabIsVisible === true ? '#90c8ac' : null,
+                            marginTop: '5px',
+                            marginBottom: '5px'
+                        }}
+                        size="lg"
+                        title="Open Manu"
+                    >
                         <Icon icon={faHome} />
                         <StyledText>Ontologies</StyledText>
-                    </StyledButton>
-                    {isModeOfOperationVisible === false ? (
+                    </StyledLink>
+                    {OntologyTabIsVisible.ontologyViewOptionIsVisible === true ? (
                         <div style={{ marginLeft: '30px' }}>
-                            <StyledButton style={{ backgroundColor: modeOfOperations === 'hybrid' ? '#90c8ac' : null }} size="lg" title="Open Manu">
+                            <StyledLink
+                                style={{
+                                    backgroundColor: modeOfOperations === 'hybrid' ? '#90c8ac' : null,
+                                    color: modeOfOperations === 'hybrid' ? 'black' : ''
+                                }}
+                                size="lg"
+                                title="Open Manu"
+                            >
                                 <Icon icon={faBrain} />
-                                <StyledLink onClick={() => selectModeOfOperation('hybrid')}>Hybrid</StyledLink>
-                            </StyledButton>
-                            <StyledButton style={{ backgroundColor: modeOfOperations === 'graph' ? '#90c8ac' : null }} size="lg" title="Open Manu">
+                                <StyledText onClick={() => selectModeOfOperation('hybrid')}>Hybrid</StyledText>
+                            </StyledLink>
+                            <StyledButton
+                                style={{
+                                    backgroundColor: modeOfOperations === 'graph' ? '#90c8ac' : null,
+                                    color: modeOfOperations === 'graph' ? 'black' : ''
+                                }}
+                                size="lg"
+                                title="Open Manu"
+                            >
                                 <Icon icon={faProjectDiagram} />
-                                <StyledLink onClick={() => selectModeOfOperation('graph')}>Graph</StyledLink>
+                                <StyledText onClick={() => selectModeOfOperation('graph')}>Graph</StyledText>
                             </StyledButton>
-                            <StyledButton style={{ backgroundColor: modeOfOperations === 'text' ? '#90c8ac' : null }} size="lg" title="Open Manu">
+                            <StyledButton
+                                style={{
+                                    backgroundColor: modeOfOperations === 'text' ? '#90c8ac' : null,
+                                    color: modeOfOperations === 'text' ? 'black' : ''
+                                }}
+                                size="lg"
+                                title="Open Manu"
+                            >
                                 <Icon icon={faAlignJustify} />
-                                <StyledLink onClick={() => selectModeOfOperation('text')}>Text</StyledLink>
+                                <StyledText onClick={() => selectModeOfOperation('text')}>Text</StyledText>
                             </StyledButton>
                         </div>
                     ) : null}
@@ -91,32 +144,31 @@ const SideBar = () => {
             ) : null}
             <StyledHr />
             <StyledText>Editing & Documentation</StyledText>
-            <StyledButton size="lg" title="Open Manu">
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.WEBPROTEGE} onClick={handleClick}>
                 <Icon icon={faHome} />
-                <StyledLink to={ROUTES.WEBPROTEGE}>WebProtege</StyledLink>
-            </StyledButton>
-
-            <StyledButton size="lg" title="Open Manu">
+                <StyledText>WebProtege</StyledText>
+            </StyledLink>
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Documentations} onClick={handleClick}>
                 <Icon icon={faBook} />
-                <StyledLink to={ROUTES.Documentations}>Documentation</StyledLink>
-            </StyledButton>
-
+                <StyledText>Documentation</StyledText>
+            </StyledLink>
             <StyledHr />
             <StyledText>General & About</StyledText>
-            <StyledButton size="lg" title="Open Manu">
-                <Icon icon={faHome} />
-                <StyledLink to={ROUTES.Dataprotections}>Data Policy</StyledLink>
-            </StyledButton>
 
-            <StyledButton size="lg" title="Open Manu">
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Dataprotections} onClick={handleClick}>
                 <Icon icon={faHome} />
-                <StyledLink to={ROUTES.Imprint}>Imprint</StyledLink>
-            </StyledButton>
+                <StyledText>Data Policy</StyledText>
+            </StyledLink>
 
-            <StyledButton size="lg" title="Open Manu">
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Imprint} onClick={handleClick}>
+                <Icon icon={faHome} />
+                <StyledText>Imprint</StyledText>
+            </StyledLink>
+
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.FAQ} onClick={handleClick}>
                 <Icon icon={faQuestion} />
-                <StyledLink to={ROUTES.FAQ}>FAQ</StyledLink>
-            </StyledButton>
+                <StyledText>FAQ</StyledText>
+            </StyledLink>
         </div>
     );
 };

@@ -77,3 +77,10 @@ export const redux_navigateOntologyView = payload => dispatch => {
         payload: payload
     });
 };
+
+export const redux_OntologyTabIsVisible = payload => dispatch => {
+    dispatch({
+        type: type.ONTOLOGY_TAB_ISVISIBLE,
+        payload: payload
+    });
+};

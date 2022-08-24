@@ -5,7 +5,8 @@ const initialState = {
     resources: null,
     relations: null,
     metaInformation: null,
-    modeOfOperation: 'hybrid'
+    modeOfOperation: 'hybrid',
+    OntologyTabAndOptionIsVisible: { OntologyTabIsVisible: false, ontologyViewOptionIsVisible: false }
 };
 
 export default (state = initialState, action) => {
@@ -85,7 +86,11 @@ export default (state = initialState, action) => {
 
         case type.NAVIGATE_ONTOLOGY_VIEW: {
             const newState = Object.assign({}, state, { modeOfOperation: action.payload });
-            console.log(newState);
+            return newState;
+        }
+
+        case type.ONTOLOGY_TAB_ISVISIBLE: {
+            const newState = Object.assign({}, state, { OntologyTabAndOptionIsVisible: action.payload });
             return newState;
         }
 

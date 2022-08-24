@@ -126,7 +126,7 @@ class Header extends Component {
         const greeting = greetingTime(new Date());
 
         return (
-            <div>
+            <div style={{ borderBottom: '1px solid black' }}>
                 <div
                     style={{
                         color: '#fff',
