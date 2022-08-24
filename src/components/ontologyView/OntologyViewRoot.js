@@ -18,7 +18,7 @@ class OntologyViewRoot extends Component {
             oldMainWidgetWidth: 500,
             newMainWidgetWidth: 500,
             windowWidth: 500,
-            mainWidgetHeight: 200,
+            mainWidgetHeight: 180,
             componentInitialized: false,
             oldLeftSideState: this.props.leftSideExpanded,
             leftSidebarWidth: 400,
@@ -131,43 +131,19 @@ class OntologyViewRoot extends Component {
 
     renderControls() {
         return (
-            // TODO: make better ui layout
-            <div style={{ marginTop: '-25px' }}>
-                <div
-                    style={{
-                        display: 'flex',
-                        width: 'auto',
-                        marginLeft: '200px',
-                        marginRight: '50px',
-                        paddingLeft: '10px',
-                        paddingRight: '10px',
-                        background: 'white',
-                        border: '1px solid #ccc',
-                        position: 'relative',
-                        top: '-6px',
-                        height: '32px'
+            <div style={{ margin: '5px 0 5px 460px' }}>
+                <ControlButton
+                    color={'primary'}
+                    onClick={() => {
+                        // emit this as signal;
+                        this.props.expandAllBodies({
+                            ui_all_resource_bodies_expanded: !this.props.globalUIReducer.ui_all_resource_bodies_expanded,
+                            ui_all_relation_bodies_expanded: !this.props.globalUIReducer.ui_all_relation_bodies_expanded
+                        });
                     }}
                 >
-                    <ControlButton
-                        onClick={() => {
-                            // emit this as signal;
-                            this.props.expandAllBodies({
-                                ui_all_resource_bodies_expanded: !this.props.globalUIReducer.ui_all_resource_bodies_expanded,
-                                ui_all_relation_bodies_expanded: !this.props.globalUIReducer.ui_all_relation_bodies_expanded
-                            });
-                        }}
-                    >
-                        {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all bodies
-                    </ControlButton>
-                    {/*Temporarily disabling default layout*/}
-                    {/*                    <ControlButton
-                        onClick={() => {
-                            this.setState({ experimentalLayout: !this.state.experimentalLayout });
-                        }}
-                    >
-                        Use {this.state.experimentalLayout ? 'default' : 'experimental'} layout
-                    </ControlButton>*/}
-                </div>
+                    {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all bodies
+                </ControlButton>
             </div>
         );
     }
@@ -177,7 +153,7 @@ class OntologyViewRoot extends Component {
             <>
                 {this.renderControls()}
 
-                <div id="mainWidgetContainer" style={{ display: 'flex', marginTop: '5px', zIndex: 150, height: 'calc(100vh - 95px)' }}>
+                <div id="mainWidgetContainer" style={{ display: 'flex', marginTop: '5px', zIndex: 150, height: 'calc(100vh - 130px)' }}>
                     <MainWidget
                         ref={this._refMainWidget}
                         leftSideBarExpanded={this.state.leftSidebarExpanded}
@@ -241,16 +217,15 @@ OntologyViewRoot.propTypes = {
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);
 
 const ControlButton = styled(Button)`
-    border-radius: 10px 10px;
-    // border: 1px solid black;
+    border-radius: 5px 5px;
     padding: 0;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: -5px;
-    height: 25px;
+    height: 40px;
     margin-top: 2px;
     margin-right: 3px;
-    font-size: 12px;
+    font-size: 16px;
     color: white;
     :focus {
         outline: none;
