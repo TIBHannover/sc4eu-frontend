@@ -30,5 +30,5 @@ const StyledBody = styled.div`
 `;
 
 const StyledAppContent = styled.div`
-    height: calc(100vh - 0px);
+    height: calc(100vh - 60px);
 `;

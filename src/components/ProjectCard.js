@@ -19,8 +19,10 @@ import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
+import { redux_OntologyTabIsVisible } from '../redux/actions/rrm_actions';
+import { connect } from 'react-redux';
 
-export default class ProjectIndexCards extends Component {
+class ProjectIndexCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -80,6 +82,7 @@ export default class ProjectIndexCards extends Component {
         } else {
             alert('This is Private Project You can not open it');
         }
+        this.props.redux_OntologyTabIsVisible({ OntologyTabIsVisible: true, ontologyViewOptionIsVisible: false });
     };
 
     toggleProjectBody = event => {
@@ -153,7 +156,7 @@ export default class ProjectIndexCards extends Component {
                             )}
                         </div>
                         <StyledLink
-                            to={reverse(ROUTES.ONTOLOGY)}
+                            to={reverse(ROUTES.VIEW_MANAGEMENT)}
                             onClick={this.showOntologies}
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
@@ -177,8 +180,15 @@ export default class ProjectIndexCards extends Component {
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    updateHeaderValueCallback: PropTypes.func.isRequired
+    updateHeaderValueCallback: PropTypes.func.isRequired,
+    redux_OntologyTabIsVisible: PropTypes.func.isRequired
 };
+
+const mapDispatchToProps = dispatch => ({
+    redux_OntologyTabIsVisible: data => dispatch(redux_OntologyTabIsVisible(data))
+});
+
+export default connect(null, mapDispatchToProps)(ProjectIndexCards);
 
 const StyledButton = styled(Button)`
     :hover {
