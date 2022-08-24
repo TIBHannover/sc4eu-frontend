@@ -10,7 +10,7 @@ export default function DefaultLayout(props) {
         <StyledBody>
             <div>
                 <SideBarLayout />
-                {/*<Header />*/}
+                <Header />
                 <StyledAppContent>{props.children}</StyledAppContent>
             </div>
         </StyledBody>
@@ -30,6 +30,5 @@ const StyledBody = styled.div`
 `;
 
 const StyledAppContent = styled.div`
-    padding-top: 40px;
     height: calc(100vh - 0px);
 `;
