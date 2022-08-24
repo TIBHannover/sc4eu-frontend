@@ -77,71 +77,56 @@ export default class OntologyIndexing extends Component {
     render() {
         return (
             <>
-                <ProjectsSideBar
-                    width={this.state.leftSidebarWidth}
-                    initialState={true}
-                    height={this.state.containerHeight - 40}
-                    title="Projects"
-                    updateHeaderValueCallback={params => {
-                        this.updateHeaderValue(params);
-                    }}
-                />
                 <Container
-                    className="box pt-2 pb-2 pl-0 pr-0"
                     style={{
                         backgroundColor: 'white',
                         border: '1px solid black',
                         borderTop: 'none',
                         overflow: 'auto',
-                        float: 'left',
                         position: 'relative'
                     }}
                 >
-                    <h2
-                        className="noSelect pl-3 pr-3 pb-3"
-                        style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center' }}
-                        title={this.state.headerValue}
-                    >
-                        {this.state.headerValue}
-                    </h2>
-                    <hr className="mt-0 mb-2" />
-                    <div className="pl-1 pr-1">
-                        {this.state.isLoading ? (
-                            <div className="text-center text-primary mt-4 mb-4">
-                                {/*using a manual fixed scale value for the spinner scale! */}
-
-                                <h2 className="h5">
-                                    <span>
-                                        <Icon icon={faSpinner} spin />
-                                    </span>{' '}
-                                    Loading
-                                </h2>
-                            </div>
-                        ) : this.state.selectedProject ? (
-                            <div>
-                                <OntologyIndexInteractions
-                                    project_id={this.state.selectedProject.uuid}
-                                    reloadAfterUpdate={() => {
-                                        this.reloadAfterUpdate();
+                    {!this.state.selectedProject ? (
+                        <ProjectsSideBar
+                            title="Projects"
+                            updateHeaderValueCallback={params => {
+                                this.updateHeaderValue(params);
+                            }}
+                        />
+                    ) : this.state.isLoading ? (
+                        <div className="text-center text-primary mt-4 mb-4">
+                            {/*using a manual fixed scale value for the spinner scale! */}
+                            <h2 className="h5">
+                                <span>
+                                    <Icon icon={faSpinner} spin />
+                                </span>{' '}
+                                Loading
+                            </h2>
+                        </div>
+                    ) : this.state.selectedProject ? (
+                        <div>
+                            <OntologyIndexInteractions
+                                project_id={this.state.selectedProject.uuid}
+                                reloadAfterUpdate={() => {
+                                    this.reloadAfterUpdate();
+                                }}
+                            />
+                            <hr className="mt-0 mb-2" />
+                            {this.state.results ? (
+                                <OntologyIndexCards
+                                    project={this.state.selectedProject}
+                                    ontologies={this.state.results}
+                                    reloadAfterDelete={() => {
+                                        this.reloadAfterDelete();
                                     }}
                                 />
-                                <hr className="mt-0 mb-2" />
-                                {this.state.results ? (
-                                    <OntologyIndexCards
-                                        project={this.state.selectedProject}
-                                        ontologies={this.state.results}
-                                        reloadAfterDelete={() => {
-                                            this.reloadAfterDelete();
-                                        }}
-                                    />
-                                ) : (
-                                    <div> No ontologies found in this project </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div />
-                        )}
-                    </div>
+                            ) : (
+                                <div> No ontologies found in this project </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div />
+                    )}
                 </Container>
             </>
         );
