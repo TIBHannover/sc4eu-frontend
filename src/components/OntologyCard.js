@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faUnlockAlt, faCheck, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
@@ -68,9 +68,6 @@ class OntologyIndexCards extends Component {
                         >
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
                                 <div> {this.props.inputData.name} </div>
-                                <div>
-                                    <Icon className="ml-1" icon={faCheck} />
-                                </div>
                                 <Button
                                     color="white"
                                     size="sm"

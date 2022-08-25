@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import 'react-modern-drawer/dist/index.css';
 import {
@@ -10,8 +10,7 @@ import {
     faProjectDiagram,
     faFile,
     faStamp,
-    faShieldAlt,
-    faChartArea
+    faShieldAlt
 } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import { Button } from 'reactstrap';
@@ -20,7 +19,7 @@ import { NavLink } from 'react-router-dom';
 import { redux_navigateOntologyView, redux_OntologyTabIsVisible } from '../redux/actions/rrm_actions';
 import { useDispatch, useSelector } from 'react-redux';
 
-const StyledText = styled.text`
+const StyledText = styled.span`
     margin-left: 20px;
 `;
 const StyledLink = styled(NavLink)`

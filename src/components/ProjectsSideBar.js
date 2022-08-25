@@ -12,7 +12,6 @@ class ProjectsSideBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            expanded: this.props.initialState,
             minHeight: 200,
             title: props.title,
             initialRendering: true,
@@ -116,7 +115,7 @@ this.setState({ expanded: !this.state.expanded });
                     }}
                 />
                 <hr className="mt-0 mb-2" />
-                <div style={{ width: this.props.width - 2, textAlign: 'left', overflowY: 'auto', height: '90vh' }}>
+                <div style={{ textAlign: 'left', overflowY: 'auto', height: '90vh' }}>
                     {this.state.results
                         ? this.state.results.map(item => {
                               //return <div key={item.name}>{item.name}</div>;
@@ -150,9 +149,6 @@ const mapDispatchToProps = dispatch => ({});
 ProjectsSideBar.propTypes = {
     title: PropTypes.string,
     //updateEvent: PropTypes.func.isRequired,
-    initialState: PropTypes.bool.isRequired,
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
     updateHeaderValueCallback: PropTypes.func.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
