@@ -20,8 +20,7 @@ class OntologyViewRoot extends Component {
             windowWidth: 500,
             mainWidgetHeight: 180,
             componentInitialized: false,
-            oldLeftSideState: this.props.leftSideExpanded,
-            leftSidebarWidth: 400,
+            leftSidebarWidth: 200,
             rightSidebarWidth: 400,
 
             experimentalLayout: true
@@ -58,26 +57,6 @@ class OntologyViewRoot extends Component {
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateDimensions);
     }
-
-    leftSideBarUpdateEvent = expanded => {
-        // child provides information about its expand status;
-        //its status is forwarded to the mainWidget which then changes its width and position
-        this.props.toggleLeftSideExpanded(expanded);
-        let result = this.state.windowWidth;
-        if (expanded) {
-            result -= this.state.leftSidebarWidth;
-        }
-        if (this.state.rightSidebarExpanded) {
-            result -= this.state.rightSidebarWidth;
-        }
-
-        this.setState({
-            leftSidebarExpanded: expanded,
-            oldLeftSideState: this.state.leftSidebarExpanded,
-            oldMainWidgetWidth: this.state.newMainWidgetWidth,
-            newMainWidgetWidth: result
-        });
-    };
 
     rightSideBarUpdateEvent = expanded => {
         // child provides information about its expand status;
@@ -121,7 +100,7 @@ class OntologyViewRoot extends Component {
 
     updateMainWidgetSize = () => {
         // get document by ids;
-        const leftSidebarHeight = document.getElementById('LeftSidebarContainer').getBoundingClientRect().height;
+        const leftSidebarHeight = document.getElementById('LeftSidebarContainer');
         //const rightSidebarHeight = document.getElementById('RightSidebarContainer').getBoundingClientRect().height;
         const newHeight = Math.max(leftSidebarHeight);
         if (newHeight !== this.state.mainWidgetHeight) {
@@ -131,7 +110,7 @@ class OntologyViewRoot extends Component {
 
     renderControls() {
         return (
-            <div style={{ margin: '5px 0 5px 460px' }}>
+            <div style={{ margin: '5px 0 5px 270px' }}>
                 <ControlButton
                     color={'primary'}
                     onClick={() => {
@@ -153,31 +132,31 @@ class OntologyViewRoot extends Component {
             <>
                 {this.renderControls()}
 
-                <div id="mainWidgetContainer" style={{ display: 'flex', marginTop: '5px', zIndex: 150, height: 'calc(100vh - 130px)' }}>
+                <div
+                    id="mainWidgetContainer"
+                    style={{ display: 'flex', marginTop: '5px', marginLeft: '200px', zIndex: 150, height: 'calc(100vh - 130px)' }}
+                >
                     <MainWidget
                         ref={this._refMainWidget}
-                        leftSideBarExpanded={this.state.leftSidebarExpanded}
                         rightSideBarExpanded={this.state.rightSidebarExpanded}
-                        leftSidebarWidth={this.state.leftSidebarWidth}
                         rightSidebarWidth={this.state.rightSidebarWidth}
                         oldWidth={this.state.oldMainWidgetWidth}
                         newWidth={this.state.newMainWidgetWidth}
                         fullWidth={this.state.windowWidth}
-                        oldLeftSidebarState={this.state.oldLeftSideState}
                         height={this.state.containerHeight}
                         title="MAIN"
                         experimentalLayout={this.state.experimentalLayout}
                     />
-                    <LeftSideBar
-                        project={this.props.project}
-                        ontologyName={this.props.ontologyName}
-                        width={this.state.leftSidebarWidth}
-                        initialState={this.props.leftSideExpanded}
-                        height={this.state.containerHeight + this.sidebarHeightOffset}
-                        title="Ontology Meta Information"
-                        // loading={this.props.loading}
-                        updateEvent={this.leftSideBarUpdateEvent}
-                    />
+                    {/*<LeftSideBar*/}
+                    {/*    project={this.props.project}*/}
+                    {/*    ontologyName={this.props.ontologyName}*/}
+                    {/*    width={this.state.leftSidebarWidth}*/}
+                    {/*    initialState={this.props.leftSideExpanded}*/}
+                    {/*    height={this.state.containerHeight + this.sidebarHeightOffset}*/}
+                    {/*    title="Ontology Meta Information"*/}
+                    {/*    // loading={this.props.loading}*/}
+                    {/*    updateEvent={this.leftSideBarUpdateEvent}*/}
+                    {/*/>*/}
                     <RightSideBar
                         width={this.state.rightSidebarWidth}
                         project={this.props.project}
@@ -210,7 +189,6 @@ OntologyViewRoot.propTypes = {
     globalUIReducer: PropTypes.object.isRequired,
     leftSideExpanded: PropTypes.bool.isRequired,
     rightSideExpanded: PropTypes.bool.isRequired,
-    toggleLeftSideExpanded: PropTypes.func.isRequired,
     toggleRightSideExpanded: PropTypes.func.isRequired,
     expandAllBodies: PropTypes.func.isRequired
 };
