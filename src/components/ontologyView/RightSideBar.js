@@ -20,7 +20,7 @@ class RightSideBar extends Component {
             collapseMetaInfo: true,
             isEditing: { description: false, title: false, version: false, iri: false },
             openOntology: props.ontologyName,
-            openProject: props.ontologyName
+            openProject: props.project
         };
     }
 

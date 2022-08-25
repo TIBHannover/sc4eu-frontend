@@ -37,12 +37,6 @@ class Footer extends Component {
                         <div className="">
                             <h5 style={{ color: '#777', fontSize: '16px' }}>About the service:</h5>
                         </div>
-                        <div style={{ fontSize: '15px' }}>
-                            <Link to={ROUTES.Imprint}>Imprint</Link>
-                        </div>
-                        <div style={{ fontSize: '15px' }}>
-                            <Link to={ROUTES.Dataprotections}>Data Policy</Link>
-                        </div>
                         <div>
                             <p style={{ fontSize: '13px', color: 'red' }}>
                                 Note : This is a Minimal Viable Product of the SC3 project.

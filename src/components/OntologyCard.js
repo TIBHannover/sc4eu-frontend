@@ -67,9 +67,6 @@ class OntologyIndexCards extends Component {
                             onDragStart={this.preventDraggingOfItem}
                         >
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div>
-                                    <Icon className="mr-1" icon={faUnlockAlt} />
-                                </div>
                                 <div> {this.props.inputData.name} </div>
                                 <div>
                                     <Icon className="ml-1" icon={faCheck} />

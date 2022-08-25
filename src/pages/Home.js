@@ -35,139 +35,90 @@ export default class Home extends Component {
 
         return (
             <div style={{ width: '100%', height: '100%' }}>
-                <div style={{ width: '100%', height: '85%', overflowY: 'scroll', paddingBottom: '40px' }}>
-                    <div style={{ backgroundColor: '#B3E5FC' }}>
-                        <div
-                            style={{
-                                margin: 'auto',
-                                fontSize: '24px',
-                                textAlign: 'center',
-                                paddingTop: '100px',
-                                paddingBottom: '20px',
-                                color: 'black',
-                                fontWeight: 600
-                            }}
-                        >
-                            The Semantically Connencted Semiconductor Supply Chains (SC3) Portal for a collaborative Ontology Development.
-                        </div>
-                        {/*<div style={{ margin: 'auto', fontSize: 'large', textAlign: 'center', color: '#0056b3' }}>*/}
-                        {/*    Please sign in to view or upload an Ontology*/}
-                        {/*</div>*/}
-
-                        {/*                    <Button
-                        color="link"
-                        className="clearfix"
-                        style={{ position: 'relative', left: '48%', paddingTop: '20px' }}
-                        tag={Link}
-                        to={ROUTES.ONTOLOGY}
-                        onClick={() => {
-                            console.log('SING IN ACTION ');
-                        }}
-                    >
-                        <Icon className="mr-1" icon={faUser} /> Sign in
-                    </Button>*/}
-                    </div>
-                    {/* <div>
-                    <div
-                        style={{
-                            backgroundImage: `url(${background})`,
-                            //backgroundSize: '40% 65%',
-                            opacity: '0.2',
-                            width: '100%',
-                            height: '100%',
-                            position: 'fixed',
-                            backgroundPositionX: 'center',
-                            backgroundRepeat: 'no-repeat'
-                        }}
-                    />
+                <div style={{ backgroundColor: '#B3E5FC' }}>
                     <div
                         style={{
                             margin: 'auto',
-                            fontSize: '18px',
+                            fontSize: '24px',
                             textAlign: 'center',
-                            paddingTop: '50px',
-                            paddingBottom: '20px',
-                            marginLeft: '15%',
-                            marginRight: '15%'
+                            paddingTop: '30px',
+                            paddingBottom: '30px',
+                            color: 'black',
+                            fontWeight: 600
                         }}
                     >
-                        The key objective of this platform is to implement data documentation of an actionable ontology-based ecosystem that consists
-                        of a top-level ontology, adapted from existing domain ontologies, and complemented by new ones for other subdomains to ensure
-                        interoperability of data.
+                        The Semantically Connencted Semiconductor Supply Chains (SC3) Portal for a collaborative Ontology Development.
                     </div>
-                </div>*/}
+                </div>
+                <div
+                    style={{
+                        margin: 'auto',
+                        fontSize: '14px',
+                        textAlign: 'center',
+                        paddingTop: '50px',
+                        paddingBottom: '20px',
+                        marginLeft: '15%',
+                        marginRight: '15%',
+                        display: 'flex',
+                        color: 'black'
+                    }}
+                >
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingRight: '20px' }}>
+                        <img src={AboutSC3} width="70" height="70" style={{ alignSelf: 'center' }} />
+                        <h5>About SC3</h5>
+                        <p />
+                        <p style={{ textAlign: 'justify', marginTop: '8px', fontFamily: 'normal', fontSize: '18px' }}>
+                            SC3 establishes a standard language for comprehensive collaboration between humans and machines, as well as all other
+                            partners.The key objective of this platform is to implement data documentation of an actionable ontology-based ecosystem
+                            that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by new ones for other
+                            subdomains to ensure interoperability of data. "Further information about the project you can find on our &nbsp;
+                            <a target="_blank" rel="noopener noreferrer" href="https://sc3-project.automotive.oth-aw.de/">
+                                SC3 webpage
+                            </a>
+                            , on our&nbsp;
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
+                            >
+                                YouTube chanel
+                            </a>
+                            , or&nbsp;
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
+                            >
+                                via LinkedIn.
+                            </a>
+                        </p>
+                    </div>
                     <div
                         style={{
-                            margin: 'auto',
-                            fontSize: '14px',
-                            textAlign: 'center',
-                            paddingTop: '50px',
-                            paddingBottom: '20px',
-                            marginLeft: '15%',
-                            marginRight: '15%',
+                            flex: 1,
                             display: 'flex',
-                            color: 'black'
+                            flexDirection: 'column',
+                            paddingLeft: '10px',
+                            paddingRight: '10px'
                         }}
                     >
-                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingRight: '20px' }}>
-                            <img src={AboutSC3} width="70" height="70" style={{ alignSelf: 'center' }} />
-                            <h5>About SC3</h5>
-                            <p />
-                            <p style={{ textAlign: 'justify', marginTop: '8px', fontFamily: 'normal', fontSize: '18px' }}>
-                                SC3 establishes a standard language for comprehensive collaboration between humans and machines, as well as all other
-                                partners.The key objective of this platform is to implement data documentation of an actionable ontology-based
-                                ecosystem that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by new ones
-                                for other subdomains to ensure interoperability of data. "Further information about the project you can find on our
-                                &nbsp;
-                                <a target="_blank" rel="noopener noreferrer" href="https://sc3-project.automotive.oth-aw.de/">
-                                    SC3 webpage
-                                </a>
-                                , on our&nbsp;
-                                <a
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
-                                >
-                                    YouTube chanel
-                                </a>
-                                , or&nbsp;
-                                <a
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
-                                >
-                                    via LinkedIn.
-                                </a>
-                            </p>
-                        </div>
-                        <div
-                            style={{
-                                flex: 1,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                paddingLeft: '10px',
-                                paddingRight: '10px'
-                            }}
-                        >
-                            <img src={Usecase} width="70" height="70" style={{ alignSelf: 'center' }} />
-                            <h5 style={{ paddingBottom: '10px' }}>What the portal can do for you</h5>
-                            <p style={{ textAlign: 'justify', marginTop: '15px', fontFamily: 'normal', fontSize: '18px' }}>
-                                We identified that the most crucial requirement for ontology development is to serve users' needs from various
-                                audiences with diverse backgrounds and in different contexts. We have therefore introduced several modes of
-                                operations.
-                            </p>
-                            <img src={UserRole} width="100%" height="300" />
-                        </div>
-                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '20px', marginRight: '20px' }}>
-                            <img src={guidance} width="70" height="70" style={{ alignSelf: 'center' }} />
-                            <h5>Framework for collaborative ontology development</h5>
-                            <p style={{ textAlign: 'justify', cursor: 'pointer', fontFamily: 'normal', fontSize: '18px' }}>
-                                {this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 500)}
-                                <span style={{ color: 'blue', fontWeight: 600 }} onClick={this.toggleReadmore}>
-                                    {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
-                                </span>
-                            </p>
-                        </div>
+                        <img src={Usecase} width="70" height="70" style={{ alignSelf: 'center' }} />
+                        <h5 style={{ paddingBottom: '10px' }}>What the portal can do for you</h5>
+                        <p style={{ textAlign: 'justify', marginTop: '15px', fontFamily: 'normal', fontSize: '18px' }}>
+                            We identified that the most crucial requirement for ontology development is to serve users' needs from various audiences
+                            with diverse backgrounds and in different contexts. We have therefore introduced several modes of operations.
+                        </p>
+                        <img src={UserRole} width="100%" height="300" />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '20px', marginRight: '20px' }}>
+                        <img src={guidance} width="70" height="70" style={{ alignSelf: 'center' }} />
+                        <h5>Framework for collaborative ontology development</h5>
+                        <p style={{ textAlign: 'justify', cursor: 'pointer', fontFamily: 'normal', fontSize: '18px' }}>
+                            {this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 500)}
+                            <span style={{ color: 'blue', fontWeight: 600 }} onClick={this.toggleReadmore}>
+                                {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
+                            </span>
+                        </p>
                     </div>
                 </div>
                 <Footer />

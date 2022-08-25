@@ -26,17 +26,18 @@ export default class OntologyIndexInteractions extends Component {
     render() {
         return (
             <div className="pl-1 pr-1 pb-2">
-                <StyledButton
+                <h1 style={{ textAlign: 'center', margin: '10px 0px 10px 0px' }}>Select Ontology</h1>
+                <hr className="mt-0 mb-2" />
+                <Button
+                    style={{ backgroundColor: 'blueviolet', margin: '10px 0px 0px 10px' }}
                     active={true}
                     onClick={() => {
                         console.log('Upload Button Triggered');
                         this.setState({ showUploadModal: true });
                     }}
                 >
-                    Upload
-                </StyledButton>
-                <StyledButton disabled={true}> Filter </StyledButton>
-                <StyledButton disabled={true}> Search </StyledButton>
+                    Add New Ontology
+                </Button>
                 <UploadOntologyModal
                     project_id={this.props.project_id}
                     showDialog={this.state.showUploadModal}

@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import 'react-modern-drawer/dist/index.css';
-import { faHome, faBook, faQuestion, faAlignJustify, faBrain, faProjectDiagram } from '@fortawesome/free-solid-svg-icons';
+import {
+    faHome,
+    faBook,
+    faQuestion,
+    faAlignJustify,
+    faBrain,
+    faProjectDiagram,
+    faFile,
+    faStamp,
+    faShieldAlt,
+    faChartArea
+} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import { Button } from 'reactstrap';
 import ROUTES from 'constants/routes';
@@ -76,11 +87,11 @@ const SideBar = () => {
             <StyledHr />
             <StyledText>Management & Visualization</StyledText>
             <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.ONTOLOGY} onClick={handleClick}>
-                <Icon icon={faHome} />
+                <Icon icon={faFile} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
             {OntologyTabIsVisible.OntologyTabIsVisible === true ? (
-                <div style={{ marginLeft: '30px' }}>
+                <div>
                     <StyledLink
                         to={''}
                         style={{
@@ -147,12 +158,12 @@ const SideBar = () => {
             <StyledText>General & About</StyledText>
 
             <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Dataprotections} onClick={handleClick}>
-                <Icon icon={faHome} />
+                <Icon icon={faShieldAlt} />
                 <StyledText>Data Policy</StyledText>
             </StyledLink>
 
             <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Imprint} onClick={handleClick}>
-                <Icon icon={faHome} />
+                <Icon icon={faStamp} />
                 <StyledText>Imprint</StyledText>
             </StyledLink>
 
