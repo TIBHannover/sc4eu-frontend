@@ -45,6 +45,8 @@ class ViewOntology extends Component {
         if (prevProps.ui_tab_selectorChanges !== this.props.ui_tab_selectorChanges) {
             this.setState({ modeOfOperation: 'hybrid' });
         }
+        console.log(this.props.location);
+        console.log('??????????????????????????????');
     }
 
     /** Functions forwarded to view Root for handling state Updates **/
@@ -77,99 +79,11 @@ class ViewOntology extends Component {
     };
 
     render() {
+        const project = this.props.location.project;
+        const ontologyName = this.props.location.ontologyName;
         // console.log(this.state);
         return (
             <div style={{ height: '100%' }}>
-                {/*{this.state.isLoading === false && (*/}
-                {/*    <div style={{ display: 'flex', paddingTop: '5px', paddingLeft: '5px' }}>*/}
-                {/*        <Tippy content="View hybrid modes of operations">*/}
-                {/*            <span>*/}
-                {/*                <Button*/}
-                {/*                    color={this.state.modeOfOperation === 'hybrid' ? 'primary' : 'secondary'}*/}
-                {/*                    size="sm"*/}
-                {/*                    className="mr-1"*/}
-                {/*                    onClick={() => this.selectModeOfOperation('hybrid')}*/}
-                {/*                >*/}
-                {/*                    <Icon icon={faBrain} />*/}
-                {/*                </Button>*/}
-                {/*            </span>*/}
-                {/*        </Tippy>*/}
-                {/*        /!*TEXT VIEW*!/*/}
-                {/*        <Tippy content="View ontology as TTL file">*/}
-                {/*            <span>*/}
-                {/*                <Button*/}
-                {/*                    color={this.state.modeOfOperation === 'text' ? 'primary' : 'secondary'}*/}
-                {/*                    size="sm"*/}
-                {/*                    className="mr-1"*/}
-                {/*                    onClick={() => this.selectModeOfOperation('text')}*/}
-                {/*                >*/}
-                {/*                    <Icon icon={faAlignJustify} />*/}
-                {/*                </Button>*/}
-                {/*            </span>*/}
-                {/*        </Tippy>*/}
-
-                {/*        /!*Protege View*!/*/}
-                {/*        /!*<Tippy content="Widget-based representation not available">*/}
-                {/*            <span>*/}
-                {/*                <Button*/}
-                {/*                    disabled={true}*/}
-                {/*                    color={this.state.modeOfOperation === 'protege' ? 'primary' : 'secondary'}*/}
-                {/*                    size="sm"*/}
-                {/*                    className="mr-1"*/}
-                {/*                    onClick={() => this.selectModeOfOperation('protege')}*/}
-                {/*                >*/}
-                {/*                    <Icon icon={faHatWizard} />*/}
-                {/*                </Button>*/}
-                {/*            </span>*/}
-                {/*        </Tippy>*!/*/}
-
-                {/*        /!*Graph View*!/*/}
-                {/*        <Tippy content="Graph Visualization">*/}
-                {/*            <span>*/}
-                {/*                <Button*/}
-                {/*                    color={this.state.modeOfOperation === 'graph' ? 'primary' : 'secondary'}*/}
-                {/*                    size="sm"*/}
-                {/*                    className="mr-1"*/}
-                {/*                    onClick={() => this.selectModeOfOperation('graph')}*/}
-                {/*                >*/}
-                {/*                    <Icon icon={faProjectDiagram} />*/}
-                {/*                </Button>*/}
-                {/*            </span>*/}
-                {/*        </Tippy>*/}
-
-                {/*        /!*PlayGround View*!/*/}
-                {/*        /!*  <Tippy content="PlayGround (Temporary)">*/}
-                {/*            <span>*/}
-                {/*                <Button*/}
-                {/*                    color={this.state.modeOfOperation === 'playground' ? 'primary' : 'secondary'}*/}
-                {/*                    size="sm"*/}
-                {/*                    className="mr-1"*/}
-                {/*                    onClick={() => this.selectModeOfOperation('playground')}*/}
-                {/*                >*/}
-                {/*                    <Icon style={{ fontSize: '1.3em', verticalAlign: '-0.175em' }} icon={faGalacticRepublic} />*/}
-                {/*                </Button>*/}
-                {/*            </span>*/}
-                {/*        </Tippy>*!/*/}
-
-                {/*        /!*DOWNLOAD BUTTON *!/*/}
-                {/*        <Tippy content="Download ontology as TTL file (not implemented yet)">*/}
-                {/*            <span style={{ position: 'absolute', right: '5px' }}>*/}
-                {/*                <Button size="sm" disabled={true}>*/}
-                {/*                    <Icon icon={faDownload} />*/}
-                {/*                </Button>*/}
-                {/*            </span>*/}
-                {/*        </Tippy>*/}
-
-                {/*        /!*<h1*!/*/}
-                {/*        /!*    className="noSelect pl-3 pr-3"*!/*/}
-                {/*        /!*    style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textAlign: 'center', height: '45px' }}*!/*/}
-                {/*        /!*    title={this.headerValue}*!/*/}
-                {/*        /!*>*!/*/}
-                {/*        /!*    {this.headerValue}*!/*/}
-                {/*        /!*</h1>*!/*/}
-                {/*    </div>*/}
-                {/*)}*/}
-
                 <div className="pl-1 pr-1">
                     {this.state.isLoading === true && (
                         <div className="text-center text-primary mt-4 mb-4">
@@ -184,19 +98,26 @@ class ViewOntology extends Component {
                         </div>
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && this.props.modeOfOperation === 'hybrid' && (
-                        <OntologyViewRoot
-                            project={this.props.location.project}
-                            ontologyName={this.props.location.ontologyName}
-                            leftSideExpanded={this.leftSideExpanded}
-                            rightSideExpanded={this.rightSideExpanded}
-                            toggleLeftSideExpanded={this.setLeftSideExpanded}
-                            toggleRightSideExpanded={this.setRightSideExpanded}
-                        />
+                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'hybrid' && (
+                        <div>
+                            <OntologyViewRoot
+                                project={this.props.location.project}
+                                ontologyName={this.props.location.ontologyName}
+                                leftSideExpanded={this.leftSideExpanded}
+                                rightSideExpanded={this.rightSideExpanded}
+                                toggleLeftSideExpanded={this.setLeftSideExpanded}
+                                toggleRightSideExpanded={this.setRightSideExpanded}
+                            />
+                        </div>
                     )}
-                    {this.state.isLoading === false && this.state.error === false && this.props.modeOfOperation === 'text' && <OntologyViewAsTTL />}
-                    {this.state.isLoading === false && this.state.error === false && this.props.modeOfOperation === 'graph' && (
-                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.props.modeOfOperation === 'graph'} />
+                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'text' && (
+                        <OntologyViewAsTTL />
+                    )}
+                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'graph' && (
+                        <GraphVisUi
+                            DonatelloGraph={this.DonatelloGraph}
+                            visualizationTabIsActive={this.props.location.modeOfOperations === 'graph'}
+                        />
                     )}
                     {/*{this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'playground' && <PlayGroundUI />}*/}
                 </div>

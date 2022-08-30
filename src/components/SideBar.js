@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import 'react-modern-drawer/dist/index.css';
 import {
@@ -18,6 +18,7 @@ import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { redux_navigateOntologyView, redux_OntologyTabIsVisible } from '../redux/actions/rrm_actions';
 import { useDispatch, useSelector } from 'react-redux';
+import { reverse } from 'named-urls';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -48,33 +49,28 @@ const StyledHr = styled.hr`
     height: 0.02rem;
 `;
 
-const StyledButton = styled(Button)`
-    width: 100%;
-    height: 50px;
-    text-align: left;
-    text-color: black;
-    font-size: 20px;
-    color: black;
-    background-color: transparent;
-    border: none;
-    :hover {
-        background-color: #90c8ac;
-        color: black;
-        text-color: black;
-    }
-`;
-
 const SideBar = () => {
-    const modeOfOperations = useSelector(state => state.ResourceRelationModelReducer.modeOfOperation);
+    //const modeOfOperations = useSelector(state => state.ResourceRelationModelReducer.modeOfOperation);
     const OntologyTabIsVisible = useSelector(state => state.ResourceRelationModelReducer.OntologyTabAndOptionIsVisible);
     const modeOfOperationsDispatch = useDispatch();
+    const project = JSON.parse(sessionStorage.getItem('project'));
+    const OntologyID = JSON.parse(sessionStorage.getItem('OntologyID'));
+    const [isActiveTab, setIsActiveTab] = useState('hybrid');
 
-    const handleClick = event => {
+    const handleClick = () => {
         modeOfOperationsDispatch(redux_OntologyTabIsVisible({ OntologyTabIsVisible: false, ontologyViewOptionIsVisible: false }));
     };
 
     const selectModeOfOperation = val => {
-        modeOfOperationsDispatch(redux_navigateOntologyView(val));
+        //modeOfOperationsDispatch(redux_navigateOntologyView(val));
+        setIsActiveTab(val);
+    };
+
+    const onclickBackToProjectList = () => {
+        if (OntologyTabIsVisible.OntologyTabIsVisible === true) {
+            sessionStorage.setItem('selectedProject', JSON.stringify(false));
+            modeOfOperationsDispatch(redux_OntologyTabIsVisible({ OntologyTabIsVisible: false, ontologyViewOptionIsVisible: false }));
+        }
     };
 
     return (
@@ -85,14 +81,20 @@ const SideBar = () => {
             </StyledLink>
             <StyledHr />
             <StyledText>Management & Visualization</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.ONTOLOGY} onClick={handleClick}>
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.ONTOLOGY} onClick={onclickBackToProjectList}>
                 <Icon icon={faFile} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
             {OntologyTabIsVisible.OntologyTabIsVisible === true ? (
                 <div>
                     <StyledLink
-                        to={''}
+                        to={{
+                            pathname: reverse(ROUTES.ONTOLOGY),
+                            project: project
+                        }}
+                        onClick={() =>
+                            modeOfOperationsDispatch(redux_OntologyTabIsVisible({ OntologyTabIsVisible: true, ontologyViewOptionIsVisible: false }))
+                        }
                         style={{
                             backgroundColor: OntologyTabIsVisible.OntologyTabIsVisible === true ? '#90c8ac' : null,
                             marginTop: '5px',
@@ -106,39 +108,87 @@ const SideBar = () => {
                     </StyledLink>
                     {OntologyTabIsVisible.ontologyViewOptionIsVisible === true ? (
                         <div style={{ marginLeft: '30px' }}>
-                            <StyledButton
-                                style={{
-                                    backgroundColor: modeOfOperations === 'hybrid' ? '#90c8ac' : null,
-                                    color: modeOfOperations === 'hybrid' ? 'black' : ''
+                            <StyledLink
+                                to={{
+                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
+                                        ontologyId: OntologyID
+                                    }),
+                                    modeOfOperations: 'hybrid'
                                 }}
-                                size="lg"
-                                title="Open Manu"
+                                onClick={() => selectModeOfOperation('hybrid')}
+                                style={{
+                                    backgroundColor: isActiveTab === 'hybrid' ? '#90c8ac' : null,
+                                    color: isActiveTab === 'hybrid' ? 'black' : ''
+                                }}
                             >
                                 <Icon icon={faBrain} />
-                                <StyledText onClick={() => selectModeOfOperation('hybrid')}>Hybrid</StyledText>
-                            </StyledButton>
-                            <StyledButton
-                                style={{
-                                    backgroundColor: modeOfOperations === 'graph' ? '#90c8ac' : null,
-                                    color: modeOfOperations === 'graph' ? 'black' : ''
+                                <StyledText>Hybrid</StyledText>
+                            </StyledLink>
+                            <StyledLink
+                                to={{
+                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
+                                        ontologyId: OntologyID
+                                    }),
+                                    modeOfOperations: 'graph'
                                 }}
-                                size="lg"
-                                title="Open Manu"
+                                onClick={() => selectModeOfOperation('graph')}
+                                style={{
+                                    backgroundColor: isActiveTab === 'graph' ? '#90c8ac' : null,
+                                    color: isActiveTab === 'graph' ? 'black' : ''
+                                }}
                             >
                                 <Icon icon={faProjectDiagram} />
-                                <StyledText onClick={() => selectModeOfOperation('graph')}>Graph</StyledText>
-                            </StyledButton>
-                            <StyledButton
-                                style={{
-                                    backgroundColor: modeOfOperations === 'text' ? '#90c8ac' : null,
-                                    color: modeOfOperations === 'text' ? 'black' : ''
+                                <StyledText>Graph</StyledText>
+                            </StyledLink>
+                            <StyledLink
+                                to={{
+                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
+                                        ontologyId: OntologyID
+                                    }),
+                                    modeOfOperations: 'text'
                                 }}
-                                size="lg"
-                                title="Open Manu"
+                                onClick={() => selectModeOfOperation('text')}
+                                style={{
+                                    backgroundColor: isActiveTab === 'text' ? '#90c8ac' : null,
+                                    color: isActiveTab === 'text' ? 'black' : ''
+                                }}
                             >
                                 <Icon icon={faAlignJustify} />
-                                <StyledText onClick={() => selectModeOfOperation('text')}>Text</StyledText>
-                            </StyledButton>
+                                <StyledText>Text</StyledText>
+                            </StyledLink>
+                            {/*<StyledButton*/}
+                            {/*    style={{*/}
+                            {/*        backgroundColor: modeOfOperations === 'hybrid' ? '#90c8ac' : null,*/}
+                            {/*        color: modeOfOperations === 'hybrid' ? 'black' : ''*/}
+                            {/*    }}*/}
+                            {/*    size="lg"*/}
+                            {/*    title="Open Manu"*/}
+                            {/*>*/}
+                            {/*    <Icon icon={faBrain} />*/}
+                            {/*    <StyledText onClick={() => selectModeOfOperation('hybrid')}>Hybrid</StyledText>*/}
+                            {/*</StyledButton>*/}
+                            {/*<StyledButton*/}
+                            {/*    style={{*/}
+                            {/*        backgroundColor: modeOfOperations === 'graph' ? '#90c8ac' : null,*/}
+                            {/*        color: modeOfOperations === 'graph' ? 'black' : ''*/}
+                            {/*    }}*/}
+                            {/*    size="lg"*/}
+                            {/*    title="Open Manu"*/}
+                            {/*>*/}
+                            {/*    <Icon icon={faProjectDiagram} />*/}
+                            {/*    <StyledText onClick={() => selectModeOfOperation('graph')}>Graph</StyledText>*/}
+                            {/*</StyledButton>*/}
+                            {/*<StyledButton*/}
+                            {/*    style={{*/}
+                            {/*        backgroundColor: modeOfOperations === 'text' ? '#90c8ac' : null,*/}
+                            {/*        color: modeOfOperations === 'text' ? 'black' : ''*/}
+                            {/*    }}*/}
+                            {/*    size="lg"*/}
+                            {/*    title="Open Manu"*/}
+                            {/*>*/}
+                            {/*    <Icon icon={faAlignJustify} />*/}
+                            {/*    <StyledText onClick={() => selectModeOfOperation('text')}>Text</StyledText>*/}
+                            {/*</StyledButton>*/}
                         </div>
                     ) : null}
                 </div>

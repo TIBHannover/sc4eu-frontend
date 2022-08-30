@@ -47,6 +47,7 @@ class OntologyIndexCards extends Component {
 
     onclick = () => {
         this.props.redux_OntologyTabIsVisible({ OntologyTabIsVisible: true, ontologyViewOptionIsVisible: true });
+        sessionStorage.setItem('OntologyID', JSON.stringify(this.props.inputData.uuid));
     };
 
     render() {
@@ -60,6 +61,7 @@ class OntologyIndexCards extends Component {
                                     ontologyId: this.props.inputData.uuid
                                 }),
                                 project: this.props.project,
+                                modeOfOperations: 'hybrid',
                                 ontologyName: this.props.inputData.name
                             }}
                             onClick={this.onclick}
