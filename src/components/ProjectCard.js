@@ -10,6 +10,7 @@ import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
+import { CLEAR_SESSION, SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 export default class ProjectIndexCards extends Component {
     constructor(props) {
@@ -70,6 +71,12 @@ export default class ProjectIndexCards extends Component {
             this.props.updateHeaderValueCallback(project);
         } else {
             alert('This is Private Project You can not open it');
+        }
+        const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
+        const selectedOntologySession = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
+
+        if (selectedProjectSession && selectedOntologySession) {
+            CLEAR_SESSION();
         }
     };
 

@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
-import { CLEAR_SESSION } from '../constants/globalConstants';
+import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -48,27 +48,17 @@ const StyledHr = styled.hr`
 `;
 
 const SideBar = () => {
-    const selectedOntologyIdSession = sessionStorage.getItem('selectedOntologyIdSession');
-    const selectedOntologyNameSession = sessionStorage.getItem('selectedOntologyNameSession');
-    const selectedProjectSession = JSON.parse(sessionStorage.getItem('selectedProjectSession'));
+    const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
+    const selectedOntologySession = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
     const [isActiveTab, setIsActiveTab] = useState('hybrid');
-
-    const handleClick = () => {};
 
     const selectModeOfOperation = val => {
         setIsActiveTab(val);
     };
 
-    const onclickBackToProjectList = () => {
-        CLEAR_SESSION();
-        if (selectedProjectSession) {
-            sessionStorage.setItem('selectedProject', JSON.stringify(false));
-        }
-    };
-
     return (
         <div style={{ background: '#5f7c9d' }}>
-            <StyledLink exact activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} onClick={handleClick} size="lg">
+            <StyledLink exact activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} size="lg">
                 <Icon icon={faHome} />
                 <StyledText>Home</StyledText>
             </StyledLink>
@@ -78,7 +68,6 @@ const SideBar = () => {
                 activeStyle={{ backgroundColor: '#90c8ac' }}
                 style={{ backgroundColor: selectedProjectSession ? '#90c8ac' : null, color: selectedProjectSession ? 'black' : '' }}
                 to={ROUTES.ONTOLOGY}
-                onClick={onclickBackToProjectList}
             >
                 <Icon icon={faFile} />
                 <StyledText>Projects</StyledText>
@@ -102,16 +91,16 @@ const SideBar = () => {
                         <Icon icon={faHome} />
                         <StyledText>Ontologies</StyledText>
                     </StyledLink>
-                    {selectedOntologyIdSession ? (
+                    {selectedOntologySession ? (
                         <div style={{ marginLeft: '30px' }}>
                             <StyledLink
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: selectedOntologyIdSession
+                                        ontologyId: selectedOntologySession.uuid
                                     }),
                                     project: selectedProjectSession,
                                     modeOfOperations: 'hybrid',
-                                    ontologyName: selectedOntologyNameSession
+                                    ontologyName: selectedOntologySession.name
                                 }}
                                 onClick={() => selectModeOfOperation('hybrid')}
                                 style={{
@@ -125,7 +114,7 @@ const SideBar = () => {
                             <StyledLink
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: selectedOntologyIdSession
+                                        ontologyId: selectedOntologySession.uuid
                                     }),
                                     modeOfOperations: 'graph'
                                 }}
@@ -141,7 +130,7 @@ const SideBar = () => {
                             <StyledLink
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: selectedOntologyIdSession
+                                        ontologyId: selectedOntologySession.uuid
                                     }),
                                     modeOfOperations: 'text'
                                 }}
@@ -160,25 +149,25 @@ const SideBar = () => {
             ) : null}
             <StyledHr />
             <StyledText>Editing & Documentation</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.WEBPROTEGE} onClick={handleClick}>
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.WEBPROTEGE}>
                 <Icon icon={faHome} />
                 <StyledText>WebProtege</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Documentations} onClick={handleClick}>
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Documentations}>
                 <Icon icon={faBook} />
                 <StyledText>Documentation</StyledText>
             </StyledLink>
             <StyledHr />
             <StyledText>General & About</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Dataprotections} onClick={handleClick}>
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Dataprotections}>
                 <Icon icon={faShieldAlt} />
                 <StyledText>Data Policy</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Imprint} onClick={handleClick}>
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Imprint}>
                 <Icon icon={faStamp} />
                 <StyledText>Imprint</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.FAQ} onClick={handleClick}>
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.FAQ}>
                 <Icon icon={faQuestion} />
                 <StyledText>FAQ</StyledText>
             </StyledLink>

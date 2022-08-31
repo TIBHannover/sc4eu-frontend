@@ -36,11 +36,6 @@ export default class OntologyIndexing extends Component {
         if (prevState.selectedProject !== this.state.selectedProject) {
             this.getOntologiesFromBackend();
         }
-        const getSelectProjectFalse = JSON.parse(sessionStorage.getItem('selectedProject'));
-        if (this.state.selectedProject !== false && getSelectProjectFalse !== null) {
-            this.setState({ selectedProject: getSelectProjectFalse });
-            sessionStorage.removeItem('selectedProject');
-        }
     }
 
     getOntologiesFromBackend = () => {

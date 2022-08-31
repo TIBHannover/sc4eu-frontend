@@ -8,7 +8,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { SELECTED_ONTOLOGY_ID_SESSION, SELECTED_ONTOLOGY_NAME_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { CLEAR_ONTOLOGY_SESSION, SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 export default class OntologyIndexCards extends Component {
     componentDidMount() {
@@ -45,8 +45,14 @@ export default class OntologyIndexCards extends Component {
     };
 
     onclick = () => {
-        sessionStorage.setItem(SELECTED_ONTOLOGY_ID_SESSION, this.props.inputData.uuid);
-        sessionStorage.setItem(SELECTED_ONTOLOGY_NAME_SESSION, this.props.inputData.name);
+        const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
+        const selectedOntologySession = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
+
+        if (selectedProjectSession && selectedOntologySession) {
+            CLEAR_ONTOLOGY_SESSION();
+        }
+
+        sessionStorage.setItem(SELECTED_ONTOLOGY_SESSION, JSON.stringify(this.props.inputData));
     };
 
     render() {
