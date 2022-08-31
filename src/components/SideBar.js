@@ -13,12 +13,10 @@ import {
     faShieldAlt
 } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-import { Button } from 'reactstrap';
 import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
-import { redux_navigateOntologyView, redux_OntologyTabIsVisible } from '../redux/actions/rrm_actions';
-import { useDispatch, useSelector } from 'react-redux';
 import { reverse } from 'named-urls';
+import { CLEAR_SESSION } from '../constants/globalConstants';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -50,26 +48,21 @@ const StyledHr = styled.hr`
 `;
 
 const SideBar = () => {
-    //const modeOfOperations = useSelector(state => state.ResourceRelationModelReducer.modeOfOperation);
-    const OntologyTabIsVisible = useSelector(state => state.ResourceRelationModelReducer.OntologyTabAndOptionIsVisible);
-    const modeOfOperationsDispatch = useDispatch();
-    const project = JSON.parse(sessionStorage.getItem('project'));
-    const OntologyID = JSON.parse(sessionStorage.getItem('OntologyID'));
+    const selectedOntologyIdSession = sessionStorage.getItem('selectedOntologyIdSession');
+    const selectedOntologyNameSession = sessionStorage.getItem('selectedOntologyNameSession');
+    const selectedProjectSession = JSON.parse(sessionStorage.getItem('selectedProjectSession'));
     const [isActiveTab, setIsActiveTab] = useState('hybrid');
 
-    const handleClick = () => {
-        modeOfOperationsDispatch(redux_OntologyTabIsVisible({ OntologyTabIsVisible: false, ontologyViewOptionIsVisible: false }));
-    };
+    const handleClick = () => {};
 
     const selectModeOfOperation = val => {
-        //modeOfOperationsDispatch(redux_navigateOntologyView(val));
         setIsActiveTab(val);
     };
 
     const onclickBackToProjectList = () => {
-        if (OntologyTabIsVisible.OntologyTabIsVisible === true) {
+        CLEAR_SESSION();
+        if (selectedProjectSession) {
             sessionStorage.setItem('selectedProject', JSON.stringify(false));
-            modeOfOperationsDispatch(redux_OntologyTabIsVisible({ OntologyTabIsVisible: false, ontologyViewOptionIsVisible: false }));
         }
     };
 
@@ -81,22 +74,25 @@ const SideBar = () => {
             </StyledLink>
             <StyledHr />
             <StyledText>Management & Visualization</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.ONTOLOGY} onClick={onclickBackToProjectList}>
+            <StyledLink
+                activeStyle={{ backgroundColor: '#90c8ac' }}
+                style={{ backgroundColor: selectedProjectSession ? '#90c8ac' : null, color: selectedProjectSession ? 'black' : '' }}
+                to={ROUTES.ONTOLOGY}
+                onClick={onclickBackToProjectList}
+            >
                 <Icon icon={faFile} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
-            {OntologyTabIsVisible.OntologyTabIsVisible === true ? (
+            {selectedProjectSession ? (
                 <div>
                     <StyledLink
                         to={{
                             pathname: reverse(ROUTES.ONTOLOGY),
-                            project: project
+                            project: selectedProjectSession
                         }}
-                        onClick={() =>
-                            modeOfOperationsDispatch(redux_OntologyTabIsVisible({ OntologyTabIsVisible: true, ontologyViewOptionIsVisible: false }))
-                        }
                         style={{
-                            backgroundColor: OntologyTabIsVisible.OntologyTabIsVisible === true ? '#90c8ac' : null,
+                            backgroundColor: selectedProjectSession ? '#90c8ac' : null,
+                            color: selectedProjectSession ? 'black' : '',
                             marginTop: '5px',
                             marginBottom: '5px'
                         }}
@@ -106,14 +102,16 @@ const SideBar = () => {
                         <Icon icon={faHome} />
                         <StyledText>Ontologies</StyledText>
                     </StyledLink>
-                    {OntologyTabIsVisible.ontologyViewOptionIsVisible === true ? (
+                    {selectedOntologyIdSession ? (
                         <div style={{ marginLeft: '30px' }}>
                             <StyledLink
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: OntologyID
+                                        ontologyId: selectedOntologyIdSession
                                     }),
-                                    modeOfOperations: 'hybrid'
+                                    project: selectedProjectSession,
+                                    modeOfOperations: 'hybrid',
+                                    ontologyName: selectedOntologyNameSession
                                 }}
                                 onClick={() => selectModeOfOperation('hybrid')}
                                 style={{
@@ -127,7 +125,7 @@ const SideBar = () => {
                             <StyledLink
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: OntologyID
+                                        ontologyId: selectedOntologyIdSession
                                     }),
                                     modeOfOperations: 'graph'
                                 }}
@@ -143,7 +141,7 @@ const SideBar = () => {
                             <StyledLink
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: OntologyID
+                                        ontologyId: selectedOntologyIdSession
                                     }),
                                     modeOfOperations: 'text'
                                 }}
@@ -156,39 +154,6 @@ const SideBar = () => {
                                 <Icon icon={faAlignJustify} />
                                 <StyledText>Text</StyledText>
                             </StyledLink>
-                            {/*<StyledButton*/}
-                            {/*    style={{*/}
-                            {/*        backgroundColor: modeOfOperations === 'hybrid' ? '#90c8ac' : null,*/}
-                            {/*        color: modeOfOperations === 'hybrid' ? 'black' : ''*/}
-                            {/*    }}*/}
-                            {/*    size="lg"*/}
-                            {/*    title="Open Manu"*/}
-                            {/*>*/}
-                            {/*    <Icon icon={faBrain} />*/}
-                            {/*    <StyledText onClick={() => selectModeOfOperation('hybrid')}>Hybrid</StyledText>*/}
-                            {/*</StyledButton>*/}
-                            {/*<StyledButton*/}
-                            {/*    style={{*/}
-                            {/*        backgroundColor: modeOfOperations === 'graph' ? '#90c8ac' : null,*/}
-                            {/*        color: modeOfOperations === 'graph' ? 'black' : ''*/}
-                            {/*    }}*/}
-                            {/*    size="lg"*/}
-                            {/*    title="Open Manu"*/}
-                            {/*>*/}
-                            {/*    <Icon icon={faProjectDiagram} />*/}
-                            {/*    <StyledText onClick={() => selectModeOfOperation('graph')}>Graph</StyledText>*/}
-                            {/*</StyledButton>*/}
-                            {/*<StyledButton*/}
-                            {/*    style={{*/}
-                            {/*        backgroundColor: modeOfOperations === 'text' ? '#90c8ac' : null,*/}
-                            {/*        color: modeOfOperations === 'text' ? 'black' : ''*/}
-                            {/*    }}*/}
-                            {/*    size="lg"*/}
-                            {/*    title="Open Manu"*/}
-                            {/*>*/}
-                            {/*    <Icon icon={faAlignJustify} />*/}
-                            {/*    <StyledText onClick={() => selectModeOfOperation('text')}>Text</StyledText>*/}
-                            {/*</StyledButton>*/}
                         </div>
                     ) : null}
                 </div>
@@ -205,17 +170,14 @@ const SideBar = () => {
             </StyledLink>
             <StyledHr />
             <StyledText>General & About</StyledText>
-
             <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Dataprotections} onClick={handleClick}>
                 <Icon icon={faShieldAlt} />
                 <StyledText>Data Policy</StyledText>
             </StyledLink>
-
             <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Imprint} onClick={handleClick}>
                 <Icon icon={faStamp} />
                 <StyledText>Imprint</StyledText>
             </StyledLink>
-
             <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.FAQ} onClick={handleClick}>
                 <Icon icon={faQuestion} />
                 <StyledText>FAQ</StyledText>

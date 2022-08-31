@@ -3,26 +3,15 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import {
-    faCaretDown,
-    faCaretRight,
-    faLock,
-    faPen,
-    faTrash,
-    faUnlockAlt,
-    faChevronCircleRight,
-    faChevronCircleDown
-} from '@fortawesome/free-solid-svg-icons';
+import { faLock, faPen, faTrash, faUnlockAlt, faChevronCircleRight, faChevronCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { Button, Collapse } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
-import { redux_OntologyTabIsVisible } from '../redux/actions/rrm_actions';
-import { connect } from 'react-redux';
 
-class ProjectIndexCards extends Component {
+export default class ProjectIndexCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -82,7 +71,6 @@ class ProjectIndexCards extends Component {
         } else {
             alert('This is Private Project You can not open it');
         }
-        this.props.redux_OntologyTabIsVisible({ OntologyTabIsVisible: true, ontologyViewOptionIsVisible: false });
     };
 
     toggleProjectBody = event => {
@@ -180,15 +168,8 @@ class ProjectIndexCards extends Component {
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    updateHeaderValueCallback: PropTypes.func.isRequired,
-    redux_OntologyTabIsVisible: PropTypes.func.isRequired
+    updateHeaderValueCallback: PropTypes.func.isRequired
 };
-
-const mapDispatchToProps = dispatch => ({
-    redux_OntologyTabIsVisible: data => dispatch(redux_OntologyTabIsVisible(data))
-});
-
-export default connect(null, mapDispatchToProps)(ProjectIndexCards);
 
 const StyledButton = styled(Button)`
     :hover {

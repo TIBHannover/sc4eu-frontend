@@ -8,10 +8,9 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { redux_OntologyTabIsVisible } from '../redux/actions/rrm_actions';
-import { connect } from 'react-redux';
+import { SELECTED_ONTOLOGY_ID_SESSION, SELECTED_ONTOLOGY_NAME_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
-class OntologyIndexCards extends Component {
+export default class OntologyIndexCards extends Component {
     componentDidMount() {
         window.localStorage.clear();
     }
@@ -46,8 +45,8 @@ class OntologyIndexCards extends Component {
     };
 
     onclick = () => {
-        this.props.redux_OntologyTabIsVisible({ OntologyTabIsVisible: true, ontologyViewOptionIsVisible: true });
-        sessionStorage.setItem('OntologyID', JSON.stringify(this.props.inputData.uuid));
+        sessionStorage.setItem(SELECTED_ONTOLOGY_ID_SESSION, this.props.inputData.uuid);
+        sessionStorage.setItem(SELECTED_ONTOLOGY_NAME_SESSION, this.props.inputData.name);
     };
 
     render() {
@@ -95,15 +94,8 @@ class OntologyIndexCards extends Component {
 OntologyIndexCards.propTypes = {
     project: PropTypes.object.isRequired,
     inputData: PropTypes.object.isRequired,
-    callback: PropTypes.func.isRequired,
-    redux_OntologyTabIsVisible: PropTypes.func.isRequired
+    callback: PropTypes.func.isRequired
 };
-
-const mapDispatchToProps = dispatch => ({
-    redux_OntologyTabIsVisible: data => dispatch(redux_OntologyTabIsVisible(data))
-});
-
-export default connect(null, mapDispatchToProps)(OntologyIndexCards);
 
 const StyledCard = styled.div`
     margin: 5px;

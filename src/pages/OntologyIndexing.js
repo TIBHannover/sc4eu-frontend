@@ -8,6 +8,7 @@ import OntologyIndexCards from '../components/OntologyIndexCards';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import ProjectsSideBar from '../components/ProjectsSideBar';
 import PropTypes from 'prop-types';
+import { SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 export default class OntologyIndexing extends Component {
     constructor(props) {
@@ -68,7 +69,6 @@ export default class OntologyIndexing extends Component {
     updateHeaderValue = projectSelected => {
         this.setState({ selectedProject: projectSelected });
         console.log(projectSelected.name);
-        sessionStorage.setItem('project', JSON.stringify(projectSelected));
         let headerTitle = 'Please select a project to view its ontologies';
         if (projectSelected) {
             headerTitle = (
@@ -78,6 +78,7 @@ export default class OntologyIndexing extends Component {
             );
         }
         this.setState({ headerValue: headerTitle });
+        sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(projectSelected));
     };
 
     render() {

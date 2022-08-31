@@ -4,9 +4,7 @@ const initialState = {
     originalModel: null, // this is the json we get from backend
     resources: null,
     relations: null,
-    metaInformation: null,
-    modeOfOperation: 'hybrid',
-    OntologyTabAndOptionIsVisible: { OntologyTabIsVisible: false, ontologyViewOptionIsVisible: false }
+    metaInformation: null
 };
 
 export default (state = initialState, action) => {
@@ -82,16 +80,6 @@ export default (state = initialState, action) => {
                 ...state,
                 metaInformation: { ...state.metaInformation, ...action.payload }
             };
-        }
-
-        case type.NAVIGATE_ONTOLOGY_VIEW: {
-            const newState = Object.assign({}, state, { modeOfOperation: action.payload });
-            return newState;
-        }
-
-        case type.ONTOLOGY_TAB_ISVISIBLE: {
-            const newState = Object.assign({}, state, { OntologyTabAndOptionIsVisible: action.payload });
-            return newState;
         }
 
         default: {
