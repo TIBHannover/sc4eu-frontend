@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
-import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -55,6 +55,14 @@ const SideBar = () => {
     const selectModeOfOperation = val => {
         setIsActiveTab(val);
     };
+    const onClickProjectTab = () => {
+        sessionStorage.setItem(SELECTED_PROJECT_LIST_TAB_SESSION, 'true');
+        setIsActiveTab('');
+    };
+    const onClickOntologyTab = () => {
+        sessionStorage.setItem(SELECTED_PROJECT_LIST_TAB_SESSION, 'false');
+        setIsActiveTab('');
+    };
 
     return (
         <div style={{ background: '#5f7c9d' }}>
@@ -64,11 +72,7 @@ const SideBar = () => {
             </StyledLink>
             <StyledHr />
             <StyledText>Management & Visualization</StyledText>
-            <StyledLink
-                activeStyle={{ backgroundColor: '#90c8ac' }}
-                style={{ backgroundColor: selectedProjectSession ? '#90c8ac' : null, color: selectedProjectSession ? 'black' : '' }}
-                to={ROUTES.ONTOLOGY}
-            >
+            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.ONTOLOGY} onClick={onClickProjectTab}>
                 <Icon icon={faFile} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
@@ -79,6 +83,7 @@ const SideBar = () => {
                             pathname: reverse(ROUTES.ONTOLOGY),
                             project: selectedProjectSession
                         }}
+                        onClick={onClickOntologyTab}
                         style={{
                             backgroundColor: selectedProjectSession ? '#90c8ac' : null,
                             color: selectedProjectSession ? 'black' : '',

@@ -8,7 +8,7 @@ import OntologyIndexCards from '../components/OntologyIndexCards';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import ProjectsSideBar from '../components/ProjectsSideBar';
 import PropTypes from 'prop-types';
-import { SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 export default class OntologyIndexing extends Component {
     constructor(props) {
@@ -19,7 +19,8 @@ export default class OntologyIndexing extends Component {
             leftSidebarWidth: 450,
             //headerValue: 'You are current viewing Index of Ontologies for Default Project',
             headerValue: 'Please select a project to view its ontologies',
-            selectedProject: false //Maybe get the uuid for the Default Project here.
+            selectedProject: false, //Maybe get the uuid for the Default Project here.
+            ProjectListShown: 'true'
         };
     }
 
@@ -33,6 +34,13 @@ export default class OntologyIndexing extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        const projectListTabSession = sessionStorage.getItem(SELECTED_PROJECT_LIST_TAB_SESSION);
+        const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
+        if (projectListTabSession !== null && this.state.ProjectListShown !== projectListTabSession) {
+            this.setState({ ProjectListShown: projectListTabSession });
+            this.setState({ selectedProject: selectedProjectSession });
+            sessionStorage.removeItem(SELECTED_PROJECT_LIST_TAB_SESSION);
+        }
         if (prevState.selectedProject !== this.state.selectedProject) {
             this.getOntologiesFromBackend();
         }
@@ -73,7 +81,7 @@ export default class OntologyIndexing extends Component {
             );
         }
         this.setState({ headerValue: headerTitle });
-        sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(projectSelected));
+        this.setState({ ProjectListShown: 'false' });
     };
 
     render() {
@@ -88,14 +96,7 @@ export default class OntologyIndexing extends Component {
                         position: 'relative'
                     }}
                 >
-                    {!this.state.selectedProject ? (
-                        <ProjectsSideBar
-                            title="Projects"
-                            updateHeaderValueCallback={params => {
-                                this.updateHeaderValue(params);
-                            }}
-                        />
-                    ) : this.state.isLoading ? (
+                    {this.state.isLoading ? (
                         <div className="text-center text-primary mt-4 mb-4">
                             {/*using a manual fixed scale value for the spinner scale! */}
                             <h2 className="h5">
@@ -105,7 +106,14 @@ export default class OntologyIndexing extends Component {
                                 Loading
                             </h2>
                         </div>
-                    ) : this.state.selectedProject ? (
+                    ) : this.state.ProjectListShown === 'true' || !this.state.selectedProject ? (
+                        <ProjectsSideBar
+                            title="Projects"
+                            updateHeaderValueCallback={params => {
+                                this.updateHeaderValue(params);
+                            }}
+                        />
+                    ) : this.state.ProjectListShown !== 'true' || this.state.selectedProject ? (
                         <div>
                             <OntologyIndexInteractions
                                 project_id={this.state.selectedProject.uuid}
@@ -126,9 +134,7 @@ export default class OntologyIndexing extends Component {
                                 <div> No ontologies found in this project </div>
                             )}
                         </div>
-                    ) : (
-                        <div />
-                    )}
+                    ) : null}
                 </Container>
             </>
         );

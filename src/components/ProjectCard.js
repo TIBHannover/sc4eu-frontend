@@ -10,7 +10,7 @@ import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
-import { CLEAR_SESSION, SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { CLEAR_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 export default class ProjectIndexCards extends Component {
     constructor(props) {
@@ -63,6 +63,7 @@ export default class ProjectIndexCards extends Component {
     };
 
     showOntologies = () => {
+        CLEAR_SESSION();
         //TODO Get all ontologies related Only to this Project
         if (this.props.inputData.unlock === true) {
             const project = this.props.inputData;
@@ -72,12 +73,7 @@ export default class ProjectIndexCards extends Component {
         } else {
             alert('This is Private Project You can not open it');
         }
-        const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
-        const selectedOntologySession = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
-
-        if (selectedProjectSession && selectedOntologySession) {
-            CLEAR_SESSION();
-        }
+        sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(this.props.inputData));
     };
 
     toggleProjectBody = event => {
