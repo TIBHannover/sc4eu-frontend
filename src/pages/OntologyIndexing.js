@@ -81,7 +81,6 @@ export default class OntologyIndexing extends Component {
             );
         }
         this.setState({ headerValue: headerTitle });
-        this.setState({ ProjectListShown: 'false' });
     };
 
     render() {
@@ -113,7 +112,7 @@ export default class OntologyIndexing extends Component {
                                 this.updateHeaderValue(params);
                             }}
                         />
-                    ) : this.state.ProjectListShown !== 'true' || this.state.selectedProject ? (
+                    ) : this.state.ProjectListShown === 'false' || this.state.selectedProject ? (
                         <div>
                             <OntologyIndexInteractions
                                 project_id={this.state.selectedProject.uuid}

@@ -10,7 +10,7 @@ import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
-import { CLEAR_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { CLEAR_SESSION, SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 export default class ProjectIndexCards extends Component {
     constructor(props) {
@@ -74,6 +74,7 @@ export default class ProjectIndexCards extends Component {
             alert('This is Private Project You can not open it');
         }
         sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(this.props.inputData));
+        sessionStorage.setItem(SELECTED_PROJECT_LIST_TAB_SESSION, 'false');
     };
 
     toggleProjectBody = event => {
