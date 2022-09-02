@@ -3,10 +3,6 @@ import PropTypes from 'prop-types';
 import LeftSideBar from './LeftSideBar';
 import RightSideBar from './RightSideBar';
 import MainWidget from './MainWidget';
-import { Button } from 'reactstrap';
-import styled from 'styled-components';
-import { expandAllBodies } from '../../redux/actions/globalUI_actions';
-import { connect } from 'react-redux';
 
 class OntologyViewRoot extends Component {
     constructor(props) {
@@ -18,7 +14,7 @@ class OntologyViewRoot extends Component {
             oldMainWidgetWidth: 500,
             newMainWidgetWidth: 500,
             windowWidth: 500,
-            mainWidgetHeight: 180,
+            mainWidgetHeight: 200,
             componentInitialized: false,
             leftSidebarWidth: 200,
             rightSidebarWidth: 400,
@@ -108,80 +104,47 @@ class OntologyViewRoot extends Component {
         }
     };
 
-    renderControls() {
+    render() {
         return (
-            <div style={{ margin: '5px 0 5px 270px' }}>
-                <ControlButton
-                    color={'primary'}
-                    onClick={() => {
-                        // emit this as signal;
-                        this.props.expandAllBodies({
-                            ui_all_resource_bodies_expanded: !this.props.globalUIReducer.ui_all_resource_bodies_expanded,
-                            ui_all_relation_bodies_expanded: !this.props.globalUIReducer.ui_all_relation_bodies_expanded
-                        });
-                    }}
-                >
-                    {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all bodies
-                </ControlButton>
+            <div
+                id="mainWidgetContainer"
+                style={{ display: 'flex', marginTop: '5px', marginLeft: '200px', zIndex: 150, height: 'calc(100vh - 70px)' }}
+            >
+                <MainWidget
+                    ref={this._refMainWidget}
+                    rightSideBarExpanded={this.state.rightSidebarExpanded}
+                    rightSidebarWidth={this.state.rightSidebarWidth}
+                    oldWidth={this.state.oldMainWidgetWidth}
+                    newWidth={this.state.newMainWidgetWidth}
+                    fullWidth={this.state.windowWidth}
+                    height={this.state.containerHeight}
+                    title="MAIN"
+                    experimentalLayout={this.state.experimentalLayout}
+                />
+                {/*<LeftSideBar*/}
+                {/*    project={this.props.project}*/}
+                {/*    ontologyName={this.props.ontologyName}*/}
+                {/*    width={this.state.leftSidebarWidth}*/}
+                {/*    initialState={this.props.leftSideExpanded}*/}
+                {/*    height={this.state.containerHeight + this.sidebarHeightOffset}*/}
+                {/*    title="Ontology Meta Information"*/}
+                {/*    // loading={this.props.loading}*/}
+                {/*    updateEvent={this.leftSideBarUpdateEvent}*/}
+                {/*/>*/}
+                <RightSideBar
+                    width={this.state.rightSidebarWidth}
+                    project={this.props.project}
+                    ontologyName={this.props.ontologyName}
+                    initialState={this.props.rightSideExpanded}
+                    height={this.state.containerHeight + this.sidebarHeightOffset}
+                    title="Provenance Information"
+                    updateEvent={this.rightSideBarUpdateEvent}
+                    heightUpdateEvent={this.updateMainWidgetSize}
+                />
             </div>
         );
     }
-
-    render() {
-        return (
-            <>
-                {this.renderControls()}
-
-                <div
-                    id="mainWidgetContainer"
-                    style={{ display: 'flex', marginTop: '5px', marginLeft: '200px', zIndex: 150, height: 'calc(100vh - 130px)' }}
-                >
-                    <MainWidget
-                        ref={this._refMainWidget}
-                        rightSideBarExpanded={this.state.rightSidebarExpanded}
-                        rightSidebarWidth={this.state.rightSidebarWidth}
-                        oldWidth={this.state.oldMainWidgetWidth}
-                        newWidth={this.state.newMainWidgetWidth}
-                        fullWidth={this.state.windowWidth}
-                        height={this.state.containerHeight}
-                        title="MAIN"
-                        experimentalLayout={this.state.experimentalLayout}
-                    />
-                    {/*<LeftSideBar*/}
-                    {/*    project={this.props.project}*/}
-                    {/*    ontologyName={this.props.ontologyName}*/}
-                    {/*    width={this.state.leftSidebarWidth}*/}
-                    {/*    initialState={this.props.leftSideExpanded}*/}
-                    {/*    height={this.state.containerHeight + this.sidebarHeightOffset}*/}
-                    {/*    title="Ontology Meta Information"*/}
-                    {/*    // loading={this.props.loading}*/}
-                    {/*    updateEvent={this.leftSideBarUpdateEvent}*/}
-                    {/*/>*/}
-                    <RightSideBar
-                        width={this.state.rightSidebarWidth}
-                        project={this.props.project}
-                        ontologyName={this.props.ontologyName}
-                        initialState={this.props.rightSideExpanded}
-                        height={this.state.containerHeight + this.sidebarHeightOffset}
-                        title="Provenance Information"
-                        updateEvent={this.rightSideBarUpdateEvent}
-                        heightUpdateEvent={this.updateMainWidgetSize}
-                    />
-                </div>
-            </>
-        );
-    }
 }
-
-// connect to redux
-const mapStateToProps = state => {
-    return {
-        globalUIReducer: state.globalUIReducer
-    };
-};
-const mapDispatchToProps = dispatch => ({
-    expandAllBodies: payload => dispatch(expandAllBodies(payload))
-});
 
 OntologyViewRoot.propTypes = {
     project: PropTypes.object,
@@ -192,23 +155,4 @@ OntologyViewRoot.propTypes = {
     toggleRightSideExpanded: PropTypes.func.isRequired,
     expandAllBodies: PropTypes.func.isRequired
 };
-export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);
-
-const ControlButton = styled(Button)`
-    border-radius: 5px 5px;
-    padding: 0;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: -5px;
-    height: 40px;
-    margin-top: 2px;
-    margin-right: 3px;
-    font-size: 16px;
-    color: white;
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
+export default OntologyViewRoot;
