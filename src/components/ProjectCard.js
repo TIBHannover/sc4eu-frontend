@@ -3,22 +3,14 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import {
-    faCaretDown,
-    faCaretRight,
-    faLock,
-    faPen,
-    faTrash,
-    faUnlockAlt,
-    faChevronCircleRight,
-    faChevronCircleDown
-} from '@fortawesome/free-solid-svg-icons';
+import { faLock, faPen, faTrash, faUnlockAlt, faChevronCircleRight, faChevronCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { Button, Collapse } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
+import { CLEAR_SESSION, SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 
 export default class ProjectIndexCards extends Component {
     constructor(props) {
@@ -71,6 +63,7 @@ export default class ProjectIndexCards extends Component {
     };
 
     showOntologies = () => {
+        CLEAR_SESSION();
         //TODO Get all ontologies related Only to this Project
         if (this.props.inputData.unlock === true) {
             const project = this.props.inputData;
@@ -80,6 +73,8 @@ export default class ProjectIndexCards extends Component {
         } else {
             alert('This is Private Project You can not open it');
         }
+        sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(this.props.inputData));
+        sessionStorage.setItem(SELECTED_PROJECT_LIST_TAB_SESSION, 'false');
     };
 
     toggleProjectBody = event => {

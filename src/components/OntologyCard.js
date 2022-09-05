@@ -4,10 +4,11 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faUnlockAlt, faCheck, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 
 export default class OntologyIndexCards extends Component {
     componentDidMount() {
@@ -43,6 +44,11 @@ export default class OntologyIndexCards extends Component {
         }
     };
 
+    onclick = () => {
+        sessionStorage.removeItem(SELECTED_ONTOLOGY_SESSION);
+        sessionStorage.setItem(SELECTED_ONTOLOGY_SESSION, JSON.stringify(this.props.inputData));
+    };
+
     render() {
         return (
             <div>
@@ -54,19 +60,15 @@ export default class OntologyIndexCards extends Component {
                                     ontologyId: this.props.inputData.uuid
                                 }),
                                 project: this.props.project,
+                                modeOfOperations: 'hybrid',
                                 ontologyName: this.props.inputData.name
                             }}
+                            onClick={this.onclick}
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div>
-                                    <Icon className="mr-1" icon={faUnlockAlt} />
-                                </div>
                                 <div> {this.props.inputData.name} </div>
-                                <div>
-                                    <Icon className="ml-1" icon={faCheck} />
-                                </div>
                                 <Button
                                     color="white"
                                     size="sm"
