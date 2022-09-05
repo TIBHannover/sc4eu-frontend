@@ -8,11 +8,9 @@ import SideBarLayout from './SideBarLayout';
 export default function DefaultLayout(props) {
     return (
         <StyledBody>
-            <div>
-                <SideBarLayout />
-                <Header />
-                <StyledAppContent>{props.children}</StyledAppContent>
-            </div>
+            <SideBarLayout />
+            <Header />
+            <StyledAppContent>{props.children}</StyledAppContent>
         </StyledBody>
     );
 }
