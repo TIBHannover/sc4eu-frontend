@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Footer from '../Layout/Footer';
+import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
 
-class Imprint extends Component {
+export default class Imprint extends Component {
     constructor(props) {
         super(props);
     }
 
     render() {
         return (
-            <div style={{ height: '100%', width: '100%' }}>
-                <div style={{ width: '100%', height: '85%', overflowY: 'scroll', paddingBottom: '30px' }}>
+            <div style={{ height: '100%', width: '100%', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
+                <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '30px' }}>
                     <div style={{ paddingTop: '20px', paddingLeft: '300px', paddingRight: '300px' }}>
                         <h2>Imprint</h2>
                         <p>Imprint for this website ‐ also serves as provider identification according to § 5 Telemediengesetz (TMG)</p>
@@ -76,7 +76,3 @@ class Imprint extends Component {
         );
     }
 }
-
-Imprint.propTypes = {};
-
-export default Imprint;

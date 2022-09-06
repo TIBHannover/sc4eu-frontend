@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input } from 'reactstrap';
+import { ALL_PAGE_BACKGROUND_COLOR } from '../../constants/globalStyled';
 
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -352,7 +353,7 @@ class GraphVisUi extends Component {
                         marginBottom: '10px',
                         paddingLeft: '10px',
                         paddingRight: '10px',
-                        background: '#6c757d',
+                        background: ALL_PAGE_BACKGROUND_COLOR,
                         position: 'relative',
                         borderTopLeftRadius: '10px',
                         borderTopRightRadius: '10px',

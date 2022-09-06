@@ -4,6 +4,7 @@ import Footer from '../Layout/Footer';
 import { Collapse, Button } from 'reactstrap';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
 
 class Faq extends Component {
     constructor(props) {
@@ -69,7 +70,7 @@ class Faq extends Component {
             }
         ];
         return (
-            <div style={{ width: '100%', height: '85%', overflowY: 'scroll' }}>
+            <div style={{ width: '100%', height: '100%', overflowY: 'auto', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
                 <div className="container">
                     <Button
                         style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: '#007bff' }}

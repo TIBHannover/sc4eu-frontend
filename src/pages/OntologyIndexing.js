@@ -9,6 +9,7 @@ import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import ProjectsSideBar from '../components/ProjectsSideBar';
 import PropTypes from 'prop-types';
 import { SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
 
 export default class OntologyIndexing extends Component {
     constructor(props) {
@@ -85,10 +86,9 @@ export default class OntologyIndexing extends Component {
 
     render() {
         return (
-            <>
+            <div style={{ height: '100%', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
                 <Container
                     style={{
-                        backgroundColor: 'white',
                         border: '1px solid black',
                         borderTop: 'none',
                         overflow: 'auto',
@@ -135,7 +135,7 @@ export default class OntologyIndexing extends Component {
                         </div>
                     ) : null}
                 </Container>
-            </>
+            </div>
         );
     }
 }

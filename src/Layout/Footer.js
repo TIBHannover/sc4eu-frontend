@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import eu_logo from 'assets/images/eu_logo.jpg';
-import ECSEL_logo from 'assets/images/ECSEL_logo.jpg';
+import ECSEL_logo from '../assets/images/ECSEL_logo.png';
 import infinion_logo from '../assets/images/infineon.png';
-import tib_logo from '../assets/images/TIB2.jpg';
+import tib_logo from '../assets/images/TIB2.png';
 import ftk_logo from '../assets/images/FTK.png';
 import bosch_logo from '../assets/images/Bosch.png';
 import mines_logo from '../assets/images/MINES.png';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { FOOTER_BACKGROUND_COLOR } from '../constants/globalStyled';
 
 const Image = styled.img``;
 
@@ -26,7 +26,8 @@ class Footer extends Component {
                         right: 0,
                         paddingLeft: '310px',
                         paddingTop: '10px',
-                        height: '9%'
+                        height: '9%',
+                        backgroundColor: FOOTER_BACKGROUND_COLOR
                     }}
                 >
                     <div style={{ flexDirection: 'column' }}>
@@ -40,7 +41,7 @@ class Footer extends Component {
                         <Image src={tib_logo} alt="TIB Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
                         <Image src={ftk_logo} alt="FTK Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
                         <Image src={bosch_logo} alt="Bosch Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
-                        <Image src={mines_logo} alt="Mines Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
+                        <Image src={mines_logo} alt="Mines Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '5px' }} />
                     </div>
                     <div style={{ paddingLeft: '130px' }}>
                         <a href={'https://www.dfg.de/'}>

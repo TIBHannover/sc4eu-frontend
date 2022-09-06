@@ -16,6 +16,7 @@ import GraphVisUi from '../components/GraphVis/GraphVisUi';
 
 import { faGalacticRepublic } from '@fortawesome/free-brands-svg-icons/faGalacticRepublic';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
+import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
 
 class ViewOntology extends Component {
     constructor(props) {
@@ -81,7 +82,7 @@ class ViewOntology extends Component {
         const ontologyName = this.props.location.ontologyName;
         // console.log(this.state);
         return (
-            <div style={{ height: '100%' }}>
+            <div style={{ height: '100%', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
                 <div className="pl-1 pr-1">
                     {this.state.isLoading === true && (
                         <div className="text-center text-primary mt-4 mb-4">
