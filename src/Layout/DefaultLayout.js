@@ -9,7 +9,6 @@ export default function DefaultLayout(props) {
     return (
         <StyledBody>
             <SideBarLayout />
-            <Header />
             <StyledAppContent>{props.children}</StyledAppContent>
         </StyledBody>
     );

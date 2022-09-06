@@ -9,6 +9,7 @@ import Logo from '../assets/images/logo.png';
 import SideBar from '../components/SideBar';
 import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
+import Header from './Header';
 
 const StyledButton = styled(Button)`
     :hover {
@@ -31,7 +32,13 @@ const SideBarLayout = () => {
     };
 
     return (
-        <>
+        <div
+            style={{
+                display: 'flex',
+                width: '100%',
+                backgroundColor: '#ffffff'
+            }}
+        >
             <StyledButton color="none" size="lg" title="Open Manu" onClick={toggleDrawer}>
                 <Icon icon={faBars} />
             </StyledButton>
@@ -40,10 +47,13 @@ const SideBarLayout = () => {
                     <Image src={Logo} alt="Home Logo" style={{ height: 20, width: 20 }} />
                 </StyledLink>
             </StyledButton>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                <Header />
+            </div>
             <Drawer open={isOpen} onClose={toggleDrawer} direction="left" style={{ marginTop: '50px', width: '250px', height: 'auto' }}>
                 <SideBar />
             </Drawer>
-        </>
+        </div>
     );
 };
 

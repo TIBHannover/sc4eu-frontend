@@ -126,15 +126,13 @@ class Header extends Component {
         const greeting = greetingTime(new Date());
 
         return (
-            <div style={{ borderBottom: '1px solid black' }}>
+            <div>
                 <div
                     style={{
                         color: '#fff',
-                        height: '100%',
                         cursor: 'pointer',
-                        float: 'right',
                         marginRight: '10px',
-                        marginTop: '-40px'
+                        alignItems: 'center'
                     }}
                 >
                     {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (

@@ -71,7 +71,7 @@ const SideBar = () => {
     };
 
     return (
-        <div style={{ background: '##5f7c9d' }}>
+        <div style={{ background: '#5f7c9d' }}>
             <StyledLink exact activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} size="lg">
                 <Icon icon={faHome} />
                 <StyledText>Home</StyledText>
