@@ -190,8 +190,6 @@ class Header extends Component {
                             style={{ backgroundColor: '#000000' }}
                             className="clearfix"
                             onClick={() => {
-                                console.log('SING IN ACTION ');
-                                console.log('location:', this.props.location);
                                 // push that to the redux state so that the user is rederected to its prev location;
                                 this.props.openAuthDialog({
                                     action: 'signin',

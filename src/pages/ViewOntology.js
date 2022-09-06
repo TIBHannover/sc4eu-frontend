@@ -45,8 +45,6 @@ class ViewOntology extends Component {
         if (prevProps.ui_tab_selectorChanges !== this.props.ui_tab_selectorChanges) {
             this.setState({ modeOfOperation: 'hybrid' });
         }
-        console.log(this.props.location);
-        console.log('??????????????????????????????');
     }
 
     /** Functions forwarded to view Root for handling state Updates **/

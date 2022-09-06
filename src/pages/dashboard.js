@@ -7,6 +7,7 @@ import { requestDashboard } from '../network/loginCalls';
 import { getAllRoles } from '../network/UserProfileCalls';
 import DashboardItem from '../components/DashboardItem';
 import { getAllProjects } from '../network/projectIndexing';
+import { Table } from 'reactstrap';
 
 export default class Dashboard extends Component {
     constructor(props) {
@@ -77,9 +78,7 @@ export default class Dashboard extends Component {
                 missedParams.push(val);
             }
         }
-
         const orderedArray = [].concat(correctParamOrder, missedParams);
-
         this.parameterOrder = orderedArray;
         return orderedArray.map((item, index) => {
             return <th key={'key_header' + index}>{item}</th>;
@@ -105,12 +104,12 @@ export default class Dashboard extends Component {
         // create a table
         // extract header information
         return (
-            <table style={{ width: '100%' }}>
+            <Table bordered>
                 <thead>
                     <tr>{this.extractHeaderInformation(data[0])}</tr>
                 </thead>
                 <tbody>{this.dashBoardRowItem()}</tbody>
-            </table>
+            </Table>
         );
     };
 
@@ -121,8 +120,8 @@ export default class Dashboard extends Component {
             } else {
                 return (
                     <div>
-                        <h1>USER INFORMATION </h1>
-                        {this.renderUserInformation(this.state.users)}
+                        <h1 style={{ textAlign: 'center', fontStyle: 'normal', padding: '20px 0px 20px 0px' }}>USER INFORMATION </h1>
+                        <div style={{ textAlign: 'center', fontStyle: 'normal' }}>{this.renderUserInformation(this.state.users)}</div>
                     </div>
                 );
             }
@@ -134,7 +133,7 @@ export default class Dashboard extends Component {
             <Container>
                 {this.state.loading && (
                     <div>
-                        <h2 className="h5">
+                        <h2 className="h5" style={{ textAlign: 'center', fontStyle: 'normal', padding: '20px 0px 20px 0px' }}>
                             <span>
                                 <Icon icon={faSpinner} spin />
                             </span>{' '}
