@@ -17,9 +17,14 @@ import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import WebProtege from '../assets/images/webprotege.png';
+import ontology from '../assets/images/Ontology.png';
+
+const Image = styled.img``;
 
 const StyledText = styled.span`
     margin-left: 20px;
+    font-family: normal;
 `;
 const StyledLink = styled(NavLink)`
     width: 100%;
@@ -33,6 +38,7 @@ const StyledLink = styled(NavLink)`
     text-decoration: none;
     text-decoration: none !important;
     font-size: 20px;
+    font-family: normal;
     :hover {
         background-color: #90c8ac;
         color: black;
@@ -65,7 +71,7 @@ const SideBar = () => {
     };
 
     return (
-        <div style={{ background: '#5f7c9d' }}>
+        <div style={{ background: '##5f7c9d' }}>
             <StyledLink exact activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} size="lg">
                 <Icon icon={faHome} />
                 <StyledText>Home</StyledText>
@@ -93,7 +99,7 @@ const SideBar = () => {
                         size="lg"
                         title="Open Manu"
                     >
-                        <Icon icon={faHome} />
+                        <Image src={ontology} alt="DFG Logo" style={{ height: 23, width: 23 }} />
                         <StyledText>Ontologies</StyledText>
                     </StyledLink>
                     {selectedOntologySession ? (
@@ -155,7 +161,12 @@ const SideBar = () => {
             <StyledHr />
             <StyledText>Editing & Documentation</StyledText>
             <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.WEBPROTEGE}>
-                <Icon icon={faHome} />
+                <Image
+                    background={'none'}
+                    src={WebProtege}
+                    alt="DFG Logo"
+                    style={{ height: 25, width: 25, marginBottom: '12px', background: 'none' }}
+                />
                 <StyledText>WebProtege</StyledText>
             </StyledLink>
             <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Documentations}>
