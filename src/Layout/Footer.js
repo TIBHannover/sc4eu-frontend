@@ -7,7 +7,7 @@ import bosch_logo from '../assets/images/Bosch.png';
 import mines_logo from '../assets/images/MINES.png';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { FOOTER_BACKGROUND_COLOR } from '../constants/globalStyled';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 const Image = styled.img``;
 
@@ -19,7 +19,6 @@ class Footer extends Component {
                     style={{
                         display: 'flex',
                         background: 'white',
-                        borderTop: '2px solid #ccc',
                         position: 'absolute',
                         left: 0,
                         bottom: 0,
@@ -27,7 +26,7 @@ class Footer extends Component {
                         paddingLeft: '310px',
                         paddingTop: '10px',
                         height: '9%',
-                        backgroundColor: FOOTER_BACKGROUND_COLOR
+                        backgroundColor: PRIMARY.lighter
                     }}
                 >
                     <div style={{ flexDirection: 'column' }}>
