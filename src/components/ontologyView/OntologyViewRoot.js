@@ -7,6 +7,7 @@ import { Button } from 'reactstrap';
 import styled from 'styled-components';
 import { expandAllBodies } from '../../redux/actions/globalUI_actions';
 import { connect } from 'react-redux';
+import { SECONDARY } from '../RRView/StyledComponents';
 
 class OntologyViewRoot extends Component {
     constructor(props) {
@@ -112,7 +113,6 @@ class OntologyViewRoot extends Component {
         return (
             <div style={{ margin: '5px 0 5px 270px' }}>
                 <ControlButton
-                    color={'primary'}
                     onClick={() => {
                         // emit this as signal;
                         this.props.expandAllBodies({
@@ -195,6 +195,7 @@ OntologyViewRoot.propTypes = {
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);
 
 const ControlButton = styled(Button)`
+    background: ${SECONDARY.dark};
     border-radius: 5px 5px;
     padding: 0;
     padding-left: 10px;

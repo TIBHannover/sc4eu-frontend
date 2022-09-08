@@ -6,6 +6,7 @@ import SingleRelation from './SingleRelation';
 import { Button, InputGroup } from 'reactstrap';
 import SearchAutoComplete from './SearchAutoComplete';
 import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
+import { PRIMARY } from '../RRView/StyledComponents';
 
 class RelationRenderer extends Component {
     constructor(props) {
@@ -193,9 +194,8 @@ class RelationRenderer extends Component {
                     style={{
                         display: 'flex',
                         height: '50px',
-                        background: '#67a0d0',
+                        background: PRIMARY.dark,
                         margin: '10px',
-                        border: '1px outset #dbdde5',
                         borderRadius: '7px 7px 7px 7px',
                         position: 'relative',
                         justifyContent: 'center',

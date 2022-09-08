@@ -10,6 +10,7 @@ import SearchAutoComplete from './SearchAutoComplete';
 import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
 //import { transformIdentifierToPrefixed } from '../../mappers/ResToTTL';
 //import Select from 'react-select';
+import { PRIMARY } from '../RRView/StyledComponents';
 
 class ResourceRenderer extends Component {
     constructor(props) {
@@ -204,9 +205,8 @@ class ResourceRenderer extends Component {
                     style={{
                         display: 'flex',
                         height: '50px',
-                        background: '#67a0d0',
+                        background: PRIMARY.dark,
                         margin: '10px',
-                        border: '1px outset #dbdde5',
                         borderRadius: '7px 7px 7px 7px',
                         justifyContent: 'center',
                         alignItems: 'center',
