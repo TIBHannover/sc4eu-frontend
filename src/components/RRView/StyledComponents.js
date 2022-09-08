@@ -3,8 +3,6 @@ import { Input } from 'reactstrap';
 
 export const StyledResourceBody = styled.div`
     background-color: red;
-    border: 1px solid black;
-    border-top: none;
     color: black;
     width: 100%;
     background: white;
@@ -16,8 +14,6 @@ export const StyledResourceBody = styled.div`
     }
     word-break: none;
     white-space: nowrap;
-
-    border-bottom: 1px solid black;
     padding: 2px;
     position: relative;
 `;
@@ -46,15 +42,14 @@ export const StyledBodyInput = styled(Input)`
     }
 `;
 
-export const StyledResourceHeader = styled.div`
+export const StyledResourceAndRelationHeader = styled.div`
     padding: 5px;
-    border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
-    border: 1px solid black;
+    // border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
     padding: 5px;
     color: white;
     //background-color: ${props => (props.isHighlighted === true ? '#000000' : '#4388cc')};
-    background-color: ${props => (props.experimentalLayout ? '#ccc' : props.isHighlighted === true ? '#000000' : '#4388cc')};
-    color:${props => (props.experimentalLayout ? 'black' : 'white')};
+    background-color: ${props => (props.experimentalLayout ? PRIMARY.dark : props.isHighlighted === true ? '#000000' : '#4388cc')};
+    color:${props => (props.experimentalLayout ? 'black' : 'black')};
     :focus {
         outline: none;
     }
@@ -93,3 +88,17 @@ export const HeaderValueInput = styled(Input)`
         display: block;
     }
 `;
+
+export const PRIMARY = {
+    lighter: '#F7FBFC',
+    light: '#D6E6F2',
+    lightMain: '#92bdff',
+    main: '#B9D7EA',
+    dark: '#769FCD'
+};
+export const SECONDARY = {
+    dark: '#536b78'
+};
+export const INFO = {};
+export const SUCCESS = {};
+export const WARNING = {};

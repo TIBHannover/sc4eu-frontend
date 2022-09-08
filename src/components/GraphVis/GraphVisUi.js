@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input } from 'reactstrap';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../../constants/globalStyled';
-
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MapperModule from '../../GraphVisLib/implementation/MapperModule';
@@ -9,6 +7,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
 import { selectVisualNotation } from 'redux/actions/globalUI_actions';
 import styled, { keyframes } from 'styled-components';
+import { PRIMARY, SECONDARY } from '../RRView/StyledComponents';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -63,7 +62,7 @@ class GraphVisUi extends Component {
                 node_mouseSingleClick: true,
                 node_mouseDoubleClick: true,
                 node_hasNodeSelection: true,
-                graphBgColor: '#eeeeee', // could be customizable
+                graphBgColor: PRIMARY.lighter, // could be customizable
                 configSelected: 'Default',
                 link_mouseDrag: true,
                 link_mouseHover: true
@@ -255,7 +254,7 @@ class GraphVisUi extends Component {
                         });
                     }}
                 >
-                    <DropdownToggle caret color="primary" style={{ border: '1px solid black' }}>
+                    <DropdownToggle caret style={{ backgroundColor: SECONDARY.dark, height: '35px' }}>
                         Notation: {this.props.visualNotation}
                     </DropdownToggle>
                     <DropdownMenu>
@@ -353,7 +352,7 @@ class GraphVisUi extends Component {
                         marginBottom: '10px',
                         paddingLeft: '10px',
                         paddingRight: '10px',
-                        background: ALL_PAGE_BACKGROUND_COLOR,
+                        background: PRIMARY.lighter,
                         position: 'relative',
                         borderTopLeftRadius: '10px',
                         borderTopRightRadius: '10px',
@@ -364,13 +363,13 @@ class GraphVisUi extends Component {
                         color={!this.state.layoutPlay ? 'primary' : 'secondary'}
                         size="sm"
                         className="mr-sm-1"
-                        style={{ borderRadius: '20px', marginLeft: '-7px', marginTop: '7px', height: '20px', padding: 0 }}
+                        style={{ borderRadius: '20px', marginTop: '3px', height: '30px', padding: 0 }}
                         onClick={() => {
                             this.graph.setForceLayoutPlayState(this.state.layoutPlay);
                             this.setState({ layoutPlay: !this.state.layoutPlay });
                         }}
                     >
-                        <Icon style={{ fontSize: '1.3em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
+                        <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
                     {this.createDropDownForNotations()}
                     {/*<Button
@@ -387,8 +386,9 @@ class GraphVisUi extends Component {
                         onClick={() => {
                             this.graph.zoomToExtent();
                         }}
+                        style={{ backgroundColor: SECONDARY.dark, textAlign: 'center', marginLeft: '5px', marginTop: '2px', height: '35px' }}
                     >
-                        ZoomTest
+                        Zoom
                     </Button>
                 </div>
 
@@ -403,6 +403,7 @@ class GraphVisUi extends Component {
                                 onClick={() => {
                                     this.setState({ leftSideBarExpanded: !this.state.leftSideBarExpanded });
                                 }}
+                                style={{ backgroundColor: SECONDARY.dark }}
                             >
                                 {this.state.leftSideBarExpanded ? '<' : '>'}
                             </Button>
@@ -424,6 +425,7 @@ class GraphVisUi extends Component {
                                 onClick={() => {
                                     this.setState({ rightSideBarExpanded: !this.state.rightSideBarExpanded });
                                 }}
+                                style={{ backgroundColor: SECONDARY.dark }}
                             >
                                 {this.state.rightSideBarExpanded ? '>' : '<'}
                             </Button>
