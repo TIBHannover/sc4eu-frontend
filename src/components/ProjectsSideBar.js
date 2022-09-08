@@ -7,6 +7,7 @@ import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
 import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
+import { SECONDARY } from '../styledComponents/styledComponents';
 
 class ProjectsSideBar extends Component {
     constructor(props) {
@@ -97,8 +98,7 @@ this.setState({ expanded: !this.state.expanded });
                 <h1 style={{ textAlign: 'center' }}>{this.state.title}</h1>
                 <hr className="mt-0 mb-2" />
                 <Button
-                    color="primary"
-                    style={{ margin: '0px 0px 10px 10px' }}
+                    style={{ margin: '0px 0px 10px 10px', backgroundColor: SECONDARY.dark }}
                     onClick={() => {
                         this.setState({ showCreateProjectModal: true });
                     }}

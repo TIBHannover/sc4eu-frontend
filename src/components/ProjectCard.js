@@ -11,6 +11,7 @@ import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
 import { CLEAR_SESSION, SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
 export default class ProjectIndexCards extends Component {
     constructor(props) {
@@ -210,12 +211,10 @@ const StyledLink = styled(Link)`
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
-    border: 1px solid black;
+    // border: 1px solid black;
     padding: 5px;
     color: white;
-    // background: #4388cc;
-    //background: #6f6f6f;
-    background: #e5e5e9;
+    background: ${PRIMARY.light};
     :focus {
         outline: none;
     }
@@ -224,7 +223,7 @@ const StyledCardHeader = styled.div`
     }
 
     :hover {
-        background: #6f6f6f; //00b4cc
+        background: ${SECONDARY.dark}; //00b4cc
     }
 `;
 
