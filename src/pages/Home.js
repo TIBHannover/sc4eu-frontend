@@ -4,7 +4,7 @@ import UserRole from '../assets/images/UserRole.PNG';
 import guidance from '../assets/images/guidance.png';
 import Usecase from '../assets/images/Usecase.png';
 import AboutSC3 from '../assets/images/AboutSC3.png';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 export default class Home extends Component {
     constructor(props) {
@@ -31,7 +31,7 @@ export default class Home extends Component {
             ' different user groups.';
 
         return (
-            <div style={{ width: '100%', height: '100%', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
+            <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div>
                     <div
                         style={{
