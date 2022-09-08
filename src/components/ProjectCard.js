@@ -178,7 +178,7 @@ ProjectIndexCards.propTypes = {
 
 const StyledButton = styled(Button)`
     :hover {
-        color: #ffffff;
+        color: white;
     }
 `;
 
@@ -205,7 +205,7 @@ const StyledLink = styled(Link)`
     }
 
     :hover {
-        color: #ffffff;
+        color: white;
     }
 `;
 

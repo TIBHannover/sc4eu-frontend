@@ -122,7 +122,7 @@ class SingleRelation extends Component {
                             ? PRIMARY.main
                             : this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()
                             ? PRIMARY.lightMain
-                            : null,
+                            : PRIMARY.lighter,
                     borderRadius: '10px 10px 10px 10px',
                     marginBottom: '2px'
                 }}

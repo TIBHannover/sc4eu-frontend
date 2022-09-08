@@ -77,7 +77,7 @@ export default class OntologyIndexCards extends Component {
                                     onClick={this.deleteOntology}
                                     style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
                                 >
-                                    <Icon icon={faTrash} color={'#000000'} />
+                                    <Icon icon={faTrash} color={'black'} />
                                 </Button>
                             </div>
                         </StyledLink>
@@ -121,7 +121,7 @@ const StyledLink = styled(Link)`
     }
 
     :hover {
-        color: #ffffff;
+        color: white;
     }
 `;
 

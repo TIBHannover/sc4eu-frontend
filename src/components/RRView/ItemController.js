@@ -13,7 +13,7 @@ class ItemController extends Component {
     getBackgroundColor = () => {
         if (this.props.itemType === 'Relation') {
             if (this.props.itemContext.isHighlighted) {
-                return '#000000';
+                return 'black';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
                 return PRIMARY.lightMain;
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
@@ -28,13 +28,13 @@ class ItemController extends Component {
     getFontColor = () => {
         if (this.props.itemType === 'Relation') {
             if (this.props.itemContext.isHighlighted) {
-                return '#000000';
+                return 'black';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return '#000000';
+                return 'black';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
-                return '#000000';
+                return 'black';
             }
-            return '#fff';
+            return 'white';
         } else {
             return undefined;
         }
@@ -169,8 +169,8 @@ const LabelDiv = styled.div`
     margin-left: auto;
     margin-right: auto;
     height: 30px;
-    color: ${props => (props.typedBasedFontColor ? props.typedBasedFontColor : '#000000')};
-    background-color: ${props => (props.isHighlighted === true ? '#000000' : props.typedBasedColor ? props.typedBasedColor : `${PRIMARY.light}`)};
+    color: ${props => (props.typedBasedFontColor ? props.typedBasedFontColor : 'black')};
+    background-color: ${props => (props.isHighlighted === true ? 'black' : props.typedBasedColor ? props.typedBasedColor : `${PRIMARY.light}`)};
 `;
 
 const ControlButton = styled.div`
@@ -192,7 +192,7 @@ const ControlButton = styled.div`
     }
 
     :hover {
-        background-color: ${props => (props?.active === true ? '#005c5f' : '#005c5f')};
+        background-color: #005c5f;
         cursor: pointer;
     }
 `;

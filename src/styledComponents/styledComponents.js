@@ -66,6 +66,3 @@ export const PRIMARY = {
 export const SECONDARY = {
     dark: '#536b78'
 };
-export const INFO = {};
-export const SUCCESS = {};
-export const WARNING = {};

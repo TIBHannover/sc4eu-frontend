@@ -67,13 +67,13 @@ const SideBar = () => {
 
     return (
         <div style={{ background: PRIMARY.light }}>
-            <StyledLink exact activeStyle={{ backgroundColor: SECONDARY.dark, color: '#ffffff' }} to={ROUTES.HOME} size="lg">
+            <StyledLink exact activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.HOME} size="lg">
                 <Icon icon={faHome} />
                 <StyledText>Home</StyledText>
             </StyledLink>
             <StyledHr />
             <StyledText style={{ fontSize: '14px' }}>Management & Visualization</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: '#ffffff' }} to={ROUTES.ONTOLOGY} onClick={onClickProjectTab}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.ONTOLOGY} onClick={onClickProjectTab}>
                 <Icon icon={faFile} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
@@ -155,25 +155,25 @@ const SideBar = () => {
             ) : null}
             <StyledHr />
             <StyledText>Editing & Documentation</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: '#ffffff' }} to={ROUTES.WEBPROTEGE}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.WEBPROTEGE}>
                 <Icon icon={faHome} />
                 <StyledText>WebProtege</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: '#ffffff' }} to={ROUTES.Documentations}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Documentations}>
                 <Icon icon={faBook} />
                 <StyledText>Documentation</StyledText>
             </StyledLink>
             <StyledHr />
             <StyledText>General & About</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: '#ffffff' }} to={ROUTES.Dataprotections}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Dataprotections}>
                 <Icon icon={faShieldAlt} />
                 <StyledText>Data Policy</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: '#ffffff' }} to={ROUTES.Imprint}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Imprint}>
                 <Icon icon={faStamp} />
                 <StyledText>Imprint</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: '#ffffff' }} to={ROUTES.FAQ}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.FAQ}>
                 <Icon icon={faQuestion} />
                 <StyledText>FAQ</StyledText>
             </StyledLink>

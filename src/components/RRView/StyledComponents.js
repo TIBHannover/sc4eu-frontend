@@ -47,8 +47,8 @@ export const StyledResourceAndRelationHeader = styled.div`
     // border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
     padding: 5px;
     color: white;
-    //background-color: ${props => (props.isHighlighted === true ? '#000000' : '#4388cc')};
-    background-color: ${props => (props.experimentalLayout ? PRIMARY.dark : props.isHighlighted === true ? '#000000' : '#4388cc')};
+    //background-color: ${props => (props.isHighlighted === true ? 'black' : '#4388cc')};
+    background-color: ${props => (props.experimentalLayout ? PRIMARY.dark : props.isHighlighted === true ? 'black' : '#4388cc')};
     color:${props => (props.experimentalLayout ? 'black' : 'black')};
     :focus {
         outline: none;
@@ -99,6 +99,3 @@ export const PRIMARY = {
 export const SECONDARY = {
     dark: '#536b78'
 };
-export const INFO = {};
-export const SUCCESS = {};
-export const WARNING = {};

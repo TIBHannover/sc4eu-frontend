@@ -60,7 +60,7 @@ class RelationHeader extends Component {
     getBackgroundColor = () => {
         const relationContext = this.props.relationContext;
         if (relationContext.isHighlighted) {
-            return '#000000';
+            return 'black';
         } else if (relationContext.type.length && relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
             return '#4388cc';
         } else if (relationContext.type.length && relationContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
@@ -169,50 +169,3 @@ RelationHeader.propTypes = {
 const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(RelationHeader);
-
-// const StyledRelationHeader = styled.div`
-//     padding: 5px;
-//     border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
-//     border: 1px solid black;
-//     padding: 5px;
-//     color: white;
-//     background-color: ${props => (props.experimentalLayout ? '#536b78' : props.isHighlighted === true ? '#000000' : props.typedBasedColor)};
-//     color: ${props => (props.experimentalLayout ? 'white' : 'black')};
-//     :focus {
-//         outline: none;
-//     }
-//     ::-moz-focus-inner {
-//         border: 0;
-//     }
-// `;
-//
-// const StyledContentView = styled.div`
-//     overflow: hidden;
-//     white-space: nowrap;
-//     text-overflow: ellipsis;
-// `;
-//
-// export const HeaderValueInput = styled(Input)`
-//     background: #fff;
-//     color: black;
-//     outline: 0;
-//     border: dotted 2px red;
-//     border-radius: 0;
-//     padding: 0 4px;
-//     display: block;
-//     height: 22px !important;
-//
-//     min-width: 150px;
-//     margin: 1px 1px;
-//     padding: 0 2px;
-//
-//     &:focus {
-//         background: #fff;
-//         color: black;
-//         outline: 0;
-//         border: dotted 2px green;
-//         padding: 0 4px;
-//         border-radius: 0;
-//         display: block;
-//     }
-// `;
