@@ -1,2 +1,0 @@
-export const ALL_PAGE_BACKGROUND_COLOR = '#D9F9F4';
-export const FOOTER_BACKGROUND_COLOR = '#9CD9DE';
