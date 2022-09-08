@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 export default class Dataprotections extends Component {
     render() {
         return (
-            <div style={{ width: '100%', height: '100%', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
+            <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div
                     style={{
                         width: '100%',

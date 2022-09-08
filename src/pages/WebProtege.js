@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Spinner } from 'reactstrap';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
+import { PRIMARY } from '../styledComponents/styledComponents';
 import Footer from '../Layout/Footer';
 
 export default class WebProtege extends Component {
@@ -32,7 +32,7 @@ export default class WebProtege extends Component {
     render() {
         return (
             <>
-                <div style={{ backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
+                <div style={{ backgroundColor: PRIMARY.lighter }}>
                     {this.state.isLoading ? (
                         <Button variant="primary" disabled>
                             <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />

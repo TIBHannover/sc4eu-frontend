@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Footer from '../Layout/Footer';
-import { Collapse, Button } from 'reactstrap';
+import { Collapse, Button, Container } from 'reactstrap';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
+import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
 class Faq extends Component {
     constructor(props) {
@@ -70,10 +70,20 @@ class Faq extends Component {
             }
         ];
         return (
-            <div style={{ width: '100%', height: '100%', overflowY: 'auto', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
-                <div className="container">
+            <div style={{ width: '100%', height: '100%', overflowY: 'auto', backgroundColor: PRIMARY.lighter }}>
+                <Container
+                    style={{
+                        // border: '1px solid black',
+                        borderTop: 'none',
+                        overflow: 'auto',
+                        position: 'relative',
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px 10px 10px 10px ',
+                        height: '100%'
+                    }}
+                >
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: '#007bff' }}
+                        style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: SECONDARY.dark }}
                         className="btn"
                         onClick={this.toggleUserRole}
                     >
@@ -99,7 +109,7 @@ class Faq extends Component {
                         </table>
                     </Collapse>
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: '#007bff' }}
+                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: SECONDARY.dark }}
                         className="btn"
                         onClick={this.toggleIssueManagement}
                     >
@@ -116,7 +126,7 @@ class Faq extends Component {
                         </p>
                     </Collapse>
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: '#007bff' }}
+                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: SECONDARY.dark }}
                         className="btn"
                         onClick={this.toggleWebProtege}
                     >
@@ -134,7 +144,7 @@ class Faq extends Component {
                             tool. A more integrated solution is coming.
                         </p>
                     </Collapse>
-                </div>
+                </Container>
                 <Footer />
             </div>
         );

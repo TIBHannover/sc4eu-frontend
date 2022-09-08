@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 class Documentations extends Component {
     constructor(props) {
@@ -25,7 +25,7 @@ class Documentations extends Component {
             'Since the created ontologies and their conceptualizations thrive from discussions and joint agreement upon their definitions and their usage, block chain technologies providing the means for versioning and history of changes should be part of the solution. Integrating them with ontology development will foster trust and validation of ontologies and enable long term support for downward compatible systems using old ontology versions”.\n';
 
         return (
-            <div style={{ width: '100%', height: '100%', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
+            <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div style={{ width: '100%', height: '90%', overflowY: 'auto', paddingBottom: '30px' }}>
                     <h1 style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '10px' }}>What Portal will do for you</h1>
                     <div style={{ paddingLeft: '300px', paddingRight: '300px' }}>

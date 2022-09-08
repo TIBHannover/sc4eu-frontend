@@ -9,7 +9,7 @@ import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import ProjectsSideBar from '../components/ProjectsSideBar';
 import PropTypes from 'prop-types';
 import { SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 export default class OntologyIndexing extends Component {
     constructor(props) {
@@ -86,13 +86,14 @@ export default class OntologyIndexing extends Component {
 
     render() {
         return (
-            <div style={{ height: '100%', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
+            <div style={{ height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <Container
                     style={{
-                        border: '1px solid black',
+                        // border: '1px solid black',
                         borderTop: 'none',
                         overflow: 'auto',
-                        position: 'relative'
+                        position: 'relative',
+                        backgroundColor: '#ffffff'
                     }}
                 >
                     {this.state.isLoading ? (
@@ -107,7 +108,7 @@ export default class OntologyIndexing extends Component {
                         </div>
                     ) : this.state.ProjectListShown === 'true' || !this.state.selectedProject ? (
                         <ProjectsSideBar
-                            title="Projects"
+                            title="Select Project"
                             updateHeaderValueCallback={params => {
                                 this.updateHeaderValue(params);
                             }}

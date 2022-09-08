@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../constants/globalStyled';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 export default class Imprint extends Component {
     constructor(props) {
@@ -9,7 +9,7 @@ export default class Imprint extends Component {
 
     render() {
         return (
-            <div style={{ height: '100%', width: '100%', backgroundColor: ALL_PAGE_BACKGROUND_COLOR }}>
+            <div style={{ height: '100%', width: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '30px' }}>
                     <div style={{ paddingTop: '20px', paddingLeft: '300px', paddingRight: '300px' }}>
                         <h2>Imprint</h2>
