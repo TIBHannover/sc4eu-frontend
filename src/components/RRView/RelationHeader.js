@@ -10,6 +10,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash, faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import { transformIdentifierToPrefixed } from '../../mappers/RelationToTTL';
 import Tippy from '@tippyjs/react';
+import { StyledResourceAndRelationHeader, HeaderValueInput, StyledContentView } from './StyledComponents';
 
 class RelationHeader extends Component {
     constructor(props) {
@@ -70,7 +71,7 @@ class RelationHeader extends Component {
 
     render() {
         return (
-            <StyledRelationHeader
+            <StyledResourceAndRelationHeader
                 experimentalLayout={this.props.experimentalLayout}
                 isHighlighted={this.props.relationContext.isHighlighted}
                 typedBasedColor={this.getBackgroundColor()}
@@ -140,7 +141,7 @@ class RelationHeader extends Component {
                 )}
 
                 {/*// add enable editing botton*/}
-            </StyledRelationHeader>
+            </StyledResourceAndRelationHeader>
         );
     }
 }
@@ -169,49 +170,49 @@ const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(RelationHeader);
 
-const StyledRelationHeader = styled.div`
-    padding: 5px;
-    border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
-    border: 1px solid black;
-    padding: 5px;
-    color: white;
-    background-color: ${props => (props.experimentalLayout ? '#ccc' : props.isHighlighted === true ? '#000000' : props.typedBasedColor)};
-    color: ${props => (props.experimentalLayout ? 'black' : 'white')};
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
-
-const StyledContentView = styled.div`
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-`;
-
-export const HeaderValueInput = styled(Input)`
-    background: #fff;
-    color: black;
-    outline: 0;
-    border: dotted 2px red;
-    border-radius: 0;
-    padding: 0 4px;
-    display: block;
-    height: 22px !important;
-
-    min-width: 150px;
-    margin: 1px 1px;
-    padding: 0 2px;
-
-    &:focus {
-        background: #fff;
-        color: black;
-        outline: 0;
-        border: dotted 2px green;
-        padding: 0 4px;
-        border-radius: 0;
-        display: block;
-    }
-`;
+// const StyledRelationHeader = styled.div`
+//     padding: 5px;
+//     border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
+//     border: 1px solid black;
+//     padding: 5px;
+//     color: white;
+//     background-color: ${props => (props.experimentalLayout ? '#536b78' : props.isHighlighted === true ? '#000000' : props.typedBasedColor)};
+//     color: ${props => (props.experimentalLayout ? 'white' : 'black')};
+//     :focus {
+//         outline: none;
+//     }
+//     ::-moz-focus-inner {
+//         border: 0;
+//     }
+// `;
+//
+// const StyledContentView = styled.div`
+//     overflow: hidden;
+//     white-space: nowrap;
+//     text-overflow: ellipsis;
+// `;
+//
+// export const HeaderValueInput = styled(Input)`
+//     background: #fff;
+//     color: black;
+//     outline: 0;
+//     border: dotted 2px red;
+//     border-radius: 0;
+//     padding: 0 4px;
+//     display: block;
+//     height: 22px !important;
+//
+//     min-width: 150px;
+//     margin: 1px 1px;
+//     padding: 0 2px;
+//
+//     &:focus {
+//         background: #fff;
+//         color: black;
+//         outline: 0;
+//         border: dotted 2px green;
+//         padding: 0 4px;
+//         border-radius: 0;
+//         display: block;
+//     }
+// `;
