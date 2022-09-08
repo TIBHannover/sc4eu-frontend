@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash, faProjectDiagram, faAlignJustify, faJedi, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
+import { PRIMARY, SECONDARY } from './StyledComponents';
 
 class ItemController extends Component {
     getBackgroundColor = () => {
@@ -14,9 +15,9 @@ class ItemController extends Component {
             if (this.props.itemContext.isHighlighted) {
                 return '#000000';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return '#8585e0';
+                return PRIMARY.lightMain;
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
-                return '#9c6';
+                return PRIMARY.main;
             }
             return '#838a92';
         } else {
@@ -27,9 +28,9 @@ class ItemController extends Component {
     getFontColor = () => {
         if (this.props.itemType === 'Relation') {
             if (this.props.itemContext.isHighlighted) {
-                return '#ffffff';
+                return '#000000';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return '#ffffff';
+                return '#000000';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
                 return '#000000';
             }
@@ -161,7 +162,6 @@ const LabelDiv = styled.div`
     text-overflow: ellipsis;
     padding: 5px;
     border-radius: 10px 10px 0 0;
-    border: 1px solid black;
     border-bottom: none;
     padding: 5px;
     color: white;
@@ -169,18 +169,17 @@ const LabelDiv = styled.div`
     margin-left: auto;
     margin-right: auto;
     height: 30px;
-    color: ${props => (props.typedBasedFontColor ? props.typedBasedFontColor : '#fff')};
-    background-color: ${props => (props.isHighlighted === true ? '#000000' : props.typedBasedColor ? props.typedBasedColor : '#4388cc')};
+    color: ${props => (props.typedBasedFontColor ? props.typedBasedFontColor : '#000000')};
+    background-color: ${props => (props.isHighlighted === true ? '#000000' : props.typedBasedColor ? props.typedBasedColor : `${PRIMARY.light}`)};
 `;
 
 const ControlButton = styled.div`
     padding: 5px;
     border-radius: ${props => (props.type === 'control' ? '0' : '10px 10px 0 0')};
-    border: 1px solid black;
     border-bottom: none;
     text-align: center;
     margin-right: ${props => (props.type === 'control' ? '3px' : '-1px')};
-    background-color: ${props => (props?.active === true ? '#ad2f38' : '#007bff')};
+    background-color: ${props => (props?.active === true ? '#005c5f' : `${SECONDARY.dark}`)};
 
     width: 30px;
     height: 30px;
@@ -193,7 +192,7 @@ const ControlButton = styled.div`
     }
 
     :hover {
-        background-color: ${props => (props?.active === true ? '#952d36' : '#0061c1')};
+        background-color: ${props => (props?.active === true ? '#005c5f' : '#005c5f')};
         cursor: pointer;
     }
 `;
