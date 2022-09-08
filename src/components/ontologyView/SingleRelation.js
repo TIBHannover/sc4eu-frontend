@@ -10,6 +10,7 @@ import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from './CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { CollapsibleItem, GraphVisButton, WidgetVisButton } from './StyledComponents';
+import { PRIMARY } from '../RRView/StyledComponents';
 
 class SingleRelation extends Component {
     constructor(props) {
@@ -98,6 +99,7 @@ class SingleRelation extends Component {
 
         this.props.redux_removeRelation(relation);
     };
+
     render() {
         // const content = transformRelationToTTL(this.props.relationContext);
         const currentRelation = this.props.relationContext;
@@ -108,7 +110,23 @@ class SingleRelation extends Component {
         const isVisible = isFiltered === true ? 'none' : 'block';
 
         return (
-            <div ref={this.ref} style={{ padding: '5px', overflow: 'none', paddingRight: '5px', display: isVisible }}>
+            <div
+                ref={this.ref}
+                style={{
+                    padding: '5px',
+                    overflow: 'none',
+                    paddingRight: '5px',
+                    display: isVisible,
+                    backgroundColor:
+                        this.props.relationContext.type[0].toLowerCase() === 'owl:DatatypeProperty'.toLowerCase()
+                            ? PRIMARY.main
+                            : this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()
+                            ? PRIMARY.lightMain
+                            : null,
+                    borderRadius: '10px 10px 10px 10px',
+                    marginBottom: '2px'
+                }}
+            >
                 {this.props.experimentalLayout && (
                     <ItemController
                         itemType="Relation"
