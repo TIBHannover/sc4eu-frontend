@@ -9,7 +9,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPen, faTrash, faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import { transformIdentifierToPrefixed } from '../../mappers/ResToTTL';
 import Tippy from '@tippyjs/react';
-import { StyledResourceHeader, HeaderValueInput, StyledContentView } from './StyledComponents';
+import { StyledResourceAndRelationHeader, HeaderValueInput, StyledContentView } from './StyledComponents';
 
 class ResourceHeader extends Component {
     constructor(props) {
@@ -44,7 +44,7 @@ class ResourceHeader extends Component {
 
     render() {
         return (
-            <StyledResourceHeader
+            <StyledResourceAndRelationHeader
                 isHighlighted={this.props.resourceContext.isHighlighted}
                 experimentalLayout={this.props.experimentalLayout}
                 style={{ height: '100%', overflow: 'auto', display: 'flex' }}
@@ -113,7 +113,7 @@ class ResourceHeader extends Component {
                 )}
 
                 {/*// add enable editing botton*/}
-            </StyledResourceHeader>
+            </StyledResourceAndRelationHeader>
         );
     }
 }
