@@ -2,7 +2,7 @@ import React, { createRef, Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { StyledResourceBody, StyledBodyInput } from './StyledComponents';
+import { StyledResourceBody, StyledBodyInput, PRIMARY } from './StyledComponents';
 
 import { transformResourceToTTL, calculateBodyRows } from '../../mappers/ResToTTL';
 
@@ -33,7 +33,15 @@ class ResourceBody extends Component {
             return (
                 <StyledResourceBody ref={this.bodyRef}>
                     <div style={{ backgroundColor: 'red', height: 'auto', display: 'block', maxHeight: '100%', maxWidth: '100%' }}>
-                        <StyledBodyInput type="textarea" readOnly name="text" id="ontologyContent" rows={numRowsRequired} value={content} />
+                        <StyledBodyInput
+                            style={{ background: PRIMARY.lighter }}
+                            type="textarea"
+                            readOnly
+                            name="text"
+                            id="ontologyContent"
+                            rows={numRowsRequired}
+                            value={content}
+                        />
                     </div>
                 </StyledResourceBody>
             );
