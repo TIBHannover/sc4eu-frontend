@@ -10,6 +10,7 @@ import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { GraphVisButton, WidgetVisButton, CollapsibleItem } from './StyledComponents';
+import { PRIMARY } from '../RRView/StyledComponents';
 class SingleResource extends Component {
     constructor(props) {
         super(props);
@@ -90,7 +91,18 @@ class SingleResource extends Component {
         const isVisible = currentResource.isFilteredOut === true ? 'none' : 'block';
         this.props.arrayOfRef.push({ identifier: currentResource.identifier, ref: this.ref });
         return (
-            <div ref={this.ref} style={{ padding: '5px', overflow: 'none', paddingRight: '5px', display: isVisible }}>
+            <div
+                ref={this.ref}
+                style={{
+                    padding: '5px',
+                    overflow: 'none',
+                    paddingRight: '5px',
+                    display: isVisible,
+                    backgroundColor: PRIMARY.light,
+                    borderRadius: '10px 10px 10px 10px ',
+                    marginBottom: '2px'
+                }}
+            >
                 {this.props.experimentalLayout && (
                     <ItemController
                         itemType="Resource"

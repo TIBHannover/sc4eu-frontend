@@ -6,6 +6,7 @@ import styled, { keyframes } from 'styled-components';
 import { Input } from 'reactstrap';
 
 import { transformRelationToTTL, calculateBodyRows } from '../../mappers/RelationToTTL';
+import { PRIMARY } from './StyledComponents';
 
 class RelationBody extends Component {
     constructor(props) {
@@ -41,7 +42,7 @@ class RelationBody extends Component {
                             id="ontologyContent"
                             rows={numRowsRequired}
                             value={content}
-                            style={{ padding: '2px' }}
+                            style={{ padding: '2px', backgroundColor: PRIMARY.lighter }}
                         />
                     )}
                 </StyledRelationBody>
@@ -105,8 +106,6 @@ const expandContentContainerAnimation = ({ isExpanded, maxHeight, initialRenderi
 
 const StyledRelationBody = styled.div`
     background-color: red;
-    border: 1px solid black;
-    border-top: none;
     color: black;
     width: 100%;
     background: white;
@@ -121,7 +120,6 @@ const StyledRelationBody = styled.div`
 
     animation-name: ${expandContentContainerAnimation};
 
-    border-bottom: ${props => (props.isExpanded ? 1 : 0)}px solid black;
     padding: ${props => (props.isExpanded ? 5 : 0)}px;
     animation-duration: ${props => (props.initialRendering ? 0 : 400)}ms;
 

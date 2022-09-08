@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import UploadOntologyModal from './UploadOntologyModal';
 // import { preInitializeOntologyUpload } from '../network/ontologyIndexing';
+import { SECONDARY } from '../styledComponents/styledComponents';
 
 export default class OntologyIndexInteractions extends Component {
     constructor(props) {
@@ -29,7 +30,7 @@ export default class OntologyIndexInteractions extends Component {
                 <h1 style={{ textAlign: 'center', margin: '10px 0px 10px 0px' }}>Select Ontology</h1>
                 <hr className="mt-0 mb-2" />
                 <Button
-                    style={{ backgroundColor: 'blueviolet', margin: '10px 0px 0px 10px' }}
+                    style={{ backgroundColor: SECONDARY.dark, margin: '10px 0px 0px 10px' }}
                     active={true}
                     onClick={() => {
                         console.log('Upload Button Triggered');

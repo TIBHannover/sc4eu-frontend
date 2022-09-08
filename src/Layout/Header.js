@@ -126,7 +126,7 @@ class Header extends Component {
         const greeting = greetingTime(new Date());
 
         return (
-            <div style={{ borderBottom: '1px solid black' }}>
+            <div>
                 <div
                     style={{
                         color: '#fff',
@@ -187,7 +187,7 @@ class Header extends Component {
                         </div>
                     ) : (
                         <Button
-                            style={{ backgroundColor: '#000000' }}
+                            style={{ backgroundColor: 'black' }}
                             className="clearfix"
                             onClick={() => {
                                 // push that to the redux state so that the user is rederected to its prev location;

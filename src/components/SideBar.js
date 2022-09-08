@@ -17,6 +17,7 @@ import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -32,10 +33,10 @@ const StyledLink = styled(NavLink)`
     color: black;
     text-decoration: none;
     text-decoration: none !important;
-    font-size: 20px;
+    font-size: 16px;
     :hover {
-        background-color: #90c8ac;
-        color: black;
+        background-color: ${SECONDARY.dark};
+        color: white;
         text-color: black;
         padding: 11px;
     }
@@ -65,14 +66,14 @@ const SideBar = () => {
     };
 
     return (
-        <div style={{ background: '#5f7c9d' }}>
-            <StyledLink exact activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} size="lg">
+        <div style={{ background: PRIMARY.light }}>
+            <StyledLink exact activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.HOME} size="lg">
                 <Icon icon={faHome} />
                 <StyledText>Home</StyledText>
             </StyledLink>
             <StyledHr />
-            <StyledText>Management & Visualization</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.ONTOLOGY} onClick={onClickProjectTab}>
+            <StyledText style={{ fontSize: '14px' }}>Management & Visualization</StyledText>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.ONTOLOGY} onClick={onClickProjectTab}>
                 <Icon icon={faFile} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
@@ -85,8 +86,8 @@ const SideBar = () => {
                         }}
                         onClick={onClickOntologyTab}
                         style={{
-                            backgroundColor: selectedProjectSession ? '#90c8ac' : null,
-                            color: selectedProjectSession ? 'black' : '',
+                            backgroundColor: selectedProjectSession ? SECONDARY.dark : null,
+                            color: selectedProjectSession ? 'white' : null,
                             marginTop: '5px',
                             marginBottom: '5px'
                         }}
@@ -109,8 +110,8 @@ const SideBar = () => {
                                 }}
                                 onClick={() => selectModeOfOperation('hybrid')}
                                 style={{
-                                    backgroundColor: isActiveTab === 'hybrid' ? '#90c8ac' : null,
-                                    color: isActiveTab === 'hybrid' ? 'black' : ''
+                                    backgroundColor: isActiveTab === 'hybrid' ? SECONDARY.dark : null,
+                                    color: isActiveTab === 'hybrid' ? 'white' : null
                                 }}
                             >
                                 <Icon icon={faBrain} />
@@ -125,8 +126,8 @@ const SideBar = () => {
                                 }}
                                 onClick={() => selectModeOfOperation('graph')}
                                 style={{
-                                    backgroundColor: isActiveTab === 'graph' ? '#90c8ac' : null,
-                                    color: isActiveTab === 'graph' ? 'black' : ''
+                                    backgroundColor: isActiveTab === 'graph' ? SECONDARY.dark : null,
+                                    color: isActiveTab === 'graph' ? 'white' : null
                                 }}
                             >
                                 <Icon icon={faProjectDiagram} />
@@ -141,8 +142,8 @@ const SideBar = () => {
                                 }}
                                 onClick={() => selectModeOfOperation('text')}
                                 style={{
-                                    backgroundColor: isActiveTab === 'text' ? '#90c8ac' : null,
-                                    color: isActiveTab === 'text' ? 'black' : ''
+                                    backgroundColor: isActiveTab === 'text' ? SECONDARY.dark : null,
+                                    color: isActiveTab === 'text' ? 'white' : null
                                 }}
                             >
                                 <Icon icon={faAlignJustify} />
@@ -154,25 +155,25 @@ const SideBar = () => {
             ) : null}
             <StyledHr />
             <StyledText>Editing & Documentation</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.WEBPROTEGE}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.WEBPROTEGE}>
                 <Icon icon={faHome} />
                 <StyledText>WebProtege</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Documentations}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Documentations}>
                 <Icon icon={faBook} />
                 <StyledText>Documentation</StyledText>
             </StyledLink>
             <StyledHr />
             <StyledText>General & About</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Dataprotections}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Dataprotections}>
                 <Icon icon={faShieldAlt} />
                 <StyledText>Data Policy</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.Imprint}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Imprint}>
                 <Icon icon={faStamp} />
                 <StyledText>Imprint</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.FAQ}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.FAQ}>
                 <Icon icon={faQuestion} />
                 <StyledText>FAQ</StyledText>
             </StyledLink>

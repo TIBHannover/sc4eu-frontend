@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
-class Dataprotections extends Component {
+export default class Dataprotections extends Component {
     render() {
         return (
-            <div style={{ width: '100%', height: '100%' }}>
+            <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div
                     style={{
                         width: '100%',
                         height: '90%',
-                        overflowY: 'scroll',
+                        overflowY: 'auto',
                         alignItems: 'center',
                         paddingLeft: '300px',
                         paddingRight: '300px'
@@ -123,7 +124,3 @@ class Dataprotections extends Component {
         );
     }
 }
-
-Dataprotections.propTypes = {};
-
-export default Dataprotections;

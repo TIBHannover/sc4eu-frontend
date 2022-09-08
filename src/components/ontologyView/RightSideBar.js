@@ -7,6 +7,7 @@ import { faAngleLeft, faChevronCircleDown, faChevronCircleRight } from '@fortawe
 import styled, { keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
+import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 
 class RightSideBar extends Component {
     constructor(props) {
@@ -62,9 +63,8 @@ class RightSideBar extends Component {
                 return (
                     <div key={'metaInformation_' + key} className="root" style={{ padding: '0 10px' }}>
                         <Button
-                            color="primary"
                             onClick={() => this.toggleMetaInformation()}
-                            style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold' }}
+                            style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold', backgroundColor: SECONDARY.dark }}
                         >
                             <Icon icon={this.state.collapseMetaInfo ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
                             Meta Information
@@ -84,9 +84,8 @@ class RightSideBar extends Component {
                 return (
                     <div key={'prefixList' + key} className="root" style={{ padding: '0 10px' }}>
                         <Button
-                            color="primary"
                             onClick={() => this.toggle()}
-                            style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold' }}
+                            style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold', backgroundColor: SECONDARY.dark }}
                         >
                             <Icon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
                             Prefix List
@@ -200,18 +199,16 @@ class RightSideBar extends Component {
                     className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
                     style={{
                         borderRadius: '10px',
-                        borderWidth: '1px',
-                        borderColor: 'rgb(219,221,229)',
-                        borderStyle: 'solid',
                         borderBottomRightRadius: '0',
                         borderBottomLeftRadius: '0',
-                        height: '40px',
+                        height: '50px',
                         marginLeft: '5px',
                         color: 'white',
-                        backgroundColor: '#67a0d0'
+                        backgroundColor: PRIMARY.dark,
+                        marginTop: '8px'
                     }}
                 >
-                    <div style={{ width: this.props.width - 10, textAlign: 'center' }}>{this.state.title}</div>
+                    <h4 style={{ width: this.props.width - 10, textAlign: 'center' }}>{this.state.title}</h4>
                 </Container>
                 <ButtonContainer
                     size="sm"
@@ -230,7 +227,7 @@ class RightSideBar extends Component {
                         padding: 0,
                         border: 'solid 1px',
                         borderColor: '#525252',
-                        backgroundColor: '#8a8a8a',
+                        backgroundColor: SECONDARY.dark,
                         float: 'left',
                         position: 'relative',
                         top: '-15px',
@@ -245,9 +242,6 @@ class RightSideBar extends Component {
                     className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
                     style={{
                         borderRadius: '10px',
-                        borderWidth: '1px',
-                        borderColor: 'rgb(219,221,229)',
-                        borderStyle: 'solid',
                         borderTopRightRadius: '0',
                         borderTopLeftRadius: '0',
                         marginLeft: '5px',

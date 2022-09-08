@@ -9,6 +9,7 @@ import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
+import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
 export default class OntologyIndexCards extends Component {
     componentDidMount() {
@@ -70,13 +71,13 @@ export default class OntologyIndexCards extends Component {
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
                                 <div> {this.props.inputData.name} </div>
                                 <Button
-                                    color="white"
+                                    color="black"
                                     size="sm"
                                     title="Delete Ontology"
                                     onClick={this.deleteOntology}
                                     style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
                                 >
-                                    <Icon icon={faTrash} color={'white'} />
+                                    <Icon icon={faTrash} color={'black'} />
                                 </Button>
                             </div>
                         </StyledLink>
@@ -111,7 +112,7 @@ const StyledCard = styled.div`
 
 const StyledLink = styled(Link)`
     padding: 10px;
-    color: white;
+    color: black;
     :focus {
         outline: none;
     }
@@ -120,27 +121,30 @@ const StyledLink = styled(Link)`
     }
 
     :hover {
-        color: #ffffff;
+        color: white;
     }
 `;
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
-    border: 1px solid black;
+    border: 1px solid ${PRIMARY.dark};
     padding: 5px;
-    color: white;
-    background: #4388cc;
+    color: black;
+    background: ${PRIMARY.light};
     :focus {
         outline: none;
     }
     ::-moz-focus-inner {
         border: 0;
     }
+    :hover {
+        background: ${SECONDARY.dark};
+    }
 `;
 
 const StyledCardBody = styled.div`
     padding: 5px;
-    border: 1px solid black;
+    border: 1px solid ${PRIMARY.dark};
     border-top: none;
     :focus {
         outline: none;

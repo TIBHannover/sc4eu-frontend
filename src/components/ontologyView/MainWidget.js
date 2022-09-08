@@ -43,10 +43,10 @@ export default class MainWidget extends Component {
                     style={{
                         width: '90%',
                         height: '100%',
-                        border: '1px solid black',
                         position: 'relative',
                         left: '5%',
-                        backgroundColor: '#f2f2f2'
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px 10px 10px 10px'
                     }}
                 >
                     <OntologyContentViewer experimentalLayout={this.props.experimentalLayout} />

@@ -17,7 +17,7 @@ class OntologyContentViewer extends Component {
     render() {
         return (
             <div style={{ display: 'flex', marginTop: '0', height: '100%' }}>
-                <div style={{ width: '50%', borderRight: '1px solid black' }}>
+                <div style={{ width: '50%' }}>
                     <ResourceRenderer experimentalLayout={this.props.experimentalLayout} />
                 </div>
                 <div style={{ width: '50%' }}>

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Spinner } from 'reactstrap';
+import { PRIMARY } from '../styledComponents/styledComponents';
+import Footer from '../Layout/Footer';
 
 export default class WebProtege extends Component {
     constructor(props) {
@@ -29,15 +31,18 @@ export default class WebProtege extends Component {
 
     render() {
         return (
-            <div>
-                {this.state.isLoading ? (
-                    <Button variant="primary" disabled>
-                        <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />
-                        Loading WebProtege...
-                    </Button>
-                ) : null}
-                {this.getWebProtege()}
-            </div>
+            <>
+                <div style={{ backgroundColor: PRIMARY.lighter }}>
+                    {this.state.isLoading ? (
+                        <Button variant="primary" disabled>
+                            <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />
+                            Loading WebProtege...
+                        </Button>
+                    ) : null}
+                    {this.getWebProtege()}
+                </div>
+                <Footer />
+            </>
         );
     }
 }

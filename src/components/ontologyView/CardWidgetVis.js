@@ -8,6 +8,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight, faPlusCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { redux_editRelation, redux_editResource } from '../../redux/actions/rrm_actions';
 import AnnotationsDropDown from './AnnotationsDropDown';
+import { PRIMARY, SECONDARY } from '../RRView/StyledComponents';
 
 class CardWidgetVis extends Component {
     constructor(props) {
@@ -97,9 +98,8 @@ class CardWidgetVis extends Component {
 
                 <div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>
                     <Button
-                        color="primary"
                         onClick={() => this.toggleResourceDescription()}
-                        style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}
+                        style={{ marginTop: '0px', width: '100%', textAlign: 'left', backgroundColor: SECONDARY.dark }}
                     >
                         <Icon icon={this.state.collapseResourceDescription ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
                         Description
@@ -138,7 +138,10 @@ class CardWidgetVis extends Component {
             <div>
                 <AnnotationsDropDown {...props} />
                 <div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>
-                    <Button color="primary" onClick={() => this.toggleDescription()} style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
+                    <Button
+                        onClick={() => this.toggleDescription()}
+                        style={{ marginTop: '0px', width: '100%', textAlign: 'left', backgroundColor: SECONDARY.dark }}
+                    >
                         <Icon icon={this.state.collapseDescription ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
                         Description
                     </Button>
@@ -590,7 +593,7 @@ class CardWidgetVis extends Component {
 
     render() {
         return (
-            <div style={{ backgroundColor: 'white', height: '250px', border: '1px solid black', borderTop: 'none', overflow: 'auto' }}>
+            <div style={{ backgroundColor: PRIMARY.lighter, height: '250px', borderTop: 'none', overflow: 'auto' }}>
                 {this.props.isExpanded && <div style={{ display: 'block' }}>{this.renderWidget()}</div>}
             </div>
         );

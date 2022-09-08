@@ -270,7 +270,7 @@ class CardGraphVis extends Component {
                     style={{
                         width: '100%',
                         height: '250px',
-                        border: '1px solid black',
+                        // border: '1px solid black',
                         borderTop: 'none'
                         // backgroundColor: '#0af225'
                     }}

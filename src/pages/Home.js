@@ -4,10 +4,7 @@ import UserRole from '../assets/images/UserRole.PNG';
 import guidance from '../assets/images/guidance.png';
 import Usecase from '../assets/images/Usecase.png';
 import AboutSC3 from '../assets/images/AboutSC3.png';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 export default class Home extends Component {
     constructor(props) {
@@ -34,8 +31,8 @@ export default class Home extends Component {
             ' different user groups.';
 
         return (
-            <div style={{ width: '100%', height: '100%' }}>
-                <div style={{ backgroundColor: '#B3E5FC' }}>
+            <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
+                <div>
                     <div
                         style={{
                             margin: 'auto',

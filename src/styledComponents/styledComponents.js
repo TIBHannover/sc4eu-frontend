@@ -55,3 +55,14 @@ export const StyledAuthTooltip = styled(Tooltip)`
         border-bottom-color: black !important;
     }
 `;
+
+export const PRIMARY = {
+    lighter: '#F7FBFC',
+    light: '#D6E6F2',
+    lightMain: '#92bdff',
+    main: '#B9D7EA',
+    dark: '#769FCD'
+};
+export const SECONDARY = {
+    dark: '#536b78'
+};

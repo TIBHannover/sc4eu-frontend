@@ -22,6 +22,7 @@ import {
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight, faPlusCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { redux_editRelation, redux_editResource } from '../../redux/actions/rrm_actions';
+import { SECONDARY } from '../RRView/StyledComponents';
 
 class AnnotationsDropDown extends Component {
     constructor(props) {
@@ -185,7 +186,10 @@ class AnnotationsDropDown extends Component {
     render() {
         return (
             <div key={'annotaions_' + this.props.itemIdentifier} className="root" style={{ padding: '2px 5px' }}>
-                <Button color="primary" onClick={() => this.toggleAnnotation()} style={{ marginTop: '0px', width: '100%', textAlign: 'left' }}>
+                <Button
+                    onClick={() => this.toggleAnnotation()}
+                    style={{ marginTop: '0px', width: '100%', textAlign: 'left', backgroundColor: SECONDARY.dark }}
+                >
                     <Icon icon={this.state.collapseAnnotations ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
                     Annotations
                     {/*<Icon
