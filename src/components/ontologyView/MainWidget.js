@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 import OntologyContentViewer from './OntologyContentViewer';
-import { ALL_PAGE_BACKGROUND_COLOR } from '../../constants/globalStyled';
 
 export default class MainWidget extends Component {
     constructor(props) {
@@ -44,10 +43,10 @@ export default class MainWidget extends Component {
                     style={{
                         width: '90%',
                         height: '100%',
-                        border: '1px solid black',
                         position: 'relative',
                         left: '5%',
-                        backgroundColor: ALL_PAGE_BACKGROUND_COLOR
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px 10px 10px 10px'
                     }}
                 >
                     <OntologyContentViewer experimentalLayout={this.props.experimentalLayout} />
