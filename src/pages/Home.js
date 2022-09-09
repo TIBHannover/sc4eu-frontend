@@ -44,7 +44,7 @@ export default class Home extends Component {
                             fontWeight: 600
                         }}
                     >
-                        The Semantically Connencted Semiconductor Supply Chains (SC3) Portal for a collaborative Ontology Development.
+                        The Semantically Connected Semiconductor Supply Chains (SC3) Portal for a collaborative Ontology Development.
                     </div>
                 </div>
                 <div
