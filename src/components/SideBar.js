@@ -163,6 +163,10 @@ const SideBar = () => {
                 <Icon icon={faBook} />
                 <StyledText>Documentation</StyledText>
             </StyledLink>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.FAQ}>
+                <Icon icon={faQuestion} />
+                <StyledText>FAQ</StyledText>
+            </StyledLink>
             <StyledHr />
             <StyledText>General & About</StyledText>
             <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Dataprotections}>
@@ -172,10 +176,6 @@ const SideBar = () => {
             <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Imprint}>
                 <Icon icon={faStamp} />
                 <StyledText>Imprint</StyledText>
-            </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.FAQ}>
-                <Icon icon={faQuestion} />
-                <StyledText>FAQ</StyledText>
             </StyledLink>
         </div>
     );

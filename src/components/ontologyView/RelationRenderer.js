@@ -202,7 +202,7 @@ class RelationRenderer extends Component {
                         alignItems: 'center'
                     }}
                 >
-                    <h4 style={{ color: '#ffffff' }}>Properties</h4>
+                    <h4 style={{ color: '#ffffff' }}>Relations</h4>
                 </div>
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
