@@ -100,8 +100,6 @@ class ViewOntology extends Component {
                     {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'hybrid' && (
                         <div>
                             <OntologyViewRoot
-                                project={this.props.location.project}
-                                ontologyName={this.props.location.ontologyName}
                                 leftSideExpanded={this.leftSideExpanded}
                                 rightSideExpanded={this.rightSideExpanded}
                                 toggleLeftSideExpanded={this.setLeftSideExpanded}

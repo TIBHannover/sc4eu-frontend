@@ -60,9 +60,7 @@ export default class OntologyIndexCards extends Component {
                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
                                     ontologyId: this.props.inputData.uuid
                                 }),
-                                project: this.props.project,
-                                modeOfOperations: 'hybrid',
-                                ontologyName: this.props.inputData.name
+                                modeOfOperations: 'hybrid'
                             }}
                             onClick={this.onclick}
                             className="p-0 noSelect"
@@ -93,7 +91,6 @@ export default class OntologyIndexCards extends Component {
 }
 
 OntologyIndexCards.propTypes = {
-    project: PropTypes.object.isRequired,
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired
 };
