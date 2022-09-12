@@ -24,7 +24,7 @@ export default class ProjectList extends Component {
                         borderTop: 'none',
                         overflow: 'auto',
                         position: 'relative',
-                        backgroundColor: '#ffffff'
+                        backgroundColor: 'white'
                     }}
                 >
                     <ProjectView

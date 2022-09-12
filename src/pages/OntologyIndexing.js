@@ -24,7 +24,6 @@ export default class OntologyIndexing extends Component {
         const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
         if (selectedProjectSession) {
             this.setState({ selectedProject: selectedProjectSession });
-            return true;
         }
         this.getOntologiesFromBackend();
     }
