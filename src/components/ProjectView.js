@@ -9,7 +9,7 @@ import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
 import { SECONDARY } from '../styledComponents/styledComponents';
 
-class ProjectsSideBar extends Component {
+class ProjectView extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -146,14 +146,14 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-ProjectsSideBar.propTypes = {
+ProjectView.propTypes = {
     title: PropTypes.string,
     //updateEvent: PropTypes.func.isRequired,
     updateHeaderValueCallback: PropTypes.func.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectsSideBar);
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
 
 /** CREATE A GREEN LINE**/
 /* gray */

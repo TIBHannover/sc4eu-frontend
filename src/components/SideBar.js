@@ -16,7 +16,7 @@ import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
-import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_LIST_TAB_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
 const StyledText = styled.span`
@@ -56,14 +56,6 @@ const SideBar = () => {
     const selectModeOfOperation = val => {
         setIsActiveTab(val);
     };
-    const onClickProjectTab = () => {
-        sessionStorage.setItem(SELECTED_PROJECT_LIST_TAB_SESSION, 'true');
-        setIsActiveTab('');
-    };
-    const onClickOntologyTab = () => {
-        sessionStorage.setItem(SELECTED_PROJECT_LIST_TAB_SESSION, 'false');
-        setIsActiveTab('');
-    };
 
     return (
         <div style={{ background: PRIMARY.light }}>
@@ -73,7 +65,7 @@ const SideBar = () => {
             </StyledLink>
             <StyledHr />
             <StyledText style={{ fontSize: '14px' }}>Management & Visualization</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.ONTOLOGY} onClick={onClickProjectTab}>
+            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.PROJECT}>
                 <Icon icon={faFile} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
@@ -84,7 +76,6 @@ const SideBar = () => {
                             pathname: reverse(ROUTES.ONTOLOGY),
                             project: selectedProjectSession
                         }}
-                        onClick={onClickOntologyTab}
                         style={{
                             backgroundColor: selectedProjectSession ? SECONDARY.dark : null,
                             color: selectedProjectSession ? 'white' : null,

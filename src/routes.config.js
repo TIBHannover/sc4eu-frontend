@@ -17,6 +17,7 @@ import Imprint from './pages/Imprint';
 import DigitalReferenceDocumentation from './pages/DigitalReferenceDocumentation';
 import FAQ from './pages/FAQ';
 import WebProtege from './pages/WebProtege';
+import ProjectList from './pages/ProjectList';
 
 const routes = [
     {
@@ -82,6 +83,12 @@ const routes = [
         path: ROUTES.ONTOLOGY,
         exact: true,
         component: OntologyIndexing
+    },
+
+    {
+        path: ROUTES.PROJECT,
+        exact: true,
+        component: ProjectList
     },
     {
         path: ROUTES.Documentations,
