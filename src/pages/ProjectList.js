@@ -4,18 +4,6 @@ import { Container } from 'reactstrap';
 import ProjectView from '../components/ProjectView';
 
 export default class ProjectList extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            selectedProject: false
-        };
-    }
-
-    updateHeaderValue = projectSelected => {
-        this.setState({ selectedProject: projectSelected });
-    };
-
     render() {
         return (
             <div style={{ height: '100vh', backgroundColor: PRIMARY.lighter }}>
@@ -27,12 +15,7 @@ export default class ProjectList extends Component {
                         backgroundColor: 'white'
                     }}
                 >
-                    <ProjectView
-                        title="Select Project"
-                        updateHeaderValueCallback={params => {
-                            this.updateHeaderValue(params);
-                        }}
-                    />
+                    <ProjectView title="Select Project" />
                 </Container>
             </div>
         );

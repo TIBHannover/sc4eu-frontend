@@ -12,8 +12,9 @@ import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
 import { CLEAR_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { withRouter } from 'react-router';
 
-export default class ProjectIndexCards extends Component {
+class ProjectIndexCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -67,14 +68,13 @@ export default class ProjectIndexCards extends Component {
         CLEAR_SESSION();
         //TODO Get all ontologies related Only to this Project
         if (this.props.inputData.unlock === true) {
-            const project = this.props.inputData;
             //change color of select card
             //StyledCardHeader.backgroundColor = 'black';
-            this.props.updateHeaderValueCallback(project);
+            sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(this.props.inputData));
+            this.props.history.push(reverse(ROUTES.ONTOLOGY));
         } else {
             alert('This is Private Project You can not open it');
         }
-        sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(this.props.inputData));
     };
 
     toggleProjectBody = event => {
@@ -147,12 +147,7 @@ export default class ProjectIndexCards extends Component {
                                 </div>
                             )}
                         </div>
-                        <StyledLink
-                            to={reverse(ROUTES.ONTOLOGY)}
-                            onClick={this.showOntologies}
-                            className="p-0 noSelect"
-                            onDragStart={this.preventDraggingOfItem}
-                        >
+                        <StyledLink onClick={this.showOntologies} className="p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
                                 <div style={{ overflowWrap: 'break-word' }}> {this.props.inputData.name} </div>
                             </div>
@@ -172,8 +167,10 @@ export default class ProjectIndexCards extends Component {
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    updateHeaderValueCallback: PropTypes.func.isRequired
+    history: PropTypes.func.isRequired
 };
+
+export default withRouter(ProjectIndexCards);
 
 const StyledButton = styled(Button)`
     :hover {

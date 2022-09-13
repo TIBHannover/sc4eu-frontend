@@ -88,7 +88,6 @@ this.setState({ expanded: !this.state.expanded });
 
     reloadAfterUpdate = () => {
         this.setState({ isLoading: false });
-        this.props.updateHeaderValueCallback(false);
         this.getProjectsFromBackend();
     };
 
@@ -126,9 +125,6 @@ this.setState({ expanded: !this.state.expanded });
                                       callback={param => {
                                           this.reloadAfterUpdate(param);
                                       }}
-                                      updateHeaderValueCallback={param => {
-                                          this.props.updateHeaderValueCallback(param);
-                                      }}
                                   />
                               );
                           })
@@ -149,7 +145,6 @@ const mapDispatchToProps = dispatch => ({});
 ProjectView.propTypes = {
     title: PropTypes.string,
     //updateEvent: PropTypes.func.isRequired,
-    updateHeaderValueCallback: PropTypes.func.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 

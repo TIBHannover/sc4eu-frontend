@@ -25,7 +25,6 @@ export default class OntologyIndexing extends Component {
         if (selectedProjectSession) {
             this.setState({ selectedProject: selectedProjectSession });
         }
-        this.getOntologiesFromBackend();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
