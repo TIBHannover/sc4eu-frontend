@@ -159,8 +159,6 @@ class OntologyViewRoot extends Component {
                     {/*/>*/}
                     <RightSideBar
                         width={this.state.rightSidebarWidth}
-                        project={this.props.project}
-                        ontologyName={this.props.ontologyName}
                         initialState={this.props.rightSideExpanded}
                         height={this.state.containerHeight + this.sidebarHeightOffset}
                         title="Ontology Meta Data"
@@ -184,8 +182,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 OntologyViewRoot.propTypes = {
-    project: PropTypes.object,
-    ontologyName: PropTypes.string,
     globalUIReducer: PropTypes.object.isRequired,
     leftSideExpanded: PropTypes.bool.isRequired,
     rightSideExpanded: PropTypes.bool.isRequired,

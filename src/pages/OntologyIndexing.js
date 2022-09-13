@@ -88,7 +88,6 @@ export default class OntologyIndexing extends Component {
                             <hr className="mt-0 mb-2" />
                             {this.state.results ? (
                                 <OntologyIndexCards
-                                    project={this.state.selectedProject}
                                     ontologies={this.state.results}
                                     reloadAfterDelete={() => {
                                         this.reloadAfterDelete();

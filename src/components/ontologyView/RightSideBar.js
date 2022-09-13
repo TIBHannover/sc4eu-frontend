@@ -8,11 +8,12 @@ import styled, { keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
+import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
 
 class RightSideBar extends Component {
     constructor(props) {
         super(props);
-        this.state = JSON.parse(window.localStorage.getItem('state')) || {
+        this.state = {
             expanded: this.props.initialState,
             minHeight: 200,
             title: props.title,
@@ -20,13 +21,17 @@ class RightSideBar extends Component {
             collapse: true,
             collapseMetaInfo: true,
             isEditing: { description: false, title: false, version: false, iri: false },
-            openOntology: props.ontologyName,
-            openProject: props.project
+            openOntology: '',
+            openProject: ''
         };
     }
 
     componentDidMount() {
         document.body.style.overflowX = 'hidden';
+        this.setState({
+            openProject: JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION)),
+            openOntology: JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION))
+        });
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -258,7 +263,7 @@ class RightSideBar extends Component {
                         <span>{this.state.openProject.name}</span>
                         <br />
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Ontology Name: </span>
-                        <span>{this.state.openOntology}</span>
+                        <span>{this.state.openOntology.name}</span>
                     </div>
                     <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Git Hub </span>
@@ -280,9 +285,7 @@ RightSideBar.propTypes = {
     heightUpdateEvent: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    metaInformation: PropTypes.object,
-    ontologyName: PropTypes.string,
-    project: PropTypes.object
+    metaInformation: PropTypes.object
 };
 
 const mapStateToProps = state => {
