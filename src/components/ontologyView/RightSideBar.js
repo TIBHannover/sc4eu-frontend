@@ -28,8 +28,10 @@ class RightSideBar extends Component {
 
     componentDidMount() {
         document.body.style.overflowX = 'hidden';
-        this.setState({ openProject: JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION)) });
-        this.setState({ openOntology: JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION)) });
+        this.setState({
+            openProject: JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION)),
+            openOntology: JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION))
+        });
     }
 
     componentDidUpdate = (prevProps, prevState) => {
