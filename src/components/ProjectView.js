@@ -104,7 +104,7 @@ class ProjectView extends Component {
                     }}
                 />
                 <hr className="mt-0 mb-2" />
-                <div style={{ textAlign: 'left', overflowY: 'auto', height: '90vh' }}>
+                <div style={{ textAlign: 'left', overflowY: 'auto', height: '70vh' }}>
                     {this.state.results
                         ? this.state.results.map(item => {
                               return (

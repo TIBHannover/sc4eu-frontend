@@ -10,9 +10,6 @@ class OntologyIndexCards extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     renderOntologyCards() {
-        console.log('rendering Cards?');
-        console.log(this.props.ontologies);
-
         if (this.props.ontologies.length === 0) {
             return (
                 <div style={{ textAlign: 'center' }}> There are no ontologies in the data base. You can upload ontologies using the menu above </div>
@@ -35,7 +32,7 @@ class OntologyIndexCards extends Component {
 
     render() {
         return (
-            <div className="pl-1 pr-1" style={{ overflow: 'auto' }}>
+            <div className="pl-1 pr-1" style={{ overflow: 'auto', height: '78vh' }}>
                 {this.renderOntologyCards()}
             </div>
         );
