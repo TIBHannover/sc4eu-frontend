@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { Button } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faPen, faTrash, faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import { transformIdentifierToPrefixed } from '../../mappers/ResToTTL';
 import Tippy from '@tippyjs/react';
 import { StyledResourceAndRelationHeader, HeaderValueInput, StyledContentView } from './StyledComponents';

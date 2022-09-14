@@ -16,7 +16,6 @@ class SignIn extends Component {
     }
 
     render() {
-        const githubAuthURL = '/auth/github';
         let disableRegisterAndGithub = false;
         if (process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'True' || process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'true') {
             disableRegisterAndGithub = true;

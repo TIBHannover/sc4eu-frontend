@@ -4,19 +4,17 @@ import ROUTES from 'constants/routes';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { Link, NavLink, Redirect, withRouter } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import { reverse } from 'named-urls';
 
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import Logo from 'components/Logo';
-
 import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth, toggleAuthDialog } from '../redux/actions/auth';
 import greetingTime from 'greeting-time';
-import { Button, ButtonGroup, Navbar, Row } from 'reactstrap';
+import { Button, ButtonGroup, Row } from 'reactstrap';
 import SignInModal from '../components/Signin/SignInModal';
 
-import { StyledAuthTooltip, StyledGravatar, StyledTopBar } from 'styledComponents/styledComponents';
+import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
 
 class Header extends Component {

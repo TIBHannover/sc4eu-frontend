@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'reactstrap';
-import styled, { keyframes } from 'styled-components';
 import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
@@ -66,17 +65,8 @@ class ProjectView extends Component {
         });
     };
 
-    /*    collapseLeftSideBar = () => {
-this.props.updateEvent(!this.state.expanded);
-this.setState({ expanded: !this.state.expanded });
-};*/
-
     toggle = () => {
         this.setState({ collapse: !this.state.collapse });
-    };
-
-    toggleEditButton = itemToToggle => {
-        this.setState({ isEditing: { ...this.state.isEditing, [itemToToggle]: !this.state.isEditing[itemToToggle] } });
     };
 
     projectCreated = param => {
@@ -117,7 +107,6 @@ this.setState({ expanded: !this.state.expanded });
                 <div style={{ textAlign: 'left', overflowY: 'auto', height: '90vh' }}>
                     {this.state.results
                         ? this.state.results.map(item => {
-                              //return <div key={item.name}>{item.name}</div>;
                               return (
                                   <ProjectCard
                                       key={'ProjectCard_' + item.name}
@@ -129,7 +118,6 @@ this.setState({ expanded: !this.state.expanded });
                               );
                           })
                         : 'Still Loading'}
-                    {/*{this.state.results[0].name}*/}
                 </div>
             </div>
         );
@@ -144,57 +132,7 @@ const mapDispatchToProps = dispatch => ({});
 
 ProjectView.propTypes = {
     title: PropTypes.string,
-    //updateEvent: PropTypes.func.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
-
-/** CREATE A GREEN LINE**/
-/* gray */
-
-const expandButtonAnimation = ({ expanded, initialRendering }) => {
-    if (!initialRendering) {
-        return keyframes`
-  from {
-    transform: rotate(${expanded ? 180 : 0}deg);
-  }
-  to {
-    transform: rotate(${expanded ? 0 : -180}deg);
-   
-  }
-`;
-    } else {
-        return keyframes``;
-    }
-};
-
-const ButtonContainer = styled.div`
-    animation-name: ${expandButtonAnimation};
-    animation-duration: 1000ms;
-    transform: rotate(${props => (props.expanded ? 0 : 180)}deg);
-    cursor: pointer;
-`;
-
-const expandContentContainerAnimation = ({ expanded, width, initialRendering }) => {
-    if (initialRendering) {
-        return keyframes``;
-    } else {
-        return keyframes`
-  from {
-    left: ${expanded ? -width : 0}px;
-  }
-  to {
-    left: ${expanded ? 0 : -width}px;
-   
-  }
-`;
-    }
-};
-
-const ContentContainer = styled.div`
-    animation-name: ${expandContentContainerAnimation};
-    animation-duration: 400ms;
-    // opacity: 0.5;
-    left: ${props => (props.expanded ? 0 : -props.width)}px;
-`;

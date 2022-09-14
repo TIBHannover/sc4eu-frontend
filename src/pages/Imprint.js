@@ -3,10 +3,6 @@ import Footer from '../Layout/Footer';
 import { PRIMARY } from '../styledComponents/styledComponents';
 
 export default class Imprint extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <div style={{ height: '100%', width: '100%', backgroundColor: PRIMARY.lighter }}>

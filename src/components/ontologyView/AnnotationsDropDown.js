@@ -20,7 +20,7 @@ import {
     NavLink
 } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretRight, faPlusCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { redux_editRelation, redux_editResource } from '../../redux/actions/rrm_actions';
 import { SECONDARY } from '../RRView/StyledComponents';
 
