@@ -18,6 +18,8 @@ import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import WebProtege from '../assets/images/webprotege.png';
+import ontology from '../assets/images/Ontology.png';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -27,7 +29,7 @@ const StyledLink = styled(NavLink)`
     height: 50px;
     display: inline-block;
     border-radius: 4px;
-    padding: 10px;
+    padding: 15px;
     border: 1px;
     background: transparent;
     color: black;
@@ -37,8 +39,6 @@ const StyledLink = styled(NavLink)`
     :hover {
         background-color: ${SECONDARY.dark};
         color: white;
-        text-color: black;
-        padding: 11px;
     }
 `;
 
@@ -57,16 +57,28 @@ const SideBar = () => {
         setIsActiveTab(val);
     };
 
+    const ActiveStyle = {
+        backgroundColor: SECONDARY.dark,
+        color: 'white'
+    };
+
+    const IconStyle = {
+        height: '17px',
+        width: '17px'
+    };
+
     return (
         <div style={{ background: PRIMARY.light }}>
-            <StyledLink exact activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.HOME} size="lg">
-                <Icon icon={faHome} />
+            <StyledLink title="Open Home" exact activeStyle={ActiveStyle} to={ROUTES.HOME} size="lg">
+                <Icon icon={faHome} style={IconStyle} />
                 <StyledText>Home</StyledText>
             </StyledLink>
             <StyledHr />
-            <StyledText style={{ fontSize: '14px' }}>Management & Visualization</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.PROJECT}>
-                <Icon icon={faFile} />
+            <div style={{ textAlign: 'center', fontSize: '14px' }}>
+                <span>Management & Visualization</span>
+            </div>
+            <StyledLink title="Open Project List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>
+                <Icon icon={faFile} style={IconStyle} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
             {selectedProjectSession ? (
@@ -76,21 +88,16 @@ const SideBar = () => {
                             pathname: reverse(ROUTES.ONTOLOGY),
                             project: selectedProjectSession
                         }}
-                        style={{
-                            backgroundColor: selectedProjectSession ? SECONDARY.dark : null,
-                            color: selectedProjectSession ? 'white' : null,
-                            marginTop: '5px',
-                            marginBottom: '5px'
-                        }}
-                        size="lg"
-                        title="Open Manu"
+                        activeStyle={ActiveStyle}
+                        title="Open Ontology List"
                     >
-                        <Icon icon={faHome} />
+                        <img src={ontology} alt="ontology icon" style={IconStyle} />
                         <StyledText>Ontologies</StyledText>
                     </StyledLink>
                     {selectedOntologySession ? (
                         <div style={{ marginLeft: '30px' }}>
                             <StyledLink
+                                title="Open Hybrid View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
                                         ontologyId: selectedOntologySession.uuid
@@ -100,15 +107,13 @@ const SideBar = () => {
                                     ontologyName: selectedOntologySession.name
                                 }}
                                 onClick={() => selectModeOfOperation('hybrid')}
-                                style={{
-                                    backgroundColor: isActiveTab === 'hybrid' ? SECONDARY.dark : null,
-                                    color: isActiveTab === 'hybrid' ? 'white' : null
-                                }}
+                                activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : ''}
                             >
-                                <Icon icon={faBrain} />
+                                <Icon icon={faBrain} style={IconStyle} />
                                 <StyledText>Hybrid</StyledText>
                             </StyledLink>
                             <StyledLink
+                                title="Open Graph View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
                                         ontologyId: selectedOntologySession.uuid
@@ -116,15 +121,13 @@ const SideBar = () => {
                                     modeOfOperations: 'graph'
                                 }}
                                 onClick={() => selectModeOfOperation('graph')}
-                                style={{
-                                    backgroundColor: isActiveTab === 'graph' ? SECONDARY.dark : null,
-                                    color: isActiveTab === 'graph' ? 'white' : null
-                                }}
+                                activeStyle={isActiveTab === 'graph' ? ActiveStyle : ''}
                             >
-                                <Icon icon={faProjectDiagram} />
+                                <Icon icon={faProjectDiagram} style={IconStyle} />
                                 <StyledText>Graph</StyledText>
                             </StyledLink>
                             <StyledLink
+                                title="Open Text View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
                                         ontologyId: selectedOntologySession.uuid
@@ -132,12 +135,9 @@ const SideBar = () => {
                                     modeOfOperations: 'text'
                                 }}
                                 onClick={() => selectModeOfOperation('text')}
-                                style={{
-                                    backgroundColor: isActiveTab === 'text' ? SECONDARY.dark : null,
-                                    color: isActiveTab === 'text' ? 'white' : null
-                                }}
+                                activeStyle={isActiveTab === 'text' ? ActiveStyle : ''}
                             >
-                                <Icon icon={faAlignJustify} />
+                                <Icon icon={faAlignJustify} style={IconStyle} />
                                 <StyledText>Text</StyledText>
                             </StyledLink>
                         </div>
@@ -145,27 +145,31 @@ const SideBar = () => {
                 </div>
             ) : null}
             <StyledHr />
-            <StyledText>Editing & Documentation</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.WEBPROTEGE}>
-                <Icon icon={faHome} />
+            <div style={{ textAlign: 'center', fontSize: '14px' }}>
+                <span>Editing & Documentation</span>
+            </div>
+            <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE}>
+                <img src={WebProtege} alt="WebProtege icon" style={IconStyle} />
                 <StyledText>WebProtege</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Documentations}>
-                <Icon icon={faBook} />
+            <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>
+                <Icon icon={faBook} style={IconStyle} />
                 <StyledText>Documentation</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.FAQ}>
-                <Icon icon={faQuestion} />
+            <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ}>
+                <Icon icon={faQuestion} style={IconStyle} />
                 <StyledText>FAQ</StyledText>
             </StyledLink>
             <StyledHr />
-            <StyledText>General & About</StyledText>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Dataprotections}>
-                <Icon icon={faShieldAlt} />
+            <div style={{ textAlign: 'center', fontSize: '14px' }}>
+                <span>General & About</span>
+            </div>
+            <StyledLink title="Open Data Policy" activeStyle={ActiveStyle} to={ROUTES.Dataprotections}>
+                <Icon icon={faShieldAlt} style={IconStyle} />
                 <StyledText>Data Policy</StyledText>
             </StyledLink>
-            <StyledLink activeStyle={{ backgroundColor: SECONDARY.dark, color: 'white' }} to={ROUTES.Imprint}>
-                <Icon icon={faStamp} />
+            <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint}>
+                <Icon icon={faStamp} style={IconStyle} />
                 <StyledText>Imprint</StyledText>
             </StyledLink>
         </div>
