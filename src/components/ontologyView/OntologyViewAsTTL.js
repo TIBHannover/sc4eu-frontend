@@ -94,7 +94,12 @@ class OntologyViewAsTTL extends Component {
     render() {
         return (
             <Container>
-                <Input style={{ height: 'calc(100vh - 80px)', resize: 'none', marginTop: '20px' }} type="textarea" value={this.state.ontologyAsTTL} />
+                <Input
+                    style={{ height: 'calc(100vh - 80px)', resize: 'none', marginTop: '20px' }}
+                    type="textarea"
+                    value={this.state.ontologyAsTTL}
+                    readOnly
+                />
             </Container>
         );
     }

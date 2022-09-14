@@ -61,7 +61,7 @@ export default class Home extends Component {
                     }}
                 >
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingRight: '20px' }}>
-                        <img src={AboutSC3} width="70" height="70" style={{ alignSelf: 'center' }} />
+                        <img src={AboutSC3} width="70" height="70" alt="AboutSC3" style={{ alignSelf: 'center' }} />
                         <h5>About SC3</h5>
                         <p />
                         <p style={{ textAlign: 'justify', marginTop: '8px', fontFamily: 'normal', fontSize: '18px' }}>
@@ -99,16 +99,16 @@ export default class Home extends Component {
                             paddingRight: '10px'
                         }}
                     >
-                        <img src={Usecase} width="70" height="70" style={{ alignSelf: 'center' }} />
+                        <img src={Usecase} width="70" height="70" alt="Usecase" style={{ alignSelf: 'center' }} />
                         <h5 style={{ paddingBottom: '10px' }}>What the portal can do for you</h5>
                         <p style={{ textAlign: 'justify', marginTop: '15px', fontFamily: 'normal', fontSize: '18px' }}>
                             We identified that the most crucial requirement for ontology development is to serve users' needs from various audiences
                             with diverse backgrounds and in different contexts. We have therefore introduced several modes of operations.
                         </p>
-                        <img src={UserRole} width="100%" height="300" />
+                        <img src={UserRole} width="100%" alt="UserRole" height="300" />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '20px', marginRight: '20px' }}>
-                        <img src={guidance} width="70" height="70" style={{ alignSelf: 'center' }} />
+                        <img src={guidance} width="70" height="70" alt="guidance" style={{ alignSelf: 'center' }} />
                         <h5>Framework for collaborative ontology development</h5>
                         <p style={{ textAlign: 'justify', cursor: 'pointer', fontFamily: 'normal', fontSize: '18px' }}>
                             {this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 500)}

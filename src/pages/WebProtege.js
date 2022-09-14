@@ -21,6 +21,7 @@ export default class WebProtege extends Component {
     getWebProtege = () => {
         return (
             <iframe
+                title="WebProtege"
                 style={{ position: 'center', height: '99vh', width: '100vw', border: 'none' }}
                 loading="lazy"
                 src="https://service.tib.eu/wp4tib/"

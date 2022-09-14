@@ -114,6 +114,7 @@ export default class Dataprotections extends Component {
                     <p>The information generated with Matomo about the use of this website is processed and stored exclusively by TIB.</p>
                     <div>
                         <iframe
+                            title="data policy"
                             src="https://support.tib.eu/piwik/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=en&amp;backgroundColor=&amp;fontColor=&amp;fontSize=&amp;fontFamily=sans-serif"
                             style={{ border: 0, height: '200px', width: '600px' }}
                         />
