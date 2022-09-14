@@ -149,7 +149,7 @@ class DashboardItem extends Component {
         const row = this.props.parameterOrder.map((selector, index) => {
             if (selector === 'role' && user[selector] !== 'System Admin') {
                 return (
-                    <table style={{ border: 'none' }} width="180">
+                    <table style={{ width: '100%', borderTop: '1px solid #dee2e6' }}>
                         <td style={{ border: 'none' }} key={'td_' + user.uuid + '_' + index}>
                             <ReactSelect
                                 key={'td_role_' + user.uuid}
