@@ -149,20 +149,18 @@ class DashboardItem extends Component {
         const row = this.props.parameterOrder.map((selector, index) => {
             if (selector === 'role' && user[selector] !== 'System Admin') {
                 return (
-                    <table style={{ border: 'none' }} width="180">
-                        <td style={{ border: 'none' }} key={'td_' + user.uuid + '_' + index}>
-                            <ReactSelect
-                                key={'td_role_' + user.uuid}
-                                value={this.state.roleValue}
-                                isDisabled={!this.state.shouldEdit}
-                                onChange={value => this.handleRoleChange(value)}
-                                options={this.props.roleOptions}
-                                components={{
-                                    RoleOption
-                                }}
-                            />
-                        </td>
-                    </table>
+                    <td style={{ borderTop: '1px solid #dee2e6' }} key={'td_' + user.uuid + '_' + index}>
+                        <ReactSelect
+                            key={'td_role_' + user.uuid}
+                            value={this.state.roleValue}
+                            isDisabled={!this.state.shouldEdit}
+                            onChange={value => this.handleRoleChange(value)}
+                            options={this.props.roleOptions}
+                            components={{
+                                RoleOption
+                            }}
+                        />
+                    </td>
                 );
             }
             return <td key={'td_' + index}>{user[selector]}</td>;

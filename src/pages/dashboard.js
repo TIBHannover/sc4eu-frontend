@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
@@ -130,10 +129,10 @@ export default class Dashboard extends Component {
 
     render() {
         return (
-            <Container>
+            <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
                 {this.state.loading && (
                     <div>
-                        <h2 className="h5" style={{ textAlign: 'center', fontStyle: 'normal', padding: '20px 0px 20px 0px' }}>
+                        <h2 className="h5" style={{ textAlign: 'center', fontStyle: 'normal' }}>
                             <span>
                                 <Icon icon={faSpinner} spin />
                             </span>{' '}
@@ -141,8 +140,8 @@ export default class Dashboard extends Component {
                         </h2>
                     </div>
                 )}
-                {!this.state.loading && this.renderDashboard()}
-            </Container>
+                <div style={{ marginLeft: '10%', marginRight: '10%' }}>{!this.state.loading && this.renderDashboard()}</div>
+            </div>
         );
     }
 }
