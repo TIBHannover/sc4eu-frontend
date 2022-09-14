@@ -36,7 +36,7 @@ const SideBarLayout = () => {
                 <Icon icon={faBars} />
             </StyledButton>
             <StyledButton color="none" title="Go Home">
-                <StyledLink activeStyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} size="lg">
+                <StyledLink activestyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} size="lg">
                     <Image src={Logo} alt="Home Logo" style={{ height: 20, width: 20 }} />
                 </StyledLink>
             </StyledButton>
