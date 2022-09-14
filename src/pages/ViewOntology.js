@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faAlignJustify, faDownload, faBrain, faProjectDiagram, faHatWizard } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { getOntologyBy } from '../network/GetOntologyData';
 import { initializeResourceRelationModel } from 'redux/actions/rrm_actions';
-import { Button } from 'reactstrap';
-import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import OntologyViewRoot from '../components/ontologyView/OntologyViewRoot';
 import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
-import PlayGroundUI from '../components/PlayGround/PlayGroundUi';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
-
-import { faGalacticRepublic } from '@fortawesome/free-brands-svg-icons/faGalacticRepublic';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 import { PRIMARY } from '../styledComponents/styledComponents';
 
@@ -28,7 +22,6 @@ class ViewOntology extends Component {
             error: false,
             errorMsg: '',
             modeOfOperation: 'hybrid'
-            // Additional states
         };
 
         this.DonatelloGraph = new DonatelloGraph();
@@ -57,8 +50,6 @@ class ViewOntology extends Component {
     };
 
     getOntologyFromBackend = () => {
-        // console.log('fetching ontologies from backend');
-        // console.log(this.props.match.params.ontologyId);
         // TODO: refactor>? getOntologyByID -> getJSONMOdel For ontology ID
         getOntologyBy(this.props.match.params.ontologyId).then(res => {
             if (res.ontology_data) {
@@ -71,16 +62,8 @@ class ViewOntology extends Component {
             }
         });
     };
-    selectModeOfOperation = val => {
-        this.setState({
-            modeOfOperation: val
-        });
-    };
 
     render() {
-        const project = this.props.location.project;
-        const ontologyName = this.props.location.ontologyName;
-        // console.log(this.state);
         return (
             <div style={{ height: '100vh', backgroundColor: PRIMARY.lighter }}>
                 <div className="pl-1 pr-1">
@@ -116,7 +99,6 @@ class ViewOntology extends Component {
                             visualizationTabIsActive={this.props.location.modeOfOperations === 'graph'}
                         />
                     )}
-                    {/*{this.state.isLoading === false && this.state.error === false && this.state.modeOfOperation === 'playground' && <PlayGroundUI />}*/}
                 </div>
             </div>
         );
@@ -127,8 +109,7 @@ const mapStateToProps = state => {
     return {
         user: state.auth.user,
         rrModel: state.ResourceRelationModelReducer,
-        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges,
-        modeOfOperation: state.ResourceRelationModelReducer.modeOfOperation
+        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges
     };
 };
 
@@ -140,8 +121,7 @@ ViewOntology.propTypes = {
     }).isRequired,
     location: PropTypes.object.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
-    ui_tab_selectorChanges: PropTypes.bool.isRequired,
-    modeOfOperation: PropTypes.string.isRequired
+    ui_tab_selectorChanges: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({

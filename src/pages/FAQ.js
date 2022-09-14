@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Footer from '../Layout/Footer';
 import { Collapse, Button, Container } from 'reactstrap';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
-class Faq extends Component {
+export default class Faq extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -15,8 +14,6 @@ class Faq extends Component {
             collapseWebProtege: false
         };
     }
-
-    componentWillMount() {}
 
     componentDidMount() {}
 
@@ -150,7 +147,3 @@ class Faq extends Component {
         );
     }
 }
-
-Faq.propTypes = {};
-
-export default Faq;

@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-
 import { Button } from 'reactstrap';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import UploadOntologyModal from './UploadOntologyModal';
-// import { preInitializeOntologyUpload } from '../network/ontologyIndexing';
 import { SECONDARY } from '../styledComponents/styledComponents';
 
 export default class OntologyIndexInteractions extends Component {
@@ -58,8 +55,3 @@ OntologyIndexInteractions.propTypes = {
     reloadAfterUpdate: PropTypes.func.isRequired,
     project_id: PropTypes.string.isRequired
 };
-
-const StyledButton = styled(Button)`
-    margin-right: 10px;
-    background-color: ${props => (props.activeFeature ? '#006500' : 'red')};
-`;

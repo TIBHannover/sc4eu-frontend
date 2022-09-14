@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { redux_addRelation } from '../../redux/actions/rrm_actions';
 import { connect } from 'react-redux';
 import SingleRelation from './SingleRelation';
-import { Button, InputGroup } from 'reactstrap';
+import { InputGroup } from 'reactstrap';
 import SearchAutoComplete from './SearchAutoComplete';
 import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
 import { PRIMARY } from '../RRView/StyledComponents';
@@ -91,7 +91,6 @@ class RelationRenderer extends Component {
     };
 
     renderSingleRelation = obj => {
-        //const isVisible = obj.isFilteredOut === true ? 'none' : 'block';
         return (
             <SingleRelation
                 arrayOfRef={this.arrayOfRef}
@@ -181,11 +180,6 @@ class RelationRenderer extends Component {
 
         this.arrayOfChildObjects.forEach(childItem => childItem.forceRerendering());
     };
-
-    /* handleAdd = () => {
-        const newRelation = { identifier: 'foaf:', axioms: {}, annotations: {}, domainRangePairs: [], resourceURI: '', type: [] };
-        this.props.redux_addRelation(newRelation);
-    };*/
 
     render() {
         return (

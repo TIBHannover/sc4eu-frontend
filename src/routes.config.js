@@ -14,7 +14,6 @@ import ViewOntology from './pages/ViewOntology';
 import Documentations from './pages/Documentations';
 import Dataprotections from './pages/Dataprotections';
 import Imprint from './pages/Imprint';
-import DigitalReferenceDocumentation from './pages/DigitalReferenceDocumentation';
 import FAQ from './pages/FAQ';
 import WebProtege from './pages/WebProtege';
 import ProjectList from './pages/ProjectList';
@@ -104,11 +103,6 @@ const routes = [
         path: ROUTES.Imprint,
         exact: true,
         component: Imprint
-    },
-    {
-        path: ROUTES.DigitalReferenceDocumentation,
-        exact: true,
-        component: DigitalReferenceDocumentation
     },
     {
         path: ROUTES.FAQ,

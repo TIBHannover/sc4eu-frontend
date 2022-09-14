@@ -3,13 +3,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SingleResource from './SingleResource';
 
-import { Button, InputGroup, Form, Input, Modal, ModalFooter, ModalHeader, ModalBody } from 'reactstrap';
+import { InputGroup } from 'reactstrap';
 import { connect } from 'react-redux';
 import { redux_addResource } from '../../redux/actions/rrm_actions';
 import SearchAutoComplete from './SearchAutoComplete';
 import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
-//import { transformIdentifierToPrefixed } from '../../mappers/ResToTTL';
-//import Select from 'react-select';
 import { PRIMARY } from '../RRView/StyledComponents';
 
 class ResourceRenderer extends Component {
@@ -25,9 +23,6 @@ class ResourceRenderer extends Component {
         this.state = {
             updateFlipFlop: true,
             addResourcesModal: false
-            //Prefix: null,
-            //label: [],
-            //dropdownOpen: false
         };
     }
 
@@ -182,23 +177,8 @@ class ResourceRenderer extends Component {
 
         this.arrayOfChildObjects.forEach(childItem => childItem.forceRerendering());
     };
-    /*
-    handleAddnewResource = () => {
-        const resources = this.props.resources;
-        const newIdentifier = this.state.Prefix.label + this.state.label;
-
-        if (resources.find(item => item.identifier === newIdentifier)) {
-            alert('The name already exist');
-        } else {
-            const newResource = { identifier: newIdentifier, axioms: {}, annotations: {}, type: '' };
-            this.props.redux_addResource(newResource);
-        }
-    }; */
 
     render() {
-        const addResourcestoggle = () => this.setState({ addResourcesModal: !this.state.addResourcesModal });
-        //const metaInformation = this.props.metaInformation.prefixList.longToShort;
-
         return (
             <div style={{ height: '100%', overflow: 'hidden' }}>
                 <div
@@ -217,38 +197,6 @@ class ResourceRenderer extends Component {
                 </div>
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
-                    {/* <Button size="sm" color="primary" style={{ height: '39px' }} onClick={addResourcestoggle}>
-                        Add
-                    </Button>
-                    <Modal isOpen={this.state.addResourcesModal} toggle={addResourcestoggle}>
-                        <ModalHeader toggle={addResourcestoggle}>Add New Resources</ModalHeader>
-                        <ModalBody>
-                            <Form>
-                                <label>Identifier</label>
-                                <Select
-                                    name="Prefix"
-                                    placeholder="Select prefix..."
-                                    value={this.state.Prefix}
-                                    onChange={e => this.setState({ Prefix: e })}
-                                    options={Object.keys(metaInformation).map(key => {
-                                        return {
-                                            label: key
-                                        };
-                                    })}
-                                />
-                                <label>Label</label>
-                                <Input type="text" name="foaf" value={this.state.label} onChange={e => this.setState({ label: e.target.value })} />
-                            </Form>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="primary" onClick={this.handleAddnewResource}>
-                                Add
-                            </Button>
-                            <Button color="primary" onClick={addResourcestoggle}>
-                                Close
-                            </Button>
-                        </ModalFooter>
-                    </Modal>*/}
                     <InputGroup>
                         <SearchAutoComplete
                             preservedSearchFilterValue={this.filterText}

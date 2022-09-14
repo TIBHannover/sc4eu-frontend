@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import LeftSideBar from './LeftSideBar';
 import RightSideBar from './RightSideBar';
 import MainWidget from './MainWidget';
 import { Button } from 'reactstrap';

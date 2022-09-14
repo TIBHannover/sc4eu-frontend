@@ -167,7 +167,7 @@ class ProjectIndexCards extends Component {
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    history: PropTypes.func.isRequired
+    history: PropTypes.object.isRequired
 };
 
 export default withRouter(ProjectIndexCards);

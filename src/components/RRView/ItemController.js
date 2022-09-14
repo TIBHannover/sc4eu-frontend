@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faPen, faTrash, faProjectDiagram, faAlignJustify, faJedi, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faProjectDiagram, faAlignJustify, faJedi } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
 import { PRIMARY, SECONDARY } from './StyledComponents';
 

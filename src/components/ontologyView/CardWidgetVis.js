@@ -5,7 +5,7 @@ import { getPrefixedVersion } from '../../mappers/helperFunctions';
 import { transformIdentifierToPrefixed } from '../../mappers/RelationToTTL';
 import { Button, Card, CardBody, Collapse, Popover, PopoverHeader, PopoverBody, CustomInput } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretRight, faPlusCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCaretRight, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { redux_editRelation, redux_editResource } from '../../redux/actions/rrm_actions';
 import AnnotationsDropDown from './AnnotationsDropDown';
 import { PRIMARY, SECONDARY } from '../RRView/StyledComponents';
@@ -215,7 +215,6 @@ class CardWidgetVis extends Component {
     };
 
     renderResourceType = itemOfInterest => {
-        const typeOfResource = itemOfInterest.type[0].split(':')[1];
         return (
             <div>
                 Characteristics
@@ -456,13 +455,11 @@ class CardWidgetVis extends Component {
                                 </div>
                                 <div>
                                     {Object.keys(itemOfInterest.axioms[axiom]).map(item => {
-                                        {
-                                            return (
-                                                <div key={itemOfInterest.itemIdentifier + axiom + item} style={{ marginLeft: '1rem' }}>
-                                                    {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}
-                                                </div>
-                                            );
-                                        }
+                                        return (
+                                            <div key={itemOfInterest.itemIdentifier + axiom + item} style={{ marginLeft: '1rem' }}>
+                                                {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}
+                                            </div>
+                                        );
                                     })}
                                 </div>
                             </div>
@@ -476,9 +473,6 @@ class CardWidgetVis extends Component {
     };
 
     renderDescription = itemOfInterest => {
-        const typeOfItemOfInterest = itemOfInterest.type[0].split(':')[1];
-
-        const typeRestrictions = typeOfItemOfInterest === 'ObjectProperty' ? [...this.objectTypeRestrictions] : [...this.dataTypeRestrictions];
         let domains = [];
         let ranges = [];
         const domainRangePairs = itemOfInterest.domainRangePairs;
