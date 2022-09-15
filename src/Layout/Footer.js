@@ -7,7 +7,6 @@ import bosch_logo from '../assets/images/Bosch.png';
 import mines_logo from '../assets/images/MINES.png';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { PRIMARY } from '../styledComponents/styledComponents';
 
 const Image = styled.img``;
 
@@ -26,12 +25,12 @@ class Footer extends Component {
                         paddingLeft: '310px',
                         paddingTop: '10px',
                         height: '9%',
-                        backgroundColor: PRIMARY.lighter
+                        backgroundColor: 'rgba(214, 230, 242, .3)'
                     }}
                 >
                     <div style={{ flexDirection: 'column' }}>
-                        <p style={{ fontSize: '13px', color: 'red' }}>
-                            Note : This is a Minimal Viable Product of the SC3 project.
+                        <p style={{ fontSize: '13px', color: '#003554' }}>
+                            <span style={{ fontWeight: 500 }}>Note :</span> This is a Minimal Viable Product of the SC3 project.
                             <br /> I.e., we dont provide any backup solution yet.
                         </p>
                     </div>
