@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import UserRole from '../assets/images/UserRole.PNG';
-import guidance from '../assets/images/guidance.png';
-import Usecase from '../assets/images/Usecase.png';
-import AboutSC3 from '../assets/images/AboutSC3.png';
-import { PRIMARY } from '../styledComponents/styledComponents';
+import nutzen from '../assets/images/LineArt_nutzen.png';
+import erstellen from '../assets/images/LineArt_erstellen.png';
+import teilen from '../assets/images/LineArt_teilen_gespiegelt.png';
+import { PRIMARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import Logo from '../assets/images/logo.png';
 
 export default class Home extends Component {
     constructor(props) {
@@ -19,24 +19,13 @@ export default class Home extends Component {
     };
 
     render() {
-        const FrameworkText =
-            ' A machine-readable conceptualization of the semiconductor domain and related supply chains requires standardized\n' +
-            ' ontologies of high quality and a common set of conceptualizations in order to apply Semantic Web technologies widely\n' +
-            ' to the semiconductor domain. Knowledge engineers and domain experts usually work together on ontology development. The\n' +
-            ' latter have less expertise in a specific domain, whereas domain experts often struggle to understand logical notations\n' +
-            ' used in OWL (Web Ontology Language). It is necessary to reduce the complexity of OWL formalization for domain experts\n' +
-            ' in order to more directly involve them in ontology modelling and foster communication with knowledge engineers.\n' +
-            ' However, they must maintain full OWL modelling capabilities for knowledge engineers. Because of this, we are\n' +
-            ' developing a user-centered approach to collaborative ontology development, addressing the needs and backgrounds of\n' +
-            ' different user groups.';
-
         return (
             <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div>
                     <div
                         style={{
                             margin: 'auto',
-                            fontSize: '24px',
+                            fontSize: '26px',
                             textAlign: 'center',
                             paddingTop: '30px',
                             paddingBottom: '30px',
@@ -44,7 +33,8 @@ export default class Home extends Component {
                             fontWeight: 600
                         }}
                     >
-                        The Semantically Connected Semiconductor Supply Chains (SC3) Portal for a collaborative Ontology Development.
+                        <img src={Logo} alt="SC3 Logo" style={{ height: 80, width: 70, marginRight: '10px' }} />
+                        The SC3 Portal enables effective ontology management and visualization for cross-stakeholder ontology engineering
                     </div>
                 </div>
                 <div
@@ -60,34 +50,36 @@ export default class Home extends Component {
                         color: 'black'
                     }}
                 >
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingRight: '20px' }}>
-                        <img src={AboutSC3} width="70" height="70" alt="AboutSC3" style={{ alignSelf: 'center' }} />
-                        <h5>About SC3</h5>
-                        <p />
-                        <p style={{ textAlign: 'justify', marginTop: '8px', fontFamily: 'normal', fontSize: '18px' }}>
-                            SC3 establishes a standard language for comprehensive collaboration between humans and machines, as well as all other
-                            partners.The key objective of this platform is to implement data documentation of an actionable ontology-based ecosystem
-                            that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by new ones for other
-                            subdomains to ensure interoperability of data. "Further information about the project you can find on our &nbsp;
-                            <a target="_blank" rel="noopener noreferrer" href="https://sc3-project.automotive.oth-aw.de/">
-                                SC3 webpage
-                            </a>
-                            , on our&nbsp;
-                            <a
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
-                            >
-                                YouTube chanel
-                            </a>
-                            , or&nbsp;
-                            <a
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
-                            >
-                                via LinkedIn.
-                            </a>
+                    <div
+                        style={{
+                            flex: 1,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            paddingLeft: '10px',
+                            paddingRight: '35px'
+                        }}
+                    >
+                        <img src={nutzen} width="200" height="150" alt="nutzen" style={{ alignSelf: 'center' }} />
+                        <p style={{ fontSize: '26px', fontWeight: 600 }}>Collection</p>
+                        <p style={{ textAlign: 'justify', textAlignLast: 'center', fontSize: '16px', color: TEXTCOLOR }}>
+                            The SC3 Portal enables you to collect all ontologies relevant for your research project. You can create new collections
+                            and add as much ontologies as you like.
+                        </p>
+                    </div>
+                    <div
+                        style={{
+                            flex: 1,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            paddingLeft: '10px',
+                            paddingRight: '35px'
+                        }}
+                    >
+                        <img src={teilen} width="200" height="150" alt="teilen" style={{ alignSelf: 'center' }} />
+                        <p style={{ fontSize: '26px', fontWeight: 600 }}>Visualisation</p>
+                        <p style={{ textAlign: 'justify', textAlignLast: 'center', fontSize: '16px', color: TEXTCOLOR }}>
+                            Creation of ontologies requires expertise from various stakeholders with different ontology proficiency levels. The portal
+                            allows easy translation of visualizations for various expert groups.
                         </p>
                     </div>
                     <div
@@ -99,22 +91,11 @@ export default class Home extends Component {
                             paddingRight: '10px'
                         }}
                     >
-                        <img src={Usecase} width="70" height="70" alt="Usecase" style={{ alignSelf: 'center' }} />
-                        <h5 style={{ paddingBottom: '10px' }}>What the portal can do for you</h5>
-                        <p style={{ textAlign: 'justify', marginTop: '15px', fontFamily: 'normal', fontSize: '18px' }}>
-                            We identified that the most crucial requirement for ontology development is to serve users' needs from various audiences
-                            with diverse backgrounds and in different contexts. We have therefore introduced several modes of operations.
-                        </p>
-                        <img src={UserRole} width="100%" alt="UserRole" height="300" />
-                    </div>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '20px', marginRight: '20px' }}>
-                        <img src={guidance} width="70" height="70" alt="guidance" style={{ alignSelf: 'center' }} />
-                        <h5>Framework for collaborative ontology development</h5>
-                        <p style={{ textAlign: 'justify', cursor: 'pointer', fontFamily: 'normal', fontSize: '18px' }}>
-                            {this.state.isreadmore ? FrameworkText : FrameworkText.substring(0, 500)}
-                            <span style={{ color: 'blue', fontWeight: 600 }} onClick={this.toggleReadmore}>
-                                {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
-                            </span>
+                        <img src={erstellen} width="200" height="150" alt="erstellen" style={{ alignSelf: 'center', marginRight: '60px' }} />
+                        <p style={{ fontSize: '26px', fontWeight: 600 }}>Editing</p>
+                        <p style={{ textAlign: 'justify', textAlignLast: 'center', fontSize: '16px', color: TEXTCOLOR }}>
+                            Collaborative editing of ontologies is the next step in the ontology agreement process. The SC3 portal integrates the
+                            broadly known WebProtege for collaborative editing.
                         </p>
                     </div>
                 </div>

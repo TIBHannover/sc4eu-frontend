@@ -64,5 +64,8 @@ export const PRIMARY = {
     dark: '#769FCD'
 };
 export const SECONDARY = {
-    dark: '#536b78'
+    dark: '#536b78',
+    link: '#0000EE'
 };
+
+export const TEXTCOLOR = '#4d5b7c';
