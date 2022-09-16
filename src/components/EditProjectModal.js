@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { editProject } from '../network/projectIndexing';
+import { SECONDARY } from '../styledComponents/styledComponents';
 
 export default class EditProjectModal extends Component {
     constructor(props) {
@@ -112,12 +113,12 @@ export default class EditProjectModal extends Component {
                 <ModalFooter>
                     {this.state.allowedToEditProjects && this.props.projectData.unlock ? (
                         <Button
-                            color="primary"
                             id="finishButton"
                             onClick={() => {
                                 this.editProject();
                             }}
                             autoFocus={true}
+                            style={{ background: SECONDARY.dark }}
                         >
                             Submit
                         </Button>

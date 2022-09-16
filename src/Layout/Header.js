@@ -16,6 +16,7 @@ import SignInModal from '../components/Signin/SignInModal';
 
 import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
+import { SECONDARY } from '../styledComponents/styledComponents';
 
 class Header extends Component {
     constructor(props) {
@@ -185,7 +186,7 @@ class Header extends Component {
                         </div>
                     ) : (
                         <Button
-                            style={{ backgroundColor: 'black' }}
+                            style={{ backgroundColor: SECONDARY.dark }}
                             className="clearfix"
                             onClick={() => {
                                 // push that to the redux state so that the user is rederected to its prev location;

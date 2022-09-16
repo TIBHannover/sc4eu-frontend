@@ -6,6 +6,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { createProject } from '../network/projectIndexing';
+import { SECONDARY } from '../styledComponents/styledComponents';
 
 class CreateProject extends Component {
     constructor(props) {
@@ -152,9 +153,9 @@ class CreateProject extends Component {
                     )}
                 </ModalBody>
                 <ModalFooter>
-                    {' '}
                     <Button
                         id="finishButton"
+                        style={{ background: SECONDARY.dark }}
                         onClick={() => {
                             this.createProject();
                         }}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { PRIMARY } from '../styledComponents/styledComponents';
+import { PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
 
 export default class Dataprotections extends Component {
     render() {
@@ -23,7 +23,7 @@ export default class Dataprotections extends Component {
                     >
                         Privacy Statement
                     </h2>
-                    <p>
+                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
                         Data protection is of high priority for the Technische Informationsbibliothek (TIB). As a general rule, the use of TIBʼs
                         services does not require the provision of any personal data. However, the processing of personal data may be required where a
                         data subject wants to use special services via the TIBʼs web pages. Where the processing of personal data is required and
@@ -39,7 +39,7 @@ export default class Dataprotections extends Component {
                         General Data Protection Regulation (GDPR).
                     </p>
                     <h3>Name and address of the controller</h3>
-                    <p>
+                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
                         The controller under data protection law shall be:
                         <br />
                         Technische Informationsbibliothek (TIB)
@@ -50,25 +50,34 @@ export default class Dataprotections extends Component {
                         <br />
                         Germany
                         <br />
-                        Phone: +49 511 762-8989
+                        Phone : +49 511 762-8989
                         <br />
-                        Email: <a href="www.tib.eu">www.tib.eu</a>
+                        Email :&nbsp;
+                        <a href="https://www.tib.eu" style={{ color: SECONDARY.link }} target="_blank" rel="noreferrer">
+                            www.tib.eu
+                        </a>
                         <br />
-                        Website: <a href="www.tib.eu">www.tib.eu</a>
+                        Website :&nbsp;
+                        <a href="https://www.tib.eu" style={{ color: SECONDARY.link }} target="_blank" rel="noreferrer">
+                            www.tib.eu
+                        </a>
                     </p>
                     <h3>Name and address of the data protection officer</h3>
-                    <p>
+                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
                         The data protection officer of the controller shall be:
                         <br />
                         Elke Brehm
                         <br />
-                        Phone: +49 511 762-8138
+                        Phone : +49 511 762-8138
                         <br />
-                        Email: <a href="mailto:datenschutz@tib.eu">datenschutz(AT)tib.eu</a>
+                        Email : &nbsp;
+                        <a href="mailto:datenschutz@tib.eu" style={{ color: SECONDARY.link }}>
+                            datenschutz(AT)tib.eu
+                        </a>
                         <br />
                     </p>
-                    <h4>Postal Address:</h4>
-                    <p>
+                    <h4>Postal Address :</h4>
+                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
                         Technische Informationsbibliothek (TIB)
                         <br />
                         data protection officer
@@ -81,7 +90,7 @@ export default class Dataprotections extends Component {
                         <br />
                     </p>
                     <h4>Visiting Address:</h4>
-                    <p>
+                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
                         TIB Conti-Campus
                         <br />
                         Königsworther Platz 1 B
@@ -95,7 +104,7 @@ export default class Dataprotections extends Component {
                         <br />
                     </p>
                     <h3>Cookies</h3>
-                    <p>
+                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
                         The TIB websites use cookies. Cookies are text files that are placed and stored on a computer system via an Internet browser
                         and serve to render the offer of the TIB more user-friendly, effective and secure.
                         <br />
@@ -111,7 +120,9 @@ export default class Dataprotections extends Component {
                     </p>
 
                     <h3>Web Analytics</h3>
-                    <p>The information generated with Matomo about the use of this website is processed and stored exclusively by TIB.</p>
+                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                        The information generated with Matomo about the use of this website is processed and stored exclusively by TIB.
+                    </p>
                     <div>
                         <iframe
                             title="data policy"

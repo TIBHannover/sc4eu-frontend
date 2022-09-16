@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { FormGroup, Label, Input } from 'reactstrap';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import { SECONDARY } from '../styledComponents/styledComponents';
+
 export default class UploadOntology extends Component {
     constructor(props) {
         super(props);
@@ -266,6 +268,7 @@ export default class UploadOntology extends Component {
                                 this.executeUpload();
                             }}
                             autoFocus={true}
+                            style={{ backgroundColor: SECONDARY.dark }}
                         >
                             Finish
                         </Button>
