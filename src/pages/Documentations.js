@@ -138,7 +138,12 @@ class Documentations extends Component {
                             SC3 is an ECSEL funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone
                             are invited to participate in the project development.
                             <br />I Would like to setup your own SC3 Portal or if you like to contribute to our codebase, please visit:&nbsp;
-                            <a style={{ color: SECONDARY.link }} href="https://gitlab.com/TIBHannover/sc3-project/">
+                            <a
+                                style={{ color: SECONDARY.link }}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href="https://gitlab.com/TIBHannover/sc3-project/"
+                            >
                                 https://gitlab.com/TIBHannover/sc3-project/
                             </a>
                             <br />

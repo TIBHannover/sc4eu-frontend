@@ -4,7 +4,7 @@ import { Col, Container, FormGroup, Input, Label, Button } from 'reactstrap';
 // import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { StyledGravatar } from '../styledComponents/styledComponents';
+import { SECONDARY, StyledGravatar } from '../styledComponents/styledComponents';
 import { updateUserSettings } from '../network/UserProfileCalls';
 import { redux_updateUserSettings } from '../redux/actions/auth';
 
@@ -57,6 +57,7 @@ class UserViewDetails extends Component {
                             newState[selector] = obj[selector];
                             this.setState(newState);
                         }}
+                        style={{ marginLeft: '10px', backgroundColor: SECONDARY.dark }}
                     >
                         Reset
                     </Button>
@@ -70,6 +71,7 @@ class UserViewDetails extends Component {
                             this.props.redux_updateUserSettings({ user: { displayName: obj[selector] } });
                             this.setState(newState);
                         }}
+                        style={{ marginLeft: '10px', backgroundColor: SECONDARY.dark }}
                     >
                         Save
                     </Button>

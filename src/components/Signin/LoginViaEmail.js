@@ -7,6 +7,7 @@ import { compose } from 'redux';
 import { loginViaEmail, regsiterViaEmail } from '../../network/loginCalls';
 import { Link } from 'react-router-dom';
 import { minLengthPassword } from '../../constants/globalConstants';
+import { SECONDARY } from '../../styledComponents/styledComponents';
 
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
@@ -151,7 +152,7 @@ class LoginViaEmail extends Component {
                         <div>
                             <p className="mt-3">
                                 Don't have an account? &nbsp;
-                                <Link to="" onClick={this.toggleSignupModel}>
+                                <Link to="" style={{ color: SECONDARY.link }} onClick={this.toggleSignupModel}>
                                     Sign Up
                                 </Link>
                             </p>
@@ -233,10 +234,10 @@ class LoginViaEmail extends Component {
                                     </div>
                                 </ModalBody>
                                 <ModalFooter>
-                                    <Button color="primary" onClick={this.handleRegister}>
+                                    <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleRegister}>
                                         Register
                                     </Button>
-                                    <Button color="primary" onClick={this.toggleSignupModel}>
+                                    <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.toggleSignupModel}>
                                         Cancel
                                     </Button>
                                 </ModalFooter>
@@ -306,7 +307,11 @@ class LoginViaEmail extends Component {
                                 </ModalFooter>
                             </Modal>
                         </div>
-                        <Button color="primary" id="loginWithMail" style={{ float: 'right', marginTop: '12px' }} onClick={this.handleLogin}>
+                        <Button
+                            id="loginWithMail"
+                            style={{ float: 'right', marginTop: '12px', backgroundColor: SECONDARY.dark }}
+                            onClick={this.handleLogin}
+                        >
                             Login
                         </Button>
                     </Form>
