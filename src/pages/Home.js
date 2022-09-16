@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
 import nutzen from '../assets/images/LineArt_nutzen.png';
 import erstellen from '../assets/images/LineArt_erstellen.png';
-import teilen from '../assets/images/LineArt_teilen_gespiegelt.svg';
+import teilen from '../assets/images/LineArt_teilen_gespiegelt.png';
 import { PRIMARY, TEXTCOLOR } from '../styledComponents/styledComponents';
 import Logo from '../assets/images/logo.png';
 
