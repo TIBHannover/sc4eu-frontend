@@ -13,6 +13,7 @@ import EditProjectModal from './EditProjectModal';
 import { CLEAR_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { withRouter } from 'react-router';
+import Tippy from '@tippyjs/react';
 
 class ProjectIndexCards extends Component {
     constructor(props) {
@@ -147,11 +148,13 @@ class ProjectIndexCards extends Component {
                                 </div>
                             )}
                         </div>
-                        <StyledLink onClick={this.showOntologies} to="#" className="p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
-                            <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div style={{ overflowWrap: 'break-word' }}> {this.props.inputData.name} </div>
-                            </div>
-                        </StyledLink>
+                        <Tippy content={'Click on The Project to Navigate Ontology List'}>
+                            <StyledLink onClick={this.showOntologies} to="#" className="p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
+                                <div style={{ display: 'flex', paddingRight: '5px' }}>
+                                    <div style={{ overflowWrap: 'break-word' }}> {this.props.inputData.name} </div>
+                                </div>
+                            </StyledLink>
+                        </Tippy>
                     </StyledCardHeader>
                     <Collapse isOpen={!this.state.collapseDescription}>
                         <StyledCardBody>

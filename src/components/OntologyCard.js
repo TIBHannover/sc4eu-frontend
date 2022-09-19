@@ -10,6 +10,7 @@ import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import Tippy from '@tippyjs/react';
 
 export default class OntologyIndexCards extends Component {
     componentDidMount() {
@@ -55,30 +56,32 @@ export default class OntologyIndexCards extends Component {
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        <StyledLink
-                            to={{
-                                pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                    ontologyId: this.props.inputData.uuid
-                                }),
-                                modeOfOperations: 'hybrid'
-                            }}
-                            onClick={this.onclick}
-                            className="p-0 noSelect"
-                            onDragStart={this.preventDraggingOfItem}
-                        >
-                            <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div> {this.props.inputData.name} </div>
-                                <Button
-                                    color="black"
-                                    size="sm"
-                                    title="Delete Ontology"
-                                    onClick={this.deleteOntology}
-                                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                                >
-                                    <Icon icon={faTrash} color={'black'} />
-                                </Button>
-                            </div>
-                        </StyledLink>
+                        <Tippy content={'Click on The Ontology to Navigate Hybrid View'}>
+                            <StyledLink
+                                to={{
+                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
+                                        ontologyId: this.props.inputData.uuid
+                                    }),
+                                    modeOfOperations: 'hybrid'
+                                }}
+                                onClick={this.onclick}
+                                className="p-0 noSelect"
+                                onDragStart={this.preventDraggingOfItem}
+                            >
+                                <div style={{ display: 'flex', paddingRight: '5px' }}>
+                                    <div> {this.props.inputData.name} </div>
+                                    <Button
+                                        color="black"
+                                        size="sm"
+                                        title="Delete Ontology"
+                                        onClick={this.deleteOntology}
+                                        style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
+                                    >
+                                        <Icon icon={faTrash} color={'black'} />
+                                    </Button>
+                                </div>
+                            </StyledLink>
+                        </Tippy>
                     </StyledCardHeader>
 
                     <StyledCardBody>
