@@ -45,9 +45,7 @@ export default class OntologyIndexing extends Component {
             }
             const localOnt = [];
             const onlineOnt = [];
-            console.log('==================');
             res.forEach(re => {
-                console.log(re.lookup_type);
                 if (re.lookup_type === 'online') {
                     onlineOnt.push(re);
                 } else {

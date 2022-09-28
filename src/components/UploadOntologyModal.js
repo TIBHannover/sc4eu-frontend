@@ -3,7 +3,7 @@ import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { getGitHubFileContent } from '../network/GithubAPICalls';
+import { getGitHubFileContent, getAllCommits, getBranches, listReleases, getReleaseTags } from '../network/GithubAPICalls';
 
 export default class UploadOntology extends Component {
     constructor(props) {
@@ -174,13 +174,12 @@ export default class UploadOntology extends Component {
     };
     handleGitHubUrl = async () => {
         //const allCommits = await getAllCommits(this.state.githubURL);
+        //const releasesTags = await getReleaseTags(this.state.githubURL);
         const gitHubFileContent = await getGitHubFileContent(this.state.githubURL);
 
         try {
             const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: gitHubFileContent });
             const pre_result = JSON.parse(pre_result_asString);
-
-            console.log(pre_result);
 
             this.setState({
                 ontologyFileContent: gitHubFileContent,

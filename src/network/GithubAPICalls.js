@@ -29,7 +29,6 @@ const getFilePath = githubapiurl => {
         .split('/')
         .splice(4)
         .join('/');
-    console.log(repoPath);
     return repoPath;
 };
 
@@ -58,12 +57,9 @@ export const getThisCommit = async (githubapiurl, sha) => {
         path: filePath,
         ref: sha
     });
-    console.log('===========================');
-    console.log(contents);
 };
 
 export const getAllCommits = async githubapiurl => {
-    console.log('getCommits');
     const octokit = new Octokit({
         auth: process.env.GITHUB_ACCESS_TOKEN
     });
@@ -77,12 +73,12 @@ export const getAllCommits = async githubapiurl => {
         repo: repoName,
         ref: branchRefoName
     });
-    console.log(contents['data']);
-    getThisCommit(githubapiurl, contents['data'][1].sha);
+    // const commitContent = await getGitHubFileContent(contents['data'][0].url);
+    // console.log(commitContent);
+    //getThisCommit(githubapiurl, contents['data'][1].sha);
 };
 
 export const getGitHubFileContent = async githubapiurl => {
-    console.log('getFileContent');
     const octokit = new Octokit({
         auth: process.env.GITHUB_ACCESS_TOKEN
     });
@@ -97,13 +93,11 @@ export const getGitHubFileContent = async githubapiurl => {
         path: filePath,
         ref: branchRefoName
     });
-    console.log(contents);
     const base64Contents = contents['data']['content'];
     const bufferObj = Buffer.from(base64Contents, 'base64');
 
     // Encode the Buffer as a utf8 string
     const decodedString = bufferObj.toString('utf8');
-    //console.log(decodedString);
     return decodedString;
 };
 
@@ -111,6 +105,42 @@ export const getRelease = async githubapiurl => {
     console.log('getRelease');
 };
 
-export const getBranch = async githubapiurl => {
-    console.log('getBranch');
+export const getBranches = async githubapiurl => {
+    const octokit = new Octokit({
+        auth: process.env.GITHUB_ACCESS_TOKEN
+    });
+    const user = getUserFromUrl(githubapiurl);
+    const repoName = getRepoFromUrl(githubapiurl);
+
+    const branches = await octokit.rest.repos.listBranches({
+        owner: user,
+        repo: repoName
+    });
+    console.log(branches);
+};
+
+export const listReleases = async githubapiurl => {
+    const octokit = new Octokit({
+        auth: process.env.GITHUB_ACCESS_TOKEN
+    });
+    const user = getUserFromUrl(githubapiurl);
+    const repoName = getRepoFromUrl(githubapiurl);
+
+    const releases = await octokit.rest.repos.listReleases({
+        owner: user,
+        repo: repoName
+    });
+    console.log(releases['data'][0].tag_name);
+    return releases;
+};
+
+export const getReleaseTags = async githubapiurl => {
+    const releases = await listReleases(githubapiurl);
+    const releaseData = releases['data'];
+    const tags = [];
+    releaseData.forEach(release => {
+        const tag = release.tag_name;
+        tags.push(tag);
+    });
+    return tags;
 };
