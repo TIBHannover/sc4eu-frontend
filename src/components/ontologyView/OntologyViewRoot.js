@@ -163,6 +163,7 @@ class OntologyViewRoot extends Component {
                         title="Ontology Meta Data"
                         updateEvent={this.rightSideBarUpdateEvent}
                         heightUpdateEvent={this.updateMainWidgetSize}
+                        ontologyVersion={this.props.ontologyVersion}
                     />
                 </div>
             </>
@@ -185,7 +186,8 @@ OntologyViewRoot.propTypes = {
     leftSideExpanded: PropTypes.bool.isRequired,
     rightSideExpanded: PropTypes.bool.isRequired,
     toggleRightSideExpanded: PropTypes.func.isRequired,
-    expandAllBodies: PropTypes.func.isRequired
+    expandAllBodies: PropTypes.func.isRequired,
+    ontologyVersion: PropTypes.string.isRequired
 };
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);
 

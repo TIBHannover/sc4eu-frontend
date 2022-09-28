@@ -4,7 +4,6 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import { getAllOntologies } from '../network/ontologyIndexing';
-import OntologyIndexCards from '../components/OntologyIndexCards';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import PropTypes from 'prop-types';
 import { SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
@@ -16,7 +15,10 @@ export default class OntologyIndexing extends Component {
 
         this.state = {
             isLoading: true,
-            selectedProject: false //Maybe get the uuid for the Default Project here.
+            selectedProject: false, //Maybe get the uuid for the Default Project here.
+            results: null,
+            onlineOntologies: null,
+            localOntologies: null
         };
     }
 
@@ -41,7 +43,16 @@ export default class OntologyIndexing extends Component {
             if (res.ontologyIndex === 'Undefined') {
                 res = false;
             }
-            this.setState({ isLoading: false, results: res });
+            const localOnt = [];
+            const onlineOnt = [];
+            res.forEach(re => {
+                if (re.lookup_type === 'online') {
+                    onlineOnt.push(re);
+                } else {
+                    localOnt.push(re);
+                }
+            });
+            this.setState({ isLoading: false, localOntologies: localOnt, onlineOntologies: onlineOnt });
         });
     };
 
@@ -50,10 +61,10 @@ export default class OntologyIndexing extends Component {
         this.getOntologiesFromBackend();
     };
 
-    reloadAfterDelete = () => {
-        this.setState({ isLoading: false });
-        this.getOntologiesFromBackend();
-    };
+    // reloadAfterDelete = () => {
+    //     this.setState({ isLoading: false });
+    //     this.getOntologiesFromBackend();
+    // };
 
     render() {
         return (
@@ -83,18 +94,9 @@ export default class OntologyIndexing extends Component {
                                 reloadAfterUpdate={() => {
                                     this.reloadAfterUpdate();
                                 }}
+                                localOntologiesFromBackend={this.state.localOntologies}
+                                onlineOntologiesFromBackend={this.state.onlineOntologies}
                             />
-                            <hr className="mt-0 mb-2" />
-                            {this.state.results ? (
-                                <OntologyIndexCards
-                                    ontologies={this.state.results}
-                                    reloadAfterDelete={() => {
-                                        this.reloadAfterDelete();
-                                    }}
-                                />
-                            ) : (
-                                <div> No ontologies found in this project </div>
-                            )}
                         </div>
                     )}
                 </Container>

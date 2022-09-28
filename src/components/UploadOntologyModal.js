@@ -1,10 +1,9 @@
-import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap';
-import React, { createRef, Component } from 'react';
-import PropTypes from 'prop-types';
-import { FormGroup, Label, Input } from 'reactstrap';
+import { Button, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import React, { Component, createRef } from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { SECONDARY } from '../styledComponents/styledComponents';
+import { getGitHubFileContent } from '../network/GithubAPICalls';
+import PropTypes from 'prop-types';
 
 export default class UploadOntology extends Component {
     constructor(props) {
@@ -18,7 +17,10 @@ export default class UploadOntology extends Component {
             waitingForResult: false,
             preInitResult: {},
             errorInitialization: false,
-            allows_upload: false
+            allows_upload: false,
+            lookup_type: null,
+            lookup_path: null,
+            githubURL: null
         };
 
         this.finishRef = createRef();
@@ -95,7 +97,9 @@ export default class UploadOntology extends Component {
                     ontologyName: pre_result.title,
                     ontologyDescription: pre_result.description,
                     preInitResult: pre_result,
-                    waitingForResult: false
+                    waitingForResult: false,
+                    lookup_type: 'local',
+                    lookup_path: 'internal'
                 });
             } catch (e) {
                 this.setState({
@@ -132,14 +136,13 @@ export default class UploadOntology extends Component {
         const objToSent = {
             name: this.state.ontologyName,
             description: this.state.ontologyDescription,
-            lookup_type: 'local',
+            lookup_type: this.state.lookup_type,
             access_type: 'public',
-            lookup_path: 'internal',
+            lookup_path: this.state.lookup_path,
             ontology_content: this.state.ontologyFileContent,
             project_id: this.props.project_id
         };
         console.log(objToSent);
-
         // await networkCall
         uploadOntology(objToSent).then(res => {
             this.props.callback(res);
@@ -161,9 +164,44 @@ export default class UploadOntology extends Component {
 
         return (
             <div>
-                <h2> Statistics </h2> {res} <hr />
+                <h2> Statistics </h2> {res}
+                <hr />
             </div>
         );
+    };
+    handleUrlChange = event => {
+        this.setState({ githubURL: event.target.value });
+    };
+    handleGitHubUrl = async () => {
+        //const allCommits = await getAllCommits(this.state.githubURL);
+        //const releasesTags = await getReleaseTags(this.state.githubURL);
+        const gitHubFileContent = await getGitHubFileContent(this.state.githubURL);
+
+        try {
+            const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: gitHubFileContent });
+            const pre_result = JSON.parse(pre_result_asString);
+
+            this.setState({
+                ontologyFileContent: gitHubFileContent,
+                hasContent: true,
+                ontologyName: pre_result.title,
+                ontologyDescription: pre_result.description,
+                preInitResult: pre_result,
+                waitingForResult: false,
+                lookup_type: 'online',
+                lookup_path: this.state.githubURL
+            });
+        } catch (e) {
+            this.setState({
+                hasContent: false,
+                ontologyFileContent: null,
+                ontologyName: '',
+                ontologyDescription: '',
+                waitingForResult: false,
+                preInitResult: {},
+                errorInitialization: true
+            });
+        }
     };
 
     render() {
@@ -184,7 +222,45 @@ export default class UploadOntology extends Component {
                     {this.state.allows_upload ? (
                         <div>
                             {!this.state.errorInitialization && (
-                                <Input type="file" name="file" onChange={this.handlePreview} disabled={this.state.waitingForResult} />
+                                <div>
+                                    {!this.props.onlineUpload ? (
+                                        <>
+                                            <div>Please lookup the ontology file you want to upload. Supported formats (ttl, owl)</div>
+                                            <br />
+                                            <Label for="fileSystem">File System </Label>
+                                            <Input
+                                                id="fileSystem"
+                                                type="file"
+                                                name="file"
+                                                style={{ border: 'lightgray 1px solid', width: '50%' }}
+                                                onChange={this.handlePreview}
+                                                disabled={this.state.waitingForResult}
+                                            />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div>Please enter github raw file url for the ontology file. Supported formats (ttl, owl)</div>
+                                            <br />
+                                            <Label for="exampleUrl" style={{ float: 'left', marginTop: '4px' }}>
+                                                GitHub/GitLab{' '}
+                                            </Label>
+                                            <Input
+                                                id="exampleUrl"
+                                                type="url"
+                                                name="url"
+                                                placeholder="Enter github url"
+                                                onChange={this.handleUrlChange}
+                                                style={{
+                                                    border: 'lightgray 1px solid',
+                                                    marginLeft: '5px',
+                                                    width: '50%',
+                                                    float: 'left'
+                                                }}
+                                            />
+                                            <Button onClick={this.handleGitHubUrl}> Upload </Button>
+                                        </>
+                                    )}
+                                </div>
                             )}
                             {/*parser not successful*/}
                             {!this.state.waitingForResult && this.state.preInitResult.parser === 'failed' && (
@@ -233,9 +309,6 @@ export default class UploadOntology extends Component {
                                     </FormGroup>
                                 </div>
                             )}
-                            {!this.state.hasContent && !this.state.waitingForResult && !this.state.errorInitialization && (
-                                <div> Upload an ontology file</div>
-                            )}
                             {this.state.waitingForResult && !this.state.errorInitialization && <div> LOADING...</div>}
                             {this.state.errorInitialization && <div> Could not establish connection to ontology service.</div>}
                         </div>
@@ -268,7 +341,6 @@ export default class UploadOntology extends Component {
                                 this.executeUpload();
                             }}
                             autoFocus={true}
-                            style={{ backgroundColor: SECONDARY.dark }}
                         >
                             Finish
                         </Button>
@@ -283,5 +355,6 @@ UploadOntology.propTypes = {
     showDialog: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
     callback: PropTypes.func.isRequired,
-    project_id: PropTypes.string.isRequired
+    project_id: PropTypes.string.isRequired,
+    onlineUpload: PropTypes.bool.isRequired
 };

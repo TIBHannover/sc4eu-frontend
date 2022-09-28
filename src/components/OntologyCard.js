@@ -11,7 +11,7 @@ import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontolog
 import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
-export default class OntologyIndexCards extends Component {
+export default class OntologyCard extends Component {
     componentDidMount() {
         window.localStorage.clear();
     }
@@ -60,6 +60,7 @@ export default class OntologyIndexCards extends Component {
                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
                                     ontologyId: this.props.inputData.uuid
                                 }),
+                                ontologyVersion: this.props.ontologyVersion,
                                 modeOfOperations: 'hybrid'
                             }}
                             onClick={this.onclick}
@@ -90,9 +91,10 @@ export default class OntologyIndexCards extends Component {
     }
 }
 
-OntologyIndexCards.propTypes = {
+OntologyCard.propTypes = {
     inputData: PropTypes.object.isRequired,
-    callback: PropTypes.func.isRequired
+    callback: PropTypes.func.isRequired,
+    ontologyVersion: PropTypes.string.isRequired
 };
 
 const StyledCard = styled.div`

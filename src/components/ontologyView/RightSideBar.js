@@ -267,9 +267,9 @@ class RightSideBar extends Component {
                     </div>
                     <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Git Hub </span>
-                        <p>Git URL:</p>
-                        <p>Licence:</p>
-                        <p>Version:</p>
+                        <p>Git URL: {this.state.openOntology.lookup_path}</p>
+                        {/*<p>Licence:</p>*/}
+                        <p>Version: {this.props.ontologyVersion}</p>
                     </div>
                     <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
                 </Container>
@@ -285,7 +285,8 @@ RightSideBar.propTypes = {
     heightUpdateEvent: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    metaInformation: PropTypes.object
+    metaInformation: PropTypes.object,
+    ontologyVersion: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => {

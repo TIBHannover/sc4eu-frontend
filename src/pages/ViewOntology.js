@@ -87,6 +87,7 @@ class ViewOntology extends Component {
                                 rightSideExpanded={this.rightSideExpanded}
                                 toggleLeftSideExpanded={this.setLeftSideExpanded}
                                 toggleRightSideExpanded={this.setRightSideExpanded}
+                                ontologyVersion={this.props.location.ontologyVersion}
                             />
                         </div>
                     )}

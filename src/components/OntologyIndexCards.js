@@ -22,8 +22,12 @@ class OntologyIndexCards extends Component {
                         key={'OntologyCard_' + index}
                         inputData={item}
                         callback={param => {
-                            this.props.reloadAfterDelete(param);
+                            this.props.reloadAfterUpdate(param);
                         }}
+                        /*
+                         * this is hardcoded for now, it needs to be changed.we need to add an entry to ontology Index about version
+                         * */
+                        ontologyVersion="Main"
                     />
                 );
             });
@@ -41,7 +45,7 @@ class OntologyIndexCards extends Component {
 
 OntologyIndexCards.propTypes = {
     ontologies: PropTypes.array.isRequired,
-    reloadAfterDelete: PropTypes.func.isRequired
+    reloadAfterUpdate: PropTypes.func.isRequired
 };
 
 export default withCookies(OntologyIndexCards);
