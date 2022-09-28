@@ -1,9 +1,9 @@
 import { Button, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import React, { Component, createRef } from 'react';
-import PropTypes from 'prop-types';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { getGitHubFileContent, getAllCommits, getBranches, listReleases, getReleaseTags } from '../network/GithubAPICalls';
+import { getGitHubFileContent } from '../network/GithubAPICalls';
+import PropTypes from 'prop-types';
 
 export default class UploadOntology extends Component {
     constructor(props) {
@@ -225,6 +225,8 @@ export default class UploadOntology extends Component {
                                 <div>
                                     {!this.props.onlineUpload ? (
                                         <>
+                                            <div>Please lookup the ontology file you want to upload. Supported formats (ttl, owl)</div>
+                                            <br />
                                             <Label for="fileSystem">File System </Label>
                                             <Input
                                                 id="fileSystem"
@@ -237,6 +239,8 @@ export default class UploadOntology extends Component {
                                         </>
                                     ) : (
                                         <>
+                                            <div>Please enter github raw file url for the ontology file. Supported formats (ttl, owl)</div>
+                                            <br />
                                             <Label for="exampleUrl" style={{ float: 'left', marginTop: '4px' }}>
                                                 GitHub/GitLab{' '}
                                             </Label>
