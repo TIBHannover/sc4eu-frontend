@@ -41,6 +41,7 @@ export default class OntologyIndexing extends Component {
         getAllOntologies(this.state.selectedProject.uuid).then(res => {
             //There is a chance that the project do not have any ontologies.
             if (res.ontologyIndex === 'Undefined') {
+                console.log('test');
                 this.setState({ isLoading: false, localOntologies: false, onlineOntologies: false });
                 return;
             }
