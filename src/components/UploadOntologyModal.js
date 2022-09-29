@@ -4,6 +4,7 @@ import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { getGitHubFileContent } from '../network/GithubAPICalls';
 import PropTypes from 'prop-types';
+import { SECONDARY } from '../styledComponents/styledComponents';
 
 export default class UploadOntology extends Component {
     constructor(props) {
@@ -242,13 +243,13 @@ export default class UploadOntology extends Component {
                                             <div>Please enter github raw file url for the ontology file. Supported formats (ttl, owl)</div>
                                             <br />
                                             <Label for="exampleUrl" style={{ float: 'left', marginTop: '4px' }}>
-                                                GitHub/GitLab{' '}
+                                                GitHub{' '}
                                             </Label>
                                             <Input
                                                 id="exampleUrl"
                                                 type="url"
                                                 name="url"
-                                                placeholder="Enter github url"
+                                                placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
                                                 onChange={this.handleUrlChange}
                                                 style={{
                                                     border: 'lightgray 1px solid',
@@ -257,7 +258,10 @@ export default class UploadOntology extends Component {
                                                     float: 'left'
                                                 }}
                                             />
-                                            <Button onClick={this.handleGitHubUrl}> Upload </Button>
+                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleGitHubUrl}>
+                                                {' '}
+                                                Upload{' '}
+                                            </Button>
                                         </>
                                     )}
                                 </div>
@@ -331,7 +335,8 @@ export default class UploadOntology extends Component {
                         <Button
                             id="finishButton"
                             innerRef={this.finishRef}
-                            disabled={
+                            style={{ backgroundColor: SECONDARY.dark }}
+                            hidden={
                                 !this.state.hasContent ||
                                 this.state.waitingForResult ||
                                 this.state.errorInitialization ||
