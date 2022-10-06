@@ -32,10 +32,10 @@ const SideBarLayout = () => {
 
     return (
         <>
-            <StyledButton color="none" size="lg" title="Open Manu" onClick={toggleDrawer}>
+            <StyledButton color="none" size="lg" title="Open Menu" onClick={toggleDrawer}>
                 <Icon icon={faBars} />
             </StyledButton>
-            <StyledButton color="none" title="Go Home">
+            <StyledButton color="none" title="Home">
                 <StyledLink activestyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} size="lg">
                     <Image src={Logo} alt="Home Logo" style={{ height: 20, width: 20 }} />
                 </StyledLink>

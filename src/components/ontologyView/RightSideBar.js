@@ -69,7 +69,13 @@ class RightSideBar extends Component {
                     <div key={'metaInformation_' + key} className="root" style={{ padding: '0 10px' }}>
                         <Button
                             onClick={() => this.toggleMetaInformation()}
-                            style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold', backgroundColor: SECONDARY.dark }}
+                            style={{
+                                marginTop: '5px',
+                                width: '100%',
+                                textAlign: 'left',
+                                fontWeight: 'bold',
+                                backgroundColor: SECONDARY.dark
+                            }}
                         >
                             <Icon icon={this.state.collapseMetaInfo ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
                             Meta Information
@@ -90,7 +96,13 @@ class RightSideBar extends Component {
                     <div key={'prefixList' + key} className="root" style={{ padding: '0 10px' }}>
                         <Button
                             onClick={() => this.toggle()}
-                            style={{ marginTop: '5px', width: '100%', textAlign: 'left', fontWeight: 'bold', backgroundColor: SECONDARY.dark }}
+                            style={{
+                                marginTop: '5px',
+                                width: '100%',
+                                textAlign: 'left',
+                                fontWeight: 'bold',
+                                backgroundColor: SECONDARY.dark
+                            }}
                         >
                             <Icon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
                             Prefix List
@@ -261,13 +273,14 @@ class RightSideBar extends Component {
                     <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px', display: 'inline-block' }}>
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Project Name: </span>
                         <span>{this.state.openProject.name}</span>
-                        <br />
+                    </div>
+                    <div style={{ marginTop: '20px', marginLeft: '15px', display: 'inline-block' }}>
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Ontology Name: </span>
                         <span>{this.state.openOntology.name}</span>
                     </div>
                     <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
-                        <span style={{ fontSize: '20px', fontWeight: 600 }}>Git Hub </span>
-                        <p>Git URL: {this.state.openOntology.lookup_path}</p>
+                        <span style={{ fontSize: '20px', fontWeight: 600 }}>Github </span>
+                        <p>URL: {this.state.openOntology.lookup_path}</p>
                         {/*<p>Licence:</p>*/}
                         <p>Version: {this.props.ontologyVersion}</p>
                     </div>

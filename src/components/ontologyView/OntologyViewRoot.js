@@ -160,7 +160,7 @@ class OntologyViewRoot extends Component {
                         width={this.state.rightSidebarWidth}
                         initialState={this.props.rightSideExpanded}
                         height={this.state.containerHeight + this.sidebarHeightOffset}
-                        title="Ontology Meta Data"
+                        title="Metadata"
                         updateEvent={this.rightSideBarUpdateEvent}
                         heightUpdateEvent={this.updateMainWidgetSize}
                         ontologyVersion={this.props.ontologyVersion}

@@ -77,7 +77,7 @@ const SideBar = () => {
             <div style={{ textAlign: 'center', fontSize: '14px' }}>
                 <span>Management & Visualization</span>
             </div>
-            <StyledLink title="Open Project List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>
+            <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>
                 <Icon icon={faFile} style={IconStyle} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
