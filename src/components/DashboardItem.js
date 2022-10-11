@@ -145,11 +145,18 @@ class DashboardItem extends Component {
 
     extractRow = () => {
         const user = this.props.userData;
-
-        const row = this.props.parameterOrder.map((selector, index) => {
-            if (selector === 'role' && user[selector] !== 'System Admin') {
-                return (
-                    <td style={{ borderTop: '1px solid #dee2e6' }} key={'td_' + user.uuid + '_' + index}>
+        let counter = 0;
+        return (
+            <>
+                <td>{user.uuid}</td>
+                <td>{user.email_address}</td>
+                <td>{user.display_name}</td>
+                <td>{user.auth_type}</td>
+                <td>{user.email_valid === false ? 'false' : 'true'}</td>
+                <td>
+                    {user.role === 'System Admin' ? (
+                        user.role
+                    ) : (
                         <ReactSelect
                             key={'td_role_' + user.uuid}
                             value={this.state.roleValue}
@@ -160,86 +167,63 @@ class DashboardItem extends Component {
                                 RoleOption
                             }}
                         />
-                    </td>
-                );
-            }
-            return <td key={'td_' + index}>{user[selector]}</td>;
-        });
-        return row;
+                    )}
+                </td>
+                <td>
+                    {user.role === 'System Admin' ? (
+                        'All projects Access'
+                    ) : (
+                        <ReactSelect
+                            key={'rs_projects_' + user.uuid + counter++}
+                            value={this.state.selectedProjectOptions}
+                            isMulti
+                            closeMenuOnSelect={false}
+                            hideSelectedOptions={false}
+                            isDisabled={!(this.state.shouldEdit && this.state.editThisUser === user.uuid)}
+                            placeholder={'Select projects'}
+                            size="lg"
+                            components={{
+                                Option
+                            }}
+                            onChange={value => this.handleProjectChange(value)}
+                            options={this.props.projects}
+                            allowSelectAll={true}
+                            //value={this.state.selectedProjectOptions}
+                        />
+                    )}
+                </td>
+                <td>
+                    {user.role === 'System Admin' ? (
+                        ''
+                    ) : (
+                        <div className="btn-group">
+                            <Button
+                                style={{ backgroundColor: '#0057B8', marginRight: '10px', borderRadius: '4px 4px 4px 4px' }}
+                                onClick={() => {
+                                    this.editUser(user);
+                                }}
+                            >
+                                {this.state.shouldEdit && this.state.editThisUser === user['uuid'] ? 'Save' : <Icon icon={faPen} color="black" />}
+                            </Button>
+
+                            <Button
+                                className="btn btn-danger"
+                                style={{ borderRadius: '4px 4px 4px 4px' }}
+                                onClick={() => {
+                                    this.deleteUser(user);
+                                }}
+                            >
+                                <Icon icon={faTrash} color={'black'} />
+                            </Button>
+                        </div>
+                    )}
+                </td>
+            </>
+        );
     };
 
     render() {
-        const thisUser = this.props.userData;
-        let counter = 0;
-
-        return (
-            <tr key={'row_item' + thisUser.uuid}>
-                {this.extractRow()}
-                {thisUser['role'] === 'System Admin' ? (
-                    <td />
-                ) : (
-                    <>
-                        {
-                            <td key={'td_' + thisUser.uuid}>
-                                <span
-                                    className="d-inline-block"
-                                    data-toggle="popover"
-                                    data-trigger="focus"
-                                    data-content="Please select ontologies"
-                                    style={{
-                                        width: '200px'
-                                    }}
-                                >
-                                    <ReactSelect
-                                        key={'rs_projects_' + thisUser.uuid + counter++}
-                                        value={this.state.selectedProjectOptions}
-                                        isMulti
-                                        closeMenuOnSelect={false}
-                                        hideSelectedOptions={false}
-                                        isDisabled={!(this.state.shouldEdit && this.state.editThisUser === thisUser.uuid)}
-                                        placeholder={'Select projects'}
-                                        size="lg"
-                                        components={{
-                                            Option
-                                        }}
-                                        onChange={value => this.handleProjectChange(value)}
-                                        options={this.props.projects}
-                                        allowSelectAll={true}
-                                        //value={this.state.selectedProjectOptions}
-                                    />
-                                </span>
-                            </td>
-                        }
-                        <td>
-                            <div className="btn-group">
-                                <Button
-                                    style={{ backgroundColor: '#0057B8', marginRight: '10px', borderRadius: '4px 4px 4px 4px' }}
-                                    onClick={() => {
-                                        this.editUser(thisUser);
-                                    }}
-                                >
-                                    {this.state.shouldEdit && this.state.editThisUser === thisUser['uuid'] ? (
-                                        'Save'
-                                    ) : (
-                                        <Icon icon={faPen} color="black" />
-                                    )}
-                                </Button>
-
-                                <Button
-                                    className="btn btn-danger"
-                                    style={{ borderRadius: '4px 4px 4px 4px' }}
-                                    onClick={() => {
-                                        this.deleteUser(thisUser);
-                                    }}
-                                >
-                                    <Icon icon={faTrash} color={'black'} />
-                                </Button>
-                            </div>
-                        </td>
-                    </>
-                )}
-            </tr>
-        );
+        return <tr>{this.extractRow()}</tr>;
     }
 }
 
@@ -248,7 +232,6 @@ DashboardItem.propTypes = {
     userData: PropTypes.object.isRequired,
     roleOptions: PropTypes.array.isRequired,
     callback: PropTypes.func.isRequired,
-    parameterOrder: PropTypes.array.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 

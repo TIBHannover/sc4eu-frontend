@@ -18,7 +18,6 @@ export default class Dashboard extends Component {
             ontologies: [],
             projects: []
         };
-        this.parameterOrder = [];
     }
 
     componentDidMount = async () => {
@@ -61,29 +60,6 @@ export default class Dashboard extends Component {
         });
     };
 
-    extractHeaderInformation = input => {
-        const parameterOrder = ['uuid', 'display_name', 'auth_type', 'email_valid'];
-        // try to use predefined order
-        const keys = Object.keys(input);
-
-        const correctParamOrder = [];
-        const missedParams = [];
-        for (let i = 0; i < keys.length; i++) {
-            const val = keys[i];
-            const orderedIndex = parameterOrder.indexOf(val);
-            if (orderedIndex !== -1) {
-                correctParamOrder[orderedIndex] = val;
-            } else {
-                missedParams.push(val);
-            }
-        }
-        const orderedArray = [].concat(correctParamOrder, missedParams);
-        this.parameterOrder = orderedArray;
-        return orderedArray.map((item, index) => {
-            return <th key={'key_header' + index}>{item}</th>;
-        });
-    };
-
     dashBoardRowItem = () => {
         return this.state.users.map(rowItem => {
             return (
@@ -93,23 +69,9 @@ export default class Dashboard extends Component {
                     roleOptions={this.state.userRoles}
                     projects={this.state.projects}
                     callback={this.getBackendData}
-                    parameterOrder={this.parameterOrder}
                 />
             );
         });
-    };
-
-    renderUserInformation = data => {
-        // create a table
-        // extract header information
-        return (
-            <Table bordered>
-                <thead>
-                    <tr>{this.extractHeaderInformation(data[0])}</tr>
-                </thead>
-                <tbody>{this.dashBoardRowItem()}</tbody>
-            </Table>
-        );
     };
 
     renderDashboard = () => {
@@ -120,7 +82,23 @@ export default class Dashboard extends Component {
                 return (
                     <div>
                         <h1 style={{ textAlign: 'center', fontStyle: 'normal', padding: '20px 0px 20px 0px' }}>USER INFORMATION </h1>
-                        <div style={{ textAlign: 'center', fontStyle: 'normal' }}>{this.renderUserInformation(this.state.users)}</div>
+                        <div style={{ textAlign: 'center', fontStyle: 'normal' }}>
+                            <Table bordered>
+                                <thead>
+                                    <tr>
+                                        <th>UUID</th>
+                                        <th>Email</th>
+                                        <th>Name</th>
+                                        <th>Auth Type</th>
+                                        <th>Verified User</th>
+                                        <th>Role</th>
+                                        <th>User Project</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>{this.dashBoardRowItem()}</tbody>
+                            </Table>
+                        </div>
                     </div>
                 );
             }
