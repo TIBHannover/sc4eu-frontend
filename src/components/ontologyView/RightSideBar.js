@@ -105,7 +105,7 @@ class RightSideBar extends Component {
                             }}
                         >
                             <Icon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
-                            Prefix List
+                            Ontology Prefixes
                         </Button>
                         <Collapse isOpen={!this.state.collapse}>
                             <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
@@ -222,7 +222,7 @@ class RightSideBar extends Component {
                         marginLeft: '5px',
                         color: 'white',
                         backgroundColor: PRIMARY.dark,
-                        marginTop: '8px'
+                        marginTop: '10px'
                     }}
                 >
                     <h4 style={{ width: this.props.width - 10, textAlign: 'center' }}>{this.state.title}</h4>

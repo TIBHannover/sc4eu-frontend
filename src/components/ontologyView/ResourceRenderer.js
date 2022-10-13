@@ -9,6 +9,7 @@ import { redux_addResource } from '../../redux/actions/rrm_actions';
 import SearchAutoComplete from './SearchAutoComplete';
 import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
 import { PRIMARY } from '../RRView/StyledComponents';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 class ResourceRenderer extends Component {
     constructor(props) {
@@ -186,7 +187,7 @@ class ResourceRenderer extends Component {
                         display: 'flex',
                         height: '50px',
                         background: PRIMARY.dark,
-                        margin: '10px',
+                        margin: '10px 6px 10px 10px',
                         borderRadius: '7px 7px 7px 7px',
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -196,7 +197,7 @@ class ResourceRenderer extends Component {
                     <h4 style={{ color: '#ffffff' }}>Resources</h4>
                 </div>
                 {/*    Controls*/}
-                <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
+                <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '20px' }}>
                     <InputGroup>
                         <SearchAutoComplete
                             preservedSearchFilterValue={this.filterText}
@@ -217,13 +218,11 @@ class ResourceRenderer extends Component {
                 {/* Resources*/}
 
                 {/*WHY IS KEY A BOOL??? */}
-                <div
-                    id="resourceRendererContainer"
-                    key={this.state.updateFlipFlop}
-                    style={{ marginTop: '10px', height: 'calc(100% - 120px)', overflow: 'auto' }}
-                >
-                    {this.renderAllResources()}
-                </div>
+                <Scrollbars style={{ marginTop: '10px', height: 'calc(100% - 120px)' }}>
+                    <div id="resourceRendererContainer" key={this.state.updateFlipFlop} style={{ paddingRight: '5px' }}>
+                        {this.renderAllResources()}
+                    </div>
+                </Scrollbars>
             </div>
         );
     }
