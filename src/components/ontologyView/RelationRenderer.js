@@ -7,6 +7,7 @@ import { InputGroup } from 'reactstrap';
 import SearchAutoComplete from './SearchAutoComplete';
 import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
 import { PRIMARY } from '../RRView/StyledComponents';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 class RelationRenderer extends Component {
     constructor(props) {
@@ -189,7 +190,7 @@ class RelationRenderer extends Component {
                         display: 'flex',
                         height: '50px',
                         background: PRIMARY.dark,
-                        margin: '10px',
+                        margin: '10px 6px 10px 10px',
                         borderRadius: '7px 7px 7px 7px',
                         position: 'relative',
                         justifyContent: 'center',
@@ -199,7 +200,7 @@ class RelationRenderer extends Component {
                     <h4 style={{ color: '#ffffff' }}>Relations</h4>
                 </div>
                 {/*    Controls*/}
-                <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '15px' }}>
+                <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '20px' }}>
                     {/*TODO: fix add relation functionality*/}
                     {/*<Button size="sm" color="primary" style={{ height: '39px' }} disabled={false} onClick={this.handleAdd}>
                         Add
@@ -223,9 +224,11 @@ class RelationRenderer extends Component {
                     </InputGroup>
                 </div>
                 {/* Relations*/}
-                <div key={this.state.updateFlipFlop} style={{ marginTop: '10px', height: 'calc(100% - 120px)', overflow: 'auto' }}>
-                    {this.renderAllRelations()}
-                </div>
+                <Scrollbars style={{ marginTop: '10px', height: 'calc(100% - 120px)' }}>
+                    <div key={this.state.updateFlipFlop} style={{ paddingRight: '5px' }}>
+                        {this.renderAllRelations()}
+                    </div>
+                </Scrollbars>
             </div>
         );
     }

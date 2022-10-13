@@ -94,13 +94,13 @@ class SingleResource extends Component {
             <div
                 ref={this.ref}
                 style={{
-                    padding: '5px',
+                    padding: '1px',
+                    marginLeft: '10px',
                     overflow: 'none',
-                    paddingRight: '5px',
                     display: isVisible,
                     backgroundColor: PRIMARY.light,
-                    borderRadius: '10px 10px 10px 10px ',
-                    marginBottom: '2px'
+                    borderRadius: '10px 10px 0px 0px ',
+                    marginBottom: '5px'
                 }}
             >
                 {this.props.experimentalLayout && (

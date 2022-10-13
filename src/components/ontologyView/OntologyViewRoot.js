@@ -120,7 +120,7 @@ class OntologyViewRoot extends Component {
                         });
                     }}
                 >
-                    {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all bodies
+                    {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all resources/relations
                 </ControlButton>
             </div>
         );
