@@ -18,7 +18,7 @@ const getRepoFromUrl = githubapiurl => {
     const repoName = url.pathname.split('/')[2];
     return repoName;
 };
-const getBranchFromUrl = githubapiurl => {
+export const getBranchFromUrl = githubapiurl => {
     const url = new URL(githubapiurl);
     const branchName = url.pathname.split('/')[3];
     return branchName;

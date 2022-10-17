@@ -163,7 +163,6 @@ class OntologyViewRoot extends Component {
                         title="Metadata"
                         updateEvent={this.rightSideBarUpdateEvent}
                         heightUpdateEvent={this.updateMainWidgetSize}
-                        ontologyVersion={this.props.ontologyVersion}
                     />
                 </div>
             </>

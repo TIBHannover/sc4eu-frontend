@@ -9,6 +9,7 @@ import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
+import { getBranchFromUrl } from '../../network/GithubAPICalls';
 
 class RightSideBar extends Component {
     constructor(props) {
@@ -22,15 +23,24 @@ class RightSideBar extends Component {
             collapseMetaInfo: true,
             isEditing: { description: false, title: false, version: false, iri: false },
             openOntology: '',
-            openProject: ''
+            openProject: '',
+            ontologyVersion: ''
         };
     }
 
     componentDidMount() {
         document.body.style.overflowX = 'hidden';
+        const theProject = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
+        const theOntology = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
+        let version = 'internal';
+        if (theOntology.lookup_type === 'online') {
+            version = getBranchFromUrl(theOntology.lookup_path);
+        }
+
         this.setState({
-            openProject: JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION)),
-            openOntology: JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION))
+            openProject: theProject,
+            openOntology: theOntology,
+            ontologyVersion: version
         });
     }
 
@@ -38,7 +48,6 @@ class RightSideBar extends Component {
         if (prevState.expanded !== this.state.expanded) {
             this.setState({ initialRendering: false });
         }
-
         // check required height TODO
         this.props.heightUpdateEvent();
     };
@@ -282,7 +291,7 @@ class RightSideBar extends Component {
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Github </span>
                         <p>URL: {this.state.openOntology.lookup_path}</p>
                         {/*<p>Licence:</p>*/}
-                        <p>Version: {this.props.ontologyVersion}</p>
+                        <p>Version: {this.state.ontologyVersion}</p>
                     </div>
                     <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
                 </Container>
@@ -298,8 +307,7 @@ RightSideBar.propTypes = {
     heightUpdateEvent: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    metaInformation: PropTypes.object,
-    ontologyVersion: PropTypes.string.isRequired
+    metaInformation: PropTypes.object
 };
 
 const mapStateToProps = state => {
