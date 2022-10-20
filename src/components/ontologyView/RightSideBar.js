@@ -2,14 +2,18 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, CardBody, Collapse, Container, Input } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faChevronCircleDown, faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import styled, { keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
-import { getBranchFromUrl } from '../../network/GithubAPICalls';
+import { getAllCommits, getBranchFromUrl, getRawUrlforCommit } from '../../network/GithubAPICalls';
+import Select from '@material-ui/core/Select';
+import { FormControl, InputLabel, MenuItem } from '@material-ui/core';
+import ShowOntologyComparisonModal from './ShowOntologyComparisonModal';
+import { getOntologyComparison } from '../../network/GetOntologyData';
 
 class RightSideBar extends Component {
     constructor(props) {
@@ -20,11 +24,18 @@ class RightSideBar extends Component {
             title: props.title,
             initialRendering: true,
             collapse: true,
+            collapseComparison: true,
             collapseMetaInfo: true,
             isEditing: { description: false, title: false, version: false, iri: false },
             openOntology: '',
             openProject: '',
-            ontologyVersion: ''
+            ontologyVersion: '',
+            firstSelectedCommit: '',
+            secondSelectedCommit: '',
+            allCommits: '',
+            showCompareModal: false,
+            compareResults: '',
+            isLoading: false
         };
     }
 
@@ -33,14 +44,22 @@ class RightSideBar extends Component {
         const theProject = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
         const theOntology = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
         let version = 'internal';
+        const ontologyCommits = [];
         if (theOntology.lookup_type === 'online') {
             version = getBranchFromUrl(theOntology.lookup_path);
+            this.getTheCommits(theOntology.lookup_path).then(results => {
+                results.data.forEach(item => {
+                    const raw_url = getRawUrlforCommit(theOntology.lookup_path, item.sha);
+                    ontologyCommits.push({ label: item.commit.committer.date, value: item.sha, url: item.url, raw_url: raw_url });
+                });
+            });
         }
 
         this.setState({
             openProject: theProject,
             openOntology: theOntology,
-            ontologyVersion: version
+            ontologyVersion: version,
+            allCommits: ontologyCommits
         });
     }
 
@@ -56,6 +75,11 @@ class RightSideBar extends Component {
         document.body.style.overflowX = 'auto';
     }
 
+    getTheCommits = async gitHubURL => {
+        const commits = await getAllCommits(gitHubURL);
+        return commits;
+    };
+
     collapseSidebar = () => {
         this.props.updateEvent(!this.state.expanded);
         this.setState({ expanded: !this.state.expanded });
@@ -63,6 +87,10 @@ class RightSideBar extends Component {
 
     toggle = () => {
         this.setState({ collapse: !this.state.collapse });
+    };
+
+    toggleComparison = () => {
+        this.setState({ collapseComparison: !this.state.collapseComparison });
     };
 
     toggleMetaInformation = () => {
@@ -212,7 +240,109 @@ class RightSideBar extends Component {
         }
     };
 
+    handleFirstCommitChange = event => {
+        this.setState({ firstSelectedCommit: event.target.value });
+    };
+
+    handleSecondCommitChange = event => {
+        this.setState({ secondSelectedCommit: event.target.value });
+    };
+
+    showComparison = async () => {
+        this.setState({ isLoading: true });
+        if (this.state.firstSelectedCommit === '' || this.state.secondSelectedCommit === '') {
+            alert('Please selected the two commits to compare');
+            return;
+        }
+        const index_first = this.state.allCommits.findIndex(item => item.value === this.state.firstSelectedCommit);
+        const index_second = this.state.allCommits.findIndex(item => item.value === this.state.secondSelectedCommit);
+        let url_first;
+        let url_second;
+        if (index_first !== -1 && index_second !== -1) {
+            url_first = this.state.allCommits[index_first].raw_url;
+            url_second = this.state.allCommits[index_second].raw_url;
+            getOntologyComparison(url_first, url_second).then(data => {
+                this.setState({ compareResults: data, showCompareModal: true, isLoading: false });
+            });
+        }
+    };
+
     render() {
+        let comparisonButton;
+        if (this.state.openOntology.lookup_type === 'online') {
+            comparisonButton = (
+                <div className="root" style={{ padding: '0 10px', width: this.props.width - 5 }}>
+                    <Button
+                        onClick={() => this.toggleComparison()}
+                        style={{
+                            marginTop: '5px',
+                            width: '100%',
+                            textAlign: 'left',
+                            fontWeight: 'bold',
+                            backgroundColor: SECONDARY.dark
+                        }}
+                    >
+                        <Icon icon={this.state.collapseComparison ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
+                        Ontology Comparison
+                    </Button>
+                    <Collapse isOpen={!this.state.collapseComparison}>
+                        <div style={{ marginTop: '5px' }}>
+                            <span style={{ fontSize: '15px', fontWeight: 600 }}>Please choose two commits to compare </span>{' '}
+                        </div>
+                        <div style={{ marginTop: '5px' }}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Select 1st Commit</InputLabel>
+                                <Select label={'choose commit'} onChange={this.handleFirstCommitChange} defaultValue="">
+                                    {this.state.allCommits.map(item => (
+                                        <MenuItem key={item.value + 'first'} value={item.value}>
+                                            {item.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Select 2nd Commit</InputLabel>
+                            <Select label={'choose commit'} onChange={this.handleSecondCommitChange} defaultValue="">
+                                {this.state.allCommits.map(item => (
+                                    <MenuItem key={item.value + 'second'} value={item.value}>
+                                        {item.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <Button style={{ backgroundColor: SECONDARY.dark, marginTop: '5px' }} onClick={this.showComparison}>
+                            Show Comparison
+                        </Button>
+                        {this.state.isLoading ? (
+                            <div className="text-center text-primary mt-4 mb-4">
+                                {/*using a manual fixed scale value for the spinner scale! */}
+
+                                <h2 className="h5">
+                                    <span>
+                                        <Icon icon={faSpinner} spin />
+                                    </span>{' '}
+                                    Loading Comparison
+                                </h2>
+                            </div>
+                        ) : (
+                            <ShowOntologyComparisonModal
+                                showDialog={this.state.showCompareModal}
+                                toggle={() => {
+                                    this.setState({ showCreateProjectModal: !this.state.showCompareModal });
+                                }}
+                                callback={() => {
+                                    this.setState({ showCompareModal: false });
+                                }}
+                                comparisonContent={this.state.compareResults}
+                            />
+                        )}
+                    </Collapse>
+                </div>
+            );
+        } else {
+            comparisonButton = <div />;
+        }
         return (
             <ContentContainer
                 id="RightSidebarContainer"
@@ -294,6 +424,7 @@ class RightSideBar extends Component {
                         <p>Version: {this.state.ontologyVersion}</p>
                     </div>
                     <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
+                    {comparisonButton}
                 </Container>
             </ContentContainer>
         );

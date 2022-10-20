@@ -90,6 +90,7 @@ database.editProject(router);
 
 processing.getJSONModelForOntologyID(router);
 processing.initializeOntology(router);
+processing.compareTwoOntologies(router);
 
 /** GITHUB OAUTH STUFF**/
 router.get('/auth/github', passport.authenticate('github'));
