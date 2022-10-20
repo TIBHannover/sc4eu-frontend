@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const request = require('request');
 const verifyToken = require('./veryfyToken');
+const { stdout } = require('nodemon/lib/config/defaults');
+const childProcess = require('child_process').exec;
 
 module.exports = {
     preInitialization: function(app) {
@@ -40,6 +42,22 @@ module.exports = {
             }
 
             //get preinit task from processing service
+        });
+    },
+
+    compareTwoOntologies: function(app) {
+        app.post('/getComparisonResult', (req, res) => {
+            const body = req.body;
+
+            const command =
+                'java -jar robot.jar  diff --left-iri ' + body['first_ontology'] + ' --right-iri ' + body['second_ontology'] + '  --format html';
+
+            childProcess(command, function(err, stdout, stderr) {
+                if (err) {
+                    console.log(err);
+                }
+                res.json(stdout);
+            });
         });
     },
 

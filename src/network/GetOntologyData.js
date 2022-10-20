@@ -1,5 +1,7 @@
-import { URL_VIEWONTOLOGY, URL_GET_JSON_MODEL } from 'constants/services';
+import { URL_GET_JSON_MODEL, URL_VIEWONTOLOGY } from 'constants/services';
 import { plainGetRequest } from './networkRequests';
+import { URL_COMPARE_ONTOLOGY } from '../constants/services';
+
 export const getOntologyBy = id => {
     // we use parameters from env.
 
@@ -17,6 +19,32 @@ export const getJSON_ModelForId = id => {
     // todo: make flexible based on the env.file
     return plainGetRequest(reqURL, {
         'Content-Type': 'application/json'
+    });
+};
+
+export const getOntologyComparison = (first, second) => {
+    const postHeader = { 'Content-Type': 'application/json' };
+
+    const twoCommits = {
+        first_ontology: first,
+        second_ontology: second
+    };
+
+    return new Promise((resolve, reject) => {
+        fetch(URL_COMPARE_ONTOLOGY, { method: 'POST', headers: postHeader, body: JSON.stringify(twoCommits) })
+            .then(response => {
+                if (!response.ok) {
+                    console.log('ERROR WHILE CREATING RESOURCE-RELATION MODEL, ', !response.ok);
+                } else {
+                    const json = response.json();
+                    if (json.then) {
+                        json.then(resolve).catch(reject);
+                    } else {
+                        return resolve(json);
+                    }
+                }
+            })
+            .catch(reject);
     });
 };
 

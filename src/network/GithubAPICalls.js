@@ -18,7 +18,7 @@ const getRepoFromUrl = githubapiurl => {
     const repoName = url.pathname.split('/')[2];
     return repoName;
 };
-const getBranchFromUrl = githubapiurl => {
+export const getBranchFromUrl = githubapiurl => {
     const url = new URL(githubapiurl);
     const branchName = url.pathname.split('/')[3];
     return branchName;
@@ -30,6 +30,13 @@ const getFilePath = githubapiurl => {
         .splice(4)
         .join('/');
     return repoPath;
+};
+
+export const getRawUrlforCommit = (githubapiurl, commit_sha) => {
+    const url = new URL(githubapiurl);
+    const temp_url = url.href.split('/');
+    temp_url[5] = commit_sha;
+    return temp_url.join('/');
 };
 
 export const getRepo = async githubapiurl => {
@@ -73,9 +80,26 @@ export const getAllCommits = async githubapiurl => {
         repo: repoName,
         ref: branchRefoName
     });
+    return contents;
     // const commitContent = await getGitHubFileContent(contents['data'][0].url);
     // console.log(commitContent);
     //getThisCommit(githubapiurl, contents['data'][1].sha);
+};
+
+export const compareTwoCommits = async (githubapiurl, firstCommit, secondCommit) => {
+    const octokit = new Octokit({
+        auth: process.env.GITHUB_ACCESS_TOKEN
+    });
+    const user = getUserFromUrl(githubapiurl);
+    const repoName = getRepoFromUrl(githubapiurl);
+
+    const compareResults = await octokit.rest.repos.compareCommits({
+        owner: user,
+        repo: repoName,
+        base: firstCommit,
+        head: secondCommit
+    });
+    return compareResults;
 };
 
 export const getGitHubFileContent = async githubapiurl => {
