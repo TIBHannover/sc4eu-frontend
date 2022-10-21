@@ -261,7 +261,11 @@ class RightSideBar extends Component {
         if (index_first !== -1 && index_second !== -1) {
             url_first = this.state.allCommits[index_first].raw_url;
             url_second = this.state.allCommits[index_second].raw_url;
+            console.log('+++++++++++++++++++++++++++');
+            console.log(url_first);
+            console.log(url_second);
             getOntologyComparison(url_first, url_second).then(data => {
+                console.log(data);
                 this.setState({ compareResults: data, showCompareModal: true, isLoading: false });
             });
         }
