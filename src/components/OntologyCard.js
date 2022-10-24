@@ -61,7 +61,7 @@ export default class OntologyCard extends Component {
                                     ontologyId: this.props.inputData.uuid
                                 }),
                                 ontologyVersion: this.props.ontologyVersion,
-                                modeOfOperations: 'hybrid'
+                                modeOfOperations: 'graph'
                             }}
                             onClick={this.onclick}
                             className="p-0 noSelect"

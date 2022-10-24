@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import 'react-modern-drawer/dist/index.css';
 import {
-    faHome,
-    faBook,
-    faQuestion,
     faAlignJustify,
+    faBook,
     faBrain,
-    faProjectDiagram,
     faFile,
-    faStamp,
-    faShieldAlt
+    faHome,
+    faProjectDiagram,
+    faQuestion,
+    faShieldAlt,
+    faStamp
 } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import ROUTES from 'constants/routes';
@@ -51,7 +51,7 @@ const StyledHr = styled.hr`
 const SideBar = () => {
     const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
     const selectedOntologySession = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
-    const [isActiveTab, setIsActiveTab] = useState('hybrid');
+    const [isActiveTab, setIsActiveTab] = useState('graph');
 
     const selectModeOfOperation = val => {
         setIsActiveTab(val);
@@ -97,6 +97,20 @@ const SideBar = () => {
                     {selectedOntologySession ? (
                         <div style={{ marginLeft: '30px' }}>
                             <StyledLink
+                                title="Open Graph View"
+                                to={{
+                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
+                                        ontologyId: selectedOntologySession.uuid
+                                    }),
+                                    modeOfOperations: 'graph'
+                                }}
+                                onClick={() => selectModeOfOperation('graph')}
+                                activeStyle={isActiveTab === 'graph' ? ActiveStyle : ''}
+                            >
+                                <Icon icon={faProjectDiagram} style={IconStyle} />
+                                <StyledText>Graph</StyledText>
+                            </StyledLink>
+                            <StyledLink
                                 title="Open Hybrid View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
@@ -111,20 +125,6 @@ const SideBar = () => {
                             >
                                 <Icon icon={faBrain} style={IconStyle} />
                                 <StyledText>Hybrid</StyledText>
-                            </StyledLink>
-                            <StyledLink
-                                title="Open Graph View"
-                                to={{
-                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: selectedOntologySession.uuid
-                                    }),
-                                    modeOfOperations: 'graph'
-                                }}
-                                onClick={() => selectModeOfOperation('graph')}
-                                activeStyle={isActiveTab === 'graph' ? ActiveStyle : ''}
-                            >
-                                <Icon icon={faProjectDiagram} style={IconStyle} />
-                                <StyledText>Graph</StyledText>
                             </StyledLink>
                             <StyledLink
                                 title="Open Text View"

@@ -423,9 +423,13 @@ class RightSideBar extends Component {
                     </div>
                     <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Github </span>
-                        <p>URL: {this.state.openOntology.lookup_path}</p>
+                        <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
+                            <b>URL:</b> {this.state.openOntology.lookup_path}
+                        </li>
                         {/*<p>Licence:</p>*/}
-                        <p>Version: {this.state.ontologyVersion}</p>
+                        <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
+                            <b>Version:</b> {this.state.ontologyVersion}
+                        </li>
                     </div>
                     <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
                     {comparisonButton}
