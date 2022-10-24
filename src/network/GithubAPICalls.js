@@ -143,6 +143,17 @@ export const getBranches = async githubapiurl => {
     console.log(branches);
 };
 
+export const getBranch = async githubapiurl => {
+    const octokit = new Octokit({
+        auth: process.env.GITHUB_ACCESS_TOKEN
+    });
+
+    const user = getUserFromUrl(githubapiurl);
+    const repoName = getRepoFromUrl(githubapiurl);
+    const branchName = getBranchFromUrl(githubapiurl);
+    console.log(branchName);
+};
+
 export const listReleases = async githubapiurl => {
     const octokit = new Octokit({
         auth: process.env.GITHUB_ACCESS_TOKEN
