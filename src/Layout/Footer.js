@@ -42,7 +42,7 @@ class Footer extends Component {
                         <Image src={mines_logo} alt="Mines Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '5px' }} />
                     </div>
                     <div style={{ paddingLeft: '130px' }}>
-                        <a href={'https://www.dfg.de/'}>
+                        <a href={'https://www.kdt-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
                             <Image src={ECSEL_logo} alt="DFG Logo" style={{ height: 50, width: 150 }} />
                         </a>
                         <p style={{ fontSize: '12px', float: 'right', paddingLeft: '15px' }}>

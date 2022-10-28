@@ -22,7 +22,7 @@ export default class WebProtege extends Component {
         return (
             <iframe
                 title="WebProtege"
-                style={{ position: 'center', height: '99vh', width: '100vw', border: 'none' }}
+                style={{ position: 'absolute', height: '15%', width: '100%', border: 'none' }}
                 loading="lazy"
                 src="https://service.tib.eu/wp4tib/"
                 onLoad={this.hideSpinner}
@@ -33,7 +33,7 @@ export default class WebProtege extends Component {
     render() {
         return (
             <>
-                <div style={{ backgroundColor: PRIMARY.lighter }}>
+                <div style={{ backgroundColor: PRIMARY.lighter, height: '100%', width: '100%' }}>
                     {this.state.isLoading ? (
                         <Button variant="primary" disabled>
                             <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />
