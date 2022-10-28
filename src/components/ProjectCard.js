@@ -19,7 +19,8 @@ class ProjectIndexCards extends Component {
         super(props);
         this.state = {
             showEditProjectModal: false,
-            collapseDescription: true
+            collapseDescription: true,
+            isReadmoreProjectDescription: false
         };
     }
 
@@ -87,19 +88,17 @@ class ProjectIndexCards extends Component {
         console.log(event.target);
     };
 
+    toggleReadmore = () => {
+        this.setState({ isReadmoreProjectDescription: !this.state.isReadmoreProjectDescription });
+    };
+
     render() {
+        const projectDescription = this.props.inputData.description ? this.props.inputData.description : 'No description available';
+
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        <StyledButton
-                            color="none"
-                            title="Expand/Collapse Description"
-                            onClick={this.toggleProjectBody}
-                            style={{ float: 'left', padding: '0px', paddingRight: '10px', marginLeft: '1px' }}
-                        >
-                            <Icon icon={this.state.collapseDescription ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '0px' }} />
-                        </StyledButton>
                         <StyledButton
                             color="none"
                             size="sm"
@@ -153,11 +152,14 @@ class ProjectIndexCards extends Component {
                             </div>
                         </StyledLink>
                     </StyledCardHeader>
-                    <Collapse isOpen={!this.state.collapseDescription}>
-                        <StyledCardBody>
-                            {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                        </StyledCardBody>
-                    </Collapse>
+                    <StyledCardBody>
+                        {this.state.isReadmoreProjectDescription ? projectDescription : projectDescription.slice(0, 270)}
+                        {projectDescription.length > 270 && (
+                            <span style={{ color: SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
+                                {this.state.isReadmoreProjectDescription ? ' Show Less' : ' ...Read More'}
+                            </span>
+                        )}
+                    </StyledCardBody>
                 </StyledCard>
             </div>
         );
@@ -207,7 +209,7 @@ const StyledLink = styled(Link)`
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
-    // border: 1px solid black;
+    border: 1px solid ${PRIMARY.dark};
     padding: 5px;
     color: white;
     background: ${PRIMARY.light};
@@ -225,7 +227,7 @@ const StyledCardHeader = styled.div`
 
 const StyledCardBody = styled.div`
     padding: 5px;
-    border: 1px solid black;
+    border: 1px solid ${PRIMARY.dark};
     border-top: none;
     :focus {
         outline: none;

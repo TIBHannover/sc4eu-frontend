@@ -12,6 +12,12 @@ import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
 export default class OntologyCard extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isReadmoreOntologyDescription: false
+        };
+    }
     componentDidMount() {
         window.localStorage.clear();
     }
@@ -50,7 +56,12 @@ export default class OntologyCard extends Component {
         sessionStorage.setItem(SELECTED_ONTOLOGY_SESSION, JSON.stringify(this.props.inputData));
     };
 
+    toggleReadmore = () => {
+        this.setState({ isReadmoreOntologyDescription: !this.state.isReadmoreOntologyDescription });
+    };
+
     render() {
+        const ontologyDescription = this.props.inputData.description ? this.props.inputData.description : 'No description available';
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
@@ -83,7 +94,12 @@ export default class OntologyCard extends Component {
                     </StyledCardHeader>
 
                     <StyledCardBody>
-                        {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                        {this.state.isReadmoreOntologyDescription ? ontologyDescription : ontologyDescription.slice(0, 270)}
+                        {ontologyDescription.length > 270 && (
+                            <span style={{ color: SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
+                                {this.state.isReadmoreOntologyDescription ? ' Show Less' : ' ...Read More'}
+                            </span>
+                        )}
                     </StyledCardBody>
                 </StyledCard>
             </div>
