@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faLock, faPen, faTrash, faUnlockAlt, faChevronCircleRight, faChevronCircleDown } from '@fortawesome/free-solid-svg-icons';
-import { Button, Collapse } from 'reactstrap';
+import { faLock, faPen, faTrash, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { Button } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
@@ -13,13 +13,13 @@ import EditProjectModal from './EditProjectModal';
 import { CLEAR_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { withRouter } from 'react-router';
+import ClampLines from 'react-clamp-lines';
 
 class ProjectIndexCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showEditProjectModal: false,
-            collapseDescription: true
+            showEditProjectModal: false
         };
     }
 
@@ -77,29 +77,11 @@ class ProjectIndexCards extends Component {
         }
     };
 
-    toggleProjectBody = event => {
-        event.preventDefault();
-        this.setState({ collapseDescription: !this.state.collapseDescription });
-    };
-
-    helloMouse = event => {
-        event.target.style.background = 'red';
-        console.log(event.target);
-    };
-
     render() {
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        <StyledButton
-                            color="none"
-                            title="Expand/Collapse Description"
-                            onClick={this.toggleProjectBody}
-                            style={{ float: 'left', padding: '0px', paddingRight: '10px', marginLeft: '1px' }}
-                        >
-                            <Icon icon={this.state.collapseDescription ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '0px' }} />
-                        </StyledButton>
                         <StyledButton
                             color="none"
                             size="sm"
@@ -153,11 +135,16 @@ class ProjectIndexCards extends Component {
                             </div>
                         </StyledLink>
                     </StyledCardHeader>
-                    <Collapse isOpen={!this.state.collapseDescription}>
-                        <StyledCardBody>
-                            {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                        </StyledCardBody>
-                    </Collapse>
+                    <StyledCardBody>
+                        <ClampLines
+                            text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                            id="custom"
+                            lines={2}
+                            moreText="Read More"
+                            lessText="Show less"
+                            className="custom-class"
+                        />
+                    </StyledCardBody>
                 </StyledCard>
             </div>
         );
@@ -207,7 +194,7 @@ const StyledLink = styled(Link)`
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
-    // border: 1px solid black;
+    border: 1px solid ${PRIMARY.dark};
     padding: 5px;
     color: white;
     background: ${PRIMARY.light};
@@ -225,7 +212,7 @@ const StyledCardHeader = styled.div`
 
 const StyledCardBody = styled.div`
     padding: 5px;
-    border: 1px solid black;
+    border: 1px solid ${PRIMARY.dark};
     border-top: none;
     :focus {
         outline: none;

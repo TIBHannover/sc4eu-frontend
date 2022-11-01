@@ -10,6 +10,7 @@ import { Button } from 'reactstrap';
 import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import ClampLines from 'react-clamp-lines';
 
 export default class OntologyCard extends Component {
     componentDidMount() {
@@ -83,7 +84,14 @@ export default class OntologyCard extends Component {
                     </StyledCardHeader>
 
                     <StyledCardBody>
-                        {this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                        <ClampLines
+                            text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                            id="custom"
+                            lines={2}
+                            moreText="Read More"
+                            lessText="Show less"
+                            className="custom-class"
+                        />
                     </StyledCardBody>
                 </StyledCard>
             </div>
