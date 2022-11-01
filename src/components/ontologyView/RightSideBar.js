@@ -9,7 +9,7 @@ import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
-import { getAllCommits, getBranchFromUrl, getRawUrlforCommit } from '../../network/GithubAPICalls';
+import { getAllCommits, getBranchFromUrl, getLicense, getRawUrlforCommit } from '../../network/GithubAPICalls';
 import Select from '@material-ui/core/Select';
 import { FormControl, InputLabel, MenuItem } from '@material-ui/core';
 import ShowOntologyComparisonModal from './ShowOntologyComparisonModal';
@@ -35,16 +35,18 @@ class RightSideBar extends Component {
             allCommits: '',
             showCompareModal: false,
             compareResults: '',
-            isLoading: false
+            isLoading: false,
+            licenceInfo: 'No Licence Available'
         };
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
         document.body.style.overflowX = 'hidden';
         const theProject = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
         const theOntology = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
         let version = 'internal';
         const ontologyCommits = [];
+        let license = null;
         if (theOntology.lookup_type === 'online') {
             version = getBranchFromUrl(theOntology.lookup_path);
             this.getTheCommits(theOntology.lookup_path).then(results => {
@@ -53,15 +55,25 @@ class RightSideBar extends Component {
                     ontologyCommits.push({ label: item.commit.committer.date, value: item.sha, url: item.url, raw_url: raw_url });
                 });
             });
+
+            license = await getLicense(theOntology.lookup_path).then(lic => {
+                license = lic;
+                return lic;
+            });
+        }
+        let licenseName = 'No Licence Available';
+        if (license) {
+            licenseName = license.data.license.name;
         }
 
         this.setState({
             openProject: theProject,
             openOntology: theOntology,
             ontologyVersion: version,
-            allCommits: ontologyCommits
+            allCommits: ontologyCommits,
+            licenceInfo: licenseName
         });
-    }
+    };
 
     componentDidUpdate = (prevProps, prevState) => {
         if (prevState.expanded !== this.state.expanded) {
@@ -426,7 +438,9 @@ class RightSideBar extends Component {
                         <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
                             <b>URL:</b> {this.state.openOntology.lookup_path}
                         </li>
-                        {/*<p>Licence:</p>*/}
+                        <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
+                            <b>License:</b> {this.state.licenceInfo}
+                        </li>
                         <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
                             <b>Version:</b> {this.state.ontologyVersion}
                         </li>
