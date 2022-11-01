@@ -1,6 +1,7 @@
 import { plainGetRequest, submitGetRequest, submitPostRequest } from './networkRequests';
 import { URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY, URL_DELETEONTOLOGY, URL_INITIALIZE, URL_ONTOLOGYINDEXING, URL_PRE_INIT } from 'constants/services';
 import { Cookies } from 'react-cookie';
+import { URL_ONTOLOGYBYID } from '../constants/services';
 
 export const getAllOntologies = project_id => {
     // we use parameters from env.
@@ -12,6 +13,14 @@ export const getAllOntologies = project_id => {
         'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
     });
 };
+
+export const getOntologyById = ontology_id => {
+    return plainGetRequest(URL_ONTOLOGYBYID + '?ontology_id=' + ontology_id, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    });
+};
+
 export const deleteOntology = ontology_id => {
     const postHeader = { 'Content-Type': 'application/json' };
     console.log('Deleting Ontology: ', { ontologyIdToDelete: ontology_id });

@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
-import { deleteOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
@@ -18,6 +18,22 @@ export default class OntologyCard extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    getOntologiesForDownloads = () => {
+        getOntologyById(this.props.inputData.uuid).then(res => {
+            try {
+                const blob = new Blob([res.ontology_data]);
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                // this.props.inputData.name  is name of the file and .ttl is the formate of the file
+                link.download = this.props.inputData.name + '.ttl';
+                link.href = url;
+                link.click();
+            } catch (error) {
+                console.log('something went wrong');
+            }
+        });
+    };
 
     deleteOntology = async event => {
         //delete Ontology...
@@ -56,6 +72,29 @@ export default class OntologyCard extends Component {
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
+                        <StyledButton
+                            color="white"
+                            size="sm"
+                            title="Delete Ontology"
+                            onClick={this.deleteOntology}
+                            style={{ float: 'right', padding: '0px', marginLeft: 'auto', marginRight: '10px' }}
+                        >
+                            <Icon icon={faTrash} />
+                        </StyledButton>
+                        <StyledButton
+                            color="white"
+                            size="sm"
+                            title="download ontology"
+                            onClick={this.getOntologiesForDownloads}
+                            style={{
+                                float: 'right',
+                                padding: '0px',
+                                marginLeft: 'auto',
+                                marginRight: '10px'
+                            }}
+                        >
+                            <Icon icon={faDownload} />
+                        </StyledButton>
                         <StyledLink
                             to={{
                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
@@ -68,18 +107,7 @@ export default class OntologyCard extends Component {
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
-                            <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div> {this.props.inputData.name} </div>
-                                <Button
-                                    color="black"
-                                    size="sm"
-                                    title="Delete Ontology"
-                                    onClick={this.deleteOntology}
-                                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                                >
-                                    <Icon icon={faTrash} color={'black'} />
-                                </Button>
-                            </div>
+                            <div> {this.props.inputData.name} </div>
                         </StyledLink>
                     </StyledCardHeader>
 
@@ -158,5 +186,11 @@ const StyledCardBody = styled.div`
     }
     ::-moz-focus-inner {
         border: 0;
+    }
+`;
+
+const StyledButton = styled(Button)`
+    :hover {
+        color: white;
     }
 `;
