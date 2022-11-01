@@ -1,8 +1,8 @@
-//https://github.com/tgfawad/Ontologies
-// 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
-// https://raw.githubusercontent.com/w3c/dpv/master/dpv-owl/dpv.owl
-
 import { Octokit } from '@octokit/rest';
+
+const octokit = new Octokit({
+    auth: process.env.GITHUB_ACCESS_TOKEN
+});
 
 export const getUser = async githubapiurl => {
     console.log('getUser');
@@ -40,19 +40,11 @@ export const getRawUrlforCommit = (githubapiurl, commit_sha) => {
 };
 
 export const getRepo = async githubapiurl => {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN
-    });
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
-    //const repoURL = constants.hostname;
-    //const response = await axios.get(this.state.githubURL);
 };
 
 export const getThisCommit = async (githubapiurl, sha) => {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN
-    });
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
     const branchRefoName = getBranchFromUrl(githubapiurl);
@@ -64,12 +56,11 @@ export const getThisCommit = async (githubapiurl, sha) => {
         path: filePath,
         ref: sha
     });
+
+    return contents;
 };
 
 export const getAllCommits = async githubapiurl => {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN
-    });
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
     const branchRefoName = getBranchFromUrl(githubapiurl);
@@ -81,15 +72,9 @@ export const getAllCommits = async githubapiurl => {
         ref: branchRefoName
     });
     return contents;
-    // const commitContent = await getGitHubFileContent(contents['data'][0].url);
-    // console.log(commitContent);
-    //getThisCommit(githubapiurl, contents['data'][1].sha);
 };
 
 export const compareTwoCommits = async (githubapiurl, firstCommit, secondCommit) => {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN
-    });
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
 
@@ -102,10 +87,25 @@ export const compareTwoCommits = async (githubapiurl, firstCommit, secondCommit)
     return compareResults;
 };
 
+export const getLicense = async githubapiurl => {
+    const user = getUserFromUrl(githubapiurl);
+    const repoName = getRepoFromUrl(githubapiurl);
+
+    const license = await octokit.rest.licenses
+        .getForRepo({
+            owner: user,
+            repo: repoName
+        })
+        .then(lic => {
+            return lic;
+        })
+        .catch(err => {
+            return null;
+        });
+    return license;
+};
+
 export const getGitHubFileContent = async githubapiurl => {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN
-    });
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
     const branchRefoName = getBranchFromUrl(githubapiurl);
@@ -117,6 +117,28 @@ export const getGitHubFileContent = async githubapiurl => {
         path: filePath,
         ref: branchRefoName
     });
+
+    // const requestWithMediaType = octokit.request.defaults({
+    //     mediaType: {
+    //         format: 'raw'
+    //     }
+    // });
+    // const contents = await requestWithMediaType('GET /repos/{owner}/{repo}/contents/{path}', {
+    //     owner: user,
+    //     repo: repoName,
+    //     path: filePath
+    // });
+
+    // octokit.headers({ accept: 'application/vnd.github.raw' });
+    // const contents = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+    //     owner: user,
+    //     repo: repoName,
+    //     path: 'master/DigitalReference.ttl',
+    //     mediaType: {
+    //         format: ['raw']
+    //     }
+    // });
+
     const base64Contents = contents['data']['content'];
     const bufferObj = Buffer.from(base64Contents, 'base64');
 
@@ -130,9 +152,6 @@ export const getRelease = async githubapiurl => {
 };
 
 export const getBranches = async githubapiurl => {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN
-    });
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
 
@@ -144,10 +163,6 @@ export const getBranches = async githubapiurl => {
 };
 
 export const getBranch = async githubapiurl => {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN
-    });
-
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
     const branchName = getBranchFromUrl(githubapiurl);
@@ -155,9 +170,6 @@ export const getBranch = async githubapiurl => {
 };
 
 export const listReleases = async githubapiurl => {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN
-    });
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
 
