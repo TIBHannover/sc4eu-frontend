@@ -94,7 +94,8 @@ class ProjectIndexCards extends Component {
 
     render() {
         const projectDescription = this.props.inputData.description ? this.props.inputData.description : 'No description available';
-
+        // show 270 word of description after that read more option will visible
+        const lengthOfDescriptionWord = 270;
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
@@ -153,8 +154,8 @@ class ProjectIndexCards extends Component {
                         </StyledLink>
                     </StyledCardHeader>
                     <StyledCardBody>
-                        {this.state.isReadmoreProjectDescription ? projectDescription : projectDescription.slice(0, 270)}
-                        {projectDescription.length > 270 && (
+                        {this.state.isReadmoreProjectDescription ? projectDescription : projectDescription.slice(0, lengthOfDescriptionWord)}
+                        {projectDescription.length > lengthOfDescriptionWord && (
                             <span style={{ color: SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
                                 {this.state.isReadmoreProjectDescription ? ' Show Less' : ' ...Read More'}
                             </span>

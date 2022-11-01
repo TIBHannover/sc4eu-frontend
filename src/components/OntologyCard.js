@@ -62,6 +62,8 @@ export default class OntologyCard extends Component {
 
     render() {
         const ontologyDescription = this.props.inputData.description ? this.props.inputData.description : 'No description available';
+        // show 270 word of description after that read more option will visible
+        const lengthOfDescriptionWord = 270;
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
@@ -94,8 +96,8 @@ export default class OntologyCard extends Component {
                     </StyledCardHeader>
 
                     <StyledCardBody>
-                        {this.state.isReadmoreOntologyDescription ? ontologyDescription : ontologyDescription.slice(0, 270)}
-                        {ontologyDescription.length > 270 && (
+                        {this.state.isReadmoreOntologyDescription ? ontologyDescription : ontologyDescription.slice(0, lengthOfDescriptionWord)}
+                        {ontologyDescription.length > lengthOfDescriptionWord && (
                             <span style={{ color: SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
                                 {this.state.isReadmoreOntologyDescription ? ' Show Less' : ' ...Read More'}
                             </span>
