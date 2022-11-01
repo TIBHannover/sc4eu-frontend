@@ -36,7 +36,8 @@ class RightSideBar extends Component {
             showCompareModal: false,
             compareResults: '',
             isLoading: false,
-            licenceInfo: 'No Licence Available'
+            licenceInfo: 'No Licence Available',
+            licenseURL: null
         };
     }
 
@@ -62,8 +63,10 @@ class RightSideBar extends Component {
             });
         }
         let licenseName = 'No Licence Available';
+        let licenseURL = '';
         if (license) {
             licenseName = license.data.license.name;
+            licenseURL = license.data.html_url;
         }
 
         this.setState({
@@ -71,7 +74,8 @@ class RightSideBar extends Component {
             openOntology: theOntology,
             ontologyVersion: version,
             allCommits: ontologyCommits,
-            licenceInfo: licenseName
+            licenceInfo: licenseName,
+            licenseURL: licenseURL
         });
     };
 
@@ -439,7 +443,10 @@ class RightSideBar extends Component {
                             <b>URL:</b> {this.state.openOntology.lookup_path}
                         </li>
                         <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                            <b>License:</b> {this.state.licenceInfo}
+                            <b>License:</b>{' '}
+                            <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank">
+                                {this.state.licenceInfo}
+                            </a>
                         </li>
                         <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
                             <b>Version:</b> {this.state.ontologyVersion}
