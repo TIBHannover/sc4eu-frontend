@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faLock, faPen, faTrash, faUnlockAlt, faChevronCircleRight, faChevronCircleDown } from '@fortawesome/free-solid-svg-icons';
-import { Button, Collapse } from 'reactstrap';
+import { faLock, faPen, faTrash, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { Button } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
@@ -13,14 +13,13 @@ import EditProjectModal from './EditProjectModal';
 import { CLEAR_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { withRouter } from 'react-router';
+import ClampLines from 'react-clamp-lines';
 
 class ProjectIndexCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showEditProjectModal: false,
-            collapseDescription: true,
-            isReadmoreProjectDescription: false
+            showEditProjectModal: false
         };
     }
 
@@ -78,24 +77,7 @@ class ProjectIndexCards extends Component {
         }
     };
 
-    toggleProjectBody = event => {
-        event.preventDefault();
-        this.setState({ collapseDescription: !this.state.collapseDescription });
-    };
-
-    helloMouse = event => {
-        event.target.style.background = 'red';
-        console.log(event.target);
-    };
-
-    toggleReadmore = () => {
-        this.setState({ isReadmoreProjectDescription: !this.state.isReadmoreProjectDescription });
-    };
-
     render() {
-        const projectDescription = this.props.inputData.description ? this.props.inputData.description : 'No description available';
-        // show 270 word of description after that read more option will visible
-        const lengthOfDescriptionWord = 270;
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
@@ -154,12 +136,14 @@ class ProjectIndexCards extends Component {
                         </StyledLink>
                     </StyledCardHeader>
                     <StyledCardBody>
-                        {this.state.isReadmoreProjectDescription ? projectDescription : projectDescription.slice(0, lengthOfDescriptionWord)}
-                        {projectDescription.length > lengthOfDescriptionWord && (
-                            <span style={{ color: SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
-                                {this.state.isReadmoreProjectDescription ? ' Show Less' : ' ...Read More'}
-                            </span>
-                        )}
+                        <ClampLines
+                            text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                            id="custom"
+                            lines={2}
+                            moreText="Read More"
+                            lessText="Show less"
+                            className="custom-class"
+                        />
                     </StyledCardBody>
                 </StyledCard>
             </div>
