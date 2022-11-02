@@ -48,16 +48,42 @@ module.exports = {
     compareTwoOntologies: function(app) {
         app.post('/getComparisonResult', (req, res) => {
             const body = req.body;
+            //-------------------------------------------------------------------------------------------------
 
-            const command =
-                'java -jar robot.jar  diff --left-iri ' + body['first_ontology'] + ' --right-iri ' + body['second_ontology'] + '  --format html';
+            const compare_ontology_header = {
+                uri: `${process.env.PROCESSING_SERVER_URL}/getComparisonResult`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(req.body)
+            };
 
-            childProcess(command, function(err, stdout, stderr) {
-                if (err) {
-                    console.log(err);
-                }
-                res.json(stdout);
-            });
+            //console.log('PreInitialize_ontology', preInitialize_ontology);
+            try {
+                request(compare_ontology_header, function(error, response) {
+                    try {
+                        //console.log('Inside compareTwoontologies ', response.body);
+                        // const resultingData = { ontology_data: jsonModel };
+                        res.json(response.body);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                });
+            } catch (e) {
+                res.json({ error: 'Something went wrong' });
+            }
+
+            //---------------------------------------------------------------------------------------------------
+            // const command =
+            //     'java -jar robot.jar  diff --left-iri ' + body['first_ontology'] + ' --right-iri ' + body['second_ontology'] + '  --format html';
+            //
+            // childProcess(command, function(err, stdout, stderr) {
+            //     if (err) {
+            //         console.log(err);
+            //     }
+            //     res.json(stdout);
+            // });
         });
     },
 
