@@ -449,7 +449,7 @@ class RightSideBar extends Component {
                             </a>
                         </li>
                         <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                            <b>Version:</b> {this.state.ontologyVersion}
+                            <b>Branch:</b> {this.state.ontologyVersion}
                         </li>
                     </div>
                     <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
