@@ -16,9 +16,7 @@ export default class OntologyIndexing extends Component {
         this.state = {
             isLoading: true,
             selectedProject: false, //Maybe get the uuid for the Default Project here.
-            results: null,
-            onlineOntologies: null,
-            localOntologies: null
+            ontologyList: []
         };
     }
 
@@ -42,19 +40,11 @@ export default class OntologyIndexing extends Component {
             //There is a chance that the project do not have any ontologies.
             if (res.ontologyIndex === 'Undefined') {
                 console.log('test');
-                this.setState({ isLoading: false, localOntologies: false, onlineOntologies: false });
+                this.setState({ isLoading: false, ontologyList: false });
                 return;
+            } else {
+                this.setState({ isLoading: false, ontologyList: res });
             }
-            const localOnt = [];
-            const onlineOnt = [];
-            res.forEach(re => {
-                if (re.lookup_type === 'online') {
-                    onlineOnt.push(re);
-                } else {
-                    localOnt.push(re);
-                }
-            });
-            this.setState({ isLoading: false, localOntologies: localOnt, onlineOntologies: onlineOnt });
         });
     };
 
@@ -85,7 +75,7 @@ export default class OntologyIndexing extends Component {
                             <h2 className="h5">
                                 <span>
                                     <Icon icon={faSpinner} spin />
-                                </span>{' '}
+                                </span>
                                 Loading
                             </h2>
                         </div>
@@ -96,8 +86,7 @@ export default class OntologyIndexing extends Component {
                                 reloadAfterUpdate={() => {
                                     this.reloadAfterUpdate();
                                 }}
-                                localOntologiesFromBackend={this.state.localOntologies}
-                                onlineOntologiesFromBackend={this.state.onlineOntologies}
+                                listOfOntology={this.state.ontologyList}
                             />
                         </div>
                     )}

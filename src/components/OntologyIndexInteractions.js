@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
+import { Button } from 'reactstrap';
 import UploadOntologyModal from './UploadOntologyModal';
 import { SECONDARY } from '../styledComponents/styledComponents';
 import OntologyIndexCards from './OntologyIndexCards';
-import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
 export default class OntologyIndexInteractions extends Component {
@@ -37,30 +36,8 @@ export default class OntologyIndexInteractions extends Component {
                 <div className="pl-1 pr-1 pb-2">
                     <h1 style={{ textAlign: 'center', margin: '10px 0px 10px 0px' }}>Select Ontology</h1>
                     <hr className="mt-0 mb-2" />
-                    <Nav tabs>
-                        <NavItem>
-                            <NavLink
-                                className={classnames({ active: this.state.activeTab === '1' })}
-                                onClick={() => {
-                                    this.toggle('1');
-                                }}
-                            >
-                                File System
-                            </NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink
-                                className={classnames({ active: this.state.activeTab === '2' })}
-                                onClick={() => {
-                                    this.toggle('2');
-                                }}
-                            >
-                                GitHub
-                            </NavLink>
-                        </NavItem>
-                    </Nav>
                     <Button
-                        style={{ backgroundColor: SECONDARY.dark, margin: '-40px 0px 0px 0px', float: 'right' }}
+                        style={{ backgroundColor: SECONDARY.dark, margin: '0px 0px 10px 5px' }}
                         active={true}
                         onClick={() => {
                             console.log('Upload Button Triggered');
@@ -69,10 +46,10 @@ export default class OntologyIndexInteractions extends Component {
                     >
                         Upload Ontology
                     </Button>
+                    <hr className="mt-0 mb-2" />
                     <UploadOntologyModal
                         project_id={this.props.project_id}
                         showDialog={this.state.showUploadModal}
-                        onlineUpload={this.state.activeTab === '2'}
                         toggle={() => {
                             this.setState({ showUploadModal: !this.state.showUploadModal });
                         }}
@@ -80,35 +57,20 @@ export default class OntologyIndexInteractions extends Component {
                             this.ontologyUploadComplete(param);
                         }}
                     />
-                    {/*<hr className="mt-3 mb-2" />*/}
                 </div>
                 <div>
-                    <TabContent activeTab={this.state.activeTab}>
-                        <TabPane tabId="1" style={{ backgroundColor: 'none' }}>
-                            {this.props.localOntologiesFromBackend ? (
-                                <OntologyIndexCards
-                                    ontologies={this.props.localOntologiesFromBackend}
-                                    reloadAfterUpdate={() => {
-                                        this.props.reloadAfterUpdate();
-                                    }}
-                                />
-                            ) : (
-                                <div> No ontologies found in this project </div>
-                            )}
-                        </TabPane>
-                        <TabPane tabId="2">
-                            {this.props.onlineOntologiesFromBackend.length > 0 ? (
-                                <OntologyIndexCards
-                                    ontologies={this.props.onlineOntologiesFromBackend}
-                                    reloadAfterUpdate={() => {
-                                        this.props.reloadAfterUpdate();
-                                    }}
-                                />
-                            ) : (
-                                <div> No online ontologies found in this project </div>
-                            )}
-                        </TabPane>
-                    </TabContent>
+                    <div>
+                        {this.props.listOfOntology ? (
+                            <OntologyIndexCards
+                                ontologies={this.props.listOfOntology}
+                                reloadAfterUpdate={() => {
+                                    this.props.reloadAfterUpdate();
+                                }}
+                            />
+                        ) : (
+                            <div> No ontologies found in this project </div>
+                        )}
+                    </div>
                 </div>
             </div>
         );
@@ -118,6 +80,5 @@ export default class OntologyIndexInteractions extends Component {
 OntologyIndexInteractions.propTypes = {
     reloadAfterUpdate: PropTypes.func.isRequired,
     project_id: PropTypes.string.isRequired,
-    localOntologiesFromBackend: PropTypes.array.isRequired,
-    onlineOntologiesFromBackend: PropTypes.array.isRequired
+    listOfOntology: PropTypes.array.isRequired
 };
