@@ -111,33 +111,18 @@ export const getGitHubFileContent = async githubapiurl => {
     const branchRefoName = getBranchFromUrl(githubapiurl);
     const filePath = getFilePath(githubapiurl);
 
-    const contents = await octokit.rest.repos.getContent({
+    const ontologyData = await octokit.rest.repos.getContent({
         owner: user,
         repo: repoName,
-        path: filePath,
-        ref: branchRefoName
+        path: filePath
     });
+    const sha = ontologyData['data']['sha'];
 
-    // const requestWithMediaType = octokit.request.defaults({
-    //     mediaType: {
-    //         format: 'raw'
-    //     }
-    // });
-    // const contents = await requestWithMediaType('GET /repos/{owner}/{repo}/contents/{path}', {
-    //     owner: user,
-    //     repo: repoName,
-    //     path: filePath
-    // });
-
-    // octokit.headers({ accept: 'application/vnd.github.raw' });
-    // const contents = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-    //     owner: user,
-    //     repo: repoName,
-    //     path: 'master/DigitalReference.ttl',
-    //     mediaType: {
-    //         format: ['raw']
-    //     }
-    // });
+    const contents = await octokit.request('GET /repos/{owner}/{repo}/git/blobs/{file_sha}', {
+        owner: user,
+        repo: repoName,
+        file_sha: sha
+    });
 
     const base64Contents = contents['data']['content'];
     const bufferObj = Buffer.from(base64Contents, 'base64');
