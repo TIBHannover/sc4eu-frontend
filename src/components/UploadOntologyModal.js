@@ -1,4 +1,4 @@
-import { Button, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { Button, Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import React, { Component, createRef } from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
@@ -21,7 +21,8 @@ export default class UploadOntology extends Component {
             allows_upload: false,
             lookup_type: null,
             lookup_path: null,
-            githubURL: null
+            githubURL: null,
+            uploadSource: ''
         };
 
         this.finishRef = createRef();
@@ -221,49 +222,83 @@ export default class UploadOntology extends Component {
                 </ModalHeader>
                 <ModalBody id="ontologyUploadModalBody">
                     {this.state.allows_upload ? (
-                        <div>
+                        <div style={{ marginLeft: '20px' }}>
                             {!this.state.errorInitialization && (
                                 <div>
-                                    {!this.props.onlineUpload ? (
-                                        <>
-                                            <div>Please lookup the ontology file you want to upload. Supported formats (ttl, owl)</div>
-                                            <br />
-                                            <Label for="fileSystem">File System </Label>
-                                            <Input
-                                                id="fileSystem"
-                                                type="file"
-                                                name="file"
-                                                style={{ border: 'lightgray 1px solid', width: '50%' }}
-                                                onChange={this.handlePreview}
-                                                disabled={this.state.waitingForResult}
-                                            />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <div>Please enter github raw file url for the ontology file. Supported formats (ttl, owl)</div>
-                                            <br />
-                                            <Label for="exampleUrl" style={{ float: 'left', marginTop: '4px' }}>
-                                                GitHub{' '}
-                                            </Label>
-                                            <Input
-                                                id="exampleUrl"
-                                                type="url"
-                                                name="url"
-                                                placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
-                                                onChange={this.handleUrlChange}
-                                                style={{
-                                                    border: 'lightgray 1px solid',
-                                                    marginLeft: '5px',
-                                                    width: '50%',
-                                                    float: 'left'
-                                                }}
-                                            />
-                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleGitHubUrl}>
-                                                {' '}
-                                                Upload{' '}
-                                            </Button>
-                                        </>
-                                    )}
+                                    <Form>
+                                        <FormGroup tag="fieldset" row>
+                                            <Col sm={10}>
+                                                <h5>Select Ontology Upload Source</h5>
+                                                <FormGroup check>
+                                                    <Label check>
+                                                        <Input
+                                                            type="radio"
+                                                            value="github"
+                                                            name="UploadSource"
+                                                            checked={this.state.uploadSource === 'github'}
+                                                            onChange={e => this.setState({ uploadSource: e.target.value })}
+                                                        />
+                                                        Upload ontology from Github
+                                                    </Label>
+                                                </FormGroup>
+                                                <FormGroup check>
+                                                    <Label check>
+                                                        <Input
+                                                            type="radio"
+                                                            value="localFile"
+                                                            name="UploadSource"
+                                                            checked={this.state.uploadSource === 'localFile'}
+                                                            onChange={e => this.setState({ uploadSource: e.target.value })}
+                                                        />
+                                                        Upload ontology from local file
+                                                    </Label>
+                                                </FormGroup>
+                                            </Col>
+                                        </FormGroup>
+                                    </Form>
+                                    <div>
+                                        {this.state.uploadSource === 'localFile' ? (
+                                            <>
+                                                <div>Please lookup the ontology file you want to upload. Supported formats (ttl, owl)</div>
+                                                <br />
+                                                <Label for="fileSystem">File System </Label>
+                                                <Input
+                                                    id="fileSystem"
+                                                    type="file"
+                                                    name="file"
+                                                    style={{ border: 'lightgray 1px solid', width: '50%' }}
+                                                    onChange={this.handlePreview}
+                                                    disabled={this.state.waitingForResult}
+                                                />
+                                            </>
+                                        ) : this.state.uploadSource === 'github' ? (
+                                            <>
+                                                <div>Please enter github raw file url for the ontology file. Supported formats (ttl, owl)</div>
+                                                <br />
+                                                <Label for="exampleUrl" style={{ float: 'left', marginTop: '4px' }}>
+                                                    GitHub
+                                                </Label>
+                                                <Input
+                                                    id="exampleUrl"
+                                                    type="url"
+                                                    name="url"
+                                                    placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
+                                                    onChange={this.handleUrlChange}
+                                                    style={{
+                                                        border: 'lightgray 1px solid',
+                                                        marginLeft: '5px',
+                                                        width: '50%',
+                                                        float: 'left'
+                                                    }}
+                                                />
+                                                <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleGitHubUrl}>
+                                                    Upload
+                                                </Button>
+                                            </>
+                                        ) : (
+                                            <div />
+                                        )}
+                                    </div>
                                 </div>
                             )}
                             {/*parser not successful*/}
@@ -360,6 +395,5 @@ UploadOntology.propTypes = {
     showDialog: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
     callback: PropTypes.func.isRequired,
-    project_id: PropTypes.string.isRequired,
-    onlineUpload: PropTypes.bool.isRequired
+    project_id: PropTypes.string.isRequired
 };

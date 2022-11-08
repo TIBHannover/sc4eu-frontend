@@ -11,6 +11,8 @@ import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '.
 import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
 
 export default class OntologyCard extends Component {
     componentDidMount() {
@@ -107,6 +109,11 @@ export default class OntologyCard extends Component {
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
+                            {this.props.inputData.lookup_type === 'online' ? (
+                                <Icon style={{ float: 'left', marginRight: '8px', marginTop: '4px' }} icon={faGithub} />
+                            ) : (
+                                <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
+                            )}
                             <div> {this.props.inputData.name} </div>
                         </StyledLink>
                     </StyledCardHeader>
