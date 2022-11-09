@@ -152,7 +152,7 @@ module.exports = {
                     const UserVerifySubject = 'Email Verification';
                     const UserVerifyBody = ` <h4>Hello ${req.body.displayName}</h4>
                     		<p> Thanks for signing up. Please follow this link to activate your account:</p>
-                    		<a href=${process.env.APPLICATION_URL}:${process.env.APPLICATION_PORT}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
+                    		<a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
                     		<p>Thanks</p>
                     		<p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
                     		</div>`;
@@ -222,7 +222,7 @@ module.exports = {
                         const UserVerifySubject = 'Email Verification';
                         const UserVerifyBody = ` <h4>Hello ${result.displayName}</h4>
                                                 <p> Thanks for signing up. Please follow this link to activate your account:</p>
-                                                <a href=${APPLICATION_URL}:${FRONTEND_APPLICATION_PORT}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
+                                                <a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
                                                 <p>Thanks</p>
                                                 <p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
                                                 </div>`;
