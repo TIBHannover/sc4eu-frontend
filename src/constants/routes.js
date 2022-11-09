@@ -17,5 +17,6 @@ export default {
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
     FAQ: '/FAQ',
-    WEBPROTEGE: '/WEBPROTEGE'
+    WEBPROTEGE: '/WEBPROTEGE',
+    EMAIL_VERIFY: '/EmailVerify/:user_id/:token'
 };

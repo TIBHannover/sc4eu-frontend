@@ -77,6 +77,8 @@ auth.registerUser(router);
 auth.loginViaEmail(router);
 auth.userSettings(router);
 auth.getUserSettings(router);
+auth.emailVerify(router);
+auth.editEmailValid(router);
 
 database.uploadOntology(router);
 database.deleteOntology(router);

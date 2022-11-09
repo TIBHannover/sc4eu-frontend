@@ -1,8 +1,9 @@
-import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } from 'constants/services';
+import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING, URL_GET_EMAIL_VERIFY } from 'constants/services';
 
-import { submitGetRequest, submitPutRequest } from './networkRequests';
+import { submitGetRequest, submitPostRequest, submitPutRequest } from './networkRequests';
 import {
     URL_DELETE_USER,
+    URL_EDIT_USER_MODAL,
     URL_GET_ALL_ROLES,
     URL_GET_USER_PROJECT,
     URL_GET_USER_ROLE,
@@ -16,6 +17,16 @@ export const getUserProfile = payload => {
 
 export const getUserSettings = () => {
     return submitGetRequest(`${URL_GET_USER_SETTINGS}`, {}, true);
+};
+
+export const getEmailVerify = (user_id, token) => {
+    return submitGetRequest(`${URL_GET_EMAIL_VERIFY}/${user_id}/${token}`, {}, false);
+};
+
+export const editUserModal = EditEmailValid => {
+    const postHeader = { 'Content-Type': 'application/json' };
+    console.log('Edit the User Modal ', EditEmailValid);
+    return submitPostRequest(URL_EDIT_USER_MODAL, postHeader, EditEmailValid);
 };
 
 export const deleteUser = userId => {

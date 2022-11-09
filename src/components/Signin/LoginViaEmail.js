@@ -8,6 +8,9 @@ import { loginViaEmail, regsiterViaEmail } from '../../network/loginCalls';
 import { Link } from 'react-router-dom';
 import { minLengthPassword } from '../../constants/globalConstants';
 import { SECONDARY } from '../../styledComponents/styledComponents';
+import success from '../../assets/images/success.png';
+import error from '../../assets/images/error.png';
+import PopUp from '../PopUp';
 
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
@@ -24,12 +27,9 @@ class LoginViaEmail extends Component {
             email: '',
             password: '',
             confirmPassword: '',
-            nameError: '',
-            emailError: '',
-            passwordError: '',
-            passwordMatchError: '',
-            emailtakenError: '',
-            WrongEmailorPasswordError: ''
+            openPopUp: false,
+            image: '',
+            popUpMessage: ''
         };
     }
 
@@ -43,12 +43,14 @@ class LoginViaEmail extends Component {
             const registerToken = await regsiterViaEmail(this.state.displayName, this.state.email, this.state.password);
             if (registerToken.error) {
                 this.setState({
-                    emailtakenError: registerToken.error
+                    openPopUp: true,
+                    popUpMessage: registerToken.error,
+                    image: error
                 });
             } else {
-                this.props.callback();
+                this.setState({ openPopUp: true, popUpMessage: registerToken.message, image: success });
+                // this.props.callback();
             }
-            console.log('result', registerToken);
             if (registerToken && registerToken.jwt) {
                 this.props.updateCookies({ token: registerToken.jwt });
             }
@@ -61,19 +63,19 @@ class LoginViaEmail extends Component {
         const token = await loginViaEmail(this.state.email, this.state.password);
         if (token.error) {
             this.setState({
-                WrongEmailorPasswordError: token.error
+                openPopUp: true,
+                popUpMessage: token.error,
+                image: error
             });
         } else {
             this.props.callback();
         }
-        console.log('result', token);
         if (token && token.jwt) {
             this.props.updateCookies({ token: token.jwt });
         }
         this.setState({ loading: false });
         return true;
     };
-
     toggleSignupModel = () => {
         this.setState({ signupModal: !this.state.signupModal });
     };
@@ -87,22 +89,30 @@ class LoginViaEmail extends Component {
 
         if (!this.state.displayName) {
             this.setState({
-                nameError: 'Name can not be empty'
+                openPopUp: true,
+                popUpMessage: 'Name can not be empty',
+                image: error
             });
             return false;
         } else if (!this.state.email || regexEmailValidation.test(this.state.email) === false) {
             this.setState({
-                emailError: 'Email is not a valid'
+                openPopUp: true,
+                popUpMessage: 'Email is not a valid',
+                image: error
             });
             return false;
         } else if (this.state.password.length < minLengthPassword) {
             this.setState({
-                passwordError: 'Password cannot be less than 5 characters'
+                openPopUp: true,
+                popUpMessage: 'Password cannot be less than 5 characters',
+                image: error
             });
             return false;
         } else if (this.state.password !== this.state.confirmPassword) {
             this.setState({
-                passwordMatchError: 'Password and Confirm Password does not match.'
+                openPopUp: true,
+                popUpMessage: 'Password and Confirm Password does not match.',
+                image: error
             });
             return false;
         }
@@ -116,207 +126,209 @@ class LoginViaEmail extends Component {
         }
         return (
             <div>
-                {!this.state.loading ? (
-                    <Form onSubmit={this.handleSubmit}>
-                        <p style={{ marginLeft: '150px' }} className="text-danger">
-                            {this.state.WrongEmailorPasswordError}
-                        </p>
-                        <FormGroup row>
-                            <Label for="exampleEmail" sm={2}>
-                                Email
-                            </Label>
-                            <Col sm={10}>
-                                <Input
-                                    type="email"
-                                    name="email"
-                                    placeholder="Enter email"
-                                    value={this.state.email}
-                                    onChange={event => this.setState({ email: event.target.value })}
-                                />
-                            </Col>
-                        </FormGroup>
-                        <FormGroup row>
-                            <Label for="examplePassword" sm={2}>
-                                Password
-                            </Label>
-                            <Col sm={10}>
-                                <Input
-                                    type="password"
-                                    name="password"
-                                    placeholder="Enter password"
-                                    value={this.state.password}
-                                    onChange={event => this.setState({ password: event.target.value })}
-                                />
-                            </Col>
-                        </FormGroup>
-                        <div>
-                            <p className="mt-3">
-                                Don't have an account? &nbsp;
-                                <Link to="" style={{ color: SECONDARY.link }} onClick={this.toggleSignupModel}>
-                                    Sign Up
-                                </Link>
-                            </p>
-                            <Modal style={{ maxWidth: '700px', width: '100%' }} isOpen={this.state.signupModal} toggle={this.toggleSignupModel}>
-                                <ModalHeader toggle={this.toggleSignupModel}>Sign Up</ModalHeader>
-                                <ModalBody>
-                                    <div className="container">
-                                        <Form onSubmit={this.handleSubmit}>
-                                            <FormGroup row>
-                                                <Label for="displayName" sm={2}>
-                                                    Name
-                                                </Label>
-                                                <Col sm={10}>
-                                                    <Input
-                                                        type="text"
-                                                        name="displayName"
-                                                        placeholder="Enter Name"
-                                                        value={this.state.displayName}
-                                                        onChange={event => this.setState({ displayName: event.target.value })}
-                                                    />
-                                                </Col>
-                                                <span style={{ marginLeft: '130px' }} className="text-danger">
-                                                    {this.state.nameError}
-                                                </span>
-                                            </FormGroup>
-                                            <FormGroup row>
-                                                <Label for="email" sm={2}>
-                                                    Email
-                                                </Label>
-                                                <Col sm={10}>
-                                                    <Input
-                                                        type="email"
-                                                        name="email"
-                                                        placeholder="Enter Email Address"
-                                                        value={this.state.email}
-                                                        onChange={event => this.setState({ email: event.target.value })}
-                                                    />
-                                                </Col>
-                                                <span style={{ marginLeft: '130px' }} className="text-danger">
-                                                    {this.state.emailError}
-                                                </span>
-                                                <span className="text-danger">{this.state.emailtakenError}</span>
-                                            </FormGroup>
-                                            <FormGroup row>
-                                                <Label for="password" sm={2}>
-                                                    Password
-                                                </Label>
-                                                <Col sm={10}>
-                                                    <Input
-                                                        type="password"
-                                                        name="password"
-                                                        placeholder="Enter Password "
-                                                        value={this.state.password}
-                                                        onChange={event => this.setState({ password: event.target.value })}
-                                                    />
-                                                </Col>
-                                                <span style={{ marginLeft: '130px' }} className="text-danger">
-                                                    {this.state.passwordError}
-                                                </span>
-                                            </FormGroup>
-                                            <FormGroup row>
-                                                <Label for="confirm-Password" sm={2}>
-                                                    Confirm Password
-                                                </Label>
-                                                <Col sm={10}>
-                                                    <Input
-                                                        type="password"
-                                                        name="confirmPassword"
-                                                        placeholder="Re-Enter Password"
-                                                        value={this.state.confirmPassword}
-                                                        onChange={event => this.setState({ confirmPassword: event.target.value })}
-                                                    />
-                                                </Col>
-                                                <span style={{ marginLeft: '130px', marginTop: '-20px' }} className="text-danger">
-                                                    {this.state.passwordMatchError}
-                                                </span>
-                                            </FormGroup>
-                                        </Form>
-                                    </div>
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleRegister}>
-                                        Register
-                                    </Button>
-                                    <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.toggleSignupModel}>
-                                        Cancel
-                                    </Button>
-                                </ModalFooter>
-                            </Modal>
-                        </div>
-                        <div>
-                            {/*<p className="mt-3">
-                                Forgot your Password? <Link to="" onClick={this.toggleResetPasswordModel}>Reset Password</Link>
-                            </p>*/}
-                            <Modal isOpen={this.state.resetPasswordModel} toggle={this.toggleResetPasswordModel}>
-                                <ModalHeader toggle={this.toggleResetPasswordModel}>Reset Password</ModalHeader>
-                                <ModalBody>
-                                    <div className="container">
-                                        <Form onSubmit={this.handleSubmit}>
-                                            <FormGroup row>
-                                                <Label for="exampleEmail" sm={2}>
-                                                    Email
-                                                </Label>
-                                                <Col sm={10}>
-                                                    <Input
-                                                        type="email"
-                                                        name="email"
-                                                        placeholder="Enter Email Address"
-                                                        value={this.state.email}
-                                                        onChange={event => this.setState({ email: event.target.value })}
-                                                    />
-                                                </Col>
-                                            </FormGroup>
-                                            <FormGroup row>
-                                                <Label for="examplePassword" sm={2}>
-                                                    Password
-                                                </Label>
-                                                <Col sm={10}>
-                                                    <Input
-                                                        type="password"
-                                                        name="password"
-                                                        placeholder="Enter Password "
-                                                        value={this.state.password}
-                                                        onChange={event => this.setState({ password: event.target.value })}
-                                                    />
-                                                </Col>
-                                            </FormGroup>
-                                            <FormGroup row>
-                                                <Label for="confirm-Password" sm={2}>
-                                                    Confirm Password
-                                                </Label>
-                                                <Col sm={10}>
-                                                    <Input
-                                                        type="password"
-                                                        name="confirmPassword"
-                                                        placeholder="Re-Enter Password"
-                                                        value={this.state.confirmPassword}
-                                                        onChange={event => this.setState({ confirmPassword: event.target.value })}
-                                                    />
-                                                </Col>
-                                            </FormGroup>
-                                        </Form>
-                                    </div>
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button color="primary" onClick={this.toggleResetPasswordModel}>
-                                        Reset
-                                    </Button>
-                                    <Button color="primary" onClick={this.toggleResetPasswordModel}>
-                                        Cancel
-                                    </Button>
-                                </ModalFooter>
-                            </Modal>
-                        </div>
-                        <Button
-                            id="loginWithMail"
-                            style={{ float: 'right', marginTop: '12px', backgroundColor: SECONDARY.dark }}
-                            onClick={this.handleLogin}
-                        >
-                            Login
-                        </Button>
-                    </Form>
+                {this.state.openPopUp ? (
+                    <PopUp
+                        open={this.state.openPopUp}
+                        onClose={() => this.setState({ openPopUp: false })}
+                        image={this.state.image}
+                        message={this.state.popUpMessage}
+                    />
                 ) : (
-                    <div>Processing...</div>
+                    <div>
+                        {!this.state.loading ? (
+                            <Form onSubmit={this.handleSubmit}>
+                                <FormGroup row>
+                                    <Label for="exampleEmail" sm={2}>
+                                        Email
+                                    </Label>
+                                    <Col sm={10}>
+                                        <Input
+                                            type="email"
+                                            name="email"
+                                            placeholder="Enter email"
+                                            value={this.state.email}
+                                            onChange={event => this.setState({ email: event.target.value })}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup row>
+                                    <Label for="examplePassword" sm={2}>
+                                        Password
+                                    </Label>
+                                    <Col sm={10}>
+                                        <Input
+                                            type="password"
+                                            name="password"
+                                            placeholder="Enter password"
+                                            value={this.state.password}
+                                            onChange={event => this.setState({ password: event.target.value })}
+                                        />
+                                    </Col>
+                                </FormGroup>
+                                <div>
+                                    <p className="mt-3">
+                                        Don't have an account? &nbsp;
+                                        <Link to="" style={{ color: SECONDARY.link }} onClick={this.toggleSignupModel}>
+                                            Sign Up
+                                        </Link>
+                                    </p>
+                                    <Modal
+                                        style={{ maxWidth: '700px', width: '100%' }}
+                                        isOpen={this.state.signupModal}
+                                        toggle={this.toggleSignupModel}
+                                    >
+                                        <ModalHeader toggle={this.toggleSignupModel}>Sign Up</ModalHeader>
+                                        <ModalBody>
+                                            <div className="container">
+                                                <Form onSubmit={this.handleSubmit}>
+                                                    <FormGroup row>
+                                                        <Label for="displayName" sm={2}>
+                                                            Name
+                                                        </Label>
+                                                        <Col sm={10}>
+                                                            <Input
+                                                                type="text"
+                                                                name="displayName"
+                                                                placeholder="Enter Name"
+                                                                value={this.state.displayName}
+                                                                onChange={event => this.setState({ displayName: event.target.value })}
+                                                            />
+                                                        </Col>
+                                                    </FormGroup>
+                                                    <FormGroup row>
+                                                        <Label for="email" sm={2}>
+                                                            Email
+                                                        </Label>
+                                                        <Col sm={10}>
+                                                            <Input
+                                                                type="email"
+                                                                name="email"
+                                                                placeholder="Enter Email Address"
+                                                                value={this.state.email}
+                                                                onChange={event => this.setState({ email: event.target.value })}
+                                                            />
+                                                        </Col>
+                                                    </FormGroup>
+                                                    <FormGroup row>
+                                                        <Label for="password" sm={2}>
+                                                            Password
+                                                        </Label>
+                                                        <Col sm={10}>
+                                                            <Input
+                                                                type="password"
+                                                                name="password"
+                                                                placeholder="Enter Password "
+                                                                value={this.state.password}
+                                                                onChange={event => this.setState({ password: event.target.value })}
+                                                            />
+                                                        </Col>
+                                                    </FormGroup>
+                                                    <FormGroup row>
+                                                        <Label for="confirm-Password" sm={2}>
+                                                            Confirm Password
+                                                        </Label>
+                                                        <Col sm={10}>
+                                                            <Input
+                                                                type="password"
+                                                                name="confirmPassword"
+                                                                placeholder="Re-Enter Password"
+                                                                value={this.state.confirmPassword}
+                                                                onChange={event => this.setState({ confirmPassword: event.target.value })}
+                                                            />
+                                                        </Col>
+                                                    </FormGroup>
+                                                </Form>
+                                            </div>
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleRegister}>
+                                                Register
+                                            </Button>
+                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.toggleSignupModel}>
+                                                Cancel
+                                            </Button>
+                                        </ModalFooter>
+                                    </Modal>
+                                </div>
+                                <div>
+                                    {/*<p className="mt-3">*/}
+                                    {/*    Forgot your Password?*/}
+                                    {/*    <Link to="" onClick={this.toggleResetPasswordModel}>*/}
+                                    {/*        Reset Password*/}
+                                    {/*    </Link>*/}
+                                    {/*</p>*/}
+                                    <Modal isOpen={this.state.resetPasswordModel} toggle={this.toggleResetPasswordModel}>
+                                        <ModalHeader toggle={this.toggleResetPasswordModel}>Reset Password</ModalHeader>
+                                        <ModalBody>
+                                            <div className="container">
+                                                <Form onSubmit={this.handleSubmit}>
+                                                    <FormGroup row>
+                                                        <Label for="exampleEmail" sm={2}>
+                                                            Email
+                                                        </Label>
+                                                        <Col sm={10}>
+                                                            <Input
+                                                                type="email"
+                                                                name="email"
+                                                                placeholder="Enter Email Address"
+                                                                value={this.state.email}
+                                                                onChange={event => this.setState({ email: event.target.value })}
+                                                            />
+                                                        </Col>
+                                                    </FormGroup>
+                                                    <FormGroup row>
+                                                        <Label for="examplePassword" sm={2}>
+                                                            Password
+                                                        </Label>
+                                                        <Col sm={10}>
+                                                            <Input
+                                                                type="password"
+                                                                name="password"
+                                                                placeholder="Enter Password "
+                                                                value={this.state.password}
+                                                                onChange={event => this.setState({ password: event.target.value })}
+                                                            />
+                                                        </Col>
+                                                    </FormGroup>
+                                                    <FormGroup row>
+                                                        <Label for="confirm-Password" sm={2}>
+                                                            Confirm Password
+                                                        </Label>
+                                                        <Col sm={10}>
+                                                            <Input
+                                                                type="password"
+                                                                name="confirmPassword"
+                                                                placeholder="Re-Enter Password"
+                                                                value={this.state.confirmPassword}
+                                                                onChange={event => this.setState({ confirmPassword: event.target.value })}
+                                                            />
+                                                        </Col>
+                                                    </FormGroup>
+                                                </Form>
+                                            </div>
+                                        </ModalBody>
+                                        <ModalFooter>
+                                            <Button color="primary" onClick={this.toggleResetPasswordModel}>
+                                                Reset
+                                            </Button>
+                                            <Button color="primary" onClick={this.toggleResetPasswordModel}>
+                                                Cancel
+                                            </Button>
+                                        </ModalFooter>
+                                    </Modal>
+                                </div>
+                                <Button
+                                    id="loginWithMail"
+                                    style={{ float: 'right', marginTop: '12px', backgroundColor: SECONDARY.dark }}
+                                    onClick={this.handleLogin}
+                                >
+                                    Login
+                                </Button>
+                            </Form>
+                        ) : (
+                            <div>Processing...</div>
+                        )}
+                    </div>
                 )}
             </div>
         );

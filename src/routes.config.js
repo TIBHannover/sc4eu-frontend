@@ -17,6 +17,7 @@ import Imprint from './pages/Imprint';
 import FAQ from './pages/FAQ';
 import WebProtege from './pages/WebProtege';
 import ProjectList from './pages/ProjectList';
+import EmailVerify from './pages/EmailVerify';
 
 const routes = [
     {
@@ -108,6 +109,11 @@ const routes = [
         path: ROUTES.FAQ,
         exact: true,
         component: FAQ
+    },
+    {
+        path: ROUTES.EMAIL_VERIFY,
+        exact: true,
+        component: EmailVerify
     },
 
     {

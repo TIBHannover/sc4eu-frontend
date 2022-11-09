@@ -4,6 +4,7 @@ export const URL_PROJECTINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}
 export const URL_CREATE_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}createProject`;
 export const URL_DELETE_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}deleteProject`;
 export const URL_EDIT_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}editProject`;
+export const URL_EDIT_USER_MODAL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}edit/email_valid/`;
 
 export const URL_ONTOLOGYINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}ontologyIndex/`;
 export const URL_ONTOLOGYBYID = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getOntologyById/`;
@@ -22,6 +23,7 @@ export const URL_EXPRESS_SERVER = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
 
 // export const URL_GET_USER_PROFILE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}/users/viewProfile`;
 export const URL_GET_USER_PROFILE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/viewProfile`;
+export const URL_GET_EMAIL_VERIFY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}EmailVerify`;
 export const URL_GET_USER_SETTINGS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/settings/`;
 export const URL_UPDATE_USER_SETTING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/updateSettings`;
 export const URL_UPDATE_USER_ROLE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/updateUserRole`;
