@@ -167,6 +167,7 @@ export const listReleases = async githubapiurl => {
 };
 
 export const getReleaseTags = async githubapiurl => {
+    console.log('getReleaseTags');
     const releases = await listReleases(githubapiurl);
     const releaseData = releases['data'];
     const tags = [];
