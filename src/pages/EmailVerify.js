@@ -5,7 +5,6 @@ import error from '../assets/images/error.png';
 import styled from 'styled-components';
 import { PRIMARY } from '../styledComponents/styledComponents';
 import { getEmailVerify } from '../network/UserProfileCalls';
-import { editUserModal } from '../network/UserProfileCalls';
 import PopUp from '../components/PopUp';
 
 const EmailVerify = () => {
@@ -19,16 +18,8 @@ const EmailVerify = () => {
             try {
                 getEmailVerify(param.user_id, param.token).then(data => {
                     if (data.success === true) {
-                        editUserModal({ uuid: param.user_id, is_email_valid: true }).then(response => {
-                            console.log(response);
-                            if (response.result === true) {
-                                setMessage('Email verified successfully');
-                                setImage(success);
-                            } else {
-                                setMessage('Something went wrong please try again');
-                                setImage(error);
-                            }
-                        });
+                        setMessage('Email verified successfully');
+                        setImage(success);
                     } else {
                         setMessage(data.error);
                         setImage(error);

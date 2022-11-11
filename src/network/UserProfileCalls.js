@@ -23,12 +23,6 @@ export const getEmailVerify = (user_id, token) => {
     return submitGetRequest(`${URL_GET_EMAIL_VERIFY}/${user_id}/${token}`, {}, false);
 };
 
-export const editUserModal = EditEmailValid => {
-    const postHeader = { 'Content-Type': 'application/json' };
-    console.log('Edit the User Modal ', EditEmailValid);
-    return submitPostRequest(URL_EDIT_USER_MODAL, postHeader, EditEmailValid);
-};
-
 export const deleteUser = userId => {
     console.log('deleting user.....................', userId);
     return submitGetRequest(`${URL_DELETE_USER}/?userId=${userId}`, {}, false);

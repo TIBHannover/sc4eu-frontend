@@ -191,7 +191,42 @@ module.exports = {
                             'get again verification email.'
                     });
                 } else {
-                    res.status(200).send({ success: true, message: 'Email verified successfully' });
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/edit/email_valid/`,
+                        body: JSON.stringify({
+                            uuid: req.params.user_id,
+                            is_email_valid: true
+                        }),
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                if (result.result === true) {
+                                    res.status(200).send({ success: true, message: 'Email verified successfully' });
+                                } else {
+                                    res.json({
+                                        success: false,
+                                        error: 'Something went wrong'
+                                    });
+                                }
+                            } catch (e) {
+                                res.json({
+                                    success: false,
+                                    error: 'Something went wrong'
+                                });
+                            }
+                        } else {
+                            res.json({
+                                success: false,
+                                error: 'Something went wrong'
+                            });
+                        }
+                    });
                 }
             });
         });
@@ -407,32 +442,6 @@ module.exports = {
                     res.json({ error: 'Invalid Token' });
                 }
             }
-        });
-    },
-
-    editEmailValid: function(app) {
-        app.post('/edit/email_valid/', (req, res) => {
-            const options = {
-                uri: `${process.env.BACKEND_SERVER_URL}/edit/email_valid/`,
-                body: JSON.stringify(req.body),
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-            request(options, function(error, response) {
-                console.log(response.body);
-                if (response && response.body) {
-                    try {
-                        const result = JSON.parse(response.body);
-                        res.json(result);
-                    } catch (e) {
-                        res.json({ error: 'Something went wrong' });
-                    }
-                } else {
-                    res.json({ error: 'Something went wrong' });
-                }
-            });
         });
     }
 };

@@ -4,7 +4,6 @@ export const URL_PROJECTINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}
 export const URL_CREATE_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}createProject`;
 export const URL_DELETE_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}deleteProject`;
 export const URL_EDIT_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}editProject`;
-export const URL_EDIT_USER_MODAL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}edit/email_valid/`;
 
 export const URL_ONTOLOGYINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}ontologyIndex/`;
 export const URL_ONTOLOGYBYID = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getOntologyById/`;
