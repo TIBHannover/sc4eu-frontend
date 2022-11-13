@@ -148,15 +148,17 @@ module.exports = {
                         process.env.JWT_SECRET,
                         { expiresIn: '8h' }
                     );
-                    const UserVerifyEmail = req.body.username;
-                    const UserVerifySubject = 'Email Verification';
-                    const UserVerifyBody = ` <h4>Hello ${req.body.displayName}</h4>
+                    const EmailFields = {
+                        email: req.body.username,
+                        subject: 'Email Verification',
+                        body: ` <h4>Hello ${req.body.displayName}</h4>
                     		<p> Thanks for signing up. Please follow this link to activate your account:</p>
                     		<a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
                     		<p>Thanks</p>
                     		<p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
-                    		</div>`;
-                    sendEmail(UserVerifyEmail, UserVerifySubject, UserVerifyBody).then(response => {
+                    		</div>`
+                    };
+                    sendEmail(EmailFields).then(response => {
                         if (response.success) {
                             res.json({
                                 jwt: local_accessToken,
@@ -177,7 +179,7 @@ module.exports = {
         });
     },
 
-    emailVerify: function(app) {
+    verifyEmail: function(app) {
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
@@ -192,10 +194,9 @@ module.exports = {
                     });
                 } else {
                     const options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/edit/email_valid/`,
+                        uri: `${process.env.BACKEND_SERVER_URL}/users/edit_email_valid/`,
                         body: JSON.stringify({
-                            uuid: req.params.user_id,
-                            is_email_valid: true
+                            uuid: req.params.user_id
                         }),
                         method: 'POST',
                         headers: {
@@ -253,15 +254,17 @@ module.exports = {
                     const result = JSON.parse(response.body);
                     // while login, we are checking the user is verified or not if it  is not verified than send again verification Email
                     if (result.is_email_valid === false) {
-                        const UserVerifyEmail = req.body.username;
-                        const UserVerifySubject = 'Email Verification';
-                        const UserVerifyBody = ` <h4>Hello ${result.displayName}</h4>
+                        const EmailFields = {
+                            email: req.body.username,
+                            subject: 'Email Verification',
+                            body: ` <h4>Hello ${result.displayName}</h4>
                                                 <p> Thanks for signing up. Please follow this link to activate your account:</p>
                                                 <a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
                                                 <p>Thanks</p>
                                                 <p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
-                                                </div>`;
-                        sendEmail(UserVerifyEmail, UserVerifySubject, UserVerifyBody).then(response => {
+                                                </div>`
+                        };
+                        sendEmail(EmailFields).then(response => {
                             if (!response.success) {
                                 res.json({
                                     error: 'Something went wrong please try again after some time'
