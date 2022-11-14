@@ -2,12 +2,21 @@ const jwt = require('jsonwebtoken');
 const GitHubStrategy = require('passport-github').Strategy;
 require('dotenv').config();
 const request = require('request');
+const sendEmail = require('./sendEmail');
 
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
 
 const verifyToken = require('./veryfyToken');
+
+const token = jwt.sign(
+    {
+        data: 'Token Data'
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+);
 
 module.exports = {
     initializeAuth: function(app, passport) {
@@ -139,13 +148,91 @@ module.exports = {
                         process.env.JWT_SECRET,
                         { expiresIn: '8h' }
                     );
-                    res.json({ jwt: local_accessToken });
+                    const EmailFields = {
+                        email: req.body.username,
+                        subject: 'Email Verification',
+                        body: ` <h4>Hello ${req.body.displayName}</h4>
+                    		<p> Thanks for signing up. Please follow this link to activate your account:</p>
+                    		<a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
+                    		<p>Thanks</p>
+                    		<p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
+                    		</div>`
+                    };
+                    sendEmail(EmailFields).then(response => {
+                        if (response.success) {
+                            res.json({
+                                jwt: local_accessToken,
+                                success: true,
+                                message:
+                                    'Please Click on the link that has just been sent your email account to verify your email and complete the registration process.'
+                            });
+                        } else {
+                            res.json({
+                                error: 'Something went wrong please try again after some time'
+                            });
+                        }
+                    });
                 } else {
                     res.json({ error: 'Could not register user' });
                 }
             });
         });
     },
+
+    verifyEmail: function(app) {
+        app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
+            const { token } = req.params;
+            // Verifying the JWT token
+            jwt.verify(token, process.env.JWT_SECRET, function(error, decoded) {
+                if (error) {
+                    console.log(error);
+                    res.send({
+                        success: false,
+                        error:
+                            'Email verification failed,  possibly the link is invalid or expired. To verify your account just sign in and you will ' +
+                            'get again verification email.'
+                    });
+                } else {
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/users/edit_email_valid/`,
+                        body: JSON.stringify({
+                            uuid: req.params.user_id
+                        }),
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                if (result.result === true) {
+                                    res.status(200).send({ success: true, message: 'Email verified successfully' });
+                                } else {
+                                    res.json({
+                                        success: false,
+                                        error: 'Something went wrong'
+                                    });
+                                }
+                            } catch (e) {
+                                res.json({
+                                    success: false,
+                                    error: 'Something went wrong'
+                                });
+                            }
+                        } else {
+                            res.json({
+                                success: false,
+                                error: 'Something went wrong'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    },
+
     loginViaEmail: function(app) {
         /** TESTING EMAIL LOGIN **/
         app.post('/auth/email', (req, res) => {
@@ -165,6 +252,26 @@ module.exports = {
             request(options, function(error, response) {
                 if (response && response.body) {
                     const result = JSON.parse(response.body);
+                    // while login, we are checking the user is verified or not if it  is not verified than send again verification Email
+                    if (result.is_email_valid === false) {
+                        const EmailFields = {
+                            email: req.body.username,
+                            subject: 'Email Verification',
+                            body: ` <h4>Hello ${result.displayName}</h4>
+                                                <p> Thanks for signing up. Please follow this link to activate your account:</p>
+                                                <a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
+                                                <p>Thanks</p>
+                                                <p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
+                                                </div>`
+                        };
+                        sendEmail(EmailFields).then(response => {
+                            if (!response.success) {
+                                res.json({
+                                    error: 'Something went wrong please try again after some time'
+                                });
+                            }
+                        });
+                    }
                     if (result.success) {
                         // if (result.error) {
                         //     return res.json(result);

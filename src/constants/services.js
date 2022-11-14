@@ -22,6 +22,7 @@ export const URL_EXPRESS_SERVER = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
 
 // export const URL_GET_USER_PROFILE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}/users/viewProfile`;
 export const URL_GET_USER_PROFILE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/viewProfile`;
+export const URL_GET_EMAIL_VERIFY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}EmailVerify`;
 export const URL_GET_USER_SETTINGS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/settings/`;
 export const URL_UPDATE_USER_SETTING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/updateSettings`;
 export const URL_UPDATE_USER_ROLE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/updateUserRole`;
