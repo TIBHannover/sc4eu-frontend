@@ -12,10 +12,10 @@ const verifyToken = require('./veryfyToken');
 
 const token = jwt.sign(
     {
-        data: 'Token Data'
+        data: 'TokenData'
     },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
+    process.env.EMAIL_JWT_SECRET,
+    { expiresIn: '10h' }
 );
 
 module.exports = {
@@ -183,7 +183,7 @@ module.exports = {
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
-            jwt.verify(token, process.env.JWT_SECRET, function(error, decoded) {
+            jwt.verify(token, process.env.EMAIL_JWT_SECRET, function(error, decoded) {
                 if (error) {
                     console.log(error);
                     res.send({
