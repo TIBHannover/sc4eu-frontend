@@ -10,14 +10,6 @@ const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_UR
 
 const verifyToken = require('./veryfyToken');
 
-const token = jwt.sign(
-    {
-        data: 'TokenData'
-    },
-    process.env.EMAIL_JWT_SECRET,
-    { expiresIn: '10h' }
-);
-
 module.exports = {
     initializeAuth: function(app, passport) {
         // passport stuff
@@ -148,6 +140,13 @@ module.exports = {
                         process.env.JWT_SECRET,
                         { expiresIn: '8h' }
                     );
+                    const token = jwt.sign(
+                        {
+                            data: 'TokenData'
+                        },
+                        process.env.JWT_SECRET,
+                        { expiresIn: '10h' }
+                    );
                     const EmailFields = {
                         email: req.body.username,
                         subject: 'Email Verification',
@@ -183,7 +182,7 @@ module.exports = {
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
-            jwt.verify(token, process.env.EMAIL_JWT_SECRET, function(error, decoded) {
+            jwt.verify(token, process.env.JWT_SECRET, function(error, decoded) {
                 if (error) {
                     console.log(error);
                     res.send({
@@ -254,6 +253,13 @@ module.exports = {
                     const result = JSON.parse(response.body);
                     // while login, we are checking the user is verified or not if it  is not verified than send again verification Email
                     if (result.is_email_valid === false) {
+                        const token = jwt.sign(
+                            {
+                                data: 'TokenData'
+                            },
+                            process.env.JWT_SECRET,
+                            { expiresIn: '10h' }
+                        );
                         const EmailFields = {
                             email: req.body.username,
                             subject: 'Email Verification',
