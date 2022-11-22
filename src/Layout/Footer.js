@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ECSEL_logo from '../assets/images/ECSEL_logo.png';
+import KDT_logo from '../assets/images/KDT-JU-logo-full.gif';
 import infinion_logo from '../assets/images/infineon.png';
 import tib_logo from '../assets/images/TIB2.png';
 import ftk_logo from '../assets/images/FTK.png';
@@ -36,17 +37,19 @@ class Footer extends Component {
                     </div>
                     <div style={{ paddingLeft: '100px' }}>
                         <Image src={infinion_logo} alt="Infinion Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
-                        <Image src={tib_logo} alt="TIB Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
+                        <a href={'https://www.tib.eu/de/'} target="_blank" rel="noopener noreferrer">
+                            <Image src={tib_logo} alt="TIB Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
+                        </a>
                         <Image src={ftk_logo} alt="FTK Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
                         <Image src={bosch_logo} alt="Bosch Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '15px' }} />
                         <Image src={mines_logo} alt="Mines Logo" style={{ height: 30, marginTop: '10px', paddingLeft: '5px' }} />
                     </div>
                     <div style={{ paddingLeft: '130px' }}>
                         <a href={'https://www.kdt-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
-                            <Image src={ECSEL_logo} alt="DFG Logo" style={{ height: 50, width: 150 }} />
+                            <Image src={KDT_logo} alt="DFG Logo" style={{ height: 50, width: 150 }} />
                         </a>
                         <p style={{ fontSize: '12px', float: 'right', paddingLeft: '15px' }}>
-                            SC3 is Supported by ECSEL <br />
+                            SC3 is Supported by KDT JU <br />
                             Under Grant number 101007312
                         </p>
                     </div>

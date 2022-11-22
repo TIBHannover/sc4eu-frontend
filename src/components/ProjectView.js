@@ -7,6 +7,7 @@ import { getAllProjects } from '../network/projectIndexing';
 import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
 import { SECONDARY } from '../styledComponents/styledComponents';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 class ProjectView extends Component {
     constructor(props) {
@@ -61,7 +62,9 @@ class ProjectView extends Component {
                     });
                 }
             });
-            this.setState({ results: allProjects });
+
+            const sortProjects = [...allProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
+            this.setState({ results: sortProjects });
         });
     };
 
@@ -104,21 +107,23 @@ class ProjectView extends Component {
                     }}
                 />
                 <hr className="mt-0 mb-2" />
-                <div style={{ textAlign: 'left', overflowY: 'auto', height: '70vh' }}>
-                    {this.state.results
-                        ? this.state.results.map(item => {
-                              return (
-                                  <ProjectCard
-                                      key={'ProjectCard_' + item.name}
-                                      inputData={item}
-                                      callback={param => {
-                                          this.reloadAfterUpdate(param);
-                                      }}
-                                  />
-                              );
-                          })
-                        : 'Still Loading'}
-                </div>
+                <Scrollbars style={{ height: '78vh' }}>
+                    <div style={{ textAlign: 'left' }}>
+                        {this.state.results
+                            ? this.state.results.map(item => {
+                                  return (
+                                      <ProjectCard
+                                          key={'ProjectCard_' + item.name}
+                                          inputData={item}
+                                          callback={param => {
+                                              this.reloadAfterUpdate(param);
+                                          }}
+                                      />
+                                  );
+                              })
+                            : 'Still Loading'}
+                    </div>
+                </Scrollbars>
             </div>
         );
     }
