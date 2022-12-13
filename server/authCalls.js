@@ -3,6 +3,7 @@ const GitHubStrategy = require('passport-github').Strategy;
 require('dotenv').config();
 const request = require('request');
 const sendEmail = require('./sendEmail');
+const emailVerificationHtml = require('./emailVerificationHtml');
 
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
@@ -147,15 +148,11 @@ module.exports = {
                         process.env.JWT_SECRET,
                         { expiresIn: '10h' }
                     );
+                    const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
                     const EmailFields = {
                         email: req.body.username,
-                        subject: 'Email Verification',
-                        body: ` <h4>Hello ${req.body.displayName}</h4>
-                    		<p> Thanks for signing up. Please follow this link to activate your account:</p>
-                    		<a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
-                    		<p>Thanks</p>
-                    		<p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
-                    		</div>`
+                        subject: 'SC3 Email Verification',
+                        body: emailVerificationHtml(callbackURL, req.body.displayName).body
                     };
                     sendEmail(EmailFields).then(response => {
                         if (response.success) {

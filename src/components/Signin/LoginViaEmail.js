@@ -119,6 +119,11 @@ class LoginViaEmail extends Component {
         return true;
     };
 
+    popUpClose = () => {
+        this.setState({ openPopUp: false });
+        this.props.callback();
+    };
+
     render() {
         // let disableRegisterAndGithub = false;
         if (process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'True' || process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'true') {
@@ -127,12 +132,7 @@ class LoginViaEmail extends Component {
         return (
             <div>
                 {this.state.openPopUp ? (
-                    <PopUp
-                        open={this.state.openPopUp}
-                        onClose={() => this.setState({ openPopUp: false })}
-                        image={this.state.image}
-                        message={this.state.popUpMessage}
-                    />
+                    <PopUp open={this.state.openPopUp} onClose={this.popUpClose} image={this.state.image} message={this.state.popUpMessage} />
                 ) : (
                     <div>
                         {!this.state.loading ? (
