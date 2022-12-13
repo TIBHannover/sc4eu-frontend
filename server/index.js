@@ -16,7 +16,7 @@ const app = express(); // create express app
 
 const proxy = require('http-proxy-middleware').createProxyMiddleware;
 
-const API_SERVICE_URL = 'http://localhost:9000';
+//const API_SERVICE_URL = 'http://localhost:9000';
 
 const router = express.Router();
 
@@ -58,15 +58,15 @@ app.use(
     })
 );
 
-app.use(
-    proxy('/sc3/EmailVerify/**', {
-        target: API_SERVICE_URL,
-        changeOrigin: true
-        // pathRewrite: {
-        //     '/sc3/EmailVerify': '/sc3/Documentation'
-        // }
-    })
-);
+// app.use(
+//     proxy('/sc3/EmailVerify/**', {
+//         target: API_SERVICE_URL,
+//         changeOrigin: true
+//         // pathRewrite: {
+//         //     '/sc3/EmailVerify': '/sc3/Documentation'
+//         // }
+//     })
+// );
 //
 // router.use('/EmailVerify', (req, res) => {
 //     console.log('Email EmailVerify');
