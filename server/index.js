@@ -16,7 +16,7 @@ const app = express(); // create express app
 
 const proxy = require('http-proxy-middleware').createProxyMiddleware;
 
-const API_SERVICE_URL = process.env.APPLICATION_URL;
+const API_SERVICE_URL = 'http://localhost:9000';
 
 const router = express.Router();
 
