@@ -1,4 +1,4 @@
-module.exports = function(callbackURL, displayName) {
+module.exports = (callbackURL, displayName) => {
     return {
         body: `<head>
 
