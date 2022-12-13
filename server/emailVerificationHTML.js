@@ -1,3 +1,4 @@
+
 module.exports = (callbackURL, displayName) => {
     return {
         body: `<head>

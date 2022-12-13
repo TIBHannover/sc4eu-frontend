@@ -3,7 +3,7 @@ const GitHubStrategy = require('passport-github').Strategy;
 require('dotenv').config();
 const request = require('request');
 const sendEmail = require('./sendEmail');
-const emailVerificationHtml = require('./emailVerificationHtml');
+const emailVerificationHtml = require('./emailVerificationHTML');
 
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
