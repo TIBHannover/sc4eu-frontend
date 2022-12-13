@@ -122,6 +122,7 @@ class LoginViaEmail extends Component {
     popUpClose = () => {
         this.setState({ openPopUp: false });
         this.props.callback();
+        console.log('test');
     };
 
     render() {
