@@ -114,7 +114,7 @@ export default class OntologyCard extends Component {
                             ) : (
                                 <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
                             )}
-                            <div> {this.props.inputData.name} </div>
+                            <div style={{ fontWeight: 'bold' }}> {this.props.inputData.name} </div>
                         </StyledLink>
                     </StyledCardHeader>
 

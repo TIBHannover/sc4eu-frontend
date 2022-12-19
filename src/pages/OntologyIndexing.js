@@ -83,6 +83,7 @@ export default class OntologyIndexing extends Component {
                         <div>
                             <OntologyIndexInteractions
                                 project_id={this.state.selectedProject.uuid}
+                                project_name={this.state.selectedProject.name}
                                 reloadAfterUpdate={() => {
                                     this.reloadAfterUpdate();
                                 }}

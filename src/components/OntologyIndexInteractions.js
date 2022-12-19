@@ -4,6 +4,10 @@ import UploadOntologyModal from './UploadOntologyModal';
 import { SECONDARY } from '../styledComponents/styledComponents';
 import OntologyIndexCards from './OntologyIndexCards';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import ROUTES from 'constants/routes';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default class OntologyIndexInteractions extends Component {
     constructor(props) {
@@ -34,7 +38,15 @@ export default class OntologyIndexInteractions extends Component {
         return (
             <div>
                 <div className="pl-1 pr-1 pb-2">
-                    <h1 style={{ textAlign: 'center', margin: '10px 0px 10px 0px' }}>Select Ontology</h1>
+                    <div className="container" style={{ display: 'flex', justifyContent: 'center', textAlign: 'left' }}>
+                        <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
+                            <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
+                            <span>Project</span>
+                        </Link>
+                        <h2 style={{ padding: '10px', margin: '0 auto' }} className="block justify-center">
+                            Select Ontology from <u>{this.props.project_name}</u> Project
+                        </h2>
+                    </div>
                     <hr className="mt-0 mb-2" />
                     <Button
                         style={{ backgroundColor: SECONDARY.dark, margin: '0px 0px 10px 5px' }}
@@ -80,5 +92,6 @@ export default class OntologyIndexInteractions extends Component {
 OntologyIndexInteractions.propTypes = {
     reloadAfterUpdate: PropTypes.func.isRequired,
     project_id: PropTypes.string.isRequired,
+    project_name: PropTypes.string.isRequired,
     listOfOntology: PropTypes.array.isRequired
 };
