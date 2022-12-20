@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
 import { getAllCommits, getBranchFromUrl, getLicense, getRawUrlforCommit } from '../../network/GithubAPICalls';
+import { getGitlabBranchFromUrl, getGitlabCommits, getRawUrlForGitlabCommit, getGitlabLicense } from '../../network/GitlabAPICalls';
 import Select from '@material-ui/core/Select';
 import { FormControl, InputLabel, MenuItem } from '@material-ui/core';
 import ShowOntologyComparisonModal from './ShowOntologyComparisonModal';
@@ -61,12 +62,27 @@ class RightSideBar extends Component {
                 license = lic;
                 return lic;
             });
+        } else if (theOntology.lookup_type === 'online-gitlab') {
+            version = getGitlabBranchFromUrl(theOntology.lookup_path);
+            this.getTheGitlabCommits(theOntology.lookup_path).then(result => {
+                result.forEach(item => {
+                    const raw_url = getRawUrlForGitlabCommit(theOntology.lookup_path, item.id);
+                    ontologyCommits.push({ label: item.committed_date, value: item.id, url: item.web_url, raw_url: raw_url });
+                });
+            });
+            license = await getGitlabLicense(theOntology.lookup_path).then(lic => {
+                license = lic;
+                return lic;
+            });
         }
         let licenseName = 'No Licence Available';
         let licenseURL = '';
-        if (license) {
+        if (license && theOntology.lookup_type === 'online') {
             licenseName = license.data.license.name;
             licenseURL = license.data.html_url;
+        } else if (license && theOntology.lookup_type === 'online-gitlab') {
+            licenseName = license.license.name;
+            licenseURL = license.license_url;
         }
 
         this.setState({
@@ -96,6 +112,10 @@ class RightSideBar extends Component {
         return commits;
     };
 
+    getTheGitlabCommits = async gitlabURL => {
+        const commits = await getGitlabCommits(gitlabURL);
+        return commits;
+    };
     collapseSidebar = () => {
         this.props.updateEvent(!this.state.expanded);
         this.setState({ expanded: !this.state.expanded });
@@ -289,7 +309,7 @@ class RightSideBar extends Component {
 
     render() {
         let comparisonButton;
-        if (this.state.openOntology.lookup_type === 'online') {
+        if (this.state.openOntology.lookup_type === 'online' || this.state.openOntology.lookup_type === 'online-gitlab') {
             comparisonButton = (
                 <div className="root" style={{ padding: '0 10px', width: this.props.width - 5 }}>
                     <Button
@@ -438,13 +458,15 @@ class RightSideBar extends Component {
                         <span>{this.state.openOntology.name}</span>
                     </div>
                     <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
-                        <span style={{ fontSize: '20px', fontWeight: 600 }}>Github </span>
+                        <span style={{ fontSize: '20px', fontWeight: 600 }}>
+                            {this.state.openOntology.lookup_type == 'online' ? 'Github' : 'Gitlab'}
+                        </span>
                         <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
                             <b>URL:</b> {this.state.openOntology.lookup_path}
                         </li>
                         <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
                             <b>License:</b>{' '}
-                            <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank">
+                            <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
                                 {this.state.licenceInfo}
                             </a>
                         </li>
