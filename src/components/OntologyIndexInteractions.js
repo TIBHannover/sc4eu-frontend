@@ -41,7 +41,7 @@ export default class OntologyIndexInteractions extends Component {
                     <div className="container" style={{ display: 'flex', justifyContent: 'center', textAlign: 'left' }}>
                         <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
                             <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
-                            <span>Project</span>
+                            <span>Projects</span>
                         </Link>
                         <h2 style={{ padding: '10px', margin: '0 auto' }} className="block justify-center">
                             Select Ontology from <u>{this.props.project_name}</u> Project
