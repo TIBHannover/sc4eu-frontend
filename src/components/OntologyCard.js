@@ -11,7 +11,7 @@ import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '.
 import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
 import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
 
 export default class OntologyCard extends Component {
@@ -111,6 +111,8 @@ export default class OntologyCard extends Component {
                         >
                             {this.props.inputData.lookup_type === 'online' ? (
                                 <Icon style={{ float: 'left', marginRight: '8px', marginTop: '4px' }} icon={faGithub} />
+                            ) : this.props.inputData.lookup_type === 'online-gitlab' ? (
+                                <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faGitlab} />
                             ) : (
                                 <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
                             )}

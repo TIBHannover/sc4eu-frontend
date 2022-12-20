@@ -3,6 +3,7 @@ import React, { Component, createRef } from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { getGitHubFileContent } from '../network/GithubAPICalls';
+import { getGitlabFileContent } from '../network/GitlabAPICalls';
 import PropTypes from 'prop-types';
 import { SECONDARY } from '../styledComponents/styledComponents';
 
@@ -22,6 +23,7 @@ export default class UploadOntology extends Component {
             lookup_type: null,
             lookup_path: null,
             githubURL: null,
+            gitlabURL: null,
             uploadSource: ''
         };
 
@@ -174,6 +176,9 @@ export default class UploadOntology extends Component {
     handleUrlChange = event => {
         this.setState({ githubURL: event.target.value });
     };
+    handleUrlChange2 = event => {
+        this.setState({ gitlabURL: event.target.value });
+    };
     handleGitHubUrl = async () => {
         //const allCommits = await getAllCommits(this.state.githubURL);
         //const releasesTags = await getReleaseTags(this.state.githubURL);
@@ -192,6 +197,37 @@ export default class UploadOntology extends Component {
                 waitingForResult: false,
                 lookup_type: 'online',
                 lookup_path: this.state.githubURL
+            });
+        } catch (e) {
+            this.setState({
+                hasContent: false,
+                ontologyFileContent: null,
+                ontologyName: '',
+                ontologyDescription: '',
+                waitingForResult: false,
+                preInitResult: {},
+                errorInitialization: true
+            });
+        }
+    };
+    handleGitlabUrl = async () => {
+        //const allCommits = await getAllCommits(this.state.githubURL);
+        //const releasesTags = await getReleaseTags(this.state.githubURL);
+        const gitlabFileContent = await getGitlabFileContent(this.state.gitlabURL);
+
+        try {
+            const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: gitlabFileContent });
+            const pre_result = JSON.parse(pre_result_asString);
+
+            this.setState({
+                ontologyFileContent: gitlabFileContent,
+                hasContent: true,
+                ontologyName: pre_result.title,
+                ontologyDescription: pre_result.description,
+                preInitResult: pre_result,
+                waitingForResult: false,
+                lookup_type: 'online-gitlab',
+                lookup_path: this.state.gitlabURL
             });
         } catch (e) {
             this.setState({
@@ -245,6 +281,18 @@ export default class UploadOntology extends Component {
                                                     <Label check>
                                                         <Input
                                                             type="radio"
+                                                            value="gitlab"
+                                                            name="UploadSource"
+                                                            checked={this.state.uploadSource === 'gitlab'}
+                                                            onChange={e => this.setState({ uploadSource: e.target.value })}
+                                                        />
+                                                        Upload ontology from Gitlab
+                                                    </Label>
+                                                </FormGroup>
+                                                <FormGroup check>
+                                                    <Label check>
+                                                        <Input
+                                                            type="radio"
                                                             value="localFile"
                                                             name="UploadSource"
                                                             checked={this.state.uploadSource === 'localFile'}
@@ -292,6 +340,30 @@ export default class UploadOntology extends Component {
                                                     }}
                                                 />
                                                 <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleGitHubUrl}>
+                                                    Upload
+                                                </Button>
+                                            </>
+                                        ) : this.state.uploadSource === 'gitlab' ? (
+                                            <>
+                                                <div>Please enter gitlab raw file</div>
+                                                <br />
+                                                <Label for="exampleUrl" style={{ float: 'left', marginTop: '4px' }}>
+                                                    Gitlab
+                                                </Label>
+                                                <Input
+                                                    id="exampleUrl"
+                                                    type="url"
+                                                    name="url"
+                                                    placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
+                                                    onChange={this.handleUrlChange2}
+                                                    style={{
+                                                        border: 'lightgray 1px solid',
+                                                        marginLeft: '5px',
+                                                        width: '50%',
+                                                        float: 'left'
+                                                    }}
+                                                />
+                                                <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleGitlabUrl}>
                                                     Upload
                                                 </Button>
                                             </>
