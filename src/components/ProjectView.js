@@ -87,7 +87,7 @@ class ProjectView extends Component {
     render() {
         return (
             <div>
-                <h1 style={{ textAlign: 'center' }}>{this.state.title}</h1>
+                <h2 style={{ textAlign: 'center' }}>{this.state.title}</h2>
                 <hr className="mt-0 mb-2" />
                 <Button
                     style={{ margin: '0px 0px 10px 10px', backgroundColor: SECONDARY.dark }}
