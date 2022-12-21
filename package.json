@@ -81,7 +81,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start_client": "react-scripts start",
     "start": "npm run build  && (cd server && npm start)",
-    "build": "set BUILD_PATH='./build/sc3' && react-scripts build --dev",
+    "build": "BUILD_PATH='./build/sc3' react-scripts build --dev",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js",
