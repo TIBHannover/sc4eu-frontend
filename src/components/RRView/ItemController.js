@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faProjectDiagram, faAlignJustify, faJedi } from '@fortawesome/free-solid-svg-icons';
+import { faJedi, faProjectDiagram, faCubesStacked } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
 import { PRIMARY, SECONDARY } from './StyledComponents';
 
@@ -46,6 +46,7 @@ class ItemController extends Component {
         const splitToken = Math.max(lastHashPos, lastSlashPos);
         return val.slice(splitToken + 1, val.length);
     };
+
     render() {
         const itemLabel = this.getSuffix(this.props.itemContext.identifier);
         const itemHighlighted = this.props.itemContext.isHighlighted;
@@ -53,19 +54,24 @@ class ItemController extends Component {
             <StyledController style={{ padding: 0, height: '30px', width: '100%', overflow: 'auto', display: 'flex' }}>
                 {/*TEXT VIEW*/}
                 <div style={{ width: '250px', minWidth: '100px', display: 'flex' }}>
-                    <ControlButton size="sm" onClick={this.props.showBody} active={this.props.showingBody}>
-                        <Icon icon={faAlignJustify} />
-                    </ControlButton>
+                    {/*--------Temporarilty disabling showing Body Icon*/}
+                    {/*<ControlButton size="sm" onClick={this.props.showBody} active={this.props.showingBody}>*/}
+                    {/*    <Icon icon={faAlignJustify} />*/}
+                    {/*</ControlButton>*/}
 
                     {/*GRAPH VIEW*/}
-                    <ControlButton size="sm" onClick={this.props.showGraphVis} active={this.props.showingGraph}>
-                        <Icon icon={faProjectDiagram} />
-                    </ControlButton>
+                    <Tippy content={'Show Graph'}>
+                        <ControlButton size="sm" onClick={this.props.showGraphVis} active={this.props.showingGraph}>
+                            <Icon icon={faProjectDiagram} />
+                        </ControlButton>
+                    </Tippy>
 
                     {/*PROTEGE VIEW */}
-                    <ControlButton size="sm" onClick={this.props.showWidget} active={this.props.showingWidget}>
-                        <Icon icon={faJedi} />
-                    </ControlButton>
+                    <Tippy content={'Show Widget'}>
+                        <ControlButton size="sm" onClick={this.props.showWidget} active={this.props.showingWidget}>
+                            <Icon icon={faCubesStacked} />
+                        </ControlButton>
+                    </Tippy>
                 </div>
                 <div style={{ width: '100%', float: 'center' }}>
                     <Tippy content={itemLabel}>
