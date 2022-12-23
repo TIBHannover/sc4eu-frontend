@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import ROUTES from 'constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+import { UncontrolledTooltip } from 'reactstrap';
 
 export default class OntologyIndexInteractions extends Component {
     constructor(props) {
@@ -35,6 +36,7 @@ export default class OntologyIndexInteractions extends Component {
     };
 
     render() {
+        const projectName = this.props.project_name.length > 10 ? this.props.project_name.substring(0, 10) + ' ...' : this.props.project_name;
         return (
             <div>
                 <div className="pl-1 pr-1 pb-2">
@@ -43,16 +45,18 @@ export default class OntologyIndexInteractions extends Component {
                             <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
                             <span>Projects</span>
                         </Link>
-                        <h2 style={{ padding: '10px', margin: '0 auto' }} className="block justify-center">
-                            Select Ontology from <u>{this.props.project_name}</u> Project
+                        <h2 style={{ padding: '10px', margin: '0 auto' }}>
+                            Select Ontology from <u id="tootlipTarget">{projectName}</u> Project
                         </h2>
+                        <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
+                            <u>{this.props.project_name}</u>
+                        </UncontrolledTooltip>
                     </div>
                     <hr className="mt-0 mb-2" />
                     <Button
                         style={{ backgroundColor: SECONDARY.dark, margin: '0px 0px 10px 5px' }}
                         active={true}
                         onClick={() => {
-                            console.log('Upload Button Triggered');
                             this.setState({ showUploadModal: true });
                         }}
                     >

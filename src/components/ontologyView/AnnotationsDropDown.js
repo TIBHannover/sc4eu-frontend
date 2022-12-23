@@ -28,7 +28,7 @@ class AnnotationsDropDown extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            collapseAnnotations: true,
+            collapseAnnotations: false,
             popoverOpen: false,
             selectedPrefix: '',
             modelTextareaValue: '',
