@@ -457,24 +457,28 @@ class RightSideBar extends Component {
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Ontology Name: </span>
                         <span>{this.state.openOntology.name}</span>
                     </div>
-                    <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
-                        <span style={{ fontSize: '20px', fontWeight: 600 }}>
-                            {this.state.openOntology.lookup_type == 'online' ? 'Github' : 'Gitlab'}
-                        </span>
-                        <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                            <b>URL:</b> {this.state.openOntology.lookup_path}
-                        </li>
-                        <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                            <b>License:</b>{' '}
-                            <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
-                                {this.state.licenceInfo}
-                            </a>
-                        </li>
-                        <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                            <b>Branch:</b> {this.state.ontologyVersion}
-                        </li>
-                    </div>
-                    <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
+                    {this.state.openOntology.lookup_type === 'online' ? (
+                        <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
+                            <span style={{ fontSize: '20px', fontWeight: 600 }}>
+                                {this.state.openOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
+                            </span>
+                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
+                                <b>URL:</b> {this.state.openOntology.lookup_path}
+                            </li>
+                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
+                                <b>License:</b>
+                                <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
+                                    {this.state.licenceInfo}
+                                </a>
+                            </li>
+                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
+                                <b>Branch:</b> {this.state.ontologyVersion}
+                            </li>
+                        </div>
+                    ) : (
+                        <div />
+                    )}
+                    <div style={{ width: this.props.width - 5, marginTop: '10px' }}>{this.renderMetaInformation()}</div>
                     {comparisonButton}
                 </Container>
             </ContentContainer>
