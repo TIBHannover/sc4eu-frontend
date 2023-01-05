@@ -5,6 +5,7 @@ import erstellen from '../assets/images/LineArt_erstellen.png';
 import teilen from '../assets/images/LineArt_teilen_gespiegelt.png';
 import { PRIMARY, TEXTCOLOR } from '../styledComponents/styledComponents';
 import Logo from '../assets/images/logo.png';
+import IntroductoryPopUp from '../components/IntroductoryPopUp';
 
 export default class Home extends Component {
     constructor(props) {
@@ -21,6 +22,7 @@ export default class Home extends Component {
     render() {
         return (
             <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
+                <IntroductoryPopUp />
                 <div>
                     <div
                         style={{
