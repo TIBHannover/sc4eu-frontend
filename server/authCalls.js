@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
-const GitHubStrategy = require('passport-github').Strategy;
+const GitHubStrategy = require('passport-github2').Strategy;
 require('dotenv').config();
 const request = require('request');
 const sendEmail = require('./sendEmail');
 const emailVerificationHtml = require('./emailVerificationHTML');
-
+const session = require('express-session');
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
@@ -21,8 +21,18 @@ module.exports = {
         passport.deserializeUser(function(user, done) {
             done(null, user);
         });
-
+        app.use(
+            session({
+                secret: process.env.JWT_SECRET,
+                resave: true,
+                saveUninitialized: true,
+                cookie: {
+                    maxAge: 30 * 24 * 60 * 60 * 1000
+                }
+            })
+        );
         app.use(passport.initialize());
+        app.use(passport.session());
 
         try {
             passport.use(
@@ -30,7 +40,7 @@ module.exports = {
                     {
                         clientID: process.env.GITHUB_CLIENT_ID,
                         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                        callbackURL: APPLICATION_URL + ':' + APPLICATION_PORT + '/auth/github/callback'
+                        callbackURL: '/sc3/auth/github/callback'
                     },
                     async function(accessToken, __refreshToken, profile, cb) {
                         const displayName = profile.displayName;

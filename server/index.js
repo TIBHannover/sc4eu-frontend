@@ -113,12 +113,12 @@ processing.initializeOntology(router);
 processing.compareTwoOntologies(router);
 
 /** GITHUB OAUTH STUFF**/
-router.get('/auth/github', passport.authenticate('github'));
-router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
+router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
+router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: 'http://localhost:3000/sc3/PAGEA' }), (req, res) => {
     // TODO: implement the /login page for failureRedirect
     // Successful authentication, redirect home.
     // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
-    res.redirect(`http://localhost:9000/loggedIn/${req.user.jwt}`);
+    res.redirect(`http://localhost:3000/sc3/loggedIn/${req.user.jwt}`);
 });
 
 router.use((req, res, next) => {

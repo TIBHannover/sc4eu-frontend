@@ -25,7 +25,6 @@ class SignIn extends Component {
                 <div>
                     <LoginViaEmail toggleAuthDialog={this.props.toggleAuthDialog} callback={this.props.callback} />
                 </div>
-                <hr />
                 {disableRegisterAndGithub && (
                     <div>
                         Registering and Login via OAuth <b>disabled</b> <br />
