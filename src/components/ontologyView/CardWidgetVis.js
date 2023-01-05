@@ -16,8 +16,8 @@ class CardWidgetVis extends Component {
         this.state = {
             updateFlipFlop: false,
             collapseAnnotations: true,
-            collapseDescription: true,
-            collapseResourceDescription: true,
+            collapseDescription: false,
+            collapseResourceDescription: false,
             popoverOpen: false,
             popoverCharacteristicsOpen: false,
             popoverDomainRangePairsOpen: false,
