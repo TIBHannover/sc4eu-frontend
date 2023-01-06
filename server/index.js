@@ -114,12 +114,17 @@ processing.compareTwoOntologies(router);
 
 /** GITHUB OAUTH STUFF**/
 router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
-router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: 'http://localhost:3000/sc3/PAGEA' }), (req, res) => {
-    // TODO: implement the /login page for failureRedirect
-    // Successful authentication, redirect home.
-    // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
-    res.redirect(`http://localhost:3000/sc3/loggedIn/${req.user.jwt}`);
-});
+router.get(
+    '/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: 'http://localhost:9000/sc3/LoginFailedRedirect' }),
+    (req, res) => {
+        // Successful authentication, redirect home.
+        // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
+        console.log(req);
+        console.log(res);
+        res.redirect(`http://localhost:9000/sc3/loggedIn/${req.user.jwt}`);
+    }
+);
 
 router.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'build/sc3', 'index.html'));

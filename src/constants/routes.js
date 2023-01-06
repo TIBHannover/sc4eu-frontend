@@ -18,5 +18,6 @@ export default {
     Imprint: '/Imprint',
     FAQ: '/FAQ',
     WEBPROTEGE: '/WEBPROTEGE',
-    EMAIL_VERIFY: '/EmailVerify/:user_id/:token'
+    EMAIL_VERIFY: '/EmailVerify/:user_id/:token',
+    LOGIN_FAILED: '/loginFailedRedirect'
 };
