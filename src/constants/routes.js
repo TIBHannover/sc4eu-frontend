@@ -12,7 +12,7 @@ export default {
     SERVICE_STATUS: '/servicesStatus',
     ADMIN_DASHBOARD: '/admin/dashboard',
 
-    LOGGED_IN: '/loggedIn/:accessToken',
+    LOGGED_IN: '/loggedIn',
     Documentations: '/Documentations',
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
