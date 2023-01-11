@@ -1,4 +1,4 @@
-import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING, URL_GET_EMAIL_VERIFY } from 'constants/services';
+import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } from 'constants/services';
 
 import { submitGetRequest, submitPutRequest } from './networkRequests';
 import {
@@ -16,10 +16,6 @@ export const getUserProfile = payload => {
 
 export const getUserSettings = () => {
     return submitGetRequest(`${URL_GET_USER_SETTINGS}`, {}, true);
-};
-
-export const getEmailVerify = (user_id, token) => {
-    return submitGetRequest(`${URL_GET_EMAIL_VERIFY}/${user_id}/${token}`, {}, false);
 };
 
 export const deleteUser = userId => {
