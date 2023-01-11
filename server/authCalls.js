@@ -41,7 +41,7 @@ module.exports = {
                     {
                         clientID: process.env.GITLAB_CLIENT_ID,
                         clientSecret: process.env.GITLAB_CLIENT_SECRET,
-                        callbackURL: '/sc3/auth/gitlab/callback'
+                        callbackURL: `${process.env.CALLBACK_URL}/sc3/auth/gitlab/callback`
                     },
                     async function(accessToken, __refreshToken, profile, cb) {
                         const options = {
@@ -119,7 +119,7 @@ module.exports = {
                     {
                         clientID: process.env.GITHUB_CLIENT_ID_FOR_LOGIN,
                         clientSecret: process.env.GITHUB_CLIENT_SECRET_FOR_LOGIN,
-                        callbackURL: '/sc3/auth/github/callback'
+                        callbackURL: `${process.env.CALLBACK_URL}/sc3/auth/github/callback`
                     },
                     async function(accessToken, __refreshToken, profile, cb) {
                         const displayName = profile.displayName;
