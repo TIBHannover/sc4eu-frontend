@@ -12,7 +12,8 @@ import success from '../../assets/images/success.png';
 import error from '../../assets/images/error.png';
 import PopUp from '../PopUp';
 import github from '../../assets/images/github.svg';
-import { URL_LOGIN_VIA_GITHUB } from '../../constants/services';
+import gitlab from '../../assets/images/gitlab.svg';
+import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB } from '../../constants/services';
 
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
@@ -155,19 +156,32 @@ class LoginViaEmail extends Component {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'space-between',
-                                        height: '50px',
+                                        height: '100px',
                                         alignItems: 'center',
                                         marginTop: '20px'
                                     }}
                                 >
                                     <a
                                         href={URL_LOGIN_VIA_GITHUB}
+                                        target="_self"
                                         className="btn btn-primary"
                                         style={{ width: '90%', backgroundColor: 'black', border: 'none' }}
+                                        rel="noreferrer"
                                     >
                                         <img src={github} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
                                         <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
                                         Sign in with GitHub
+                                    </a>
+                                    <a
+                                        href={URL_LOGIN_VIA_GITLAB}
+                                        target="_self"
+                                        className="btn btn-primary"
+                                        style={{ width: '90%', backgroundColor: '#ec672a', border: 'none' }}
+                                        rel="noreferrer"
+                                    >
+                                        <img src={gitlab} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
+                                        <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
+                                        Sign in with GitLab
                                     </a>
                                 </div>
                                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
