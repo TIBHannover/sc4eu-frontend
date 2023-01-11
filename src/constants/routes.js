@@ -12,11 +12,12 @@ export default {
     SERVICE_STATUS: '/servicesStatus',
     ADMIN_DASHBOARD: '/admin/dashboard',
 
-    LOGGED_IN: '/loggedIn/:accessToken',
+    LOGGED_IN: '/loggedIn',
     Documentations: '/Documentations',
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
     FAQ: '/FAQ',
     WEBPROTEGE: '/WEBPROTEGE',
-    EMAIL_VERIFY: '/EmailVerify/:user_id/:token'
+    EMAIL_VERIFY: '/EmailVerify/:user_id/:token',
+    LOGIN_FAILED: '/loginFailedRedirect'
 };

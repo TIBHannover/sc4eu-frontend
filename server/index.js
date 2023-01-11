@@ -13,7 +13,7 @@ const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
 
 const app = express(); // create express app
-
+const url = require('url');
 const proxy = require('http-proxy-middleware').createProxyMiddleware;
 
 //const API_SERVICE_URL = 'http://localhost:9000';
@@ -113,13 +113,24 @@ processing.initializeOntology(router);
 processing.compareTwoOntologies(router);
 
 /** GITHUB OAUTH STUFF**/
-router.get('/auth/github', passport.authenticate('github'));
-router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-    // TODO: implement the /login page for failureRedirect
-    // Successful authentication, redirect home.
-    // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
-    res.redirect(`http://localhost:9000/loggedIn/${req.user.jwt}`);
-});
+router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
+router.get(
+    '/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/sc3/LoginFailedRedirect` }),
+    (req, res) => {
+        // Successful authentication, redirect home.
+        // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
+        res.redirect(
+            url.format({
+                pathname: `${process.env.CALLBACK_URL}/sc3/loggedIn`,
+                query: {
+                    success: true,
+                    token: req.user.jwt
+                }
+            })
+        );
+    }
+);
 
 router.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'build/sc3', 'index.html'));

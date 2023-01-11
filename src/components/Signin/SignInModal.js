@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalHeader } from 'reactstrap';
+import { Modal, ModalBody } from 'reactstrap';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -23,7 +23,6 @@ class SignInModal extends Component {
         return (
             <>
                 <Modal isOpen={this.props.dialogIsOpen} toggle={this.props.toggleAuthDialog}>
-                    <ModalHeader toggle={this.props.toggleAuthDialog}>{this.props.action === 'signin' && 'Sign in'}</ModalHeader>
                     <ModalBody>
                         <TransitionGroup exit={false}>
                             {this.props.action === 'signin' && (
