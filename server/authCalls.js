@@ -9,7 +9,7 @@ const session = require('express-session');
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
-
+const url = require('url');
 const verifyToken = require('./veryfyToken');
 
 module.exports = {
@@ -265,18 +265,23 @@ module.exports = {
     },
 
     verifyEmail: function(app) {
+        const pathname = `${process.env.CALLBACK_URL}/sc3/EmailVerify`;
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
             jwt.verify(token, process.env.JWT_SECRET, function(error, decoded) {
                 if (error) {
-                    console.log(error);
-                    res.send({
-                        success: false,
-                        error:
-                            'Email verification failed,  possibly the link is invalid or expired. To verify your account just sign in and you will ' +
-                            'get again verification email.'
-                    });
+                    res.redirect(
+                        url.format({
+                            pathname: pathname,
+                            query: {
+                                success: false,
+                                message:
+                                    'Email verification failed,  possibly the link is invalid or expired. To verify your account just sign in and you will ' +
+                                    'get again verification email.'
+                            }
+                        })
+                    );
                 } else {
                     const options = {
                         uri: `${process.env.BACKEND_SERVER_URL}/users/edit_email_valid/`,
@@ -293,24 +298,47 @@ module.exports = {
                             try {
                                 const result = JSON.parse(response.body);
                                 if (result.result === true) {
-                                    res.status(200).send({ success: true, message: 'Email verified successfully' });
+                                    res.redirect(
+                                        url.format({
+                                            pathname: pathname,
+                                            query: {
+                                                success: true,
+                                                message: 'Email verified successfully'
+                                            }
+                                        })
+                                    );
                                 } else {
-                                    res.json({
-                                        success: false,
-                                        error: 'Something went wrong'
-                                    });
+                                    res.redirect(
+                                        url.format({
+                                            pathname: pathname,
+                                            query: {
+                                                success: false,
+                                                message: 'Something went wrong'
+                                            }
+                                        })
+                                    );
                                 }
                             } catch (e) {
-                                res.json({
-                                    success: false,
-                                    error: 'Something went wrong'
-                                });
+                                res.redirect(
+                                    url.format({
+                                        pathname: pathname,
+                                        query: {
+                                            success: false,
+                                            message: 'Something went wrong'
+                                        }
+                                    })
+                                );
                             }
                         } else {
-                            res.json({
-                                success: false,
-                                error: 'Something went wrong'
-                            });
+                            res.redirect(
+                                url.format({
+                                    pathname: pathname,
+                                    query: {
+                                        success: false,
+                                        message: 'Something went wrong'
+                                    }
+                                })
+                            );
                         }
                     });
                 }
@@ -346,15 +374,11 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '10h' }
                         );
+                        const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.username,
-                            subject: 'Email Verification',
-                            body: ` <h4>Hello ${result.displayName}</h4>
-                                                <p> Thanks for signing up. Please follow this link to activate your account:</p>
-                                                <a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
-                                                <p>Thanks</p>
-                                                <p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
-                                                </div>`
+                            subject: 'SC3 Email Verification',
+                            body: emailVerificationHtml(callbackURL, result.displayName).body
                         };
                         sendEmail(EmailFields).then(response => {
                             if (!response.success) {

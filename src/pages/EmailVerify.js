@@ -1,47 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { Redirect, useParams } from 'react-router-dom';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { PRIMARY } from '../styledComponents/styledComponents';
+import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 import success from '../assets/images/success.png';
 import error from '../assets/images/error.png';
-import styled from 'styled-components';
-import { PRIMARY } from '../styledComponents/styledComponents';
-import { getEmailVerify } from '../network/UserProfileCalls';
 import PopUp from '../components/PopUp';
+import { Redirect } from 'react-router-dom';
 
-const EmailVerify = () => {
-    const [message, setMessage] = useState('');
-    const [openPopUp, setPopUp] = useState(true);
-    const [image, setImage] = useState('');
-    const param = useParams();
-
-    useEffect(() => {
-        const verifyEmailUrl = async () => {
-            try {
-                getEmailVerify(param.user_id, param.token).then(data => {
-                    if (data.success === true) {
-                        setMessage('Email verified successfully');
-                        setImage(success);
-                    } else {
-                        setMessage(data.error);
-                        setImage(error);
-                    }
-                });
-            } catch (error) {
-                setMessage('Something went wrong please try again');
-                setImage(error);
-            }
+class EmailVerify extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            message: '',
+            openPopUp: true,
+            image: ''
         };
-        verifyEmailUrl();
-    }, [param]);
+    }
 
-    return (
-        <StyledDiv style={{ backgroundColor: PRIMARY.lighter, height: '100%' }}>
-            <PopUp open={openPopUp} onClose={() => setPopUp(false)} image={image} message={message} />
-            {!openPopUp ? <Redirect to="/" /> : <div />}
-        </StyledDiv>
-    );
+    componentDidMount() {
+        this.getResponse();
+    }
+
+    getResponse = () => {
+        // Get response from the URL string and convert in the JSON formate
+        if (this.props.location.search) {
+            const urlParams = new URLSearchParams(this.props.location.search);
+            const response = Object.fromEntries(urlParams);
+            if (response.success === 'true') {
+                this.setState({ message: 'Email verified successfully' });
+                this.setState({ image: success });
+            } else {
+                this.setState({ message: response });
+                this.setState({ image: error });
+            }
+        }
+    };
+
+    render() {
+        return (
+            <StyledDiv style={{ backgroundColor: PRIMARY.lighter, height: '100%' }}>
+                <div>
+                    <PopUp
+                        open={this.state.openPopUp}
+                        onClose={() => this.setState({ openPopUp: false })}
+                        image={this.state.image}
+                        message={this.state.message}
+                    />
+                    {!this.state.openPopUp ? <Redirect to="/" /> : <div />}
+                </div>
+            </StyledDiv>
+        );
+    }
+}
+
+EmailVerify.propTypes = {
+    location: PropTypes.object.isRequired
 };
 
-export default EmailVerify;
+export default withRouter(EmailVerify);
 
 const StyledDiv = styled.div`
     width: 100vw;
