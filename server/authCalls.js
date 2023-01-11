@@ -38,8 +38,8 @@ module.exports = {
             passport.use(
                 new GitHubStrategy(
                     {
-                        clientID: process.env.GITHUB_CLIENT_ID,
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                        clientID: process.env.GITHUB_CLIENT_ID_FOR_LOGIN,
+                        clientSecret: process.env.GITHUB_CLIENT_SECRET_FOR_LOGIN,
                         callbackURL: '/sc3/auth/github/callback'
                     },
                     async function(accessToken, __refreshToken, profile, cb) {
