@@ -174,7 +174,6 @@ export default class GraphRenderer {
         });
 
         this.model.links.forEach(link => {
-            console.log('link: ', link);
             if (link) {
                 //TODO this is nto a fix, check why node is undefined
                 const targetNode = this.semanticNodeMap[link.__target.__nodeLinkIdentifier];

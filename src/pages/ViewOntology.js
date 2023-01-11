@@ -11,6 +11,7 @@ import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 import { PRIMARY } from '../styledComponents/styledComponents';
+import { ALREADY_LOADED_ONTOLOGY, SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 
 class ViewOntology extends Component {
     constructor(props) {
@@ -32,7 +33,14 @@ class ViewOntology extends Component {
 
     componentDidMount() {
         // on mount we fetch all Ontologies
-        this.getOntologyFromBackend();
+        const loadedOntology = sessionStorage.getItem(ALREADY_LOADED_ONTOLOGY);
+        if (loadedOntology !== this.props.match.params.ontologyId) {
+            console.log('Loading from backend');
+            sessionStorage.setItem(ALREADY_LOADED_ONTOLOGY, this.props.match.params.ontologyId);
+            this.getOntologyFromBackend();
+        } else {
+            this.setState({ isLoading: false, ontologyFileContent: 'not exported' });
+        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {

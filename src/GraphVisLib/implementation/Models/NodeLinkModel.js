@@ -67,15 +67,15 @@ export default class NodeLinkModel extends BaseModel {
         // get its links and move them to the src node;
         tar.__incomingLinks.forEach(inLink => {
             if (!inLink.__SHADOWLINK) {
-                console.error('TODO MERGE THE LINKS TO THE SRC NODE');
-                console.log(inLink);
+                // console.error('TODO MERGE THE LINKS TO THE SRC NODE');
+                // console.log(inLink);
             }
         });
 
         tar.__outgoingLinks.forEach(outLink => {
             if (!outLink.__SHADOWLINK) {
-                console.error('TODO MERGE THE LINKS TO THE SRC NODE');
-                console.log(outLink);
+                // console.error('TODO MERGE THE LINKS TO THE SRC NODE');
+                // console.log(outLink);
             }
         });
     }
