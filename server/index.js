@@ -132,6 +132,23 @@ router.get(
     }
 );
 
+router.get('/auth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
+router.get(
+    '/auth/gitlab/callback',
+    passport.authenticate('gitlab', { failureRedirect: `${process.env.CALLBACK_URL}/sc3/LoginFailedRedirect` }),
+    (req, res) => {
+        res.redirect(
+            url.format({
+                pathname: `${process.env.CALLBACK_URL}/sc3/loggedIn`,
+                query: {
+                    success: true,
+                    token: req.user.jwt
+                }
+            })
+        );
+    }
+);
+
 router.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'build/sc3', 'index.html'));
 });

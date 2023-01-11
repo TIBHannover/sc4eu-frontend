@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const GitHubStrategy = require('passport-github2').Strategy;
+const GitLabStrategy = require('passport-gitlab2').Strategy;
 require('dotenv').config();
 const request = require('request');
 const sendEmail = require('./sendEmail');
@@ -33,6 +34,84 @@ module.exports = {
         );
         app.use(passport.initialize());
         app.use(passport.session());
+
+        try {
+            passport.use(
+                new GitLabStrategy(
+                    {
+                        clientID: process.env.GITLAB_CLIENT_ID,
+                        clientSecret: process.env.GITLAB_CLIENT_SECRET,
+                        callbackURL: '/sc3/auth/gitlab/callback'
+                    },
+                    async function(accessToken, __refreshToken, profile, cb) {
+                        const options = {
+                            headers: {
+                                'User-Agent': 'JavaScript',
+                                Authorization: 'Bearer ' + accessToken
+                            },
+                            json: true,
+                            url: 'https://gitlab.com/api/v4/user/emails'
+                        };
+
+                        // this is where we need to fetch the email address and the display name
+                        // get emails using oauth token
+                        await request(options, function(error, response, body) {
+                            if (error || response.statusCode !== 200) {
+                                console.log(error);
+                                console.log(body);
+                                return null;
+                            }
+                            let email = '';
+                            Object.keys(body).forEach(function(key) {
+                                email = body[key].email;
+                            });
+                            if (!email.length) {
+                                return { error: 'Could not access your email  address ' };
+                                // >> CRITICAL ERROR
+                            }
+
+                            const loginRequestOptions = {
+                                uri: `${process.env.BACKEND_SERVER_URL}/users/login/`,
+                                body: JSON.stringify({
+                                    displayName: profile.displayName,
+                                    email: email,
+                                    auth_type: 'AUTH_GITLAB',
+                                    token: 'undefined'
+                                }),
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            };
+                            request(loginRequestOptions, function(error, response) {
+                                if (response && response.body) {
+                                    try {
+                                        const result = JSON.parse(response.body);
+                                        const local_accessToken = jwt.sign(
+                                            {
+                                                userId: result.user_id,
+                                                bToken: result.bToken
+                                            },
+                                            process.env.JWT_SECRET,
+                                            {
+                                                expiresIn: '8h'
+                                            }
+                                        );
+                                        cb(null, { jwt: local_accessToken }); // sends the local access token to the call back routine;
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+                                } else {
+                                    cb(null, { error: 'Could not login via GitLab' }); // sends the local access token to the call back routine;
+                                }
+                            });
+                        });
+                    }
+                )
+            );
+        } catch (e) {
+            console.log(e);
+        }
 
         try {
             passport.use(
