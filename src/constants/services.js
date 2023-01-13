@@ -18,7 +18,8 @@ export const URL_LOGIN_VIA_GITHUB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL
 export const URL_LOGIN_VIA_GITLAB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/gitlab`;
 export const URL_LOGIN_VIA_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/email`;
 export const URL_REGISTER_VIA_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}users/register`;
-
+export const URL_FORGOT_PASSWORD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/forgotPassword`;
+export const URL_SET_NEW_PASSWORD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/setNewPassword`;
 export const URL_EXPRESS_SERVER = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`;
 
 // export const URL_GET_USER_PROFILE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}/users/viewProfile`;

@@ -19,6 +19,7 @@ import WebProtege from './pages/WebProtege';
 import ProjectList from './pages/ProjectList';
 import EmailVerify from './pages/EmailVerify';
 import loginFailedRedirect from './pages/loginFailedRedirect';
+import resetPassword from './pages/resetPassword';
 
 const routes = [
     {
@@ -120,6 +121,11 @@ const routes = [
         path: ROUTES.LOGIN_FAILED,
         exact: true,
         component: loginFailedRedirect
+    },
+    {
+        path: ROUTES.RESET_PASSWORD,
+        exact: true,
+        component: resetPassword
     },
 
     {
