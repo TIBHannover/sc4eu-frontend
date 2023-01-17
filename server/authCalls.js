@@ -5,6 +5,7 @@ require('dotenv').config();
 const request = require('request');
 const sendEmail = require('./sendEmail');
 const emailVerificationHtml = require('./emailVerificationHTML');
+const passwordResetEmailHtml = require('./passwordResetEmailHTML');
 const session = require('express-session');
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
@@ -561,6 +562,104 @@ module.exports = {
                     res.json({ error: 'Invalid Token' });
                 }
             }
+        });
+    },
+    forgotPassword: function(app) {
+        app.post('/user/forgotPassword', (req, res) => {
+            const options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/users/email_exists/`,
+                body: JSON.stringify({
+                    email_address: req.body.email_address
+                }),
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            request(options, function(error, response) {
+                const result = JSON.parse(response.body);
+                if (result) {
+                    if (result.success === true) {
+                        const token = jwt.sign(
+                            {
+                                data: 'TokenData'
+                            },
+                            process.env.JWT_SECRET,
+                            { expiresIn: '10h' }
+                        );
+                        const callbackURL = `${process.env.CALLBACK_URL}/sc3/verifResetPassword/${result.user_id}/${token}`;
+                        const EmailFields = {
+                            email: req.body.email_address,
+                            subject: 'SC3 Password Reset',
+                            body: passwordResetEmailHtml(callbackURL, result.display_name).body
+                        };
+                        sendEmail(EmailFields).then(response => {
+                            if (response.success) {
+                                res.json({
+                                    success: true,
+                                    message: 'Please Click on the link that has just been sent your email account to reset password.'
+                                });
+                            } else {
+                                res.json({
+                                    success: false,
+                                    message: 'Something went wrong please try again after some time'
+                                });
+                            }
+                        });
+                    } else {
+                        res.json(result);
+                    }
+                } else {
+                    res.json({ success: false, message: 'Something went wrong please try again after some time' });
+                }
+            });
+        });
+    },
+
+    verifResetPassword: function(app) {
+        const pathname = `${process.env.CALLBACK_URL}/sc3/ResetPassword`;
+        app.get(`/verifResetPassword/:user_id/:token`, (req, res) => {
+            const { token } = req.params;
+            const { user_id } = req.params;
+            jwt.verify(token, process.env.JWT_SECRET, function(error, decoded) {
+                if (error) {
+                    res.json({ error, success: false, message: 'password verification failed' });
+                } else {
+                    res.redirect(
+                        url.format({
+                            pathname: pathname,
+                            query: {
+                                success: true,
+                                user_id: user_id
+                            }
+                        })
+                    );
+                }
+            });
+        });
+    },
+
+    setNewPassword: function(app) {
+        app.post(`/user/setNewPassword`, (req, res) => {
+            const options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/users/set_new_password/`,
+                body: JSON.stringify({
+                    user_id: req.body.user_id,
+                    password: req.body.password
+                }),
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            request(options, function(error, response) {
+                const result = JSON.parse(response.body);
+                if (result) {
+                    return res.json(result);
+                } else {
+                    return res.json({ success: false, message: 'something went wrong please try again after some time' });
+                }
+            });
         });
     }
 };

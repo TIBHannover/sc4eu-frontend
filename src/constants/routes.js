@@ -19,5 +19,6 @@ export default {
     FAQ: '/FAQ',
     WEBPROTEGE: '/WEBPROTEGE',
     EMAIL_VERIFY: '/EmailVerify',
-    LOGIN_FAILED: '/loginFailedRedirect'
+    LOGIN_FAILED: '/loginFailedRedirect',
+    RESET_PASSWORD: '/resetPassword'
 };

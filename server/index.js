@@ -97,6 +97,9 @@ auth.loginViaEmail(router);
 auth.userSettings(router);
 auth.getUserSettings(router);
 auth.verifyEmail(router);
+auth.forgotPassword(router);
+auth.verifResetPassword(router);
+auth.setNewPassword(router);
 
 database.uploadOntology(router);
 database.deleteOntology(router);
