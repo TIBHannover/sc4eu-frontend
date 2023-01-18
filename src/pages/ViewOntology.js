@@ -73,7 +73,7 @@ class ViewOntology extends Component {
 
     render() {
         return (
-            <div style={{ height: '100vh', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ height: '90%', backgroundColor: PRIMARY.lighter }}>
                 <div className="pl-1 pr-1">
                     {this.state.isLoading === true && (
                         <div className="text-center text-primary mt-4 mb-4">

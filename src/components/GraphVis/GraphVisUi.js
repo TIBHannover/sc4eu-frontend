@@ -438,7 +438,7 @@ class GraphVisUi extends Component {
                         style={{
                             marginTop: '-5px',
                             maxWidth: '100%',
-                            height: 'calc(100vh - 85px)',
+                            height: 'calc(100vh - 140px)',
                             backgroundColor: '#eeeeee',
                             padding: 0,
                             overflow: 'hidden'

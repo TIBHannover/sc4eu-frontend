@@ -67,7 +67,7 @@ export default class Faq extends Component {
             }
         ];
         return (
-            <div style={{ width: '100%', height: '100%', overflowY: 'auto', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ width: '100%', height: '100%', overflow: 'auto', backgroundColor: PRIMARY.lighter }}>
                 <Container
                     style={{
                         // border: '1px solid black',
@@ -76,7 +76,7 @@ export default class Faq extends Component {
                         position: 'relative',
                         backgroundColor: '#ffffff',
                         borderRadius: '10px 10px 10px 10px ',
-                        height: '100%'
+                        height: '90%'
                     }}
                 >
                     <Button

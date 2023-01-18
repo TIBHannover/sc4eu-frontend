@@ -98,7 +98,7 @@ export default class Dataprotections extends Component {
                         30167 Hannover
                         <br />
                     </p>
-                    <p>
+                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
                         Any data subject may contact our data protection officer directly regarding any and all questions and suggestions regarding
                         data protection at any time.
                         <br />
@@ -127,7 +127,7 @@ export default class Dataprotections extends Component {
                         <iframe
                             title="data policy"
                             src="https://support.tib.eu/piwik/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=en&amp;backgroundColor=&amp;fontColor=&amp;fontSize=&amp;fontFamily=sans-serif"
-                            style={{ border: 0, height: '200px', width: '600px' }}
+                            style={{ border: 0, height: '200px', width: '600px', color: TEXTCOLOR, textAlign: 'justify' }}
                         />
                     </div>
                 </div>
