@@ -6,7 +6,7 @@ export default class Imprint extends Component {
     render() {
         return (
             <div style={{ height: '100%', width: '100%', backgroundColor: PRIMARY.lighter }}>
-                <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '30px' }}>
+                <div style={{ width: '100%', height: '90%', overflowY: 'auto', paddingBottom: '30px' }}>
                     <div style={{ paddingTop: '20px', paddingLeft: '300px', paddingRight: '300px' }}>
                         <h2>Imprint</h2>
                         <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>

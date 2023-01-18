@@ -11,6 +11,8 @@ import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
 
 const StyledButton = styled(Button)`
+    height: 25;
+    width: 20;
     :hover {
         transform: scale(1.3);
     }
@@ -32,12 +34,12 @@ const SideBarLayout = () => {
 
     return (
         <>
-            <StyledButton color="none" size="lg" title="Open Menu" onClick={toggleDrawer}>
-                <Icon icon={faBars} />
+            <StyledButton color="none" title="Open Menu" onMouseOver={toggleDrawer}>
+                <Icon icon={faBars} style={{ height: 30, width: 30 }} />
             </StyledButton>
             <StyledButton color="none" title="Home">
                 <StyledLink activestyle={{ backgroundColor: '#90c8ac' }} to={ROUTES.HOME} size="lg">
-                    <Image src={Logo} alt="Home Logo" style={{ height: 20, width: 20 }} />
+                    <Image src={Logo} alt="Home Logo" style={{ height: 30, width: 30 }} />
                 </StyledLink>
             </StyledButton>
             <Drawer open={isOpen} onClose={toggleDrawer} direction="left" style={{ marginTop: '50px', width: '250px', height: 'auto' }}>

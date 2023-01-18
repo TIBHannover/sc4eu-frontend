@@ -16,7 +16,9 @@ import SignInModal from '../components/Signin/SignInModal';
 
 import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
-import { SECONDARY } from '../styledComponents/styledComponents';
+import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import SideBarLayout from './SideBarLayout';
+import background from '../assets/images/Curve Line.svg';
 
 class Header extends Component {
     constructor(props) {
@@ -125,82 +127,88 @@ class Header extends Component {
         const greeting = greetingTime(new Date());
 
         return (
-            <div>
-                <div
-                    style={{
-                        color: '#fff',
-                        height: '100%',
-                        cursor: 'pointer',
-                        float: 'right',
-                        marginRight: '10px',
-                        marginTop: '-40px'
-                    }}
-                >
-                    {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
-                        <div>
-                            <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
-                            <StyledAuthTooltip
-                                fade={false}
-                                trigger="click"
-                                innerClassName="pr-3 pl-3 pt-3 pb-3 clearfix"
-                                placement="bottom-end"
-                                isOpen={this.state.userTooltipOpen}
-                                target="TooltipExample"
-                                toggle={this.toggleUserTooltip}
-                                innerRef={this.userPopup}
-                            >
-                                <Row>
-                                    <div className="col-3 text-center">
-                                        <Link onClick={this.toggleUserTooltip} to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}>
-                                            <StyledGravatar
-                                                className="rounded-circle"
-                                                style={{ border: '3px solid #fff' }}
-                                                md5={this.props.user.gravatarId}
-                                                size={64}
-                                                id="TooltipExample"
-                                            />
-                                        </Link>
-                                    </div>
-                                    <div className="col-9 text-left">
-                                        <span className="ml-1">
-                                            {greeting} {this.props.user.displayName}
-                                        </span>
-                                        <ButtonGroup className="mt-2" size="sm">
-                                            {this.showDashboard()}
-                                            <Button
-                                                color="secondary"
+            <div
+                style={{
+                    height: '100px',
+                    background: PRIMARY.light,
+                    position: 'relative',
+                    overflow: 'auto'
+                }}
+            >
+                <div style={{ height: '100px', width: '100%', backgroundImage: `url("${background}")` }}>
+                    <div style={{ float: 'left' }}>
+                        <SideBarLayout />
+                    </div>
+                    <div style={{ float: 'right', marginRight: '20px', marginTop: '15px' }}>
+                        {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
+                            <div>
+                                <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
+                                <StyledAuthTooltip
+                                    fade={false}
+                                    trigger="click"
+                                    innerClassName="pr-3 pl-3 pt-3 pb-3 clearfix"
+                                    placement="bottom-end"
+                                    isOpen={this.state.userTooltipOpen}
+                                    target="TooltipExample"
+                                    toggle={this.toggleUserTooltip}
+                                    innerRef={this.userPopup}
+                                >
+                                    <Row>
+                                        <div className="col-3 text-center">
+                                            <Link
                                                 onClick={this.toggleUserTooltip}
-                                                tag={Link}
                                                 to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
                                             >
-                                                Profile
-                                            </Button>
-                                            <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.USER_SETTINGS}>
-                                                Settings
-                                            </Button>
-                                            <Button onClick={this.handleSignOut}>Sign out</Button>
-                                        </ButtonGroup>
-                                    </div>
-                                </Row>
-                            </StyledAuthTooltip>
-                        </div>
-                    ) : (
-                        <Button
-                            style={{ backgroundColor: SECONDARY.dark }}
-                            className="clearfix"
-                            onClick={() => {
-                                // push that to the redux state so that the user is rederected to its prev location;
-                                this.props.openAuthDialog({
-                                    action: 'signin',
-                                    redirectRoute: this.props.location.pathname
-                                });
-                            }}
-                        >
-                            <Icon className="mr-1" icon={faUser} /> Sign in
-                        </Button>
-                    )}
+                                                <StyledGravatar
+                                                    className="rounded-circle"
+                                                    style={{ border: '3px solid #fff' }}
+                                                    md5={this.props.user.gravatarId}
+                                                    size={64}
+                                                    id="TooltipExample"
+                                                />
+                                            </Link>
+                                        </div>
+                                        <div className="col-9 text-left">
+                                            <span className="ml-1">
+                                                {greeting} {this.props.user.displayName}
+                                            </span>
+                                            <ButtonGroup className="mt-2" size="sm">
+                                                {this.showDashboard()}
+                                                <Button
+                                                    color="secondary"
+                                                    onClick={this.toggleUserTooltip}
+                                                    tag={Link}
+                                                    to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
+                                                >
+                                                    Profile
+                                                </Button>
+                                                <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.USER_SETTINGS}>
+                                                    Settings
+                                                </Button>
+                                                <Button onClick={this.handleSignOut}>Sign out</Button>
+                                            </ButtonGroup>
+                                        </div>
+                                    </Row>
+                                </StyledAuthTooltip>
+                            </div>
+                        ) : (
+                            <Button
+                                style={{ backgroundColor: SECONDARY.dark }}
+                                className="clearfix"
+                                onClick={() => {
+                                    // push that to the redux state so that the user is rederected to its prev location;
+                                    this.props.openAuthDialog({
+                                        action: 'signin',
+                                        redirectRoute: this.props.location.pathname
+                                    });
+                                }}
+                            >
+                                <Icon className="mr-1" icon={faUser} /> Login
+                            </Button>
+                        )}
+                    </div>
+                    <SignInModal callback={this.loginCallback} />
                 </div>
-                <SignInModal callback={this.loginCallback} />
             </div>
         );
     }

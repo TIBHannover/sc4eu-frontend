@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ECSEL_logo from '../assets/images/ECSEL_logo.png';
 import KDT_logo from '../assets/images/KDT-JU-logo-full.gif';
 import infinion_logo from '../assets/images/infineon.png';
 import tib_logo from '../assets/images/TIB2.png';
@@ -8,6 +7,7 @@ import bosch_logo from '../assets/images/Bosch.png';
 import mines_logo from '../assets/images/MINES.png';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 const Image = styled.img``;
 
@@ -18,7 +18,6 @@ class Footer extends Component {
                 <div
                     style={{
                         display: 'flex',
-                        background: 'white',
                         position: 'absolute',
                         left: 0,
                         bottom: 0,
@@ -26,13 +25,14 @@ class Footer extends Component {
                         paddingLeft: '310px',
                         paddingTop: '10px',
                         height: '9%',
-                        backgroundColor: 'rgba(214, 230, 242, .3)'
+                        background: PRIMARY.light,
+                        overflow: 'hidden'
                     }}
                 >
                     <div style={{ flexDirection: 'column' }}>
-                        <p style={{ fontSize: '13px', color: '#003554' }}>
-                            <span style={{ fontWeight: 500 }}>Note :</span> This is a Minimal Viable Product of the SC3 project.
-                            <br /> I.e., we dont provide any backup solution yet.
+                        <p style={{ fontSize: '13px', color: '#003554', fontFamily: 'sans-serif' }}>
+                            <span style={{ fontWeight: 600 }}>Note :</span> This is a Minimal Viable Product of the SC3 project.
+                            <br /> I.e., We don't provide any backup solution yet.
                         </p>
                     </div>
                     <div style={{ paddingLeft: '100px' }}>
@@ -48,7 +48,7 @@ class Footer extends Component {
                         <a href={'https://www.kdt-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
                             <Image src={KDT_logo} alt="DFG Logo" style={{ height: 50, width: 150 }} />
                         </a>
-                        <p style={{ fontSize: '12px', float: 'right', paddingLeft: '15px' }}>
+                        <p style={{ fontSize: '12px', float: 'right', paddingLeft: '15px', fontFamily: 'sans-serif', color: '#003554' }}>
                             SC3 is Supported by KDT JU <br />
                             Under Grant number 101007312
                         </p>

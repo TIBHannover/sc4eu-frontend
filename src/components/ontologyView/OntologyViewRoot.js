@@ -133,7 +133,7 @@ class OntologyViewRoot extends Component {
 
                 <div
                     id="mainWidgetContainer"
-                    style={{ display: 'flex', marginTop: '5px', marginLeft: '200px', zIndex: 150, height: 'calc(100vh - 130px)' }}
+                    style={{ display: 'flex', marginTop: '5px', marginLeft: '200px', zIndex: 150, height: 'calc(100vh - 180px)' }}
                 >
                     <MainWidget
                         ref={this._refMainWidget}
