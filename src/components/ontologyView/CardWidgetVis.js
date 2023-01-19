@@ -409,6 +409,8 @@ class CardWidgetVis extends Component {
     };
 
     renderResourceDescription = itemOfInterest => {
+        const prefixList = this.props.metaInformation.prefixList.longToShort;
+        const iri = transformIdentifierToPrefixed(this.props.itemContext.identifier, prefixList);
         return (
             <div>
                 {Object.keys(itemOfInterest.axioms).length > 0 ? (
@@ -416,6 +418,11 @@ class CardWidgetVis extends Component {
                         return (
                             <div key={itemOfInterest.itemIdentifier + axiom}>
                                 <div>
+                                    <span>IRI:</span>
+                                    <div style={{ marginLeft: '25px' }}>
+                                        <span>{iri}</span>
+                                        <hr style={{ marginTop: 0 }} />
+                                    </div>
                                     {axiom.split(':')[1]}
                                     {'   '}
                                     {/*<Icon
@@ -486,10 +493,16 @@ class CardWidgetVis extends Component {
         //Keep only unique values in the list
         domains = [...new Set(domains)];
         ranges = [...new Set(ranges)];
-
+        const prefixList = this.props.metaInformation.prefixList.longToShort;
+        const iri = transformIdentifierToPrefixed(this.props.itemContext.identifier, prefixList);
         return (
             <div style={{ overflow: 'hidden' }}>
                 <div>
+                    <span>IRI:</span>
+                    <div style={{ marginLeft: '25px' }}>
+                        <span>{iri}</span>
+                        <hr style={{ marginTop: 0 }} />
+                    </div>
                     Domains{'  '}
                     {/* <Icon
                         id={'PopoverDomain' + itemOfInterest.itemIdentifier}
@@ -602,12 +615,14 @@ CardWidgetVis.propTypes = {
     isExpanded: PropTypes.bool.isRequired,
     callback: PropTypes.func.isRequired,
     redux_editRelation: PropTypes.func.isRequired,
-    redux_editResource: PropTypes.func.isRequired
+    redux_editResource: PropTypes.func.isRequired,
+    metaInformation: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
     return {
-        rrModel: state.ResourceRelationModelReducer
+        rrModel: state.ResourceRelationModelReducer,
+        metaInformation: state.ResourceRelationModelReducer.metaInformation
     };
 };
 

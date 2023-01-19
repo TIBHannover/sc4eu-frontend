@@ -24,10 +24,8 @@ class RelationHeader extends Component {
             headerTerminationToken = '.';
         }
 
-        const prefixList = this.props.metaInformation.prefixList.longToShort;
-        const prefixedIdentifier = transformIdentifierToPrefixed(this.props.relationContext.identifier, prefixList);
         this.state = {
-            headerInputValue: prefixedIdentifier + ' rdf:type ' + this.props.relationContext.type + ' ' + headerTerminationToken
+            headerInputValue: ' rdf:type ' + this.props.relationContext.type + ' ' + headerTerminationToken
         };
     }
 
