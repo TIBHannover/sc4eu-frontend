@@ -413,16 +413,16 @@ class CardWidgetVis extends Component {
         const iri = transformIdentifierToPrefixed(this.props.itemContext.identifier, prefixList);
         return (
             <div>
-                {Object.keys(itemOfInterest.axioms).length > 0 ? (
+                <span>IRI:</span>
+                <div style={{ marginLeft: '25px' }}>
+                    <span>{iri}</span>
+                    <hr style={{ marginTop: 0 }} />
+                </div>
+                {Object.keys(itemOfInterest.axioms).length > 0 || iri.length > 0 ? (
                     Object.keys(itemOfInterest.axioms).map(axiom => {
                         return (
                             <div key={itemOfInterest.itemIdentifier + axiom}>
                                 <div>
-                                    <span>IRI:</span>
-                                    <div style={{ marginLeft: '25px' }}>
-                                        <span>{iri}</span>
-                                        <hr style={{ marginTop: 0 }} />
-                                    </div>
                                     {axiom.split(':')[1]}
                                     {'   '}
                                     {/*<Icon
