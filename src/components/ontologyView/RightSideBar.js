@@ -472,7 +472,7 @@ class RightSideBar extends Component {
                                 }}
                             >
                                 <Icon icon={this.state.gitCollapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
-                                {this.state.openOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}    
+                                {this.state.openOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
                             </Button>
                             <Collapse isOpen={!this.state.gitCollapse}>
                                 <Table bordered style={{ marginTop: '10px' }}>
