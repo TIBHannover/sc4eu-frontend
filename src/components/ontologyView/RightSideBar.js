@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Card, CardBody, Collapse, Container, Input } from 'reactstrap';
+import { Button, Card, CardBody, Collapse, Container, Input, Table } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
@@ -38,7 +38,8 @@ class RightSideBar extends Component {
             compareResults: '',
             isLoading: false,
             licenceInfo: 'No Licence Available',
-            licenseURL: null
+            licenseURL: null,
+            gitCollapse: true
         };
     }
 
@@ -127,6 +128,10 @@ class RightSideBar extends Component {
 
     toggleComparison = () => {
         this.setState({ collapseComparison: !this.state.collapseComparison });
+    };
+
+    toggleGitCollapse = () => {
+        this.setState({ gitCollapse: !this.state.gitCollapse });
     };
 
     toggleMetaInformation = () => {
@@ -297,9 +302,6 @@ class RightSideBar extends Component {
         if (index_first !== -1 && index_second !== -1) {
             url_first = this.state.allCommits[index_first].raw_url;
             url_second = this.state.allCommits[index_second].raw_url;
-            console.log('+++++++++++++++++++++++++++');
-            console.log(url_first);
-            console.log(url_second);
             getOntologyComparison(url_first, url_second).then(data => {
                 console.log(data);
                 this.setState({ compareResults: data, showCompareModal: true, isLoading: false });
@@ -453,32 +455,54 @@ class RightSideBar extends Component {
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Project Name: </span>
                         <span>{this.state.openProject.name}</span>
                     </div>
-                    <div style={{ marginTop: '20px', marginLeft: '15px', display: 'inline-block' }}>
+                    <div style={{ marginTop: '20px', marginLeft: '15px', display: 'inline-block', marginBottom: '10px' }}>
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Ontology Name: </span>
                         <span>{this.state.openOntology.name}</span>
                     </div>
                     {this.state.openOntology.lookup_type === 'online' ? (
-                        <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
-                            <span style={{ fontSize: '20px', fontWeight: 600 }}>
+                        <div style={{ padding: '0 10px', width: this.props.width - 5, marginTop: '10px' }}>
+                            <Button
+                                onClick={() => this.toggleGitCollapse()}
+                                style={{
+                                    marginTop: '5px',
+                                    width: '100%',
+                                    textAlign: 'left',
+                                    fontWeight: 'bold',
+                                    backgroundColor: SECONDARY.dark
+                                }}
+                            >
+                                <Icon icon={this.state.gitCollapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
                                 {this.state.openOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
-                            </span>
-                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                                <b>URL:</b> {this.state.openOntology.lookup_path}
-                            </li>
-                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                                <b>License:</b>
-                                <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
-                                    {this.state.licenceInfo}
-                                </a>
-                            </li>
-                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                                <b>Branch:</b> {this.state.ontologyVersion}
-                            </li>
+                            </Button>
+                            <Collapse isOpen={!this.state.gitCollapse}>
+                                <Table bordered style={{ marginTop: '10px' }}>
+                                    <tr style={{ fontSize: '20px', fontWeight: 600 }}>
+                                        {this.state.openOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
+                                    </tr>
+                                    <tr>
+                                        <th style={{ width: '20px' }}>URL</th>
+                                        <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.openOntology.lookup_path}</td>
+                                    </tr>
+                                    <tr>
+                                        <th style={{ width: '20px' }}>License</th>
+                                        <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                            <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
+                                                {this.state.licenceInfo}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style={{ width: '20px' }}>Branch</th>
+                                        <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.ontologyVersion}</td>
+                                    </tr>
+                                </Table>
+                            </Collapse>
                         </div>
                     ) : (
                         <div />
                     )}
-                    <div style={{ width: this.props.width - 5, marginTop: '10px' }}>{this.renderMetaInformation()}</div>
+
+                    <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
                     {comparisonButton}
                 </Container>
             </ContentContainer>

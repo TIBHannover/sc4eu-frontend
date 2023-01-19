@@ -7,6 +7,12 @@ import styled from 'styled-components';
 import { expandAllBodies } from '../../redux/actions/globalUI_actions';
 import { connect } from 'react-redux';
 import { SECONDARY } from '../RRView/StyledComponents';
+import { reverse } from 'named-urls';
+import { Link } from 'react-router-dom';
+import { SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
+import ROUTES from '../../constants/routes';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 
 class OntologyViewRoot extends Component {
     constructor(props) {
@@ -109,8 +115,20 @@ class OntologyViewRoot extends Component {
     };
 
     renderControls() {
+        const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
         return (
-            <div style={{ margin: '5px 0 5px 270px' }}>
+            <div>
+                <Link
+                    style={{ float: 'left', margin: '15px 0px 0px 280px' }}
+                    to={{
+                        pathname: reverse(ROUTES.ONTOLOGY),
+                        project: selectedProjectSession
+                    }}
+                    title="Open Ontology List"
+                >
+                    <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
+                    <span>List of Ontology</span>
+                </Link>
                 <ControlButton
                     onClick={() => {
                         // emit this as signal;
@@ -129,7 +147,7 @@ class OntologyViewRoot extends Component {
     render() {
         return (
             <>
-                {this.renderControls()}
+                <div style={{ paddingBottom: '50px' }}> {this.renderControls()}</div>
 
                 <div
                     id="mainWidgetContainer"
@@ -198,10 +216,11 @@ const ControlButton = styled(Button)`
     padding-right: 10px;
     padding-top: -5px;
     height: 40px;
-    margin-top: 2px;
-    margin-right: 3px;
+    margin-top: 8px;
+    margin-right: 470px;
     font-size: 16px;
     color: white;
+    float: right;
     :focus {
         outline: none;
     }
