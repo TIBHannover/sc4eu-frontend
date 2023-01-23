@@ -65,6 +65,7 @@ export const PRIMARY = {
 };
 export const SECONDARY = {
     dark: '#536b78',
+    darker: '#2f3d45',
     link: '#0000EE'
 };
 

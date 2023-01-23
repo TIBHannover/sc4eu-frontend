@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faLock, faPen, faTrash, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Button } from 'reactstrap';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { deleteProject } from '../network/projectIndexing';
@@ -118,17 +118,6 @@ class ProjectIndexCards extends Component {
                                 this.setState({ showEditProjectModal: !this.state.showEditProjectModal });
                             }}
                         />
-                        <div color="white" style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}>
-                            {this.props.inputData.unlock === true ? (
-                                <div>
-                                    <Icon className="ml-2 mr-1" icon={faUnlockAlt} color="black" />
-                                </div>
-                            ) : (
-                                <div>
-                                    <Icon className="ml-2 mr-1" icon={faLock} color="black" />
-                                </div>
-                            )}
-                        </div>
                         <StyledLink onClick={this.showOntologies} to="#" className="p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
                                 <div style={{ overflowWrap: 'break-word', fontWeight: '500' }}> {this.props.inputData.name} </div>
