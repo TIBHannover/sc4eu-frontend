@@ -20,108 +20,11 @@ class ProjectIndexCards extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
-    // deleteProject = async event => {
-    //     //delete Project...
-    //     event.preventDefault();
-    //     event.stopPropagation();
-    //
-    //     const isConfirmed = window.confirm('Are you sure you want to Delete this ontology?');
-    //     if (!isConfirmed) {
-    //         return;
-    //     }
-    //
-    //     try {
-    //         const allows = await userIsAllowdToUploadOntology();
-    //         if (allows.result === true) {
-    //             if (this.props.inputData.unlock === true) {
-    //                 deleteProject(this.props.inputData.uuid).then(res => {
-    //                     if (res.success === true) {
-    //                         this.props.callback(res.result);
-    //                     }
-    //                 });
-    //             } else {
-    //                 alert('You are not authorized to delete this project');
-    //             }
-    //         } else {
-    //             alert('You are not authorized to delete this project');
-    //         }
-    //     } catch (rejectedValue) {
-    //         console.log(rejectedValue);
-    //     }
-    // };
-    //
-    // projectEdited = param => {
-    //     if (param.result === true) {
-    //         this.setState({ showEditProjectModal: false });
-    //         this.props.callback();
-    //     }
-    // };
-
-    // showOntologies = () => {
-    //     CLEAR_SESSION();
-    //     //TODO Get all ontologies related Only to this Project
-    //     if (this.props.inputData.unlock === true) {
-    //         //change color of select card
-    //         //StyledCardHeader.backgroundColor = 'black';
-    //         sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(this.props.inputData));
-    //         this.props.history.push(reverse(ROUTES.ONTOLOGY));
-    //     } else {
-    //         alert('This is Private Project You can not open it');
-    //     }
-    // };
-
     render() {
         return (
             <div>
                 <StyledCard className="pl-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        {/*<StyledButton*/}
-                        {/*    color="none"*/}
-                        {/*    size="sm"*/}
-                        {/*    title="Delete Project"*/}
-                        {/*    onClick={this.deleteProject}*/}
-                        {/*    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}*/}
-                        {/*>*/}
-                        {/*    <Icon icon={faTrash} />*/}
-                        {/*</StyledButton>*/}
-                        {/*<StyledButton*/}
-                        {/*    color="white"*/}
-                        {/*    size="sm"*/}
-                        {/*    title="Edit Project"*/}
-                        {/*    onClick={() => {*/}
-                        {/*        this.setState({ showEditProjectModal: true });*/}
-                        {/*    }}*/}
-                        {/*    style={{*/}
-                        {/*        float: 'right',*/}
-                        {/*        padding: '0px',*/}
-                        {/*        paddingLeft: '5px',*/}
-                        {/*        marginLeft: 'auto',*/}
-                        {/*        marginRight: '5px'*/}
-                        {/*    }}*/}
-                        {/*>*/}
-                        {/*    <Icon icon={faPen} />*/}
-                        {/*</StyledButton>*/}
-                        {/*<EditProjectModal*/}
-                        {/*    showDialog={this.state.showEditProjectModal}*/}
-                        {/*    projectData={this.props.inputData}*/}
-                        {/*    callback={param => {*/}
-                        {/*        this.projectEdited(param);*/}
-                        {/*    }}*/}
-                        {/*    toggle={() => {*/}
-                        {/*        this.setState({ showEditProjectModal: !this.state.showEditProjectModal });*/}
-                        {/*    }}*/}
-                        {/*/>*/}
-                        {/*<div color="white" style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}>*/}
-                        {/*    {this.props.inputData.unlock === true ? (*/}
-                        {/*        <div>*/}
-                        {/*            <Icon className="ml-2 mr-1" icon={faUnlockAlt} color="black" />*/}
-                        {/*        </div>*/}
-                        {/*    ) : (*/}
-                        {/*        <div>*/}
-                        {/*            <Icon className="ml-2 mr-1" icon={faLock} color="black" />*/}
-                        {/*        </div>*/}
-                        {/*    )}*/}
-                        {/*</div>*/}
                         <StyledLabel className="pl-1 pr-1 pt-sm-0 pb-sm-0 mt-1 mb-1">
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
                                 <div style={{ overflowWrap: 'break-word', fontWeight: '500' }}> {this.props.inputData.name} </div>
