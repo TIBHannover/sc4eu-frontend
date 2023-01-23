@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'reactstrap';
+import { Button, Container } from 'reactstrap';
 import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
 import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
-import { SECONDARY } from '../styledComponents/styledComponents';
+import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 
 class ProjectView extends Component {
@@ -34,8 +34,9 @@ class ProjectView extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if (prevState.expanded !== this.state.expanded) {
-            this.setState({ initialRendering: false });
+        if (prevProps.updateFlipFlop !== this.props.updateFlipFlop) {
+            // this.setState({ initialRendering: false });
+            this.getProjectsFromBackend();
         }
         if (prevProps.user !== this.props.user && this.props.user) {
             this.getProjectsFromBackend();
@@ -75,51 +76,70 @@ class ProjectView extends Component {
     projectCreated = param => {
         if (param.result === true) {
             this.setState({ showCreateProjectModal: false });
-            this.reloadAfterUpdate();
+            this.props.reloadAfterUpdate();
         }
     };
 
-    reloadAfterUpdate = () => {
-        this.setState({ isLoading: false });
-        this.getProjectsFromBackend();
-    };
+    // reloadAfterUpdate = () => {
+    //     this.setState({ isLoading: false });
+    //     this.getProjectsFromBackend();
+    // };
 
     render() {
         return (
-            <div>
-                <h2 style={{ textAlign: 'center' }}>{this.state.title}</h2>
-                <hr className="mt-0 mb-2" />
-                <Button
-                    style={{ margin: '0px 0px 10px 10px', backgroundColor: SECONDARY.dark }}
-                    onClick={() => {
-                        this.setState({ showCreateProjectModal: true });
+            <div style={{ width: '100%', marginLeft: '20%', backgroundColor: 'white', marginTop: '0.5%' }}>
+                <Container
+                    className="pt-sm-2 pb-sm-2 clearfix"
+                    style={{
+                        borderRadius: '10px 10px 0px 0px',
+                        height: '50px',
+                        color: 'white',
+                        backgroundColor: PRIMARY.dark
                     }}
                 >
-                    Add New Project
-                </Button>
-                <CreateProjectModal
-                    showDialog={this.state.showCreateProjectModal}
-                    toggle={() => {
-                        this.setState({ showCreateProjectModal: !this.state.showCreateProjectModal });
-                    }}
-                    callback={param => {
-                        this.projectCreated(param);
-                    }}
-                />
-                <hr className="mt-0 mb-2" />
+                    <h4 style={{ width: '100%', textAlign: 'center' }}>{this.state.title}</h4>
+                </Container>
+
+                {/*<h2 style={{ textAlign: 'center' }}>{this.state.title}</h2>*/}
+                {/*<hr className="mt-0 mb-2" />*/}
+                <div>
+                    <p style={{ float: 'left', margin: '15px 0px 0px 15px', textAlign: 'center' }}>
+                        Click on one of the projects below to view its ontologies
+                    </p>
+                    <Button
+                        style={{ margin: '10px 10px 10px 10px', backgroundColor: SECONDARY.dark, float: 'right' }}
+                        onClick={() => {
+                            this.setState({ showCreateProjectModal: true });
+                        }}
+                    >
+                        Add New Project
+                    </Button>
+                    <CreateProjectModal
+                        showDialog={this.state.showCreateProjectModal}
+                        toggle={() => {
+                            this.setState({ showCreateProjectModal: !this.state.showCreateProjectModal });
+                        }}
+                        callback={param => {
+                            this.projectCreated(param);
+                        }}
+                    />
+                </div>
+                {/*<hr className="mt-0 mb-2" />*/}
                 <Scrollbars style={{ height: '78vh' }}>
-                    <div style={{ textAlign: 'left' }}>
+                    <div style={{ textAlign: 'left', borderTop: '0.01rem solid #e7e9eb' }}>
                         {this.state.results
                             ? this.state.results.map(item => {
-                                  return (
-                                      <ProjectCard
-                                          key={'ProjectCard_' + item.name}
-                                          inputData={item}
-                                          callback={param => {
-                                              this.reloadAfterUpdate(param);
-                                          }}
-                                      />
-                                  );
+                                  if (item.unlock) {
+                                      return (
+                                          <ProjectCard
+                                              key={'ProjectCard_' + item.name}
+                                              inputData={item}
+                                              callback={param => {
+                                                  this.props.reloadAfterUpdate(param);
+                                              }}
+                                          />
+                                      );
+                                  }
                               })
                             : 'Still Loading'}
                     </div>
@@ -137,7 +157,9 @@ const mapDispatchToProps = dispatch => ({});
 
 ProjectView.propTypes = {
     title: PropTypes.string,
-    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+    reloadAfterUpdate: PropTypes.func.isRequired,
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    updateFlipFlop: PropTypes.bool.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);

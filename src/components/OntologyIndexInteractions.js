@@ -54,7 +54,7 @@ export default class OntologyIndexInteractions extends Component {
                     </div>
                     <hr className="mt-0 mb-2" />
                     <Button
-                        style={{ backgroundColor: SECONDARY.dark, margin: '0px 0px 10px 5px' }}
+                        style={{ backgroundColor: SECONDARY.dark, margin: '10px 5px 10px 5px' }}
                         active={true}
                         onClick={() => {
                             this.setState({ showUploadModal: true });
