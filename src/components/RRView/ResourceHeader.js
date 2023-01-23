@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { Button } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTrash, faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
-import { transformIdentifierToPrefixed } from '../../mappers/ResToTTL';
 import Tippy from '@tippyjs/react';
 import { StyledResourceAndRelationHeader, HeaderValueInput, StyledContentView } from './StyledComponents';
 
@@ -23,14 +22,8 @@ class ResourceHeader extends Component {
         if (anCount === 0 && axCount === 0) {
             headerTerminationToken = '.';
         }
-        const prefixList = this.props.metaInformation.prefixList.longToShort;
         this.state = {
-            headerInputValue:
-                transformIdentifierToPrefixed(this.props.resourceContext.identifier, prefixList) +
-                ' rdf:type ' +
-                this.props.resourceContext.type +
-                ' ' +
-                headerTerminationToken
+            headerInputValue: ' rdf:type ' + this.props.resourceContext.type + ' ' + headerTerminationToken
         };
     }
 
@@ -121,8 +114,7 @@ class ResourceHeader extends Component {
 const mapStateToProps = state => {
     return {
         user: state.auth.user,
-        resources: state.ResourceRelationModelReducer.resources,
-        metaInformation: state.ResourceRelationModelReducer.metaInformation
+        resources: state.ResourceRelationModelReducer.resources
     };
 };
 
@@ -134,8 +126,7 @@ ResourceHeader.propTypes = {
     editResource: PropTypes.func.isRequired,
     showBody: PropTypes.func.isRequired,
     isBodyExpanded: PropTypes.bool.isRequired,
-    experimentalLayout: PropTypes.bool.isRequired,
-    metaInformation: PropTypes.object.isRequired
+    experimentalLayout: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
