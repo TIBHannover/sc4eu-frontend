@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, ModalBody, Button } from 'reactstrap';
-import { PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
 
 const SliderText = [
     {
@@ -100,6 +100,7 @@ class IntroductoryPopUp extends Component {
                         <div style={{ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)', display: 'flex' }}>
                             {Array.from({ length: 3 }).map((item, index) => (
                                 <div
+                                    key={index}
                                     style={
                                         this.state.sliderIndex === index
                                             ? {

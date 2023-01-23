@@ -13,6 +13,7 @@ import ROUTES from '../constants/routes';
 const StyledButton = styled(Button)`
     height: 25;
     width: 20;
+    margin-top: 5px;
     :hover {
         transform: scale(1.3);
     }
@@ -43,7 +44,9 @@ const SideBarLayout = () => {
                 </StyledLink>
             </StyledButton>
             <Drawer open={isOpen} onClose={toggleDrawer} direction="left" style={{ marginTop: '50px', width: '250px', height: 'auto' }}>
-                <SideBar />
+                <div onMouseLeave={toggleDrawer}>
+                    <SideBar />
+                </div>
             </Drawer>
         </>
     );

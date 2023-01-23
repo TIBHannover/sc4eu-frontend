@@ -33,7 +33,7 @@ export default class Home extends Component {
                         }}
                     >
                         <img src={Logo} alt="SC3 Logo" style={{ height: 80, width: 70, marginRight: '10px' }} />
-                        The SC3 Portal enables effective ontology management and visualization for cross-stakeholder ontology engineering
+                        The SC3 Portal Enables Effective Ontology Management and Visualization for Cross-stakeholder Ontology Engineering
                     </div>
                 </div>
                 <div
