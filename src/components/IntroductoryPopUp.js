@@ -68,7 +68,10 @@ class IntroductoryPopUp extends Component {
     render() {
         return (
             <div>
-                <Modal isOpen={this.state.firstModal} style={{ maxWidth: '70%', width: '100%', borderRadius: '15px', overflow: 'hidden' }}>
+                <Modal
+                    isOpen={this.state.firstModal}
+                    style={{ maxWidth: '80%', width: '100%', marginLeft: '10%', marginRight: '10%', borderRadius: '15px', overflow: 'hidden' }}
+                >
                     <ModalBody style={{ backgroundColor: 'rgba(214, 230, 242, .3)' }}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <h4 style={{ marginLeft: 'auto' }}>
@@ -92,7 +95,7 @@ class IntroductoryPopUp extends Component {
                         </div>
                         <br />
                         <span style={{ fontSize: '18px', color: TEXTCOLOR }}>{SliderText[this.state.sliderIndex].value}</span>
-                        <div style={{ marginTop: '15px' }}>
+                        <div style={{ marginTop: '15px', marginBottom: '15px' }}>
                             <Button onClick={this.goToNextSlide} style={{ backgroundColor: SECONDARY.dark }}>
                                 {this.state.buttonText}
                             </Button>

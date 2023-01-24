@@ -70,3 +70,5 @@ export const SECONDARY = {
 };
 
 export const TEXTCOLOR = '#4d5b7c';
+
+export const MAX_WIDTH = '769px';
