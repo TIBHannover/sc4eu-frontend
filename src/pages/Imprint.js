@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { PRIMARY, TEXTCOLOR, SECONDARY } from '../styledComponents/styledComponents';
+import { PRIMARY, TEXTCOLOR, SECONDARY, MAX_WIDTH } from '../styledComponents/styledComponents';
+import styled from 'styled-components';
 
 export default class Imprint extends Component {
     render() {
         return (
             <div style={{ height: '100%', width: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div style={{ width: '100%', height: '90%', overflowY: 'auto', paddingBottom: '30px' }}>
-                    <div style={{ paddingTop: '20px', paddingLeft: '300px', paddingRight: '300px' }}>
+                    <StyledDiv>
                         <h2>Imprint</h2>
                         <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
                             Imprint for this website ‐ also serves as provider identification according to § 5 Telemediengesetz (TMG)
@@ -73,10 +74,21 @@ export default class Imprint extends Component {
                             The layout of the homepage, the graphics used and the other content are protected by copyright.
                             <br />
                         </p>
-                    </div>
+                    </StyledDiv>
                 </div>
                 <Footer />
             </div>
         );
     }
 }
+
+const StyledDiv = styled.div`
+    padding-top: 20px;
+    padding-left: 20%;
+    padding-right: 20%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+`;
