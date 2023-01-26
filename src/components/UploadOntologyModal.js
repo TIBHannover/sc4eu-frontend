@@ -6,6 +6,9 @@ import { getGitHubFileContent } from '../network/GithubAPICalls';
 import { getGitlabFileContent } from '../network/GitlabAPICalls';
 import PropTypes from 'prop-types';
 import { SECONDARY } from '../styledComponents/styledComponents';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
+import { faFile } from '@fortawesome/free-solid-svg-icons';
 
 export default class UploadOntology extends Component {
     constructor(props) {
@@ -266,7 +269,7 @@ export default class UploadOntology extends Component {
                                             <Col sm={10}>
                                                 <h5>Select Ontology Upload Source</h5>
                                                 <FormGroup check>
-                                                    <Label check>
+                                                    <Label check style={{ display: 'flex' }}>
                                                         <Input
                                                             type="radio"
                                                             value="github"
@@ -274,11 +277,12 @@ export default class UploadOntology extends Component {
                                                             checked={this.state.uploadSource === 'github'}
                                                             onChange={e => this.setState({ uploadSource: e.target.value })}
                                                         />
-                                                        Upload ontology from Github
+                                                        <Icon icon={faGithub} style={{ marginRight: '0.5%', marginTop: '0.4%' }} />
+                                                        <span>Upload ontology from Github</span>
                                                     </Label>
                                                 </FormGroup>
                                                 <FormGroup check>
-                                                    <Label check>
+                                                    <Label check style={{ display: 'flex' }}>
                                                         <Input
                                                             type="radio"
                                                             value="gitlab"
@@ -286,11 +290,12 @@ export default class UploadOntology extends Component {
                                                             checked={this.state.uploadSource === 'gitlab'}
                                                             onChange={e => this.setState({ uploadSource: e.target.value })}
                                                         />
-                                                        Upload ontology from Gitlab
+                                                        <Icon icon={faGitlab} style={{ marginRight: '0.5%', marginTop: '0.4%' }} />
+                                                        <span>Upload ontology from Gitlab</span>
                                                     </Label>
                                                 </FormGroup>
                                                 <FormGroup check>
-                                                    <Label check>
+                                                    <Label check style={{ display: 'flex' }}>
                                                         <Input
                                                             type="radio"
                                                             value="localFile"
@@ -298,7 +303,8 @@ export default class UploadOntology extends Component {
                                                             checked={this.state.uploadSource === 'localFile'}
                                                             onChange={e => this.setState({ uploadSource: e.target.value })}
                                                         />
-                                                        Upload ontology from local file
+                                                        <Icon icon={faFile} style={{ marginRight: '0.8%', marginTop: '0.4%' }} />
+                                                        <span>Upload ontology from local file</span>
                                                     </Label>
                                                 </FormGroup>
                                             </Col>
@@ -323,49 +329,56 @@ export default class UploadOntology extends Component {
                                             <>
                                                 <div>Please enter github raw file url for the ontology file. Supported formats (ttl, owl)</div>
                                                 <br />
-                                                <Label for="exampleUrl" style={{ float: 'left', marginTop: '4px' }}>
+                                                <Label for="exampleUrl" style={{ flexDirection: 'column' }}>
                                                     GitHub
                                                 </Label>
-                                                <Input
-                                                    id="exampleUrl"
-                                                    type="url"
-                                                    name="url"
-                                                    placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
-                                                    onChange={this.handleUrlChange}
-                                                    style={{
-                                                        border: 'lightgray 1px solid',
-                                                        marginLeft: '5px',
-                                                        width: '50%',
-                                                        float: 'left'
-                                                    }}
-                                                />
-                                                <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleGitHubUrl}>
-                                                    Upload
-                                                </Button>
+                                                <div style={{ display: 'flex' }}>
+                                                    <Input
+                                                        id="exampleUrl"
+                                                        type="url"
+                                                        name="url"
+                                                        placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
+                                                        onChange={this.handleUrlChange}
+                                                        style={{
+                                                            border: 'lightgray 1px solid',
+                                                            width: '50%',
+                                                            flexDirection: 'column'
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        style={{ backgroundColor: SECONDARY.dark, marginLeft: '1%' }}
+                                                        onClick={this.handleGitHubUrl}
+                                                    >
+                                                        Upload
+                                                    </Button>
+                                                </div>
                                             </>
                                         ) : this.state.uploadSource === 'gitlab' ? (
                                             <>
-                                                <div>Please enter gitlab raw file</div>
+                                                <div>Please enter gitlab raw file url for the ontology file. Supported formats (ttl, owl)</div>
                                                 <br />
-                                                <Label for="exampleUrl" style={{ float: 'left', marginTop: '4px' }}>
+                                                <Label for="exampleUrl" style={{ flexDirection: 'column' }}>
                                                     Gitlab
                                                 </Label>
-                                                <Input
-                                                    id="exampleUrl"
-                                                    type="url"
-                                                    name="url"
-                                                    placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
-                                                    onChange={this.handleUrlChange2}
-                                                    style={{
-                                                        border: 'lightgray 1px solid',
-                                                        marginLeft: '5px',
-                                                        width: '50%',
-                                                        float: 'left'
-                                                    }}
-                                                />
-                                                <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleGitlabUrl}>
-                                                    Upload
-                                                </Button>
+                                                <div style={{ display: 'flex' }}>
+                                                    <Input
+                                                        id="exampleUrl"
+                                                        type="url"
+                                                        name="url"
+                                                        placeholder="e.g., https://gitlab.com/tib-ts/ontology/-/blob/main/advanceExample.ttl"
+                                                        onChange={this.handleUrlChange2}
+                                                        style={{
+                                                            border: 'lightgray 1px solid',
+                                                            width: '50%'
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        style={{ backgroundColor: SECONDARY.dark, marginLeft: '1%' }}
+                                                        onClick={this.handleGitlabUrl}
+                                                    >
+                                                        Upload
+                                                    </Button>
+                                                </div>
                                             </>
                                         ) : (
                                             <div />

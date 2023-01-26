@@ -82,8 +82,12 @@ class RightSideBar extends Component {
             licenseName = license.data.license.name;
             licenseURL = license.data.html_url;
         } else if (license && theOntology.lookup_type === 'online-gitlab') {
-            licenseName = license.license.name;
-            licenseURL = license.license_url;
+            if (license.license) {
+                licenseName = license.license.name;
+                licenseURL = license.license_url;
+            } else {
+                licenseName = 'No Licence Available';
+            }
         }
 
         this.setState({
@@ -459,7 +463,7 @@ class RightSideBar extends Component {
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Ontology Name: </span>
                         <span>{this.state.openOntology.name}</span>
                     </div>
-                    {this.state.openOntology.lookup_type === 'online' ? (
+                    {this.state.openOntology.lookup_type === 'online' || 'online-gitlab' ? (
                         <div style={{ padding: '0 10px', width: this.props.width - 5, marginTop: '10px' }}>
                             <Button
                                 onClick={() => this.toggleGitCollapse()}
