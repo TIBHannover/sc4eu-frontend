@@ -24,6 +24,7 @@ export const updateCookies = payload => dispatch => {
                     updateAuth({
                         user: {
                             displayName: userData.displayName,
+                            userEmail: userData.userEmail,
                             gravatarId: userData.gravatarId,
                             userId: userData.userId,
                             role: userData.role,
@@ -95,6 +96,7 @@ export function firstLoad() {
                         updateAuth({
                             user: {
                                 displayName: userData.displayName,
+                                userEmail: userData.userEmail,
                                 gravatarId: userData.gravatarId,
                                 userId: userData.userId,
                                 role: userData.role,

@@ -4,6 +4,7 @@ const GitLabStrategy = require('passport-gitlab2').Strategy;
 require('dotenv').config();
 const request = require('request');
 const sendEmail = require('./sendEmail');
+const sendProjectPermissionEmail = require('./sendProjectPermissionEmail');
 const emailVerificationHtml = require('./emailVerificationHTML');
 const passwordResetEmailHtml = require('./passwordResetEmailHTML');
 const session = require('express-session');
@@ -658,6 +659,31 @@ module.exports = {
                     return res.json(result);
                 } else {
                     return res.json({ success: false, message: 'something went wrong please try again after some time' });
+                }
+            });
+        });
+    },
+
+    projectAccessEmail: function(app) {
+        app.post(`/auth/projectAccessEmail`, (req, res) => {
+            const emailFields = {
+                userEmail: req.body.userEmail,
+                projectAdminEmail: req.body.projectAdminEmail,
+                subject: req.body.emailSubject,
+                body: req.body.emailContent
+            };
+            sendProjectPermissionEmail(emailFields).then(response => {
+                console.log(response);
+                if (response.success) {
+                    res.json({
+                        success: true,
+                        message: 'Email have been sent successfully'
+                    });
+                } else {
+                    res.json({
+                        success: false,
+                        message: 'Something went wrong please try again after some time'
+                    });
                 }
             });
         });

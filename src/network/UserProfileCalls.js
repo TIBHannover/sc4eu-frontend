@@ -4,6 +4,7 @@ import { submitGetRequest, submitPutRequest } from './networkRequests';
 import {
     URL_DELETE_USER,
     URL_GET_ALL_ROLES,
+    URL_GET_ALL_USERS,
     URL_GET_USER_PROJECT,
     URL_GET_USER_ROLE,
     URL_UPDATE_USER_PROJECTS,
@@ -77,4 +78,12 @@ export const updateUserProjects = payload => {
         'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
     };
     return submitPutRequest(URL_UPDATE_USER_PROJECTS, headers, data);
+};
+
+export const getAllUsers = () => {
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+
+    return submitGetRequest(URL_GET_ALL_USERS, headers, true);
 };

@@ -100,6 +100,7 @@ auth.verifyEmail(router);
 auth.forgotPassword(router);
 auth.verifResetPassword(router);
 auth.setNewPassword(router);
+auth.projectAccessEmail(router);
 
 database.uploadOntology(router);
 database.deleteOntology(router);
@@ -110,6 +111,7 @@ database.getProjectIndex(router);
 database.createProject(router);
 database.deleteProject(router);
 database.editProject(router);
+database.getAllUsers(router);
 
 processing.getJSONModelForOntologyID(router);
 processing.initializeOntology(router);

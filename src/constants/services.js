@@ -17,6 +17,7 @@ export const URL_GET_JSON_MODEL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}g
 export const URL_LOGIN_VIA_GITHUB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/github`;
 export const URL_LOGIN_VIA_GITLAB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/gitlab`;
 export const URL_LOGIN_VIA_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/email`;
+export const URL_PROJECT_ACCESS_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/projectAccessEmail`;
 export const URL_REGISTER_VIA_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}users/register`;
 export const URL_FORGOT_PASSWORD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/forgotPassword`;
 export const URL_SET_NEW_PASSWORD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/setNewPassword`;
@@ -35,6 +36,7 @@ export const URL_GET_USER_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL
 
 export const URL_ADMIN_DASHBOARD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}admin/dashboard`;
 export const URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}allowed_upload_of_ontologies`;
+export const URL_GET_ALL_USERS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}users/all`;
 
 // playground
 
