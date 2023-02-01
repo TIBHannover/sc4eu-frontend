@@ -1,21 +1,13 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import styled from 'styled-components';
 
 export default class Dataprotections extends Component {
     render() {
         return (
             <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
-                <div
-                    style={{
-                        width: '100%',
-                        height: '90%',
-                        overflowY: 'auto',
-                        alignItems: 'center',
-                        paddingLeft: '300px',
-                        paddingRight: '300px'
-                    }}
-                >
+                <StyledDiv>
                     <h2
                         style={{
                             marginTop: '20px'
@@ -127,12 +119,26 @@ export default class Dataprotections extends Component {
                         <iframe
                             title="data policy"
                             src="https://support.tib.eu/piwik/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=en&amp;backgroundColor=&amp;fontColor=&amp;fontSize=&amp;fontFamily=sans-serif"
-                            style={{ border: 0, height: '200px', width: '600px', color: TEXTCOLOR, textAlign: 'justify' }}
+                            style={{ border: 0, height: '250px', width: '100%', color: TEXTCOLOR, textAlign: 'justify' }}
                         />
                     </div>
-                </div>
+                </StyledDiv>
                 <Footer />
             </div>
         );
     }
 }
+
+const StyledDiv = styled.div`
+    width: 100%;
+    height: 90%;
+    overflow-y: auto;
+    align-items: center;
+    padding-left: 20%;
+    padding-right: 20%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+`;

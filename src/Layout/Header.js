@@ -16,9 +16,10 @@ import SignInModal from '../components/Signin/SignInModal';
 
 import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import SideBarLayout from './SideBarLayout';
 import background from '../assets/images/Curve Line.svg';
+import styled from 'styled-components';
 
 class Header extends Component {
     constructor(props) {
@@ -127,19 +128,12 @@ class Header extends Component {
         const greeting = greetingTime(new Date());
 
         return (
-            <div
-                style={{
-                    height: '100px',
-                    background: PRIMARY.light,
-                    position: 'relative',
-                    overflow: 'auto'
-                }}
-            >
-                <div style={{ height: '100px', width: '100%', backgroundImage: `url("${background}")` }}>
+            <StyledRootDiv>
+                <StyledHeaderDiv>
                     <div style={{ float: 'left' }}>
                         <SideBarLayout />
                     </div>
-                    <div style={{ float: 'right', marginRight: '20px', marginTop: '15px' }}>
+                    <StyledRightSideDiv>
                         {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
                             <div>
                                 <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
@@ -206,10 +200,10 @@ class Header extends Component {
                                 <Icon className="mr-1" icon={faUser} /> Login
                             </Button>
                         )}
-                    </div>
+                    </StyledRightSideDiv>
                     <SignInModal callback={this.loginCallback} />
-                </div>
-            </div>
+                </StyledHeaderDiv>
+            </StyledRootDiv>
         );
     }
 }
@@ -240,3 +234,36 @@ Header.propTypes = {
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(Header);
+
+const StyledRootDiv = styled.div`
+    height: 100px;
+    position: relative;
+    overflow: auto;
+    background: ${PRIMARY.light};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        height: 50px;
+        overflow: hide;
+    }
+`;
+
+const StyledHeaderDiv = styled.div`
+    height: 100px;
+    width: 100%;
+    background-image: url("${background}");
+    
+     @media (max-width: ${MAX_WIDTH}) {
+        height: 50px;
+        overflow: hide;
+    }
+`;
+
+const StyledRightSideDiv = styled.div`
+    float: right;
+    margin-right: 20px;
+    margin-top: 15px;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+`;

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { PRIMARY } from '../styledComponents/styledComponents';
-import { Container } from 'reactstrap';
+import { MAX_WIDTH, TEXTCOLOR } from '../styledComponents/styledComponents';
 import ProjectView from '../components/ProjectView';
 import RightSideProjectBar from '../components/ontologyView/RightSideProjectBar';
+import styled from 'styled-components';
 
 export default class ProjectList extends Component {
     constructor(props) {
@@ -24,10 +24,40 @@ export default class ProjectList extends Component {
 
     render() {
         return (
-            <div style={{ display: 'flex', marginTop: '5px', zIndex: 150, height: '94vh', width: '74%' }}>
-                <ProjectView title="My Projects" reloadAfterUpdate={() => this.reloadAfterUpdate()} updateFlipFlop={this.state.updateFlipFlop} />
-                <RightSideProjectBar title="Available Projects" updateFlipFlop={this.state.updateFlipFlop} />
-            </div>
+            <>
+                <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
+                <StyledDiv>
+                    <ProjectView title="My Projects" reloadAfterUpdate={() => this.reloadAfterUpdate()} updateFlipFlop={this.state.updateFlipFlop} />
+                    <RightSideProjectBar title="Available Projects" updateFlipFlop={this.state.updateFlipFlop} />
+                </StyledDiv>
+            </>
         );
     }
 }
+
+const StyledDiv = styled.div`
+    display: flex;
+    margin-top: 5px;
+    z-index: 150;
+    height: 94vh;
+    width: 74%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+`;
+
+const StyledInfo = styled.h5`
+    display: none;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: block;
+        width: 100%;
+        padding-top: 20px;
+        padding-left: 10%;
+        padding-right: 10%;
+        text-align: justify;
+        text-align-last: center;
+        color: ${TEXTCOLOR};
+    }
+`;

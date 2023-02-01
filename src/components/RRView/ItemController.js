@@ -5,11 +5,37 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faJedi, faProjectDiagram, faCubesStacked } from '@fortawesome/free-solid-svg-icons';
+import { faProjectDiagram, faCubesStacked } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
 import { PRIMARY, SECONDARY } from './StyledComponents';
 
 class ItemController extends Component {
+    constructor() {
+        super();
+        this.state = {
+            headerLabel: ''
+        };
+    }
+    componentDidMount() {
+        this.header();
+    }
+
+    header = () => {
+        const label = this.props.itemContext.annotations['rdfs:label'];
+        const itemLabel = this.getSuffix(this.props.itemContext.identifier);
+        if (label) {
+            if (label.en) {
+                this.setState({ headerLabel: label.en });
+            } else if (label.de) {
+                this.setState({ headerLabel: label.de });
+            } else {
+                this.setState({ headerLabel: Object.values(label)[0] });
+            }
+        } else {
+            this.setState({ headerLabel: itemLabel });
+        }
+    };
+
     getBackgroundColor = () => {
         if (this.props.itemType === 'Relation') {
             if (this.props.itemContext.isHighlighted) {
@@ -48,7 +74,6 @@ class ItemController extends Component {
     };
 
     render() {
-        const itemLabel = this.getSuffix(this.props.itemContext.identifier);
         const itemHighlighted = this.props.itemContext.isHighlighted;
         return (
             <StyledController style={{ padding: 0, height: '30px', width: '100%', overflow: 'auto', display: 'flex' }}>
@@ -74,13 +99,13 @@ class ItemController extends Component {
                     </Tippy>
                 </div>
                 <div style={{ width: '100%', float: 'center' }}>
-                    <Tippy content={itemLabel}>
+                    <Tippy content={this.state.headerLabel}>
                         <LabelDiv
                             isHighlighted={itemHighlighted}
                             typedBasedColor={this.getBackgroundColor()}
                             typedBasedFontColor={this.getFontColor()}
                         >
-                            {itemLabel}
+                            {this.state.headerLabel}
                         </LabelDiv>
                     </Tippy>
                 </div>
