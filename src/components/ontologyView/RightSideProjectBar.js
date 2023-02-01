@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { PRIMARY } from '../../styledComponents/styledComponents';
 import { getAllProjects } from '../../network/projectIndexing';
-import { getUserProjects } from '../../network/UserProfileCalls';
+import { getAllUsers, getUserProjects } from '../../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import ProjectSideBarCard from '../ProjectSideBarCard';
 
@@ -15,14 +15,33 @@ class RightSideProjectBar extends Component {
         super(props);
         this.state = {
             title: props.title,
-            results: '',
+            results: [],
             flipflop: false,
             isLoading: true
         };
     }
 
     componentDidMount = async () => {
-        this.getProjectsFromBackend();
+        await this.getProjectsFromBackend();
+        await getAllUsers().then(allUsers => {
+            const onlyProjectAdmins = [];
+            allUsers.forEach(user => {
+                if (user.role === 'Project Admin') {
+                    onlyProjectAdmins.push(user);
+                }
+            });
+
+            this.state.results.forEach(project => {
+                project.projectAdmins = [];
+                onlyProjectAdmins.forEach(projectAdmin => {
+                    getUserProjects(projectAdmin.uuid).then(thisAdminProjects => {
+                        if (thisAdminProjects.some(adminProject => adminProject === project.uuid)) {
+                            project.projectAdmins.push({ name: projectAdmin.display_name, email: projectAdmin.email_address });
+                        }
+                    });
+                });
+            });
+        });
     };
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -32,8 +51,8 @@ class RightSideProjectBar extends Component {
         }
     };
 
-    getProjectsFromBackend = () => {
-        getAllProjects().then(allProjects => {
+    getProjectsFromBackend = async () => {
+        await getAllProjects().then(allProjects => {
             allProjects.reverse().forEach(singleProject => {
                 singleProject.unlock = false;
                 if (singleProject.access_type === 'Public' || singleProject.access_type === 'public') {
@@ -53,10 +72,30 @@ class RightSideProjectBar extends Component {
                     });
                 }
             });
+            this.getOnlySideBarProjects(allProjects).then(sortedSideBarProjects => {
+                this.setState({ results: sortedSideBarProjects });
+            });
 
-            const sortProjects = [...allProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
-            this.setState({ results: sortProjects });
+            // const sortProjects = [...allProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
+            // this.setState({ results: sortProjects });
         });
+    };
+
+    getOnlySideBarProjects = async allProjects => {
+        const sideBarProjects = [];
+        await allProjects.forEach(item => {
+            if (item.unlock === false) {
+                sideBarProjects.push(item);
+            }
+        });
+
+        const sortSideBarProjects = [...sideBarProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
+        return sortSideBarProjects;
+    };
+
+    getProjectsForUser = async admin => {
+        const userProjects = await getUserProjects(admin.uuid);
+        return userProjects;
     };
 
     render() {
@@ -64,7 +103,7 @@ class RightSideProjectBar extends Component {
             <ContentContainer
                 id="RightSidebarContainer"
                 initialRendering={this.state.initialRendering}
-                style={{ width: '22%', position: 'absolute', marginTop: '0.4%' }}
+                style={{ width: '22%', position: 'absolute', marginTop: '0.4%', height: '100%' }}
             >
                 <Container
                     className="pr-md-5 pt-sm-2 pb-sm-2 clearfix"
@@ -84,7 +123,8 @@ class RightSideProjectBar extends Component {
                     style={{
                         color: 'black',
                         backgroundColor: 'white',
-                        position: 'absolute'
+                        position: 'absolute',
+                        height: '78%'
                         // zIndex: -500
                     }}
                 >
@@ -93,9 +133,9 @@ class RightSideProjectBar extends Component {
                             Click on the email icon to request permission to a project you are interested to join
                         </p>
                     </div>
-                    <Scrollbars style={{ height: '87vh', borderTop: '0.01rem solid #e7e9eb' }}>
+                    <Scrollbars style={{ borderTop: '0.01rem solid #e7e9eb' }}>
                         <div style={{ textAlign: 'left' }}>
-                            {this.state.results
+                            {this.state.results.length > 0
                                 ? this.state.results.map(item => {
                                       if (item.unlock === false) {
                                           return (
@@ -109,7 +149,7 @@ class RightSideProjectBar extends Component {
                                           );
                                       }
                                   })
-                                : 'Still Loading'}
+                                : 'No Available Projects'}
                         </div>
                     </Scrollbars>
                 </Container>

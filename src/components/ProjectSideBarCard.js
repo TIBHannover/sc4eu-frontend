@@ -2,23 +2,31 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { Button, Label } from 'reactstrap';
+import { Label } from 'reactstrap';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
-import { withRouter } from 'react-router';
 import ClampLines from 'react-clamp-lines';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ProjectPermissionModal from './Modals/ProjectPermissionModal';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 class ProjectIndexCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showEditProjectModal: false
+            showEmailModal: false
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        console.log(this.props.user);
+    }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    emailSent = () => {
+        this.setState({ showEmailModal: false });
+    };
 
     render() {
         return (
@@ -32,10 +40,24 @@ class ProjectIndexCards extends Component {
                         </StyledLabel>
                         <FontAwesomeIcon
                             icon={faEnvelope}
-                            size={'lg'}
+                            hidden={!this.props.user}
+                            size={'12px'}
                             color={SECONDARY.darker}
-                            style={{ float: 'right', marginTop: '5px', marginRight: '5px' }}
-                            onClick={() => alert('under construction')}
+                            style={{ float: 'right', marginTop: '7px', marginRight: '5px' }}
+                            onClick={() => {
+                                this.setState({ showEmailModal: true });
+                            }}
+                        />
+                        <ProjectPermissionModal
+                            toggle={() => {
+                                this.setState({ showEmailModal: !this.state.showEmailModal });
+                            }}
+                            showDialog={this.state.showEmailModal}
+                            projectDetails={this.props.inputData}
+                            callback={() => {
+                                this.emailSent();
+                            }}
+                            userEmail={this.props.user ? this.props.user.userEmail : 'admin@example.com'}
                         />
                     </StyledCardHeader>
                     <StyledCardBody>
@@ -57,16 +79,21 @@ class ProjectIndexCards extends Component {
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    history: PropTypes.object.isRequired
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 
-export default withRouter(ProjectIndexCards);
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
 
-const StyledButton = styled(Button)`
-    :hover {
-        color: white;
-    }
-`;
+export default compose(connect(mapStateToProps))(ProjectIndexCards);
+//export default withRouter(ProjectIndexCards);
+
+// const StyledButton = styled(Button)`
+//     :hover {
+//         color: white;
+//     }
+// `;
 
 const StyledCard = styled.div`
     margin: 5px;

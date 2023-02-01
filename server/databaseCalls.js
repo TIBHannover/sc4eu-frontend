@@ -6,7 +6,6 @@ const verifyToken = require('./veryfyToken');
 module.exports = {
     getProjectIndex: function(app) {
         app.get('/projectIndex', (req, res) => {
-            console.log('Requesting Project Index', `${process.env.BACKEND_SERVER_URL}/projectIndex`);
             const project_indexOptions = {
                 uri: `${process.env.BACKEND_SERVER_URL}/projectIndex`,
                 method: 'GET',
@@ -307,6 +306,33 @@ module.exports = {
                 });
             } catch (e) {
                 res.json({ error: 'Network Error' });
+            }
+        });
+    },
+
+    getAllUsers: function(app) {
+        app.get('/users/all', (req, res) => {
+            try {
+                const options = {
+                    uri: `${process.env.BACKEND_SERVER_URL}/users/all/`,
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                request(options, function(error, response) {
+                    if (response && response.body) {
+                        try {
+                            const result = JSON.parse(response.body);
+                            res.json(result);
+                        } catch (e) {
+                            res.json({ error: 'Network error occurred' });
+                        }
+                    }
+                });
+            } catch (e) {
+                res.json({ error: 'You dont have access to view this page' });
             }
         });
     }

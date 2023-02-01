@@ -139,6 +139,8 @@ class ProjectView extends Component {
                                               }}
                                           />
                                       );
+                                  } else {
+                                      return null;
                                   }
                               })
                             : 'Still Loading'}
