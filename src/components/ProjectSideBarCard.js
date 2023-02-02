@@ -33,7 +33,7 @@ class ProjectIndexCards extends Component {
             <div>
                 <StyledCard className="pl-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        <StyledLabel className="pl-1 pr-1 pt-sm-0 pb-sm-0 mt-1 mb-1">
+                        <StyledLabel style={{ width: '90%' }} className="pl-1 pr-1 pt-sm-0 pb-sm-0 mt-1 mb-1">
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
                                 <div style={{ overflowWrap: 'break-word', fontWeight: '500' }}> {this.props.inputData.name} </div>
                             </div>
