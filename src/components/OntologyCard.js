@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
@@ -13,8 +13,17 @@ import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
 import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
 import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
+import WidocoDocumentation from './widocoDocumentation';
 
 export default class OntologyCard extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showWidocoDocumentation: false,
+            ontologyFile: null
+        };
+    }
+
     componentDidMount() {
         window.localStorage.clear();
     }
@@ -34,6 +43,15 @@ export default class OntologyCard extends Component {
             } catch (error) {
                 console.log('something went wrong');
             }
+        });
+    };
+
+    getOntologyFileForDocumentation = () => {
+        getOntologyById(this.props.inputData.uuid).then(res => {
+            const file = new File([res.ontology_data], this.props.inputData.name, { type: 'text/turtle' });
+            this.setState({ ontologyFile: file }, () => {
+                this.setState({ showWidocoDocumentation: true });
+            });
         });
     };
 
@@ -97,6 +115,29 @@ export default class OntologyCard extends Component {
                         >
                             <Icon icon={faDownload} />
                         </StyledButton>
+                        <StyledButton
+                            color="white"
+                            size="sm"
+                            title="Ontology Documentation"
+                            onClick={this.getOntologyFileForDocumentation}
+                            style={{
+                                float: 'right',
+                                padding: '0px',
+                                marginLeft: 'auto',
+                                marginRight: '10px'
+                            }}
+                        >
+                            <Icon icon={faBook} />
+                        </StyledButton>
+                        {this.state.showWidocoDocumentation && (
+                            <WidocoDocumentation
+                                showDialog={this.state.showWidocoDocumentation}
+                                toggle={() => {
+                                    this.setState({ showWidocoDocumentation: !this.state.showWidocoDocumentation });
+                                }}
+                                file={this.state.ontologyFile}
+                            />
+                        )}
                         <StyledLink
                             to={{
                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY, {

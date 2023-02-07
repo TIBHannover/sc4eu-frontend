@@ -4,6 +4,7 @@ const request = require('request');
 const verifyToken = require('./veryfyToken');
 const { stdout } = require('nodemon/lib/config/defaults');
 const childProcess = require('child_process').exec;
+const multer = require('multer');
 
 module.exports = {
     preInitialization: function(app) {
@@ -132,6 +133,39 @@ module.exports = {
                 } else {
                     res.json({ error: 'Something went wrong in response' });
                 }
+            });
+        });
+    },
+
+    getWidocoDocumentation: function(app) {
+        const storage = multer.memoryStorage();
+        const upload = multer({ storage: storage });
+        app.post('/getWidocoDocumentation', upload.single('file'), (req, res) => {
+            const file = req.file;
+            if (!file) {
+                res.send('No file provided');
+            }
+            const fileContent = file.buffer;
+            const formData = {
+                file: {
+                    value: fileContent,
+                    options: {
+                        filename: file.originalname,
+                        contentType: file.mimetype
+                    }
+                }
+            };
+            const header = {
+                uri: `${process.env.PROCESSING_SERVER_URL}/getWidocoDocumentation`,
+                method: 'POST',
+                formData: formData
+            };
+
+            request(header, (error, response) => {
+                if (error) {
+                    res.send('Error uploading file');
+                }
+                res.send(response.body);
             });
         });
     }

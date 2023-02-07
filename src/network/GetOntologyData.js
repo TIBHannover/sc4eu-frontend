@@ -1,6 +1,6 @@
 import { URL_GET_JSON_MODEL, URL_VIEWONTOLOGY } from 'constants/services';
 import { plainGetRequest } from './networkRequests';
-import { URL_COMPARE_ONTOLOGY } from '../constants/services';
+import { URL_COMPARE_ONTOLOGY, URL_GET_WIDOCO_DOCUMENTATION } from '../constants/services';
 
 export const getOntologyBy = id => {
     // we use parameters from env.
@@ -41,6 +41,27 @@ export const getOntologyComparison = (first, second) => {
                         json.then(resolve).catch(reject);
                     } else {
                         return resolve(json);
+                    }
+                }
+            })
+            .catch(reject);
+    });
+};
+
+export const getWidocoDocumentation = ontologyFile => {
+    const data = new FormData();
+    data.append('file', ontologyFile);
+    return new Promise((resolve, reject) => {
+        fetch(URL_GET_WIDOCO_DOCUMENTATION, { method: 'POST', body: data })
+            .then(response => {
+                if (!response.ok) {
+                    return { message: 'something went wrong, Please try agin after some time' };
+                } else {
+                    const text = response.text();
+                    if (text.then) {
+                        text.then(resolve).catch(reject);
+                    } else {
+                        return resolve(text);
                     }
                 }
             })

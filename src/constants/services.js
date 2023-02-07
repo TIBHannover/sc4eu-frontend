@@ -9,6 +9,7 @@ export const URL_ONTOLOGYINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL
 export const URL_ONTOLOGYBYID = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getOntologyById/`;
 export const URL_VIEWONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelForId/`;
 export const URL_COMPARE_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getComparisonResult`;
+export const URL_GET_WIDOCO_DOCUMENTATION = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getWidocoDocumentation`;
 export const URL_INITIALIZE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}uploadOntology`;
 export const URL_DELETEONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}deleteOntology`;
 export const URL_PRE_INIT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}initializeOntology/`;
