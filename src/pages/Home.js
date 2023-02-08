@@ -20,7 +20,7 @@ export default class Home extends Component {
         return (
             <StyledRootDiv style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <IntroductoryPopUp />
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', height: '10%' }}>
                     <StyledLogo src={Logo} alt="SC3 Logo" />
                     <StyledHeading>
                         The SC3 Portal Enables Effective Ontology Management and Visualization for Cross-stakeholder Ontology Engineering
@@ -62,9 +62,15 @@ const StyledRootDiv = styled.div`
     width: 100%;
     height: 100%;
     background-color: ${PRIMARY.lighter};
+`;
+
+const StyledDiv = styled.div`
+    display: flex;
+    justify-content: center;
+    height: 10%;
 
     @media (max-width: ${MAX_WIDTH}) {
-        overflow: scroll;
+        height: 20%;
     }
 `;
 
@@ -103,28 +109,29 @@ const StyledLogo = styled.img`
 `;
 
 const StyledBody = styled.div`
+    height: 78%;
     margin: auto;
     font-size: 14px;
     text-align: center;
-    padding-top: 50px;
-    padding-bottom: 20px;
+    margin-top: 5%;
+    margin-bottom: 20px;
     margin-left: 15%;
     margin-right: 15%;
     display: flex;
     color: black;
 
     @media (max-width: ${MAX_WIDTH}) {
-        margin: auto;
+        height: 83%;
         flex-direction: column;
         font-size: 8px;
         text-align: center;
-        padding-top: 20px;
-        padding-bottom: 5px;
         margin-left: 2%;
+        padding-top: 5%;
         margin-right: 2%;
         display: flex;
         color: black;
-        margin-bottom: 20px;
+        margin-bottom: 0px;
+        overflow: auto;
     }
 `;
 
@@ -182,7 +189,7 @@ const StyledBodyText = styled.p`
 `;
 
 const StyledVisLogo = styled.img`
-    width: 190px;
+    width: 210px;
     height: 140px;
     align-self: center;
 
@@ -198,6 +205,7 @@ const StyledEditLogo = styled.img`
     height: 140px;
     align-self: center;
     margin-right: 70px;
+    padding-right: 20px;
 
     @media (max-width: ${MAX_WIDTH}) {
         width: 90px;

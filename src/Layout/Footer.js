@@ -92,7 +92,7 @@ const StyledImage = styled.img`
     margin-top: 10px;
 
     @media (max-width: ${MAX_WIDTH}) {
-        height: 50px;
+        height: 40px;
         width: 100px;
         margin-top: 5px;
     }
