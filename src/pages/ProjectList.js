@@ -43,7 +43,7 @@ const StyledDiv = styled.div`
     display: flex;
     margin-top: 5px;
     z-index: 150;
-    height: 94vh;
+    height: 94%;
     width: 74%;
 
     @media (max-width: ${MAX_WIDTH}) {

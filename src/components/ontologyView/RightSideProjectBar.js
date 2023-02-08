@@ -103,7 +103,7 @@ class RightSideProjectBar extends Component {
             <ContentContainer
                 id="RightSidebarContainer"
                 initialRendering={this.state.initialRendering}
-                style={{ width: '22%', position: 'absolute', marginTop: '0.4%', height: '100%' }}
+                style={{ width: '22%', position: 'absolute', marginTop: '0.4%', height: '81%' }}
             >
                 <Container
                     className="pr-md-5 pt-sm-2 pb-sm-2 clearfix"
@@ -124,7 +124,7 @@ class RightSideProjectBar extends Component {
                         color: 'black',
                         backgroundColor: 'white',
                         position: 'absolute',
-                        height: '78%'
+                        height: '88%'
                         // zIndex: -500
                     }}
                 >
