@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, ModalBody, Button } from 'reactstrap';
 import { SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import Cookies from 'js-cookie';
 
 const SliderText = [
     {
@@ -38,14 +39,15 @@ class IntroductoryPopUp extends Component {
             buttonText: 'Next'
         };
     }
+
     componentDidMount() {
-        const visited = sessionStorage['alreadyVisited'];
-        if (visited) {
+        const value = Cookies.get('alreadyVisited');
+        if (value) {
             this.setState({ firstModal: false });
             //do not view Popup
         } else {
             //this is the first time
-            sessionStorage['alreadyVisited'] = true;
+            Cookies.set('alreadyVisited', true);
             this.setState({ firstModal: true });
         }
     }
