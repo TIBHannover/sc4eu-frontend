@@ -23,11 +23,9 @@ DefaultLayout.propTypes = {
 const StyledBody = styled.div`
     min-height: calc(100vh - 0px);
     height: 100%;
-    overflow: auto;
     background-color: ${PRIMARY.lighter};
 `;
 
 const StyledAppContent = styled.div`
     height: calc(100vh - 100px);
-    overflow: auto;
 `;
