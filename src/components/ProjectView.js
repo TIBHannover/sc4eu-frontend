@@ -87,7 +87,7 @@ class ProjectView extends Component {
 
     render() {
         return (
-            <div style={{ width: '100%', marginLeft: '20%', backgroundColor: 'white', marginTop: '0.5%' }}>
+            <div style={{ width: '100%', marginLeft: '20%', backgroundColor: 'white', marginTop: '0.5%', height: '96%' }}>
                 <Container
                     className="pt-sm-2 pb-sm-2 clearfix"
                     style={{
@@ -125,7 +125,7 @@ class ProjectView extends Component {
                     />
                 </div>
                 {/*<hr className="mt-0 mb-2" />*/}
-                <Scrollbars style={{ height: '78vh' }}>
+                <Scrollbars style={{ height: '95%' }}>
                     <div style={{ textAlign: 'left', borderTop: '0.01rem solid #e7e9eb' }}>
                         {this.state.results
                             ? this.state.results.map(item => {
