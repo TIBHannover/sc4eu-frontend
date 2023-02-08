@@ -37,7 +37,7 @@ class OntologyIndexCards extends Component {
 
     render() {
         return (
-            <Scrollbars style={{ height: '70vh' }}>
+            <Scrollbars style={{ height: '67vh' }}>
                 <div className="pl-1 pr-1">{this.renderOntologyCards()}</div>
             </Scrollbars>
         );

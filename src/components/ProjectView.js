@@ -125,7 +125,7 @@ class ProjectView extends Component {
                     />
                 </div>
                 {/*<hr className="mt-0 mb-2" />*/}
-                <Scrollbars style={{ height: '95%' }}>
+                <Scrollbars style={{ height: '90%' }}>
                     <div style={{ textAlign: 'left', borderTop: '0.01rem solid #e7e9eb' }}>
                         {this.state.results
                             ? this.state.results.map(item => {

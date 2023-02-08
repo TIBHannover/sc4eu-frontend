@@ -124,7 +124,7 @@ class RightSideProjectBar extends Component {
                         color: 'black',
                         backgroundColor: 'white',
                         position: 'absolute',
-                        height: '94%'
+                        height: '88%'
                         // zIndex: -500
                     }}
                 >

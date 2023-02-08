@@ -60,7 +60,7 @@ export default class OntologyIndexing extends Component {
 
     render() {
         return (
-            <div style={{ height: '89vh', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ height: '80%', backgroundColor: PRIMARY.lighter }}>
                 <Container
                     style={{
                         borderTop: 'none',
