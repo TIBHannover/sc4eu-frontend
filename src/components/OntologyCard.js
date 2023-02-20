@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import ROUTES from '../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faBook, faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faDownload, faSpinner, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
@@ -13,14 +13,14 @@ import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
 import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
 import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
-import WidocoDocumentation from './widocoDocumentation';
+import { getWidocoDocumentation } from '../network/GetOntologyData';
+import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
 
 export default class OntologyCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showWidocoDocumentation: false,
-            ontologyFile: null
+            isLoading: false
         };
     }
 
@@ -46,13 +46,25 @@ export default class OntologyCard extends Component {
         });
     };
 
-    getOntologyFileForDocumentation = () => {
-        getOntologyById(this.props.inputData.uuid).then(res => {
+    getOntologyFileForDocumentation = async () => {
+        try {
+            this.setState({ isLoading: true });
+            const res = await getOntologyById(this.props.inputData.uuid);
             const file = new File([res.ontology_data], this.props.inputData.name, { type: 'text/turtle' });
-            this.setState({ ontologyFile: file }, () => {
-                this.setState({ showWidocoDocumentation: true });
-            });
-        });
+            const widocoRes = await getWidocoDocumentation(file);
+            if (widocoRes === true) {
+                setTimeout(() => {
+                    window.open(URL_GET_HTML_FILE_WIDOCO, '_blank');
+                }, 2000);
+                this.setState({ isLoading: false });
+            } else {
+                this.setState({ isLoading: false });
+                alert('Something went wrong, please try again after some time');
+            }
+        } catch (error) {
+            this.setState({ isLoading: false });
+            alert(error);
+        }
     };
 
     deleteOntology = async event => {
@@ -90,6 +102,16 @@ export default class OntologyCard extends Component {
     render() {
         return (
             <div>
+                {this.state.isLoading && (
+                    <div className="text-center text-primary">
+                        <h2 className="h5">
+                            <span>
+                                <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                            </span>
+                            Loading Document
+                        </h2>
+                    </div>
+                )}
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
                         <StyledButton
@@ -129,15 +151,6 @@ export default class OntologyCard extends Component {
                         >
                             <Icon icon={faBook} />
                         </StyledButton>
-                        {this.state.showWidocoDocumentation && (
-                            <WidocoDocumentation
-                                showDialog={this.state.showWidocoDocumentation}
-                                toggle={() => {
-                                    this.setState({ showWidocoDocumentation: !this.state.showWidocoDocumentation });
-                                }}
-                                file={this.state.ontologyFile}
-                            />
-                        )}
                         <StyledLink
                             to={{
                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY, {

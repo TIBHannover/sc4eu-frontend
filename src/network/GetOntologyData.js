@@ -55,13 +55,13 @@ export const getWidocoDocumentation = ontologyFile => {
         fetch(URL_GET_WIDOCO_DOCUMENTATION, { method: 'POST', body: data })
             .then(response => {
                 if (!response.ok) {
-                    return { message: 'something went wrong, Please try agin after some time' };
+                    return { message: 'something went wrong, Please try again after some time' };
                 } else {
-                    const text = response.text();
-                    if (text.then) {
-                        text.then(resolve).catch(reject);
+                    const json = response.json();
+                    if (json.then) {
+                        json.then(resolve).catch(reject);
                     } else {
-                        return resolve(text);
+                        return resolve(json);
                     }
                 }
             })

@@ -5,6 +5,9 @@ const verifyToken = require('./veryfyToken');
 const { stdout } = require('nodemon/lib/config/defaults');
 const childProcess = require('child_process').exec;
 const multer = require('multer');
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
 
 module.exports = {
     preInitialization: function(app) {
@@ -140,7 +143,7 @@ module.exports = {
     getWidocoDocumentation: function(app) {
         const storage = multer.memoryStorage();
         const upload = multer({ storage: storage });
-        app.post('/getWidocoDocumentation', upload.single('file'), (req, res) => {
+        app.post('/getWidoco', upload.single('file'), (req, res) => {
             const file = req.file;
             if (!file) {
                 res.send('No file provided');
@@ -160,13 +163,52 @@ module.exports = {
                 method: 'POST',
                 formData: formData
             };
-
             request(header, (error, response) => {
                 if (error) {
-                    res.send('Error uploading file');
+                    res.send('Something went wrong, Please try again after some time');
                 }
-                res.send(response.body);
+                if (response.body === true) {
+                    res.json({ success: true });
+                } else {
+                    res.send(response.body);
+                }
             });
+        });
+    },
+
+    getHtmlForWidoco: function(app) {
+        app.use('/getHtmlForWidoco', (req, res) => {
+            // Set the file paths for Widoco-generated documentation. These paths depend on whether the script is being run on a local machine or a server.
+
+            // For local machines, the documentation is generated in the widoco_doc_directory and widoco_directory.
+            const widoco_doc_directory = path.join(__dirname, '..', '..', '..', 'Widoco_Document/doc');
+            const widoco_directory = path.join(__dirname, '..', '..', '..', 'Widoco_Document');
+
+            // For servers, the documentation is generated in the document_doc and document_dir located in the same directory as the script.
+            const document_doc = path.join(__dirname, 'Widoco_Document/doc');
+            const document_dir = path.join(__dirname, 'Widoco_Document');
+
+            let staticPath;
+
+            if (fs.existsSync(widoco_doc_directory)) {
+                staticPath = widoco_doc_directory;
+            } else if (fs.existsSync(widoco_directory)) {
+                staticPath = widoco_directory;
+            } else if (fs.existsSync(document_doc)) {
+                staticPath = document_doc;
+            } else if (fs.existsSync(document_dir)) {
+                staticPath = document_dir;
+            } else {
+                res.status(404).send('Page is not available in this moment!');
+                return;
+            }
+
+            const files = fs.readdirSync(staticPath);
+            if (files.length > 0) {
+                express.static(staticPath)(req, res);
+            } else {
+                res.status(404).send('Page is not available in this moment!');
+            }
         });
     }
 };

@@ -117,6 +117,7 @@ processing.getJSONModelForOntologyID(router);
 processing.initializeOntology(router);
 processing.compareTwoOntologies(router);
 processing.getWidocoDocumentation(router);
+processing.getHtmlForWidoco(router);
 
 /** GITHUB OAUTH STUFF**/
 router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
