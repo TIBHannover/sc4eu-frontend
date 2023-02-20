@@ -55,8 +55,8 @@ export default class OntologyCard extends Component {
             if (widocoRes === true) {
                 setTimeout(() => {
                     window.open(URL_GET_HTML_FILE_WIDOCO, '_blank');
+                    this.setState({ isLoading: false });
                 }, 2000);
-                this.setState({ isLoading: false });
             } else {
                 this.setState({ isLoading: false });
                 alert('Something went wrong, please try again after some time');
