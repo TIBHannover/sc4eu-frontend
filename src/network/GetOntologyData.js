@@ -1,6 +1,6 @@
 import { URL_GET_JSON_MODEL, URL_VIEWONTOLOGY } from 'constants/services';
 import { plainGetRequest } from './networkRequests';
-import { URL_COMPARE_ONTOLOGY } from '../constants/services';
+import { URL_COMPARE_ONTOLOGY, URL_GET_WIDOCO_DOCUMENTATION } from '../constants/services';
 
 export const getOntologyBy = id => {
     // we use parameters from env.
@@ -35,6 +35,27 @@ export const getOntologyComparison = (first, second) => {
             .then(response => {
                 if (!response.ok) {
                     console.log('ERROR WHILE CREATING RESOURCE-RELATION MODEL, ', !response.ok);
+                } else {
+                    const json = response.json();
+                    if (json.then) {
+                        json.then(resolve).catch(reject);
+                    } else {
+                        return resolve(json);
+                    }
+                }
+            })
+            .catch(reject);
+    });
+};
+
+export const getWidocoDocumentation = ontologyFile => {
+    const data = new FormData();
+    data.append('file', ontologyFile);
+    return new Promise((resolve, reject) => {
+        fetch(URL_GET_WIDOCO_DOCUMENTATION, { method: 'POST', body: data })
+            .then(response => {
+                if (!response.ok) {
+                    return { message: 'something went wrong, Please try again after some time' };
                 } else {
                     const json = response.json();
                     if (json.then) {
