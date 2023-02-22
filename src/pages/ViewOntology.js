@@ -11,7 +11,7 @@ import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 import { PRIMARY } from '../styledComponents/styledComponents';
-import { ALREADY_LOADED_ONTOLOGY, SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
+import { ALREADY_LOADED_ONTOLOGY } from '../constants/globalConstants';
 
 class ViewOntology extends Component {
     constructor(props) {
@@ -88,7 +88,7 @@ class ViewOntology extends Component {
                         </div>
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'hybrid' && (
+                    {this.state.isLoading === false && this.state.error === false && this.props.match.params.modeOfOperations === 'hybrid' && (
                         <div>
                             <OntologyViewRoot
                                 leftSideExpanded={this.leftSideExpanded}
@@ -99,13 +99,13 @@ class ViewOntology extends Component {
                             />
                         </div>
                     )}
-                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'text' && (
+                    {this.state.isLoading === false && this.state.error === false && this.props.match.params.modeOfOperations === 'text' && (
                         <OntologyViewAsTTL />
                     )}
-                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'graph' && (
+                    {this.state.isLoading === false && this.state.error === false && this.props.match.params.modeOfOperations === 'graph' && (
                         <GraphVisUi
                             DonatelloGraph={this.DonatelloGraph}
-                            visualizationTabIsActive={this.props.location.modeOfOperations === 'graph'}
+                            visualizationTabIsActive={this.props.match.params.modeOfOperations === 'graph'}
                         />
                     )}
                 </div>
@@ -125,7 +125,8 @@ const mapStateToProps = state => {
 ViewOntology.propTypes = {
     match: PropTypes.shape({
         params: PropTypes.shape({
-            ontologyId: PropTypes.string.isRequired
+            ontologyId: PropTypes.string.isRequired,
+            modeOfOperations: PropTypes.string.isRequired
         }).isRequired
     }).isRequired,
     location: PropTypes.object.isRequired,

@@ -5,7 +5,7 @@ export default {
     PAGEB: '/pageB',
     ONTOLOGY: '/ontology',
     PROJECT: '/project',
-    VIEW_ONTOLOGY: '/view_ontology/:ontologyId',
+    VIEW_ONTOLOGY: '/view_ontology/:ontologyId/:modeOfOperations',
     DELETE_ONTOLOGY: '/delete_ontology/:ontologyId',
     USER_PROFILE: '/user/profile/:userId',
     USER_SETTINGS: '/user/settings/',
