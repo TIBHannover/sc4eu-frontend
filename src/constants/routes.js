@@ -10,7 +10,7 @@ export default {
     USER_PROFILE: '/user/profile/:userId',
     USER_SETTINGS: '/user/settings/',
     SERVICE_STATUS: '/servicesStatus',
-    ADMIN_DASHBOARD: '/admin/dashboard',
+    ADMIN_DASHBOARD: '/admin_Dashboard',
 
     LOGGED_IN: '/loggedIn',
     Documentations: '/Documentations',
