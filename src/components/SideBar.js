@@ -131,10 +131,8 @@ const SideBar = () => {
                             <StyledLink
                                 title="Open Hybrid View"
                                 to={{
-                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: selectedOntologySession.uuid,
-                                        modeOfOperations: 'hybrid'
-                                    }),
+                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                    search: `?ontologyId=${selectedOntologySession.uuid}&modeOfOperations=hybrid`,
                                     project: selectedProjectSession,
                                     ontologyName: selectedOntologySession.name
                                 }}
@@ -147,10 +145,8 @@ const SideBar = () => {
                             <StyledLink
                                 title="Open Graph View"
                                 to={{
-                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: selectedOntologySession.uuid,
-                                        modeOfOperations: 'graph'
-                                    })
+                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                    search: `?ontologyId=${selectedOntologySession.uuid}&modeOfOperations=graph`
                                 }}
                                 onClick={() => selectModeOfOperation('graph')}
                                 activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
@@ -161,10 +157,8 @@ const SideBar = () => {
                             <StyledLink
                                 title="Open Text View"
                                 to={{
-                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                        ontologyId: selectedOntologySession.uuid,
-                                        modeOfOperations: 'text'
-                                    })
+                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                    search: `?ontologyId=${selectedOntologySession.uuid}&modeOfOperations=text`
                                 }}
                                 onClick={() => selectModeOfOperation('text')}
                                 activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}

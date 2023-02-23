@@ -153,10 +153,8 @@ export default class OntologyCard extends Component {
                         </StyledButton>
                         <StyledLink
                             to={{
-                                pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                    ontologyId: this.props.inputData.uuid,
-                                    modeOfOperations: 'hybrid'
-                                }),
+                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                search: `?ontologyId=${this.props.inputData.uuid}&modeOfOperations=hybrid`,
                                 ontologyVersion: this.props.ontologyVersion
                             }}
                             onClick={this.onclick}

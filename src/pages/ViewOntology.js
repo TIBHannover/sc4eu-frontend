@@ -16,13 +16,13 @@ import { ALREADY_LOADED_ONTOLOGY } from '../constants/globalConstants';
 class ViewOntology extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             isLoading: true,
             ontologyFileContent: undefined,
             error: false,
             errorMsg: '',
-            modeOfOperation: 'hybrid'
+            modeOfOperations: '',
+            ontologyID: ''
         };
 
         this.DonatelloGraph = new DonatelloGraph();
@@ -32,20 +32,28 @@ class ViewOntology extends Component {
     }
 
     componentDidMount() {
-        // on mount we fetch all Ontologies
-        const loadedOntology = sessionStorage.getItem(ALREADY_LOADED_ONTOLOGY);
-        if (loadedOntology !== this.props.match.params.ontologyId) {
-            console.log('Loading from backend');
-            sessionStorage.setItem(ALREADY_LOADED_ONTOLOGY, this.props.match.params.ontologyId);
-            this.getOntologyFromBackend();
-        } else {
-            this.setState({ isLoading: false, ontologyFileContent: 'not exported' });
-        }
+        const urlParams = new URLSearchParams(this.props.location.search);
+        const response = Object.fromEntries(urlParams);
+
+        // Update the state with the ontologyID value from the query params
+        this.setState({ ontologyID: response.ontologyId, modeOfOperations: response.modeOfOperations }, () => {
+            // Fetch the ontology from the backend if it hasn't been loaded yet
+            const loadedOntology = sessionStorage.getItem(ALREADY_LOADED_ONTOLOGY);
+            if (loadedOntology !== this.state.ontologyID) {
+                sessionStorage.setItem(ALREADY_LOADED_ONTOLOGY, this.state.ontologyID);
+                this.getOntologyFromBackend();
+            } else {
+                this.setState({ isLoading: false, ontologyFileContent: 'not exported' });
+            }
+        });
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.ui_tab_selectorChanges !== this.props.ui_tab_selectorChanges) {
-            this.setState({ modeOfOperation: 'hybrid' });
+        // Check if the modes parameter has changed
+        if (this.props.location.search !== prevProps.location.search) {
+            const urlParams = new URLSearchParams(this.props.location.search);
+            const response = Object.fromEntries(urlParams);
+            this.setState({ modeOfOperations: response.modeOfOperations });
         }
     }
 
@@ -59,7 +67,7 @@ class ViewOntology extends Component {
 
     getOntologyFromBackend = () => {
         // TODO: refactor>? getOntologyByID -> getJSONMOdel For ontology ID
-        getOntologyBy(this.props.match.params.ontologyId).then(res => {
+        getOntologyBy(this.state.ontologyID).then(res => {
             if (res.ontology_data) {
                 // create json obj from the string
                 const parsedModel = res.ontology_data;
@@ -88,7 +96,7 @@ class ViewOntology extends Component {
                         </div>
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && this.props.match.params.modeOfOperations === 'hybrid' && (
+                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'hybrid' && (
                         <div>
                             <OntologyViewRoot
                                 leftSideExpanded={this.leftSideExpanded}
@@ -99,14 +107,9 @@ class ViewOntology extends Component {
                             />
                         </div>
                     )}
-                    {this.state.isLoading === false && this.state.error === false && this.props.match.params.modeOfOperations === 'text' && (
-                        <OntologyViewAsTTL />
-                    )}
-                    {this.state.isLoading === false && this.state.error === false && this.props.match.params.modeOfOperations === 'graph' && (
-                        <GraphVisUi
-                            DonatelloGraph={this.DonatelloGraph}
-                            visualizationTabIsActive={this.props.match.params.modeOfOperations === 'graph'}
-                        />
+                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'text' && <OntologyViewAsTTL />}
+                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'graph' && (
+                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperations === 'graph'} />
                     )}
                 </div>
             </div>
@@ -123,12 +126,6 @@ const mapStateToProps = state => {
 };
 
 ViewOntology.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            ontologyId: PropTypes.string.isRequired,
-            modeOfOperations: PropTypes.string.isRequired
-        }).isRequired
-    }).isRequired,
     location: PropTypes.object.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
     ui_tab_selectorChanges: PropTypes.bool.isRequired
