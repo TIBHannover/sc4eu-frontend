@@ -8,13 +8,14 @@ import { faBook, faDownload, faSpinner, faTrash } from '@fortawesome/free-solid-
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
+import { MODE_OF_OPERATIONS, SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
 import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
 import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
 import { getWidocoDocumentation } from '../network/GetOntologyData';
 import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
+import Cookies from 'js-cookie';
 
 export default class OntologyCard extends Component {
     constructor(props) {
@@ -97,6 +98,7 @@ export default class OntologyCard extends Component {
     onclick = () => {
         sessionStorage.removeItem(SELECTED_ONTOLOGY_SESSION);
         sessionStorage.setItem(SELECTED_ONTOLOGY_SESSION, JSON.stringify(this.props.inputData));
+        Cookies.set(MODE_OF_OPERATIONS, 'hybrid');
     };
 
     render() {
@@ -154,7 +156,7 @@ export default class OntologyCard extends Component {
                         <StyledLink
                             to={{
                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                search: `?ontologyId=${this.props.inputData.uuid}&modeOfOperations=hybrid`,
+                                search: `?ontologyId=${this.props.inputData.uuid}`,
                                 ontologyVersion: this.props.ontologyVersion
                             }}
                             onClick={this.onclick}

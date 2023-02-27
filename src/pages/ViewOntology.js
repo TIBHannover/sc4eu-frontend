@@ -11,7 +11,8 @@ import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 import { PRIMARY } from '../styledComponents/styledComponents';
-import { ALREADY_LOADED_ONTOLOGY } from '../constants/globalConstants';
+import { ALREADY_LOADED_ONTOLOGY, MODE_OF_OPERATIONS } from '../constants/globalConstants';
+import Cookies from 'js-cookie';
 
 class ViewOntology extends Component {
     constructor(props) {
@@ -21,7 +22,6 @@ class ViewOntology extends Component {
             ontologyFileContent: undefined,
             error: false,
             errorMsg: '',
-            modeOfOperations: '',
             ontologyID: ''
         };
 
@@ -36,7 +36,7 @@ class ViewOntology extends Component {
         const response = Object.fromEntries(urlParams);
 
         // Update the state with the ontologyID value from the query params
-        this.setState({ ontologyID: response.ontologyId, modeOfOperations: response.modeOfOperations }, () => {
+        this.setState({ ontologyID: response.ontologyId }, () => {
             // Fetch the ontology from the backend if it hasn't been loaded yet
             const loadedOntology = sessionStorage.getItem(ALREADY_LOADED_ONTOLOGY);
             if (loadedOntology !== this.state.ontologyID) {
@@ -48,14 +48,7 @@ class ViewOntology extends Component {
         });
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        // Check if the modes parameter has changed
-        if (this.props.location.search !== prevProps.location.search) {
-            const urlParams = new URLSearchParams(this.props.location.search);
-            const response = Object.fromEntries(urlParams);
-            this.setState({ modeOfOperations: response.modeOfOperations });
-        }
-    }
+    componentDidUpdate(prevProps, prevState, snapshot) {}
 
     /** Functions forwarded to view Root for handling state Updates **/
     setLeftSideExpanded = val => {
@@ -80,6 +73,7 @@ class ViewOntology extends Component {
     };
 
     render() {
+        const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
         return (
             <div style={{ height: '90%', backgroundColor: PRIMARY.lighter }}>
                 <div className="pl-1 pr-1">
@@ -96,7 +90,7 @@ class ViewOntology extends Component {
                         </div>
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'hybrid' && (
+                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'hybrid' && (
                         <div>
                             <OntologyViewRoot
                                 leftSideExpanded={this.leftSideExpanded}
@@ -107,9 +101,9 @@ class ViewOntology extends Component {
                             />
                         </div>
                     )}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'text' && <OntologyViewAsTTL />}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'graph' && (
-                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperations === 'graph'} />
+                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'text' && <OntologyViewAsTTL />}
+                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'graph' && (
+                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={modeOfOperations === 'graph'} />
                     )}
                 </div>
             </div>

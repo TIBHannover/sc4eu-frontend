@@ -16,10 +16,11 @@ import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
-import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { MODE_OF_OPERATIONS, SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { MAX_WIDTH, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import WebProtege from '../assets/images/webprotege.png';
 import ontology from '../assets/images/Ontology.png';
+import Cookies from 'js-cookie';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -88,10 +89,12 @@ const StyledHeadingDiv = styled.div`
 const SideBar = () => {
     const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
     const selectedOntologySession = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
-    const [isActiveTab, setIsActiveTab] = useState('hybrid');
+    const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
+    const [isActiveTab, setIsActiveTab] = useState(modeOfOperations);
 
     const selectModeOfOperation = val => {
         setIsActiveTab(val);
+        Cookies.set(MODE_OF_OPERATIONS, val);
     };
 
     const ActiveStyle = {
@@ -132,7 +135,7 @@ const SideBar = () => {
                                 title="Open Hybrid View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntologySession.uuid}&modeOfOperations=hybrid`,
+                                    search: `?ontologyId=${selectedOntologySession.uuid}`,
                                     project: selectedProjectSession,
                                     ontologyName: selectedOntologySession.name
                                 }}
@@ -146,7 +149,7 @@ const SideBar = () => {
                                 title="Open Graph View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntologySession.uuid}&modeOfOperations=graph`
+                                    search: `?ontologyId=${selectedOntologySession.uuid}`
                                 }}
                                 onClick={() => selectModeOfOperation('graph')}
                                 activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
@@ -158,7 +161,7 @@ const SideBar = () => {
                                 title="Open Text View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntologySession.uuid}&modeOfOperations=text`
+                                    search: `?ontologyId=${selectedOntologySession.uuid}`
                                 }}
                                 onClick={() => selectModeOfOperation('text')}
                                 activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
