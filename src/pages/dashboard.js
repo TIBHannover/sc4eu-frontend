@@ -5,10 +5,16 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { requestDashboard } from '../network/loginCalls';
 import { getAllRoles } from '../network/UserProfileCalls';
 import DashboardItem from '../components/DashboardItem';
+import DashboardProjects from '../components/DashboardProjects';
 import { getAllProjects } from '../network/projectIndexing';
-import { Table } from 'reactstrap';
+import { Col, Nav, NavItem, NavLink, Row, TabContent, Table, TabPane } from 'reactstrap';
+import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,7 +22,8 @@ export default class Dashboard extends Component {
             users: undefined,
             userRoles: [],
             ontologies: [],
-            projects: []
+            projects: [],
+            activeTab: '1'
         };
     }
 
@@ -74,7 +81,7 @@ export default class Dashboard extends Component {
         });
     };
 
-    renderDashboard = () => {
+    renderUserDashboard = () => {
         if (this.state.users) {
             if (this.state.users.error) {
                 return <h1>{this.state.users.error}</h1>;
@@ -86,9 +93,9 @@ export default class Dashboard extends Component {
                             <Table bordered>
                                 <thead>
                                     <tr>
-                                        <th>UUID</th>
-                                        <th>Email</th>
+                                        {/*<th>UUID</th>*/}
                                         <th>Name</th>
+                                        <th>Email</th>
                                         <th>Auth Type</th>
                                         <th>Verified User</th>
                                         <th>Role</th>
@@ -105,6 +112,14 @@ export default class Dashboard extends Component {
         }
     };
 
+    toggle = tab => {
+        if (this.state.activeTab !== tab) {
+            this.setState({
+                activeTab: tab
+            });
+        }
+    };
+
     render() {
         return (
             <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
@@ -118,8 +133,50 @@ export default class Dashboard extends Component {
                         </h2>
                     </div>
                 )}
-                <div style={{ marginLeft: '10%', marginRight: '10%' }}>{!this.state.loading && this.renderDashboard()}</div>
+                <Nav tabs style={{ alignContent: 'center', fontStyle: 'normal' }}>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === '1' })}
+                            onClick={() => {
+                                this.toggle('1');
+                            }}
+                        >
+                            Projects
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === '2' })}
+                            onClick={() => {
+                                this.toggle('2');
+                            }}
+                        >
+                            Users
+                        </NavLink>
+                    </NavItem>
+                </Nav>
+
+                <TabContent activeTab={this.state.activeTab}>
+                    <TabPane tabId="1">
+                        <DashboardProjects currentUser={this.props.user} />
+                    </TabPane>
+                    <TabPane tabId="2">
+                        <div style={{ marginLeft: '1%', marginRight: '1%' }}>{!this.state.loading && this.renderUserDashboard()}</div>
+                    </TabPane>
+                </TabContent>
+
+                {/*<div style={{ marginLeft: '1%', marginRight: '1%' }}>{!this.state.loading && this.renderDashboard()}</div>*/}
             </div>
         );
     }
 }
+
+Dashboard.propTypes = {
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+};
+
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+export default compose(connect(mapStateToProps))(Dashboard);
