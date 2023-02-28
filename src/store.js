@@ -14,7 +14,8 @@ export const history = createBrowserHistory({ basename: env('PUBLIC_URL') });
 const persistConfig = {
     key: 'root',
     storage,
-    expire: 8 * 60 * 60 * 1000 // 8 hours in milliseconds
+    expires: 8 * 60 * 60 * 1000, // 8 hours in milliseconds
+    blacklist: ['auth']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer(history));
