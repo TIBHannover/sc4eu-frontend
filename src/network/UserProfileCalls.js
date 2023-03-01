@@ -1,4 +1,4 @@
-import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } from 'constants/services';
+//import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } from 'constants/services';
 
 import { submitGetRequest, submitPutRequest } from './networkRequests';
 import {
@@ -6,9 +6,14 @@ import {
     URL_GET_ALL_ROLES,
     URL_GET_ALL_USERS,
     URL_GET_USER_PROJECT,
+    URL_GET_USER_PROJECTS_Detail,
     URL_GET_USER_ROLE,
     URL_UPDATE_USER_PROJECTS,
-    URL_UPDATE_USER_ROLE
+    URL_UPDATE_USER_ROLE,
+    URL_GET_PROJECT_USERS_Detail,
+    URL_GET_USER_PROFILE,
+    URL_GET_USER_SETTINGS,
+    URL_UPDATE_USER_SETTING
 } from '../constants/services';
 
 export const getUserProfile = payload => {
@@ -38,6 +43,14 @@ export const getUserRole = userId => {
 
 export const getUserProjects = userId => {
     return submitGetRequest(`${URL_GET_USER_PROJECT}/?userId=${userId}`, {}, false);
+};
+
+export const getUserProjectsDetail = userId => {
+    return submitGetRequest(`${URL_GET_USER_PROJECTS_Detail}/?userId=${userId}`, {}, false);
+};
+
+export const getProjectUsersDetail = projectId => {
+    return submitGetRequest(`${URL_GET_PROJECT_USERS_Detail}/?projectId=${projectId}`, {}, false);
 };
 
 export const updateUserSettings = payload => {

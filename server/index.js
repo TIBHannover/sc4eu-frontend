@@ -86,6 +86,8 @@ server.adminDashBoard(router);
 server.allRoles(router);
 server.userRole(router);
 server.userProject(router);
+server.userProjectsDetail(router);
+server.projectUsersDetail(router);
 server.allowUploads(router);
 server.getUserHeader(router);
 server.deleteUser(router);

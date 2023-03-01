@@ -35,6 +35,8 @@ export const URL_DELETE_USER = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user
 export const URL_GET_ALL_ROLES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}roles/all`;
 export const URL_GET_USER_ROLE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/role`;
 export const URL_GET_USER_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/projects`;
+export const URL_GET_USER_PROJECTS_Detail = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/projectsDetail`;
+export const URL_GET_PROJECT_USERS_Detail = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}project/usersDetail`;
 
 export const URL_ADMIN_DASHBOARD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}admin/dashboard`;
 export const URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}allowed_upload_of_ontologies`;

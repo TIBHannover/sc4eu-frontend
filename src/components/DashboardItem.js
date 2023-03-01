@@ -52,7 +52,6 @@ class DashboardItem extends Component {
     }
 
     componentDidMount = () => {
-        console.log('componentDidMount');
         //Get Current role and Current Projects for this user
         this.getRoleForUser();
         this.getProjectsForUser();
@@ -148,9 +147,8 @@ class DashboardItem extends Component {
         let counter = 0;
         return (
             <>
-                <td>{user.uuid}</td>
-                <td>{user.email_address}</td>
                 <td>{user.display_name}</td>
+                <td>{user.email_address}</td>
                 <td>{user.auth_type}</td>
                 <td>{user.email_valid === false ? 'false' : 'true'}</td>
                 <td>

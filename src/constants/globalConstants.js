@@ -2,6 +2,7 @@ export const minLengthPassword = 5;
 export const SELECTED_PROJECT_SESSION = 'selectedProjectSession';
 export const SELECTED_ONTOLOGY_SESSION = 'selectedOntologySession';
 export const ALREADY_LOADED_ONTOLOGY = 'alreadyLoadedOntology';
+export const MODE_OF_OPERATIONS = 'modeOfOperations';
 
 export const CLEAR_SESSION = function() {
     sessionStorage.removeItem(SELECTED_PROJECT_SESSION);
