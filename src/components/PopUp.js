@@ -31,6 +31,7 @@ const PopUp = props => {
                         <span
                             style={{
                                 fontSize: '24px',
+                                color: '#000000',
                                 fontWeight: 600,
                                 textAlign: 'center'
                             }}

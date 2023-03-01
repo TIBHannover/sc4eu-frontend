@@ -2,7 +2,6 @@ const nodemailer = require('nodemailer');
 
 module.exports = async EmailFields => {
     try {
-        console.log(EmailFields);
         const transporter = nodemailer.createTransport({
             host: process.env.MAIL_HOST,
             secureConnection: process.env.MAIL_SECURE,
