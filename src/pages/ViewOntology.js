@@ -125,7 +125,7 @@ ViewOntology.propTypes = {
     location: PropTypes.object.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
     ui_tab_selectorChanges: PropTypes.bool.isRequired,
-    redux_getAlreadyLoadedOntology: PropTypes.func.isRequired,
+    redux_getAlreadyLoadedOntology: PropTypes.object.isRequired,
     redux_alreadyLoadedOntology: PropTypes.func.isRequired
 };
 
