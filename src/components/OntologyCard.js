@@ -8,7 +8,7 @@ import { faBook, faDownload, faSpinner, faTrash } from '@fortawesome/free-solid-
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { MODE_OF_OPERATIONS, SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
+import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
 import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
@@ -16,8 +16,11 @@ import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
 import { getWidocoDocumentation } from '../network/GetOntologyData';
 import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
 import Cookies from 'js-cookie';
+import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 
-export default class OntologyCard extends Component {
+class OntologyCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -25,9 +28,7 @@ export default class OntologyCard extends Component {
         };
     }
 
-    componentDidMount() {
-        window.localStorage.clear();
-    }
+    componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
@@ -96,8 +97,8 @@ export default class OntologyCard extends Component {
     };
 
     onclick = () => {
-        sessionStorage.removeItem(SELECTED_ONTOLOGY_SESSION);
-        sessionStorage.setItem(SELECTED_ONTOLOGY_SESSION, JSON.stringify(this.props.inputData));
+        this.props.redux_removeOntology();
+        this.props.redux_addOntology(this.props.inputData);
         Cookies.set(MODE_OF_OPERATIONS, 'hybrid');
     };
 
@@ -159,7 +160,7 @@ export default class OntologyCard extends Component {
                                 search: `?ontologyId=${this.props.inputData.uuid}`,
                                 ontologyVersion: this.props.ontologyVersion
                             }}
-                            onClick={this.onclick}
+                            onMouseDown={this.onclick}
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
@@ -193,8 +194,17 @@ export default class OntologyCard extends Component {
 OntologyCard.propTypes = {
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    ontologyVersion: PropTypes.string.isRequired
+    ontologyVersion: PropTypes.string.isRequired,
+    redux_addOntology: PropTypes.func.isRequired,
+    redux_removeOntology: PropTypes.func.isRequired
 };
+
+const mapDispatchToProps = dispatch => ({
+    redux_removeOntology: () => dispatch(redux_removeOntology()),
+    redux_addOntology: data => dispatch(redux_addOntology(data))
+});
+
+export default withRouter(connect(null, mapDispatchToProps)(OntologyCard));
 
 const StyledCard = styled.div`
     margin: 5px;
