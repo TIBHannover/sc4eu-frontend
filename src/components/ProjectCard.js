@@ -10,10 +10,11 @@ import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
-import { CLEAR_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { withRouter } from 'react-router';
 import ClampLines from 'react-clamp-lines';
+import { redux_addProject, redux_removeAlreadyLoadedOntology, redux_removeOntology, redux_removeProject } from '../redux/actions/rrm_actions';
+import { connect } from 'react-redux';
 
 class ProjectIndexCards extends Component {
     constructor(props) {
@@ -65,12 +66,15 @@ class ProjectIndexCards extends Component {
     };
 
     showOntologies = () => {
-        CLEAR_SESSION();
+        // redux_removeProject, redux_removeOntology and redux_removeAlreadyLoadedOntology will remove previous open project and ontology
+        this.props.redux_removeProject();
+        this.props.redux_removeOntology();
+        this.props.redux_removeAlreadyLoadedOntology();
         //TODO Get all ontologies related Only to this Project
         if (this.props.inputData.unlock === true) {
             //change color of select card
             //StyledCardHeader.backgroundColor = 'black';
-            sessionStorage.setItem(SELECTED_PROJECT_SESSION, JSON.stringify(this.props.inputData));
+            this.props.redux_addProject(this.props.inputData);
             this.props.history.push(reverse(ROUTES.ONTOLOGY));
         } else {
             alert('This is Private Project You can not open it');
@@ -143,10 +147,23 @@ class ProjectIndexCards extends Component {
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    history: PropTypes.object.isRequired
+    history: PropTypes.object.isRequired,
+    redux_addProject: PropTypes.func.isRequired,
+    redux_removeProject: PropTypes.func.isRequired,
+    redux_removeOntology: PropTypes.func.isRequired,
+    redux_removeAlreadyLoadedOntology: PropTypes.func.isRequired
 };
 
-export default withRouter(ProjectIndexCards);
+const mapStateToProps = state => ({});
+
+const mapDispatchToProps = dispatch => ({
+    redux_removeOntology: () => dispatch(redux_removeOntology()),
+    redux_removeProject: () => dispatch(redux_removeProject()),
+    redux_removeAlreadyLoadedOntology: () => dispatch(redux_removeAlreadyLoadedOntology()),
+    redux_addProject: data => dispatch(redux_addProject(data))
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProjectIndexCards));
 
 const StyledButton = styled(Button)`
     :hover {
