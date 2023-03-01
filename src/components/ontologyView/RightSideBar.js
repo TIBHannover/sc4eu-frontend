@@ -8,7 +8,6 @@ import styled, { keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
-import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
 import { getAllCommits, getBranchFromUrl, getLicense, getRawUrlforCommit } from '../../network/GithubAPICalls';
 import { getGitlabBranchFromUrl, getGitlabCommits, getRawUrlForGitlabCommit, getGitlabLicense } from '../../network/GitlabAPICalls';
 import Select from '@material-ui/core/Select';
@@ -45,8 +44,8 @@ class RightSideBar extends Component {
 
     componentDidMount = async () => {
         document.body.style.overflowX = 'hidden';
-        const theProject = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
-        const theOntology = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
+        const theProject = this.props.selectedProject;
+        const theOntology = this.props.selectedOntology;
         let version = 'internal';
         const ontologyCommits = [];
         let license = null;
@@ -518,12 +517,16 @@ RightSideBar.propTypes = {
     heightUpdateEvent: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    metaInformation: PropTypes.object
+    metaInformation: PropTypes.object,
+    selectedProject: PropTypes.object.isRequired,
+    selectedOntology: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
     return {
-        metaInformation: state.ResourceRelationModelReducer.metaInformation
+        metaInformation: state.ResourceRelationModelReducer.metaInformation,
+        selectedProject: state.ResourceRelationModelReducer.project,
+        selectedOntology: state.ResourceRelationModelReducer.ontology
     };
 };
 

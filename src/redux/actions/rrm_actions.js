@@ -70,3 +70,48 @@ export const redux_editMetaInfo = payload => dispatch => {
         payload: payload
     });
 };
+
+export const redux_addProject = payload => dispatch => {
+    dispatch({
+        type: type.ADD_PROJECT,
+        payload: payload
+    });
+};
+
+export const redux_removeProject = () => {
+    return dispatch => {
+        dispatch({
+            type: type.DELETE_PROJECT
+        });
+    };
+};
+
+export const redux_addOntology = payload => dispatch => {
+    dispatch({
+        type: type.ADD_ONTOLOGY,
+        payload: payload
+    });
+};
+
+export const redux_removeOntology = () => {
+    return dispatch => {
+        dispatch({
+            type: type.DELETE_ONTOLOGY
+        });
+    };
+};
+
+export const redux_alreadyLoadedOntology = payload => dispatch => {
+    dispatch({
+        type: type.ALREADY_LOADED_ONTOLOGY,
+        payload: payload
+    });
+};
+
+export const redux_removeAlreadyLoadedOntology = () => {
+    return dispatch => {
+        dispatch({
+            type: type.DELETE_ALREADY_LOADED_ONTOLOGY
+        });
+    };
+};

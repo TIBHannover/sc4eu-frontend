@@ -4,7 +4,10 @@ const initialState = {
     originalModel: null, // this is the json we get from backend
     resources: null,
     relations: null,
-    metaInformation: null
+    metaInformation: null,
+    project: null,
+    ontology: null,
+    ontologyID: null
 };
 
 export default (state = initialState, action) => {
@@ -79,6 +82,51 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 metaInformation: { ...state.metaInformation, ...action.payload }
+            };
+        }
+
+        case type.ADD_PROJECT: {
+            return {
+                ...state,
+                project: { ...state.project, ...action.payload }
+            };
+        }
+
+        case type.DELETE_PROJECT: {
+            return {
+                ...state,
+                project: null
+            };
+        }
+
+        case type.ADD_ONTOLOGY: {
+            return {
+                ...state,
+                ontology: { ...state.ontology, ...action.payload }
+            };
+        }
+
+        case type.DELETE_ONTOLOGY: {
+            return {
+                ...state,
+                ontology: null
+            };
+        }
+
+        case type.ALREADY_LOADED_ONTOLOGY: {
+            if (state.ontologyID === action.payload) {
+                // If the new OntologyID is the same as the current one, return the current state
+                return state;
+            } else {
+                // If the new OntologyID is different, update the state with the new OntologyID
+                return { ...state, ontologyID: action.payload };
+            }
+        }
+
+        case type.DELETE_ALREADY_LOADED_ONTOLOGY: {
+            return {
+                ...state,
+                ontologyID: null
             };
         }
 
