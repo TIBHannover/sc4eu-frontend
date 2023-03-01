@@ -26,11 +26,16 @@ export default class ProjectPermissionModal extends Component {
     handelClick = () => {
         if (!this.state.message || !this.state.subject) {
             this.setState({ showWarning: 'true' });
-            console.log('message or subject can not be empty');
             return;
         }
         const projectDetails = this.props.projectDetails;
-        const emailContent = projectAccessEmailHTML(projectDetails.name, this.state.message).body;
+        const emailContent = projectAccessEmailHTML(
+            projectDetails.name,
+            this.state.message,
+            projectDetails.projectAdmins[0].name,
+            this.props.userName,
+            this.props.userEmail
+        ).body;
         const emailToSend = {
             userEmail: this.props.userEmail,
             projectAdminEmail: projectDetails.projectAdmins.length > 0 ? projectDetails.projectAdmins[0].email : 'terminology-service@tib.eu',
@@ -47,8 +52,6 @@ export default class ProjectPermissionModal extends Component {
             } else {
                 this.setState({ openPopUp: true, popUpMessage: 'Your request for permission has been sent', image: success });
             }
-            console.log(result);
-            this.setState({ name: null, email: null, subject: null, message: null, showWarning: null });
             this.props.callback();
         });
     };
@@ -88,7 +91,7 @@ export default class ProjectPermissionModal extends Component {
                                     style={{ width: '70%', backgroundColor: 'lightgray' }}
                                     type="text"
                                     name="subject"
-                                    placeholder="Enter Subject"
+                                    placeholder="Enter subject"
                                     value={this.state.subject}
                                     onChange={event => this.setState({ subject: event.target.value })}
                                 />
@@ -104,7 +107,7 @@ export default class ProjectPermissionModal extends Component {
                                     style={{ width: '70%', backgroundColor: 'lightgray' }}
                                     type="textarea"
                                     name="message"
-                                    placeholder="Enter Subject"
+                                    placeholder="Enter Message"
                                     value={this.state.message}
                                     onChange={event => this.setState({ message: event.target.value })}
                                 />
@@ -130,5 +133,6 @@ ProjectPermissionModal.propTypes = {
     showDialog: PropTypes.bool.isRequired,
     projectDetails: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    userEmail: PropTypes.string.isRequired
+    userEmail: PropTypes.string.isRequired,
+    userName: PropTypes.string.isRequired
 };

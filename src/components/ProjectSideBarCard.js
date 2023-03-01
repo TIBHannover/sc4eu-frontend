@@ -18,9 +18,7 @@ class ProjectIndexCards extends Component {
         };
     }
 
-    componentDidMount() {
-        console.log(this.props.user);
-    }
+    componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
@@ -41,7 +39,7 @@ class ProjectIndexCards extends Component {
                         <FontAwesomeIcon
                             icon={faEnvelope}
                             hidden={!this.props.user}
-                            size={'12px'}
+                            size="1x"
                             color={SECONDARY.darker}
                             style={{ float: 'right', marginTop: '7px', marginRight: '5px', cursor: 'pointer' }}
                             onClick={() => {
@@ -58,6 +56,7 @@ class ProjectIndexCards extends Component {
                                 this.emailSent();
                             }}
                             userEmail={this.props.user ? this.props.user.userEmail : 'terminology-service@tib.eu'}
+                            userName={this.props.user ? this.props.user.displayName : 'terminology-service@tib.eu'}
                         />
                     </StyledCardHeader>
                     <StyledCardBody>
