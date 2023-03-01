@@ -91,7 +91,6 @@ const SideBar = () => {
     const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
     const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
-    console.log(modeOfOperations);
     const [isActiveTab, setIsActiveTab] = useState(modeOfOperations ? modeOfOperations : 'hybrid');
 
     const selectModeOfOperation = val => {
