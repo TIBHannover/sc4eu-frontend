@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import { unregister } from './registerServiceWorker';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import configureStore, { history } from './store';
 import rootReducer from './redux/rootReducer';
 import { CookiesProvider } from 'react-cookie';
@@ -22,13 +23,15 @@ const piwik = new ReactPiwik({
 
 ReactPiwik.push(['trackEvent', 'trackPageView']);
 
-const store = configureStore();
+const { store, persistor } = configureStore();
 const render = () => {
     ReactDOM.render(
         <DndProvider backend={HTML5Backend}>
             <CookiesProvider>
                 <Provider store={store}>
-                    <App history={piwik.connectToHistory(history)} />
+                    <PersistGate loading={null} persistor={persistor}>
+                        <App history={piwik.connectToHistory(history)} />
+                    </PersistGate>
                 </Provider>
             </CookiesProvider>
         </DndProvider>,
