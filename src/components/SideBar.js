@@ -16,11 +16,12 @@ import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
-import { MODE_OF_OPERATIONS, SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
+import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { MAX_WIDTH, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import WebProtege from '../assets/images/webprotege.png';
 import ontology from '../assets/images/Ontology.png';
 import Cookies from 'js-cookie';
+import { useSelector } from 'react-redux';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -87,14 +88,14 @@ const StyledHeadingDiv = styled.div`
 `;
 
 const SideBar = () => {
-    const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
-    const selectedOntologySession = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
     const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
-    const [isActiveTab, setIsActiveTab] = useState(modeOfOperations);
+    const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
+    const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
+    const [isActiveTab, setIsActiveTab] = useState(modeOfOperations ? modeOfOperations : 'hybrid');
 
     const selectModeOfOperation = val => {
-        setIsActiveTab(val);
         Cookies.set(MODE_OF_OPERATIONS, val);
+        setIsActiveTab(val);
     };
 
     const ActiveStyle = {
@@ -116,12 +117,12 @@ const SideBar = () => {
                 <StyledIcon icon={faFile} />
                 <StyledText>Projects</StyledText>
             </StyledLink>
-            {selectedProjectSession ? (
+            {selectedProject ? (
                 <div>
                     <StyledLink
                         to={{
                             pathname: reverse(ROUTES.ONTOLOGY),
-                            project: selectedProjectSession
+                            project: selectedProject
                         }}
                         activeStyle={ActiveStyle}
                         title="Open Ontology List"
@@ -129,15 +130,13 @@ const SideBar = () => {
                         <StyledImage src={ontology} alt="ontology icon" />
                         <StyledText>Ontologies</StyledText>
                     </StyledLink>
-                    {selectedOntologySession ? (
+                    {selectedOntology ? (
                         <div style={{ marginLeft: '30px' }}>
                             <StyledLink
                                 title="Open Hybrid View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntologySession.uuid}`,
-                                    project: selectedProjectSession,
-                                    ontologyName: selectedOntologySession.name
+                                    search: `?ontologyId=${selectedOntology.uuid}`
                                 }}
                                 onClick={() => selectModeOfOperation('hybrid')}
                                 activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
@@ -149,7 +148,7 @@ const SideBar = () => {
                                 title="Open Graph View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntologySession.uuid}`
+                                    search: `?ontologyId=${selectedOntology.uuid}`
                                 }}
                                 onClick={() => selectModeOfOperation('graph')}
                                 activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
@@ -161,7 +160,7 @@ const SideBar = () => {
                                 title="Open Text View"
                                 to={{
                                     pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntologySession.uuid}`
+                                    search: `?ontologyId=${selectedOntology.uuid}`
                                 }}
                                 onClick={() => selectModeOfOperation('text')}
                                 activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}

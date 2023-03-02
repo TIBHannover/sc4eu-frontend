@@ -11,8 +11,9 @@ import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 import { PRIMARY } from '../styledComponents/styledComponents';
-import { ALREADY_LOADED_ONTOLOGY, MODE_OF_OPERATIONS } from '../constants/globalConstants';
+import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import Cookies from 'js-cookie';
+import { redux_alreadyLoadedOntology } from '../redux/actions/rrm_actions';
 
 class ViewOntology extends Component {
     constructor(props) {
@@ -38,9 +39,9 @@ class ViewOntology extends Component {
         // Update the state with the ontologyID value from the query params
         this.setState({ ontologyID: response.ontologyId }, () => {
             // Fetch the ontology from the backend if it hasn't been loaded yet
-            const loadedOntology = sessionStorage.getItem(ALREADY_LOADED_ONTOLOGY);
+            const loadedOntology = this.props.redux_getAlreadyLoadedOntology?.id;
             if (loadedOntology !== this.state.ontologyID) {
-                sessionStorage.setItem(ALREADY_LOADED_ONTOLOGY, this.state.ontologyID);
+                this.props.redux_alreadyLoadedOntology({ id: this.state.ontologyID });
                 this.getOntologyFromBackend();
             } else {
                 this.setState({ isLoading: false, ontologyFileContent: 'not exported' });
@@ -115,18 +116,22 @@ const mapStateToProps = state => {
     return {
         user: state.auth.user,
         rrModel: state.ResourceRelationModelReducer,
-        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges
+        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges,
+        redux_getAlreadyLoadedOntology: state.ResourceRelationModelReducer.ontologyID
     };
 };
 
 ViewOntology.propTypes = {
     location: PropTypes.object.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
-    ui_tab_selectorChanges: PropTypes.bool.isRequired
+    ui_tab_selectorChanges: PropTypes.bool.isRequired,
+    redux_getAlreadyLoadedOntology: PropTypes.object.isRequired,
+    redux_alreadyLoadedOntology: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
-    initializeResourceRelationModel: payload => dispatch(initializeResourceRelationModel(payload))
+    initializeResourceRelationModel: payload => dispatch(initializeResourceRelationModel(payload)),
+    redux_alreadyLoadedOntology: data => dispatch(redux_alreadyLoadedOntology(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewOntology);

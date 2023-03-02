@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import { SECONDARY } from '../RRView/StyledComponents';
 import { reverse } from 'named-urls';
 import { Link } from 'react-router-dom';
-import { SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
 import ROUTES from '../../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
@@ -115,14 +114,14 @@ class OntologyViewRoot extends Component {
     };
 
     renderControls() {
-        const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
+        const selectedProject = this.props.selectedProject;
         return (
             <div>
                 <Link
                     style={{ float: 'left', margin: '15px 0px 0px 280px' }}
                     to={{
                         pathname: reverse(ROUTES.ONTOLOGY),
-                        project: selectedProjectSession
+                        project: selectedProject
                     }}
                     title="Open Ontology List"
                 >
@@ -191,7 +190,8 @@ class OntologyViewRoot extends Component {
 // connect to redux
 const mapStateToProps = state => {
     return {
-        globalUIReducer: state.globalUIReducer
+        globalUIReducer: state.globalUIReducer,
+        selectedProject: state.ResourceRelationModelReducer.project
     };
 };
 const mapDispatchToProps = dispatch => ({
@@ -204,7 +204,8 @@ OntologyViewRoot.propTypes = {
     rightSideExpanded: PropTypes.bool.isRequired,
     toggleRightSideExpanded: PropTypes.func.isRequired,
     expandAllBodies: PropTypes.func.isRequired,
-    ontologyVersion: PropTypes.string.isRequired
+    ontologyVersion: PropTypes.string.isRequired,
+    selectedProject: PropTypes.object.isRequired
 };
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);
 
