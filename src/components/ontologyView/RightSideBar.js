@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, CardBody, Collapse, Container, Input, Table } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faBook, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import styled, { keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
@@ -13,7 +13,9 @@ import { getGitlabBranchFromUrl, getGitlabCommits, getRawUrlForGitlabCommit, get
 import Select from '@material-ui/core/Select';
 import { FormControl, InputLabel, MenuItem } from '@material-ui/core';
 import ShowOntologyComparisonModal from './ShowOntologyComparisonModal';
-import { getOntologyComparison } from '../../network/GetOntologyData';
+import { getOntologyComparison, getWidocoDocumentation } from '../../network/GetOntologyData';
+import { getOntologyById } from '../../network/ontologyIndexing';
+import { URL_GET_HTML_FILE_WIDOCO } from '../../constants/services';
 
 class RightSideBar extends Component {
     constructor(props) {
@@ -38,7 +40,8 @@ class RightSideBar extends Component {
             isLoading: false,
             licenceInfo: 'No Licence Available',
             licenseURL: null,
-            gitCollapse: true
+            gitCollapse: true,
+            isLoadingForWidoco: false
         };
     }
 
@@ -312,6 +315,31 @@ class RightSideBar extends Component {
         }
     };
 
+    getOntologyFileForDocumentation = async () => {
+        if (this.props.selectedOntology) {
+            try {
+                this.setState({ isLoadingForWidoco: true });
+                const res = await getOntologyById(this.props.selectedOntology.uuid);
+                const file = new File([res.ontology_data], this.props.selectedOntology.name, { type: 'text/turtle' });
+                const widocoRes = await getWidocoDocumentation(file);
+                if (widocoRes === true) {
+                    setTimeout(() => {
+                        window.open(URL_GET_HTML_FILE_WIDOCO, '_blank');
+                        this.setState({ isLoadingForWidoco: false });
+                    }, 2000);
+                } else {
+                    this.setState({ isLoadingForWidoco: false });
+                    alert('Something went wrong, please try again after some time');
+                }
+            } catch (error) {
+                this.setState({ isLoadingForWidoco: false });
+                alert(error);
+            }
+        } else {
+            alert('Something went wrong, Please Try again after some times');
+        }
+    };
+
     render() {
         let comparisonButton;
         if (this.state.openOntology.lookup_type === 'online' || this.state.openOntology.lookup_type === 'online-gitlab') {
@@ -462,7 +490,7 @@ class RightSideBar extends Component {
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Ontology Name: </span>
                         <span>{this.state.openOntology.name}</span>
                     </div>
-                    {this.state.openOntology.lookup_type === 'online' || 'online-gitlab' ? (
+                    {this.state.openOntology.lookup_type === 'online' || this.state.openOntology.lookup_type === 'online-gitlab' ? (
                         <div style={{ padding: '0 10px', width: this.props.width - 5, marginTop: '10px' }}>
                             <Button
                                 onClick={() => this.toggleGitCollapse()}
@@ -479,22 +507,24 @@ class RightSideBar extends Component {
                             </Button>
                             <Collapse isOpen={!this.state.gitCollapse}>
                                 <Table bordered style={{ marginTop: '10px' }}>
-                                    <tr>
-                                        <th style={{ width: '20px' }}>URL</th>
-                                        <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.openOntology.lookup_path}</td>
-                                    </tr>
-                                    <tr>
-                                        <th style={{ width: '20px' }}>License</th>
-                                        <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                                            <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
-                                                {this.state.licenceInfo}
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th style={{ width: '20px' }}>Branch</th>
-                                        <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.ontologyVersion}</td>
-                                    </tr>
+                                    <tbody>
+                                        <tr>
+                                            <th style={{ width: '20px' }}>URL</th>
+                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.openOntology.lookup_path}</td>
+                                        </tr>
+                                        <tr>
+                                            <th style={{ width: '20px' }}>License</th>
+                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                                <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
+                                                    {this.state.licenceInfo}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style={{ width: '20px' }}>Branch</th>
+                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.ontologyVersion}</td>
+                                        </tr>
+                                    </tbody>
                                 </Table>
                             </Collapse>
                         </div>
@@ -504,6 +534,32 @@ class RightSideBar extends Component {
 
                     <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
                     {comparisonButton}
+                    <div style={{ padding: '0 10px', width: this.props.width - 5 }}>
+                        <Button
+                            title="Ontology Documentation"
+                            onClick={this.getOntologyFileForDocumentation}
+                            style={{
+                                marginTop: '5px',
+                                width: '100%',
+                                textAlign: 'left',
+                                fontWeight: 'bold',
+                                backgroundColor: SECONDARY.dark
+                            }}
+                        >
+                            <Icon icon={faBook} style={{ marginRight: '8px' }} />
+                            Widoco Documentation
+                        </Button>
+                        {this.state.isLoadingForWidoco && (
+                            <div className="text-center text-primary" style={{ marginTop: '10px' }}>
+                                <h2 className="h5">
+                                    <span>
+                                        <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                                    </span>
+                                    Loading Document
+                                </h2>
+                            </div>
+                        )}
+                    </div>
                 </Container>
             </ContentContainer>
         );
