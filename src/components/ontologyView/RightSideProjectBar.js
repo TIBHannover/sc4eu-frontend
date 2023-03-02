@@ -130,7 +130,11 @@ class RightSideProjectBar extends Component {
                 >
                     <div>
                         <p style={{ float: 'left', margin: '0px 10px 5px 5px', textAlign: 'center' }}>
-                            Click on the email icon to request permission to a project you are interested to join
+                            {this.props.user ? (
+                                <>Click on the email icon to request permission to a project you are interested to join</>
+                            ) : (
+                                <>Please Sign In to request permission to a project you are interested to join</>
+                            )}
                         </p>
                     </div>
                     <Scrollbars style={{ borderTop: '0.01rem solid #e7e9eb' }}>
