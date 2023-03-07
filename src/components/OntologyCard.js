@@ -117,7 +117,12 @@ class OntologyCard extends Component {
                             ) : (
                                 <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
                             )}
-                            <div style={{ fontWeight: '500' }}> {this.props.inputData.name} </div>
+                            <div style={{ fontWeight: '500' }}>
+                                {this.props.inputData.lookup_type === 'online' && (
+                                    <span style={{ marginRight: '15px' }}>[Branch: {this.props.inputData.commitStatus}]</span>
+                                )}
+                                <span>{this.props.inputData.name}</span>
+                            </div>
                         </StyledLink>
                     </StyledCardHeader>
 

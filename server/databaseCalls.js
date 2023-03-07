@@ -196,6 +196,32 @@ module.exports = {
         });
     },
 
+    getGitData: function(app) {
+        app.get('/getGitdata', (req, res) => {
+            const query = req.query;
+            const ontology_indexOptions = {
+                uri: `${process.env.BACKEND_SERVER_URL}/get_gitdata/?ontology_id=${query['ontology_id']}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(ontology_indexOptions, function(error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    },
+
     deleteOntology: function(app) {
         app.post('/deleteOntology', verifyToken, (req, res) => {
             console.log('Deleting Ontology as POST ');

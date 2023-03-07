@@ -4,20 +4,60 @@ import PropTypes from 'prop-types';
 import OntologyCard from './OntologyCard';
 import { withCookies } from 'react-cookie';
 import { Scrollbars } from 'react-custom-scrollbars-2';
+import { checkFileUpdated } from '../network/GithubAPICalls';
+import { getGitData } from '../network/ontologyIndexing';
 
 class OntologyIndexCards extends Component {
-    componentDidMount() {}
+    constructor(props) {
+        super(props);
+        this.state = {
+            ontologies: []
+        };
+    }
+    componentDidMount() {
+        this.setState({ ontologies: this.props.ontologies }, () => {
+            this.getCommitHistory();
+        });
+    }
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
+    getCommitHistory = async () => {
+        const { ontologies } = this.state;
+        if (ontologies.length > 0) {
+            const updatedOntologies = await Promise.all(
+                ontologies.map(async singleOntology => {
+                    if (singleOntology.lookup_type === 'online') {
+                        try {
+                            const lastCommit = await getGitData(singleOntology.uuid);
+                            console.log(lastCommit);
+                            const commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
+                            if (commitStatus?.status === 'latest') {
+                                singleOntology.commitStatus = 'latest';
+                            } else if (commitStatus?.status === 'behind') {
+                                singleOntology.commitStatus = `${commitStatus.commitsBehind} commits behind`;
+                            } else {
+                                console.log('An error occurred while checking the URL.');
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                    return singleOntology;
+                })
+            );
+            this.setState({ ontologies: updatedOntologies });
+        }
+    };
+
     renderOntologyCards() {
-        if (this.props.ontologies.length === 0) {
+        if (this.state.ontologies.length === 0) {
             return (
                 <div style={{ textAlign: 'center' }}> There are no ontologies in the data base. You can upload ontologies using the menu above </div>
             );
-        } else if (this.props.ontologies.length > 0) {
+        } else if (this.state.ontologies.length > 0) {
             //  render the cards;
-            return this.props.ontologies.map((item, index) => {
+            return this.state.ontologies.map((item, index) => {
                 return (
                     <OntologyCard
                         key={'OntologyCard_' + index}
