@@ -3,7 +3,7 @@ import React, { Component, createRef } from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { getGitHubFileContent, getLatestCommit } from '../network/GithubAPICalls';
-import { getGitlabFileContent } from '../network/GitlabAPICalls';
+import { getGitlabFileContent, getGitlabLatestCommit } from '../network/GitlabAPICalls';
 import PropTypes from 'prop-types';
 import { SECONDARY } from '../styledComponents/styledComponents';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -95,7 +95,6 @@ export default class UploadOntology extends Component {
                 const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: reader.result });
                 // const pre_result = await preInitializeOntologyUpload({ ontologyData: 'hello' });
                 const pre_result = JSON.parse(pre_result_asString);
-                console.log(pre_result);
 
                 // using the name and description we can fill in the values; also we need to make sure the values are not null
 
@@ -222,6 +221,8 @@ export default class UploadOntology extends Component {
         //const allCommits = await getAllCommits(this.state.githubURL);
         //const releasesTags = await getReleaseTags(this.state.githubURL);
         const gitlabFileContent = await getGitlabFileContent(this.state.gitlabURL);
+        const gitlab_commit_sha = await getGitlabLatestCommit(this.state.gitlabURL);
+        console.log(gitlab_commit_sha);
 
         try {
             const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: gitlabFileContent });
@@ -235,7 +236,8 @@ export default class UploadOntology extends Component {
                 preInitResult: pre_result,
                 waitingForResult: false,
                 lookup_type: 'online-gitlab',
-                lookup_path: this.state.gitlabURL
+                lookup_path: this.state.gitlabURL,
+                git_data: gitlab_commit_sha
             });
         } catch (e) {
             this.setState({

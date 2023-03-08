@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { PRIMARY } from '../styledComponents/styledComponents';
 import { connect } from 'react-redux';
 import { checkFileUpdated } from '../network/GithubAPICalls';
+import { checkGitlabFileUpdated } from '../network/GitlabAPICalls';
 
 class OntologyIndexing extends Component {
     constructor(props) {
@@ -61,6 +62,20 @@ class OntologyIndexing extends Component {
                         try {
                             const lastCommit = await getGitData(singleOntology.uuid);
                             const commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
+                            if (commitStatus?.status === 'latest') {
+                                singleOntology.commitStatus = 'latest';
+                            } else if (commitStatus?.status === 'behind') {
+                                singleOntology.commitStatus = `${commitStatus.commitsBehind} commits behind`;
+                            } else {
+                                console.log('An error occurred while checking the URL.');
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    } else if (singleOntology.lookup_type === 'online-gitlab') {
+                        try {
+                            const lastFetchedFileSha = await getGitData(singleOntology.uuid);
+                            const commitStatus = await checkGitlabFileUpdated(singleOntology.lookup_path, lastFetchedFileSha);
                             if (commitStatus?.status === 'latest') {
                                 singleOntology.commitStatus = 'latest';
                             } else if (commitStatus?.status === 'behind') {
