@@ -64,8 +64,10 @@ class OntologyIndexing extends Component {
                             const commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
                             if (commitStatus?.status === 'latest') {
                                 singleOntology.commitStatus = 'latest';
+                                singleOntology.gitBranch = commitStatus.branch;
                             } else if (commitStatus?.status === 'behind') {
                                 singleOntology.commitStatus = `${commitStatus.commitsBehind} commits behind`;
+                                singleOntology.gitBranch = commitStatus.branch;
                             } else {
                                 console.log('An error occurred while checking the URL.');
                             }

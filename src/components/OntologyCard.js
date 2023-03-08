@@ -124,6 +124,18 @@ class OntologyCard extends Component {
                     </StyledCardHeader>
 
                     <StyledCardBody>
+                        {this.props.inputData.lookup_type === 'online' && (
+                            <div style={{ marginBottom: '0.5%' }}>
+                                <span style={{ fontWeight: '500' }}>Git Branch:</span>
+                                <span style={{ marginLeft: '5px' }}>
+                                    <a href={this.props.inputData.lookup_path} target={'_blank'} rel="noreferrer">
+                                        {this.props.inputData.gitBranch},
+                                    </a>
+                                </span>
+                                <span style={{ fontWeight: '500', marginLeft: '8px' }}>Version: </span>
+                                <span> {this.props.inputData.commitStatus}</span>
+                            </div>
+                        )}
                         <ClampLines
                             text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
                             id="custom"
