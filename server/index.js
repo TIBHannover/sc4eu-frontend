@@ -117,6 +117,7 @@ database.editProject(router);
 database.getAllUsers(router);
 database.unregisterUserFromProject(router);
 database.addUserToProject(router);
+database.getGitData(router);
 
 processing.getJSONModelForOntologyID(router);
 processing.initializeOntology(router);
