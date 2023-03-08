@@ -118,11 +118,6 @@ class OntologyCard extends Component {
                                 <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
                             )}
                             <div style={{ fontWeight: '500' }}>
-                                {this.props.inputData.lookup_type === 'online' || this.props.inputData.lookup_type === 'online-gitlab' ? (
-                                    <span style={{ marginRight: '15px' }}>Git Version : main {this.props.inputData.commitStatus}]</span>
-                                ) : (
-                                    <></>
-                                )}
                                 <span>{this.props.inputData.name}</span>
                             </div>
                         </StyledLink>
