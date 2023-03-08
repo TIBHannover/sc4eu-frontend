@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getProjectUsersDetail, getUserProjectsDetail } from '../network/UserProfileCalls';
+import { addUserToProject, getProjectUsersDetail, getUserProjectsDetail, unregisterUserFromProject } from '../network/UserProfileCalls';
 import DashboardProjectsTable from './DashboardProjectsTable';
 
 export default class DashboardProjects extends Component {
@@ -8,7 +8,8 @@ export default class DashboardProjects extends Component {
         super(props);
 
         this.state = {
-            userProjectsDetail: null
+            userProjectsDetail: null,
+            updateFlipFlop: false
         };
     }
 
@@ -31,14 +32,30 @@ export default class DashboardProjects extends Component {
         const usersDetail = await getProjectUsersDetail(project.uuid);
         const usersNames = [];
         for (const userDetail of usersDetail) {
-            usersNames.push(userDetail.display_name);
+            const theUser = { name: userDetail.display_name, UUID: userDetail.uuid };
+            usersNames.push(theUser);
         }
         return usersNames;
-        //return project;
     };
 
-    addNewMemberCallback = email => {
-        console.log(email);
+    deleteUserFromProject = async (projectUUID, userUUID, userName) => {
+        unregisterUserFromProject(projectUUID, userUUID).then(res => {
+            if (res) {
+                this.getProjectsFromBackend().then(() => {
+                    this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                });
+            }
+        });
+    };
+
+    addUserToProject = async (projectUUID, userUUID) => {
+        addUserToProject(projectUUID, userUUID).then(res => {
+            if (res) {
+                this.getProjectsFromBackend().then(() => {
+                    this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                });
+            }
+        });
     };
 
     COLUMNS = [
@@ -61,17 +78,22 @@ export default class DashboardProjects extends Component {
         {
             Header: 'Description',
             accessor: 'description'
+        },
+        {
+            Header: 'ProjectUUID',
+            accessor: 'uuid'
         }
     ];
 
     render() {
         return (
-            <div>
+            <div key={this.state.updateFlipFlop}>
                 {this.state.userProjectsDetail ? (
                     <DashboardProjectsTable
                         columns={this.COLUMNS}
                         userProjectsDetail={this.state.userProjectsDetail}
-                        callback={this.addNewMemberCallback}
+                        callback={this.deleteUserFromProject}
+                        addUserToProjectCallBack={this.addUserToProject}
                     />
                 ) : (
                     <div> ...loading</div>

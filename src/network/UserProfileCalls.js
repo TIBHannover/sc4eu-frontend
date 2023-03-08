@@ -1,6 +1,6 @@
 //import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } from 'constants/services';
 
-import { submitGetRequest, submitPutRequest } from './networkRequests';
+import { submitGetRequest, submitPostRequest, submitPutRequest } from './networkRequests';
 import {
     URL_DELETE_USER,
     URL_GET_ALL_ROLES,
@@ -13,7 +13,10 @@ import {
     URL_GET_PROJECT_USERS_Detail,
     URL_GET_USER_PROFILE,
     URL_GET_USER_SETTINGS,
-    URL_UPDATE_USER_SETTING
+    URL_UPDATE_USER_SETTING,
+    URL_UNREGISTER_USER_FROM_PROJECT,
+    URL_CHECK_USER_EXIST_BY_EMAIL,
+    URL_ADD_USER_TO_PROJECT
 } from '../constants/services';
 
 export const getUserProfile = payload => {
@@ -51,6 +54,10 @@ export const getUserProjectsDetail = userId => {
 
 export const getProjectUsersDetail = projectId => {
     return submitGetRequest(`${URL_GET_PROJECT_USERS_Detail}/?projectId=${projectId}`, {}, false);
+};
+
+export const doesUserExist = email => {
+    return submitGetRequest(`${URL_CHECK_USER_EXIST_BY_EMAIL}/?email=${email}`, {}, false);
 };
 
 export const updateUserSettings = payload => {
@@ -99,4 +106,28 @@ export const getAllUsers = () => {
     };
 
     return submitGetRequest(URL_GET_ALL_USERS, headers, true);
+};
+
+export const unregisterUserFromProject = (projectUUID, userUUID) => {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    };
+    const data = {
+        projectUUID: projectUUID,
+        userUUID: userUUID
+    };
+    return submitPutRequest(URL_UNREGISTER_USER_FROM_PROJECT, headers, data);
+};
+
+export const addUserToProject = (projectUUID, userUUID) => {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    };
+    const data = {
+        projectUUID: projectUUID,
+        userUUID: userUUID
+    };
+    return submitPutRequest(URL_ADD_USER_TO_PROJECT, headers, data);
 };

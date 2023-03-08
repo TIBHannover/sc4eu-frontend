@@ -8,11 +8,13 @@ import ProjectMembersDropdown from './ProjectMembersDropDown';
 function DashboardProjectsTable(props) {
     const columns = props.columns;
     const data = props.userProjectsDetail;
-    const callback = props.callback;
 
     const tableInstance = useTable({
         columns,
-        data
+        data,
+        initialState: {
+            hiddenColumns: ['uuid', 'description']
+        }
     });
 
     const { getTableProps, getTableBodyProps, headerGroups, footerGroups, rows, prepareRow } = tableInstance;
@@ -34,10 +36,14 @@ function DashboardProjectsTable(props) {
                         <tr {...row.getRowProps()}>
                             {row.cells.map(cell => {
                                 if (cell.column.id === 'members') {
-                                    console.log(cell);
                                     return (
                                         <td key={cell.column.id}>
-                                            <ProjectMembersDropdown projectUsers={cell.value} />
+                                            <ProjectMembersDropdown
+                                                projectUsers={cell.value}
+                                                projectUUID={row.values.uuid}
+                                                callBack={props.callback}
+                                                addUserCallBack={props.addUserToProjectCallBack}
+                                            />
                                         </td>
                                     );
                                 }
@@ -54,7 +60,8 @@ function DashboardProjectsTable(props) {
 DashboardProjectsTable.propTypes = {
     columns: PropTypes.array.isRequired,
     userProjectsDetail: PropTypes.array.isRequired,
-    callback: PropTypes.func.isRequired
+    callback: PropTypes.func.isRequired,
+    addUserToProjectCallBack: PropTypes.func.isRequired
 };
 
 export default DashboardProjectsTable;
