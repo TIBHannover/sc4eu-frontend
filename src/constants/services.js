@@ -37,6 +37,9 @@ export const URL_GET_USER_ROLE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}us
 export const URL_GET_USER_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/projects`;
 export const URL_GET_USER_PROJECTS_Detail = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/projectsDetail`;
 export const URL_GET_PROJECT_USERS_Detail = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}project/usersDetail`;
+export const URL_UNREGISTER_USER_FROM_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}project/unregisterUser`;
+export const URL_ADD_USER_TO_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}project/addUser`;
+export const URL_CHECK_USER_EXIST_BY_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/doesUserExist`;
 
 export const URL_ADMIN_DASHBOARD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}admin/dashboard`;
 export const URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}allowed_upload_of_ontologies`;

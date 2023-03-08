@@ -8,10 +8,16 @@ import AddProjectUserModal from './Modals/AddProjectUser';
 
 function ProjectMembersDropdown(props, { ...args }) {
     const projectUsers = props.projectUsers;
+    const projectUUID = props.projectUUID;
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [addUserPopupOpen, setAddUserPopupOpen] = useState(false);
 
-    const toggle = () => setDropdownOpen(prevState => !prevState);
+    const toggle = () => {
+        setDropdownOpen(!dropdownOpen);
+    };
+    const togglePopup = () => {
+        setAddUserPopupOpen(!addUserPopupOpen);
+    };
 
     return (
         <div>
@@ -29,33 +35,30 @@ function ProjectMembersDropdown(props, { ...args }) {
                             title={'Click to add new user'}
                             style={{ float: 'right', marginRight: '5px' }}
                             onClick={() => {
-                                console.log('Add a user to the Project');
                                 setAddUserPopupOpen(true);
                             }}
                         />
                         <AddProjectUserModal
-                            toggleAddUserPopup={() => setAddUserPopupOpen(!addUserPopupOpen)}
+                            toggleAddUserPopup={togglePopup}
                             showDialog={addUserPopupOpen}
-                            callback={email => {
-                                console.log('email is : ', email);
-                                //TODO add code to add user to the project
-                                setAddUserPopupOpen(!addUserPopupOpen);
+                            callback={(email, userUUID) => {
+                                props.addUserCallBack(projectUUID, userUUID);
+                                togglePopup();
                             }}
                         />
                     </DropdownItem>
                     {projectUsers.map((item, index) => (
                         <DropdownItem key={'key' + index} style={{ padding: '0.0rem 0.05rem' }}>
                             <hr />
-                            <div style={{ marginLeft: '3%', float: 'left' }}>{item}</div>
+                            <div style={{ marginLeft: '3%', float: 'left' }}>{item.name}</div>
                             <FontAwesomeIcon
                                 icon={faTrash}
                                 size={'1x'}
                                 color={SECONDARY.darker}
-                                title={'Click to add new user'}
+                                title={'Click to unregister this user from this Project'}
                                 style={{ float: 'right', marginRight: '3%' }}
                                 onClick={() => {
-                                    //TODO add code to remove the user from the project
-                                    console.log('Remove user from Project');
+                                    props.callBack(projectUUID, item.UUID, item.name);
                                 }}
                             />
                         </DropdownItem>
@@ -67,7 +70,10 @@ function ProjectMembersDropdown(props, { ...args }) {
 }
 
 ProjectMembersDropdown.propTypes = {
-    projectUsers: PropTypes.array.isRequired
+    projectUsers: PropTypes.array.isRequired,
+    projectUUID: PropTypes.string.isRequired,
+    callBack: PropTypes.func.isRequired,
+    addUserCallBack: PropTypes.func.isRequired
 };
 
 export default ProjectMembersDropdown;
