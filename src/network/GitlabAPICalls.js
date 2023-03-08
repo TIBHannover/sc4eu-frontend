@@ -53,7 +53,7 @@ export const getGitlabLicense = async gitlabapiurl => {
     const repo = getRepoFromUrl(gitlabapiurl);
 
     const response = await fetch(`https://gitlab.com/api/v4/projects/${user}%2F${repo}?license=yes`, { headers });
-    let license = await response.json();
+    const license = await response.json();
     return license;
 };
 export const getGitlabFileContent = async gitlabapiurl => {
@@ -83,7 +83,7 @@ export const getGitlabLatestCommit = async githubApiUrl => {
 
 export const checkGitlabFileUpdated = async (githubApiUrl, lastFetchedFileSha) => {
     const userRepo = await getUserRepoByName(githubApiUrl);
-
+    const branch = getGitlabBranchFromUrl(githubApiUrl);
     try {
         // Get the latest commit SHA for the repositor
         const latestCommitSha = await getGitlabLatestCommit(githubApiUrl);
@@ -96,12 +96,14 @@ export const checkGitlabFileUpdated = async (githubApiUrl, lastFetchedFileSha) =
             const commitsBehind = response?.commits?.length;
             return {
                 status: 'behind',
-                commitsBehind
+                commitsBehind,
+                branch
             };
         } else {
             return {
                 status: 'latest',
-                commitsBehind: 0
+                commitsBehind: 0,
+                branch
             };
         }
     } catch (error) {

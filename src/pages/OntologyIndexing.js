@@ -58,36 +58,26 @@ class OntologyIndexing extends Component {
         if (ontologyList.length > 0) {
             const updatedOntologies = await Promise.all(
                 ontologyList.map(async singleOntology => {
-                    if (singleOntology.lookup_type === 'online') {
-                        try {
-                            const lastCommit = await getGitData(singleOntology.uuid);
-                            const commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
-                            if (commitStatus?.status === 'latest') {
-                                singleOntology.commitStatus = 'latest';
-                                singleOntology.gitBranch = commitStatus.branch;
-                            } else if (commitStatus?.status === 'behind') {
-                                singleOntology.commitStatus = `${commitStatus.commitsBehind} commits behind`;
-                                singleOntology.gitBranch = commitStatus.branch;
-                            } else {
-                                console.log('An error occurred while checking the URL.');
-                            }
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    } else if (singleOntology.lookup_type === 'online-gitlab') {
-                        try {
+                    let lastCommit;
+                    let commitStatus;
+                    switch (singleOntology.lookup_type) {
+                        case 'online':
+                            lastCommit = await getGitData(singleOntology.uuid);
+                            commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
+                            break;
+                        case 'online-gitlab':
                             const lastFetchedFileSha = await getGitData(singleOntology.uuid);
-                            const commitStatus = await checkGitlabFileUpdated(singleOntology.lookup_path, lastFetchedFileSha);
-                            if (commitStatus?.status === 'latest') {
-                                singleOntology.commitStatus = 'latest';
-                            } else if (commitStatus?.status === 'behind') {
-                                singleOntology.commitStatus = `${commitStatus.commitsBehind} commits behind`;
-                            } else {
-                                console.log('An error occurred while checking the URL.');
-                            }
-                        } catch (error) {
-                            console.error(error);
-                        }
+                            commitStatus = await checkGitlabFileUpdated(singleOntology.lookup_path, lastFetchedFileSha);
+                            break;
+                        default:
+                            break;
+                    }
+                    if (commitStatus?.status === 'latest') {
+                        singleOntology.commitStatus = 'latest';
+                        singleOntology.gitBranch = commitStatus.branch;
+                    } else if (commitStatus?.status === 'behind') {
+                        singleOntology.commitStatus = `${commitStatus.commitsBehind} commits behind`;
+                        singleOntology.gitBranch = commitStatus.branch;
                     }
                     return singleOntology;
                 })
