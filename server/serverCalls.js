@@ -419,5 +419,38 @@ module.exports = {
                 }
             });
         });
+    },
+
+    checkUserExists: function(app) {
+        app.get('/user/doesUserExist', (req, res) => {
+            const query = req.query;
+            if (req.token === null) {
+                res.json({ error: 'You need to be logged in to view this page' });
+            } else {
+                try {
+                    const emailId = query['email'];
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/user/doesUserExist/?emailId=${emailId}`,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Network error occurred' });
+                            }
+                        }
+                    });
+                } catch (e) {
+                    res.json({ error: 'Checking if User exists: You dont have access to view this page' });
+                }
+            }
+        });
     }
 };

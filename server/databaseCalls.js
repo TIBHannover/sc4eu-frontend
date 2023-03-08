@@ -361,5 +361,70 @@ module.exports = {
                 res.json({ error: 'You dont have access to view this page' });
             }
         });
+    },
+    unregisterUserFromProject: function(app) {
+        app.put('/project/unregisterUser/', verifyToken, (req, res) => {
+            const token = jwt.verify(req.token, process.env.JWT_SECRET);
+            const userId = token.userId;
+            const data = JSON.stringify(req.body);
+            const options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/project/unregisterUser/?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            };
+
+            try {
+                request(options, function(error, response) {
+                    if (response && response.body) {
+                        try {
+                            const result = JSON.parse(response.body);
+                            res.json(result);
+                        } catch (e) {
+                            res.json({ error: 'Something went wrong in response' });
+                        }
+                    } else {
+                        res.json({ error: 'Something went wrong in request' });
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    },
+
+    addUserToProject: function(app) {
+        app.put('/project/addUser/', verifyToken, (req, res) => {
+            const token = jwt.verify(req.token, process.env.JWT_SECRET);
+            const userId = token.userId;
+            const data = JSON.stringify(req.body);
+            const options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/project/addUser/?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            };
+
+            try {
+                request(options, function(error, response) {
+                    if (response && response.body) {
+                        try {
+                            const result = JSON.parse(response.body);
+                            res.json(result);
+                        } catch (e) {
+                            res.json({ error: 'Something went wrong in response' });
+                        }
+                    } else {
+                        res.json({ error: 'Something went wrong in request' });
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        });
     }
 };

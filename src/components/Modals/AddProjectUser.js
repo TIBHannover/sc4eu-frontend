@@ -2,17 +2,19 @@ import { Button, Form, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader 
 import React, { Component } from 'react';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import PropTypes from 'prop-types';
-import { sendProjectAccessEmail } from '../../network/emailCalls';
-import projectAccessEmailHTML from '../../html/projectAccessEmailHTML';
+import { doesUserExist } from '../../network/UserProfileCalls';
 
 export default class AddProjectUserModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
             showWarning: false,
-            email: ''
+            email: '',
+            emailWarning: 'User with this email does not exists'
         };
+        this.emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     }
+
     render() {
         return (
             <Form onSubmit={this.handleSubmit}>
@@ -35,7 +37,7 @@ export default class AddProjectUserModal extends Component {
                             </Label>
                             <Input
                                 style={{ width: '70%', backgroundColor: 'lightgray' }}
-                                type="text"
+                                type="email"
                                 name="email"
                                 placeholder="Enter member Email"
                                 onChange={event => this.setState({ email: event.target.value })}
@@ -44,18 +46,29 @@ export default class AddProjectUserModal extends Component {
                     </ModalBody>
                     <ModalFooter style={{ backgroundColor: 'lightgray' }}>
                         <label style={{ color: 'red', alignContent: 'right', display: this.state.showWarning ? 'block' : 'none' }}>
-                            User with this email does not exists
+                            {this.state.emailWarning}
                         </label>
                         <Button
                             id="finishButton"
                             style={{ background: SECONDARY.dark }}
                             onClick={() => {
                                 if (!this.state.email) {
-                                    this.setState({ showWarning: 'true' });
-                                    console.log('email does not exists');
+                                    this.setState({ emailWarning: 'Email can not be Empty ', showWarning: 'true' });
                                     return;
                                 }
-                                this.props.callback(this.state.email);
+
+                                if (this.emailRegexp.test(this.state.email)) {
+                                    doesUserExist(this.state.email).then(res => {
+                                        if (res.success) {
+                                            this.props.callback(this.state.email, res.user_id);
+                                        } else {
+                                            this.setState({ emailWarning: 'User with this email does not exists', showWarning: 'true' });
+                                            return;
+                                        }
+                                    });
+                                } else {
+                                    this.setState({ emailWarning: 'Please enter a valid email', showWarning: 'true' });
+                                }
                             }}
                             autoFocus={true}
                         >

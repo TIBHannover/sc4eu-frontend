@@ -93,6 +93,7 @@ server.getUserHeader(router);
 server.deleteUser(router);
 server.transformTTL(router);
 server.transformVOWL_JSON(router);
+server.checkUserExists(router);
 
 auth.registerUser(router);
 auth.loginViaEmail(router);
@@ -114,6 +115,8 @@ database.createProject(router);
 database.deleteProject(router);
 database.editProject(router);
 database.getAllUsers(router);
+database.unregisterUserFromProject(router);
+database.addUserToProject(router);
 database.getGitData(router);
 
 processing.getJSONModelForOntologyID(router);
