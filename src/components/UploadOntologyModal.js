@@ -28,7 +28,7 @@ export default class UploadOntology extends Component {
             githubURL: null,
             gitlabURL: null,
             uploadSource: '',
-            git_data: null
+            ontology_git_data: null
         };
 
         this.finishRef = createRef();
@@ -107,7 +107,7 @@ export default class UploadOntology extends Component {
                     waitingForResult: false,
                     lookup_type: 'local',
                     lookup_path: 'internal',
-                    git_data: 'none'
+                    ontology_git_data: 'none'
                 });
             } catch (e) {
                 this.setState({
@@ -149,9 +149,8 @@ export default class UploadOntology extends Component {
             lookup_path: this.state.lookup_path,
             ontology_content: this.state.ontologyFileContent,
             project_id: this.props.project_id,
-            git_data: this.state.git_data
+            ontology_git_data: this.state.ontology_git_data
         };
-        console.log(objToSent);
         // await networkCall
         uploadOntology(objToSent).then(res => {
             this.props.callback(res);
@@ -203,7 +202,7 @@ export default class UploadOntology extends Component {
                 waitingForResult: false,
                 lookup_type: 'online',
                 lookup_path: this.state.githubURL,
-                git_data: git_commit_sha
+                ontology_git_data: git_commit_sha
             });
         } catch (e) {
             this.setState({
@@ -222,7 +221,6 @@ export default class UploadOntology extends Component {
         //const releasesTags = await getReleaseTags(this.state.githubURL);
         const gitlabFileContent = await getGitlabFileContent(this.state.gitlabURL);
         const gitlab_commit_sha = await getGitlabLatestCommit(this.state.gitlabURL);
-        console.log(gitlab_commit_sha);
 
         try {
             const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: gitlabFileContent });
@@ -237,7 +235,7 @@ export default class UploadOntology extends Component {
                 waitingForResult: false,
                 lookup_type: 'online-gitlab',
                 lookup_path: this.state.gitlabURL,
-                git_data: gitlab_commit_sha
+                ontology_git_data: gitlab_commit_sha
             });
         } catch (e) {
             this.setState({

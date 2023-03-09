@@ -6,7 +6,7 @@ export const URL_DELETE_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}d
 export const URL_EDIT_PROJECT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}editProject`;
 
 export const URL_ONTOLOGYINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}ontologyIndex/`;
-export const URL_GET_GIT_DATA = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getGitdata/`;
+export const URL_GET_ONTOLOGY_GIT_DATA = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getOntologyGitdata/`;
 export const URL_ONTOLOGYBYID = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getOntologyById/`;
 export const URL_VIEWONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelForId/`;
 export const URL_COMPARE_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getComparisonResult`;

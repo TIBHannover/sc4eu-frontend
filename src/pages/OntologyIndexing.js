@@ -3,7 +3,7 @@ import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-import { getAllOntologies, getGitData } from '../network/ontologyIndexing';
+import { getAllOntologies, getOntologyGitData } from '../network/ontologyIndexing';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import PropTypes from 'prop-types';
 import { PRIMARY } from '../styledComponents/styledComponents';
@@ -62,11 +62,11 @@ class OntologyIndexing extends Component {
                     let commitStatus;
                     switch (singleOntology.lookup_type) {
                         case 'online':
-                            lastCommit = await getGitData(singleOntology.uuid);
+                            lastCommit = await getOntologyGitData(singleOntology.uuid);
                             commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
                             break;
                         case 'online-gitlab':
-                            const lastFetchedFileSha = await getGitData(singleOntology.uuid);
+                            const lastFetchedFileSha = await getOntologyGitData(singleOntology.uuid);
                             commitStatus = await checkGitlabFileUpdated(singleOntology.lookup_path, lastFetchedFileSha);
                             break;
                         default:

@@ -196,11 +196,12 @@ module.exports = {
         });
     },
 
-    getGitData: function(app) {
-        app.get('/getGitdata', (req, res) => {
+    getOntologyGitData: function(app) {
+        app.get('/getOntologyGitdata', (req, res) => {
             const query = req.query;
+            const ontology_id = query['ontology_id'];
             const ontology_indexOptions = {
-                uri: `${process.env.BACKEND_SERVER_URL}/get_gitdata/?ontology_id=${query['ontology_id']}`,
+                uri: `${process.env.BACKEND_SERVER_URL}/get_ontology_gitdata/?ontology_id=${ontology_id}`,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
