@@ -144,7 +144,7 @@ class Dashboard extends Component {
                             Projects
                         </NavLink>
                     </NavItem>
-                    <NavItem>
+                    <NavItem hidden={this.props.user && this.props.user.role.toLowerCase() !== 'System ADMIN'.toLowerCase()}>
                         <NavLink
                             className={classnames({ active: this.state.activeTab === '2' })}
                             onClick={() => {
