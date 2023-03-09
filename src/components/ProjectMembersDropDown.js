@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { SECONDARY } from '../styledComponents/styledComponents';
 import AddProjectUserModal from './Modals/AddProjectUser';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 function ProjectMembersDropdown(props, { ...args }) {
     const projectUsers = props.projectUsers;
@@ -47,22 +48,24 @@ function ProjectMembersDropdown(props, { ...args }) {
                             }}
                         />
                     </DropdownItem>
-                    {projectUsers.map((item, index) => (
-                        <DropdownItem key={'key' + index} style={{ padding: '0.0rem 0.05rem' }}>
-                            <hr />
-                            <div style={{ marginLeft: '3%', float: 'left' }}>{item.name}</div>
-                            <FontAwesomeIcon
-                                icon={faTrash}
-                                size={'1x'}
-                                color={SECONDARY.darker}
-                                title={'Click to unregister this user from this Project'}
-                                style={{ float: 'right', marginRight: '3%' }}
-                                onClick={() => {
-                                    props.callBack(projectUUID, item.UUID, item.name);
-                                }}
-                            />
-                        </DropdownItem>
-                    ))}
+                    <Scrollbars style={{ height: '50vh' }}>
+                        {projectUsers.map((item, index) => (
+                            <DropdownItem key={'key' + index} style={{ padding: '0.0rem 0.05rem' }}>
+                                <hr />
+                                <div style={{ marginLeft: '3%', float: 'left' }}>{item.name}</div>
+                                <FontAwesomeIcon
+                                    icon={faTrash}
+                                    size={'1x'}
+                                    color={SECONDARY.darker}
+                                    title={'Click to unregister this user from this Project'}
+                                    style={{ float: 'right', marginRight: '3%' }}
+                                    onClick={() => {
+                                        props.callBack(projectUUID, item.UUID, item.name);
+                                    }}
+                                />
+                            </DropdownItem>
+                        ))}
+                    </Scrollbars>
                 </DropdownMenu>
             </Dropdown>
         </div>
