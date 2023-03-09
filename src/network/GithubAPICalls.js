@@ -210,14 +210,12 @@ export const checkFileUpdated = async (githubApiUrl, lastCommit) => {
                 base: latestCommitSha,
                 head: lastFetchedFileSha
             });
-            console.log(`The file has been updated since it was last fetched. It is ${commitsBehind} commits behind the latest commit.`);
             return {
                 status: 'behind',
                 commitsBehind,
                 branch
             };
         } else {
-            console.log('The file is up to date.');
             return {
                 status: 'latest',
                 commitsBehind: 0,
@@ -225,7 +223,6 @@ export const checkFileUpdated = async (githubApiUrl, lastCommit) => {
             };
         }
     } catch (error) {
-        console.error(error);
         return {
             status: 'error',
             commitsBehind: -1
