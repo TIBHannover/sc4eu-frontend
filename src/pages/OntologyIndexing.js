@@ -3,11 +3,12 @@ import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-import { getAllOntologies } from '../network/ontologyIndexing';
+import { getAllOntologies, getGitData } from '../network/ontologyIndexing';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import PropTypes from 'prop-types';
 import { PRIMARY } from '../styledComponents/styledComponents';
 import { connect } from 'react-redux';
+import { checkFileUpdated } from '../network/GithubAPICalls';
 
 class OntologyIndexing extends Component {
     constructor(props) {
@@ -44,8 +45,40 @@ class OntologyIndexing extends Component {
                 return;
             } else {
                 this.setState({ isLoading: false, ontologyList: res });
+                this.setState({ isLoading: false, ontologyList: res }, async () => {
+                    await this.getCommitHistory();
+                });
             }
         });
+    };
+
+    getCommitHistory = async () => {
+        const { ontologyList } = this.state;
+        if (ontologyList.length > 0) {
+            const updatedOntologies = await Promise.all(
+                ontologyList.map(async singleOntology => {
+                    if (singleOntology.lookup_type === 'online') {
+                        try {
+                            const lastCommit = await getGitData(singleOntology.uuid);
+                            const commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
+                            if (commitStatus?.status === 'latest') {
+                                singleOntology.commitStatus = 'latest';
+                                singleOntology.gitBranch = commitStatus.branch;
+                            } else if (commitStatus?.status === 'behind') {
+                                singleOntology.commitStatus = `${commitStatus.commitsBehind} commits behind`;
+                                singleOntology.gitBranch = commitStatus.branch;
+                            } else {
+                                console.log('An error occurred while checking the URL.');
+                            }
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    }
+                    return singleOntology;
+                })
+            );
+            this.setState({ ontologyList: updatedOntologies });
+        }
     };
 
     reloadAfterUpdate = () => {

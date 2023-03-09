@@ -2,7 +2,7 @@ import { Button, Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFoot
 import React, { Component, createRef } from 'react';
 import ReactHtmlParser from 'react-html-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { getGitHubFileContent } from '../network/GithubAPICalls';
+import { getGitHubFileContent, getLatestCommit } from '../network/GithubAPICalls';
 import { getGitlabFileContent } from '../network/GitlabAPICalls';
 import PropTypes from 'prop-types';
 import { SECONDARY } from '../styledComponents/styledComponents';
@@ -27,7 +27,8 @@ export default class UploadOntology extends Component {
             lookup_path: null,
             githubURL: null,
             gitlabURL: null,
-            uploadSource: ''
+            uploadSource: '',
+            git_data: null
         };
 
         this.finishRef = createRef();
@@ -106,7 +107,8 @@ export default class UploadOntology extends Component {
                     preInitResult: pre_result,
                     waitingForResult: false,
                     lookup_type: 'local',
-                    lookup_path: 'internal'
+                    lookup_path: 'internal',
+                    git_data: 'none'
                 });
             } catch (e) {
                 this.setState({
@@ -147,7 +149,8 @@ export default class UploadOntology extends Component {
             access_type: 'public',
             lookup_path: this.state.lookup_path,
             ontology_content: this.state.ontologyFileContent,
-            project_id: this.props.project_id
+            project_id: this.props.project_id,
+            git_data: this.state.git_data
         };
         console.log(objToSent);
         // await networkCall
@@ -186,6 +189,7 @@ export default class UploadOntology extends Component {
         //const allCommits = await getAllCommits(this.state.githubURL);
         //const releasesTags = await getReleaseTags(this.state.githubURL);
         const gitHubFileContent = await getGitHubFileContent(this.state.githubURL);
+        const git_commit_sha = await getLatestCommit(this.state.githubURL);
 
         try {
             const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: gitHubFileContent });
@@ -199,7 +203,8 @@ export default class UploadOntology extends Component {
                 preInitResult: pre_result,
                 waitingForResult: false,
                 lookup_type: 'online',
-                lookup_path: this.state.githubURL
+                lookup_path: this.state.githubURL,
+                git_data: git_commit_sha
             });
         } catch (e) {
             this.setState({
