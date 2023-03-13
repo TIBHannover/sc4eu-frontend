@@ -422,7 +422,7 @@ class RightSideBar extends Component {
                 expanded={this.state.expanded}
                 width={this.props.width}
                 initialRendering={this.state.initialRendering}
-                style={{ width: this.props.width, position: 'absolute', height: this.props.height + 'px' }}
+                style={{ width: this.props.width, position: 'absolute', height: this.props.height + 'px', marginTop: '55px' }}
             >
                 <Container
                     className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
