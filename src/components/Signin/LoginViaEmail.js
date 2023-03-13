@@ -154,7 +154,7 @@ class LoginViaEmail extends Component {
                         {!this.state.loading ? (
                             <Form onSubmit={this.handleSubmit}>
                                 {this.state.signInModal ? (
-                                    <div>
+                                    <div style={{ margin: '20px 20px 30px 20px' }}>
                                         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                                             <h2 style={{ marginBottom: '20px' }}>Sign In</h2>
                                             <p className="mt-3">
