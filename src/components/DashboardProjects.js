@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { addUserToProject, getProjectUsersDetail, getUserProjectsDetail, unregisterUserFromProject } from '../network/UserProfileCalls';
 import DashboardProjectsTable from './DashboardProjectsTable';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 export default class DashboardProjects extends Component {
     constructor(props) {
@@ -17,15 +19,23 @@ export default class DashboardProjects extends Component {
         await this.getProjectsFromBackend();
     };
 
-    getProjectsFromBackend = async () => {
-        const userProjectsDetails = await getUserProjectsDetail(this.props.currentUser.userId);
-
-        for (const projectDetails of userProjectsDetails) {
-            const projectUsers = await this.retrieveProjectUsersDetail(projectDetails);
-            projectDetails.members = projectUsers;
+    componentDidUpdate = async prevProps => {
+        if (prevProps.currentUser !== this.props.currentUser) {
+            await this.getProjectsFromBackend();
         }
+    };
 
-        this.setState({ userProjectsDetail: userProjectsDetails });
+    getProjectsFromBackend = async () => {
+        if (this.props.currentUser !== 0) {
+            const userProjectsDetails = await getUserProjectsDetail(this.props.currentUser.userId);
+
+            for (const projectDetails of userProjectsDetails) {
+                const projectUsers = await this.retrieveProjectUsersDetail(projectDetails);
+                projectDetails.members = projectUsers;
+            }
+
+            this.setState({ userProjectsDetail: userProjectsDetails });
+        }
     };
 
     retrieveProjectUsersDetail = async project => {

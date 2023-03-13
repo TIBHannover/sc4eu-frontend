@@ -44,10 +44,13 @@ class RightSideProjectBar extends Component {
         });
     };
 
-    componentDidUpdate = (prevProps, prevState) => {
+    componentDidUpdate = async (prevProps, prevState) => {
         if (prevProps.updateFlipFlop !== this.props.updateFlipFlop) {
             // this.setState({ initialRendering: false });
             this.getProjectsFromBackend();
+        }
+        if (prevProps.user !== this.props.user) {
+            await this.getProjectsFromBackend();
         }
     };
 
