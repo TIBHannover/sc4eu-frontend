@@ -23,7 +23,7 @@ class SignInModal extends Component {
         return (
             <>
                 <Modal isOpen={this.props.dialogIsOpen} toggle={this.props.toggleAuthDialog}>
-                    <ModalBody>
+                    <div>
                         <TransitionGroup exit={false}>
                             {this.props.action === 'signin' && (
                                 <AnimationContainer key={1} classNames="fadeIn" timeout={{ enter: 700, exit: 0 }}>
@@ -31,7 +31,7 @@ class SignInModal extends Component {
                                 </AnimationContainer>
                             )}
                         </TransitionGroup>
-                    </ModalBody>
+                    </div>
                 </Modal>
             </>
         );
