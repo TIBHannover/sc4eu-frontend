@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Card, CardBody, Collapse, Container, Input, Table } from 'reactstrap';
+import { FormGroup, Button, Card, CardBody, Collapse, Container, Input, Table } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faBook, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
@@ -10,8 +10,6 @@ import { connect } from 'react-redux';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import { getAllCommits, getBranchFromUrl, getLicense, getRawUrlforCommit } from '../../network/GithubAPICalls';
 import { getGitlabBranchFromUrl, getGitlabCommits, getRawUrlForGitlabCommit, getGitlabLicense } from '../../network/GitlabAPICalls';
-import Select from '@material-ui/core/Select';
-import { FormControl, InputLabel, MenuItem } from '@material-ui/core';
 import ShowOntologyComparisonModal from './ShowOntologyComparisonModal';
 import { getOntologyComparison, getWidocoDocumentation } from '../../network/GetOntologyData';
 import { getOntologyById } from '../../network/ontologyIndexing';
@@ -309,7 +307,6 @@ class RightSideBar extends Component {
             url_first = this.state.allCommits[index_first].raw_url;
             url_second = this.state.allCommits[index_second].raw_url;
             getOntologyComparison(url_first, url_second).then(data => {
-                console.log(data);
                 this.setState({ compareResults: data, showCompareModal: true, isLoading: false });
             });
         }
@@ -363,27 +360,34 @@ class RightSideBar extends Component {
                             <span style={{ fontSize: '15px', fontWeight: 600 }}>Please choose two commits to compare </span>{' '}
                         </div>
                         <div style={{ marginTop: '5px' }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Select 1st Commit</InputLabel>
-                                <Select label={'choose commit'} onChange={this.handleFirstCommitChange} defaultValue="">
+                            <FormGroup>
+                                <Input
+                                    type="select"
+                                    name="select"
+                                    label={'choose commit'}
+                                    id="exampleSelect"
+                                    defaultValue={''}
+                                    onChange={this.handleFirstCommitChange}
+                                >
+                                    <option style={{ display: 'none' }}>Select 1st Commit</option>
                                     {this.state.allCommits.map(item => (
-                                        <MenuItem key={item.value + 'first'} value={item.value}>
+                                        <option key={item.value + 'first'} value={item.value}>
                                             {item.label}
-                                        </MenuItem>
+                                        </option>
                                     ))}
-                                </Select>
-                            </FormControl>
+                                </Input>
+                            </FormGroup>
                         </div>
-                        <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Select 2nd Commit</InputLabel>
-                            <Select label={'choose commit'} onChange={this.handleSecondCommitChange} defaultValue="">
+                        <FormGroup style={{ margin: '3% 0 2% 0' }}>
+                            <Input type="select" name="select" label={'choose commit'} defaultValue={''} onChange={this.handleSecondCommitChange}>
+                                <option style={{ display: 'none' }}>Select 2nd Commit</option>
                                 {this.state.allCommits.map(item => (
-                                    <MenuItem key={item.value + 'second'} value={item.value}>
+                                    <option key={item.value + 'second'} value={item.value}>
                                         {item.label}
-                                    </MenuItem>
+                                    </option>
                                 ))}
-                            </Select>
-                        </FormControl>
+                            </Input>
+                        </FormGroup>
                         <Button style={{ backgroundColor: SECONDARY.dark, marginTop: '5px' }} onClick={this.showComparison}>
                             Show Comparison
                         </Button>
