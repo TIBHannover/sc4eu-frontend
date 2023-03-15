@@ -24,8 +24,22 @@ export default class AddProjectUserModal extends Component {
                     toggle={this.props.toggleAddUserPopup}
                     autoFocus={false}
                 >
-                    <ModalHeader style={{ backgroundColor: PRIMARY.dark }} autoFocus={false}>
-                        Add User to Project
+                    <ModalHeader style={{ display: 'block', backgroundColor: PRIMARY.dark }} autoFocus={false}>
+                        <span style={{ color: '#000000' }}>Add User to Project</span>
+                        <Button
+                            style={{
+                                float: 'right',
+                                background: 'none',
+                                border: 'none',
+                                color: '#000000',
+                                cursor: 'pointer',
+                                fontWeight: 500,
+                                fontSize: 18
+                            }}
+                            onClick={this.props.toggleAddUserPopup}
+                        >
+                            X
+                        </Button>
                     </ModalHeader>
                     <ModalBody id="createProjectBody" style={{ backgroundColor: 'whitesmoke', maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
                         <div style={{ display: 'auto', flexDirection: 'column', alignItems: 'left', marginTop: '10px' }}>
