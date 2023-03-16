@@ -63,6 +63,7 @@ class Dashboard extends Component {
             getProjectsFromBackend.forEach(project => {
                 projectsLabels.push({ value: project.name, label: project.name, projectUUID: project.uuid });
             });
+            console.log('testing');
             this.setState({ projects: projectsLabels });
         });
     };
