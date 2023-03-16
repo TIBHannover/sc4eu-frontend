@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { addUserToProject, getProjectUsersDetail, getUserProjectsDetail, unregisterUserFromProject } from '../network/UserProfileCalls';
 import DashboardProjectsTable from './DashboardProjectsTable';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
 
 export default class DashboardProjects extends Component {
     constructor(props) {
@@ -26,7 +24,7 @@ export default class DashboardProjects extends Component {
     };
 
     getProjectsFromBackend = async () => {
-        if (this.props.currentUser !== 0) {
+        if (this.props.currentUser && this.props.currentUser !== 0) {
             const userProjectsDetails = await getUserProjectsDetail(this.props.currentUser.userId);
 
             for (const projectDetails of userProjectsDetails) {
@@ -49,6 +47,10 @@ export default class DashboardProjects extends Component {
     };
 
     deleteUserFromProject = async (projectUUID, userUUID, userName) => {
+        const isConfirmed = window.confirm(`Are you sure you want to Delete ${userName} User?`);
+        if (!isConfirmed) {
+            return;
+        }
         unregisterUserFromProject(projectUUID, userUUID).then(res => {
             if (res) {
                 this.getProjectsFromBackend().then(() => {
