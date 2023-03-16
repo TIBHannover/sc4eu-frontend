@@ -3,13 +3,15 @@ import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-import { getAllOntologies } from '../network/ontologyIndexing';
+import { getAllOntologies, getOntologyGitData } from '../network/ontologyIndexing';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import PropTypes from 'prop-types';
-import { SELECTED_PROJECT_SESSION } from '../constants/globalConstants';
 import { PRIMARY } from '../styledComponents/styledComponents';
+import { connect } from 'react-redux';
+import { checkFileUpdated } from '../network/GithubAPICalls';
+import { checkGitlabFileUpdated } from '../network/GitlabAPICalls';
 
-export default class OntologyIndexing extends Component {
+class OntologyIndexing extends Component {
     constructor(props) {
         super(props);
 
@@ -21,9 +23,9 @@ export default class OntologyIndexing extends Component {
     }
 
     componentDidMount() {
-        const selectedProjectSession = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
-        if (selectedProjectSession) {
-            this.setState({ selectedProject: selectedProjectSession });
+        const selectedProject = this.props.selectedProject;
+        if (selectedProject) {
+            this.setState({ selectedProject: selectedProject });
         }
     }
 
@@ -44,8 +46,44 @@ export default class OntologyIndexing extends Component {
                 return;
             } else {
                 this.setState({ isLoading: false, ontologyList: res });
+                this.setState({ isLoading: false, ontologyList: res }, async () => {
+                    await this.getCommitHistory();
+                });
             }
         });
+    };
+
+    getCommitHistory = async () => {
+        const { ontologyList } = this.state;
+        if (ontologyList.length > 0) {
+            const updatedOntologies = await Promise.all(
+                ontologyList.map(async singleOntology => {
+                    let lastCommit;
+                    let commitStatus;
+                    switch (singleOntology.lookup_type) {
+                        case 'online':
+                            lastCommit = await getOntologyGitData(singleOntology.uuid);
+                            commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
+                            break;
+                        case 'online-gitlab':
+                            const lastFetchedFileSha = await getOntologyGitData(singleOntology.uuid);
+                            commitStatus = await checkGitlabFileUpdated(singleOntology.lookup_path, lastFetchedFileSha);
+                            break;
+                        default:
+                            break;
+                    }
+                    if (commitStatus?.status === 'latest') {
+                        singleOntology.commitStatus = 'latest';
+                        singleOntology.gitBranch = commitStatus.branch;
+                    } else if (commitStatus?.status === 'behind') {
+                        singleOntology.commitStatus = `${commitStatus.commitsBehind} commits behind`;
+                        singleOntology.gitBranch = commitStatus.branch;
+                    }
+                    return singleOntology;
+                })
+            );
+            this.setState({ ontologyList: updatedOntologies });
+        }
     };
 
     reloadAfterUpdate = () => {
@@ -60,7 +98,7 @@ export default class OntologyIndexing extends Component {
 
     render() {
         return (
-            <div style={{ height: '100vh', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ height: '80%', backgroundColor: PRIMARY.lighter }}>
                 <Container
                     style={{
                         borderTop: 'none',
@@ -74,7 +112,7 @@ export default class OntologyIndexing extends Component {
                             {/*using a manual fixed scale value for the spinner scale! */}
                             <h2 className="h5">
                                 <span>
-                                    <Icon icon={faSpinner} spin />
+                                    <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
                                 </span>
                                 Loading
                             </h2>
@@ -98,5 +136,12 @@ export default class OntologyIndexing extends Component {
 }
 
 OntologyIndexing.propTypes = {
-    location: PropTypes.object.isRequired
+    location: PropTypes.object.isRequired,
+    selectedProject: PropTypes.object.isRequired
 };
+
+const mapStateToProps = state => ({
+    selectedProject: state.ResourceRelationModelReducer.project
+});
+
+export default connect(mapStateToProps, null)(OntologyIndexing);

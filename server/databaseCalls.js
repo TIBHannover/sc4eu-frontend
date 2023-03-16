@@ -6,7 +6,6 @@ const verifyToken = require('./veryfyToken');
 module.exports = {
     getProjectIndex: function(app) {
         app.get('/projectIndex', (req, res) => {
-            console.log('Requesting Project Index', `${process.env.BACKEND_SERVER_URL}/projectIndex`);
             const project_indexOptions = {
                 uri: `${process.env.BACKEND_SERVER_URL}/projectIndex`,
                 method: 'GET',
@@ -197,6 +196,33 @@ module.exports = {
         });
     },
 
+    getOntologyGitData: function(app) {
+        app.get('/getOntologyGitdata', (req, res) => {
+            const query = req.query;
+            const ontology_id = query['ontology_id'];
+            const ontology_indexOptions = {
+                uri: `${process.env.BACKEND_SERVER_URL}/get_ontology_gitdata/?ontology_id=${ontology_id}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(ontology_indexOptions, function(error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    },
+
     deleteOntology: function(app) {
         app.post('/deleteOntology', verifyToken, (req, res) => {
             console.log('Deleting Ontology as POST ');
@@ -307,6 +333,98 @@ module.exports = {
                 });
             } catch (e) {
                 res.json({ error: 'Network Error' });
+            }
+        });
+    },
+
+    getAllUsers: function(app) {
+        app.get('/users/all', (req, res) => {
+            try {
+                const options = {
+                    uri: `${process.env.BACKEND_SERVER_URL}/users/all/`,
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                request(options, function(error, response) {
+                    if (response && response.body) {
+                        try {
+                            const result = JSON.parse(response.body);
+                            res.json(result);
+                        } catch (e) {
+                            res.json({ error: 'Network error occurred' });
+                        }
+                    }
+                });
+            } catch (e) {
+                res.json({ error: 'You dont have access to view this page' });
+            }
+        });
+    },
+    unregisterUserFromProject: function(app) {
+        app.put('/project/unregisterUser/', verifyToken, (req, res) => {
+            const token = jwt.verify(req.token, process.env.JWT_SECRET);
+            const userId = token.userId;
+            const data = JSON.stringify(req.body);
+            const options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/project/unregisterUser/?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            };
+
+            try {
+                request(options, function(error, response) {
+                    if (response && response.body) {
+                        try {
+                            const result = JSON.parse(response.body);
+                            res.json(result);
+                        } catch (e) {
+                            res.json({ error: 'Something went wrong in response' });
+                        }
+                    } else {
+                        res.json({ error: 'Something went wrong in request' });
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    },
+
+    addUserToProject: function(app) {
+        app.put('/project/addUser/', verifyToken, (req, res) => {
+            const token = jwt.verify(req.token, process.env.JWT_SECRET);
+            const userId = token.userId;
+            const data = JSON.stringify(req.body);
+            const options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/project/addUser/?userId=${userId}`,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            };
+
+            try {
+                request(options, function(error, response) {
+                    if (response && response.body) {
+                        try {
+                            const result = JSON.parse(response.body);
+                            res.json(result);
+                        } catch (e) {
+                            res.json({ error: 'Something went wrong in response' });
+                        }
+                    } else {
+                        res.json({ error: 'Something went wrong in request' });
+                    }
+                });
+            } catch (e) {
+                console.log(e);
             }
         });
     }

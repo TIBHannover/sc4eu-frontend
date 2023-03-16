@@ -2,11 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import RightSideBar from './RightSideBar';
 import MainWidget from './MainWidget';
-import { Button } from 'reactstrap';
-import styled from 'styled-components';
-import { expandAllBodies } from '../../redux/actions/globalUI_actions';
-import { connect } from 'react-redux';
-import { SECONDARY } from '../RRView/StyledComponents';
 
 class OntologyViewRoot extends Component {
     constructor(props) {
@@ -108,33 +103,10 @@ class OntologyViewRoot extends Component {
         }
     };
 
-    renderControls() {
-        return (
-            <div style={{ margin: '5px 0 5px 270px' }}>
-                <ControlButton
-                    onClick={() => {
-                        // emit this as signal;
-                        this.props.expandAllBodies({
-                            ui_all_resource_bodies_expanded: !this.props.globalUIReducer.ui_all_resource_bodies_expanded,
-                            ui_all_relation_bodies_expanded: !this.props.globalUIReducer.ui_all_relation_bodies_expanded
-                        });
-                    }}
-                >
-                    {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all resources/relations
-                </ControlButton>
-            </div>
-        );
-    }
-
     render() {
         return (
             <>
-                {this.renderControls()}
-
-                <div
-                    id="mainWidgetContainer"
-                    style={{ display: 'flex', marginTop: '5px', marginLeft: '200px', zIndex: 150, height: 'calc(100vh - 130px)' }}
-                >
+                <div id="mainWidgetContainer" style={{ display: 'flex', marginLeft: '200px', zIndex: 150, height: 'calc(100vh - 180px)' }}>
                     <MainWidget
                         ref={this._refMainWidget}
                         rightSideBarExpanded={this.state.rightSidebarExpanded}
@@ -170,42 +142,10 @@ class OntologyViewRoot extends Component {
     }
 }
 
-// connect to redux
-const mapStateToProps = state => {
-    return {
-        globalUIReducer: state.globalUIReducer
-    };
-};
-const mapDispatchToProps = dispatch => ({
-    expandAllBodies: payload => dispatch(expandAllBodies(payload))
-});
-
 OntologyViewRoot.propTypes = {
-    globalUIReducer: PropTypes.object.isRequired,
     leftSideExpanded: PropTypes.bool.isRequired,
     rightSideExpanded: PropTypes.bool.isRequired,
     toggleRightSideExpanded: PropTypes.func.isRequired,
-    expandAllBodies: PropTypes.func.isRequired,
     ontologyVersion: PropTypes.string.isRequired
 };
-export default connect(mapStateToProps, mapDispatchToProps)(OntologyViewRoot);
-
-const ControlButton = styled(Button)`
-    background: ${SECONDARY.dark};
-    border-radius: 5px 5px;
-    padding: 0;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: -5px;
-    height: 40px;
-    margin-top: 2px;
-    margin-right: 3px;
-    font-size: 16px;
-    color: white;
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
+export default OntologyViewRoot;

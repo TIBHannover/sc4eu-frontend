@@ -4,13 +4,16 @@ import { Col, Button, Form, FormGroup, Label, Input, Modal, ModalHeader, ModalBo
 import { connect } from 'react-redux';
 import { openAuthDialog, toggleAuthDialog, updateAuth, updateCookies } from '../../redux/actions/auth';
 import { compose } from 'redux';
-import { loginViaEmail, regsiterViaEmail } from '../../network/loginCalls';
+import { loginViaEmail, regsiterViaEmail, forgotPassword } from '../../network/loginCalls';
 import { Link } from 'react-router-dom';
 import { minLengthPassword } from '../../constants/globalConstants';
 import { SECONDARY } from '../../styledComponents/styledComponents';
 import success from '../../assets/images/success.png';
 import error from '../../assets/images/error.png';
 import PopUp from '../PopUp';
+import github from '../../assets/images/github.svg';
+import gitlab from '../../assets/images/gitlab.svg';
+import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB } from '../../constants/services';
 
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
@@ -29,7 +32,12 @@ class LoginViaEmail extends Component {
             confirmPassword: '',
             openPopUp: false,
             image: '',
-            popUpMessage: ''
+            popUpMessage: '',
+            signInModal: true,
+            nameError: '',
+            emailError: '',
+            passwordError: '',
+            confirmPasswordError: ''
         };
     }
 
@@ -76,12 +84,28 @@ class LoginViaEmail extends Component {
         this.setState({ loading: false });
         return true;
     };
+    handleForgotPassword = async e => {
+        const response = await forgotPassword(this.state.email);
+        if (response.success === false) {
+            this.setState({
+                openPopUp: true,
+                popUpMessage: response.message,
+                image: error
+            });
+        } else {
+            this.setState({ openPopUp: true, popUpMessage: response.message, image: success });
+        }
+        this.setState({ loading: false });
+        return true;
+    };
     toggleSignupModel = () => {
         this.setState({ signupModal: !this.state.signupModal });
+        this.setState({ signInModal: false });
     };
 
     toggleResetPasswordModel = () => {
         this.setState({ resetPasswordModel: !this.state.resetPasswordModel });
+        this.setState({ signInModal: false });
     };
 
     isfieldValid = () => {
@@ -89,30 +113,22 @@ class LoginViaEmail extends Component {
 
         if (!this.state.displayName) {
             this.setState({
-                openPopUp: true,
-                popUpMessage: 'Name can not be empty',
-                image: error
+                nameError: 'Name can not be empty'
             });
             return false;
         } else if (!this.state.email || regexEmailValidation.test(this.state.email) === false) {
             this.setState({
-                openPopUp: true,
-                popUpMessage: 'Email is not a valid',
-                image: error
+                emailError: 'Email is not a valid'
             });
             return false;
         } else if (this.state.password.length < minLengthPassword) {
             this.setState({
-                openPopUp: true,
-                popUpMessage: 'Password cannot be less than 5 characters',
-                image: error
+                passwordError: 'Password cannot be less than 5 characters'
             });
             return false;
         } else if (this.state.password !== this.state.confirmPassword) {
             this.setState({
-                openPopUp: true,
-                popUpMessage: 'Password and Confirm Password does not match.',
-                image: error
+                confirmPasswordError: 'Password and Confirm Password does not match.'
             });
             return false;
         }
@@ -122,7 +138,6 @@ class LoginViaEmail extends Component {
     popUpClose = () => {
         this.setState({ openPopUp: false });
         this.props.callback();
-        console.log('test');
     };
 
     render() {
@@ -138,47 +153,101 @@ class LoginViaEmail extends Component {
                     <div>
                         {!this.state.loading ? (
                             <Form onSubmit={this.handleSubmit}>
-                                <FormGroup row>
-                                    <Label for="exampleEmail" sm={2}>
-                                        Email
-                                    </Label>
-                                    <Col sm={10}>
-                                        <Input
-                                            type="email"
-                                            name="email"
-                                            placeholder="Enter email"
-                                            value={this.state.email}
-                                            onChange={event => this.setState({ email: event.target.value })}
-                                        />
-                                    </Col>
-                                </FormGroup>
-                                <FormGroup row>
-                                    <Label for="examplePassword" sm={2}>
-                                        Password
-                                    </Label>
-                                    <Col sm={10}>
-                                        <Input
-                                            type="password"
-                                            name="password"
-                                            placeholder="Enter password"
-                                            value={this.state.password}
-                                            onChange={event => this.setState({ password: event.target.value })}
-                                        />
-                                    </Col>
-                                </FormGroup>
-                                <div>
-                                    <p className="mt-3">
-                                        Don't have an account? &nbsp;
-                                        <Link to="" style={{ color: SECONDARY.link }} onClick={this.toggleSignupModel}>
-                                            Sign Up
-                                        </Link>
-                                    </p>
+                                {this.state.signInModal ? (
+                                    <div style={{ margin: '20px 20px 30px 20px' }}>
+                                        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                                            <h2 style={{ marginBottom: '20px' }}>Sign In</h2>
+                                            <p className="mt-3">
+                                                Don't have an account? &nbsp;
+                                                <Link to="" style={{ color: SECONDARY.link }} onClick={this.toggleSignupModel}>
+                                                    Sign Up
+                                                </Link>
+                                            </p>
+                                        </div>
+                                        <hr className="mt-0 mb-2" />
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                justifyContent: 'space-between',
+                                                height: '100px',
+                                                alignItems: 'center',
+                                                marginTop: '20px'
+                                            }}
+                                        >
+                                            <a
+                                                href={URL_LOGIN_VIA_GITHUB}
+                                                target="_self"
+                                                className="btn btn-primary"
+                                                style={{ width: '90%', backgroundColor: 'black', border: 'none' }}
+                                                rel="noreferrer"
+                                            >
+                                                <img src={github} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
+                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
+                                                Sign in with GitHub
+                                            </a>
+                                            <a
+                                                href={URL_LOGIN_VIA_GITLAB}
+                                                target="_self"
+                                                className="btn btn-primary"
+                                                style={{ width: '90%', backgroundColor: '#ec672a', border: 'none' }}
+                                                rel="noreferrer"
+                                            >
+                                                <img src={gitlab} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
+                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
+                                                Sign in with GitLab
+                                            </a>
+                                        </div>
+                                        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                            <hr style={{ float: 'left', marginLeft: 'auto', marginRight: 'auto', width: '45%' }} />
+                                            OR
+                                            <hr style={{ float: 'right', marginLeft: 'auto', marginRight: 'auto', width: '45%' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px' }}>
+                                            <Label style={{ width: '90%', textAlign: 'start' }}>Email</Label>
+                                            <Input
+                                                style={{ width: '90%' }}
+                                                type="email"
+                                                name="email"
+                                                placeholder="Enter email"
+                                                value={this.state.email}
+                                                onChange={event => this.setState({ email: event.target.value })}
+                                            />
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px' }}>
+                                            <Label style={{ width: '90%', textAlign: 'start' }}>Password</Label>
+                                            <Input
+                                                style={{ width: '90%' }}
+                                                type="password"
+                                                name="password"
+                                                placeholder="Enter password"
+                                                value={this.state.password}
+                                                onChange={event => this.setState({ password: event.target.value })}
+                                            />
+                                        </div>
+                                        <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                                            <Button
+                                                id="loginWithMail"
+                                                style={{ width: '90%', marginTop: '15px', backgroundColor: SECONDARY.dark }}
+                                                onClick={this.handleLogin}
+                                            >
+                                                Login
+                                            </Button>
+                                        </div>
+                                        <p style={{ textAlign: 'center' }}>
+                                            <Link to="" onClick={this.toggleResetPasswordModel}>
+                                                Forgot Password ?
+                                            </Link>
+                                        </p>
+                                    </div>
+                                ) : this.state.signupModal ? (
+                                    // sign up model start from here
                                     <Modal
                                         style={{ maxWidth: '700px', width: '100%' }}
                                         isOpen={this.state.signupModal}
-                                        toggle={this.toggleSignupModel}
+                                        toggle={this.props.toggleAuthDialog}
                                     >
-                                        <ModalHeader toggle={this.toggleSignupModel}>Sign Up</ModalHeader>
+                                        <ModalHeader toggle={this.props.toggleAuthDialog}>Sign Up</ModalHeader>
                                         <ModalBody>
                                             <div className="container">
                                                 <Form onSubmit={this.handleSubmit}>
@@ -194,6 +263,7 @@ class LoginViaEmail extends Component {
                                                                 value={this.state.displayName}
                                                                 onChange={event => this.setState({ displayName: event.target.value })}
                                                             />
+                                                            <span className="text-danger">{this.state.nameError}</span>
                                                         </Col>
                                                     </FormGroup>
                                                     <FormGroup row>
@@ -208,6 +278,7 @@ class LoginViaEmail extends Component {
                                                                 value={this.state.email}
                                                                 onChange={event => this.setState({ email: event.target.value })}
                                                             />
+                                                            <span className="text-danger">{this.state.emailError}</span>
                                                         </Col>
                                                     </FormGroup>
                                                     <FormGroup row>
@@ -222,6 +293,7 @@ class LoginViaEmail extends Component {
                                                                 value={this.state.password}
                                                                 onChange={event => this.setState({ password: event.target.value })}
                                                             />
+                                                            <span className="text-danger">{this.state.passwordError}</span>
                                                         </Col>
                                                     </FormGroup>
                                                     <FormGroup row>
@@ -236,6 +308,7 @@ class LoginViaEmail extends Component {
                                                                 value={this.state.confirmPassword}
                                                                 onChange={event => this.setState({ confirmPassword: event.target.value })}
                                                             />
+                                                            <span className="text-danger">{this.state.confirmPasswordError}</span>
                                                         </Col>
                                                     </FormGroup>
                                                 </Form>
@@ -245,21 +318,15 @@ class LoginViaEmail extends Component {
                                             <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleRegister}>
                                                 Register
                                             </Button>
-                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.toggleSignupModel}>
+                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.props.toggleAuthDialog}>
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
                                     </Modal>
-                                </div>
-                                <div>
-                                    {/*<p className="mt-3">*/}
-                                    {/*    Forgot your Password?*/}
-                                    {/*    <Link to="" onClick={this.toggleResetPasswordModel}>*/}
-                                    {/*        Reset Password*/}
-                                    {/*    </Link>*/}
-                                    {/*</p>*/}
-                                    <Modal isOpen={this.state.resetPasswordModel} toggle={this.toggleResetPasswordModel}>
-                                        <ModalHeader toggle={this.toggleResetPasswordModel}>Reset Password</ModalHeader>
+                                ) : (
+                                    // forgot password model start from here
+                                    <Modal isOpen={this.state.resetPasswordModel} toggle={this.props.toggleAuthDialog}>
+                                        <ModalHeader toggle={this.props.toggleAuthDialog}>Reset Password</ModalHeader>
                                         <ModalBody>
                                             <div className="container">
                                                 <Form onSubmit={this.handleSubmit}>
@@ -277,54 +344,19 @@ class LoginViaEmail extends Component {
                                                             />
                                                         </Col>
                                                     </FormGroup>
-                                                    <FormGroup row>
-                                                        <Label for="examplePassword" sm={2}>
-                                                            Password
-                                                        </Label>
-                                                        <Col sm={10}>
-                                                            <Input
-                                                                type="password"
-                                                                name="password"
-                                                                placeholder="Enter Password "
-                                                                value={this.state.password}
-                                                                onChange={event => this.setState({ password: event.target.value })}
-                                                            />
-                                                        </Col>
-                                                    </FormGroup>
-                                                    <FormGroup row>
-                                                        <Label for="confirm-Password" sm={2}>
-                                                            Confirm Password
-                                                        </Label>
-                                                        <Col sm={10}>
-                                                            <Input
-                                                                type="password"
-                                                                name="confirmPassword"
-                                                                placeholder="Re-Enter Password"
-                                                                value={this.state.confirmPassword}
-                                                                onChange={event => this.setState({ confirmPassword: event.target.value })}
-                                                            />
-                                                        </Col>
-                                                    </FormGroup>
                                                 </Form>
                                             </div>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button color="primary" onClick={this.toggleResetPasswordModel}>
+                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleForgotPassword}>
                                                 Reset
                                             </Button>
-                                            <Button color="primary" onClick={this.toggleResetPasswordModel}>
+                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.props.toggleAuthDialog}>
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
                                     </Modal>
-                                </div>
-                                <Button
-                                    id="loginWithMail"
-                                    style={{ float: 'right', marginTop: '12px', backgroundColor: SECONDARY.dark }}
-                                    onClick={this.handleLogin}
-                                >
-                                    Login
-                                </Button>
+                                )}
                             </Form>
                         ) : (
                             <div>Processing...</div>

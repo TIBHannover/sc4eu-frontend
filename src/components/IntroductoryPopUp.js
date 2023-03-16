@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, ModalBody, Button } from 'reactstrap';
-import { PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import Cookies from 'js-cookie';
 
 const SliderText = [
     {
@@ -38,14 +39,15 @@ class IntroductoryPopUp extends Component {
             buttonText: 'Next'
         };
     }
+
     componentDidMount() {
-        const visited = sessionStorage['alreadyVisited'];
-        if (visited) {
+        const value = Cookies.get('alreadyVisited');
+        if (value) {
             this.setState({ firstModal: false });
             //do not view Popup
         } else {
             //this is the first time
-            sessionStorage['alreadyVisited'] = true;
+            Cookies.set('alreadyVisited', true);
             this.setState({ firstModal: true });
         }
     }
@@ -68,7 +70,10 @@ class IntroductoryPopUp extends Component {
     render() {
         return (
             <div>
-                <Modal isOpen={this.state.firstModal} style={{ maxWidth: '70%', width: '100%', borderRadius: '15px', overflow: 'hidden' }}>
+                <Modal
+                    isOpen={this.state.firstModal}
+                    style={{ maxWidth: '80%', width: '100%', marginLeft: '10%', marginRight: '10%', borderRadius: '15px', overflow: 'hidden' }}
+                >
                     <ModalBody style={{ backgroundColor: 'rgba(214, 230, 242, .3)' }}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <h4 style={{ marginLeft: 'auto' }}>
@@ -92,7 +97,7 @@ class IntroductoryPopUp extends Component {
                         </div>
                         <br />
                         <span style={{ fontSize: '18px', color: TEXTCOLOR }}>{SliderText[this.state.sliderIndex].value}</span>
-                        <div style={{ marginTop: '15px' }}>
+                        <div style={{ marginTop: '15px', marginBottom: '15px' }}>
                             <Button onClick={this.goToNextSlide} style={{ backgroundColor: SECONDARY.dark }}>
                                 {this.state.buttonText}
                             </Button>
@@ -100,6 +105,7 @@ class IntroductoryPopUp extends Component {
                         <div style={{ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)', display: 'flex' }}>
                             {Array.from({ length: 3 }).map((item, index) => (
                                 <div
+                                    key={index}
                                     style={
                                         this.state.sliderIndex === index
                                             ? {

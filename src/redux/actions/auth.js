@@ -24,6 +24,7 @@ export const updateCookies = payload => dispatch => {
                     updateAuth({
                         user: {
                             displayName: userData.displayName,
+                            userEmail: userData.userEmail,
                             gravatarId: userData.gravatarId,
                             userId: userData.userId,
                             role: userData.role,
@@ -64,8 +65,8 @@ export const redux_updateUserSettings = payload => dispatch => {
 };
 
 export const resetAuth = () => dispatch => {
-    cookies.remove('token', { path: '/' });
-    cookies.remove('token_expires_in', { path: '/' });
+    cookies.remove('token', { path: '/sc3/' });
+    cookies.remove('token_expires_in', { path: '/sc3/' });
 
     const token = cookies.get('token');
 
@@ -95,6 +96,7 @@ export function firstLoad() {
                         updateAuth({
                             user: {
                                 displayName: userData.displayName,
+                                userEmail: userData.userEmail,
                                 gravatarId: userData.gravatarId,
                                 userId: userData.userId,
                                 role: userData.role,

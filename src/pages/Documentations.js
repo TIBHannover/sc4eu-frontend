@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
 import UserRole from '../assets/images/UserRole.jpg';
+import styled from 'styled-components';
 
 class Documentations extends Component {
     constructor(props) {
@@ -69,8 +70,8 @@ class Documentations extends Component {
         return (
             <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div style={{ width: '100%', height: '90%', overflowY: 'auto', paddingBottom: '30px' }}>
-                    <h2 style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '10px' }}>What Portal will do for you</h2>
-                    <div style={{ paddingLeft: '300px', paddingRight: '300px' }}>
+                    <StyledDiv>
+                        <h2 style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '10px' }}>What Portal will do for you</h2>
                         <h4>Connecting domain experts with knowledge engineers</h4>
                         <p style={{ whiteSpace: 'pre-wrap', textAlign: 'justify', color: TEXTCOLOR }}>
                             {this.state.isreadmoreUserGuidance ? (
@@ -156,10 +157,10 @@ class Documentations extends Component {
                                 {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
                             </span>
                         </p>
-                    </div>
-                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                    </StyledDiv>
+                    <div style={{ marginTop: '30px', textAlign: 'center' }}>
                         <iframe
-                            width="750"
+                            width="50%"
                             height="350"
                             src={`https://www.youtube.com/embed/R-lJrUgmZJc`}
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -177,3 +178,13 @@ class Documentations extends Component {
 Documentations.propTypes = {};
 
 export default Documentations;
+
+const StyledDiv = styled.div`
+    padding-left: 20%;
+    padding-right: 20%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+`;

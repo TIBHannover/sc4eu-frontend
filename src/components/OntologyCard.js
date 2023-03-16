@@ -8,16 +8,18 @@ import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { SELECTED_ONTOLOGY_SESSION } from '../constants/globalConstants';
+import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
 import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
 import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
+import Cookies from 'js-cookie';
+import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 
-export default class OntologyCard extends Component {
-    componentDidMount() {
-        window.localStorage.clear();
-    }
+class OntologyCard extends Component {
+    componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
@@ -65,8 +67,9 @@ export default class OntologyCard extends Component {
     };
 
     onclick = () => {
-        sessionStorage.removeItem(SELECTED_ONTOLOGY_SESSION);
-        sessionStorage.setItem(SELECTED_ONTOLOGY_SESSION, JSON.stringify(this.props.inputData));
+        this.props.redux_removeOntology();
+        this.props.redux_addOntology(this.props.inputData);
+        Cookies.set(MODE_OF_OPERATIONS, 'hybrid');
     };
 
     render() {
@@ -99,13 +102,11 @@ export default class OntologyCard extends Component {
                         </StyledButton>
                         <StyledLink
                             to={{
-                                pathname: reverse(ROUTES.VIEW_ONTOLOGY, {
-                                    ontologyId: this.props.inputData.uuid
-                                }),
-                                ontologyVersion: this.props.ontologyVersion,
-                                modeOfOperations: 'hybrid'
+                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                search: `?ontologyId=${this.props.inputData.uuid}`,
+                                ontologyVersion: this.props.ontologyVersion
                             }}
-                            onClick={this.onclick}
+                            onMouseDown={this.onclick}
                             className="p-0 noSelect"
                             onDragStart={this.preventDraggingOfItem}
                         >
@@ -116,11 +117,27 @@ export default class OntologyCard extends Component {
                             ) : (
                                 <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
                             )}
-                            <div style={{ fontWeight: '500' }}> {this.props.inputData.name} </div>
+                            <div style={{ fontWeight: '500' }}>
+                                <span>{this.props.inputData.name}</span>
+                            </div>
                         </StyledLink>
                     </StyledCardHeader>
 
                     <StyledCardBody>
+                        {this.props.inputData.lookup_type === 'online' || this.props.inputData.lookup_type === 'online-gitlab' ? (
+                            <div style={{ marginBottom: '0.5%' }}>
+                                <span style={{ fontWeight: '500' }}>Git Branch:</span>
+                                <span style={{ marginLeft: '5px' }}>
+                                    <a href={this.props.inputData.lookup_path} target={'_blank'} rel="noreferrer">
+                                        {this.props.inputData.gitBranch}
+                                    </a>
+                                </span>
+                                <span style={{ fontWeight: '500', marginLeft: '8px' }}>Version: </span>
+                                <span> {this.props.inputData.commitStatus}</span>
+                            </div>
+                        ) : (
+                            <></>
+                        )}
                         <ClampLines
                             text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
                             id="custom"
@@ -139,8 +156,17 @@ export default class OntologyCard extends Component {
 OntologyCard.propTypes = {
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
-    ontologyVersion: PropTypes.string.isRequired
+    ontologyVersion: PropTypes.string.isRequired,
+    redux_addOntology: PropTypes.func.isRequired,
+    redux_removeOntology: PropTypes.func.isRequired
 };
+
+const mapDispatchToProps = dispatch => ({
+    redux_removeOntology: () => dispatch(redux_removeOntology()),
+    redux_addOntology: data => dispatch(redux_addOntology(data))
+});
+
+export default withRouter(connect(null, mapDispatchToProps)(OntologyCard));
 
 const StyledCard = styled.div`
     margin: 5px;

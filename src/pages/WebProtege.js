@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Spinner } from 'reactstrap';
-import { PRIMARY } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, PRIMARY, TEXTCOLOR } from '../styledComponents/styledComponents';
 import Footer from '../Layout/Footer';
+import styled from 'styled-components';
 
 export default class WebProtege extends Component {
     constructor(props) {
@@ -33,7 +34,8 @@ export default class WebProtege extends Component {
     render() {
         return (
             <>
-                <div style={{ backgroundColor: PRIMARY.lighter, height: '100%', width: '100%' }}>
+                <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
+                <StyledDiv>
                     {this.state.isLoading ? (
                         <Button variant="primary" disabled>
                             <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />
@@ -41,9 +43,36 @@ export default class WebProtege extends Component {
                         </Button>
                     ) : null}
                     {this.getWebProtege()}
-                </div>
+                </StyledDiv>
                 <Footer />
             </>
         );
     }
 }
+
+const StyledDiv = styled.div`
+    background-color: ${PRIMARY.lighter};
+    height: 90%;
+    width: 100%;
+    overflow-y: auto;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+`;
+
+const StyledInfo = styled.h5`
+    display: none;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: block;
+        width: 100%;
+        height: 90%;
+        padding-top: 20px;
+        padding-left: 10%;
+        padding-right: 10%;
+        text-align: justify;
+        text-align-last: center;
+        color: ${TEXTCOLOR};
+    }
+`;

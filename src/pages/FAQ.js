@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { Collapse, Button, Container } from 'reactstrap';
+import { Collapse, Button, Container, Table } from 'reactstrap';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
@@ -67,7 +67,7 @@ export default class Faq extends Component {
             }
         ];
         return (
-            <div style={{ width: '100%', height: '100%', overflowY: 'auto', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ width: '100%', height: '100%', overflow: 'auto', backgroundColor: PRIMARY.lighter }}>
                 <Container
                     style={{
                         // border: '1px solid black',
@@ -76,7 +76,7 @@ export default class Faq extends Component {
                         position: 'relative',
                         backgroundColor: '#ffffff',
                         borderRadius: '10px 10px 10px 10px ',
-                        height: '100%'
+                        height: '90%'
                     }}
                 >
                     <Button
@@ -88,7 +88,7 @@ export default class Faq extends Component {
                         Definition of User Roles
                     </Button>
                     <Collapse isOpen={this.state.collapseUserRole}>
-                        <table style={{ marginTop: '20px' }} className="table table-bordered ">
+                        <Table style={{ marginTop: '20px' }} bordered responsive>
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -103,7 +103,7 @@ export default class Faq extends Component {
                                     </tr>
                                 ))}
                             </tbody>
-                        </table>
+                        </Table>
                     </Collapse>
                     <Button
                         style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: SECONDARY.dark }}

@@ -140,6 +140,72 @@ module.exports = {
         });
     },
 
+    userProjectsDetail: function(app) {
+        app.get('/user/projectsDetail', (req, res) => {
+            const query = req.query;
+            if (req.token === null) {
+                res.json({ error: 'You need to be logged in to view this page' });
+            } else {
+                try {
+                    const userId = query['userId'];
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/user/projectsDetail/?userId=${userId}`,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Network error occurred in userProjectDetail' });
+                            }
+                        }
+                    });
+                } catch (e) {
+                    res.json({ error: 'Getting User Role: You dont have access to view this page' });
+                }
+            }
+        });
+    },
+
+    projectUsersDetail: function(app) {
+        app.get('/project/usersDetail', (req, res) => {
+            const query = req.query;
+            if (req.token === null) {
+                res.json({ error: 'You need to be logged in to view this page' });
+            } else {
+                try {
+                    const projectId = query['projectId'];
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/project/usersDetail/?projectId=${projectId}`,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Network error occurred in projectUsersDetail' });
+                            }
+                        }
+                    });
+                } catch (e) {
+                    res.json({ error: 'Getting Project Users Details: You dont have access to view this page' });
+                }
+            }
+        });
+    },
+
     adminDashBoard: function(app) {
         app.get('/admin/dashboard', verifyToken, (req, res) => {
             if (req.token === null) {
@@ -278,7 +344,13 @@ module.exports = {
                                     if (result.error) {
                                         return res.json(result);
                                     }
-                                    res.json({ displayName: result.displayName, gravatarId: result.gravatarId, userId: result.userId, role: result.role });
+                                    res.json({
+                                        displayName: result.displayName,
+                                        userEmail: result.userEmail,
+                                        gravatarId: result.gravatarId,
+                                        userId: result.userId,
+                                        role: result.role
+                                    });
                                 } else {
                                     res.json({ error: 'Could not find user' });
                                 }
@@ -346,6 +418,39 @@ module.exports = {
                     res.json({ error: 'Something went wrong' });
                 }
             });
+        });
+    },
+
+    checkUserExists: function(app) {
+        app.get('/user/doesUserExist', (req, res) => {
+            const query = req.query;
+            if (req.token === null) {
+                res.json({ error: 'You need to be logged in to view this page' });
+            } else {
+                try {
+                    const emailId = query['email'];
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/user/doesUserExist/?emailId=${emailId}`,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    };
+
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Network error occurred' });
+                            }
+                        }
+                    });
+                } catch (e) {
+                    res.json({ error: 'Checking if User exists: You dont have access to view this page' });
+                }
+            }
         });
     }
 };

@@ -3,12 +3,11 @@ import styled from 'styled-components';
 
 import Header from './Header';
 import PropTypes from 'prop-types';
-import SideBarLayout from './SideBarLayout';
+import { PRIMARY } from '../styledComponents/styledComponents';
 
 export default function DefaultLayout(props) {
     return (
         <StyledBody>
-            <SideBarLayout />
             <Header />
             <StyledAppContent>{props.children}</StyledAppContent>
         </StyledBody>
@@ -24,9 +23,9 @@ DefaultLayout.propTypes = {
 const StyledBody = styled.div`
     min-height: calc(100vh - 0px);
     height: 100%;
-    overflow: hidden;
+    background-color: ${PRIMARY.lighter};
 `;
 
 const StyledAppContent = styled.div`
-    height: calc(100vh - 60px);
+    height: calc(100vh - 100px);
 `;

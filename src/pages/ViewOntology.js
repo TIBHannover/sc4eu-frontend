@@ -11,17 +11,19 @@ import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 import { PRIMARY } from '../styledComponents/styledComponents';
+import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
+import Cookies from 'js-cookie';
+import { redux_alreadyLoadedOntology } from '../redux/actions/rrm_actions';
 
 class ViewOntology extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             isLoading: true,
             ontologyFileContent: undefined,
             error: false,
             errorMsg: '',
-            modeOfOperation: 'hybrid'
+            ontologyID: ''
         };
 
         this.DonatelloGraph = new DonatelloGraph();
@@ -31,15 +33,23 @@ class ViewOntology extends Component {
     }
 
     componentDidMount() {
-        // on mount we fetch all Ontologies
-        this.getOntologyFromBackend();
+        const urlParams = new URLSearchParams(this.props.location.search);
+        const response = Object.fromEntries(urlParams);
+
+        // Update the state with the ontologyID value from the query params
+        this.setState({ ontologyID: response.ontologyId }, () => {
+            // Fetch the ontology from the backend if it hasn't been loaded yet
+            const loadedOntology = this.props.redux_getAlreadyLoadedOntology?.id;
+            if (loadedOntology !== this.state.ontologyID) {
+                this.props.redux_alreadyLoadedOntology({ id: this.state.ontologyID });
+                this.getOntologyFromBackend();
+            } else {
+                this.setState({ isLoading: false, ontologyFileContent: 'not exported' });
+            }
+        });
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.ui_tab_selectorChanges !== this.props.ui_tab_selectorChanges) {
-            this.setState({ modeOfOperation: 'hybrid' });
-        }
-    }
+    componentDidUpdate(prevProps, prevState, snapshot) {}
 
     /** Functions forwarded to view Root for handling state Updates **/
     setLeftSideExpanded = val => {
@@ -51,7 +61,7 @@ class ViewOntology extends Component {
 
     getOntologyFromBackend = () => {
         // TODO: refactor>? getOntologyByID -> getJSONMOdel For ontology ID
-        getOntologyBy(this.props.match.params.ontologyId).then(res => {
+        getOntologyBy(this.state.ontologyID).then(res => {
             if (res.ontology_data) {
                 // create json obj from the string
                 const parsedModel = res.ontology_data;
@@ -64,8 +74,9 @@ class ViewOntology extends Component {
     };
 
     render() {
+        const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
         return (
-            <div style={{ height: '100vh', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ height: '90%', backgroundColor: PRIMARY.lighter }}>
                 <div className="pl-1 pr-1">
                     {this.state.isLoading === true && (
                         <div className="text-center text-primary mt-4 mb-4">
@@ -80,7 +91,7 @@ class ViewOntology extends Component {
                         </div>
                     )}
                     {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'hybrid' && (
+                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'hybrid' && (
                         <div>
                             <OntologyViewRoot
                                 leftSideExpanded={this.leftSideExpanded}
@@ -91,14 +102,9 @@ class ViewOntology extends Component {
                             />
                         </div>
                     )}
-                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'text' && (
-                        <OntologyViewAsTTL />
-                    )}
-                    {this.state.isLoading === false && this.state.error === false && this.props.location.modeOfOperations === 'graph' && (
-                        <GraphVisUi
-                            DonatelloGraph={this.DonatelloGraph}
-                            visualizationTabIsActive={this.props.location.modeOfOperations === 'graph'}
-                        />
+                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'text' && <OntologyViewAsTTL />}
+                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'graph' && (
+                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={modeOfOperations === 'graph'} />
                     )}
                 </div>
             </div>
@@ -110,23 +116,22 @@ const mapStateToProps = state => {
     return {
         user: state.auth.user,
         rrModel: state.ResourceRelationModelReducer,
-        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges
+        ui_tab_selectorChanges: state.globalUIReducer.ui_tab_selectorChanges,
+        redux_getAlreadyLoadedOntology: state.ResourceRelationModelReducer.ontologyID
     };
 };
 
 ViewOntology.propTypes = {
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            ontologyId: PropTypes.string.isRequired
-        }).isRequired
-    }).isRequired,
     location: PropTypes.object.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
-    ui_tab_selectorChanges: PropTypes.bool.isRequired
+    ui_tab_selectorChanges: PropTypes.bool.isRequired,
+    redux_getAlreadyLoadedOntology: PropTypes.object.isRequired,
+    redux_alreadyLoadedOntology: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
-    initializeResourceRelationModel: payload => dispatch(initializeResourceRelationModel(payload))
+    initializeResourceRelationModel: payload => dispatch(initializeResourceRelationModel(payload)),
+    redux_alreadyLoadedOntology: data => dispatch(redux_alreadyLoadedOntology(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewOntology);

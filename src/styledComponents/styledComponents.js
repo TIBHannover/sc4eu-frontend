@@ -65,7 +65,10 @@ export const PRIMARY = {
 };
 export const SECONDARY = {
     dark: '#536b78',
+    darker: '#2f3d45',
     link: '#0000EE'
 };
 
 export const TEXTCOLOR = '#4d5b7c';
+
+export const MAX_WIDTH = '769px';

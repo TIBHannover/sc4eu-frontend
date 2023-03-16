@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
 import { updateCookies } from '../redux/actions/auth';
-// this needs to connect to the redux
 
 class LoggedIn extends Component {
     componentDidMount() {
+        const urlParams = new URLSearchParams(this.props.location.search);
+        const response = Object.fromEntries(urlParams);
+        console.log(response.token);
         if (this.props.user === 0) {
-            const token = this.props.match.params.accessToken;
+            const token = response.token;
             this.props.updateCookies({ token });
         }
     }
@@ -28,15 +29,8 @@ const mapStateToProps = state => {
 };
 
 LoggedIn.propTypes = {
-    redirectRoute: PropTypes.string.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
-    match: PropTypes.shape({
-        params: PropTypes.shape({
-            accessToken: PropTypes.string,
-            redirectTo: PropTypes.string
-        }).isRequired
-    }).isRequired,
-
+    location: PropTypes.object.isRequired,
     updateCookies: PropTypes.func.isRequired
 };
 

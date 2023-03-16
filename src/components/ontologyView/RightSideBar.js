@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Card, CardBody, Collapse, Container, Input } from 'reactstrap';
+import { FormGroup, Button, Card, CardBody, Collapse, Container, Input, Table } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faBook, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import styled, { keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
 import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
-import { SELECTED_ONTOLOGY_SESSION, SELECTED_PROJECT_SESSION } from '../../constants/globalConstants';
 import { getAllCommits, getBranchFromUrl, getLicense, getRawUrlforCommit } from '../../network/GithubAPICalls';
 import { getGitlabBranchFromUrl, getGitlabCommits, getRawUrlForGitlabCommit, getGitlabLicense } from '../../network/GitlabAPICalls';
-import Select from '@material-ui/core/Select';
-import { FormControl, InputLabel, MenuItem } from '@material-ui/core';
 import ShowOntologyComparisonModal from './ShowOntologyComparisonModal';
-import { getOntologyComparison } from '../../network/GetOntologyData';
+import { getOntologyComparison, getWidocoDocumentation } from '../../network/GetOntologyData';
+import { getOntologyById } from '../../network/ontologyIndexing';
+import { URL_GET_HTML_FILE_WIDOCO } from '../../constants/services';
 
 class RightSideBar extends Component {
     constructor(props) {
@@ -38,14 +37,16 @@ class RightSideBar extends Component {
             compareResults: '',
             isLoading: false,
             licenceInfo: 'No Licence Available',
-            licenseURL: null
+            licenseURL: null,
+            gitCollapse: true,
+            isLoadingForWidoco: false
         };
     }
 
     componentDidMount = async () => {
         document.body.style.overflowX = 'hidden';
-        const theProject = JSON.parse(sessionStorage.getItem(SELECTED_PROJECT_SESSION));
-        const theOntology = JSON.parse(sessionStorage.getItem(SELECTED_ONTOLOGY_SESSION));
+        const theProject = this.props.selectedProject;
+        const theOntology = this.props.selectedOntology;
         let version = 'internal';
         const ontologyCommits = [];
         let license = null;
@@ -81,8 +82,12 @@ class RightSideBar extends Component {
             licenseName = license.data.license.name;
             licenseURL = license.data.html_url;
         } else if (license && theOntology.lookup_type === 'online-gitlab') {
-            licenseName = license.license.name;
-            licenseURL = license.license_url;
+            if (license.license) {
+                licenseName = license.license.name;
+                licenseURL = license.license_url;
+            } else {
+                licenseName = 'No Licence Available';
+            }
         }
 
         this.setState({
@@ -127,6 +132,10 @@ class RightSideBar extends Component {
 
     toggleComparison = () => {
         this.setState({ collapseComparison: !this.state.collapseComparison });
+    };
+
+    toggleGitCollapse = () => {
+        this.setState({ gitCollapse: !this.state.gitCollapse });
     };
 
     toggleMetaInformation = () => {
@@ -297,13 +306,34 @@ class RightSideBar extends Component {
         if (index_first !== -1 && index_second !== -1) {
             url_first = this.state.allCommits[index_first].raw_url;
             url_second = this.state.allCommits[index_second].raw_url;
-            console.log('+++++++++++++++++++++++++++');
-            console.log(url_first);
-            console.log(url_second);
             getOntologyComparison(url_first, url_second).then(data => {
-                console.log(data);
                 this.setState({ compareResults: data, showCompareModal: true, isLoading: false });
             });
+        }
+    };
+
+    getOntologyFileForDocumentation = async () => {
+        if (this.props.selectedOntology) {
+            try {
+                this.setState({ isLoadingForWidoco: true });
+                const res = await getOntologyById(this.props.selectedOntology.uuid);
+                const file = new File([res.ontology_data], this.props.selectedOntology.name, { type: 'text/turtle' });
+                const widocoRes = await getWidocoDocumentation(file);
+                if (widocoRes === true) {
+                    setTimeout(() => {
+                        window.open(URL_GET_HTML_FILE_WIDOCO, '_blank');
+                        this.setState({ isLoadingForWidoco: false });
+                    }, 2000);
+                } else {
+                    this.setState({ isLoadingForWidoco: false });
+                    alert('Something went wrong, please try again after some time');
+                }
+            } catch (error) {
+                this.setState({ isLoadingForWidoco: false });
+                alert(error);
+            }
+        } else {
+            alert('Something went wrong, Please Try again after some times');
         }
     };
 
@@ -330,27 +360,34 @@ class RightSideBar extends Component {
                             <span style={{ fontSize: '15px', fontWeight: 600 }}>Please choose two commits to compare </span>{' '}
                         </div>
                         <div style={{ marginTop: '5px' }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Select 1st Commit</InputLabel>
-                                <Select label={'choose commit'} onChange={this.handleFirstCommitChange} defaultValue="">
+                            <FormGroup>
+                                <Input
+                                    type="select"
+                                    name="select"
+                                    label={'choose commit'}
+                                    id="exampleSelect"
+                                    defaultValue={''}
+                                    onChange={this.handleFirstCommitChange}
+                                >
+                                    <option style={{ display: 'none' }}>Select 1st Commit</option>
                                     {this.state.allCommits.map(item => (
-                                        <MenuItem key={item.value + 'first'} value={item.value}>
+                                        <option key={item.value + 'first'} value={item.value}>
                                             {item.label}
-                                        </MenuItem>
+                                        </option>
                                     ))}
-                                </Select>
-                            </FormControl>
+                                </Input>
+                            </FormGroup>
                         </div>
-                        <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Select 2nd Commit</InputLabel>
-                            <Select label={'choose commit'} onChange={this.handleSecondCommitChange} defaultValue="">
+                        <FormGroup style={{ margin: '3% 0 2% 0' }}>
+                            <Input type="select" name="select" label={'choose commit'} defaultValue={''} onChange={this.handleSecondCommitChange}>
+                                <option style={{ display: 'none' }}>Select 2nd Commit</option>
                                 {this.state.allCommits.map(item => (
-                                    <MenuItem key={item.value + 'second'} value={item.value}>
+                                    <option key={item.value + 'second'} value={item.value}>
                                         {item.label}
-                                    </MenuItem>
+                                    </option>
                                 ))}
-                            </Select>
-                        </FormControl>
+                            </Input>
+                        </FormGroup>
                         <Button style={{ backgroundColor: SECONDARY.dark, marginTop: '5px' }} onClick={this.showComparison}>
                             Show Comparison
                         </Button>
@@ -389,7 +426,7 @@ class RightSideBar extends Component {
                 expanded={this.state.expanded}
                 width={this.props.width}
                 initialRendering={this.state.initialRendering}
-                style={{ width: this.props.width, position: 'absolute', height: this.props.height + 'px' }}
+                style={{ width: this.props.width, position: 'absolute', height: this.props.height + 'px', marginTop: '55px' }}
             >
                 <Container
                     className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
@@ -453,33 +490,80 @@ class RightSideBar extends Component {
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Project Name: </span>
                         <span>{this.state.openProject.name}</span>
                     </div>
-                    <div style={{ marginTop: '20px', marginLeft: '15px', display: 'inline-block' }}>
+                    <div style={{ marginTop: '20px', marginLeft: '15px', display: 'inline-block', marginBottom: '10px' }}>
                         <span style={{ fontSize: '20px', fontWeight: 600 }}>Ontology Name: </span>
                         <span>{this.state.openOntology.name}</span>
                     </div>
-                    {this.state.openOntology.lookup_type === 'online' ? (
-                        <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px' }}>
-                            <span style={{ fontSize: '20px', fontWeight: 600 }}>
+                    {this.state.openOntology.lookup_type === 'online' || this.state.openOntology.lookup_type === 'online-gitlab' ? (
+                        <div style={{ padding: '0 10px', width: this.props.width - 5, marginTop: '10px' }}>
+                            <Button
+                                onClick={() => this.toggleGitCollapse()}
+                                style={{
+                                    marginTop: '5px',
+                                    width: '100%',
+                                    textAlign: 'left',
+                                    fontWeight: 'bold',
+                                    backgroundColor: SECONDARY.dark
+                                }}
+                            >
+                                <Icon icon={this.state.gitCollapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
                                 {this.state.openOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
-                            </span>
-                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                                <b>URL:</b> {this.state.openOntology.lookup_path}
-                            </li>
-                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                                <b>License:</b>
-                                <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
-                                    {this.state.licenceInfo}
-                                </a>
-                            </li>
-                            <li style={{ listStyleType: 'disc', marginLeft: '20px' }}>
-                                <b>Branch:</b> {this.state.ontologyVersion}
-                            </li>
+                            </Button>
+                            <Collapse isOpen={!this.state.gitCollapse}>
+                                <Table bordered style={{ marginTop: '10px' }}>
+                                    <tbody>
+                                        <tr>
+                                            <th style={{ width: '20px' }}>URL</th>
+                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.openOntology.lookup_path}</td>
+                                        </tr>
+                                        <tr>
+                                            <th style={{ width: '20px' }}>License</th>
+                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                                <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
+                                                    {this.state.licenceInfo}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style={{ width: '20px' }}>Branch</th>
+                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.ontologyVersion}</td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                            </Collapse>
                         </div>
                     ) : (
                         <div />
                     )}
-                    <div style={{ width: this.props.width - 5, marginTop: '10px' }}>{this.renderMetaInformation()}</div>
+
+                    <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
                     {comparisonButton}
+                    <div style={{ padding: '0 10px', width: this.props.width - 5 }}>
+                        <Button
+                            title="Ontology Documentation"
+                            onClick={this.getOntologyFileForDocumentation}
+                            style={{
+                                marginTop: '5px',
+                                width: '100%',
+                                textAlign: 'left',
+                                fontWeight: 'bold',
+                                backgroundColor: SECONDARY.dark
+                            }}
+                        >
+                            <Icon icon={faBook} style={{ marginRight: '8px' }} />
+                            Widoco Documentation
+                        </Button>
+                        {this.state.isLoadingForWidoco && (
+                            <div className="text-center text-primary" style={{ marginTop: '10px' }}>
+                                <h2 className="h5">
+                                    <span>
+                                        <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                                    </span>
+                                    Loading Document
+                                </h2>
+                            </div>
+                        )}
+                    </div>
                 </Container>
             </ContentContainer>
         );
@@ -493,12 +577,16 @@ RightSideBar.propTypes = {
     heightUpdateEvent: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
-    metaInformation: PropTypes.object
+    metaInformation: PropTypes.object,
+    selectedProject: PropTypes.object.isRequired,
+    selectedOntology: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
     return {
-        metaInformation: state.ResourceRelationModelReducer.metaInformation
+        metaInformation: state.ResourceRelationModelReducer.metaInformation,
+        selectedProject: state.ResourceRelationModelReducer.project,
+        selectedOntology: state.ResourceRelationModelReducer.ontology
     };
 };
 

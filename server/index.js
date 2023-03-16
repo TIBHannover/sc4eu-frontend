@@ -13,7 +13,7 @@ const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
 
 const app = express(); // create express app
-
+const url = require('url');
 const proxy = require('http-proxy-middleware').createProxyMiddleware;
 
 //const API_SERVICE_URL = 'http://localhost:9000';
@@ -86,17 +86,24 @@ server.adminDashBoard(router);
 server.allRoles(router);
 server.userRole(router);
 server.userProject(router);
+server.userProjectsDetail(router);
+server.projectUsersDetail(router);
 server.allowUploads(router);
 server.getUserHeader(router);
 server.deleteUser(router);
 server.transformTTL(router);
 server.transformVOWL_JSON(router);
+server.checkUserExists(router);
 
 auth.registerUser(router);
 auth.loginViaEmail(router);
 auth.userSettings(router);
 auth.getUserSettings(router);
 auth.verifyEmail(router);
+auth.forgotPassword(router);
+auth.verifResetPassword(router);
+auth.setNewPassword(router);
+auth.projectAccessEmail(router);
 
 database.uploadOntology(router);
 database.deleteOntology(router);
@@ -107,19 +114,53 @@ database.getProjectIndex(router);
 database.createProject(router);
 database.deleteProject(router);
 database.editProject(router);
+database.getAllUsers(router);
+database.unregisterUserFromProject(router);
+database.addUserToProject(router);
+database.getOntologyGitData(router);
 
 processing.getJSONModelForOntologyID(router);
 processing.initializeOntology(router);
 processing.compareTwoOntologies(router);
+processing.getWidocoDocumentation(router);
+processing.getHtmlForWidoco(router);
 
 /** GITHUB OAUTH STUFF**/
-router.get('/auth/github', passport.authenticate('github'));
-router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-    // TODO: implement the /login page for failureRedirect
-    // Successful authentication, redirect home.
-    // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
-    res.redirect(`http://localhost:9000/loggedIn/${req.user.jwt}`);
-});
+router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
+router.get(
+    '/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/sc3/LoginFailedRedirect` }),
+    (req, res) => {
+        // Successful authentication, redirect home.
+        // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
+        res.redirect(
+            url.format({
+                pathname: `${process.env.CALLBACK_URL}/sc3/loggedIn`,
+                query: {
+                    success: true,
+                    token: req.user.jwt
+                }
+            })
+        );
+    }
+);
+
+router.get('/auth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
+router.get(
+    '/auth/gitlab/callback',
+    passport.authenticate('gitlab', { failureRedirect: `${process.env.CALLBACK_URL}/sc3/LoginFailedRedirect` }),
+    (req, res) => {
+        res.redirect(
+            url.format({
+                pathname: `${process.env.CALLBACK_URL}/sc3/loggedIn`,
+                query: {
+                    success: true,
+                    token: req.user.jwt
+                }
+            })
+        );
+    }
+);
 
 router.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'build/sc3', 'index.html'));

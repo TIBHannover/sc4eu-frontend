@@ -1,7 +1,7 @@
 import { plainGetRequest, submitGetRequest, submitPostRequest } from './networkRequests';
 import { URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY, URL_DELETEONTOLOGY, URL_INITIALIZE, URL_ONTOLOGYINDEXING, URL_PRE_INIT } from 'constants/services';
 import { Cookies } from 'react-cookie';
-import { URL_ONTOLOGYBYID } from '../constants/services';
+import { URL_GET_ONTOLOGY_GIT_DATA, URL_ONTOLOGYBYID } from '../constants/services';
 
 export const getAllOntologies = project_id => {
     // we use parameters from env.
@@ -21,15 +21,20 @@ export const getOntologyById = ontology_id => {
     });
 };
 
+export const getOntologyGitData = ontology_id => {
+    return plainGetRequest(URL_GET_ONTOLOGY_GIT_DATA + '?ontology_id=' + ontology_id, {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    });
+};
+
 export const deleteOntology = ontology_id => {
     const postHeader = { 'Content-Type': 'application/json' };
-    console.log('Deleting Ontology: ', { ontologyIdToDelete: ontology_id });
     return submitPostRequest(URL_DELETEONTOLOGY, postHeader, { ontologyIdToDelete: ontology_id });
 };
 
 export const uploadOntology = data => {
     const postHeader = { 'Content-Type': 'application/json' };
-    console.log('UPLOADING THE DATA ', data);
     return submitPostRequest(URL_INITIALIZE, postHeader, data);
 };
 

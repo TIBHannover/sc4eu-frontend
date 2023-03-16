@@ -4,10 +4,6 @@ const octokit = new Octokit({
     auth: process.env.GITHUB_ACCESS_TOKEN
 });
 
-export const getUser = async githubapiurl => {
-    console.log('getUser');
-};
-
 const getUserFromUrl = githubapiurl => {
     const url = new URL(githubapiurl);
     const userName = url.pathname.split('/')[1];
@@ -20,34 +16,47 @@ const getRepoFromUrl = githubapiurl => {
 };
 export const getBranchFromUrl = githubapiurl => {
     const url = new URL(githubapiurl);
-    const branchName = url.pathname.split('/')[3];
+    let branchName;
+    if (githubapiurl.includes('raw.githubusercontent')) {
+        branchName = url.pathname.split('/')[3];
+    } else {
+        branchName = url.pathname.split('/')[4];
+    }
     return branchName;
 };
 const getFilePath = githubapiurl => {
     const url = new URL(githubapiurl);
-    const repoPath = url.pathname
-        .split('/')
-        .splice(4)
-        .join('/');
+    let repoPath;
+    if (githubapiurl.includes('raw.githubusercontent')) {
+        repoPath = url.pathname
+            .split('/')
+            .splice(4)
+            .join('/');
+    } else {
+        repoPath = url.pathname
+            .split('/')
+            .splice(5)
+            .join('/');
+    }
     return repoPath;
 };
-
 export const getRawUrlforCommit = (githubapiurl, commit_sha) => {
     const url = new URL(githubapiurl);
     const temp_url = url.href.split('/');
-    temp_url[5] = commit_sha;
+    if (githubapiurl.includes('github.com')) {
+        temp_url[2] = 'raw.githubusercontent.com';
+        temp_url.splice(5, 1);
+        temp_url[5] = commit_sha;
+        console.log(commit_sha);
+    } else if (githubapiurl.includes('raw.githubusercontent')) {
+        temp_url[5] = commit_sha;
+    }
     return temp_url.join('/');
-};
-
-export const getRepo = async githubapiurl => {
-    const user = getUserFromUrl(githubapiurl);
-    const repoName = getRepoFromUrl(githubapiurl);
 };
 
 export const getThisCommit = async (githubapiurl, sha) => {
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
-    const branchRefoName = getBranchFromUrl(githubapiurl);
     const filePath = getFilePath(githubapiurl);
 
     const contents = await octokit.rest.repos.getCommit({
@@ -56,7 +65,7 @@ export const getThisCommit = async (githubapiurl, sha) => {
         path: filePath,
         ref: sha
     });
-
+    console.log(contents);
     return contents;
 };
 
@@ -64,7 +73,6 @@ export const getAllCommits = async githubapiurl => {
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
     const branchRefoName = getBranchFromUrl(githubapiurl);
-    const filePath = getFilePath(githubapiurl);
 
     const contents = await octokit.rest.repos.listCommits({
         owner: user,
@@ -108,7 +116,6 @@ export const getLicense = async githubapiurl => {
 export const getGitHubFileContent = async githubapiurl => {
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
-    const branchRefoName = getBranchFromUrl(githubapiurl);
     const filePath = getFilePath(githubapiurl);
 
     const ontologyData = await octokit.rest.repos.getContent({
@@ -123,17 +130,12 @@ export const getGitHubFileContent = async githubapiurl => {
         repo: repoName,
         file_sha: sha
     });
-
     const base64Contents = contents['data']['content'];
     const bufferObj = Buffer.from(base64Contents, 'base64');
 
     // Encode the Buffer as a utf8 string
     const decodedString = bufferObj.toString('utf8');
     return decodedString;
-};
-
-export const getRelease = async githubapiurl => {
-    console.log('getRelease');
 };
 
 export const getBranches = async githubapiurl => {
@@ -145,13 +147,6 @@ export const getBranches = async githubapiurl => {
         repo: repoName
     });
     console.log(branches);
-};
-
-export const getBranch = async githubapiurl => {
-    const user = getUserFromUrl(githubapiurl);
-    const repoName = getRepoFromUrl(githubapiurl);
-    const branchName = getBranchFromUrl(githubapiurl);
-    console.log(branchName);
 };
 
 export const listReleases = async githubapiurl => {
@@ -176,4 +171,61 @@ export const getReleaseTags = async githubapiurl => {
         tags.push(tag);
     });
     return tags;
+};
+
+export const getLatestCommit = async githubApiUrl => {
+    const owner = getUserFromUrl(githubApiUrl);
+    const repo = getRepoFromUrl(githubApiUrl);
+    const branch = getBranchFromUrl(githubApiUrl) || 'main';
+
+    const response = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
+        owner: owner,
+        repo: repo,
+        ref: branch
+    });
+    return response.data.sha;
+};
+
+export const checkFileUpdated = async (githubApiUrl, lastCommit) => {
+    const owner = getUserFromUrl(githubApiUrl);
+    const repo = getRepoFromUrl(githubApiUrl);
+    const branch = getBranchFromUrl(githubApiUrl) || 'main';
+
+    try {
+        // Get the latest commit SHA for the repository
+        const response = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
+            owner: owner,
+            repo: repo,
+            ref: branch
+        });
+
+        const latestCommitSha = response.data.sha;
+        const lastFetchedFileSha = lastCommit;
+        if (latestCommitSha !== lastFetchedFileSha) {
+            const {
+                data: { behind_by: commitsBehind }
+            } = await octokit.rest.repos.compareCommits({
+                owner,
+                repo,
+                base: latestCommitSha,
+                head: lastFetchedFileSha
+            });
+            return {
+                status: 'behind',
+                commitsBehind,
+                branch
+            };
+        } else {
+            return {
+                status: 'latest',
+                commitsBehind: 0,
+                branch
+            };
+        }
+    } catch (error) {
+        return {
+            status: 'error',
+            commitsBehind: -1
+        };
+    }
 };

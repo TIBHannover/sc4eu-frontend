@@ -1,14 +1,17 @@
 const jwt = require('jsonwebtoken');
-const GitHubStrategy = require('passport-github').Strategy;
+const GitHubStrategy = require('passport-github2').Strategy;
+const GitLabStrategy = require('passport-gitlab2').Strategy;
 require('dotenv').config();
 const request = require('request');
 const sendEmail = require('./sendEmail');
+const sendProjectPermissionEmail = require('./sendProjectPermissionEmail');
 const emailVerificationHtml = require('./emailVerificationHTML');
-
+const passwordResetEmailHtml = require('./passwordResetEmailHTML');
+const session = require('express-session');
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
-
+const url = require('url');
 const verifyToken = require('./veryfyToken');
 
 module.exports = {
@@ -21,16 +24,104 @@ module.exports = {
         passport.deserializeUser(function(user, done) {
             done(null, user);
         });
-
+        app.use(
+            session({
+                secret: process.env.JWT_SECRET,
+                resave: true,
+                saveUninitialized: true,
+                cookie: {
+                    maxAge: 30 * 24 * 60 * 60 * 1000
+                }
+            })
+        );
         app.use(passport.initialize());
+        app.use(passport.session());
+
+        try {
+            passport.use(
+                new GitLabStrategy(
+                    {
+                        clientID: process.env.GITLAB_CLIENT_ID,
+                        clientSecret: process.env.GITLAB_CLIENT_SECRET,
+                        callbackURL: `${process.env.CALLBACK_URL}/sc3/auth/gitlab/callback`
+                    },
+                    async function(accessToken, __refreshToken, profile, cb) {
+                        const options = {
+                            headers: {
+                                'User-Agent': 'JavaScript',
+                                Authorization: 'Bearer ' + accessToken
+                            },
+                            json: true,
+                            url: 'https://gitlab.com/api/v4/user/emails'
+                        };
+
+                        // this is where we need to fetch the email address and the display name
+                        // get emails using oauth token
+                        await request(options, function(error, response, body) {
+                            if (error || response.statusCode !== 200) {
+                                console.log(error);
+                                console.log(body);
+                                return null;
+                            }
+                            let email = '';
+                            Object.keys(body).forEach(function(key) {
+                                email = body[key].email;
+                            });
+                            if (!email.length) {
+                                return { error: 'Could not access your email  address ' };
+                                // >> CRITICAL ERROR
+                            }
+
+                            const loginRequestOptions = {
+                                uri: `${process.env.BACKEND_SERVER_URL}/users/login/`,
+                                body: JSON.stringify({
+                                    displayName: profile.displayName,
+                                    email: email,
+                                    auth_type: 'AUTH_GITLAB',
+                                    token: 'undefined'
+                                }),
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            };
+                            request(loginRequestOptions, function(error, response) {
+                                if (response && response.body) {
+                                    try {
+                                        const result = JSON.parse(response.body);
+                                        const local_accessToken = jwt.sign(
+                                            {
+                                                userId: result.user_id,
+                                                bToken: result.bToken
+                                            },
+                                            process.env.JWT_SECRET,
+                                            {
+                                                expiresIn: '8h'
+                                            }
+                                        );
+                                        cb(null, { jwt: local_accessToken }); // sends the local access token to the call back routine;
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+                                } else {
+                                    cb(null, { error: 'Could not login via GitLab' }); // sends the local access token to the call back routine;
+                                }
+                            });
+                        });
+                    }
+                )
+            );
+        } catch (e) {
+            console.log(e);
+        }
 
         try {
             passport.use(
                 new GitHubStrategy(
                     {
-                        clientID: process.env.GITHUB_CLIENT_ID,
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-                        callbackURL: APPLICATION_URL + ':' + APPLICATION_PORT + '/auth/github/callback'
+                        clientID: process.env.GITHUB_CLIENT_ID_FOR_LOGIN,
+                        clientSecret: process.env.GITHUB_CLIENT_SECRET_FOR_LOGIN,
+                        callbackURL: `${process.env.CALLBACK_URL}/sc3/auth/github/callback`
                     },
                     async function(accessToken, __refreshToken, profile, cb) {
                         const displayName = profile.displayName;
@@ -176,18 +267,23 @@ module.exports = {
     },
 
     verifyEmail: function(app) {
+        const pathname = `${process.env.CALLBACK_URL}/sc3/EmailVerify`;
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
             jwt.verify(token, process.env.JWT_SECRET, function(error, decoded) {
                 if (error) {
-                    console.log(error);
-                    res.send({
-                        success: false,
-                        error:
-                            'Email verification failed,  possibly the link is invalid or expired. To verify your account just sign in and you will ' +
-                            'get again verification email.'
-                    });
+                    res.redirect(
+                        url.format({
+                            pathname: pathname,
+                            query: {
+                                success: false,
+                                message:
+                                    'Email verification failed,  possibly the link is invalid or expired. To verify your account just sign in and you will ' +
+                                    'get again verification email.'
+                            }
+                        })
+                    );
                 } else {
                     const options = {
                         uri: `${process.env.BACKEND_SERVER_URL}/users/edit_email_valid/`,
@@ -204,24 +300,47 @@ module.exports = {
                             try {
                                 const result = JSON.parse(response.body);
                                 if (result.result === true) {
-                                    res.status(200).send({ success: true, message: 'Email verified successfully' });
+                                    res.redirect(
+                                        url.format({
+                                            pathname: pathname,
+                                            query: {
+                                                success: true,
+                                                message: 'Email verified successfully'
+                                            }
+                                        })
+                                    );
                                 } else {
-                                    res.json({
-                                        success: false,
-                                        error: 'Something went wrong'
-                                    });
+                                    res.redirect(
+                                        url.format({
+                                            pathname: pathname,
+                                            query: {
+                                                success: false,
+                                                message: 'Something went wrong'
+                                            }
+                                        })
+                                    );
                                 }
                             } catch (e) {
-                                res.json({
-                                    success: false,
-                                    error: 'Something went wrong'
-                                });
+                                res.redirect(
+                                    url.format({
+                                        pathname: pathname,
+                                        query: {
+                                            success: false,
+                                            message: 'Something went wrong'
+                                        }
+                                    })
+                                );
                             }
                         } else {
-                            res.json({
-                                success: false,
-                                error: 'Something went wrong'
-                            });
+                            res.redirect(
+                                url.format({
+                                    pathname: pathname,
+                                    query: {
+                                        success: false,
+                                        message: 'Something went wrong'
+                                    }
+                                })
+                            );
                         }
                     });
                 }
@@ -257,15 +376,11 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '10h' }
                         );
+                        const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.username,
-                            subject: 'Email Verification',
-                            body: ` <h4>Hello ${result.displayName}</h4>
-                                                <p> Thanks for signing up. Please follow this link to activate your account:</p>
-                                                <a href=${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}> Click here</a>
-                                                <p>Thanks</p>
-                                                <p>Note: If you did not make this request then simply ignore this email and no changes will be made.</p>
-                                                </div>`
+                            subject: 'SC3 Email Verification',
+                            body: emailVerificationHtml(callbackURL, result.displayName).body
                         };
                         sendEmail(EmailFields).then(response => {
                             if (!response.success) {
@@ -448,6 +563,128 @@ module.exports = {
                     res.json({ error: 'Invalid Token' });
                 }
             }
+        });
+    },
+    forgotPassword: function(app) {
+        app.post('/user/forgotPassword', (req, res) => {
+            const options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/users/email_exists/`,
+                body: JSON.stringify({
+                    email_address: req.body.email_address
+                }),
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            request(options, function(error, response) {
+                const result = JSON.parse(response.body);
+                if (result) {
+                    if (result.success === true) {
+                        const token = jwt.sign(
+                            {
+                                data: 'TokenData'
+                            },
+                            process.env.JWT_SECRET,
+                            { expiresIn: '10h' }
+                        );
+                        const callbackURL = `${process.env.CALLBACK_URL}/sc3/verifResetPassword/${result.user_id}/${token}`;
+                        const EmailFields = {
+                            email: req.body.email_address,
+                            subject: 'SC3 Password Reset',
+                            body: passwordResetEmailHtml(callbackURL, result.display_name).body
+                        };
+                        sendEmail(EmailFields).then(response => {
+                            if (response.success) {
+                                res.json({
+                                    success: true,
+                                    message: 'Please Click on the link that has just been sent your email account to reset password.'
+                                });
+                            } else {
+                                res.json({
+                                    success: false,
+                                    message: 'Something went wrong please try again after some time'
+                                });
+                            }
+                        });
+                    } else {
+                        res.json(result);
+                    }
+                } else {
+                    res.json({ success: false, message: 'Something went wrong please try again after some time' });
+                }
+            });
+        });
+    },
+
+    verifResetPassword: function(app) {
+        const pathname = `${process.env.CALLBACK_URL}/sc3/ResetPassword`;
+        app.get(`/verifResetPassword/:user_id/:token`, (req, res) => {
+            const { token } = req.params;
+            const { user_id } = req.params;
+            jwt.verify(token, process.env.JWT_SECRET, function(error, decoded) {
+                if (error) {
+                    res.json({ error, success: false, message: 'password verification failed' });
+                } else {
+                    res.redirect(
+                        url.format({
+                            pathname: pathname,
+                            query: {
+                                success: true,
+                                user_id: user_id
+                            }
+                        })
+                    );
+                }
+            });
+        });
+    },
+
+    setNewPassword: function(app) {
+        app.post(`/user/setNewPassword`, (req, res) => {
+            const options = {
+                uri: `${process.env.BACKEND_SERVER_URL}/users/set_new_password/`,
+                body: JSON.stringify({
+                    user_id: req.body.user_id,
+                    password: req.body.password
+                }),
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            request(options, function(error, response) {
+                const result = JSON.parse(response.body);
+                if (result) {
+                    return res.json(result);
+                } else {
+                    return res.json({ success: false, message: 'something went wrong please try again after some time' });
+                }
+            });
+        });
+    },
+
+    projectAccessEmail: function(app) {
+        app.post(`/auth/projectAccessEmail`, (req, res) => {
+            const emailFields = {
+                userEmail: req.body.userEmail,
+                projectAdminEmail: req.body.projectAdminEmail,
+                subject: req.body.emailSubject,
+                body: req.body.emailContent
+            };
+            sendProjectPermissionEmail(emailFields).then(response => {
+                if (response.success) {
+                    res.json({
+                        success: true,
+                        message: 'Email have been sent successfully'
+                    });
+                } else {
+                    res.json({
+                        success: false,
+                        message: 'Something went wrong please try again after some time'
+                    });
+                }
+            });
         });
     }
 };

@@ -53,7 +53,7 @@ export const getGitlabLicense = async gitlabapiurl => {
     const repo = getRepoFromUrl(gitlabapiurl);
 
     const response = await fetch(`https://gitlab.com/api/v4/projects/${user}%2F${repo}?license=yes`, { headers });
-    let license = await response.json();
+    const license = await response.json();
     return license;
 };
 export const getGitlabFileContent = async gitlabapiurl => {
@@ -70,4 +70,46 @@ export const getGitlabFileContent = async gitlabapiurl => {
     const bufferObj = Buffer.from(userRepoFilesParsed['content'], 'base64');
     const decodedString = bufferObj.toString('utf8');
     return decodedString;
+};
+
+export const getGitlabLatestCommit = async githubApiUrl => {
+    const userRepo = await getUserRepoByName(githubApiUrl);
+    const branch = getGitlabBranchFromUrl(githubApiUrl) || 'main';
+
+    const response = await fetch(`https://gitlab.com/api/v4/projects/${userRepo['id']}/repository/commits/${branch}`, { headers });
+    const data = await response.json();
+    return data.id;
+};
+
+export const checkGitlabFileUpdated = async (githubApiUrl, lastFetchedFileSha) => {
+    const userRepo = await getUserRepoByName(githubApiUrl);
+    const branch = getGitlabBranchFromUrl(githubApiUrl);
+    try {
+        // Get the latest commit SHA for the repositor
+        const latestCommitSha = await getGitlabLatestCommit(githubApiUrl);
+        if (latestCommitSha !== lastFetchedFileSha) {
+            const comparisonUrl = await fetch(
+                `https://gitlab.com/api/v4/projects/${userRepo['id']}/repository/compare?from=${lastFetchedFileSha}&to=${latestCommitSha}&straight=false`,
+                { headers }
+            );
+            const response = await comparisonUrl.json();
+            const commitsBehind = response?.commits?.length;
+            return {
+                status: 'behind',
+                commitsBehind,
+                branch
+            };
+        } else {
+            return {
+                status: 'latest',
+                commitsBehind: 0,
+                branch
+            };
+        }
+    } catch (error) {
+        return {
+            status: 'error',
+            commitsBehind: -1
+        };
+    }
 };
