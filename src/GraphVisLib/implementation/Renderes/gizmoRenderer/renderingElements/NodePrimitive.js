@@ -52,13 +52,13 @@ export default class NodePrimitive extends BasePrimitive {
     removeIncomingLink = link => {
         const found = this.incomingLinks.findIndex(item => item.__id === link.__id);
         if (found !== -1) {
-            this.incomingLinks.slice(found, 1);
+            this.incomingLinks.splice(found, 1);
         }
     };
     removeOutgoingLink = link => {
         const found = this.outgoingLinks.findIndex(item => item.__id === link.__id);
         if (found !== -1) {
-            this.outgoingLinks.slice(found, 1);
+            this.outgoingLinks.splice(found, 1);
         }
     };
 

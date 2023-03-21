@@ -20,7 +20,7 @@ import {
 } from '../constants/services';
 
 export const getUserProfile = payload => {
-    return submitGetRequest(`${URL_GET_USER_PROFILE}/?id=${payload.user}`, {}, false);
+    return submitGetRequest(`${URL_GET_USER_PROFILE}/?id=${payload.user}`, {}, true);
 };
 
 export const getUserSettings = () => {
