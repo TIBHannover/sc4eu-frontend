@@ -47,7 +47,6 @@ export const getRawUrlforCommit = (githubapiurl, commit_sha) => {
         temp_url[2] = 'raw.githubusercontent.com';
         temp_url.splice(5, 1);
         temp_url[5] = commit_sha;
-        console.log(commit_sha);
     } else if (githubapiurl.includes('raw.githubusercontent')) {
         temp_url[5] = commit_sha;
     }
@@ -65,7 +64,6 @@ export const getThisCommit = async (githubapiurl, sha) => {
         path: filePath,
         ref: sha
     });
-    console.log(contents);
     return contents;
 };
 
@@ -117,11 +115,13 @@ export const getGitHubFileContent = async githubapiurl => {
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);
     const filePath = getFilePath(githubapiurl);
+    const branchName = getBranchFromUrl(githubapiurl);
 
     const ontologyData = await octokit.rest.repos.getContent({
         owner: user,
         repo: repoName,
-        path: filePath
+        path: filePath,
+        ref: branchName
     });
     const sha = ontologyData['data']['sha'];
 
@@ -146,7 +146,6 @@ export const getBranches = async githubapiurl => {
         owner: user,
         repo: repoName
     });
-    console.log(branches);
 };
 
 export const listReleases = async githubapiurl => {
@@ -157,12 +156,10 @@ export const listReleases = async githubapiurl => {
         owner: user,
         repo: repoName
     });
-    console.log(releases['data'][0].tag_name);
     return releases;
 };
 
 export const getReleaseTags = async githubapiurl => {
-    console.log('getReleaseTags');
     const releases = await listReleases(githubapiurl);
     const releaseData = releases['data'];
     const tags = [];
