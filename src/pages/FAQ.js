@@ -123,7 +123,7 @@ export default class Faq extends Component {
                                 href="https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues"
                                 rel="noreferrer"
                             >
-                                https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues
+                                SC3 Issue Management
                             </a>
                         </p>
                     </Collapse>
@@ -139,12 +139,12 @@ export default class Faq extends Component {
                         <p style={{ marginTop: '30px', color: TEXTCOLOR }}>
                             WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC3 Platform
                             Visualization ( &nbsp;
-                            <a style={{ color: SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/project" rel="noreferrer">
-                                https://service.tib.eu/sc3/project
+                            <a style={{ color: SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
+                                SC3 Portal
                             </a>
                             &nbsp;) and WebProtege (&nbsp;
                             <a style={{ color: SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/webprotege" rel="noreferrer">
-                                https://service.tib.eu/sc3/webprotege
+                                WebProtege
                             </a>
                             &nbsp;) are only loosely coupled. Both have their own authentication solutions and data management systems. It is
                             therefore not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first work
