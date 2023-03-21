@@ -71,8 +71,8 @@ class Documentations extends Component {
             <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
                 <div style={{ width: '100%', height: '90%', overflowY: 'auto', paddingBottom: '30px' }}>
                     <StyledDiv>
-                        <h2 style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '10px' }}>What Portal will do for you</h2>
-                        <h4>Connecting domain experts with knowledge engineers</h4>
+                        <h2 style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '10px' }}>What the Portal will do for you</h2>
+                        <h4>Connecting Domain Experts with Knowledge Engineers</h4>
                         <p style={{ whiteSpace: 'pre-wrap', textAlign: 'justify', color: TEXTCOLOR }}>
                             {this.state.isreadmoreUserGuidance ? (
                                 <>
@@ -126,7 +126,7 @@ class Documentations extends Component {
                                 via LinkedIn.
                             </a>
                         </p>
-                        <h4>Framework for collaborative ontology development</h4>
+                        <h4>Framework for Collaborative Ontology Development</h4>
                         <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer', textAlign: 'justify', color: TEXTCOLOR }}>
                             {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
                             <span style={{ color: SECONDARY.link }} onClick={this.toggleReadmoreFrameworkText}>
@@ -134,7 +134,7 @@ class Documentations extends Component {
                             </span>
                         </p>
 
-                        <h4>Be part of the SC3 Community and collaborate with us </h4>
+                        <h4>Be part of the SC3 Community and Collaborate with us </h4>
                         <p style={{ textAlign: 'justify', color: TEXTCOLOR }}>
                             SC3 is an ECSEL funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone
                             are invited to participate in the project development.
@@ -145,12 +145,12 @@ class Documentations extends Component {
                                 rel="noopener noreferrer"
                                 href="https://gitlab.com/TIBHannover/sc3-project/"
                             >
-                                https://gitlab.com/TIBHannover/sc3-project/
+                                SC3 Project GitLab
                             </a>
                             <br />
                             You will find all our code under a MIT licence, instructions. Check it out!
                         </p>
-                        <h4>Hybrid modes of operation</h4>
+                        <h4>Hybrid Modes of Operation</h4>
                         <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer', textAlign: 'justify', color: TEXTCOLOR }}>
                             {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
                             <span style={{ color: SECONDARY.link }} onClick={this.toggleReadmore}>
