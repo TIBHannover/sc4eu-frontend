@@ -300,11 +300,7 @@ module.exports = {
                         if (response && response.body) {
                             const result = JSON.parse(response.body);
                             if (result) {
-                                if (result.error) {
-                                    return res.json({ error: 'Could not find user' });
-                                } else {
-                                    return res.json(result);
-                                }
+                                return res.json(result);
                             } else {
                                 res.json({ error: 'Could not find user' });
                             }
