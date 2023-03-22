@@ -49,7 +49,7 @@ export const StyledResourceAndRelationHeader = styled.div`
     color: white;
     //background-color: ${props => (props.isHighlighted === true ? 'black' : '#4388cc')};
     background-color: ${props => (props.experimentalLayout ? PRIMARY.dark : props.isHighlighted === true ? 'black' : '#4388cc')};
-    color:${props => (props.experimentalLayout ? 'black' : 'black')};
+    color:${props => (props.experimentalLayout ? 'black' : 'blue')};
     :focus {
         outline: none;
     }

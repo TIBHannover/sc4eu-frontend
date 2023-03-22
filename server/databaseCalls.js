@@ -307,32 +307,36 @@ module.exports = {
     },
 
     viewUserSettings: function(app) {
-        app.get('/user/viewProfile/', (req, res) => {
-            try {
-                console.log(req.query);
-                const userId = req.query.id;
-                const options = {
-                    uri: `${process.env.BACKEND_SERVER_URL}/users/viewProfile/?userId=${userId}`,
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                };
-
-                request(options, function(error, response) {
-                    if (response && response.body) {
-                        const result = JSON.parse(response.body);
-                        if (result) {
-                            res.json(response);
-                        } else {
-                            res.json({ error: 'Could not find user' });
+        app.get('/user/viewProfile/', verifyToken, (req, res) => {
+            if (req.token === null) {
+                res.send(JSON.stringify({ result: 'empty' }));
+            } else {
+                try {
+                    const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                    const userId = req.query.id;
+                    const options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/users/viewProfile/?userId=${userId}&token=${token.bToken}`,
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
                         }
-                    } else {
-                        res.json({ error: 'Network Error' });
-                    }
-                });
-            } catch (e) {
-                res.json({ error: 'Network Error' });
+                    };
+
+                    request(options, function(error, response) {
+                        if (response && response.body) {
+                            const result = JSON.parse(response.body);
+                            if (result) {
+                                res.json(response);
+                            } else {
+                                res.json({ error: 'Could not find user' });
+                            }
+                        } else {
+                            res.json({ error: 'Network Error' });
+                        }
+                    });
+                } catch (e) {
+                    res.json({ error: 'Network Error' });
+                }
             }
         });
     },

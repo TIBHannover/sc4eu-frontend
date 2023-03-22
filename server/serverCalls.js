@@ -299,13 +299,8 @@ module.exports = {
                     request(options, function(error, response) {
                         if (response && response.body) {
                             const result = JSON.parse(response.body);
-                            console.log('results from backend', result);
                             if (result) {
-                                if (result.error) {
-                                    return res.json(result);
-                                } else {
-                                    return res.json(result);
-                                }
+                                return res.json(result);
                             } else {
                                 res.json({ error: 'Could not find user' });
                             }

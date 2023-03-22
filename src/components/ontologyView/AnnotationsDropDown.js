@@ -147,10 +147,10 @@ class AnnotationsDropDown extends Component {
 
         const currentAnnotations = JSON.parse(JSON.stringify(currentItemContext.annotations));
 
-        Object.keys(currentAnnotations).map(annotationKey => {
+        Object.keys(currentAnnotations).forEach(annotationKey => {
             if (annotationKey === item.prefix) {
                 //now we need to check for each language
-                Object.keys(currentAnnotations[annotationKey]).map(languageKey => {
+                Object.keys(currentAnnotations[annotationKey]).forEach(languageKey => {
                     const listOfTypes = currentAnnotations[annotationKey][languageKey];
                     if (listOfTypes.length === 1) {
                         delete currentAnnotations[annotationKey][languageKey];

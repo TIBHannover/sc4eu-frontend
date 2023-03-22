@@ -69,13 +69,7 @@ export default class DrawTools {
             this.__drawArrowTail(groupContainer, arrowContainer, 'arrowTail_' + link.id(), renderingConfig.style.arrowTail);
         }
         if (renderingConfig.options.drawPropertyNode) {
-            const groupContainer = null;
-            const renderingElements = this.__createRenderingShapeForPropertyNode(
-                propertyContainer,
-                groupContainer,
-                renderingConfig.style.propertyNode,
-                link
-            );
+            const renderingElements = this.__createRenderingShapeForPropertyNode(propertyContainer, renderingConfig.style.propertyNode, link);
             renderingShape = renderingElements.renderingShape;
             renderingText = renderingElements.displayName;
             propertyNodeContainer = renderingElements.propertyNodeContainer;
@@ -89,9 +83,9 @@ export default class DrawTools {
         };
     }
 
-    __createRenderingShapeForPropertyNode(propertyContainer, groupContainer, cfg, link) {
+    __createRenderingShapeForPropertyNode(propertyContainer, cfg, link) {
         // create a group container for that thing
-        groupContainer = propertyContainer.append('g');
+        const groupContainer = propertyContainer.append('g');
         const itemId = 'PROPERTY_NODE_' + link.sourceNode.id() + '_' + link.id() + '_' + link.targetNode.id();
         groupContainer.node().id = itemId;
 
