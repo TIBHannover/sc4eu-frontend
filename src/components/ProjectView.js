@@ -85,6 +85,42 @@ class ProjectView extends Component {
     //     this.getProjectsFromBackend();
     // };
 
+    ProjectSection = ({ project, AccessType }) => {
+        let found = false;
+        const filteredProject = project.filter(item => item.unlock && item.access_type === AccessType);
+        if (filteredProject.length > 0) {
+            found = true;
+        }
+
+        return (
+            <>
+                <div
+                    style={{
+                        padding: '1% 1% 1% 1%',
+                        backgroundColor: PRIMARY.dark,
+                        borderRadius: '10px',
+                        color: '#ffffff'
+                    }}
+                >
+                    {AccessType} Project
+                </div>
+                {found ? (
+                    filteredProject.map(item => (
+                        <ProjectCard
+                            key={'ProjectCard_' + item.name}
+                            inputData={item}
+                            callback={param => {
+                                this.props.reloadAfterUpdate(param);
+                            }}
+                        />
+                    ))
+                ) : (
+                    <div>{AccessType} Project Not found</div>
+                )}
+            </>
+        );
+    };
+
     render() {
         return (
             <div style={{ width: '100%', marginLeft: '20%', backgroundColor: 'white', marginTop: '0.5%', height: '96%' }}>
@@ -126,24 +162,11 @@ class ProjectView extends Component {
                 </div>
                 {/*<hr className="mt-0 mb-2" />*/}
                 <Scrollbars style={{ height: '90%' }}>
-                    <div style={{ textAlign: 'left', borderTop: '0.01rem solid #e7e9eb' }}>
-                        {this.state.results
-                            ? this.state.results.map(item => {
-                                  if (item.unlock) {
-                                      return (
-                                          <ProjectCard
-                                              key={'ProjectCard_' + item.name}
-                                              inputData={item}
-                                              callback={param => {
-                                                  this.props.reloadAfterUpdate(param);
-                                              }}
-                                          />
-                                      );
-                                  } else {
-                                      return null;
-                                  }
-                              })
-                            : 'Still Loading'}
+                    <div style={{ padding: '0 0 1% 0' }}>
+                        {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Private" /> : 'Still Loading'}
+                    </div>
+                    <div style={{ padding: '0 0 1% 0' }}>
+                        {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Public" /> : 'Still Loading'}
                     </div>
                 </Scrollbars>
             </div>
