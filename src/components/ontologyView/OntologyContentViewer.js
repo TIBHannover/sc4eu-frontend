@@ -26,9 +26,9 @@ class OntologyContentViewer extends Component {
     render() {
         return (
             <div style={{ height: '100%' }}>
-                <div style={{ height: '7%' }}>
+                <div style={{ paddingBottom: '3.5em', height: '5%' }}>
                     <Link
-                        style={{ float: 'left', margin: '15px 0px 0px 15px' }}
+                        style={{ float: 'left', marginTop: '20px', marginLeft: '10px' }}
                         to={{
                             pathname: reverse(ROUTES.ONTOLOGY),
                             project: this.props.selectedProject
@@ -50,7 +50,7 @@ class OntologyContentViewer extends Component {
                         {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all resources/relations
                     </ControlButton>
                 </div>
-                <div style={{ display: 'flex', height: '93%' }}>
+                <div style={{ display: 'flex', height: '95%' }}>
                     <div style={{ width: '50%' }}>
                         <ResourceRenderer experimentalLayout={this.props.experimentalLayout} />
                     </div>
@@ -87,14 +87,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(OntologyContentViewe
 const ControlButton = styled(Button)`
     background: ${SECONDARY.dark};
     border-radius: 5px 5px;
-    padding: 0;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: -5px;
-    height: 40px;
     margin-top: 10px;
     margin-right: 10px;
-    font-size: 16px;
     color: white;
     float: right;
     :focus {
