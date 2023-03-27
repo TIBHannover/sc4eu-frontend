@@ -7,7 +7,7 @@ We require express as middle ware to do the oauth login.
 Thus, the react components are served by the express server it self.
 
 The server code is in the folder server.
-The frontend code is in the folder a src. 
+The frontend code is in the folder src. 
 
 # Initialization
 
