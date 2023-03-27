@@ -122,6 +122,7 @@ class OntologyIndexing extends Component {
                             <OntologyIndexInteractions
                                 project_id={this.state.selectedProject.uuid}
                                 project_name={this.state.selectedProject.name}
+                                access_type={this.state.selectedProject.access_type}
                                 reloadAfterUpdate={() => {
                                     this.reloadAfterUpdate();
                                 }}
