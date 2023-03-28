@@ -37,8 +37,12 @@ export default class UploadOntology extends Component {
     componentDidUpdate = async prevProps => {
         if (prevProps.showDialog === false && this.props.showDialog === true) {
             // check if user is allowed to do uploads
-            const allows = await userIsAllowdToUploadOntology();
-            this.setState({ allows_upload: allows.result });
+            if (this.props.access_type === 'Public') {
+                this.setState({ allows_upload: true });
+            } else {
+                const allows = await userIsAllowdToUploadOntology();
+                this.setState({ allows_upload: allows.result });
+            }
         }
     };
 
@@ -126,8 +130,6 @@ export default class UploadOntology extends Component {
     };
 
     executeUpload = () => {
-        console.log('Executing Upload to backend!');
-
         if (!this.state.ontologyName && !this.state.ontologyDescription) {
             alert('Please provide name and description for the ontology');
             return;
@@ -485,5 +487,6 @@ UploadOntology.propTypes = {
     showDialog: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
     callback: PropTypes.func.isRequired,
-    project_id: PropTypes.string.isRequired
+    project_id: PropTypes.string.isRequired,
+    access_type: PropTypes.string.isRequired
 };

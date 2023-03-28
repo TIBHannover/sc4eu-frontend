@@ -66,7 +66,7 @@ class ProjectIndexCards extends Component {
     };
 
     showOntologies = () => {
-        // redux_removeProject, redux_removeOntology and redux_removeAlreadyLoadedOntology will remove previous open project and ontology
+        // redux_removeProjects, redux_removeOntology and redux_removeAlreadyLoadedOntology will remove previous open project and ontology
         this.props.redux_removeProject();
         this.props.redux_removeOntology();
         this.props.redux_removeAlreadyLoadedOntology();

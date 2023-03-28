@@ -65,6 +65,7 @@ export default class OntologyIndexInteractions extends Component {
                     <hr className="mt-0 mb-2" />
                     <UploadOntologyModal
                         project_id={this.props.project_id}
+                        access_type={this.props.access_type}
                         showDialog={this.state.showUploadModal}
                         toggle={() => {
                             this.setState({ showUploadModal: !this.state.showUploadModal });
@@ -97,5 +98,6 @@ OntologyIndexInteractions.propTypes = {
     reloadAfterUpdate: PropTypes.func.isRequired,
     project_id: PropTypes.string.isRequired,
     project_name: PropTypes.string.isRequired,
+    access_type: PropTypes.string.isRequired,
     listOfOntology: PropTypes.array.isRequired
 };
