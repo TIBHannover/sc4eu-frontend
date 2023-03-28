@@ -27,7 +27,11 @@ export default class ProjectList extends Component {
             <>
                 <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
                 <StyledDiv>
-                    <ProjectView title="My Projects" reloadAfterUpdate={() => this.reloadAfterUpdate()} updateFlipFlop={this.state.updateFlipFlop} />
+                    <ProjectView
+                        title="My & Public Projects "
+                        reloadAfterUpdate={() => this.reloadAfterUpdate()}
+                        updateFlipFlop={this.state.updateFlipFlop}
+                    />
                     <RightSideProjectBar
                         title="Available Projects"
                         reloadAfterUpdate={() => this.reloadAfterUpdate()}
