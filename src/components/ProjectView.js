@@ -42,7 +42,7 @@ class ProjectView extends Component {
         this.getProjectsFromBackend();
     }
 
-    componentDidUpdate = (prevProps) => {
+    componentDidUpdate = prevProps => {
         if (prevProps.updateFlipFlop !== this.props.updateFlipFlop) {
             // this.setState({ initialRendering: false });
             this.getProjectsFromBackend();
