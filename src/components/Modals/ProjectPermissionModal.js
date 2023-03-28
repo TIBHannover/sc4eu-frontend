@@ -4,6 +4,7 @@ import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import PropTypes from 'prop-types';
 import { sendProjectAccessEmail } from '../../network/emailCalls';
 import projectAccessEmailHTML from '../../html/projectAccessEmailHTML';
+import roleUpdateRequest from '../../html/roleUpdateRequest';
 import PopUp from '../PopUp';
 import error from '../../assets/images/error.png';
 import success from '../../assets/images/success.png';
@@ -24,21 +25,24 @@ export default class ProjectPermissionModal extends Component {
     }
 
     handelClick = () => {
+        let MailReceiver;
+        let emailContent;
+        const projectDetails = this.props.projectDetails;
+        if (this.props.isRoleChanged) {
+            MailReceiver = ['nilesh.chavada@tib.eu', 'terminology-service@tib.eu'];
+            emailContent = roleUpdateRequest(this.state.message, this.props.userName).body;
+        } else {
+            MailReceiver = projectDetails?.projectAdmins?.length > 0 ? projectDetails.projectAdmins[0].email : 'terminology-service@tib.eu';
+            emailContent = projectAccessEmailHTML(projectDetails.name, this.state.message, MailReceiver, this.props.userName, this.props.userEmail)
+                .body;
+        }
         if (!this.state.message || !this.state.subject) {
             this.setState({ showWarning: 'true' });
             return;
         }
-        const projectDetails = this.props.projectDetails;
-        const emailContent = projectAccessEmailHTML(
-            projectDetails.name,
-            this.state.message,
-            projectDetails.projectAdmins[0].name,
-            this.props.userName,
-            this.props.userEmail
-        ).body;
         const emailToSend = {
             userEmail: this.props.userEmail,
-            projectAdminEmail: projectDetails.projectAdmins.length > 0 ? projectDetails.projectAdmins[0].email : 'terminology-service@tib.eu',
+            projectAdminEmail: MailReceiver,
             emailSubject: this.state.subject,
             emailContent: emailContent
         };
@@ -50,7 +54,7 @@ export default class ProjectPermissionModal extends Component {
                     image: error
                 });
             } else {
-                this.setState({ openPopUp: true, popUpMessage: 'Your request for permission has been sent', image: success });
+                this.setState({ openPopUp: true, popUpMessage: 'Your request has been sent', image: success });
             }
             this.props.callback();
         });
@@ -74,7 +78,7 @@ export default class ProjectPermissionModal extends Component {
                         autoFocus={false}
                     >
                         <ModalHeader style={{ backgroundColor: PRIMARY.dark }} autoFocus={false}>
-                            Get Access to {this.props.projectDetails.name} Project
+                            {this.props.title}
                         </ModalHeader>
                         <ModalBody
                             id="createProjectBody"
@@ -131,8 +135,10 @@ export default class ProjectPermissionModal extends Component {
 ProjectPermissionModal.propTypes = {
     toggle: PropTypes.func.isRequired,
     showDialog: PropTypes.bool.isRequired,
-    projectDetails: PropTypes.object.isRequired,
+    projectDetails: PropTypes.object,
     callback: PropTypes.func.isRequired,
     userEmail: PropTypes.string.isRequired,
-    userName: PropTypes.string.isRequired
+    userName: PropTypes.string.isRequired,
+    isRoleChanged: PropTypes.bool,
+    title: PropTypes.string.isRequired
 };

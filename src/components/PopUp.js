@@ -72,6 +72,7 @@ const StyledDiv = styled.div`
     background-color: #ffffff;
     box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.75);
     border-radius: 8px;
+    z-index: 1000;
     // overflow: hidden;
 `;
 
