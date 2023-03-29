@@ -105,7 +105,6 @@ class ProjectView extends Component {
         if (filteredProject.length > 0) {
             isProjectAvailable = true;
         }
-
         return (
             <>
                 {isProjectAvailable ? (
@@ -120,10 +119,10 @@ class ProjectView extends Component {
                     ))
                 ) : (
                     <div style={{ paddingLeft: '3.5%' }}>
-                        {this.props.user === 0 ? (
-                            <span>Please sign in to see whether do you have any {AccessType} project available</span>
+                        {this.props.user === 0 || this.props.user === null ? (
+                            <span>Please sign in to see whether do you have any project available</span>
                         ) : (
-                            <span>{AccessType} project not available</span>
+                            <span>You do not have project</span>
                         )}
                     </div>
                 )}
@@ -179,7 +178,7 @@ class ProjectView extends Component {
                             icon={!this.state.collapsePrivateProject ? faCaretRight : faCaretDown}
                         />
                         <StyledH4>
-                            <span style={{ background: '#fff', padding: '0 10px' }}>Private Project</span>
+                            <span style={{ background: '#fff', padding: '0 10px' }}>My Projects</span>
                         </StyledH4>
                         <FontAwesomeIcon
                             color={PRIMARY.dark}
@@ -197,7 +196,7 @@ class ProjectView extends Component {
                             icon={!this.state.collapsePublicProject ? faCaretRight : faCaretDown}
                         />
                         <StyledH4>
-                            <span style={{ background: '#fff', padding: '0 10px' }}>Public Project</span>
+                            <span style={{ background: '#fff', padding: '0 10px' }}>Public Projects</span>
                         </StyledH4>
                         <FontAwesomeIcon
                             color={PRIMARY.dark}
