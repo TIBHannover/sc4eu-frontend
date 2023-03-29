@@ -175,7 +175,7 @@ class ProjectView extends Component {
                         )}
                     </div>
                     <Button
-                        style={{ margin: '15px 15px 15px 15px', backgroundColor: SECONDARY.dark, float: 'right' }}
+                        style={{ margin: '10px 10px 10px 10px', backgroundColor: SECONDARY.dark, float: 'right' }}
                         onClick={() => {
                             this.setState({ showCreateProjectModal: true });
                         }}
