@@ -28,8 +28,7 @@ class ProjectView extends Component {
             flipflop: false,
             isEditing: { description: false, title: false, version: false, iri: false },
             collapsePrivateProject: true,
-            collapsePublicProject: true,
-            showEmailModal: false
+            collapsePublicProject: true
         };
     }
 
