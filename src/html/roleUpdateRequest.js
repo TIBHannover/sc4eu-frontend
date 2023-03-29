@@ -143,9 +143,9 @@ module.exports = (emailContent, SenderName) => {
                           <li>Click on your avatar located in the top-right corner of the screen.</li>
                           <li>Select "Dashboard" from the dropdown menu.</li>
                           <li>Click on the "Users" tab located in the left sidebar menu.</li>
-                          <li>Find the user you want to update role and click on the "Edit Icon" from Action column.</li>
-                          <li>Click on the Role Column dropdoen and select "Project Admin".</li>
-                          <li>Clcik on the "Save" button from the Action Column.</li>
+                          <li>Find the user you want to update role and click on the "Edit Icon" from action column.</li>
+                          <li>Click on the role column dropdown and select "Project Admin".</li>
+                          <li>Clcik on the "Save" button from the action column.</li>
                         </ol>
                     </td>
                 </tr>

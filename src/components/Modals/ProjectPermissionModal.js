@@ -25,15 +25,15 @@ export default class ProjectPermissionModal extends Component {
     }
 
     handelClick = () => {
-        let MailReceiver;
+        let mailReceiver;
         let emailContent;
         const projectDetails = this.props.projectDetails;
         if (this.props.isRoleChanged) {
-            MailReceiver = ['nilesh.chavada@tib.eu', 'terminology-service@tib.eu'];
+            mailReceiver = ['nilesh.chavada@tib.eu', 'terminology-service@tib.eu', 'Felix.Engel@tib.eu', 'Fawad.Khan@tib.eu'];
             emailContent = roleUpdateRequest(this.state.message, this.props.userName).body;
         } else {
-            MailReceiver = projectDetails?.projectAdmins?.length > 0 ? projectDetails.projectAdmins[0].email : 'terminology-service@tib.eu';
-            emailContent = projectAccessEmailHTML(projectDetails.name, this.state.message, MailReceiver, this.props.userName, this.props.userEmail)
+            mailReceiver = projectDetails?.projectAdmins?.length > 0 ? projectDetails.projectAdmins[0].email : 'terminology-service@tib.eu';
+            emailContent = projectAccessEmailHTML(projectDetails.name, this.state.message, mailReceiver, this.props.userName, this.props.userEmail)
                 .body;
         }
         if (!this.state.message || !this.state.subject) {
@@ -42,7 +42,7 @@ export default class ProjectPermissionModal extends Component {
         }
         const emailToSend = {
             userEmail: this.props.userEmail,
-            projectAdminEmail: MailReceiver,
+            projectAdminEmail: mailReceiver,
             emailSubject: this.state.subject,
             emailContent: emailContent
         };

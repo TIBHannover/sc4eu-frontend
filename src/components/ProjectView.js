@@ -157,7 +157,7 @@ class ProjectView extends Component {
                         ) : this.props.user ? (
                             <>
                                 <span style={{ margin: '15px 15px 15px 15px' }}>
-                                    You are "{this.props.user?.role}" and you have limited access of portal, Become project admin please send mail
+                                    You are "{this.props.user?.role}" and you have limited access to SC3 portal, become project admin please send mail
                                 </span>
                                 <span>
                                     <FontAwesomeIcon
