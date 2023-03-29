@@ -119,7 +119,13 @@ class ProjectView extends Component {
                         />
                     ))
                 ) : (
-                    <div style={{ paddingLeft: '3.5%' }}>{AccessType} Project Not Available</div>
+                    <div style={{ paddingLeft: '3.5%' }}>
+                        {this.props.user === 0 ? (
+                            <span>Please sign in to see whether do you have any {AccessType} project available</span>
+                        ) : (
+                            <span>{AccessType} project not available</span>
+                        )}
+                    </div>
                 )}
             </>
         );
@@ -184,7 +190,7 @@ class ProjectView extends Component {
                     <Collapse isOpen={this.state.collapsePrivateProject}>
                         {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Private" /> : 'Still Loading'}
                     </Collapse>
-                    <StyledButton onClick={this.togglePublicProject}>
+                    <StyledButton style={{ marginTop: '1%' }} onClick={this.togglePublicProject}>
                         <FontAwesomeIcon
                             color={PRIMARY.dark}
                             style={{ width: '3%', margin: '4px 0px 0px 0px' }}
