@@ -8,7 +8,7 @@ import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { FontAwesomeIcon, FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretLeft, faCaretRight, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import ProjectPermissionModal from './Modals/ProjectPermissionModal';
@@ -29,7 +29,8 @@ class ProjectView extends Component {
             isEditing: { description: false, title: false, version: false, iri: false },
             canNotAddProject: true,
             collapsePrivateProject: true,
-            collapsePublicProject: true
+            collapsePublicProject: true,
+            showEmailModal: false
         };
     }
 
@@ -183,7 +184,7 @@ class ProjectView extends Component {
                         )}
                     </div>
                     <Button
-                        style={{ margin: '10px 10px 10px 10px', backgroundColor: SECONDARY.dark, float: 'right' }}
+                        style={{ margin: '15px 15px 15px 15px', backgroundColor: SECONDARY.dark, float: 'right' }}
                         disabled={this.state.canNotAddProject}
                         title={this.state.canNotAddProject ? 'Only Project Admin and System Admin can add projects' : 'Click to add new Project'}
                         onClick={() => {
