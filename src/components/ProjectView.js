@@ -26,7 +26,8 @@ class ProjectView extends Component {
             results: '',
             isLoading: true,
             flipflop: false,
-            isEditing: { description: false, title: false, version: false, iri: false }
+            isEditing: { description: false, title: false, version: false, iri: false },
+            canNotAddProject: true
         };
     }
 
@@ -34,10 +35,17 @@ class ProjectView extends Component {
         //Get the current User from Redux State
         //TODO Retrive all the project for the current User
         //this.getProjectsFromBackend();
+        if (
+            this.props.user &&
+            (this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase() ||
+                this.props.user.role.toLowerCase() === 'System Admin'.toLowerCase())
+        ) {
+            this.setState({ canNotAddProject: false });
+        }
         this.getProjectsFromBackend();
     }
 
-    componentDidUpdate = (prevProps, prevState) => {
+    componentDidUpdate = prevProps => {
         if (prevProps.updateFlipFlop !== this.props.updateFlipFlop) {
             // this.setState({ initialRendering: false });
             this.getProjectsFromBackend();
@@ -148,6 +156,8 @@ class ProjectView extends Component {
                     </p>
                     <Button
                         style={{ margin: '10px 10px 10px 10px', backgroundColor: SECONDARY.dark, float: 'right' }}
+                        disabled={this.state.canNotAddProject}
+                        title={this.state.canNotAddProject ? 'Only Project Admin and System Admin can add projects' : 'Click to add new Project'}
                         onClick={() => {
                             this.setState({ showCreateProjectModal: true });
                         }}
