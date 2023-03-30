@@ -84,7 +84,7 @@ class ProjectIndexCards extends Component {
     render() {
         return (
             <div>
-                <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
+                <StyledCard onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
                         <StyledButton
                             color="none"
@@ -173,7 +173,7 @@ const StyledButton = styled(Button)`
 
 const StyledCard = styled.div`
     margin: 5px;
-    padding: 0 !important;
+    padding: 0 2.7% 0 2.7%;
 
     :focus {
         outline: none;

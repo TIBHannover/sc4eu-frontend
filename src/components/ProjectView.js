@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Container } from 'reactstrap';
+import { Button, Collapse, Container } from 'reactstrap';
 import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
@@ -8,6 +8,10 @@ import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { Scrollbars } from 'react-custom-scrollbars-2';
+import { FontAwesomeIcon, FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faCaretDown, faCaretLeft, faCaretRight, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components';
+import ProjectPermissionModal from './Modals/ProjectPermissionModal';
 
 class ProjectView extends Component {
     constructor(props) {
@@ -23,7 +27,9 @@ class ProjectView extends Component {
             isLoading: true,
             flipflop: false,
             isEditing: { description: false, title: false, version: false, iri: false },
-            canNotAddProject: true
+            canNotAddProject: true,
+            collapsePrivateProject: true,
+            collapsePublicProject: true
         };
     }
 
@@ -93,6 +99,45 @@ class ProjectView extends Component {
     //     this.getProjectsFromBackend();
     // };
 
+    togglePrivateProject = () => {
+        this.setState({ collapsePrivateProject: !this.state.collapsePrivateProject });
+    };
+
+    togglePublicProject = () => {
+        this.setState({ collapsePublicProject: !this.state.collapsePublicProject });
+    };
+
+    ProjectSection = ({ project, AccessType }) => {
+        let isProjectAvailable = false;
+        const filteredProject = project.filter(item => item.unlock && item.access_type === AccessType);
+        if (filteredProject.length > 0) {
+            isProjectAvailable = true;
+        }
+        return (
+            <>
+                {isProjectAvailable ? (
+                    filteredProject.map(item => (
+                        <ProjectCard
+                            key={'ProjectCard_' + item.name}
+                            inputData={item}
+                            callback={param => {
+                                this.props.reloadAfterUpdate(param);
+                            }}
+                        />
+                    ))
+                ) : (
+                    <div style={{ paddingLeft: '3.5%' }}>
+                        {this.props.user === 0 || this.props.user === null ? (
+                            <span>Please sign in to see whether do you have any project available</span>
+                        ) : (
+                            <span>You do not have project</span>
+                        )}
+                    </div>
+                )}
+            </>
+        );
+    };
+
     render() {
         return (
             <div style={{ width: '100%', marginLeft: '20%', backgroundColor: 'white', marginTop: '0.5%', height: '96%' }}>
@@ -107,9 +152,6 @@ class ProjectView extends Component {
                 >
                     <h4 style={{ width: '100%', textAlign: 'center' }}>{this.state.title}</h4>
                 </Container>
-
-                {/*<h2 style={{ textAlign: 'center' }}>{this.state.title}</h2>*/}
-                {/*<hr className="mt-0 mb-2" />*/}
                 <div>
                     <p style={{ float: 'left', margin: '15px 0px 0px 15px', textAlign: 'center' }}>
                         Click on one of the projects below to view its ontologies
@@ -134,27 +176,47 @@ class ProjectView extends Component {
                         }}
                     />
                 </div>
-                {/*<hr className="mt-0 mb-2" />*/}
                 <Scrollbars style={{ height: '90%' }}>
-                    <div style={{ textAlign: 'left', borderTop: '0.01rem solid #e7e9eb' }}>
-                        {this.state.results
-                            ? this.state.results.map(item => {
-                                  if (item.unlock) {
-                                      return (
-                                          <ProjectCard
-                                              key={'ProjectCard_' + item.name}
-                                              inputData={item}
-                                              callback={param => {
-                                                  this.props.reloadAfterUpdate(param);
-                                              }}
-                                          />
-                                      );
-                                  } else {
-                                      return null;
-                                  }
-                              })
-                            : 'Still Loading'}
-                    </div>
+                    <hr className="mt-3 mb-0" />
+                    <StyledButton onClick={this.togglePrivateProject}>
+                        <FontAwesomeIcon
+                            style={{
+                                width: '3%',
+                                margin: '4px 0px 0px 0px'
+                            }}
+                            color={PRIMARY.dark}
+                            icon={!this.state.collapsePrivateProject ? faCaretRight : faCaretDown}
+                        />
+                        <StyledH4>
+                            <span style={{ background: '#fff', padding: '0 10px' }}>My Projects</span>
+                        </StyledH4>
+                        <FontAwesomeIcon
+                            color={PRIMARY.dark}
+                            style={{ width: '3%', margin: '4px 0px 0px 0px' }}
+                            icon={!this.state.collapsePrivateProject ? faCaretLeft : faCaretDown}
+                        />
+                    </StyledButton>
+                    <Collapse isOpen={this.state.collapsePrivateProject}>
+                        {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Private" /> : 'Still Loading'}
+                    </Collapse>
+                    <StyledButton style={{ marginTop: '1%' }} onClick={this.togglePublicProject}>
+                        <FontAwesomeIcon
+                            color={PRIMARY.dark}
+                            style={{ width: '3%', margin: '4px 0px 0px 0px' }}
+                            icon={!this.state.collapsePublicProject ? faCaretRight : faCaretDown}
+                        />
+                        <StyledH4>
+                            <span style={{ background: '#fff', padding: '0 10px' }}>Public Projects</span>
+                        </StyledH4>
+                        <FontAwesomeIcon
+                            color={PRIMARY.dark}
+                            style={{ width: '3%', margin: '4px 0px 0px 0px' }}
+                            icon={!this.state.collapsePublicProject ? faCaretLeft : faCaretDown}
+                        />
+                    </StyledButton>
+                    <Collapse isOpen={this.state.collapsePublicProject}>
+                        {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Public" /> : 'Still Loading'}
+                    </Collapse>
                 </Scrollbars>
             </div>
         );
@@ -175,3 +237,20 @@ ProjectView.propTypes = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
+
+const StyledButton = styled.button`
+    width: 100%;
+    border: none;
+    background: none;
+    display: flex;
+    padding-top: 10px;
+`;
+
+const StyledH4 = styled.h4`
+    width: 98%;
+    text-align: center;
+    color: ${PRIMARY.dark};
+    border-bottom: 2px solid #769fcd;
+    line-height: 0.1em;
+    margin: 10px 0px 20px 0px;
+`;
