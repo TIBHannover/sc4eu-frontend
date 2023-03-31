@@ -8,7 +8,7 @@ import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
 import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { FontAwesomeIcon, FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretLeft, faCaretRight, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import ProjectPermissionModal from './Modals/ProjectPermissionModal';
@@ -29,7 +29,8 @@ class ProjectView extends Component {
             isEditing: { description: false, title: false, version: false, iri: false },
             canNotAddProject: true,
             collapsePrivateProject: true,
-            collapsePublicProject: true
+            collapsePublicProject: true,
+            showEmailModal: false
         };
     }
 
@@ -107,6 +108,10 @@ class ProjectView extends Component {
         this.setState({ collapsePublicProject: !this.state.collapsePublicProject });
     };
 
+    emailSent = () => {
+        this.setState({ showEmailModal: false });
+    };
+
     ProjectSection = ({ project, AccessType }) => {
         let isProjectAvailable = false;
         const filteredProject = project.filter(item => item.unlock && item.access_type === AccessType);
@@ -153,11 +158,33 @@ class ProjectView extends Component {
                     <h4 style={{ width: '100%', textAlign: 'center' }}>{this.state.title}</h4>
                 </Container>
                 <div>
-                    <p style={{ float: 'left', margin: '15px 0px 0px 15px', textAlign: 'center' }}>
-                        Click on one of the projects below to view its ontologies
-                    </p>
+                    <div style={{ float: 'left' }}>
+                        <p style={{ margin: '15px 15px 15px 15px' }}>Click on one of the projects below to view its ontologies</p>
+                        {this.props.user?.role === 'System Admin' || this.props.user?.role === 'Project Admin' ? (
+                            <></>
+                        ) : this.props.user ? (
+                            <>
+                                <span style={{ margin: '15px 15px 15px 15px' }}>
+                                    You are "{this.props.user?.role}" and you have limited access to SC3 portal, become project admin please send mail
+                                </span>
+                                <span>
+                                    <FontAwesomeIcon
+                                        icon={faEnvelope}
+                                        size="1x"
+                                        color={SECONDARY.darker}
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => {
+                                            this.setState({ showEmailModal: true });
+                                        }}
+                                    />
+                                </span>
+                            </>
+                        ) : (
+                            <span style={{ margin: '15px 15px 15px 15px' }}>Please sign in to request for change a role</span>
+                        )}
+                    </div>
                     <Button
-                        style={{ margin: '10px 10px 10px 10px', backgroundColor: SECONDARY.dark, float: 'right' }}
+                        style={{ margin: '15px 15px 15px 15px', backgroundColor: SECONDARY.dark, float: 'right' }}
                         disabled={this.state.canNotAddProject}
                         title={this.state.canNotAddProject ? 'Only Project Admin and System Admin can add projects' : 'Click to add new Project'}
                         onClick={() => {
@@ -174,6 +201,19 @@ class ProjectView extends Component {
                         callback={param => {
                             this.projectCreated(param);
                         }}
+                    />
+                    <ProjectPermissionModal
+                        toggle={() => {
+                            this.setState({ showEmailModal: !this.state.showEmailModal });
+                        }}
+                        showDialog={this.state.showEmailModal}
+                        callback={() => {
+                            this.emailSent();
+                        }}
+                        title="Request to Become Project Admin"
+                        isRoleChanged={true}
+                        userEmail={this.props.user ? this.props.user.userEmail : 'terminology-service@tib.eu'}
+                        userName={this.props.user ? this.props.user.displayName : 'terminology-service@tib.eu'}
                     />
                 </div>
                 <Scrollbars style={{ height: '90%' }}>

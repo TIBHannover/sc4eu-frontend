@@ -16,7 +16,8 @@ import {
     URL_UPDATE_USER_SETTING,
     URL_UNREGISTER_USER_FROM_PROJECT,
     URL_CHECK_USER_EXIST_BY_EMAIL,
-    URL_ADD_USER_TO_PROJECT
+    URL_ADD_USER_TO_PROJECT,
+    URL_GET_ALL_SYSTEM_ADMIN
 } from '../constants/services';
 
 export const getUserProfile = payload => {
@@ -106,6 +107,14 @@ export const getAllUsers = () => {
     };
 
     return submitGetRequest(URL_GET_ALL_USERS, headers, true);
+};
+
+export const getAllSystemAdmin = () => {
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+
+    return submitGetRequest(URL_GET_ALL_SYSTEM_ADMIN, headers, true);
 };
 
 export const unregisterUserFromProject = (projectUUID, userUUID) => {

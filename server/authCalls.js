@@ -452,7 +452,6 @@ module.exports = {
         });
 
         app.put('/user/updateUserRole', verifyToken, (req, res) => {
-            console.log('Body', req.body);
             if (req.token === null || req.token === undefined) {
                 res.send(JSON.stringify({ result: 'empty' }));
             } else {
@@ -474,7 +473,7 @@ module.exports = {
                             if (response && response.body) {
                                 const result = JSON.parse(response.body);
                                 if (result) {
-                                    res.json(response);
+                                    res.json(result);
                                 } else {
                                     res.json({ error: 'error while updating user role' });
                                 }
@@ -685,6 +684,35 @@ module.exports = {
                     });
                 }
             });
+        });
+    },
+    getAllSystemAdmin: function(app) {
+        app.get('/user/getAllSystemAdmin', verifyToken, (req, res) => {
+            const token = jwt.verify(req.token, process.env.JWT_SECRET);
+            if (token) {
+                const options = {
+                    uri: `${process.env.BACKEND_SERVER_URL}/users/getAllSystemAdmin/`,
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                request(options, function(error, response) {
+                    if (response && response.body) {
+                        const result = JSON.parse(response.body);
+                        if (result) {
+                            res.json(result);
+                        } else {
+                            res.json({ error: 'Could not find system admin' });
+                        }
+                    } else {
+                        res.json({ error: 'Network Error' });
+                    }
+                });
+            } else {
+                res.json({ error: 'Invalid  Token' });
+            }
         });
     }
 };

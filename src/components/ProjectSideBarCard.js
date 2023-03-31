@@ -57,6 +57,7 @@ class ProjectIndexCards extends Component {
                             }}
                             userEmail={this.props.user ? this.props.user.userEmail : 'terminology-service@tib.eu'}
                             userName={this.props.user ? this.props.user.displayName : 'terminology-service@tib.eu'}
+                            title={`Get Access to ${this.props.inputData.name} Project`}
                         />
                     </StyledCardHeader>
                     <StyledCardBody>
