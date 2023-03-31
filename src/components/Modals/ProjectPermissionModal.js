@@ -8,6 +8,7 @@ import roleUpdateRequest from '../../html/roleUpdateRequest';
 import PopUp from '../PopUp';
 import error from '../../assets/images/error.png';
 import success from '../../assets/images/success.png';
+import { getAllSystemAdmin } from '../../network/UserProfileCalls';
 
 export default class ProjectPermissionModal extends Component {
     constructor(props) {
@@ -24,15 +25,21 @@ export default class ProjectPermissionModal extends Component {
         };
     }
 
-    handelClick = () => {
+    handelClick = async () => {
         let mailReceiver;
         let emailContent;
+        const SystemAdminsEmail = [];
         const projectDetails = this.props.projectDetails;
+        await getAllSystemAdmin().then(response => {
+            response.map(SystemAdmin => {
+                SystemAdminsEmail.push(SystemAdmin.email_address);
+            });
+        });
         if (this.props.isRoleChanged) {
-            mailReceiver = ['nilesh.chavada@tib.eu', 'terminology-service@tib.eu', 'Felix.Engel@tib.eu', 'Fawad.Khan@tib.eu'];
+            mailReceiver = SystemAdminsEmail;
             emailContent = roleUpdateRequest(this.state.message, this.props.userName).body;
         } else {
-            mailReceiver = projectDetails?.projectAdmins?.length > 0 ? projectDetails.projectAdmins[0].email : 'terminology-service@tib.eu';
+            mailReceiver = projectDetails?.projectAdmins?.length > 0 ? projectDetails.projectAdmins[0].email : SystemAdminsEmail[0];
             emailContent = projectAccessEmailHTML(projectDetails.name, this.state.message, mailReceiver, this.props.userName, this.props.userEmail)
                 .body;
         }

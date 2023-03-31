@@ -104,6 +104,7 @@ auth.forgotPassword(router);
 auth.verifResetPassword(router);
 auth.setNewPassword(router);
 auth.projectAccessEmail(router);
+auth.getAllSystemAdmin(router);
 
 database.uploadOntology(router);
 database.deleteOntology(router);

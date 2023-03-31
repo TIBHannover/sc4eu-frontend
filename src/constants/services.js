@@ -45,6 +45,7 @@ export const URL_CHECK_USER_EXIST_BY_EMAIL = `${process.env.REACT_APP_EXPRESS_BA
 export const URL_ADMIN_DASHBOARD = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}admin/dashboard`;
 export const URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}allowed_upload_of_ontologies`;
 export const URL_GET_ALL_USERS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}users/all`;
+export const URL_GET_ALL_SYSTEM_ADMIN = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/getAllSystemAdmin`;
 
 // playground
 
