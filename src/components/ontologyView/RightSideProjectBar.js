@@ -132,7 +132,7 @@ class RightSideProjectBar extends Component {
                     }}
                 >
                     <div>
-                        <p style={{ float: 'left', margin: '0px 10px 5px 5px', textAlign: 'center' }}>
+                        <p style={{ float: 'left', margin: '0px 10px 5px 5px', textAlign: 'center', fontStyle: 'italic' }}>
                             {this.props.user ? (
                                 <>Click on the email icon to request permission to a project you are interested to join</>
                             ) : (
@@ -142,21 +142,23 @@ class RightSideProjectBar extends Component {
                     </div>
                     <Scrollbars style={{ borderTop: '0.01rem solid #e7e9eb' }}>
                         <div style={{ textAlign: 'left' }}>
-                            {this.state.results.length > 0
-                                ? this.state.results.map(item => {
-                                      if (item.unlock === false) {
-                                          return (
-                                              <ProjectSideBarCard
-                                                  key={'ProjectCard_' + item.name}
-                                                  inputData={item}
-                                                  callback={param => {
-                                                      this.reloadAfterUpdate(param);
-                                                  }}
-                                              />
-                                          );
-                                      }
-                                  })
-                                : 'No Available Projects'}
+                            {this.state.results.length > 0 ? (
+                                this.state.results.map(item => {
+                                    if (item.unlock === false) {
+                                        return (
+                                            <ProjectSideBarCard
+                                                key={'ProjectCard_' + item.name}
+                                                inputData={item}
+                                                callback={param => {
+                                                    this.reloadAfterUpdate(param);
+                                                }}
+                                            />
+                                        );
+                                    }
+                                })
+                            ) : (
+                                <p style={{ margin: '10px 10px 5px 5px', textAlign: 'center', fontStyle: 'italic' }}>No Available Projects</p>
+                            )}
                         </div>
                     </Scrollbars>
                 </Container>

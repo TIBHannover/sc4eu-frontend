@@ -131,7 +131,7 @@ class ProjectView extends Component {
                         />
                     ))
                 ) : (
-                    <div style={{ paddingLeft: '3.5%' }}>
+                    <div style={{ paddingLeft: '3.5%', fontStyle: 'italic' }}>
                         {this.props.user === 0 || this.props.user === null ? (
                             <span>Please sign in to see whether do you have any project available</span>
                         ) : (
@@ -159,12 +159,14 @@ class ProjectView extends Component {
                 </Container>
                 <div>
                     <div style={{ float: 'left' }}>
-                        <p style={{ margin: '15px 15px 15px 15px' }}>Click on one of the projects below to view its ontologies</p>
+                        <p style={{ margin: '15px 15px 15px 15px', fontStyle: 'italic' }}>
+                            Click on one of the projects below to view its ontologies
+                        </p>
                         {this.props.user?.role === 'System Admin' || this.props.user?.role === 'Project Admin' ? (
                             <></>
                         ) : this.props.user ? (
                             <>
-                                <span style={{ margin: '15px 15px 15px 15px' }}>
+                                <span style={{ margin: '15px 15px 15px 15px', fontStyle: 'italic' }}>
                                     You are "{this.props.user?.role}" and you have limited access to SC3 portal, become project admin please send mail
                                 </span>
                                 <span>
@@ -180,7 +182,7 @@ class ProjectView extends Component {
                                 </span>
                             </>
                         ) : (
-                            <span style={{ margin: '15px 15px 15px 15px' }}>Please sign in to request for change a role</span>
+                            <span style={{ margin: '15px 15px 15px 15px', fontStyle: 'italic' }}>Please sign in to request for change a role</span>
                         )}
                     </div>
                     <Button
