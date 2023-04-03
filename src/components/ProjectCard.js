@@ -124,7 +124,17 @@ class ProjectIndexCards extends Component {
                         />
                         <StyledLink onClick={this.showOntologies} to="#" className="p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
                             <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div style={{ overflowWrap: 'break-word', fontWeight: '500' }}> {this.props.inputData.name} </div>
+                                <div
+                                    style={{
+                                        overflowWrap: 'break-word',
+                                        fontWeight: '500',
+                                        width: '97%',
+                                        whiteSpace: 'normal',
+                                        wordBreak: 'break-all'
+                                    }}
+                                >
+                                    {this.props.inputData.name}{' '}
+                                </div>
                             </div>
                         </StyledLink>
                     </StyledCardHeader>
