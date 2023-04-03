@@ -48,7 +48,7 @@ class LoginViaEmail extends Component {
     handleRegister = async e => {
         if (this.isfieldValid()) {
             this.setState({ loading: false });
-            const registerToken = await regsiterViaEmail(this.state.displayName, this.state.email, this.state.password);
+            const registerToken = await regsiterViaEmail(this.state.displayName, this.state.email.toLowerCase(), this.state.password);
             if (registerToken.error) {
                 this.setState({
                     openPopUp: true,
@@ -68,7 +68,7 @@ class LoginViaEmail extends Component {
     };
     handleLogin = async e => {
         this.setState({ loading: false });
-        const token = await loginViaEmail(this.state.email, this.state.password);
+        const token = await loginViaEmail(this.state.email.toLowerCase(), this.state.password);
         if (token.error) {
             this.setState({
                 openPopUp: true,
@@ -85,7 +85,7 @@ class LoginViaEmail extends Component {
         return true;
     };
     handleForgotPassword = async e => {
-        const response = await forgotPassword(this.state.email);
+        const response = await forgotPassword(this.state.email.toLowerCase());
         if (response.success === false) {
             this.setState({
                 openPopUp: true,

@@ -1,4 +1,4 @@
-import { Modal, ModalBody } from 'reactstrap';
+import { Modal } from 'reactstrap';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
