@@ -98,40 +98,31 @@ class OntologyIndexing extends Component {
 
     render() {
         return (
-            <div style={{ height: '80%', backgroundColor: PRIMARY.lighter }}>
-                <Container
-                    style={{
-                        borderTop: 'none',
-                        overflow: 'auto',
-                        position: 'relative',
-                        backgroundColor: '#ffffff'
-                    }}
-                >
-                    {this.state.isLoading ? (
-                        <div className="text-center text-primary mt-4 mb-4">
-                            {/*using a manual fixed scale value for the spinner scale! */}
-                            <h2 className="h5">
-                                <span>
-                                    <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                                </span>
-                                Loading
-                            </h2>
-                        </div>
-                    ) : (
-                        <div>
-                            <OntologyIndexInteractions
-                                project_id={this.state.selectedProject.uuid}
-                                project_name={this.state.selectedProject.name}
-                                access_type={this.state.selectedProject.access_type}
-                                reloadAfterUpdate={() => {
-                                    this.reloadAfterUpdate();
-                                }}
-                                listOfOntology={this.state.ontologyList}
-                            />
-                        </div>
-                    )}
-                </Container>
-            </div>
+            <Container style={{ height: '95%', width: '100%', backgroundColor: 'white', padding: '0.5% 0px 0px 0px' }}>
+                {this.state.isLoading ? (
+                    <div className="text-center text-primary mt-4 mb-4">
+                        {/*using a manual fixed scale value for the spinner scale! */}
+                        <h2 className="h5">
+                            <span>
+                                <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                            </span>
+                            Loading
+                        </h2>
+                    </div>
+                ) : (
+                    <div>
+                        <OntologyIndexInteractions
+                            project_id={this.state.selectedProject.uuid}
+                            project_name={this.state.selectedProject.name}
+                            access_type={this.state.selectedProject.access_type}
+                            reloadAfterUpdate={() => {
+                                this.reloadAfterUpdate();
+                            }}
+                            listOfOntology={this.state.ontologyList}
+                        />
+                    </div>
+                )}
+            </Container>
         );
     }
 }
