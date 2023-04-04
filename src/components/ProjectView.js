@@ -133,7 +133,7 @@ class ProjectView extends Component {
                 ) : (
                     <div style={{ paddingLeft: '3.5%', fontStyle: 'italic' }}>
                         {this.props.user === 0 || this.props.user === null ? (
-                            <span>Please log in to see your own projects</span>
+                            <span>Please sign in to see whether do you have any project available</span>
                         ) : (
                             <span>You do not have project</span>
                         )}
