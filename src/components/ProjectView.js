@@ -133,7 +133,7 @@ class ProjectView extends Component {
                 ) : (
                     <div style={{ paddingLeft: '3.5%', fontStyle: 'italic' }}>
                         {this.props.user === 0 || this.props.user === null ? (
-                            <span>Please sign in to see whether do you have any project available</span>
+                            <span>Please log in to see your own projects</span>
                         ) : (
                             <span>You do not have project</span>
                         )}
@@ -145,19 +145,24 @@ class ProjectView extends Component {
 
     render() {
         return (
-            <div style={{ width: '100%', marginLeft: '20%', backgroundColor: 'white', marginTop: '0.5%', height: '96%' }}>
-                <Container
-                    className="pt-sm-2 pb-sm-2 clearfix"
+            <div style={{ width: '60%', marginLeft: 'auto', backgroundColor: 'white', marginTop: '0.5%', height: '100%', marginRight: '2%' }}>
+                <div
                     style={{
-                        borderRadius: '10px 10px 0px 0px',
-                        height: '50px',
+                        borderRadius: '10px',
+                        borderBottomRightRadius: '0',
+                        borderBottomLeftRadius: '0',
                         color: 'white',
-                        backgroundColor: PRIMARY.dark
+                        backgroundColor: PRIMARY.dark,
+                        height: '6%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center'
                     }}
                 >
-                    <h4 style={{ width: '100%', textAlign: 'center' }}>{this.state.title}</h4>
-                </Container>
-                <div>
+                    <h4 style={{ width: '100%', margin: '0 auto' }}>{this.state.title}</h4>
+                </div>
+                <div style={{ height: '10%' }}>
                     <div style={{ float: 'left' }}>
                         <p style={{ margin: '15px 15px 15px 15px', fontStyle: 'italic' }}>
                             Click on one of the projects below to view its ontologies
@@ -218,8 +223,7 @@ class ProjectView extends Component {
                         userName={this.props.user ? this.props.user.displayName : 'terminology-service@tib.eu'}
                     />
                 </div>
-                <Scrollbars style={{ height: '90%' }}>
-                    <hr className="mt-3 mb-0" />
+                <Scrollbars style={{ height: '83%', borderTop: '0.01rem solid #e7e9eb' }}>
                     <StyledButton onClick={this.togglePrivateProject}>
                         <FontAwesomeIcon
                             style={{

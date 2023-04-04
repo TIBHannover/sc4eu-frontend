@@ -103,45 +103,45 @@ class RightSideProjectBar extends Component {
 
     render() {
         return (
-            <ContentContainer
+            <div
                 id="RightSidebarContainer"
                 initialRendering={this.state.initialRendering}
-                style={{ width: '22%', position: 'absolute', marginTop: '0.4%', height: '81%' }}
+                style={{ width: '22%', marginTop: '0.5%', height: '100%', backgroundColor: 'white' }}
             >
-                <Container
-                    className="pr-md-5 pt-sm-2 pb-sm-2 clearfix"
+                <div
                     style={{
                         borderRadius: '10px',
                         borderBottomRightRadius: '0',
                         borderBottomLeftRadius: '0',
                         color: 'white',
                         backgroundColor: PRIMARY.dark,
-                        height: '50px'
+                        height: '6%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center'
                     }}
                 >
-                    <h4 style={{ width: '100%', textAlign: 'center' }}>{this.state.title}</h4>
-                </Container>
-                <Container
-                    className=" pt-sm-2 pb-sm-2 pl-sm-1 pr-sm-0 "
+                    <h4 style={{ width: '100%', margin: '0 auto' }}>{this.state.title}</h4>
+                </div>
+                <div
                     style={{
                         color: 'black',
                         backgroundColor: 'white',
-                        position: 'absolute',
-                        height: '88%'
-                        // zIndex: -500
+                        height: '90%'
                     }}
                 >
                     <div>
-                        <p style={{ float: 'left', margin: '0px 10px 5px 5px', textAlign: 'center', fontStyle: 'italic' }}>
+                        <p style={{ float: 'left', margin: '0px 10px 5px 5px', textAlign: 'center', fontStyle: 'italic', height: '5%' }}>
                             {this.props.user ? (
                                 <>Click on the email icon to request permission to a project you are interested to join</>
                             ) : (
-                                <>Please Sign In to request permission to a project you are interested to join</>
+                                <>Please log in to apply for approval for a project you are interested in.</>
                             )}
                         </p>
                     </div>
-                    <Scrollbars style={{ borderTop: '0.01rem solid #e7e9eb' }}>
-                        <div style={{ textAlign: 'left' }}>
+                    <Scrollbars style={{ borderTop: '0.01rem solid #e7e9eb', height: '95%' }}>
+                        <div style={{ textAlign: 'left', marginRight: '1.5%' }}>
                             {this.state.results.length > 0 ? (
                                 this.state.results.map(item => {
                                     if (item.unlock === false) {
@@ -161,8 +161,8 @@ class RightSideProjectBar extends Component {
                             )}
                         </div>
                     </Scrollbars>
-                </Container>
-            </ContentContainer>
+                </div>
+            </div>
         );
     }
 }
@@ -179,7 +179,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps)(RightSideProjectBar);
-
-const ContentContainer = styled.aside`
-    right: 15px;
-`;
