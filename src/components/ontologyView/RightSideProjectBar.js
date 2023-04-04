@@ -136,7 +136,7 @@ class RightSideProjectBar extends Component {
                             {this.props.user ? (
                                 <>Click on the email icon to request permission to a project you are interested to join</>
                             ) : (
-                                <>Please Sign In to request permission to a project you are interested to join</>
+                                <>Please log in to apply for approval for a project you are interested in.</>
                             )}
                         </p>
                     </div>
