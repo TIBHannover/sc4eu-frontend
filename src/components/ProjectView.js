@@ -55,6 +55,12 @@ class ProjectView extends Component {
         }
         if (prevProps.user !== this.props.user && this.props.user) {
             this.getProjectsFromBackend();
+            if (
+                this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase() ||
+                this.props.user.role.toLowerCase() === 'System Admin'.toLowerCase()
+            ) {
+                this.setState({ canNotAddProject: false });
+            }
         }
     };
 
