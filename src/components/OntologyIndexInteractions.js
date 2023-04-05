@@ -9,16 +9,25 @@ import ROUTES from 'constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { UncontrolledTooltip } from 'reactstrap';
+import { connect } from 'react-redux';
 
-export default class OntologyIndexInteractions extends Component {
+class OntologyIndexInteractions extends Component {
     constructor(props) {
         super(props);
-        this.state = { showUploadModal: false, activeTab: '1' };
+        this.state = { showUploadModal: false, activeTab: '1', canNotUploadOntology: true };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        if (this.props.user && this.props.user !== 0) {
+            this.setState({ canNotUploadOntology: false });
+        }
+    }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.user !== this.props.user && this.props.user && this.props.user !== 0) {
+            this.setState({ canNotUploadOntology: false });
+        }
+    }
 
     ontologyUploadComplete(param) {
         if (param.result === true) {
@@ -65,6 +74,8 @@ export default class OntologyIndexInteractions extends Component {
                     </div>
                     <hr className="mt-0 mb-2" />
                     <Button
+                        disabled={this.state.canNotUploadOntology}
+                        title={'Please login to upload ontology'}
                         style={{ backgroundColor: SECONDARY.dark, margin: '10px 5px 10px 5px', marginLeft: '1%' }}
                         active={true}
                         onClick={() => {
@@ -108,5 +119,14 @@ OntologyIndexInteractions.propTypes = {
     project_id: PropTypes.string.isRequired,
     project_name: PropTypes.string.isRequired,
     access_type: PropTypes.string.isRequired,
-    listOfOntology: PropTypes.array.isRequired
+    listOfOntology: PropTypes.array.isRequired,
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
+
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+const mapDispatchToProps = dispatch => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(OntologyIndexInteractions);
