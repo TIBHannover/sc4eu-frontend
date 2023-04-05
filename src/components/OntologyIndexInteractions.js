@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
 import UploadOntologyModal from './UploadOntologyModal';
-import { SECONDARY } from '../styledComponents/styledComponents';
+import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import OntologyIndexCards from './OntologyIndexCards';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -39,22 +39,33 @@ export default class OntologyIndexInteractions extends Component {
         const projectName = this.props.project_name.length > 10 ? this.props.project_name.substring(0, 10) + ' ...' : this.props.project_name;
         return (
             <div>
-                <div className="pl-1 pr-1 pb-2">
-                    <div className="container" style={{ display: 'flex', justifyContent: 'center', textAlign: 'left' }}>
-                        <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
+                <div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            height: '6%',
+                            justifyContent: 'center',
+                            textAlign: 'left',
+                            backgroundColor: PRIMARY.dark,
+                            borderRadius: '10px',
+                            borderBottomRightRadius: '0',
+                            borderBottomLeftRadius: '0'
+                        }}
+                    >
+                        <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginTop: '15px', color: 'white', marginLeft: '1%' }}>
                             <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
                             <span>Projects</span>
                         </Link>
-                        <h2 style={{ padding: '10px', margin: '0 auto' }}>
+                        <h4 style={{ padding: '10px', margin: '0 auto', color: 'white' }}>
                             Select Ontology from <u id="tootlipTarget">{projectName}</u> Project
-                        </h2>
+                        </h4>
                         <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
                             <u>{this.props.project_name}</u>
                         </UncontrolledTooltip>
                     </div>
                     <hr className="mt-0 mb-2" />
                     <Button
-                        style={{ backgroundColor: SECONDARY.dark, margin: '10px 5px 10px 5px' }}
+                        style={{ backgroundColor: SECONDARY.dark, margin: '10px 5px 10px 5px', marginLeft: '1%' }}
                         active={true}
                         onClick={() => {
                             this.setState({ showUploadModal: true });
@@ -62,7 +73,7 @@ export default class OntologyIndexInteractions extends Component {
                     >
                         Upload Ontology
                     </Button>
-                    <hr className="mt-0 mb-2" />
+                    <hr className="mt-0 mb-2 ml-2 mr-2" />
                     <UploadOntologyModal
                         project_id={this.props.project_id}
                         access_type={this.props.access_type}
@@ -75,19 +86,17 @@ export default class OntologyIndexInteractions extends Component {
                         }}
                     />
                 </div>
-                <div>
-                    <div>
-                        {this.props.listOfOntology ? (
-                            <OntologyIndexCards
-                                ontologies={this.props.listOfOntology}
-                                reloadAfterUpdate={() => {
-                                    this.props.reloadAfterUpdate();
-                                }}
-                            />
-                        ) : (
-                            <div> No ontologies found in this project </div>
-                        )}
-                    </div>
+                <div className="mt-0 mb-0 ml-1 mr-1">
+                    {this.props.listOfOntology ? (
+                        <OntologyIndexCards
+                            ontologies={this.props.listOfOntology}
+                            reloadAfterUpdate={() => {
+                                this.props.reloadAfterUpdate();
+                            }}
+                        />
+                    ) : (
+                        <div> No ontologies found in this project </div>
+                    )}
                 </div>
             </div>
         );
