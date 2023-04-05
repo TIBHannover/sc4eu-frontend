@@ -116,5 +116,5 @@ export default class DashboardProjects extends Component {
 }
 
 DashboardProjects.propTypes = {
-    currentUser: PropTypes.object.isRequired
+    currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };

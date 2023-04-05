@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-
 import { requestDashboard } from '../network/loginCalls';
 import { getAllRoles } from '../network/UserProfileCalls';
 import DashboardItem from '../components/DashboardItem';
 import DashboardProjects from '../components/DashboardProjects';
 import { getAllProjects } from '../network/projectIndexing';
-import { Col, Nav, NavItem, NavLink, Row, TabContent, Table, TabPane } from 'reactstrap';
+import { Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import styled from 'styled-components';
+import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -63,7 +63,6 @@ class Dashboard extends Component {
             getProjectsFromBackend.forEach(project => {
                 projectsLabels.push({ value: project.name, label: project.name, projectUUID: project.uuid });
             });
-            console.log('testing');
             this.setState({ projects: projectsLabels });
         });
     };
@@ -91,21 +90,19 @@ class Dashboard extends Component {
                     <div>
                         <h1 style={{ textAlign: 'center', fontStyle: 'normal', padding: '20px 0px 20px 0px' }}>USER INFORMATION </h1>
                         <div style={{ textAlign: 'center', fontStyle: 'normal' }}>
-                            <Table bordered>
+                            <StyledTable bordered>
                                 <thead>
                                     <tr>
-                                        {/*<th>UUID</th>*/}
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <th>Auth Type</th>
                                         <th>Verified User</th>
                                         <th>Role</th>
-                                        <th>User Project</th>
+                                        <th>User Projects</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>{this.dashBoardRowItem()}</tbody>
-                            </Table>
+                            </StyledTable>
                         </div>
                     </div>
                 );
@@ -181,3 +178,34 @@ const mapStateToProps = state => ({
 });
 
 export default compose(connect(mapStateToProps))(Dashboard);
+
+const StyledTable = styled.table`
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+
+    th,
+    td {
+        text-align: left;
+        padding: 16px;
+        border: 1px solid #ddd;
+    }
+
+    tr:nth-child(even) {
+        background-color: ${PRIMARY.light};
+    }
+
+    tr:hover {
+        background-color: ${SECONDARY.dark};
+        color: black;
+    }
+
+    th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: ${SECONDARY.dark};
+        color: white;
+    }
+`;
