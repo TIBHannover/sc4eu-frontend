@@ -97,7 +97,7 @@ const StyledNoteText = styled.div`
 const LogoOntologyPortal = styled.img`
     height: 40px;
     width: 70px;
-    margin-top: 3%;
+    margin-top: 2%;
 
     @media (max-width: ${MAX_WIDTH}) {
         display: none;
