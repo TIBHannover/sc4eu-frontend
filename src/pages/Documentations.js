@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { MAX_WIDTH, PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import UserRole from '../assets/images/UserRole.jpg';
 import styled from 'styled-components';
+import { colorStyled } from '../styledComponents/styledColor';
+import { fontStyled } from '../styledComponents/styledFont';
 
 class Documentations extends Component {
     constructor(props) {
@@ -68,39 +70,39 @@ class Documentations extends Component {
             'very dependent. To allow users to adapt visual representations to their needs, flexible and adjustable techniques are required.';
 
         return (
-            <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
-                <div style={{ width: '100%', height: '90%', overflowY: 'auto', paddingBottom: '30px' }}>
+            <div style={{ width: '100%', height: '100%' }}>
+                <div style={{ width: '100%', height: '90%', overflowY: 'auto', paddingBottom: '3%' }}>
                     <StyledDiv>
-                        <h2 style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '10px' }}>What the Portal will do for you</h2>
-                        <h4>Connecting Domain Experts with Knowledge Engineers</h4>
-                        <p style={{ whiteSpace: 'pre-wrap', textAlign: 'justify', color: TEXTCOLOR }}>
+                        <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%' }}>What the Portal will do for you</h3>
+                        <h5>Connecting Domain Experts with Knowledge Engineers</h5>
+                        <StyledText>
                             {this.state.isreadmoreUserGuidance ? (
                                 <>
                                     {UserGuidance}
                                     <div style={{ textAlign: 'center' }}>
                                         <img src={UserRole} alt="UserRole" />
-                                        <p style={{ textAlign: 'justify' }}>
+                                        <StyledText>
                                             We identified that the most crucial requirement for ontology development is to serve users' needs from
                                             various audiences with diverse backgrounds and in different contexts. We have therefore introduced several
                                             modes of operations.
-                                        </p>
+                                        </StyledText>
                                     </div>
                                 </>
                             ) : (
                                 UserGuidance.substring(0, 300)
                             )}
-                            <span style={{ color: SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
+                            <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
                                 {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
                             </span>
-                        </p>
-                        <h4>About SC3</h4>
-                        <p style={{ textAlign: 'justify', color: TEXTCOLOR }}>
+                        </StyledText>
+                        <h5>About SC3</h5>
+                        <StyledText>
                             SC3 establishes a standard language for comprehensive collaboration between humans and machines, as well as all other
                             partners.The key objective of this platform is to implement data documentation of an actionable ontology-based ecosystem
                             that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by new ones for other
                             subdomains to ensure interoperability of data. "Further information about the project you can find on our &nbsp;
                             <a
-                                style={{ color: SECONDARY.link }}
+                                style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href="https://sc3-project.automotive.oth-aw.de/"
@@ -109,7 +111,7 @@ class Documentations extends Component {
                             </a>
                             , on our&nbsp;
                             <a
-                                style={{ color: SECONDARY.link }}
+                                style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
@@ -118,29 +120,29 @@ class Documentations extends Component {
                             </a>
                             , or&nbsp;
                             <a
-                                style={{ color: SECONDARY.link }}
+                                style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
                             >
                                 via LinkedIn.
                             </a>
-                        </p>
-                        <h4>Framework for Collaborative Ontology Development</h4>
-                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer', textAlign: 'justify', color: TEXTCOLOR }}>
+                        </StyledText>
+                        <h5>Framework for Collaborative Ontology Development</h5>
+                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
                             {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
-                            <span style={{ color: SECONDARY.link }} onClick={this.toggleReadmoreFrameworkText}>
+                            <span style={{ color: colorStyled.SECONDARY.link }} onClick={this.toggleReadmoreFrameworkText}>
                                 {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
                             </span>
                         </p>
 
-                        <h4>Be part of the SC3 Community and Collaborate with us </h4>
-                        <p style={{ textAlign: 'justify', color: TEXTCOLOR }}>
+                        <h5>Be part of the SC3 Community and Collaborate with us </h5>
+                        <StyledText>
                             SC3 is an ECSEL funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone
                             are invited to participate in the project development.
                             <br />I Would like to setup your own SC3 Portal or if you like to contribute to our codebase, please visit:&nbsp;
                             <a
-                                style={{ color: SECONDARY.link }}
+                                style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href="https://gitlab.com/TIBHannover/sc3-project/"
@@ -149,11 +151,11 @@ class Documentations extends Component {
                             </a>
                             <br />
                             You will find all our code under a MIT licence, instructions. Check it out!
-                        </p>
-                        <h4>Hybrid Modes of Operation</h4>
-                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer', textAlign: 'justify', color: TEXTCOLOR }}>
+                        </StyledText>
+                        <h5>Hybrid Modes of Operation</h5>
+                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
                             {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
-                            <span style={{ color: SECONDARY.link }} onClick={this.toggleReadmore}>
+                            <span style={{ color: colorStyled.SECONDARY.link }} onClick={this.toggleReadmore}>
                                 {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
                             </span>
                         </p>
@@ -182,9 +184,21 @@ export default Documentations;
 const StyledDiv = styled.div`
     padding-left: 20%;
     padding-right: 20%;
+    font-family: ${fontStyled.fontFamily};
 
     @media (max-width: ${MAX_WIDTH}) {
         padding-left: 10%;
         padding-right: 10%;
+    }
+`;
+
+const StyledText = styled.p`
+    color: ${colorStyled.TEXTCOLOR};
+    white-space: pre-wrap;
+    text-align: justify;
+    font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        font-size: ${fontStyled.fontSize.MobileViewNormalText};
     }
 `;

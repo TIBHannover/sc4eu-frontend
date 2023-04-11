@@ -3,7 +3,10 @@ import Footer from '../Layout/Footer';
 import { Collapse, Button, Container, Table } from 'reactstrap';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
+import styled from 'styled-components';
+import { colorStyled } from '../styledComponents/styledColor';
+import { fontStyled } from '../styledComponents/styledFont';
 
 export default class Faq extends Component {
     constructor(props) {
@@ -54,12 +57,8 @@ export default class Faq extends Component {
                     '· Mark ontologies Public, or Not-Public'
             },
             {
-                name: 'Key User',
-                role: '· Read permission on all project ontologies'
-            },
-            {
                 name: 'Public User',
-                role: '· Read permission on all public content'
+                role: '· Read permission on all public content\n\n· Write ontologies in public Projects'
             },
             {
                 name: 'Member',
@@ -67,20 +66,20 @@ export default class Faq extends Component {
             }
         ];
         return (
-            <div style={{ width: '100%', height: '100%', overflow: 'auto', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
                 <Container
                     style={{
-                        // border: '1px solid black',
                         borderTop: 'none',
                         overflow: 'auto',
                         position: 'relative',
                         backgroundColor: '#ffffff',
                         borderRadius: '10px 10px 10px 10px ',
-                        height: '90%'
+                        height: '88%',
+                        fontFamily: fontStyled.fontFamily
                     }}
                 >
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: SECONDARY.dark }}
+                        style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
                         className="btn"
                         onClick={this.toggleUserRole}
                     >
@@ -98,15 +97,15 @@ export default class Faq extends Component {
                             <tbody style={{ whiteSpace: 'pre' }}>
                                 {items?.map((item, id) => (
                                     <tr key={id}>
-                                        <td style={{ fontWeight: 600, color: TEXTCOLOR }}>{item.name}</td>
-                                        <td style={{ color: TEXTCOLOR }}>{item.role}</td>
+                                        <td style={{ fontWeight: 600, color: colorStyled.TEXTCOLOR }}>{item.name}</td>
+                                        <td style={{ color: colorStyled.TEXTCOLOR }}>{item.role}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </Table>
                     </Collapse>
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: SECONDARY.dark }}
+                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
                         className="btn"
                         onClick={this.toggleIssueManagement}
                     >
@@ -114,21 +113,21 @@ export default class Faq extends Component {
                         Issue Management
                     </Button>
                     <Collapse isOpen={this.state.collapseIssueManagement}>
-                        <p style={{ marginTop: '30px', color: TEXTCOLOR }}>
+                        <StyledText>
                             If you face any problems with our portal, face any issues with our running system or if you have any further questions,
                             please get in contact with us via our issue management system that you will find here :&nbsp;
                             <a
-                                style={{ color: SECONDARY.link }}
+                                style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
                                 href="https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues"
                                 rel="noreferrer"
                             >
                                 SC3 Issue Management
                             </a>
-                        </p>
+                        </StyledText>
                     </Collapse>
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: SECONDARY.dark }}
+                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
                         className="btn"
                         onClick={this.toggleWebProtege}
                     >
@@ -136,21 +135,26 @@ export default class Faq extends Component {
                         WebProtege
                     </Button>
                     <Collapse isOpen={this.state.collapseWebProtege}>
-                        <p style={{ marginTop: '30px', color: TEXTCOLOR }}>
+                        <StyledText>
                             WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC3 Platform
                             Visualization ( &nbsp;
-                            <a style={{ color: SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
+                            <a style={{ color: colorStyled.SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
                                 SC3 Portal
                             </a>
                             &nbsp;) and WebProtege (&nbsp;
-                            <a style={{ color: SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/webprotege" rel="noreferrer">
+                            <a
+                                style={{ color: colorStyled.SECONDARY.link }}
+                                target="_blank"
+                                href="https://service.tib.eu/sc3/webprotege"
+                                rel="noreferrer"
+                            >
                                 WebProtege
                             </a>
                             &nbsp;) are only loosely coupled. Both have their own authentication solutions and data management systems. It is
                             therefore not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first work
                             collaboratively Web-protege. Then download the ontology from WebProtege and from there into the and from there into the
                             visualization tool. A more integrated solution is coming.
-                        </p>
+                        </StyledText>
                     </Collapse>
                 </Container>
                 <Footer />
@@ -158,3 +162,14 @@ export default class Faq extends Component {
         );
     }
 }
+
+const StyledText = styled.p`
+    color: ${colorStyled.TEXTCOLOR};
+    text-align: justify;
+    margin-top: 2%;
+    font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        font-size: ${fontStyled.fontSize.MobileViewNormalText};
+    }
+`;

@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { MAX_WIDTH, PRIMARY, SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import styled from 'styled-components';
+import { colorStyled } from '../styledComponents/styledColor';
+import { fontStyled } from '../styledComponents/styledFont';
 
 export default class Dataprotections extends Component {
     render() {
         return (
-            <div style={{ width: '100%', height: '100%', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <StyledDiv>
-                    <h2
-                        style={{
-                            marginTop: '20px'
-                        }}
-                    >
-                        Privacy Statement
-                    </h2>
-                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                    <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '1%' }}>Privacy Statement </h3>
+                    <StyledText>
                         Data protection is of high priority for the Technische Informationsbibliothek (TIB). As a general rule, the use of TIBʼs
                         services does not require the provision of any personal data. However, the processing of personal data may be required where a
                         data subject wants to use special services via the TIBʼs web pages. Where the processing of personal data is required and
@@ -29,9 +25,9 @@ export default class Dataprotections extends Component {
                         <br />
                         The terms used in this privacy statement are to be understood within the meaning of the European General Data Protection
                         General Data Protection Regulation (GDPR).
-                    </p>
-                    <h3>Name and address of the controller</h3>
-                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                    </StyledText>
+                    <h5>Name and address of the controller</h5>
+                    <StyledText>
                         The controller under data protection law shall be:
                         <br />
                         Technische Informationsbibliothek (TIB)
@@ -45,17 +41,17 @@ export default class Dataprotections extends Component {
                         Phone : +49 511 762-8989
                         <br />
                         Email :&nbsp;
-                        <a href="https://www.tib.eu" style={{ color: SECONDARY.link }} target="_blank" rel="noreferrer">
+                        <a href="https://www.tib.eu" style={{ color: colorStyled.SECONDARY.link }} target="_blank" rel="noreferrer">
                             www.tib.eu
                         </a>
                         <br />
                         Website :&nbsp;
-                        <a href="https://www.tib.eu" style={{ color: SECONDARY.link }} target="_blank" rel="noreferrer">
+                        <a href="https://www.tib.eu" style={{ color: colorStyled.SECONDARY.link }} target="_blank" rel="noreferrer">
                             www.tib.eu
                         </a>
-                    </p>
-                    <h3>Name and address of the data protection officer</h3>
-                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                    </StyledText>
+                    <h5>Name and address of the data protection officer</h5>
+                    <StyledText>
                         The data protection officer of the controller shall be:
                         <br />
                         Elke Brehm
@@ -63,13 +59,13 @@ export default class Dataprotections extends Component {
                         Phone : +49 511 762-8138
                         <br />
                         Email : &nbsp;
-                        <a href="mailto:datenschutz@tib.eu" style={{ color: SECONDARY.link }}>
+                        <a href="mailto:datenschutz@tib.eu" style={{ color: colorStyled.SECONDARY.link }}>
                             datenschutz(AT)tib.eu
                         </a>
                         <br />
-                    </p>
-                    <h4>Postal Address :</h4>
-                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                    </StyledText>
+                    <h5>Postal Address :</h5>
+                    <StyledText>
                         Technische Informationsbibliothek (TIB)
                         <br />
                         data protection officer
@@ -80,23 +76,23 @@ export default class Dataprotections extends Component {
                         <br />
                         Germany
                         <br />
-                    </p>
-                    <h4>Visiting Address:</h4>
-                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                    </StyledText>
+                    <h5>Visiting Address:</h5>
+                    <StyledText>
                         TIB Conti-Campus
                         <br />
                         Königsworther Platz 1 B
                         <br />
                         30167 Hannover
                         <br />
-                    </p>
-                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                    </StyledText>
+                    <StyledText>
                         Any data subject may contact our data protection officer directly regarding any and all questions and suggestions regarding
                         data protection at any time.
                         <br />
-                    </p>
-                    <h3>Cookies</h3>
-                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                    </StyledText>
+                    <h5>Cookies</h5>
+                    <StyledText>
                         The TIB websites use cookies. Cookies are text files that are placed and stored on a computer system via an Internet browser
                         and serve to render the offer of the TIB more user-friendly, effective and secure.
                         <br />
@@ -109,17 +105,17 @@ export default class Dataprotections extends Component {
                         or by other software programs. This is possible in all common Internet browsers. If the data subject deactivates the setting
                         of cookies in the Internet browser used, the TIB web pages may not function properly.
                         <br />
-                    </p>
+                    </StyledText>
 
-                    <h3>Web Analytics</h3>
-                    <p style={{ color: TEXTCOLOR, textAlign: 'justify' }}>
+                    <h5>Web Analytics</h5>
+                    <StyledText>
                         The information generated with Matomo about the use of this website is processed and stored exclusively by TIB.
-                    </p>
+                    </StyledText>
                     <div>
                         <iframe
                             title="data policy"
                             src="https://support.tib.eu/piwik/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=en&amp;backgroundColor=&amp;fontColor=&amp;fontSize=&amp;fontFamily=sans-serif"
-                            style={{ border: 0, height: '250px', width: '100%', color: TEXTCOLOR, textAlign: 'justify' }}
+                            style={{ border: 0, height: '250px', width: '100%', color: colorStyled.TEXTCOLOR, textAlign: 'justify' }}
                         />
                     </div>
                 </StyledDiv>
@@ -136,9 +132,20 @@ const StyledDiv = styled.div`
     align-items: center;
     padding-left: 20%;
     padding-right: 20%;
+    font-family: ${fontStyled.fontFamily};
 
     @media (max-width: ${MAX_WIDTH}) {
         padding-left: 10%;
         padding-right: 10%;
+    }
+`;
+
+const StyledText = styled.p`
+    color: ${colorStyled.TEXTCOLOR};
+    text-align: justify;
+    font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        font-size: ${fontStyled.fontSize.MobileViewNormalText};
     }
 `;
