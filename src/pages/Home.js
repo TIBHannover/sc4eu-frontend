@@ -122,7 +122,7 @@ const StyledBodyLogo = styled.img`
         width: 110px;
         height: 90px;
         align-self: center;
-        margin-top: 0;
+        margin-bottom: 10px;
     }
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
@@ -195,7 +195,7 @@ const StyledEditLogo = styled.img`
         height: 75px;
         align-self: center;
         margin-right: 1%;
-        margin-top: 3%;
+        margin-top: 4%;
     }
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
