@@ -7,21 +7,26 @@ import bosch_logo from '../assets/images/Bosch.png';
 import mines_logo from '../assets/images/MINES.png';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { MAX_WIDTH, PRIMARY } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
+import Logo from '../assets/images/logo.png';
+import OntologyPortal from '../assets/images/OntologyPOrtalLogo.png';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class Footer extends Component {
     render() {
         return (
             <div>
                 <StyledBodyDiv>
-                    <div style={{ flexDirection: 'column' }}>
+                    <StyledLeftDiv>
+                        <LogoOntologyPortal src={OntologyPortal} alt="OntologyPortal" />
                         <StyledNoteText>
                             <span style={{ fontWeight: 600 }}>Note :</span> This is a Minimal Viable Product of the SC3 project.
                             <br /> I.e., We don't provide any backup solution yet.
                         </StyledNoteText>
-                    </div>
-                    <div style={{ paddingLeft: '10%' }}>
-                        <Image src={infinion_logo} alt="Infinion Logo" style={{ paddingLeft: '15px' }} />
+                    </StyledLeftDiv>
+                    <div>
+                        <Image src={infinion_logo} alt="Infinion Logo" />
                         <a href={'https://www.tib.eu/de/'} target="_blank" rel="noopener noreferrer">
                             <Image src={tib_logo} alt="TIB Logo" style={{ paddingLeft: '15px' }} />
                         </a>
@@ -29,7 +34,7 @@ class Footer extends Component {
                         <Image src={bosch_logo} alt="Bosch Logo" style={{ paddingLeft: '15px' }} />
                         <Image src={mines_logo} alt="Mines Logo" style={{ paddingLeft: '5px' }} />
                     </div>
-                    <div style={{ paddingLeft: '10%' }}>
+                    <StyledRightDiv>
                         <a href={'https://www.kdt-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
                             <StyledImage src={KDT_logo} alt="DFG Logo" />
                         </a>
@@ -37,7 +42,8 @@ class Footer extends Component {
                             SC3 is Supported by KDT JU <br />
                             Under Grant number 101007312
                         </StyledText>
-                    </div>
+                        <StyledLogo src={Logo} alt="SC3 Logo" />
+                    </StyledRightDiv>
                 </StyledBodyDiv>
             </div>
         );
@@ -48,68 +54,127 @@ export default withRouter(Footer);
 
 const StyledBodyDiv = styled.div`
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     position: absolute;
     left: 0;
     bottom: 0;
     right: 0;
-    padding-left: 15%;
-    padding-right: 15%;
-    padding-top: 10px;
-    height: 9%;
-    background: ${PRIMARY.light};
+    padding-left: 3%;
+    padding-right: 6%;
+    height: 10%;
+    background: ${colorStyled.PRIMARY.light};
     overflow: hidden;
 
     @media (max-width: ${MAX_WIDTH}) {
         padding-left: 1%;
         padding-right: 1%;
     }
-`;
 
-const StyledNoteText = styled.p`
-    font-size: 13px; 
-    color: #003554, 
-    font-family: 
-    sans-serif;
-    margin-top: 10px;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none
+    @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        padding-left: 15%;
+        padding-right: 15%;
     }
 `;
 
-const Image = styled.img`
-    height: 30px;
-    margin-top: 10px;
+const StyledLeftDiv = styled.div`
+    display: flex;
+`;
+
+const StyledNoteText = styled.div`
+    font-size: ${fontStyled.fontSize.infoText};
+    color: #003554;
+    font-family: ${fontStyled.fontFamily};
+    margin-top: 2%;
+    margin-left: 3%;
+    white-space: nowrap;
 
     @media (max-width: ${MAX_WIDTH}) {
         display: none;
     }
 `;
 
+const LogoOntologyPortal = styled.img`
+    height: 40px;
+    width: 70px;
+    margin-top: 3%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+
+    @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 60px;
+        width: 80px;
+    }
+`;
+
+const Image = styled.img`
+    height: 25px;
+    margin-top: 3%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+
+    @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 35px;
+    }
+`;
+
+const StyledRightDiv = styled.div`
+    display: flex;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        transform: translate(-30%, 30%);
+    }
+`;
+
 const StyledImage = styled.img`
-    height: 50px;
-    width: 150px;
-    margin-top: 10px;
+    height: 40px;
+    width: 110px;
+    margin-top: 3%;
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 40px;
         width: 100px;
-        margin-top: 5px;
+        margin-top: 2%;
+    }
+
+    @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 55px;
+        width: 150px;
     }
 `;
 
 const StyledText = styled.p`
-    font-size: 12px;
-    float: right;
-    padding-left: 15px;
-    font-family: sans-serif;
+    font-size: ${fontStyled.fontSize.infoText};
+    font-family: ${fontStyled.fontFamily};
     color: #003554;
-    margin-top: 10px;
+    margin-top: 1.5%;
+    margin-left: 3%;
+    white-space: nowrap;
 
     @media (max-width: ${MAX_WIDTH}) {
-        margin-top: 15px;
-        margin-left: 10px;
+        margin-top: 2%;
+        margin-left: 1%;
         font-size: 10px;
-        padding-left: 5px;
+        padding-left: 0.5%;
+    }
+`;
+
+const StyledLogo = styled.img`
+    height: 40px;
+    width: 40px;
+    margin-top: 2%;
+    margin-left: 3%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+
+    @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 40px;
+        width: 50px;
     }
 `;

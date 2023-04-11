@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import Header from './Header';
 import PropTypes from 'prop-types';
-import { PRIMARY } from '../styledComponents/styledComponents';
+import { colorStyled } from '../styledComponents/styledColor';
 
 export default function DefaultLayout(props) {
     return (
@@ -23,9 +22,10 @@ DefaultLayout.propTypes = {
 const StyledBody = styled.div`
     min-height: calc(100vh - 0px);
     height: 100%;
-    background-color: ${PRIMARY.lighter};
+    background-color: ${colorStyled.PRIMARY.lighter};
 `;
 
 const StyledAppContent = styled.div`
-    height: calc(100vh - 100px);
+    height: 90vh;
+    overflow: hidden;
 `;
