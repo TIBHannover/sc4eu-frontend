@@ -2,7 +2,7 @@ const fontSize = {
     mainHeading: '24px',
     subHeading: '22px',
     NormalText: '14px',
-    infoText: '10px'
+    infoText: '12px'
 };
 
 const fontFamily = 'roboto';

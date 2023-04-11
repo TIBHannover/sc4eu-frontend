@@ -16,10 +16,11 @@ import SignInModal from '../components/Signin/SignInModal';
 
 import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
-import { MAX_WIDTH, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import SideBarLayout from './SideBarLayout';
 import background from '../assets/images/Curve Line.svg';
 import styled from 'styled-components';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class Header extends Component {
     constructor(props) {
@@ -130,7 +131,7 @@ class Header extends Component {
         return (
             <StyledRootDiv>
                 <StyledHeaderDiv>
-                    <div style={{ float: 'left' }}>
+                    <div style={{ marginRight: 'auto' }}>
                         <SideBarLayout />
                     </div>
                     <StyledRightSideDiv>
@@ -187,7 +188,7 @@ class Header extends Component {
                             </div>
                         ) : (
                             <Button
-                                style={{ backgroundColor: SECONDARY.dark }}
+                                style={{ backgroundColor: colorStyled.SECONDARY.dark }}
                                 className="clearfix"
                                 onClick={() => {
                                     // push that to the redux state so that the user is rederected to its prev location;
@@ -236,10 +237,9 @@ Header.propTypes = {
 export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(Header);
 
 const StyledRootDiv = styled.div`
-    height: 100px;
-    position: relative;
+    height: 10vh;
     overflow: auto;
-    background: ${PRIMARY.light};
+    background: ${colorStyled.PRIMARY.light};
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
@@ -248,8 +248,11 @@ const StyledRootDiv = styled.div`
 `;
 
 const StyledHeaderDiv = styled.div`
-    height: 100px;
+    height: 10vh;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-image: url("${background}");
     
      @media (max-width: ${MAX_WIDTH}) {
@@ -259,9 +262,8 @@ const StyledHeaderDiv = styled.div`
 `;
 
 const StyledRightSideDiv = styled.div`
-    float: right;
-    margin-right: 20px;
-    margin-top: 15px;
+    margin-left: auto;
+    margin-right: 1%;
 
     @media (max-width: ${MAX_WIDTH}) {
         display: none;
