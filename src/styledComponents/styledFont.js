@@ -3,6 +3,7 @@ const fontSize = {
     Heading: '20px',
     subHeading: '22px',
     MobileViewHeading: '16px',
+    LaptopAndDesktopViewNormalText: '16px',
     DesktopViewNormalText: '14px',
     NormalText: '14px',
     MobileViewNormalText: '14px',
