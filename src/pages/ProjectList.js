@@ -46,7 +46,7 @@ export default class ProjectList extends Component {
 const StyledDiv = styled.div`
     display: flex;
     z-index: 150;
-    height: 95%;
+    height: 100%;
     justifyContent: 'flex-end'
     width: 100%;
 

@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { Label } from 'reactstrap';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import ProjectPermissionModal from './Modals/ProjectPermissionModal';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class ProjectIndexCards extends Component {
     constructor(props) {
@@ -36,12 +38,10 @@ class ProjectIndexCards extends Component {
                                 <div style={{ overflowWrap: 'break-word', fontWeight: '500' }}> {this.props.inputData.name} </div>
                             </div>
                         </StyledLabel>
-                        <FontAwesomeIcon
+                        <StyledIcon
                             icon={faEnvelope}
                             hidden={!this.props.user}
-                            size="1x"
                             color={SECONDARY.darker}
-                            style={{ float: 'right', marginTop: '7px', marginRight: '5px', cursor: 'pointer' }}
                             onClick={() => {
                                 this.setState({ showEmailModal: true });
                             }}
@@ -87,13 +87,6 @@ const mapStateToProps = state => ({
 });
 
 export default compose(connect(mapStateToProps))(ProjectIndexCards);
-//export default withRouter(ProjectIndexCards);
-
-// const StyledButton = styled(Button)`
-//     :hover {
-//         color: white;
-//     }
-// `;
 
 const StyledCard = styled.div`
     margin: 5px;
@@ -109,6 +102,7 @@ const StyledCard = styled.div`
 
 const StyledLabel = styled(Label)`
     padding: 10px;
+    font-size: ${fontStyled.fontSize.NormalText};
     color: black;
     :focus {
         outline: none;
@@ -120,13 +114,17 @@ const StyledLabel = styled(Label)`
     // :hover {
     //     color: white;
     // }
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
 `;
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
     border: 1px solid ${PRIMARY.dark};
     padding: 2px;
-    color: white;
+    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     background: ${PRIMARY.light};
     :focus {
         outline: none;
@@ -143,11 +141,28 @@ const StyledCardHeader = styled.div`
 const StyledCardBody = styled.div`
     padding: 5px;
     border: 1px solid ${PRIMARY.dark};
+    font-size: ${fontStyled.fontSize.NormalText};
     border-top: none;
     :focus {
         outline: none;
     }
     ::-moz-focus-inner {
         border: 0;
+    }
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledIcon = styled(Icon)`
+    font-size: ${fontStyled.fontSize.NormalText};
+    float: right;
+    margin-top: 7px;
+    margin-right: 5px;
+    cursor: pointer;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
     }
 `;

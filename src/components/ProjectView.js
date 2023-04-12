@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Collapse, Container } from 'reactstrap';
+import { Button, Collapse } from 'reactstrap';
 import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
 import ProjectCard from './ProjectCard';
 import { getUserProjects } from '../network/UserProfileCalls';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretLeft, faCaretRight, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import ProjectPermissionModal from './Modals/ProjectPermissionModal';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
+import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 
 class ProjectView extends Component {
     constructor(props) {
@@ -137,11 +139,11 @@ class ProjectView extends Component {
                         />
                     ))
                 ) : (
-                    <div style={{ paddingLeft: '3.5%', fontStyle: 'italic' }}>
+                    <div style={{ paddingLeft: '3.5%' }}>
                         {this.props.user === 0 || this.props.user === null ? (
-                            <span>Please log in to see your own projects</span>
+                            <StyledInfoSpan>Please log in to see your own projects</StyledInfoSpan>
                         ) : (
-                            <span>You do not have project</span>
+                            <StyledInfoSpan>You do not have project</StyledInfoSpan>
                         )}
                     </div>
                 )}
@@ -151,53 +153,15 @@ class ProjectView extends Component {
 
     render() {
         return (
-            <div style={{ width: '60%', marginLeft: 'auto', backgroundColor: 'white', marginTop: '0.5%', height: '100%', marginRight: '2%' }}>
-                <div
-                    style={{
-                        borderRadius: '10px',
-                        borderBottomRightRadius: '0',
-                        borderBottomLeftRadius: '0',
-                        color: 'white',
-                        backgroundColor: PRIMARY.dark,
-                        height: '6%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        textAlign: 'center'
-                    }}
-                >
+            <StyledRootDiv>
+                <StyledHeadingDiv>
                     <h4 style={{ width: '100%', margin: '0 auto' }}>{this.state.title}</h4>
-                </div>
-                <div style={{ height: '10%' }}>
-                    <div style={{ float: 'left' }}>
-                        <p style={{ margin: '15px 15px 15px 15px', fontStyle: 'italic' }}>
-                            Click on one of the projects below to view its ontologies
-                        </p>
-                        {this.props.user?.role === 'System Admin' || this.props.user?.role === 'Project Admin' ? (
-                            <></>
-                        ) : this.props.user ? (
-                            <>
-                                <span style={{ margin: '15px 15px 15px 15px', fontStyle: 'italic' }}>
-                                    You are "{this.props.user?.role}" and you have limited access to SC3 portal, become project admin please send mail
-                                </span>
-                                <span>
-                                    <FontAwesomeIcon
-                                        icon={faEnvelope}
-                                        size="1x"
-                                        color={SECONDARY.darker}
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={() => {
-                                            this.setState({ showEmailModal: true });
-                                        }}
-                                    />
-                                </span>
-                            </>
-                        ) : (
-                            <span style={{ margin: '15px 15px 15px 15px', fontStyle: 'italic' }}>Please sign in to request for change a role</span>
-                        )}
-                    </div>
-                    <Button
-                        style={{ margin: '15px 15px 15px 15px', backgroundColor: SECONDARY.dark, float: 'right' }}
+                </StyledHeadingDiv>
+                <StyledSubHeadingDiv>
+                    <StyledInfoSpan style={{ margin: '15px 15px 15px 15px', float: 'left' }}>
+                        Click on one of the projects below to view its ontologies
+                    </StyledInfoSpan>
+                    <StyledButtonToAddProject
                         disabled={this.state.canNotAddProject}
                         title={this.state.canNotAddProject ? 'Only Project Admin and System Admin can add projects' : 'Click to add new Project'}
                         onClick={() => {
@@ -205,7 +169,7 @@ class ProjectView extends Component {
                         }}
                     >
                         Add New Project
-                    </Button>
+                    </StyledButtonToAddProject>
                     <CreateProjectModal
                         showDialog={this.state.showCreateProjectModal}
                         toggle={() => {
@@ -228,49 +192,73 @@ class ProjectView extends Component {
                         userEmail={this.props.user ? this.props.user.userEmail : 'terminology-service@tib.eu'}
                         userName={this.props.user ? this.props.user.displayName : 'terminology-service@tib.eu'}
                     />
-                </div>
-                <Scrollbars style={{ height: '83%', borderTop: '0.01rem solid #e7e9eb' }}>
-                    <StyledButton onClick={this.togglePrivateProject}>
-                        <FontAwesomeIcon
-                            style={{
-                                width: '3%',
-                                margin: '4px 0px 0px 0px'
-                            }}
-                            color={PRIMARY.dark}
-                            icon={!this.state.collapsePrivateProject ? faCaretRight : faCaretDown}
-                        />
-                        <StyledH4>
-                            <span style={{ background: '#fff', padding: '0 10px' }}>My Projects</span>
-                        </StyledH4>
-                        <FontAwesomeIcon
-                            color={PRIMARY.dark}
-                            style={{ width: '3%', margin: '4px 0px 0px 0px' }}
-                            icon={!this.state.collapsePrivateProject ? faCaretLeft : faCaretDown}
-                        />
-                    </StyledButton>
-                    <Collapse isOpen={this.state.collapsePrivateProject}>
-                        {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Private" /> : 'Still Loading'}
-                    </Collapse>
-                    <StyledButton style={{ marginTop: '1%' }} onClick={this.togglePublicProject}>
-                        <FontAwesomeIcon
-                            color={PRIMARY.dark}
-                            style={{ width: '3%', margin: '4px 0px 0px 0px' }}
-                            icon={!this.state.collapsePublicProject ? faCaretRight : faCaretDown}
-                        />
-                        <StyledH4>
-                            <span style={{ background: '#fff', padding: '0 10px' }}>Public Projects</span>
-                        </StyledH4>
-                        <FontAwesomeIcon
-                            color={PRIMARY.dark}
-                            style={{ width: '3%', margin: '4px 0px 0px 0px' }}
-                            icon={!this.state.collapsePublicProject ? faCaretLeft : faCaretDown}
-                        />
-                    </StyledButton>
-                    <Collapse isOpen={this.state.collapsePublicProject}>
-                        {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Public" /> : 'Still Loading'}
-                    </Collapse>
-                </Scrollbars>
-            </div>
+                    <div style={{ float: 'left', width: '70%', marginLeft: '15px' }}>
+                        {this.props.user?.role === 'System Admin' || this.props.user?.role === 'Project Admin' ? (
+                            <></>
+                        ) : this.props.user ? (
+                            <>
+                                <StyledInfoSpan>
+                                    You are "{this.props.user?.role}" and you have limited access to SC3 portal, become project admin please send mail
+                                </StyledInfoSpan>
+                                <span style={{ marginLeft: '10px' }}>
+                                    <StyledIcon
+                                        icon={faEnvelope}
+                                        color={colorStyled.SECONDARY.darker}
+                                        onClick={() => {
+                                            this.setState({ showEmailModal: true });
+                                        }}
+                                    />
+                                </span>
+                            </>
+                        ) : (
+                            <StyledInfoSpan>Please sign in to request for change a role</StyledInfoSpan>
+                        )}
+                    </div>
+                </StyledSubHeadingDiv>
+                <StyledScrollbarDiv>
+                    <Scrollbars>
+                        <StyledButton onClick={this.togglePrivateProject}>
+                            <FontAwesomeIcon
+                                style={{
+                                    width: '3%',
+                                    margin: '4px 0px 0px 0px'
+                                }}
+                                color={colorStyled.PRIMARY.dark}
+                                icon={!this.state.collapsePrivateProject ? faCaretRight : faCaretDown}
+                            />
+                            <StyledH4>
+                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>My Projects</span>
+                            </StyledH4>
+                            <FontAwesomeIcon
+                                color={colorStyled.PRIMARY.dark}
+                                style={{ width: '3%', margin: '4px 0px 0px 0px' }}
+                                icon={!this.state.collapsePrivateProject ? faCaretLeft : faCaretDown}
+                            />
+                        </StyledButton>
+                        <Collapse isOpen={this.state.collapsePrivateProject}>
+                            {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Private" /> : 'Still Loading'}
+                        </Collapse>
+                        <StyledButton style={{ marginTop: '1%' }} onClick={this.togglePublicProject}>
+                            <FontAwesomeIcon
+                                color={colorStyled.PRIMARY.dark}
+                                style={{ width: '3%', margin: '4px 0px 0px 0px' }}
+                                icon={!this.state.collapsePublicProject ? faCaretRight : faCaretDown}
+                            />
+                            <StyledH4>
+                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>Public Projects</span>
+                            </StyledH4>
+                            <FontAwesomeIcon
+                                color={colorStyled.PRIMARY.dark}
+                                style={{ width: '3%', margin: '4px 0px 0px 0px' }}
+                                icon={!this.state.collapsePublicProject ? faCaretLeft : faCaretDown}
+                            />
+                        </StyledButton>
+                        <Collapse isOpen={this.state.collapsePublicProject}>
+                            {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Public" /> : 'Still Loading'}
+                        </Collapse>
+                    </Scrollbars>
+                </StyledScrollbarDiv>
+            </StyledRootDiv>
         );
     }
 }
@@ -290,6 +278,33 @@ ProjectView.propTypes = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
 
+const StyledRootDiv = styled.div`
+    width: 60%;
+    margin-left: auto;
+    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    margin-top: 0.5%;
+    height: 95%;
+    margin-right: 2%;
+    font-family: ${fontStyled.fontFamily};
+`;
+
+const StyledHeadingDiv = styled.div`
+    border-radius: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    background-color: ${colorStyled.PRIMARY.dark};
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 5%;
+    }
+`;
+
 const StyledButton = styled.button`
     width: 100%;
     border: none;
@@ -298,11 +313,63 @@ const StyledButton = styled.button`
     padding-top: 10px;
 `;
 
+const StyledSubHeadingDiv = styled.div`
+    height: 18%;
+    margin-bottom: 2%;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        margin-bottom: 0%;
+        height: 10%;
+    }
+`;
+
+const StyledInfoSpan = styled.span`
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledButtonToAddProject = styled(Button)`
+    margin: 15px 15px 15px 0px;
+    background-color: ${colorStyled.SECONDARY.dark};
+    float: right;
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledIcon = styled(FontAwesomeIcon)`
+    cursor: pointer;
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledScrollbarDiv = styled.div`
+    height: 68%;
+    border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 84%;
+    }
+`;
+
 const StyledH4 = styled.h4`
     width: 98%;
     text-align: center;
-    color: ${PRIMARY.dark};
-    border-bottom: 2px solid #769fcd;
+    color: ${colorStyled.PRIMARY.dark};
+    border-bottom: 2px solid ${colorStyled.BORDER_COLOR};
     line-height: 0.1em;
     margin: 10px 0px 20px 0px;
+    font-size: ${fontStyled.fontSize.subHeading};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.Heading};
+    }
 `;

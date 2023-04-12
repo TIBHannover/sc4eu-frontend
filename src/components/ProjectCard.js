@@ -10,11 +10,13 @@ import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { withRouter } from 'react-router';
 import ClampLines from 'react-clamp-lines';
 import { redux_addProject, redux_removeAlreadyLoadedOntology, redux_removeOntology, redux_removeProject } from '../redux/actions/rrm_actions';
 import { connect } from 'react-redux';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class ProjectIndexCards extends Component {
     constructor(props) {
@@ -93,7 +95,7 @@ class ProjectIndexCards extends Component {
                             onClick={this.deleteProject}
                             style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
                         >
-                            <Icon icon={faTrash} />
+                            <StyledIcon icon={faTrash} />
                         </StyledButton>
                         <StyledButton
                             color="white"
@@ -110,7 +112,7 @@ class ProjectIndexCards extends Component {
                                 marginRight: '5px'
                             }}
                         >
-                            <Icon icon={faPen} />
+                            <StyledIcon icon={faPen} />
                         </StyledButton>
                         <EditProjectModal
                             showDialog={this.state.showEditProjectModal}
@@ -133,7 +135,7 @@ class ProjectIndexCards extends Component {
                                         wordBreak: 'break-all'
                                     }}
                                 >
-                                    {this.props.inputData.name}{' '}
+                                    {this.props.inputData.name}
                                 </div>
                             </div>
                         </StyledLink>
@@ -177,7 +179,7 @@ export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProjectIn
 
 const StyledButton = styled(Button)`
     :hover {
-        color: white;
+        color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     }
 `;
 
@@ -195,6 +197,7 @@ const StyledCard = styled.div`
 
 const StyledLink = styled(Link)`
     padding: 10px;
+    font-size: ${fontStyled.fontSize.NormalText};
     color: black;
     :focus {
         outline: none;
@@ -204,7 +207,10 @@ const StyledLink = styled(Link)`
     }
 
     :hover {
-        color: white;
+        color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    }
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
     }
 `;
 
@@ -212,7 +218,7 @@ const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
     border: 1px solid ${PRIMARY.dark};
     padding: 5px;
-    color: white;
+    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     background: ${PRIMARY.light};
     :focus {
         outline: none;
@@ -228,6 +234,7 @@ const StyledCardHeader = styled.div`
 
 const StyledCardBody = styled.div`
     padding: 5px;
+    font-size: ${fontStyled.fontSize.NormalText};
     border: 1px solid ${PRIMARY.dark};
     border-top: none;
     :focus {
@@ -235,5 +242,17 @@ const StyledCardBody = styled.div`
     }
     ::-moz-focus-inner {
         border: 0;
+    }
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledIcon = styled(Icon)`
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
     }
 `;
