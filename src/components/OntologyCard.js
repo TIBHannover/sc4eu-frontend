@@ -9,7 +9,7 @@ import { reverse } from 'named-urls';
 import { Button } from 'reactstrap';
 import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
 import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
 import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
@@ -17,6 +17,8 @@ import Cookies from 'js-cookie';
 import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class OntologyCard extends Component {
     componentDidMount() {}
@@ -51,8 +53,6 @@ class OntologyCard extends Component {
         try {
             const allows = await userIsAllowdToUploadOntology();
             if (allows.result === true) {
-                console.log(this.props.inputData.uuid);
-
                 deleteOntology(this.props.inputData.uuid).then(res => {
                     if (res.success === true) {
                         this.props.callback(res.result);
@@ -79,16 +79,14 @@ class OntologyCard extends Component {
                     <StyledCardHeader>
                         <StyledButton
                             color="white"
-                            size="sm"
                             title="Delete Ontology"
                             onClick={this.deleteOntology}
                             style={{ float: 'right', padding: '0px', marginLeft: 'auto', marginRight: '10px' }}
                         >
-                            <Icon icon={faTrash} />
+                            <StyledIcon icon={faTrash} />
                         </StyledButton>
                         <StyledButton
                             color="white"
-                            size="sm"
                             title="download ontology"
                             onClick={this.getOntologiesForDownloads}
                             style={{
@@ -98,7 +96,7 @@ class OntologyCard extends Component {
                                 marginRight: '10px'
                             }}
                         >
-                            <Icon icon={faDownload} />
+                            <StyledIcon icon={faDownload} />
                         </StyledButton>
                         <StyledLink
                             to={{
@@ -111,11 +109,11 @@ class OntologyCard extends Component {
                             onDragStart={this.preventDraggingOfItem}
                         >
                             {this.props.inputData.lookup_type === 'online' ? (
-                                <Icon style={{ float: 'left', marginRight: '8px', marginTop: '4px' }} icon={faGithub} />
+                                <StyledIcon style={{ float: 'left', marginRight: '8px', marginTop: '4px' }} icon={faGithub} />
                             ) : this.props.inputData.lookup_type === 'online-gitlab' ? (
-                                <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faGitlab} />
+                                <StyledIcon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faGitlab} />
                             ) : (
-                                <Icon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
+                                <StyledIcon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
                             )}
                             <div style={{ fontWeight: '500' }}>
                                 <span>{this.props.inputData.name}</span>
@@ -191,16 +189,17 @@ const StyledLink = styled(Link)`
     }
 
     :hover {
-        color: white;
+        color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     }
 `;
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
-    border: 1px solid ${PRIMARY.dark};
+    border: 1px solid ${colorStyled.PRIMARY.dark};
     padding: 5px;
     color: black;
-    background: ${PRIMARY.light};
+    background: ${colorStyled.PRIMARY.light};
+    font-size: ${fontStyled.fontSize.NormalText};
     :focus {
         outline: none;
     }
@@ -208,24 +207,40 @@ const StyledCardHeader = styled.div`
         border: 0;
     }
     :hover {
-        background: ${SECONDARY.dark};
+        background: ${colorStyled.SECONDARY.dark};
+    }
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
     }
 `;
 
 const StyledCardBody = styled.div`
     padding: 5px;
-    border: 1px solid ${PRIMARY.dark};
+    border: 1px solid ${colorStyled.PRIMARY.dark};
     border-top: none;
+    font-size: ${fontStyled.fontSize.NormalText};
     :focus {
         outline: none;
     }
     ::-moz-focus-inner {
         border: 0;
     }
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
 `;
 
 const StyledButton = styled(Button)`
     :hover {
-        color: white;
+        color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    }
+`;
+
+const StyledIcon = styled(Icon)`
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
     }
 `;

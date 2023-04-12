@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
 import OntologyCard from './OntologyCard';
 import { withCookies } from 'react-cookie';
 import { Scrollbars } from 'react-custom-scrollbars-2';
@@ -37,7 +36,7 @@ class OntologyIndexCards extends Component {
 
     render() {
         return (
-            <Scrollbars style={{ height: '70vh' }}>
+            <Scrollbars>
                 <div className="pl-1 pr-1">{this.renderOntologyCards()}</div>
             </Scrollbars>
         );

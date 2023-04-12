@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
 import UploadOntologyModal from './UploadOntologyModal';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import OntologyIndexCards from './OntologyIndexCards';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -10,6 +10,9 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { UncontrolledTooltip } from 'reactstrap';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
+import { colorStyled } from '../styledComponents/styledColor';
+import { fontStyled } from '../styledComponents/styledFont';
 
 class OntologyIndexInteractions extends Component {
     constructor(props) {
@@ -47,43 +50,34 @@ class OntologyIndexInteractions extends Component {
     render() {
         const projectName = this.props.project_name.length > 10 ? this.props.project_name.substring(0, 10) + ' ...' : this.props.project_name;
         return (
-            <div>
-                <div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            height: '6%',
-                            justifyContent: 'center',
-                            textAlign: 'left',
-                            backgroundColor: PRIMARY.dark,
-                            borderRadius: '10px',
-                            borderBottomRightRadius: '0',
-                            borderBottomLeftRadius: '0'
-                        }}
+            <div style={{ height: '100%', fontFamily: fontStyled.fontFamily }}>
+                <StyledHeadingDiv>
+                    <Link
+                        title="Projects List"
+                        to={ROUTES.PROJECT}
+                        style={{ marginTop: '15px', color: colorStyled.CONTAINER_BACKGROUND_COLOR, marginLeft: '1%' }}
                     >
-                        <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginTop: '15px', color: 'white', marginLeft: '1%' }}>
-                            <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
-                            <span>Projects</span>
-                        </Link>
-                        <h4 style={{ padding: '10px', margin: '0 auto', color: 'white' }}>
-                            Select Ontology from <u id="tootlipTarget">{projectName}</u> Project
-                        </h4>
-                        <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
-                            <u>{this.props.project_name}</u>
-                        </UncontrolledTooltip>
-                    </div>
-                    <hr className="mt-0 mb-2" />
-                    <Button
+                        <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
+                        <span>Projects</span>
+                    </Link>
+                    <h4 style={{ padding: '10px', margin: '0 auto', color: 'white' }}>
+                        Select Ontology from <u id="tootlipTarget">{projectName}</u> Project
+                    </h4>
+                    <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
+                        <u>{this.props.project_name}</u>
+                    </UncontrolledTooltip>
+                </StyledHeadingDiv>
+                <StyledSubHeadingDiv>
+                    <StyledButtonToUploadOntology
                         disabled={this.state.canNotUploadOntology}
                         title={'Please login to upload ontology'}
-                        style={{ backgroundColor: SECONDARY.dark, margin: '10px 5px 10px 5px', marginLeft: '1%' }}
                         active={true}
                         onClick={() => {
                             this.setState({ showUploadModal: true });
                         }}
                     >
                         Upload Ontology
-                    </Button>
+                    </StyledButtonToUploadOntology>
                     <hr className="mt-0 mb-2 ml-2 mr-2" />
                     <UploadOntologyModal
                         project_id={this.props.project_id}
@@ -96,8 +90,8 @@ class OntologyIndexInteractions extends Component {
                             this.ontologyUploadComplete(param);
                         }}
                     />
-                </div>
-                <div className="mt-0 mb-0 ml-1 mr-1">
+                </StyledSubHeadingDiv>
+                <StyledContentDiv>
                     {this.props.listOfOntology ? (
                         <OntologyIndexCards
                             ontologies={this.props.listOfOntology}
@@ -108,7 +102,7 @@ class OntologyIndexInteractions extends Component {
                     ) : (
                         <div> No ontologies found in this project </div>
                     )}
-                </div>
+                </StyledContentDiv>
             </div>
         );
     }
@@ -130,3 +124,45 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyIndexInteractions);
+
+const StyledHeadingDiv = styled.div`
+    display: flex;
+    height: 10%;
+    justify-content: center;
+    text-align: left;
+    background-color: ${colorStyled.PRIMARY.dark};
+    border-radius: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 5%;
+    }
+`;
+
+const StyledSubHeadingDiv = styled.div`
+    height: 12%;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 7%;
+    }
+`;
+
+const StyledContentDiv = styled.div`
+    height: 77%;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 87%;
+    }
+`;
+
+const StyledButtonToUploadOntology = styled(Button)`
+    margin: 10px 15px 15px 0px;
+    background-color: ${colorStyled.SECONDARY.dark};
+    margin-left: 1%;
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
