@@ -43,6 +43,7 @@ function DashboardProjectsTable(props) {
                                                 projectUUID={row.values.uuid}
                                                 callBack={props.callback}
                                                 addUserCallBack={props.addUserToProjectCallBack}
+                                                currentUser={props.currentUser}
                                             />
                                         </td>
                                     );
@@ -61,7 +62,8 @@ DashboardProjectsTable.propTypes = {
     columns: PropTypes.array.isRequired,
     userProjectsDetail: PropTypes.array.isRequired,
     callback: PropTypes.func.isRequired,
-    addUserToProjectCallBack: PropTypes.func.isRequired
+    addUserToProjectCallBack: PropTypes.func.isRequired,
+    currentUser: PropTypes.object.isRequired
 };
 
 export default DashboardProjectsTable;

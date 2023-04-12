@@ -40,7 +40,7 @@ export default class DashboardProjects extends Component {
         const usersDetail = await getProjectUsersDetail(project.uuid);
         const usersNames = [];
         for (const userDetail of usersDetail) {
-            const theUser = { name: userDetail.display_name, UUID: userDetail.uuid };
+            const theUser = { name: userDetail.display_name, UUID: userDetail.uuid, role: userDetail.role };
             usersNames.push(theUser);
         }
         return usersNames;
@@ -106,6 +106,7 @@ export default class DashboardProjects extends Component {
                         userProjectsDetail={this.state.userProjectsDetail}
                         callback={this.deleteUserFromProject}
                         addUserToProjectCallBack={this.addUserToProject}
+                        currentUser={this.props.currentUser}
                     />
                 ) : (
                     <div> ...loading</div>
