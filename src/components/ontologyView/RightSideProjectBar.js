@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Container } from 'reactstrap';
-
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { PRIMARY } from '../../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { getAllProjects } from '../../network/projectIndexing';
 import { getAllUsers, getUserProjects } from '../../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import ProjectSideBarCard from '../ProjectSideBarCard';
+import { colorStyled } from '../../styledComponents/styledColor';
+import { fontStyled } from '../../styledComponents/styledFont';
 
 class RightSideProjectBar extends Component {
     constructor(props) {
@@ -103,44 +103,19 @@ class RightSideProjectBar extends Component {
 
     render() {
         return (
-            <div
-                id="RightSidebarContainer"
-                initialRendering={this.state.initialRendering}
-                style={{ width: '22%', marginTop: '0.5%', height: '100%', backgroundColor: 'white' }}
-            >
-                <div
-                    style={{
-                        borderRadius: '10px',
-                        borderBottomRightRadius: '0',
-                        borderBottomLeftRadius: '0',
-                        color: 'white',
-                        backgroundColor: PRIMARY.dark,
-                        height: '6%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        textAlign: 'center'
-                    }}
-                >
+            <StyledRootDiv id="RightSidebarContainer" initialRendering={this.state.initialRendering}>
+                <StyledHeadingDiv>
                     <h4 style={{ width: '100%', margin: '0 auto' }}>{this.state.title}</h4>
-                </div>
-                <div
-                    style={{
-                        color: 'black',
-                        backgroundColor: 'white',
-                        height: '90%'
-                    }}
-                >
-                    <div>
-                        <p style={{ float: 'left', margin: '0px 10px 5px 5px', textAlign: 'center', fontStyle: 'italic', height: '5%' }}>
-                            {this.props.user ? (
-                                <>Click on the email icon to request permission to a project you are interested to join</>
-                            ) : (
-                                <>Please log in to apply for approval for a project you are interested in.</>
-                            )}
-                        </p>
-                    </div>
-                    <Scrollbars style={{ borderTop: '0.01rem solid #e7e9eb', height: '95%' }}>
+                </StyledHeadingDiv>
+                <StyledInfoSpan>
+                    {this.props.user ? (
+                        <>Click on the email icon to request permission to a project you are interested to join</>
+                    ) : (
+                        <>Please log in to apply for approval for a project you are interested in.</>
+                    )}
+                </StyledInfoSpan>
+                <StyledScrollbarDiv>
+                    <Scrollbars style={{ borderTop: `0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR}` }}>
                         <div style={{ textAlign: 'left', marginRight: '1.5%' }}>
                             {this.state.results.length > 0 ? (
                                 this.state.results.map(item => {
@@ -154,15 +129,17 @@ class RightSideProjectBar extends Component {
                                                 }}
                                             />
                                         );
+                                    } else {
+                                        return null;
                                     }
                                 })
                             ) : (
-                                <p style={{ margin: '10px 10px 5px 5px', textAlign: 'center', fontStyle: 'italic' }}>No Available Projects</p>
+                                <StyledInfoSpan>No Available Projects</StyledInfoSpan>
                             )}
                         </div>
                     </Scrollbars>
-                </div>
-            </div>
+                </StyledScrollbarDiv>
+            </StyledRootDiv>
         );
     }
 }
@@ -179,3 +156,49 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps)(RightSideProjectBar);
+
+const StyledRootDiv = styled.div`
+    width: 22%;
+    margin-top: 0.5%;
+    height: 95%;
+    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    font-family: ${fontStyled.fontFamily};
+`;
+
+const StyledHeadingDiv = styled.div`
+    border-radius: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    background-color: ${colorStyled.PRIMARY.dark};
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 5%;
+    }
+`;
+
+const StyledInfoSpan = styled.span`
+    font-size: ${fontStyled.fontSize.NormalText};
+    float: left;
+    margin: 0px 10px 5px 5px;
+    text-align: center;
+    height: 15%;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 5%;
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledScrollbarDiv = styled.div`
+    height: 73%;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        height: 88%;
+    }
+`;
