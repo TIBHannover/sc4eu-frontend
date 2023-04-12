@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-
 import { getAllOntologies, getOntologyGitData } from '../network/ontologyIndexing';
 import OntologyIndexInteractions from '../components/OntologyIndexInteractions';
 import PropTypes from 'prop-types';
-import { PRIMARY } from '../styledComponents/styledComponents';
 import { connect } from 'react-redux';
 import { checkFileUpdated } from '../network/GithubAPICalls';
 import { checkGitlabFileUpdated } from '../network/GitlabAPICalls';
+import styled from 'styled-components';
+import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class OntologyIndexing extends Component {
     constructor(props) {
@@ -98,7 +99,7 @@ class OntologyIndexing extends Component {
 
     render() {
         return (
-            <Container style={{ height: '95%', width: '100%', backgroundColor: 'white', padding: '0.5% 0px 0px 0px' }}>
+            <StyledContainer>
                 {this.state.isLoading ? (
                     <div className="text-center text-primary mt-4 mb-4">
                         {/*using a manual fixed scale value for the spinner scale! */}
@@ -110,7 +111,7 @@ class OntologyIndexing extends Component {
                         </h2>
                     </div>
                 ) : (
-                    <div>
+                    <div style={{ height: '100%' }}>
                         <OntologyIndexInteractions
                             project_id={this.state.selectedProject.uuid}
                             project_name={this.state.selectedProject.name}
@@ -122,7 +123,7 @@ class OntologyIndexing extends Component {
                         />
                     </div>
                 )}
-            </Container>
+            </StyledContainer>
         );
     }
 }
@@ -137,3 +138,14 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, null)(OntologyIndexing);
+
+const StyledContainer = styled(Container)`
+    height: 95%;
+    width: 70%;
+    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    padding: 0.5% 0px 0px 0px;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        width: 100%;
+    }
+`;
