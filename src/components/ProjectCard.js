@@ -26,10 +26,6 @@ class ProjectIndexCards extends Component {
         };
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     deleteProject = async event => {
         //delete Project...
         event.preventDefault();
@@ -88,32 +84,36 @@ class ProjectIndexCards extends Component {
             <div>
                 <StyledCard onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        <StyledButton
-                            color="none"
-                            size="sm"
-                            title="Delete Project"
-                            onClick={this.deleteProject}
-                            style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                        >
-                            <StyledIcon icon={faTrash} />
-                        </StyledButton>
-                        <StyledButton
-                            color="white"
-                            size="sm"
-                            title="Edit Project"
-                            onClick={() => {
-                                this.setState({ showEditProjectModal: true });
-                            }}
-                            style={{
-                                float: 'right',
-                                padding: '0px',
-                                paddingLeft: '5px',
-                                marginLeft: 'auto',
-                                marginRight: '5px'
-                            }}
-                        >
-                            <StyledIcon icon={faPen} />
-                        </StyledButton>
+                        {this.props.currentUser !== 0 && this.props.currentUser !== null && (
+                            <>
+                                <StyledButton
+                                    color="none"
+                                    size="sm"
+                                    title="Delete Project"
+                                    onClick={this.deleteProject}
+                                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
+                                >
+                                    <StyledIcon icon={faTrash} />
+                                </StyledButton>
+                                <StyledButton
+                                    color="white"
+                                    size="sm"
+                                    title="Edit Project"
+                                    onClick={() => {
+                                        this.setState({ showEditProjectModal: true });
+                                    }}
+                                    style={{
+                                        float: 'right',
+                                        padding: '0px',
+                                        paddingLeft: '5px',
+                                        marginLeft: 'auto',
+                                        marginRight: '5px'
+                                    }}
+                                >
+                                    <StyledIcon icon={faPen} />
+                                </StyledButton>
+                            </>
+                        )}
                         <EditProjectModal
                             showDialog={this.state.showEditProjectModal}
                             projectData={this.props.inputData}
@@ -158,6 +158,7 @@ class ProjectIndexCards extends Component {
 
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
+    currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
     callback: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
     redux_addProject: PropTypes.func.isRequired,

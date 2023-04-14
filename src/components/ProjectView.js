@@ -133,6 +133,7 @@ class ProjectView extends Component {
                         <ProjectCard
                             key={'ProjectCard_' + item.name}
                             inputData={item}
+                            currentUser={this.props.user}
                             callback={param => {
                                 this.props.reloadAfterUpdate(param);
                             }}

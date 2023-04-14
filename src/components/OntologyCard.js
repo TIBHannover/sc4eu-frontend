@@ -77,14 +77,16 @@ class OntologyCard extends Component {
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
                     <StyledCardHeader>
-                        <StyledButton
-                            color="white"
-                            title="Delete Ontology"
-                            onClick={this.deleteOntology}
-                            style={{ float: 'right', padding: '0px', marginLeft: 'auto', marginRight: '10px' }}
-                        >
-                            <StyledIcon icon={faTrash} />
-                        </StyledButton>
+                        {this.props.currentUser !== 0 && this.props.currentUser !== null && (
+                            <StyledButton
+                                color="white"
+                                title="Delete Ontology"
+                                onClick={this.deleteOntology}
+                                style={{ float: 'right', padding: '0px', marginLeft: 'auto', marginRight: '10px' }}
+                            >
+                                <StyledIcon icon={faTrash} />
+                            </StyledButton>
+                        )}
                         <StyledButton
                             color="white"
                             title="download ontology"
@@ -152,6 +154,7 @@ class OntologyCard extends Component {
 }
 
 OntologyCard.propTypes = {
+    currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
     inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
     ontologyVersion: PropTypes.string.isRequired,
