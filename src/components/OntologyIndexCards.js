@@ -20,6 +20,7 @@ class OntologyIndexCards extends Component {
                 return (
                     <OntologyCard
                         key={'OntologyCard_' + index}
+                        currentUser={this.props.currentUser}
                         inputData={item}
                         callback={param => {
                             this.props.reloadAfterUpdate(param);
@@ -45,6 +46,7 @@ class OntologyIndexCards extends Component {
 
 OntologyIndexCards.propTypes = {
     ontologies: PropTypes.array.isRequired,
+    currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
     reloadAfterUpdate: PropTypes.func.isRequired
 };
 
