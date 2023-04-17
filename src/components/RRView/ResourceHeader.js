@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { Button } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faTrash, faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
+import { faCaretSquareDown, faCaretSquareUp } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
 import { StyledResourceAndRelationHeader, HeaderValueInput, StyledContentView } from './StyledComponents';
 
@@ -92,17 +92,6 @@ class ResourceHeader extends Component {
                     <Tippy content={this.state.headerInputValue}>
                         <StyledContentView>{this.state.headerInputValue}</StyledContentView>
                     </Tippy>
-                )}
-                {!this.props.experimentalLayout && (
-                    <Button
-                        color="white"
-                        size="sm"
-                        title="Delete Resource"
-                        onClick={this.props.deleteResource}
-                        style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                    >
-                        <Icon icon={faTrash} color={'white'} />
-                    </Button>
                 )}
 
                 {/*// add enable editing botton*/}

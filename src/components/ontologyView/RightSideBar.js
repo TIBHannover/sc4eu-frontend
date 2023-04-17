@@ -1,32 +1,29 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Button, Card, CardBody, Collapse, Container, Input, Table } from 'reactstrap';
+import { FormGroup, Button, Card, CardBody, Collapse, Input, Table } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faBook, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
-
-import styled, { keyframes } from 'styled-components';
+import { faAngleLeft, faAngleRight, faBook, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
-import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { getAllCommits, getBranchFromUrl, getLicense, getRawUrlforCommit } from '../../network/GithubAPICalls';
 import { getGitlabBranchFromUrl, getGitlabCommits, getRawUrlForGitlabCommit, getGitlabLicense } from '../../network/GitlabAPICalls';
 import ShowOntologyComparisonModal from './ShowOntologyComparisonModal';
 import { getOntologyComparison, getWidocoDocumentation } from '../../network/GetOntologyData';
 import { getOntologyById } from '../../network/ontologyIndexing';
 import { URL_GET_HTML_FILE_WIDOCO } from '../../constants/services';
+import { colorStyled } from '../../styledComponents/styledColor';
+import { Scrollbars } from 'react-custom-scrollbars-2';
+import { fontStyled } from '../../styledComponents/styledFont';
 
 class RightSideBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            expanded: this.props.initialState,
-            minHeight: 200,
-            title: props.title,
-            initialRendering: true,
             collapse: true,
             collapseComparison: true,
             collapseMetaInfo: true,
-            isEditing: { description: false, title: false, version: false, iri: false },
             openOntology: '',
             openProject: '',
             ontologyVersion: '',
@@ -44,7 +41,6 @@ class RightSideBar extends Component {
     }
 
     componentDidMount = async () => {
-        document.body.style.overflowX = 'hidden';
         const theProject = this.props.selectedProject;
         const theOntology = this.props.selectedOntology;
         let version = 'internal';
@@ -100,18 +96,6 @@ class RightSideBar extends Component {
         });
     };
 
-    componentDidUpdate = (prevProps, prevState) => {
-        if (prevState.expanded !== this.state.expanded) {
-            this.setState({ initialRendering: false });
-        }
-        // check required height TODO
-        this.props.heightUpdateEvent();
-    };
-
-    componentWillUnmount() {
-        document.body.style.overflowX = 'auto';
-    }
-
     getTheCommits = async gitHubURL => {
         const commits = await getAllCommits(gitHubURL);
         return commits;
@@ -120,10 +104,6 @@ class RightSideBar extends Component {
     getTheGitlabCommits = async gitlabURL => {
         const commits = await getGitlabCommits(gitlabURL);
         return commits;
-    };
-    collapseSidebar = () => {
-        this.props.updateEvent(!this.state.expanded);
-        this.setState({ expanded: !this.state.expanded });
     };
 
     toggle = () => {
@@ -149,19 +129,10 @@ class RightSideBar extends Component {
             if (key === 'metaDescriptions') {
                 return (
                     <div key={'metaInformation_' + key} className="root" style={{ padding: '0 10px' }}>
-                        <Button
-                            onClick={() => this.toggleMetaInformation()}
-                            style={{
-                                marginTop: '5px',
-                                width: '100%',
-                                textAlign: 'left',
-                                fontWeight: 'bold',
-                                backgroundColor: SECONDARY.dark
-                            }}
-                        >
-                            <Icon icon={this.state.collapseMetaInfo ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
+                        <StyledButton onClick={() => this.toggleMetaInformation()}>
+                            <StyledIcon icon={this.state.collapseMetaInfo ? faChevronCircleRight : faChevronCircleDown} />
                             Meta Information
-                        </Button>
+                        </StyledButton>
                         <Collapse isOpen={!this.state.collapseMetaInfo}>
                             <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
                                 <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
@@ -176,19 +147,10 @@ class RightSideBar extends Component {
             } else if (key === 'prefixList') {
                 return (
                     <div key={'prefixList' + key} className="root" style={{ padding: '0 10px' }}>
-                        <Button
-                            onClick={() => this.toggle()}
-                            style={{
-                                marginTop: '5px',
-                                width: '100%',
-                                textAlign: 'left',
-                                fontWeight: 'bold',
-                                backgroundColor: SECONDARY.dark
-                            }}
-                        >
-                            <Icon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
+                        <StyledButton onClick={() => this.toggle()}>
+                            <StyledIcon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} />
                             Ontology Prefixes
-                        </Button>
+                        </StyledButton>
                         <Collapse isOpen={!this.state.collapse}>
                             <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
                                 <CardBody style={{ padding: '0 5px', paddingBottom: '5px', width: '100%', overflow: 'hidden' }}>
@@ -222,8 +184,6 @@ class RightSideBar extends Component {
             const metaDescriptionsItem = obj[itemKey];
             if (itemKey === 'description' || itemKey === 'title') {
                 return Object.keys(metaDescriptionsItem).map(language => {
-                    const itemPerLan = metaDescriptionsItem[language] + ' @' + language;
-                    const itemValueInLang = metaDescriptionsItem[language];
                     return (
                         <tr style={{ fontSize: '12px' }} key={'description_title_' + itemKey + keyIndex++}>
                             <td style={{ paddingRight: '5px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
@@ -231,9 +191,7 @@ class RightSideBar extends Component {
                                     <b>{itemKey}:</b>
                                 </div>
                             </td>
-                            <td suppressContentEditableWarning={true} contentEditable={this.state.isEditing[itemKey]}>
-                                {!this.state.isEditing[itemKey] ? itemPerLan : <Input defaultValue={itemValueInLang} />}
-                            </td>
+                            <td>itemValueInLang</td>
                         </tr>
                     );
                 });
@@ -245,9 +203,7 @@ class RightSideBar extends Component {
                                 <b>{itemKey}:</b>
                             </div>
                         </td>
-                        <td suppressContentEditableWarning={true} contentEditable={this.state.isEditing[itemKey]}>
-                            {!this.state.isEditing[itemKey] ? obj[itemKey] : <Input defaultValue={obj[itemKey]} />}
-                        </td>
+                        <td>{obj[itemKey]}</td>
                     </tr>
                 );
             }
@@ -266,7 +222,7 @@ class RightSideBar extends Component {
                         <Tippy content={shortToLongValues[shortKey]}>
                             <td
                                 style={{
-                                    maxWidth: '94%',
+                                    maxWidth: '65%',
                                     whiteSpace: 'nowrap',
                                     display: 'block',
                                     paddingLeft: '10px',
@@ -341,23 +297,14 @@ class RightSideBar extends Component {
         let comparisonButton;
         if (this.state.openOntology.lookup_type === 'online' || this.state.openOntology.lookup_type === 'online-gitlab') {
             comparisonButton = (
-                <div className="root" style={{ padding: '0 10px', width: this.props.width - 5 }}>
-                    <Button
-                        onClick={() => this.toggleComparison()}
-                        style={{
-                            marginTop: '5px',
-                            width: '100%',
-                            textAlign: 'left',
-                            fontWeight: 'bold',
-                            backgroundColor: SECONDARY.dark
-                        }}
-                    >
-                        <Icon icon={this.state.collapseComparison ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
+                <div className="root" style={{ padding: '0 10px' }}>
+                    <StyledButton onClick={() => this.toggleComparison()}>
+                        <StyledIcon icon={this.state.collapseComparison ? faChevronCircleRight : faChevronCircleDown} />
                         Ontology Comparison
-                    </Button>
+                    </StyledButton>
                     <Collapse isOpen={!this.state.collapseComparison}>
                         <div style={{ marginTop: '5px' }}>
-                            <span style={{ fontSize: '15px', fontWeight: 600 }}>Please choose two commits to compare </span>{' '}
+                            <HeadingSpan style={{ fontWeight: 600 }}>Please choose two commits to compare </HeadingSpan>
                         </div>
                         <div style={{ marginTop: '5px' }}>
                             <FormGroup>
@@ -388,17 +335,14 @@ class RightSideBar extends Component {
                                 ))}
                             </Input>
                         </FormGroup>
-                        <Button style={{ backgroundColor: SECONDARY.dark, marginTop: '5px' }} onClick={this.showComparison}>
-                            Show Comparison
-                        </Button>
+                        <ShowComparisonButton onClick={this.showComparison}> Show Comparison </ShowComparisonButton>
                         {this.state.isLoading ? (
                             <div className="text-center text-primary mt-4 mb-4">
                                 {/*using a manual fixed scale value for the spinner scale! */}
-
                                 <h2 className="h5">
                                     <span>
                                         <Icon icon={faSpinner} spin />
-                                    </span>{' '}
+                                    </span>
                                     Loading Comparison
                                 </h2>
                             </div>
@@ -421,165 +365,100 @@ class RightSideBar extends Component {
             comparisonButton = <div />;
         }
         return (
-            <ContentContainer
-                id="RightSidebarContainer"
-                expanded={this.state.expanded}
-                width={this.props.width}
-                initialRendering={this.state.initialRendering}
-                style={{ width: this.props.width, position: 'absolute', height: this.props.height + 'px', marginTop: '55px' }}
-            >
-                <Container
-                    className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
-                    style={{
-                        borderRadius: '10px',
-                        borderBottomRightRadius: '0',
-                        borderBottomLeftRadius: '0',
-                        height: '50px',
-                        marginLeft: '5px',
-                        color: 'white',
-                        backgroundColor: PRIMARY.dark,
-                        marginTop: '10px'
-                    }}
-                >
-                    <h4 style={{ width: this.props.width - 10, textAlign: 'center' }}>{this.state.title}</h4>
-                </Container>
-                <ButtonContainer
-                    size="sm"
-                    className="btn-primary"
-                    expanded={this.state.expanded}
-                    initialRendering={this.state.initialRendering}
-                    duration={500}
-                    style={{
-                        margin: '0 0',
-                        flexGrow: '1',
-                        display: 'flex',
-                        alignSelf: 'center',
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '30px',
-                        padding: 0,
-                        border: 'solid 1px',
-                        borderColor: '#525252',
-                        backgroundColor: SECONDARY.dark,
-                        float: 'left',
-                        position: 'relative',
-                        top: '-15px',
-                        left: '-8px',
-                        zIndex: 100
-                    }}
-                    onClick={this.collapseSidebar}
-                >
-                    <Icon icon={faAngleLeft} rotation={180} className="align-self-center" style={{ marginLeft: '7px', fontSize: '28px' }} />
-                </ButtonContainer>
-                <Container
-                    className="pr-md-5 pt-sm-2 pb-sm-2 pl-sm-2 pr-sm-2 clearfix"
-                    style={{
-                        borderRadius: '10px',
-                        borderTopRightRadius: '0',
-                        borderTopLeftRadius: '0',
-                        marginLeft: '5px',
-                        color: 'black',
-                        backgroundColor: '#ffffff',
-                        marginTop: '-1px',
-                        height: this.props.height + 'px',
-                        position: 'absolute'
-                        // zIndex: -500
-                    }}
-                >
-                    <div style={{ width: this.props.width - 5, marginTop: '20px', marginLeft: '15px', display: 'inline-block' }}>
-                        <span style={{ fontSize: '20px', fontWeight: 600 }}>Project Name: </span>
-                        <span>{this.state.openProject.name}</span>
-                    </div>
-                    <div style={{ marginTop: '20px', marginLeft: '15px', display: 'inline-block', marginBottom: '10px' }}>
-                        <span style={{ fontSize: '20px', fontWeight: 600 }}>Ontology Name: </span>
-                        <span>{this.state.openOntology.name}</span>
-                    </div>
-                    {this.state.openOntology.lookup_type === 'online' || this.state.openOntology.lookup_type === 'online-gitlab' ? (
-                        <div style={{ padding: '0 10px', width: this.props.width - 5, marginTop: '10px' }}>
-                            <Button
-                                onClick={() => this.toggleGitCollapse()}
-                                style={{
-                                    marginTop: '5px',
-                                    width: '100%',
-                                    textAlign: 'left',
-                                    fontWeight: 'bold',
-                                    backgroundColor: SECONDARY.dark
-                                }}
-                            >
-                                <Icon icon={this.state.gitCollapse ? faChevronCircleRight : faChevronCircleDown} style={{ marginRight: '5px' }} />
-                                {this.state.openOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
-                            </Button>
-                            <Collapse isOpen={!this.state.gitCollapse}>
-                                <Table bordered style={{ marginTop: '10px' }}>
-                                    <tbody>
-                                        <tr>
-                                            <th style={{ width: '20px' }}>URL</th>
-                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.openOntology.lookup_path}</td>
-                                        </tr>
-                                        <tr>
-                                            <th style={{ width: '20px' }}>License</th>
-                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                                                <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
-                                                    {this.state.licenceInfo}
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th style={{ width: '20px' }}>Branch</th>
-                                            <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{this.state.ontologyVersion}</td>
-                                        </tr>
-                                    </tbody>
-                                </Table>
-                            </Collapse>
+            <>
+                <StyledHeadingDiv>
+                    <h4 style={{ width: '100%', margin: '0 auto' }}>Metadata</h4>
+                </StyledHeadingDiv>
+                <OpenCloseButton onClick={this.props.toggleSidebar}>
+                    <Icon
+                        icon={this.props.isSidebarOpen ? faAngleRight : faAngleLeft}
+                        className="align-self-center"
+                        style={{ marginLeft: '5px', fontSize: '26px' }}
+                    />
+                </OpenCloseButton>
+                <StyledScrollbarDiv>
+                    <Scrollbars>
+                        <div style={{ marginLeft: '15px' }}>
+                            <HeadingSpan style={{ fontWeight: 600 }}>Project Name: </HeadingSpan>
+                            <HeadingSpan>{this.state.openProject.name}</HeadingSpan>
                         </div>
-                    ) : (
-                        <div />
-                    )}
-
-                    <div style={{ width: this.props.width - 5 }}>{this.renderMetaInformation()}</div>
-                    {comparisonButton}
-                    <div style={{ padding: '0 10px', width: this.props.width - 5 }}>
-                        <Button
-                            title="Ontology Documentation"
-                            onClick={this.getOntologyFileForDocumentation}
-                            style={{
-                                marginTop: '5px',
-                                width: '100%',
-                                textAlign: 'left',
-                                fontWeight: 'bold',
-                                backgroundColor: SECONDARY.dark
-                            }}
-                        >
-                            <Icon icon={faBook} style={{ marginRight: '8px' }} />
-                            Widoco Documentation
-                        </Button>
-                        {this.state.isLoadingForWidoco && (
-                            <div className="text-center text-primary" style={{ marginTop: '10px' }}>
-                                <h2 className="h5">
-                                    <span>
-                                        <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                                    </span>
-                                    Loading Document
-                                </h2>
+                        <div style={{ marginTop: '10px', marginLeft: '15px', marginBottom: '10px' }}>
+                            <HeadingSpan style={{ fontWeight: 600 }}>Ontology Name: </HeadingSpan>
+                            <HeadingSpan>{this.state.openOntology.name}</HeadingSpan>
+                        </div>
+                        {this.state.openOntology.lookup_type === 'online' || this.state.openOntology.lookup_type === 'online-gitlab' ? (
+                            <div style={{ padding: '0 10px', marginTop: '10px' }}>
+                                <StyledButton onClick={() => this.toggleGitCollapse()}>
+                                    <StyledIcon icon={this.state.gitCollapse ? faChevronCircleRight : faChevronCircleDown} />
+                                    {this.state.openOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
+                                </StyledButton>
+                                <Collapse isOpen={!this.state.gitCollapse}>
+                                    <Table bordered style={{ marginTop: '10px' }}>
+                                        <tbody>
+                                            <tr>
+                                                <th style={{ width: '20px' }}>
+                                                    <HeadingSpan>URL</HeadingSpan>
+                                                </th>
+                                                <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                                    <HeadingSpan>{this.state.openOntology.lookup_path}</HeadingSpan>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th style={{ width: '20px' }}>
+                                                    <HeadingSpan>License</HeadingSpan>
+                                                </th>
+                                                <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                                    <a href={this.state.licenseURL ? this.state.licenseURL : null} target="_blank" rel="noreferrer">
+                                                        <HeadingSpan>{this.state.licenceInfo}</HeadingSpan>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th style={{ width: '20px' }}>
+                                                    <HeadingSpan>Branch</HeadingSpan>
+                                                </th>
+                                                <td style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                                    <HeadingSpan>{this.state.ontologyVersion}</HeadingSpan>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </Table>
+                                </Collapse>
                             </div>
+                        ) : (
+                            <div />
                         )}
-                    </div>
-                </Container>
-            </ContentContainer>
+                        <div>{this.renderMetaInformation()}</div>
+                        {comparisonButton}
+                        <div style={{ padding: '0 10px' }}>
+                            <StyledButton title="Ontology Documentation" onClick={this.getOntologyFileForDocumentation}>
+                                <StyledIcon icon={faBook} style={{ marginRight: '8px' }} />
+                                Widoco Documentation
+                            </StyledButton>
+                            {this.state.isLoadingForWidoco && (
+                                <div className="text-center text-primary" style={{ marginTop: '10px' }}>
+                                    <h2 className="h5">
+                                        <span>
+                                            <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                                        </span>
+                                        Loading Document
+                                    </h2>
+                                </div>
+                            )}
+                        </div>
+                    </Scrollbars>
+                </StyledScrollbarDiv>
+            </>
         );
     }
 }
 
 RightSideBar.propTypes = {
-    title: PropTypes.string,
-    updateEvent: PropTypes.func.isRequired,
-    initialState: PropTypes.bool.isRequired,
-    heightUpdateEvent: PropTypes.func.isRequired,
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
     metaInformation: PropTypes.object,
     selectedProject: PropTypes.object.isRequired,
-    selectedOntology: PropTypes.object.isRequired
+    selectedOntology: PropTypes.object.isRequired,
+    isSidebarOpen: PropTypes.bool.isRequired,
+    toggleSidebar: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
@@ -592,48 +471,71 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(RightSideBar);
 
-const expandButtonAnimation = ({ expanded, initialRendering }) => {
-    if (!initialRendering) {
-        return keyframes`
-  from {
-    transform: rotate(${expanded ? -180 : 0}deg);
-  }
-  to {
-    transform: rotate(${expanded ? 0 : 180}deg);
-   
-  }
-`;
-    }
-    if (initialRendering) {
-        return keyframes``;
-    }
-};
-
-const ButtonContainer = styled.div`
-    animation-name: ${expandButtonAnimation};
-    animation-duration: 1000ms;
-    cursor: pointer;
-    transform: rotate(${props => (props.expanded ? 0 : 180)}deg);
+const StyledHeadingDiv = styled.div`
+    border-radius: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    background-color: ${colorStyled.PRIMARY.dark};
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 `;
 
-const expandContentContainerAnimation = ({ expanded, width, initialRendering }) => {
-    if (initialRendering) {
-        return keyframes``;
-    } else {
-        return keyframes`
-  from {
-    right: ${expanded ? -(width - 10) : 8}px;
-  }
-  to {
-    right: ${expanded ? 8 : -(width - 10)}px;
-   
-  }
+const OpenCloseButton = styled(Button)`
+    display: flex;
+    width: 28px;
+    border-radius: 30px;
+    padding: 0;
+    background-color: ${colorStyled.SECONDARY.dark};
+    position: relative;
+    top: -15px;
+    left: -20px;
 `;
-    }
-};
 
-const ContentContainer = styled.aside`
-    animation-name: ${expandContentContainerAnimation};
-    animation-duration: 400ms;
-    right: ${props => (props.expanded ? 8 : -(props.width - 10))}px;
+const HeadingSpan = styled.span`
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledIcon = styled(Icon)`
+    font-size: ${fontStyled.fontSize.NormalText};
+    margin-right: 5px;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledButton = styled(Button)`
+    margin-top: 5px;
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+    font-size: ${fontStyled.fontSize.NormalText};
+    background-color: ${colorStyled.SECONDARY.dark};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const ShowComparisonButton = styled(Button)`
+    margin-top: 5px;
+    font-size: ${fontStyled.fontSize.NormalText};
+    background-color: ${colorStyled.SECONDARY.dark};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledScrollbarDiv = styled.div`
+    height: calc(100% - 65px);
+    margin-top: -15px;
 `;

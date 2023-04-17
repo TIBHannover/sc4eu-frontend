@@ -9,6 +9,9 @@ import { faCaretDown, faCaretRight, faPlusCircle } from '@fortawesome/free-solid
 import { redux_editRelation, redux_editResource } from '../../redux/actions/rrm_actions';
 import AnnotationsDropDown from './AnnotationsDropDown';
 import { PRIMARY, SECONDARY } from '../RRView/StyledComponents';
+import styled from 'styled-components';
+import { fontStyled } from '../../styledComponents/styledFont';
+import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 
 class CardWidgetVis extends Component {
     constructor(props) {
@@ -102,7 +105,7 @@ class CardWidgetVis extends Component {
                         style={{ marginTop: '0px', width: '100%', textAlign: 'left', backgroundColor: SECONDARY.dark }}
                     >
                         <Icon icon={this.state.collapseResourceDescription ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                        Description
+                        <StyledSpan>Description</StyledSpan>
                     </Button>
                     <Collapse isOpen={!this.state.collapseResourceDescription}>
                         <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
@@ -143,7 +146,7 @@ class CardWidgetVis extends Component {
                         style={{ marginTop: '0px', width: '100%', textAlign: 'left', backgroundColor: SECONDARY.dark }}
                     >
                         <Icon icon={this.state.collapseDescription ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                        Description
+                        <StyledSpan>Description</StyledSpan>
                     </Button>
                     <Collapse isOpen={!this.state.collapseDescription}>
                         <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
@@ -413,9 +416,9 @@ class CardWidgetVis extends Component {
         const iri = transformIdentifierToPrefixed(this.props.itemContext.identifier, prefixList);
         return (
             <div>
-                <span>IRI:</span>
+                <StyledSpan>IRI:</StyledSpan>
                 <div style={{ marginLeft: '25px' }}>
-                    <span>{iri}</span>
+                    <StyledSpan>{iri}</StyledSpan>
                     <hr style={{ marginTop: 0 }} />
                 </div>
                 {Object.keys(itemOfInterest.axioms).length > 0 || iri.length > 0 ? (
@@ -423,8 +426,7 @@ class CardWidgetVis extends Component {
                         return (
                             <div key={itemOfInterest.itemIdentifier + axiom}>
                                 <div>
-                                    {axiom.split(':')[1]}
-                                    {'   '}
+                                    <StyledSpan>{axiom.split(':')[1]}</StyledSpan>
                                     {/*<Icon
                                         id={'PopoverAxiom' + itemOfInterest.itemIdentifier}
                                         icon={faPlusCircle}
@@ -464,7 +466,7 @@ class CardWidgetVis extends Component {
                                     {Object.keys(itemOfInterest.axioms[axiom]).map(item => {
                                         return (
                                             <div key={itemOfInterest.itemIdentifier + axiom + item} style={{ marginLeft: '1rem' }}>
-                                                {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}
+                                                <StyledSpan> {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}</StyledSpan>
                                             </div>
                                         );
                                     })}
@@ -473,7 +475,7 @@ class CardWidgetVis extends Component {
                         );
                     })
                 ) : (
-                    <div>No Description Available</div>
+                    <StyledSpan>No Description Available</StyledSpan>
                 )}
             </div>
         );
@@ -498,12 +500,12 @@ class CardWidgetVis extends Component {
         return (
             <div style={{ overflow: 'hidden' }}>
                 <div>
-                    <span>IRI:</span>
+                    <StyledSpan>IRI:</StyledSpan>
                     <div style={{ marginLeft: '25px' }}>
-                        <span>{iri}</span>
+                        <StyledSpan>{iri}</StyledSpan>
                         <hr style={{ marginTop: 0 }} />
                     </div>
-                    Domains{'  '}
+                    <StyledSpan>Domains</StyledSpan>
                     {/* <Icon
                         id={'PopoverDomain' + itemOfInterest.itemIdentifier}
                         icon={faPlusCircle}
@@ -541,7 +543,7 @@ class CardWidgetVis extends Component {
                 </div>
                 {domains.map(domain => (
                     <div key={'domainKey_' + domain} style={{ marginLeft: '1rem' }}>
-                        {domain}
+                        <StyledSpan>{domain}</StyledSpan>
                         {/* <Icon
                             icon={faTimesCircle}
                             onClick={event => this.deleteDomain(event, domain)}
@@ -551,7 +553,7 @@ class CardWidgetVis extends Component {
                     </div>
                 ))}
                 <div>
-                    Ranges{'  '}
+                    <StyledSpan>Ranges</StyledSpan>
                     {/* <Icon
                         id={'PopoverRange' + itemOfInterest.itemIdentifier}
                         icon={faPlusCircle}
@@ -632,3 +634,11 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardWidgetVis);
+
+const StyledSpan = styled.span`
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;

@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-
 import PropTypes from 'prop-types';
 import SingleResource from './SingleResource';
-
 import { InputGroup } from 'reactstrap';
 import { connect } from 'react-redux';
 import { redux_addResource } from '../../redux/actions/rrm_actions';
 import SearchAutoComplete from './SearchAutoComplete';
 import { redux_preserveFilterSearch } from '../../redux/actions/globalUI_actions';
-import { PRIMARY } from '../RRView/StyledComponents';
+import { StyledHeaderDiv } from '../RRView/StyledComponents';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 
 class ResourceRenderer extends Component {
@@ -182,20 +180,9 @@ class ResourceRenderer extends Component {
     render() {
         return (
             <div style={{ height: '100%', overflow: 'hidden' }}>
-                <div
-                    style={{
-                        display: 'flex',
-                        height: '50px',
-                        background: PRIMARY.dark,
-                        margin: '10px 6px 10px 10px',
-                        borderRadius: '7px 7px 7px 7px',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        textColor: 'white'
-                    }}
-                >
-                    <h4 style={{ color: '#ffffff' }}>Resources</h4>
-                </div>
+                <StyledHeaderDiv>
+                    <h5 style={{ margin: '0 auto' }}>Resources</h5>
+                </StyledHeaderDiv>
                 {/*    Controls*/}
                 <div style={{ display: 'flex', height: '30px', margin: '5px', marginBottom: '20px' }}>
                     <InputGroup>

@@ -73,4 +73,4 @@ export const TEXTCOLOR = '#4d5b7c';
 
 export const MAX_WIDTH = '769px';
 
-export const MIN_WIDTH_FOR_MONITOR = '1325px';
+export const MIN_WIDTH_FOR_MONITOR = '1750px';

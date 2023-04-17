@@ -12,6 +12,8 @@ import { expandAllBodies } from '../../redux/actions/globalUI_actions';
 import styled from 'styled-components';
 import { Button } from 'reactstrap';
 import { SECONDARY } from '../RRView/StyledComponents';
+import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
+import { fontStyled } from '../../styledComponents/styledFont';
 class OntologyContentViewer extends Component {
     constructor(props) {
         super(props);
@@ -26,9 +28,8 @@ class OntologyContentViewer extends Component {
     render() {
         return (
             <div style={{ height: '100%' }}>
-                <div style={{ paddingBottom: '3.5em', height: '5%' }}>
-                    <Link
-                        style={{ float: 'left', marginTop: '20px', marginLeft: '10px' }}
+                <div style={{ paddingBottom: '3.1em', height: '55px' }}>
+                    <ControlLink
                         to={{
                             pathname: reverse(ROUTES.ONTOLOGY),
                             project: this.props.selectedProject
@@ -37,7 +38,7 @@ class OntologyContentViewer extends Component {
                     >
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
                         <span>List of Ontology</span>
-                    </Link>
+                    </ControlLink>
                     <ControlButton
                         onClick={() => {
                             // emit this as signal;
@@ -50,14 +51,14 @@ class OntologyContentViewer extends Component {
                         {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all resources/relations
                     </ControlButton>
                 </div>
-                <div style={{ display: 'flex', height: '95%' }}>
+                <StyledDiv>
                     <div style={{ width: '50%' }}>
                         <ResourceRenderer experimentalLayout={this.props.experimentalLayout} />
                     </div>
                     <div style={{ width: '50%' }}>
                         <RelationRenderer experimentalLayout={this.props.experimentalLayout} />
                     </div>
-                </div>
+                </StyledDiv>
             </div>
         );
     }
@@ -91,10 +92,37 @@ const ControlButton = styled(Button)`
     margin-right: 10px;
     color: white;
     float: right;
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
     :focus {
         outline: none;
     }
     ::-moz-focus-inner {
         border: 0;
     }
+`;
+
+const ControlLink = styled(Link)`
+    float: left;
+    margin-top: 15px;
+    margin-left: 10px;
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+    :focus {
+        outline: none;
+    }
+    ::-moz-focus-inner {
+        border: 0;
+    }
+`;
+
+const StyledDiv = styled.div`
+    display: flex;
+    height: calc(100% - 55px);
 `;
