@@ -295,15 +295,11 @@ const StyledHeadingDiv = styled.div`
     border-bottom-left-radius: 0;
     color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     background-color: ${colorStyled.PRIMARY.dark};
-    height: 10%;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 5%;
-    }
 `;
 
 const StyledButton = styled.button`
@@ -315,13 +311,7 @@ const StyledButton = styled.button`
 `;
 
 const StyledSubHeadingDiv = styled.div`
-    height: 18%;
-    margin-bottom: 2%;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        margin-bottom: 0%;
-        height: 10%;
-    }
+    height: 100px;
 `;
 
 const StyledInfoSpan = styled.span`
@@ -353,12 +343,8 @@ const StyledIcon = styled(FontAwesomeIcon)`
 `;
 
 const StyledScrollbarDiv = styled.div`
-    height: 68%;
+    height: calc(100% - 160px);
     border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 84%;
-    }
 `;
 
 const StyledH4 = styled.h4`

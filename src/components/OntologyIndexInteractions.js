@@ -52,11 +52,7 @@ class OntologyIndexInteractions extends Component {
         return (
             <div style={{ height: '100%', fontFamily: fontStyled.fontFamily }}>
                 <StyledHeadingDiv>
-                    <Link
-                        title="Projects List"
-                        to={ROUTES.PROJECT}
-                        style={{ marginTop: '15px', color: colorStyled.CONTAINER_BACKGROUND_COLOR, marginLeft: '1%' }}
-                    >
+                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ color: colorStyled.CONTAINER_BACKGROUND_COLOR, marginLeft: '1%' }}>
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
                         <span>Projects</span>
                     </Link>
@@ -128,33 +124,22 @@ export default connect(mapStateToProps, mapDispatchToProps)(OntologyIndexInterac
 
 const StyledHeadingDiv = styled.div`
     display: flex;
-    height: 10%;
+    height: 60px; /* Absolute height for all screen sizes */
     justify-content: center;
-    text-align: left;
+    text-align: center;
+    align-items: center;
     background-color: ${colorStyled.PRIMARY.dark};
     border-radius: 10px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 5%;
-    }
 `;
 
 const StyledSubHeadingDiv = styled.div`
-    height: 12%;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 7%;
-    }
+    height: 70px; /* Absolute height for all screen sizes */
 `;
 
 const StyledContentDiv = styled.div`
-    height: 77%;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 87%;
-    }
+    height: calc(100% - 130px); /* Percentage height for different screen sizes */
 `;
 
 const StyledButtonToUploadOntology = styled(Button)`

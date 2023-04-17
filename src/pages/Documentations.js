@@ -70,125 +70,127 @@ class Documentations extends Component {
             'very dependent. To allow users to adapt visual representations to their needs, flexible and adjustable techniques are required.';
 
         return (
-            <div style={{ width: '100%', height: '100%' }}>
-                <div style={{ width: '100%', height: '90%', overflowY: 'auto', paddingBottom: '3%' }}>
-                    <StyledDiv>
-                        <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%' }}>What the Portal will do for you</h3>
-                        <h5>Connecting Domain Experts with Knowledge Engineers</h5>
-                        <StyledText>
-                            {this.state.isreadmoreUserGuidance ? (
-                                <>
-                                    {UserGuidance}
-                                    <div style={{ textAlign: 'center' }}>
-                                        <img src={UserRole} alt="UserRole" />
-                                        <StyledText>
-                                            We identified that the most crucial requirement for ontology development is to serve users' needs from
-                                            various audiences with diverse backgrounds and in different contexts. We have therefore introduced several
-                                            modes of operations.
-                                        </StyledText>
-                                    </div>
-                                </>
-                            ) : (
-                                UserGuidance.substring(0, 300)
-                            )}
-                            <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
-                                {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
-                            </span>
-                        </StyledText>
-                        <h5>
-                            About SC<sup>3</sup> Ontology Curation Portal
-                        </h5>
-                        <StyledText>
-                            SC<sup>3</sup> Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and
-                            machines, as well as all other partners.The key objective of this platform is to implement data documentation of an
-                            actionable ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies, and
-                            complemented by new ones for other subdomains to ensure interoperability of data. "Further information about the project
-                            you can find on our &nbsp;
-                            <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://sc3-project.automotive.oth-aw.de/"
-                            >
-                                SC<sup>3</sup> webpage
-                            </a>
-                            , on our&nbsp;
-                            <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
-                            >
-                                YouTube chanel
-                            </a>
-                            , or&nbsp;
-                            <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
-                            >
-                                via LinkedIn.
-                            </a>
-                        </StyledText>
-                        <h5>Framework for Collaborative Ontology Development</h5>
-                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
-                            {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
-                            <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
-                                {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
-                            </span>
-                        </p>
+            <>
+                <div style={{ width: '100%', height: 'calc(100% - 80px)' }}>
+                    <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '3%' }}>
+                        <StyledDiv>
+                            <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%' }}>What the Portal will do for you</h3>
+                            <h5>Connecting Domain Experts with Knowledge Engineers</h5>
+                            <StyledText>
+                                {this.state.isreadmoreUserGuidance ? (
+                                    <>
+                                        {UserGuidance}
+                                        <div style={{ textAlign: 'center' }}>
+                                            <img src={UserRole} alt="UserRole" />
+                                            <StyledText>
+                                                We identified that the most crucial requirement for ontology development is to serve users' needs from
+                                                various audiences with diverse backgrounds and in different contexts. We have therefore introduced
+                                                several modes of operations.
+                                            </StyledText>
+                                        </div>
+                                    </>
+                                ) : (
+                                    UserGuidance.substring(0, 300)
+                                )}
+                                <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
+                                    {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
+                                </span>
+                            </StyledText>
+                            <h5>
+                                About SC<sup>3</sup> Ontology Curation Portal
+                            </h5>
+                            <StyledText>
+                                SC<sup>3</sup> Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans
+                                and machines, as well as all other partners.The key objective of this platform is to implement data documentation of
+                                an actionable ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies,
+                                and complemented by new ones for other subdomains to ensure interoperability of data. "Further information about the
+                                project you can find on our &nbsp;
+                                <a
+                                    style={{ color: colorStyled.SECONDARY.link }}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://sc3-project.automotive.oth-aw.de/"
+                                >
+                                    SC<sup>3</sup> webpage
+                                </a>
+                                , on our&nbsp;
+                                <a
+                                    style={{ color: colorStyled.SECONDARY.link }}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
+                                >
+                                    YouTube chanel
+                                </a>
+                                , or&nbsp;
+                                <a
+                                    style={{ color: colorStyled.SECONDARY.link }}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
+                                >
+                                    via LinkedIn.
+                                </a>
+                            </StyledText>
+                            <h5>Framework for Collaborative Ontology Development</h5>
+                            <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
+                                {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
+                                <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
+                                    {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
+                                </span>
+                            </p>
 
-                        <h5>
-                            Be part of the SC<sup>3</sup> Community and Collaborate with us{' '}
-                        </h5>
-                        <StyledText>
-                            SC<sup>3</sup> is a{' '}
-                            <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://www.kdt-ju.europa.eu/"
-                            >
-                                KDT JU
-                            </a>{' '}
-                            funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited to
-                            participate in the project development.
-                            <br />
-                            If you would like to setup your own SC<sup>3</sup> Portal or if you would like to contribute to our codebase, please
-                            visit:&nbsp;
-                            <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://gitlab.com/TIBHannover/sc3-project/"
-                            >
-                                SC<sup>3</sup> Project GitLab
-                            </a>
-                            <br />
-                            You will find all our code under MIT licence, instructions. Check it out!
-                        </StyledText>
-                        <h5>Hybrid Modes of Operation</h5>
-                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
-                            {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
-                            <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
-                                {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
-                            </span>
-                        </p>
-                    </StyledDiv>
-                    <div style={{ marginTop: '30px', textAlign: 'center' }}>
-                        <iframe
-                            width="50%"
-                            height="350"
-                            src={`https://www.youtube.com/embed/R-lJrUgmZJc`}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            title="Embedded youtube"
-                        />
+                            <h5>
+                                Be part of the SC<sup>3</sup> Community and Collaborate with us{' '}
+                            </h5>
+                            <StyledText>
+                                SC<sup>3</sup> is a{' '}
+                                <a
+                                    style={{ color: colorStyled.SECONDARY.link }}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://www.kdt-ju.europa.eu/"
+                                >
+                                    KDT JU
+                                </a>{' '}
+                                funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited
+                                to participate in the project development.
+                                <br />
+                                If you would like to setup your own SC<sup>3</sup> Portal or if you would like to contribute to our codebase, please
+                                visit:&nbsp;
+                                <a
+                                    style={{ color: colorStyled.SECONDARY.link }}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href="https://gitlab.com/TIBHannover/sc3-project/"
+                                >
+                                    SC<sup>3</sup> Project GitLab
+                                </a>
+                                <br />
+                                You will find all our code under MIT licence, instructions. Check it out!
+                            </StyledText>
+                            <h5>Hybrid Modes of Operation</h5>
+                            <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
+                                {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
+                                <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
+                                    {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
+                                </span>
+                            </p>
+                        </StyledDiv>
+                        <div style={{ marginTop: '30px', textAlign: 'center' }}>
+                            <iframe
+                                width="50%"
+                                height="350"
+                                src={`https://www.youtube.com/embed/R-lJrUgmZJc`}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                title="Embedded youtube"
+                            />
+                        </div>
                     </div>
                 </div>
                 <Footer />
-            </div>
+            </>
         );
     }
 }

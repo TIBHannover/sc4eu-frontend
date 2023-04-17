@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { checkFileUpdated } from '../network/GithubAPICalls';
 import { checkGitlabFileUpdated } from '../network/GitlabAPICalls';
 import styled from 'styled-components';
-import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR, TEXTCOLOR } from '../styledComponents/styledComponents';
 import { colorStyled } from '../styledComponents/styledColor';
 
 class OntologyIndexing extends Component {
@@ -99,31 +99,34 @@ class OntologyIndexing extends Component {
 
     render() {
         return (
-            <StyledContainer>
-                {this.state.isLoading ? (
-                    <div className="text-center text-primary mt-4 mb-4">
-                        {/*using a manual fixed scale value for the spinner scale! */}
-                        <h2 className="h5">
-                            <span>
-                                <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                            </span>
-                            Loading
-                        </h2>
-                    </div>
-                ) : (
-                    <div style={{ height: '100%' }}>
-                        <OntologyIndexInteractions
-                            project_id={this.state.selectedProject.uuid}
-                            project_name={this.state.selectedProject.name}
-                            access_type={this.state.selectedProject.access_type}
-                            reloadAfterUpdate={() => {
-                                this.reloadAfterUpdate();
-                            }}
-                            listOfOntology={this.state.ontologyList}
-                        />
-                    </div>
-                )}
-            </StyledContainer>
+            <>
+                <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
+                <StyledContainer>
+                    {this.state.isLoading ? (
+                        <div className="text-center text-primary mt-4 mb-4">
+                            {/*using a manual fixed scale value for the spinner scale! */}
+                            <h2 className="h5">
+                                <span>
+                                    <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                                </span>
+                                Loading
+                            </h2>
+                        </div>
+                    ) : (
+                        <div style={{ height: '100%' }}>
+                            <OntologyIndexInteractions
+                                project_id={this.state.selectedProject.uuid}
+                                project_name={this.state.selectedProject.name}
+                                access_type={this.state.selectedProject.access_type}
+                                reloadAfterUpdate={() => {
+                                    this.reloadAfterUpdate();
+                                }}
+                                listOfOntology={this.state.ontologyList}
+                            />
+                        </div>
+                    )}
+                </StyledContainer>
+            </>
         );
     }
 }
@@ -147,5 +150,24 @@ const StyledContainer = styled(Container)`
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         width: 100%;
+    }
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+`;
+
+const StyledInfo = styled.h5`
+    display: none;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: block;
+        width: 100%;
+        padding-top: 20px;
+        padding-left: 10%;
+        padding-right: 10%;
+        text-align: justify;
+        text-align-last: center;
+        color: ${TEXTCOLOR};
     }
 `;

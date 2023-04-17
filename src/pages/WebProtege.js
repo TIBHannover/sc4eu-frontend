@@ -23,7 +23,7 @@ export default class WebProtege extends Component {
         return (
             <iframe
                 title="WebProtege"
-                style={{ position: 'absolute', height: '75%', width: '100%', border: 'none' }}
+                style={{ position: 'absolute', height: 'calc(85% - 80px)', width: '100%', border: 'none' }}
                 loading="lazy"
                 src="https://service.tib.eu/wp4tib/"
                 onLoad={this.hideSpinner}
@@ -52,7 +52,7 @@ export default class WebProtege extends Component {
 
 const StyledDiv = styled.div`
     background-color: ${PRIMARY.lighter};
-    height: 90%;
+    height: calc(100% - 80px);
     width: 100%;
     overflow-y: auto;
 
