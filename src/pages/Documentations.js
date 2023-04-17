@@ -30,14 +30,14 @@ class Documentations extends Component {
 
     render() {
         const HybridTEXT =
-            "We identified that the most crucial requirement for the approach is to serve users' needs from various audiences with " +
+            "We identified that the most crucial requirement for the approach is to serve user's needs from various audiences with " +
             'diverse backgrounds and in different contexts. Because web-based approaches are ready-to-use without the need to install ' +
-            'additional software they reduce entrance barriers and engage different user groups more directly.\n' +
+            'additional software, they reduce entrance barriers and engage different user groups more directly.\n' +
             'Having defined the above-mentioned domain experts (non-experts as to ontology modelling) and the knowledge engineers (expert users) as the two ' +
             'relevant user groups in the project, we describes the individual requirements as follows:\n' +
             '“For domain experts the approach should be easy-to-learn/easy-to-use with a least complex OWL modelling, providing guidance and best-practice ' +
-            'suggestions during the modelling. For expert users in turn the approach should support all modelling features of the commonly used open source ontology editor Protégé; ' +
-            'and visual modelling paradigms in the form of node-link diagrams can address the requirements easy-to-use and low complexity.\n' +
+            'suggestions during the modelling. The approach should support all modelling features of the commonly used open source ontology editor Protégé for ' +
+            'expert users. Additionally, visual modelling paradigms in the form of node-link diagrams can address the requirements of easy-to-use and low complexity.\n' +
             'However, they have to provide additional customizations for the visual representation to facilitate understanding. ' +
             'The requirements guidance and best practices can be addressed using auto-complete functionalities to align the created nodes and ' +
             'links with existing terms of ontologies, reducing manual labor to transform high-level conceptualizations to OWL elements.\n' +
@@ -95,19 +95,22 @@ class Documentations extends Component {
                                 {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
                             </span>
                         </StyledText>
-                        <h5>About SC3</h5>
+                        <h5>
+                            About SC<sup>3</sup> Ontology Curation Portal
+                        </h5>
                         <StyledText>
-                            SC3 establishes a standard language for comprehensive collaboration between humans and machines, as well as all other
-                            partners.The key objective of this platform is to implement data documentation of an actionable ontology-based ecosystem
-                            that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by new ones for other
-                            subdomains to ensure interoperability of data. "Further information about the project you can find on our &nbsp;
+                            SC<sup>3</sup> Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and
+                            machines, as well as all other partners.The key objective of this platform is to implement data documentation of an
+                            actionable ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies, and
+                            complemented by new ones for other subdomains to ensure interoperability of data. "Further information about the project
+                            you can find on our &nbsp;
                             <a
                                 style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href="https://sc3-project.automotive.oth-aw.de/"
                             >
-                                SC3 webpage
+                                SC<sup>3</sup> webpage
                             </a>
                             , on our&nbsp;
                             <a
@@ -129,33 +132,46 @@ class Documentations extends Component {
                             </a>
                         </StyledText>
                         <h5>Framework for Collaborative Ontology Development</h5>
-                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
+                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
                             {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
-                            <span style={{ color: colorStyled.SECONDARY.link }} onClick={this.toggleReadmoreFrameworkText}>
+                            <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
                                 {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
                             </span>
                         </p>
 
-                        <h5>Be part of the SC3 Community and Collaborate with us </h5>
+                        <h5>
+                            Be part of the SC<sup>3</sup> Community and Collaborate with us{' '}
+                        </h5>
                         <StyledText>
-                            SC3 is an ECSEL funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone
-                            are invited to participate in the project development.
-                            <br />I Would like to setup your own SC3 Portal or if you like to contribute to our codebase, please visit:&nbsp;
+                            SC<sup>3</sup> is a{' '}
+                            <a
+                                style={{ color: colorStyled.SECONDARY.link }}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href="https://www.kdt-ju.europa.eu/"
+                            >
+                                KDT JU
+                            </a>{' '}
+                            funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited to
+                            participate in the project development.
+                            <br />
+                            If you would like to setup your own SC<sup>3</sup> Portal or if you would like to contribute to our codebase, please
+                            visit:&nbsp;
                             <a
                                 style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href="https://gitlab.com/TIBHannover/sc3-project/"
                             >
-                                SC3 Project GitLab
+                                SC<sup>3</sup> Project GitLab
                             </a>
                             <br />
-                            You will find all our code under a MIT licence, instructions. Check it out!
+                            You will find all our code under MIT licence, instructions. Check it out!
                         </StyledText>
                         <h5>Hybrid Modes of Operation</h5>
-                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'pointer', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
+                        <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
                             {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
-                            <span style={{ color: colorStyled.SECONDARY.link }} onClick={this.toggleReadmore}>
+                            <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
                                 {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
                             </span>
                         </p>

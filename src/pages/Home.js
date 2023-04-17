@@ -30,8 +30,8 @@ export default class Home extends Component {
                             Collaborative Ontology Curation
                         </StyledBodyLink>
                         <StyledBodyText>
-                            The SC3 Portal enables you to collect all ontologies relevant for your research project. You can create new collections
-                            and add as much ontologies as you like.
+                            The SC<sup>3</sup> Ontology Curation Portal enables you to collect all ontologies relevant for your research project. You
+                            You can create new collections and add as much ontologies as you like.
                         </StyledBodyText>
                     </StyledBodyDiv>
                     <StyledBodyDiv>
@@ -50,8 +50,8 @@ export default class Home extends Component {
                             Collaborative Ontology Editing
                         </StyledBodyLink>
                         <StyledBodyText>
-                            Collaborative editing of ontologies is the next step in the ontology agreement process. The SC3 portal integrates the
-                            broadly known WebProtege for collaborative editing.
+                            Collaborative editing of ontologies is the next step in the ontology agreement process. The SC<sup>3</sup> Ontology
+                            Curation Portal integrates the broadly known WebProtege for collaborative editing.
                         </StyledBodyText>
                     </StyledBodyDiv>
                 </StyledBody>
