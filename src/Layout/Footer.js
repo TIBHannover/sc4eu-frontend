@@ -21,7 +21,7 @@ class Footer extends Component {
                     <StyledLeftDiv>
                         <LogoOntologyPortal src={OntologyPortal} alt="OntologyPortal" />
                         <StyledNoteText>
-                            <span style={{ fontWeight: 600 }}>Note :</span> This is a Minimal Viable Product of the SC3 project.
+                            <span style={{ fontWeight: 600 }}>Note :</span> This is a Minimal Viable Product of the SC<sup>3</sup> project.
                             <br /> I.e., We don't provide any backup solution yet.
                         </StyledNoteText>
                     </StyledLeftDiv>
@@ -39,7 +39,7 @@ class Footer extends Component {
                             <StyledImage src={KDT_logo} alt="DFG Logo" />
                         </a>
                         <StyledText>
-                            SC3 is Supported by KDT JU <br />
+                            SC<sup>3</sup> is Supported by KDT JU <br />
                             Under Grant number 101007312
                         </StyledText>
                         <StyledLogo src={Logo} alt="SC3 Logo" />

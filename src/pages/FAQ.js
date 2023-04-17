@@ -122,7 +122,7 @@ export default class Faq extends Component {
                                 href="https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues"
                                 rel="noreferrer"
                             >
-                                SC3 Issue Management
+                                SC<sup>3</sup> Issue Management
                             </a>
                         </StyledText>
                     </Collapse>
@@ -136,10 +136,10 @@ export default class Faq extends Component {
                     </Button>
                     <Collapse isOpen={this.state.collapseWebProtege}>
                         <StyledText>
-                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC3 Platform
-                            Visualization ( &nbsp;
+                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC<sup>3</sup> Ontology
+                            Curation Portal ( &nbsp;
                             <a style={{ color: colorStyled.SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
-                                SC3 Portal
+                                SC<sup>3</sup> Ontology Curation Portal
                             </a>
                             &nbsp;) and WebProtege (&nbsp;
                             <a
@@ -152,8 +152,8 @@ export default class Faq extends Component {
                             </a>
                             &nbsp;) are only loosely coupled. Both have their own authentication solutions and data management systems. It is
                             therefore not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first work
-                            collaboratively Web-protege. Then download the ontology from WebProtege and from there into the and from there into the
-                            visualization tool. A more integrated solution is coming.
+                            collaboratively Web-protege. Then download the ontology from WebProtege and from there into the visualization tool. A more
+                            integrated solution is coming.
                         </StyledText>
                     </Collapse>
                 </Container>
