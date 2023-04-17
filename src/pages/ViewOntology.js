@@ -10,10 +10,13 @@ import OntologyViewRoot from '../components/ontologyView/OntologyViewRoot';
 import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
-import { PRIMARY } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR, PRIMARY, TEXTCOLOR } from '../styledComponents/styledComponents';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import Cookies from 'js-cookie';
 import { redux_alreadyLoadedOntology } from '../redux/actions/rrm_actions';
+import styled from 'styled-components';
+import { Container } from 'reactstrap';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class ViewOntology extends Component {
     constructor(props) {
@@ -76,23 +79,24 @@ class ViewOntology extends Component {
     render() {
         const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
         return (
-            <div style={{ height: '90%', backgroundColor: PRIMARY.lighter }}>
-                <div className="pl-1 pr-1">
-                    {this.state.isLoading === true && (
-                        <div className="text-center text-primary mt-4 mb-4">
-                            {/*using a manual fixed scale value for the spinner scale! */}
+            <>
+                <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
+                <StyledRootDiv>
+                    <div style={{ height: '100%', backgroundColor: PRIMARY.lighter }}>
+                        {this.state.isLoading === true && (
+                            <div className="text-center text-primary mt-4 mb-4">
+                                {/*using a manual fixed scale value for the spinner scale! */}
 
-                            <h2 className="h5">
-                                <span>
-                                    <Icon icon={faSpinner} spin />
-                                </span>{' '}
-                                Loading
-                            </h2>
-                        </div>
-                    )}
-                    {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'hybrid' && (
-                        <div>
+                                <h2 className="h5">
+                                    <span>
+                                        <Icon icon={faSpinner} spin />
+                                    </span>{' '}
+                                    Loading
+                                </h2>
+                            </div>
+                        )}
+                        {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
+                        {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'hybrid' && (
                             <OntologyViewRoot
                                 leftSideExpanded={this.leftSideExpanded}
                                 rightSideExpanded={this.rightSideExpanded}
@@ -100,14 +104,14 @@ class ViewOntology extends Component {
                                 toggleRightSideExpanded={this.setRightSideExpanded}
                                 ontologyVersion={this.props.location.ontologyVersion}
                             />
-                        </div>
-                    )}
-                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'text' && <OntologyViewAsTTL />}
-                    {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'graph' && (
-                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={modeOfOperations === 'graph'} />
-                    )}
-                </div>
-            </div>
+                        )}
+                        {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'text' && <OntologyViewAsTTL />}
+                        {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'graph' && (
+                            <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={modeOfOperations === 'graph'} />
+                        )}
+                    </div>
+                </StyledRootDiv>
+            </>
         );
     }
 }
@@ -135,3 +139,26 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewOntology);
+
+const StyledRootDiv = styled.div`
+    height: 100%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+`;
+
+const StyledInfo = styled.h5`
+    display: none;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: block;
+        width: 100%;
+        padding-top: 20px;
+        padding-left: 10%;
+        padding-right: 10%;
+        text-align: justify;
+        text-align-last: center;
+        color: ${TEXTCOLOR};
+    }
+`;

@@ -62,7 +62,7 @@ const StyledBodyDiv = styled.div`
     right: 0;
     padding-left: 3%;
     padding-right: 6%;
-    height: 10%;
+    height: 80px;
     background: ${colorStyled.PRIMARY.light};
     overflow: hidden;
 

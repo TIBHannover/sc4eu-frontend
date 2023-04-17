@@ -26,6 +26,6 @@ const StyledBody = styled.div`
 `;
 
 const StyledAppContent = styled.div`
-    height: 90vh;
+    height: calc(100vh - 100px);
     overflow: hidden;
 `;

@@ -21,49 +21,51 @@ export default class Home extends Component {
 
     render() {
         return (
-            <StyledRootDiv>
-                <IntroductoryPopUp />
-                <StyledBody>
-                    <StyledBodyDiv>
-                        <StyledBodyLogo src={collection} alt="collection" />
-                        <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '-10px' }}>
-                            Collaborative Ontology Curation
-                        </StyledBodyLink>
-                        <StyledBodyText>
-                            The SC<sup>3</sup> Ontology Curation Portal enables you to collect all ontologies relevant for your research project. You
-                            You can create new collections and add as much ontologies as you like.
-                        </StyledBodyText>
-                    </StyledBodyDiv>
-                    <StyledBodyDiv>
-                        <StyledVisLogo src={visualisation} alt="visualisation" />
-                        <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
-                            Ontology Visualisation
-                        </StyledBodyLink>
-                        <StyledBodyText>
-                            Creation of ontologies requires expertise from various stakeholders with different ontology proficiency levels. The portal
-                            allows easy translation of visualizations for various expert groups.
-                        </StyledBodyText>
-                    </StyledBodyDiv>
-                    <StyledBodyDiv>
-                        <StyledEditLogo src={edite} alt="edite" />
-                        <StyledBodyLink to={ROUTES.WEBPROTEGE} style={{ marginTop: '20px' }}>
-                            Collaborative Ontology Editing
-                        </StyledBodyLink>
-                        <StyledBodyText>
-                            Collaborative editing of ontologies is the next step in the ontology agreement process. The SC<sup>3</sup> Ontology
-                            Curation Portal integrates the broadly known WebProtege for collaborative editing.
-                        </StyledBodyText>
-                    </StyledBodyDiv>
-                </StyledBody>
+            <>
+                <StyledRootDiv>
+                    <IntroductoryPopUp />
+                    <StyledBody>
+                        <StyledBodyDiv>
+                            <StyledBodyLogo src={collection} alt="collection" />
+                            <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '-10px' }}>
+                                Collaborative Ontology Curation
+                            </StyledBodyLink>
+                            <StyledBodyText>
+                                The SC<sup>3</sup> Ontology Curation Portal enables you to collect all ontologies relevant for your research project.
+                                You You can create new collections and add as much ontologies as you like.
+                            </StyledBodyText>
+                        </StyledBodyDiv>
+                        <StyledBodyDiv>
+                            <StyledVisLogo src={visualisation} alt="visualisation" />
+                            <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
+                                Ontology Visualisation
+                            </StyledBodyLink>
+                            <StyledBodyText>
+                                Creation of ontologies requires expertise from various stakeholders with different ontology proficiency levels. The
+                                portal allows easy translation of visualizations for various expert groups.
+                            </StyledBodyText>
+                        </StyledBodyDiv>
+                        <StyledBodyDiv>
+                            <StyledEditLogo src={edite} alt="edite" />
+                            <StyledBodyLink to={ROUTES.WEBPROTEGE} style={{ marginTop: '20px' }}>
+                                Collaborative Ontology Editing
+                            </StyledBodyLink>
+                            <StyledBodyText>
+                                Collaborative editing of ontologies is the next step in the ontology agreement process. The SC<sup>3</sup> Ontology
+                                Curation Portal integrates the broadly known WebProtege for collaborative editing.
+                            </StyledBodyText>
+                        </StyledBodyDiv>
+                    </StyledBody>
+                </StyledRootDiv>
                 <Footer />
-            </StyledRootDiv>
+            </>
         );
     }
 }
 
 const StyledRootDiv = styled.div`
     width: 100%;
-    height: 100%;
+    height: calc(100% - 80px);
     overflow: auto;
 `;
 
@@ -71,7 +73,7 @@ const StyledBody = styled.div`
     height: 88%;
     margin: auto;
     text-align: center;
-    margin-top: 5%;
+    padding-top: 5%;
     margin-left: 10%;
     margin-right: 10%;
     display: flex;
@@ -101,7 +103,7 @@ const StyledBodyDiv = styled.div`
     display: flex;
     flex-direction: column;
     padding-left: 1%;
-    padding-right: 3.5%;
+    padding-right: 3%;
 
     @media (max-width: ${MAX_WIDTH}) {
         flex: 1;
@@ -132,7 +134,7 @@ const StyledBodyLogo = styled.img`
 `;
 
 const StyledBodyLink = styled(Link)`
-    font-size: ${fontStyled.fontSize.Heading};
+    font-size: ${fontStyled.fontSize.subHeading};
     font-weight: 600;
     color: black;
     padding-bottom: 3%;
@@ -140,9 +142,6 @@ const StyledBodyLink = styled(Link)`
 
     @media (max-width: ${MAX_WIDTH}) {
         font-size: ${fontStyled.fontSize.MobileViewHeading};
-        font-size: 16px;
-        font-weight: 600;
-        font-family: sans-serif;
     }
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {

@@ -237,7 +237,7 @@ Header.propTypes = {
 export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(Header);
 
 const StyledRootDiv = styled.div`
-    height: 10vh;
+    height: 100px;
     overflow: auto;
     background: ${colorStyled.PRIMARY.light};
 
@@ -248,7 +248,7 @@ const StyledRootDiv = styled.div`
 `;
 
 const StyledHeaderDiv = styled.div`
-    height: 10vh;
+    height: 100%;
     width: 100%;
     display: flex;
     justify-content: center;

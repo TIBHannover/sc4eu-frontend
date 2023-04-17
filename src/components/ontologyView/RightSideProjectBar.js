@@ -107,13 +107,15 @@ class RightSideProjectBar extends Component {
                 <StyledHeadingDiv>
                     <h4 style={{ width: '100%', margin: '0 auto' }}>{this.state.title}</h4>
                 </StyledHeadingDiv>
-                <StyledInfoSpan>
-                    {this.props.user ? (
-                        <>Click on the email icon to request permission to a project you are interested to join</>
-                    ) : (
-                        <>Please log in to apply for approval for a project you are interested in.</>
-                    )}
-                </StyledInfoSpan>
+                <StyledInfoDiv>
+                    <p style={{ padding: '10px 10px 5px 5px' }}>
+                        {this.props.user ? (
+                            <>Click on the email icon to request permission to a project you are interested to join</>
+                        ) : (
+                            <>Please log in to apply for approval for a project you are interested in.</>
+                        )}
+                    </p>
+                </StyledInfoDiv>
                 <StyledScrollbarDiv>
                     <Scrollbars style={{ borderTop: `0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR}` }}>
                         <div style={{ textAlign: 'left', marginRight: '1.5%' }}>
@@ -171,34 +173,32 @@ const StyledHeadingDiv = styled.div`
     border-bottom-left-radius: 0;
     color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     background-color: ${colorStyled.PRIMARY.dark};
-    height: 10%;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 5%;
-    }
 `;
 
 const StyledInfoSpan = styled.span`
     font-size: ${fontStyled.fontSize.NormalText};
-    float: left;
-    margin: 0px 10px 5px 5px;
-    text-align: center;
-    height: 15%;
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 5%;
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledInfoDiv = styled.div`
+    font-size: ${fontStyled.fontSize.NormalText};
+    float: left;
+    text-align: center;
+    height: 75px;
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
     }
 `;
 
 const StyledScrollbarDiv = styled.div`
-    height: 73%;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 88%;
-    }
+    height: calc(100% - 135px);
 `;
