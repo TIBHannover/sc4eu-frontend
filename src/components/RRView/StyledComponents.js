@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 import { Input } from 'reactstrap';
+import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
+import { fontStyled } from '../../styledComponents/styledFont';
+import { colorStyled } from '../../styledComponents/styledColor';
 
 export const StyledResourceBody = styled.div`
     background-color: red;
@@ -62,6 +65,11 @@ export const StyledContentView = styled.div`
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
 `;
 
 export const HeaderValueInput = styled(Input)`
@@ -99,3 +107,15 @@ export const PRIMARY = {
 export const SECONDARY = {
     dark: '#536b78'
 };
+
+export const StyledHeaderDiv = styled.div`
+    margin: 10px 6px 10px 10px;
+    border-radius: 7px 7px 7px 7px;
+    text-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    background-color: ${colorStyled.PRIMARY.dark};
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;

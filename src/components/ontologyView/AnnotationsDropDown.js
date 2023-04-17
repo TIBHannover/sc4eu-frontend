@@ -23,6 +23,9 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { redux_editRelation, redux_editResource } from '../../redux/actions/rrm_actions';
 import { SECONDARY } from '../RRView/StyledComponents';
+import styled from 'styled-components';
+import { fontStyled } from '../../styledComponents/styledFont';
+import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 
 class AnnotationsDropDown extends Component {
     constructor(props) {
@@ -73,7 +76,7 @@ class AnnotationsDropDown extends Component {
             }
         }
         if (allAnnotations.length === 0) {
-            return <div>No Annotations Available</div>;
+            return <StyledSpan>No Annotations Available</StyledSpan>;
         }
         const mappedAnnotations = allAnnotations.map(item => {
             return (
@@ -91,8 +94,10 @@ class AnnotationsDropDown extends Component {
                         }}
                         style={{ marginRight: '5px', float: 'right' }}
                     />*/}
-                    <div>{item.prefix}</div>
-                    <div style={{ marginLeft: '1rem' }}>{item.type}</div>
+                    <StyledSpan>{item.prefix}</StyledSpan>
+                    <div style={{ marginLeft: '1rem' }}>
+                        <StyledSpan>{item.type}</StyledSpan>
+                    </div>
                 </div>
             );
         });
@@ -191,7 +196,7 @@ class AnnotationsDropDown extends Component {
                     style={{ marginTop: '0px', width: '100%', textAlign: 'left', backgroundColor: SECONDARY.dark }}
                 >
                     <Icon icon={this.state.collapseAnnotations ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                    Annotations
+                    <StyledSpan>Annotations</StyledSpan>
                     {/*<Icon
                         id="PopoverAnnotation"
                         onClick={this.toggleAddAnnotation}
@@ -330,3 +335,11 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnnotationsDropDown);
+
+const StyledSpan = styled.span`
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;

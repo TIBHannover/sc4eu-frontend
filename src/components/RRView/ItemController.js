@@ -8,6 +8,8 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faProjectDiagram, faCubesStacked } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
 import { PRIMARY, SECONDARY } from './StyledComponents';
+import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
+import { fontStyled } from '../../styledComponents/styledFont';
 
 class ItemController extends Component {
     constructor() {
@@ -76,7 +78,7 @@ class ItemController extends Component {
     render() {
         const itemHighlighted = this.props.itemContext.isHighlighted;
         return (
-            <StyledController style={{ padding: 0, height: '30px', width: '100%', overflow: 'auto', display: 'flex' }}>
+            <StyledController style={{ padding: 0, height: '30px', width: '100%', overflow: 'hidden', display: 'flex' }}>
                 {/*TEXT VIEW*/}
                 <div style={{ width: '250px', minWidth: '100px', display: 'flex' }}>
                     {/*--------Temporarilty disabling showing Body Icon*/}
@@ -201,7 +203,13 @@ const LabelDiv = styled.div`
     margin-right: auto;
     height: 30px;
     color: ${props => (props.typedBasedFontColor ? props.typedBasedFontColor : 'black')};
-    background-color: ${props => (props.isHighlighted === true ? 'black' : props.typedBasedColor ? props.typedBasedColor : `${PRIMARY.light}`)};
+    background-color: ${props =>
+        props.isHighlighted === true ? `${SECONDARY.dark}` : props.typedBasedColor ? props.typedBasedColor : `${PRIMARY.light}`};
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
 `;
 
 const ControlButton = styled.div`
