@@ -6,7 +6,8 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { createProject } from '../network/projectIndexing';
-import { SECONDARY } from '../styledComponents/styledComponents';
+import { colorStyled } from '../styledComponents/styledColor';
+import { fontStyled } from '../styledComponents/styledFont';
 
 class CreateProject extends Component {
     constructor(props) {
@@ -53,7 +54,6 @@ class CreateProject extends Component {
             this.props.toggle();
             return;
         }
-        console.log('Creating New Project');
 
         if (!this.state.projectName && !this.state.projectDescription) {
             alert('Please provide name and description for the project');
@@ -73,8 +73,6 @@ class CreateProject extends Component {
             return;
         }
 
-        console.log(this.props.user.displayName);
-
         const objToSent = {
             name: this.state.projectName,
             description: this.state.projectDescription,
@@ -93,7 +91,7 @@ class CreateProject extends Component {
     render() {
         return (
             <Modal
-                style={{ width: '80%', maxWidth: '50%' }}
+                style={{ width: '80%', maxWidth: '50%', fontFamily: fontStyled.fontFamily }}
                 isOpen={this.props.showDialog}
                 toggle={this.props.toggle}
                 autoFocus={false}
@@ -155,7 +153,7 @@ class CreateProject extends Component {
                 <ModalFooter>
                     <Button
                         id="finishButton"
-                        style={{ background: SECONDARY.dark }}
+                        style={{ background: colorStyled.SECONDARY.dark }}
                         onClick={() => {
                             this.createProject();
                         }}

@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { editProject } from '../network/projectIndexing';
-import { SECONDARY } from '../styledComponents/styledComponents';
+import { colorStyled } from '../styledComponents/styledColor';
+import { fontStyled } from '../styledComponents/styledFont';
 
 export default class EditProjectModal extends Component {
     constructor(props) {
@@ -59,7 +60,12 @@ export default class EditProjectModal extends Component {
 
     render() {
         return (
-            <Modal style={{ width: '80%', maxWidth: '50%' }} isOpen={this.props.showDialog} toggle={this.props.toggle} autoFocus={false}>
+            <Modal
+                style={{ width: '80%', maxWidth: '50%', fontFamily: fontStyled.fontFamily }}
+                isOpen={this.props.showDialog}
+                toggle={this.props.toggle}
+                autoFocus={false}
+            >
                 <ModalHeader toggle={this.props.toggle} autoFocus={false}>
                     Edit Project
                 </ModalHeader>
@@ -118,7 +124,7 @@ export default class EditProjectModal extends Component {
                                 this.editProject();
                             }}
                             autoFocus={true}
-                            style={{ background: SECONDARY.dark }}
+                            style={{ background: colorStyled.SECONDARY.dark }}
                         >
                             Submit
                         </Button>

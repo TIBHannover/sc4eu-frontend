@@ -1,6 +1,5 @@
 import { Button, Form, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import React, { Component } from 'react';
-import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import PropTypes from 'prop-types';
 import { sendProjectAccessEmail } from '../../network/emailCalls';
 import projectAccessEmailHTML from '../../html/projectAccessEmailHTML';
@@ -9,6 +8,8 @@ import PopUp from '../PopUp';
 import error from '../../assets/images/error.png';
 import success from '../../assets/images/success.png';
 import { getAllSystemAdmin } from '../../network/UserProfileCalls';
+import { colorStyled } from '../../styledComponents/styledColor';
+import { fontStyled } from '../../styledComponents/styledFont';
 
 export default class ProjectPermissionModal extends Component {
     constructor(props) {
@@ -79,12 +80,12 @@ export default class ProjectPermissionModal extends Component {
                 )}
                 <Form onSubmit={this.handleSubmit}>
                     <Modal
-                        style={{ width: '50%', maxWidth: '30%', height: '100%', maxHeight: '50%' }}
+                        style={{ width: '50%', maxWidth: '30%', height: '100%', maxHeight: '50%', fontFamily: fontStyled.fontFamily }}
                         isOpen={this.props.showDialog}
                         toggle={this.props.toggle}
                         autoFocus={false}
                     >
-                        <ModalHeader style={{ backgroundColor: PRIMARY.dark }} autoFocus={false}>
+                        <ModalHeader style={{ backgroundColor: colorStyled.PRIMARY.dark }} autoFocus={false}>
                             {this.props.title}
                         </ModalHeader>
                         <ModalBody
@@ -128,7 +129,7 @@ export default class ProjectPermissionModal extends Component {
                             <label style={{ color: 'red', alignContent: 'right', display: this.state.showWarning ? 'block' : 'none' }}>
                                 Subject and Message can not be empty
                             </label>
-                            <Button id="finishButton" style={{ background: SECONDARY.dark }} onClick={this.handelClick} autoFocus={true}>
+                            <Button id="finishButton" style={{ background: colorStyled.SECONDARY.dark }} onClick={this.handelClick} autoFocus={true}>
                                 Submit
                             </Button>
                         </ModalFooter>

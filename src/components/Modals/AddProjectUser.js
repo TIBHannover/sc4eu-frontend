@@ -1,8 +1,9 @@
 import { Button, Form, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import React, { Component } from 'react';
-import { PRIMARY, SECONDARY } from '../../styledComponents/styledComponents';
 import PropTypes from 'prop-types';
 import { doesUserExist } from '../../network/UserProfileCalls';
+import { fontStyled } from '../../styledComponents/styledFont';
+import { colorStyled } from '../../styledComponents/styledColor';
 
 export default class AddProjectUserModal extends Component {
     constructor(props) {
@@ -12,19 +13,19 @@ export default class AddProjectUserModal extends Component {
             email: '',
             emailWarning: 'User with this email does not exists'
         };
-        this.emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        this.emailRegexp = /^(([^<>()\\[\]\\.,;:\s@"]+(\.[^<>()\\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     }
 
     render() {
         return (
             <Form onSubmit={this.handleSubmit}>
                 <Modal
-                    style={{ width: '50%', maxWidth: '30%', height: '100%', maxHeight: '50%' }}
+                    style={{ width: '50%', maxWidth: '30%', height: '100%', maxHeight: '50%', fontFamily: fontStyled.fontFamily }}
                     isOpen={this.props.showDialog}
                     toggle={this.props.toggleAddUserPopup}
                     autoFocus={false}
                 >
-                    <ModalHeader style={{ display: 'block', backgroundColor: PRIMARY.dark }} autoFocus={false}>
+                    <ModalHeader style={{ display: 'block', backgroundColor: colorStyled.PRIMARY.dark }} autoFocus={false}>
                         <span style={{ color: '#000000' }}>Add User to Project</span>
                         <Button
                             style={{
@@ -64,7 +65,7 @@ export default class AddProjectUserModal extends Component {
                         </label>
                         <Button
                             id="finishButton"
-                            style={{ background: SECONDARY.dark }}
+                            style={{ background: colorStyled.SECONDARY.dark }}
                             onClick={() => {
                                 if (!this.state.email) {
                                     this.setState({ emailWarning: 'Email can not be Empty ', showWarning: 'true' });
