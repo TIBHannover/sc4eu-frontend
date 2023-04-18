@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { PRIMARY } from '../styledComponents/styledComponents';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import success from '../assets/images/success.png';
 import error from '../assets/images/error.png';
 import PopUp from '../components/PopUp';
 import { Redirect } from 'react-router-dom';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class EmailVerify extends Component {
     constructor(props) {
@@ -39,7 +39,7 @@ class EmailVerify extends Component {
 
     render() {
         return (
-            <StyledDiv style={{ backgroundColor: PRIMARY.lighter, height: '100%' }}>
+            <StyledDiv style={{ backgroundColor: colorStyled.PRIMARY.lighter, height: '100%' }}>
                 <div>
                     <PopUp
                         open={this.state.openPopUp}

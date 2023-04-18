@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { checkFileUpdated } from '../network/GithubAPICalls';
 import { checkGitlabFileUpdated } from '../network/GitlabAPICalls';
 import styled from 'styled-components';
-import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import { colorStyled } from '../styledComponents/styledColor';
 
 class OntologyIndexing extends Component {
@@ -168,6 +168,6 @@ const StyledInfo = styled.h5`
         padding-right: 10%;
         text-align: justify;
         text-align-last: center;
-        color: ${TEXTCOLOR};
+        color: ${colorStyled.TEXTCOLOR};
     }
 `;

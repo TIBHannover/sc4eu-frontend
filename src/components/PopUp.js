@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import SC3 from '../assets/images/logo.png';
 import PropTypes from 'prop-types';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import { Button } from 'reactstrap';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 const PopUp = props => {
     if (!props.open) {
@@ -22,7 +23,7 @@ const PopUp = props => {
                 <StyledImage src={SC3} alt="/" height="50px" width="50px" />
                 <hr />
             </div>
-            <div style={{ height: '80%', backgroundColor: PRIMARY.lighter }}>
+            <div style={{ height: '80%', backgroundColor: colorStyled.PRIMARY.lighter }}>
                 <div style={{ height: '80%' }}>
                     <div style={{ padding: '30px', float: 'left' }}>
                         <img style={{ height: '150x', width: '150px' }} src={props.image} alt="/" />
@@ -43,7 +44,7 @@ const PopUp = props => {
                 <div style={{ height: '20%' }}>
                     <Button
                         onClick={props.onClose}
-                        style={{ float: 'right', margin: '0px 30px 30px 0', width: '80px', backgroundColor: SECONDARY.dark }}
+                        style={{ float: 'right', margin: '0px 30px 30px 0', width: '80px', backgroundColor: colorStyled.SECONDARY.dark }}
                     >
                         OK
                     </Button>
@@ -73,6 +74,7 @@ const StyledDiv = styled.div`
     box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.75);
     border-radius: 8px;
     z-index: 1000;
+    font-family: ${fontStyled.fontFamily};
     // overflow: hidden;
 `;
 

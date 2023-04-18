@@ -56,21 +56,6 @@ export const StyledAuthTooltip = styled(Tooltip)`
     }
 `;
 
-export const PRIMARY = {
-    lighter: '#F7FBFC',
-    light: '#D6E6F2',
-    lightMain: '#92bdff',
-    main: '#B9D7EA',
-    dark: '#769FCD'
-};
-export const SECONDARY = {
-    dark: '#536b78',
-    darker: '#2f3d45',
-    link: '#0000EE'
-};
-
-export const TEXTCOLOR = '#4d5b7c';
-
 export const MAX_WIDTH = '769px';
 
 export const MIN_WIDTH_FOR_MONITOR = '1750px';

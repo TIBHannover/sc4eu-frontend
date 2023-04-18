@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { MAX_WIDTH, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import ProjectView from '../components/ProjectView';
 import RightSideProjectBar from '../components/ontologyView/RightSideProjectBar';
 import styled from 'styled-components';
+import { colorStyled } from '../styledComponents/styledColor';
 
 export default class ProjectList extends Component {
     constructor(props) {
@@ -66,6 +67,6 @@ const StyledInfo = styled.h5`
         padding-right: 10%;
         text-align: justify;
         text-align-last: center;
-        color: ${TEXTCOLOR};
+        color: ${colorStyled.TEXTCOLOR};
     }
 `;

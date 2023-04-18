@@ -138,16 +138,6 @@ export const getGitHubFileContent = async githubapiurl => {
     return decodedString;
 };
 
-export const getBranches = async githubapiurl => {
-    const user = getUserFromUrl(githubapiurl);
-    const repoName = getRepoFromUrl(githubapiurl);
-
-    const branches = await octokit.rest.repos.listBranches({
-        owner: user,
-        repo: repoName
-    });
-};
-
 export const listReleases = async githubapiurl => {
     const user = getUserFromUrl(githubapiurl);
     const repoName = getRepoFromUrl(githubapiurl);

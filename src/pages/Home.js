@@ -32,7 +32,7 @@ export default class Home extends Component {
                             </StyledBodyLink>
                             <StyledBodyText>
                                 The SC<sup>3</sup> Ontology Curation Portal enables you to collect all ontologies relevant for your research project.
-                                You You can create new collections and add as much ontologies as you like.
+                                You can create new collections and add as much ontologies as you like.
                             </StyledBodyText>
                         </StyledBodyDiv>
                         <StyledBodyDiv>
