@@ -8,6 +8,9 @@ const fontSize = {
     DesktopViewNormalText: '14px',
     NormalText: '14px',
     MobileViewNormalText: '14px',
+    LeftSidebarText: '14px',
+    MobileViewLeftSidebarText: '10px',
+    MobileViewLeftSidebarLabelText: '12px',
     infoText: '12px'
 };
 

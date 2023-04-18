@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Modal, ModalBody, Button } from 'reactstrap';
-import { SECONDARY, TEXTCOLOR } from '../styledComponents/styledComponents';
 import Cookies from 'js-cookie';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 const SliderText = [
     {
@@ -72,19 +73,27 @@ class IntroductoryPopUp extends Component {
             <div>
                 <Modal
                     isOpen={this.state.firstModal}
-                    style={{ maxWidth: '80%', width: '100%', marginLeft: '10%', marginRight: '10%', borderRadius: '15px', overflow: 'hidden' }}
+                    style={{
+                        maxWidth: '80%',
+                        width: '100%',
+                        marginLeft: '10%',
+                        marginRight: '10%',
+                        borderRadius: '15px',
+                        overflow: 'hidden',
+                        fontFamily: fontStyled.fontFamily
+                    }}
                 >
                     <ModalBody style={{ backgroundColor: 'rgba(214, 230, 242, .3)' }}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <h4 style={{ marginLeft: 'auto' }}>
-                                <i>Thank you for visiting our portal</i>
+                                <p>Thank you for visiting our portal</p>
                             </h4>
                             <Button
                                 onClick={() => this.setState({ firstModal: !this.state.firstModal })}
                                 style={{
                                     background: 'none',
                                     border: 'none',
-                                    color: TEXTCOLOR,
+                                    color: colorStyled.TEXTCOLOR,
                                     fontWeight: 600,
                                     marginLeft: 'auto',
                                     marginRight: '10px',
@@ -96,9 +105,9 @@ class IntroductoryPopUp extends Component {
                             </Button>
                         </div>
                         <br />
-                        <span style={{ fontSize: '18px', color: TEXTCOLOR }}>{SliderText[this.state.sliderIndex].value}</span>
+                        <span style={{ fontSize: '18px', color: colorStyled.TEXTCOLOR }}>{SliderText[this.state.sliderIndex].value}</span>
                         <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: SECONDARY.dark }}>
+                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
                                 {this.state.buttonText}
                             </Button>
                         </div>
@@ -112,7 +121,7 @@ class IntroductoryPopUp extends Component {
                                                   width: '15px',
                                                   height: '15px',
                                                   borderRadius: '50%',
-                                                  border: `3px solid ${SECONDARY.dark}`,
+                                                  border: `3px solid ${colorStyled.SECONDARY.dark}`,
                                                   margin: '0 5px',
                                                   backgroundColor: '#f1f1f1'
                                               }
@@ -120,9 +129,9 @@ class IntroductoryPopUp extends Component {
                                                   width: '15px',
                                                   height: '15px',
                                                   borderRadius: '50%',
-                                                  border: `3px solid ${SECONDARY.dark}`,
+                                                  border: `3px solid ${colorStyled.SECONDARY.dark}`,
                                                   margin: '0 5px',
-                                                  backgroundColor: SECONDARY.dark
+                                                  backgroundColor: colorStyled.SECONDARY.dark
                                               }
                                     }
                                 />

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Button, Spinner } from 'reactstrap';
-import { MAX_WIDTH, PRIMARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import Footer from '../Layout/Footer';
 import styled from 'styled-components';
+import { colorStyled } from '../styledComponents/styledColor';
 
 export default class WebProtege extends Component {
     constructor(props) {
@@ -51,7 +52,7 @@ export default class WebProtege extends Component {
 }
 
 const StyledDiv = styled.div`
-    background-color: ${PRIMARY.lighter};
+    background-color: ${colorStyled.PRIMARY.lighter};
     height: calc(100% - 80px);
     width: 100%;
     overflow-y: auto;
@@ -73,6 +74,6 @@ const StyledInfo = styled.h5`
         padding-right: 10%;
         text-align: justify;
         text-align-last: center;
-        color: ${TEXTCOLOR};
+        color: ${colorStyled.TEXTCOLOR};
     }
 `;

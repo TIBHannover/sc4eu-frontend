@@ -53,8 +53,15 @@ const SideBarLayout = () => {
             <StyledButton color="none" title="Open Menu" onMouseOver={toggleDrawer}>
                 <StyledIcon icon={faBars} />
             </StyledButton>
-            <Drawer open={isOpen} onClose={toggleDrawer} direction="left" style={{ marginTop: '50px', width: '250px', height: 'auto' }}>
-                <div onMouseLeave={toggleDrawer}>
+            <Drawer open={isOpen} onClose={toggleDrawer} direction="left" style={{ marginTop: '70px', width: '250px', height: 'auto' }}>
+                <div
+                    onMouseLeave={toggleDrawer}
+                    style={{
+                        maxHeight: 'calc(100vh - 70px)',
+                        overflowY: 'auto',
+                        height: 'auto'
+                    }}
+                >
                     <SideBar />
                 </div>
             </Drawer>
