@@ -3,14 +3,15 @@ import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import ReactHtmlParser from 'react-html-parser';
-import { SECONDARY } from '../../styledComponents/styledComponents';
 import PropTypes from 'prop-types';
+import { colorStyled } from '../../styledComponents/styledColor';
+import { fontStyled } from '../../styledComponents/styledFont';
 
 class ShowOntologyComparisonModal extends Component {
     render() {
         return (
             <Modal
-                style={{ width: '100%', maxWidth: '80%', height: '100%', maxHeight: '50%' }}
+                style={{ width: '100%', maxWidth: '80%', height: '100%', maxHeight: '50%', fontFamily: fontStyled.fontFamily }}
                 isOpen={this.props.showDialog}
                 toggle={this.props.toggle}
                 autoFocus={false}
@@ -22,7 +23,7 @@ class ShowOntologyComparisonModal extends Component {
                 <ModalFooter>
                     <Button
                         id="finishButton"
-                        style={{ background: SECONDARY.dark }}
+                        style={{ background: colorStyled.SECONDARY.dark }}
                         onClick={() => {
                             this.props.callback();
                         }}

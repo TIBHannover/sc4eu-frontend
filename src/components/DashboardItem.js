@@ -6,9 +6,9 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon, FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { SECONDARY } from '../styledComponents/styledComponents';
 import { addUserToProject } from '../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class DashboardItem extends Component {
     constructor(props) {
@@ -158,7 +158,7 @@ class DashboardItem extends Component {
                                                     hidden={this.state.roleValue?.value === option.value}
                                                     icon={faPlus}
                                                     size={'1x'}
-                                                    color={SECONDARY.darker}
+                                                    color={colorStyled.SECONDARY.darker}
                                                     title={'Click to add new project to this user'}
                                                     style={{ float: 'right', marginRight: '3%' }}
                                                 />
@@ -201,7 +201,7 @@ class DashboardItem extends Component {
                                                         <FontAwesomeIcon
                                                             icon={faPlus}
                                                             size={'1x'}
-                                                            color={SECONDARY.darker}
+                                                            color={colorStyled.SECONDARY.darker}
                                                             title={'Click to add new project to this user'}
                                                             style={{ float: 'right', marginRight: '3%' }}
                                                             onClick={() => this.addNewProjectFromUser(user, project)}
@@ -236,7 +236,7 @@ class DashboardItem extends Component {
                                                         <FontAwesomeIcon
                                                             icon={faTrash}
                                                             size={'1x'}
-                                                            color={SECONDARY.darker}
+                                                            color={colorStyled.SECONDARY.darker}
                                                             title={'Click to unregister this user from this Project'}
                                                             style={{ float: 'right', marginRight: '3%' }}
                                                             onClick={() => this.deleteProjectFromUser(item, user)}

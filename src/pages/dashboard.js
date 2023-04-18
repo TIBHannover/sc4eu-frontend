@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -88,8 +88,8 @@ class Dashboard extends Component {
             } else {
                 return (
                     <div>
-                        <h1 style={{ textAlign: 'center', fontStyle: 'normal', padding: '20px 0px 20px 0px' }}>USER INFORMATION </h1>
-                        <div style={{ textAlign: 'center', fontStyle: 'normal' }}>
+                        <h1 style={{ textAlign: 'center', padding: '20px 0px 20px 0px' }}>USER INFORMATION </h1>
+                        <div style={{ textAlign: 'center' }}>
                             <StyledTable bordered>
                                 <thead>
                                     <tr>
@@ -123,10 +123,10 @@ class Dashboard extends Component {
             <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
                 {this.state.loading && (
                     <div>
-                        <h2 className="h5" style={{ textAlign: 'center', fontStyle: 'normal' }}>
+                        <h2 className="h5" style={{ textAlign: 'center' }}>
                             <span>
                                 <Icon icon={faSpinner} spin />
-                            </span>{' '}
+                            </span>
                             Loading
                         </h2>
                     </div>
@@ -193,11 +193,11 @@ const StyledTable = styled.table`
     }
 
     tr:nth-child(even) {
-        background-color: ${PRIMARY.light};
+        background-color: ${colorStyled.PRIMARY.light};
     }
 
     tr:hover {
-        background-color: ${SECONDARY.dark};
+        background-color: ${colorStyled.SECONDARY.dark};
         color: black;
     }
 
@@ -205,7 +205,7 @@ const StyledTable = styled.table`
         padding-top: 12px;
         padding-bottom: 12px;
         text-align: center;
-        background-color: ${SECONDARY.dark};
+        background-color: ${colorStyled.SECONDARY.dark};
         color: white;
     }
 `;

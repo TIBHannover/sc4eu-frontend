@@ -2,8 +2,8 @@ import React from 'react';
 import { useTable } from 'react-table';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
 import ProjectMembersDropdown from './ProjectMembersDropDown';
+import { colorStyled } from '../styledComponents/styledColor';
 
 function DashboardProjectsTable(props) {
     const columns = props.columns;
@@ -17,7 +17,7 @@ function DashboardProjectsTable(props) {
         }
     });
 
-    const { getTableProps, getTableBodyProps, headerGroups, footerGroups, rows, prepareRow } = tableInstance;
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
     return (
         <StyledTable {...getTableProps()}>
             <thead>
@@ -82,11 +82,11 @@ const StyledTable = styled.table`
     }
 
     tr:nth-child(even) {
-        background-color: ${PRIMARY.light};
+        background-color: ${colorStyled.PRIMARY.light};
     }
 
     tr:hover {
-        background-color: ${SECONDARY.dark};
+        background-color: ${colorStyled.SECONDARY.dark};
         color: white;
     }
 
@@ -94,7 +94,7 @@ const StyledTable = styled.table`
         padding-top: 12px;
         padding-bottom: 12px;
         text-align: center;
-        background-color: ${SECONDARY.dark};
+        background-color: ${colorStyled.SECONDARY.dark};
         color: white;
     }
 `;

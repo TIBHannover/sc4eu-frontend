@@ -3,10 +3,11 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import { SECONDARY } from '../styledComponents/styledComponents';
 import AddProjectUserModal from './Modals/AddProjectUser';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import styled from 'styled-components';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 function ProjectMembersDropdown(props, { ...args }) {
     const projectUsers = props.projectUsers;
@@ -22,18 +23,20 @@ function ProjectMembersDropdown(props, { ...args }) {
     };
 
     return (
-        <div>
+        <div style={{ fontFamily: fontStyled.fontFamily }}>
             <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                 <DropdownToggle caret style={{ width: '100%' }}>
                     Project Members
                 </DropdownToggle>
                 <StyledDropdownMenu {...args}>
                     <DropdownItem style={{ padding: '0.5rem 0.1rem', width: '100%', backgroundColor: 'lightgray' }}>
-                        <div style={{ marginLeft: '3%', float: 'left', fontWeight: 500, color: `${SECONDARY.dark}` }}>Project Members</div>
+                        <div style={{ marginLeft: '3%', float: 'left', fontWeight: 500, color: `${colorStyled.SECONDARY.dark}` }}>
+                            Project Members
+                        </div>
                         <FontAwesomeIcon
                             icon={faUserPlus}
                             size={'lg'}
-                            color={SECONDARY.darker}
+                            color={colorStyled.SECONDARY.darker}
                             title={'Click to add new user'}
                             style={{ float: 'right', marginRight: '1%' }}
                             onClick={() => {
@@ -59,7 +62,7 @@ function ProjectMembersDropdown(props, { ...args }) {
                                         <FontAwesomeIcon
                                             icon={faTrash}
                                             size={'1x'}
-                                            color={SECONDARY.darker}
+                                            color={colorStyled.SECONDARY.darker}
                                             title={'Click to unregister this user from this Project'}
                                             style={{ float: 'right', marginRight: '3%' }}
                                             onClick={() => {
