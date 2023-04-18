@@ -2,10 +2,10 @@ import { Modal } from 'reactstrap';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { openAuthDialog, toggleAuthDialog } from '../../redux/actions/auth';
+import { toggleAuthDialog } from '../../redux/actions/auth';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import styled from 'styled-components';
-import SignIn from './SignIn';
+import LoginViaEmail from './LoginViaEmail';
 
 const AnimationContainer = styled(CSSTransition)`
     &.fadeIn-enter {
@@ -27,7 +27,7 @@ class SignInModal extends Component {
                         <TransitionGroup exit={false}>
                             {this.props.action === 'signin' && (
                                 <AnimationContainer key={1} classNames="fadeIn" timeout={{ enter: 700, exit: 0 }}>
-                                    <SignIn callback={this.props.callback} />
+                                    <LoginViaEmail callback={this.props.callback} />
                                 </AnimationContainer>
                             )}
                         </TransitionGroup>
@@ -44,7 +44,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    openAuthDialog: payload => dispatch(openAuthDialog(payload)),
     toggleAuthDialog: () => dispatch(toggleAuthDialog())
 });
 
@@ -52,7 +51,6 @@ SignInModal.propTypes = {
     action: PropTypes.string.isRequired,
     dialogIsOpen: PropTypes.bool.isRequired,
     toggleAuthDialog: PropTypes.func.isRequired,
-    openAuthDialog: PropTypes.func.isRequired,
     callback: PropTypes.func.isRequired
 };
 

@@ -1,6 +1,6 @@
 //import { URL_GET_USER_PROFILE, URL_GET_USER_SETTINGS, URL_UPDATE_USER_SETTING } from 'constants/services';
 
-import { submitGetRequest, submitPostRequest, submitPutRequest } from './networkRequests';
+import { submitGetRequest, submitPutRequest } from './networkRequests';
 import {
     URL_DELETE_USER,
     URL_GET_ALL_ROLES,
@@ -29,7 +29,6 @@ export const getUserSettings = () => {
 };
 
 export const deleteUser = userId => {
-    console.log('deleting user.....................', userId);
     return submitGetRequest(`${URL_DELETE_USER}/?userId=${userId}`, {}, false);
 };
 

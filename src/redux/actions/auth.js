@@ -4,11 +4,7 @@ import { Cookies } from 'react-cookie';
 // import env from '@beam-australia/react-env';
 const cookies = new Cookies();
 export const updateCookies = payload => dispatch => {
-    console.log('WE HAVE A PAYLOAD', payload);
-
-    console.log('THIS NOW CREATES AN EMPTY USER FOR THE SATE    THINGY, WE WILL THEN FILL IT WITH VALUES FROM BACKEND');
     const PUBLIC_URL = `${process.env.REACT_APP_PUBLIC_URL}`;
-    console.log('path: ', PUBLIC_URL);
 
     const expiresIn = 8 * 60 * 60;
     cookies.set('token', payload.token, { path: PUBLIC_URL, maxAge: expiresIn });
@@ -67,11 +63,6 @@ export const redux_updateUserSettings = payload => dispatch => {
 export const resetAuth = () => dispatch => {
     cookies.remove('token', { path: '/sc3/' });
     cookies.remove('token_expires_in', { path: '/sc3/' });
-
-    const token = cookies.get('token');
-
-    console.log('Is it still here? ');
-    console.log(token);
     dispatch({
         type: type.RESET_AUTH
     });
@@ -83,15 +74,9 @@ export function firstLoad() {
         const token = cookies.get('token') ? cookies.get('token') : null;
         const token_expires_in = cookies.get('token_expires_in') ? cookies.get('token_expires_in') : null;
 
-        console.log('FIRST LOAD FUNCTION');
-        console.log('DO WE HAVE TOKEN?', token);
-        console.log('TOKE EXP ', token_expires_in);
-
         return getUserInformation()
             .then(userData => {
-                console.log('WE HAVE SOME DATA ON FIRST LOAD', userData);
                 if (userData && userData.result !== 'empty' && userData.error === undefined) {
-                    console.log('We have some data on first load ', userData);
                     dispatch(
                         updateAuth({
                             user: {
@@ -137,14 +122,12 @@ export const toggleAuthDialog = () => dispatch => {
 };
 
 export const closeAuthDialog = () => dispatch => {
-    console.log('-----------DISPATCHING CLOSE AUTH');
     dispatch({
         type: type.CLOSE_AUTHENTICATION_DIALOG
     });
 };
 
 export const hello = () => dispatch => {
-    console.log('-----------DISPATCHING CLOSE AUTH');
     dispatch({
         type: type.TOGGLE_AUTHENTICATION_DIALOG
     });

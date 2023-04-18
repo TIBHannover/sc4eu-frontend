@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { PRIMARY } from '../styledComponents/styledComponents';
 import Footer from '../Layout/Footer';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class LoginFailedRedirect extends Component {
     render() {
@@ -10,7 +10,7 @@ class LoginFailedRedirect extends Component {
                     style={{
                         textAlign: 'center',
                         fontWeight: '600',
-                        backgroundColor: PRIMARY.lighter,
+                        backgroundColor: colorStyled.PRIMARY.lighter,
                         height: '100%',
                         fontSize: '22px'
                     }}

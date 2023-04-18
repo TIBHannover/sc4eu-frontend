@@ -18,17 +18,6 @@ export default (state = initialState, action) => {
             return currentState;
 
         case type.UPDATE_AUTH:
-            console.log('rage:', {
-                ...state,
-                ...action.payload
-            });
-            console.log(
-                'user:',
-                {
-                    ...state,
-                    ...action.payload
-                }.user
-            );
             return {
                 ...state,
                 ...action.payload
@@ -41,7 +30,6 @@ export default (state = initialState, action) => {
 
         case type.OPEN_AUTHENTICATION_DIALOG: {
             const { payload } = action;
-            console.log('WE have an redirect route! ', payload.redirectRoute);
             return {
                 ...state,
                 dialogIsOpen: true,

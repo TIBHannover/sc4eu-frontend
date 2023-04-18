@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { minLengthPassword } from '../constants/globalConstants';
 import { Redirect } from 'react-router-dom';
-import { SECONDARY } from '../styledComponents/styledComponents';
 import PopUp from '../components/PopUp';
 import { Button, Col, Form, FormGroup, Input, Label } from 'reactstrap';
 import success from '../assets/images/success.png';
 import error from '../assets/images/error.png';
 import { setNewPassword } from '../network/loginCalls';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 class ResetPassword extends Component {
     constructor(props) {
@@ -64,7 +65,7 @@ class ResetPassword extends Component {
 
     render() {
         return (
-            <div className="container" style={{ marginTop: '50px' }}>
+            <div className="container" style={{ marginTop: '50px', fontFamily: fontStyled.fontFamily }}>
                 {this.state.redirectToHome ? <Redirect to="/" /> : <div />}
                 {this.state.openPopUp ? (
                     <PopUp open={this.state.openPopUp} onClose={this.popUpClose} image={this.state.image} message={this.state.message} />
@@ -105,7 +106,7 @@ class ResetPassword extends Component {
                         </FormGroup>
                         <FormGroup check row>
                             <Col sm={{ offset: 2 }}>
-                                <Button onClick={this.handleSetNewPassword} style={{ backgroundColor: SECONDARY.dark }}>
+                                <Button onClick={this.handleSetNewPassword} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
                                     Submit
                                 </Button>
                             </Col>

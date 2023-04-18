@@ -7,13 +7,14 @@ import { compose } from 'redux';
 import { loginViaEmail, regsiterViaEmail, forgotPassword } from '../../network/loginCalls';
 import { Link } from 'react-router-dom';
 import { minLengthPassword } from '../../constants/globalConstants';
-import { SECONDARY } from '../../styledComponents/styledComponents';
 import success from '../../assets/images/success.png';
 import error from '../../assets/images/error.png';
 import PopUp from '../PopUp';
 import github from '../../assets/images/github.svg';
 import gitlab from '../../assets/images/gitlab.svg';
 import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB } from '../../constants/services';
+import { fontStyled } from '../../styledComponents/styledFont';
+import { colorStyled } from '../../styledComponents/styledColor';
 
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
@@ -150,7 +151,7 @@ class LoginViaEmail extends Component {
                 {this.state.openPopUp ? (
                     <PopUp open={this.state.openPopUp} onClose={this.popUpClose} image={this.state.image} message={this.state.popUpMessage} />
                 ) : (
-                    <div>
+                    <div style={{ fontFamily: fontStyled.fontFamily }}>
                         {!this.state.loading ? (
                             <Form onSubmit={this.handleSubmit}>
                                 {this.state.signInModal ? (
@@ -159,7 +160,7 @@ class LoginViaEmail extends Component {
                                             <h2 style={{ marginBottom: '20px' }}>Sign In</h2>
                                             <p className="mt-3">
                                                 Don't have an account? &nbsp;
-                                                <Link to="" style={{ color: SECONDARY.link }} onClick={this.toggleSignupModel}>
+                                                <Link to="" style={{ color: colorStyled.SECONDARY.link }} onClick={this.toggleSignupModel}>
                                                     Sign Up
                                                 </Link>
                                             </p>
@@ -228,7 +229,7 @@ class LoginViaEmail extends Component {
                                         <div style={{ textAlign: 'center', marginBottom: '10px' }}>
                                             <Button
                                                 id="loginWithMail"
-                                                style={{ width: '90%', marginTop: '15px', backgroundColor: SECONDARY.dark }}
+                                                style={{ width: '90%', marginTop: '15px', backgroundColor: colorStyled.SECONDARY.dark }}
                                                 onClick={this.handleLogin}
                                             >
                                                 Login
@@ -243,7 +244,7 @@ class LoginViaEmail extends Component {
                                 ) : this.state.signupModal ? (
                                     // sign up model start from here
                                     <Modal
-                                        style={{ maxWidth: '700px', width: '100%' }}
+                                        style={{ maxWidth: '700px', width: '100%', fontFamily: fontStyled.fontFamily }}
                                         isOpen={this.state.signupModal}
                                         toggle={this.props.toggleAuthDialog}
                                     >
@@ -315,17 +316,21 @@ class LoginViaEmail extends Component {
                                             </div>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleRegister}>
+                                            <Button style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={this.handleRegister}>
                                                 Register
                                             </Button>
-                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.props.toggleAuthDialog}>
+                                            <Button style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={this.props.toggleAuthDialog}>
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
                                     </Modal>
                                 ) : (
                                     // forgot password model start from here
-                                    <Modal isOpen={this.state.resetPasswordModel} toggle={this.props.toggleAuthDialog}>
+                                    <Modal
+                                        style={{ fontFamily: fontStyled.fontFamily }}
+                                        isOpen={this.state.resetPasswordModel}
+                                        toggle={this.props.toggleAuthDialog}
+                                    >
                                         <ModalHeader toggle={this.props.toggleAuthDialog}>Reset Password</ModalHeader>
                                         <ModalBody>
                                             <div className="container">
@@ -348,10 +353,10 @@ class LoginViaEmail extends Component {
                                             </div>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.handleForgotPassword}>
+                                            <Button style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={this.handleForgotPassword}>
                                                 Reset
                                             </Button>
-                                            <Button style={{ backgroundColor: SECONDARY.dark }} onClick={this.props.toggleAuthDialog}>
+                                            <Button style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={this.props.toggleAuthDialog}>
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
