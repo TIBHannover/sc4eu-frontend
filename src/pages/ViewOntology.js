@@ -10,12 +10,11 @@ import OntologyViewRoot from '../components/ontologyView/OntologyViewRoot';
 import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
-import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR, PRIMARY, TEXTCOLOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import Cookies from 'js-cookie';
 import { redux_alreadyLoadedOntology } from '../redux/actions/rrm_actions';
 import styled from 'styled-components';
-import { Container } from 'reactstrap';
 import { colorStyled } from '../styledComponents/styledColor';
 
 class ViewOntology extends Component {
@@ -82,7 +81,7 @@ class ViewOntology extends Component {
             <>
                 <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
                 <StyledRootDiv>
-                    <div style={{ height: '100%', backgroundColor: PRIMARY.lighter }}>
+                    <div style={{ height: '100%', backgroundColor: colorStyled.PRIMARY.lighter }}>
                         {this.state.isLoading === true && (
                             <div className="text-center text-primary mt-4 mb-4">
                                 {/*using a manual fixed scale value for the spinner scale! */}
@@ -159,6 +158,6 @@ const StyledInfo = styled.h5`
         padding-right: 10%;
         text-align: justify;
         text-align-last: center;
-        color: ${TEXTCOLOR};
+        color: ${colorStyled.TEXTCOLOR};
     }
 `;

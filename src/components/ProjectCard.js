@@ -10,7 +10,7 @@ import { deleteProject } from '../network/projectIndexing';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import EditProjectModal from './EditProjectModal';
-import { MIN_WIDTH_FOR_MONITOR, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import { withRouter } from 'react-router';
 import ClampLines from 'react-clamp-lines';
 import { redux_addProject, redux_removeAlreadyLoadedOntology, redux_removeOntology, redux_removeProject } from '../redux/actions/rrm_actions';
@@ -217,10 +217,10 @@ const StyledLink = styled(Link)`
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
-    border: 1px solid ${PRIMARY.dark};
+    border: 1px solid ${colorStyled.PRIMARY.dark};
     padding: 5px;
     color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background: ${PRIMARY.light};
+    background: ${colorStyled.PRIMARY.light};
     :focus {
         outline: none;
     }
@@ -229,14 +229,14 @@ const StyledCardHeader = styled.div`
     }
 
     :hover {
-        background: ${SECONDARY.dark}; //00b4cc
+        background: ${colorStyled.SECONDARY.dark}; //00b4cc
     }
 `;
 
 const StyledCardBody = styled.div`
     padding: 5px;
     font-size: ${fontStyled.fontSize.NormalText};
-    border: 1px solid ${PRIMARY.dark};
+    border: 1px solid ${colorStyled.PRIMARY.dark};
     border-top: none;
     :focus {
         outline: none;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { Label } from 'reactstrap';
-import { MIN_WIDTH_FOR_MONITOR, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import ClampLines from 'react-clamp-lines';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import ProjectPermissionModal from './Modals/ProjectPermissionModal';
@@ -41,7 +41,7 @@ class ProjectIndexCards extends Component {
                         <StyledIcon
                             icon={faEnvelope}
                             hidden={!this.props.user}
-                            color={SECONDARY.darker}
+                            color={colorStyled.SECONDARY.darker}
                             onClick={() => {
                                 this.setState({ showEmailModal: true });
                             }}
@@ -122,10 +122,10 @@ const StyledLabel = styled(Label)`
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
-    border: 1px solid ${PRIMARY.dark};
+    border: 1px solid ${colorStyled.PRIMARY.dark};
     padding: 2px;
     color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background: ${PRIMARY.light};
+    background: ${colorStyled.PRIMARY.light};
     :focus {
         outline: none;
     }
@@ -134,13 +134,13 @@ const StyledCardHeader = styled.div`
     }
 
     // :hover {
-    //     background: ${SECONDARY.dark}; //00b4cc
+    //     background: ${colorStyled.SECONDARY.dark}; //00b4cc
     // }
 `;
 
 const StyledCardBody = styled.div`
     padding: 5px;
-    border: 1px solid ${PRIMARY.dark};
+    border: 1px solid ${colorStyled.PRIMARY.dark};
     font-size: ${fontStyled.fontSize.NormalText};
     border-top: none;
     :focus {

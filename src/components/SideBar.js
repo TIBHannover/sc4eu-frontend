@@ -17,11 +17,13 @@ import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import { MAX_WIDTH, PRIMARY, SECONDARY } from '../styledComponents/styledComponents';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import WebProtege from '../assets/images/webprotege.png';
 import ontology from '../assets/images/Ontology.png';
 import Cookies from 'js-cookie';
 import { useSelector } from 'react-redux';
+import { fontStyled } from '../styledComponents/styledFont';
+import { colorStyled } from '../styledComponents/styledColor';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -41,16 +43,16 @@ const StyledLink = styled(NavLink)`
     color: black;
     text-decoration: none;
     text-decoration: none !important;
-    font-size: 16px;
+    font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
     :hover {
-        background-color: ${SECONDARY.dark};
+        background-color: ${colorStyled.SECONDARY.dark};
         color: white;
     }
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 30px;
         padding: 7px;
-        font-size: 12px;
+        font-size: font-size: ${fontStyled.fontSize.MobileViewLeftSidebarLabelText};
     }
 `;
 
@@ -61,10 +63,10 @@ const StyledHr = styled.hr`
 `;
 
 const StyledIcon = styled(Icon)`
-    font-size: 17px;
+    font-size: ${fontStyled.fontSize.LeftSidebarText};
 
     @media (max-width: ${MAX_WIDTH}) {
-        font-size: 10px;
+        font-size: ${fontStyled.fontSize.MobileViewLeftSidebarText};s
     }
 `;
 
@@ -80,10 +82,10 @@ const StyledImage = styled.img`
 
 const StyledHeadingDiv = styled.div`
     text-align: center;
-    font-size: 14px;
+    font-size: ${fontStyled.fontSize.LeftSidebarText};
 
     @media (max-width: ${MAX_WIDTH}) {
-        font-size: 10px;
+        font-size: ${fontStyled.fontSize.MobileViewLeftSidebarText};
     }
 `;
 
@@ -99,12 +101,12 @@ const SideBar = () => {
     };
 
     const ActiveStyle = {
-        backgroundColor: SECONDARY.dark,
+        backgroundColor: colorStyled.SECONDARY.dark,
         color: 'white'
     };
 
     return (
-        <div style={{ background: PRIMARY.light }}>
+        <div style={{ background: colorStyled.PRIMARY.light, fontFamily: fontStyled.fontFamily }}>
             <StyledLink title="Open Home" exact activeStyle={ActiveStyle} to={ROUTES.HOME} size="lg">
                 <StyledIcon icon={faHome} />
                 <StyledText>Home</StyledText>
