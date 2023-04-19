@@ -15,6 +15,7 @@ import Documentations from './pages/Documentations';
 import Dataprotections from './pages/Dataprotections';
 import Imprint from './pages/Imprint';
 import FAQ from './pages/FAQ';
+import Training from './pages/Training';
 import WebProtege from './pages/WebProtege';
 import ProjectList from './pages/ProjectList';
 import EmailVerify from './pages/EmailVerify';
@@ -111,6 +112,11 @@ const routes = [
         path: ROUTES.FAQ,
         exact: true,
         component: FAQ
+    },
+    {
+        path: ROUTES.TRAINING,
+        exact: true,
+        component: Training
     },
     {
         path: ROUTES.EMAIL_VERIFY,
