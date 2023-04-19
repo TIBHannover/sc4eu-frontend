@@ -10,7 +10,6 @@ export const submitGetRequest = (url, headers, send_token = false) => {
     }
     const myHeaders = headers ? new Headers(headers) : {};
     if (send_token) {
-        console.log('WHATS THE URL???', url);
         const cookies = new Cookies();
         const token = cookies.get('token') ? cookies.get('token') : null;
         if (token) {
@@ -96,12 +95,10 @@ export const submitPutRequest = (url, headers, data, jsonStringify = true) => {
     if (token) {
         myHeaders.append('Authorization', `Bearer ${token}`);
     }
-    console.log('Header', myHeaders);
 
     if (jsonStringify) {
         data = JSON.stringify(data);
     }
-    console.log('WHATS THE BODY', data);
     return new Promise((resolve, reject) => {
         fetch(url, { method: 'PUT', headers: myHeaders, body: data })
             .then(response => {

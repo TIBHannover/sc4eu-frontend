@@ -5,8 +5,6 @@ import { URL_FORGOT_PASSWORD } from '../constants/services';
 
 export const loginViaGithub = () => {
     // we use parameters from env.
-
-    console.log('IN network we want this page', URL_LOGIN_VIA_GITHUB);
     // todo: make flexible based on the env.file
     return plainGetRequest(URL_LOGIN_VIA_GITHUB, {
         'Content-Type': 'application/json',
@@ -88,7 +86,6 @@ export const requestDashboard = () => {
     const headers = {
         'Content-Type': 'application/json'
     };
-    console.log('>>>>> REQUESTING ADMIN DASHBOARD');
 
     return submitGetRequest(URL_ADMIN_DASHBOARD, headers, true);
 };
