@@ -58,7 +58,7 @@ function ProjectMembersDropdown(props, { ...args }) {
                                 <hr style={{ margin: '0px 0px 0px 0px' }} />
                                 <DropdownItem key={'key' + index} style={{ padding: '10px 0px 10px 0px' }}>
                                     <div style={{ marginLeft: '3%', float: 'left' }}>{item.name}</div>
-                                    {!(item.role.toLowerCase() === 'System Admin'.toLowerCase() || item.UUID === props.currentUser.userId) && (
+                                    {!(item.role.toLowerCase() === 'System Admin'.toLowerCase() || item.UUID === props.currentUser?.userId) && (
                                         <FontAwesomeIcon
                                             icon={faTrash}
                                             size={'1x'}
@@ -85,7 +85,7 @@ ProjectMembersDropdown.propTypes = {
     projectUUID: PropTypes.string.isRequired,
     callBack: PropTypes.func.isRequired,
     addUserCallBack: PropTypes.func.isRequired,
-    currentUser: PropTypes.object.isRequired
+    currentUser: PropTypes.object
 };
 
 export default ProjectMembersDropdown;

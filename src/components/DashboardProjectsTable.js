@@ -63,7 +63,7 @@ DashboardProjectsTable.propTypes = {
     userProjectsDetail: PropTypes.array.isRequired,
     callback: PropTypes.func.isRequired,
     addUserToProjectCallBack: PropTypes.func.isRequired,
-    currentUser: PropTypes.object.isRequired
+    currentUser: PropTypes.object
 };
 
 export default DashboardProjectsTable;
