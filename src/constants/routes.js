@@ -17,6 +17,7 @@ export default {
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
     FAQ: '/FAQ',
+    TRAINING: '/Training',
     WEBPROTEGE: '/WEBPROTEGE',
     EMAIL_VERIFY: '/EmailVerify',
     LOGIN_FAILED: '/loginFailedRedirect',

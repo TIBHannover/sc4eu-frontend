@@ -5,6 +5,7 @@ import {
     faAlignJustify,
     faBook,
     faBrain,
+    faChalkboardTeacher,
     faFile,
     faHome,
     faProjectDiagram,
@@ -189,6 +190,10 @@ const SideBar = () => {
             <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ}>
                 <StyledIcon icon={faQuestion} />
                 <StyledText>FAQ</StyledText>
+            </StyledLink>
+            <StyledLink title="Open Training" activeStyle={ActiveStyle} to={ROUTES.TRAINING}>
+                <StyledIcon icon={faChalkboardTeacher} />
+                <StyledText>Training</StyledText>
             </StyledLink>
             <StyledHr />
             <StyledHeadingDiv>
