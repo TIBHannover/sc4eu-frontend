@@ -16,7 +16,8 @@ class CreateProject extends Component {
             projectName: '',
             projectDescription: '',
             accessType: '',
-            allowedToCreateProjects: false
+            allowedToCreateProjects: false,
+            showWarning: ''
         };
     }
 
@@ -46,7 +47,8 @@ class CreateProject extends Component {
     resetStateObject = () => {
         this.setState({
             projectName: '',
-            projectDescription: ''
+            projectDescription: '',
+            showWarning: ''
         });
     };
     createProject = () => {
@@ -56,20 +58,20 @@ class CreateProject extends Component {
         }
 
         if (!this.state.projectName && !this.state.projectDescription) {
-            alert('Please provide name and description for the project');
+            this.setState({ showWarning: 'Please provide name and description for the project' });
             return;
         }
         if (!this.state.projectName) {
-            alert('Please provide name for the project');
+            this.setState({ showWarning: 'Please provide name for the project' });
             return;
         }
         if (!this.state.projectDescription) {
-            alert('Please provide description for the project');
+            this.setState({ showWarning: 'Please provide description for the project' });
             return;
         }
 
         if (!this.state.accessType) {
-            alert('Please select access type for the project');
+            this.setState({ showWarning: 'Please select access type for the project' });
             return;
         }
 
@@ -83,6 +85,9 @@ class CreateProject extends Component {
         };
 
         createProject(objToSent).then(res => {
+            if (res.result === false) {
+                this.setState({ showWarning: res.message });
+            }
             this.props.callback(res);
         });
         //this.props.callback({ result: true });
@@ -102,6 +107,7 @@ class CreateProject extends Component {
                 <ModalHeader toggle={this.props.toggle} autoFocus={false}>
                     Create New Project
                 </ModalHeader>
+                {this.state.showWarning ? <span className="text-center text-danger">{this.state.showWarning}</span> : <></>}
                 <ModalBody id="createProjectBody">
                     {this.state.allowedToCreateProjects ? (
                         <div>

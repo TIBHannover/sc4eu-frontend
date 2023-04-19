@@ -54,7 +54,6 @@ module.exports = {
                         if (response && response.body) {
                             try {
                                 const result = JSON.parse(response.body);
-                                console.log('result', result);
                                 res.json(result);
                             } catch (e) {
                                 res.json({ error: 'Something went wrong' });
