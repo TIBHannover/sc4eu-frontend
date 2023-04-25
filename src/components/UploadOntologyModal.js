@@ -29,7 +29,8 @@ export default class UploadOntology extends Component {
             githubURL: null,
             gitlabURL: null,
             uploadSource: '',
-            ontology_git_data: null
+            ontology_git_data: null,
+            showWarning: ''
         };
 
         this.finishRef = createRef();
@@ -55,7 +56,8 @@ export default class UploadOntology extends Component {
             ontologyDescription: '',
             waitingForResult: false,
             preInitResult: {},
-            errorInitialization: false
+            errorInitialization: false,
+            showWarning: ''
         });
     };
 
@@ -67,8 +69,6 @@ export default class UploadOntology extends Component {
     };
 
     handlePreview = async e => {
-        console.log('ON CHANGE TRIGGERED');
-
         e.preventDefault();
 
         const file = e.target.files[0];
@@ -132,15 +132,15 @@ export default class UploadOntology extends Component {
 
     executeUpload = () => {
         if (!this.state.ontologyName && !this.state.ontologyDescription) {
-            alert('Please provide name and description for the ontology');
+            this.setState({ showWarning: 'Please provide name and description for the ontology' });
             return;
         }
         if (!this.state.ontologyName) {
-            alert('Please provide name for the ontology');
+            this.setState({ showWarning: 'Please provide name for the ontology' });
             return;
         }
         if (!this.state.ontologyDescription) {
-            alert('Please provide description for the ontology');
+            this.setState({ showWarning: 'Please provide description for the ontology' });
             return;
         }
 
@@ -156,6 +156,9 @@ export default class UploadOntology extends Component {
         };
         // await networkCall
         uploadOntology(objToSent).then(res => {
+            if (res.result === false) {
+                this.setState({ showWarning: res.message });
+            }
             this.props.callback(res);
         });
     };
@@ -167,7 +170,6 @@ export default class UploadOntology extends Component {
             const readAble = item.replace('_', ' ');
             return (
                 <div key={'Stats_' + key}>
-                    {' '}
                     {readAble}: {value}
                 </div>
             );
@@ -267,6 +269,7 @@ export default class UploadOntology extends Component {
                 <ModalHeader toggle={this.props.toggle} autoFocus={false}>
                     Upload Ontology File
                 </ModalHeader>
+                {this.state.showWarning ? <span className="text-center text-danger">{this.state.showWarning}</span> : <></>}
                 <ModalBody id="ontologyUploadModalBody">
                     {this.state.allows_upload ? (
                         <div style={{ marginLeft: '20px' }}>
