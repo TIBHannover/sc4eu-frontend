@@ -589,13 +589,13 @@ class CardWidgetVis extends Component {
                         </Popover>
                     </div>*/}
                 </div>
-                {/*{ranges.map(range => (
-                     <div key={'domainKey_' + range} style={{ marginLeft: '1rem' }}>
+                {ranges.map(range => (
+                    <div key={'domainKey_' + range} style={{ marginLeft: '1rem' }}>
                         {range}
-                        <Icon icon={faTimesCircle} onClick={event => this.deleteRange(event, range)} style={{ marginRight: '5px', float: 'right' }} />
-                        <hr style={{ marginTop: 0 }} />
+                        {/*<Icon icon={faTimesCircle} onClick={event => this.deleteRange(event, range)} style={{ marginRight: '5px', float: 'right' }} />*/}
+                        {/*<hr style={{ marginTop: 0 }} />*/}
                     </div>
-                ))}*/}
+                ))}
             </div>
         );
     };
