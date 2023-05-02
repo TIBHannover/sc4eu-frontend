@@ -184,6 +184,8 @@ class RightSideBar extends Component {
             const metaDescriptionsItem = obj[itemKey];
             if (itemKey === 'description' || itemKey === 'title') {
                 return Object.keys(metaDescriptionsItem).map(language => {
+                    const itemValueInLang = metaDescriptionsItem[language];
+
                     return (
                         <tr style={{ fontSize: '12px' }} key={'description_title_' + itemKey + keyIndex++}>
                             <td style={{ paddingRight: '5px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
@@ -191,7 +193,7 @@ class RightSideBar extends Component {
                                     <b>{itemKey}:</b>
                                 </div>
                             </td>
-                            <td>itemValueInLang</td>
+                            <td>{itemValueInLang}</td>
                         </tr>
                     );
                 });
