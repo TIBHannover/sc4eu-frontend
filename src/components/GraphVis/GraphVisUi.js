@@ -1,17 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Container,
-    Dropdown,
-    DropdownMenu,
-    DropdownItem,
-    DropdownToggle,
-    Button,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter
-} from 'reactstrap';
+import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MapperModule from '../../GraphVisLib/implementation/MapperModule';
@@ -21,8 +9,8 @@ import { selectVisualNotation } from 'redux/actions/globalUI_actions';
 import styled, { keyframes } from 'styled-components';
 import { PRIMARY, SECONDARY } from '../RRView/StyledComponents';
 import html2canvas from 'html2canvas';
-import { fontStyled } from '../../styledComponents/styledFont';
 import ScreenCapture from '../ScreenCapture';
+import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -366,7 +354,6 @@ class GraphVisUi extends Component {
             scale: 3
         }).then(canvas => {
             const screenshotUrl = canvas.toDataURL();
-            console.log(screenshotUrl);
 
             const link = document.createElement('a');
             link.href = screenshotUrl;
@@ -383,25 +370,10 @@ class GraphVisUi extends Component {
         });
     };
 
-    closeModal = () => {
-        this.setState({ startCapture: false });
-        this.setState({ open: false, screenCapture: '' });
-    };
-
-    DownloadCapturedImage = () => {
-        const link = document.createElement('a');
-        link.download = 'screenshot.png';
-        link.href = this.state.screenCapture;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
     render() {
         if (this.props.visualizationTabIsActive === false) {
             return <div>This should never be visible</div>;
         }
-        const { screenCapture } = this.state;
         return (
             <div>
                 <div
@@ -432,16 +404,6 @@ class GraphVisUi extends Component {
                         <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
                     {this.createDropDownForNotations()}
-                    {/*<Button
-                        onClick={() => {
-                            console.log(this.graph.links);
-                            console.log(this.graph.nodes);
-                            this.graph.bruteForceRedrawGraph(true);
-                            this.graph.pauseForceDirectedLayout(true);
-                        }}
-                    >
-                        Debug
-                    </Button> */}
                     <Button
                         onClick={() => {
                             this.graph.zoomToExtent();
@@ -519,20 +481,15 @@ class GraphVisUi extends Component {
                         <div id="donatello_rendering_div" style={{ height: '100%', overflow: 'hidden' }} />
                     </Container>
                 </div>
-                <Modal isOpen={this.state.open} style={{ maxHeight: '70vh', maxWidth: '100vh', fontFamily: fontStyled.fontFamily }}>
-                    <ModalHeader toggle={this.closeModal} autoFocus={false}>
-                        ScreenShot Preview
-                    </ModalHeader>
-                    <ModalBody>
-                        <div style={{ maxHeight: '75vh', maxWidth: '100vh', overflow: 'auto' }}>
-                            {screenCapture && <img src={screenCapture} alt="screen capture" />}
-                        </div>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button onClick={this.DownloadCapturedImage}>Save</Button>
-                        <Button onClick={this.closeModal}>Cancel</Button>
-                    </ModalFooter>
-                </Modal>
+                {this.state.open && (
+                    <ScreenCaptureModal
+                        toggle={() => {
+                            this.setState({ open: !this.state.open, screenCapture: '', startCapture: false });
+                        }}
+                        modelOpen={this.state.open}
+                        screenCapture={this.state.screenCapture}
+                    />
+                )}
                 {this.state.startCapture && <ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
             </div>
         );
