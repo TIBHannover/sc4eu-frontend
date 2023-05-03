@@ -8,6 +8,9 @@ import { faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
 import { selectVisualNotation } from 'redux/actions/globalUI_actions';
 import styled, { keyframes } from 'styled-components';
 import { PRIMARY, SECONDARY } from '../RRView/StyledComponents';
+import html2canvas from 'html2canvas';
+import ScreenCapture from '../ScreenCapture';
+import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -37,8 +40,12 @@ class GraphVisUi extends Component {
             leftSideBarExpanded: false,
             rightSideBarExpanded: false,
             selectedItem: null,
-            updateFlipFlop: false
+            updateFlipFlop: false,
+            screenCapture: '',
+            open: false,
+            startCapture: false
         };
+        this.componentRef = React.createRef();
     }
 
     componentDidMount() {
@@ -337,11 +344,36 @@ class GraphVisUi extends Component {
         );
     };
 
+    captureScreenshot = () => {
+        const MainRenderingContainer = document.querySelector('#MainRenderingContainer');
+        if (!MainRenderingContainer) {
+            return;
+        }
+
+        html2canvas(MainRenderingContainer, {
+            scale: 3
+        }).then(canvas => {
+            const screenshotUrl = canvas.toDataURL();
+
+            const link = document.createElement('a');
+            link.href = screenshotUrl;
+            link.download = 'screenshot.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    };
+
+    handleScreenCapture = CapturedImage => {
+        this.setState({ screenCapture: CapturedImage }, () => {
+            this.setState({ open: true });
+        });
+    };
+
     render() {
         if (this.props.visualizationTabIsActive === false) {
             return <div>This should never be visible</div>;
         }
-
         return (
             <div>
                 <div
@@ -372,16 +404,6 @@ class GraphVisUi extends Component {
                         <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
                     {this.createDropDownForNotations()}
-                    {/*<Button
-                        onClick={() => {
-                            console.log(this.graph.links);
-                            console.log(this.graph.nodes);
-                            this.graph.bruteForceRedrawGraph(true);
-                            this.graph.pauseForceDirectedLayout(true);
-                        }}
-                    >
-                        Debug
-                    </Button> */}
                     <Button
                         onClick={() => {
                             this.graph.zoomToExtent();
@@ -390,9 +412,21 @@ class GraphVisUi extends Component {
                     >
                         Zoom
                     </Button>
+                    <Button
+                        style={{ backgroundColor: SECONDARY.dark, textAlign: 'center', marginLeft: '5px', marginTop: '2px', height: '35px' }}
+                        onClick={this.captureScreenshot}
+                    >
+                        Full-page capture
+                    </Button>
+                    <Button
+                        style={{ backgroundColor: SECONDARY.dark, textAlign: 'center', marginLeft: '5px', marginTop: '2px', height: '35px' }}
+                        onClick={() => this.setState({ startCapture: true })}
+                    >
+                        Interactive Capture
+                    </Button>
                 </div>
 
-                <div id="MainRenderingContainer">
+                <div id="MainRenderingContainer" ref={this.componentRef}>
                     <SelectionSideBar
                         style={{ position: 'absolute', backgroundColor: 'white' }}
                         expanded={this.state.leftSideBarExpanded}
@@ -447,6 +481,16 @@ class GraphVisUi extends Component {
                         <div id="donatello_rendering_div" style={{ height: '100%', overflow: 'hidden' }} />
                     </Container>
                 </div>
+                {this.state.open && (
+                    <ScreenCaptureModal
+                        toggle={() => {
+                            this.setState({ open: !this.state.open, screenCapture: '', startCapture: false });
+                        }}
+                        modelOpen={this.state.open}
+                        screenCapture={this.state.screenCapture}
+                    />
+                )}
+                {this.state.startCapture && <ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
             </div>
         );
     }
@@ -504,7 +548,7 @@ export const SelectionSideBar = styled.div`
     border: 1px solid black;
     color: black;
     width: 350px;
-    height: calc(100% - 90px);
+    height: calc(100% - 140px);
     background: white;
     :focus {
         outline: none;
@@ -528,7 +572,7 @@ export const SelectionRightSidebar = styled.div`
     border: 1px solid black;
     color: black;
     width: 350px;
-    height: calc(100% - 90px);
+    height: calc(100% - 140px);
     background: white;
     :focus {
         outline: none;
