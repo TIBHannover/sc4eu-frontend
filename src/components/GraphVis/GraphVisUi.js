@@ -416,7 +416,7 @@ class GraphVisUi extends Component {
                         style={{ backgroundColor: SECONDARY.dark, textAlign: 'center', marginLeft: '5px', marginTop: '2px', height: '35px' }}
                         onClick={this.captureScreenshot}
                     >
-                        Full-page capture
+                        Visible-page capture
                     </Button>
                     <Button
                         style={{ backgroundColor: SECONDARY.dark, textAlign: 'center', marginLeft: '5px', marginTop: '2px', height: '35px' }}
