@@ -62,7 +62,8 @@ class DashboardItem extends Component {
         this.setState({
             isPopUpOpen: !this.state.isPopUpOpen,
             popUpMessage: 'Are you sure you want to Delete ' + user.display_name + ' ?',
-            Action: 'UserProjectDelete'
+            Action: 'UserDelete',
+            selectedUserID: user.uuid
         });
     };
 
@@ -127,7 +128,7 @@ class DashboardItem extends Component {
                 });
             } else {
                 //Delete User
-                deleteUser(user.uuid).then(() => {
+                deleteUser(this.state.selectedUserID).then(() => {
                     this.props.callback();
                     this.resetState();
                 });
@@ -214,7 +215,7 @@ class DashboardItem extends Component {
                                                     icon={faPlus}
                                                     size={'1x'}
                                                     color={colorStyled.SECONDARY.darker}
-                                                    title={'Click to add new project to this user'}
+                                                    title={'Click to change user role'}
                                                     style={{ float: 'right', marginRight: '3%' }}
                                                 />
                                             </DropdownItem>

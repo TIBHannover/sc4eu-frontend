@@ -60,13 +60,6 @@ export default class DashboardProjects extends Component {
             selectedProjectID: projectUUID,
             selectedUserID: userUUID
         });
-        unregisterUserFromProject(projectUUID, userUUID).then(res => {
-            if (res) {
-                this.getProjectsFromBackend().then(() => {
-                    this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
-                });
-            }
-        });
     };
 
     callBackFromAlertBox = confirmed => {
