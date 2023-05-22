@@ -9,6 +9,7 @@ import { FontAwesomeIcon, FontAwesomeIcon as Icon } from '@fortawesome/react-fon
 import { addUserToProject } from '../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { colorStyled } from '../styledComponents/styledColor';
+import AlertPopUp from './ReusableComponents/AlertPopUp';
 
 class DashboardItem extends Component {
     constructor(props) {
@@ -17,7 +18,13 @@ class DashboardItem extends Component {
             roleValue: null,
             selectedProjectOptions: [],
             dropdownOpen: false,
-            userProjectDropDown: false
+            userProjectDropDown: false,
+            isPopUpOpen: false,
+            popUpMessage: '',
+            selectedProjectID: null,
+            selectedUserID: null,
+            Action: '',
+            userRoleSelected: null
         };
     }
 
@@ -50,20 +57,13 @@ class DashboardItem extends Component {
         });
     };
 
-    deleteUser = item => {
+    deleteUser = () => {
         const user = this.props.userData;
-        const isConfirmed = window.confirm('Are you sure you want to delete ' + user.display_name);
-        if (isConfirmed) {
-            if (user.role === 'System Admin') {
-                alert('Not allowed to delete System Admin');
-                return;
-            } else {
-                //Delete User
-                deleteUser(user.uuid).then(() => {
-                    this.props.callback();
-                });
-            }
-        }
+        this.setState({
+            isPopUpOpen: !this.state.isPopUpOpen,
+            popUpMessage: 'Are you sure you want to Delete ' + user.display_name + ' ?',
+            Action: 'UserProjectDelete'
+        });
     };
 
     toggle = () => {
@@ -75,52 +75,107 @@ class DashboardItem extends Component {
     };
 
     deleteProjectFromUser = async (project, user) => {
-        const isConfirmed = window.confirm(`Are you sure you want to Delete?`);
-        if (!isConfirmed) {
-            return;
-        }
-        unregisterUserFromProject(project.projectUUID, user.uuid).then(res => {
-            if (res) {
-                if (res.result === true) {
-                    this.getProjectsForUser();
-                } else {
-                    alert('Something went wrong, Please try again');
-                }
-            }
+        this.setState({
+            isPopUpOpen: !this.state.isPopUpOpen,
+            popUpMessage: 'Are you sure you want to Delete ?',
+            Action: 'UserProjectDelete',
+            selectedProjectID: project.projectUUID,
+            selectedUserID: user.uuid
         });
     };
 
     addNewProjectFromUser = async (user, project) => {
-        const isConfirmed = window.confirm(`Are you sure you want to Add "${project.value}" project ?`);
-        if (!isConfirmed) {
-            return;
-        }
-        addUserToProject(project.projectUUID, user.uuid).then(res => {
-            if (res.result === true) {
-                this.getProjectsForUser();
-            } else {
-                console.warn(res);
-            }
+        this.setState({
+            isPopUpOpen: true,
+            popUpMessage: `Are you sure you want to Add "${project.value}" project ?`,
+            Action: 'UserProjectAdd',
+            selectedProjectID: project.projectUUID,
+            selectedUserID: user.uuid
         });
     };
 
     updateUserRole = async (user, roleSelected) => {
-        this.setState({ roleValue: roleSelected });
-        const newRole = {
-            user_id: user.uuid,
-            role_id: roleSelected.roleId
-        };
-        const isConfirmed = window.confirm(`Are you sure you want to update role of "${user.display_name}" ?`);
-        if (!isConfirmed) {
-            return;
-        }
-        updateUserRole(newRole).then(response => {
-            if (response === 'true') {
-                console.info('user role updated successfully');
-            } else {
-                console.warn(response);
-            }
+        this.setState({
+            roleValue: roleSelected,
+            isPopUpOpen: true,
+            popUpMessage: `Are you sure you want to update role of "${user.display_name}" ?`,
+            Action: 'UpdateUserRole',
+            selectedUserID: user.uuid,
+            userRoleSelected: roleSelected
         });
+    };
+
+    resetState = () => {
+        this.setState({
+            isPopUpOpen: false,
+            popUpMessage: '',
+            Action: null,
+            selectedProjectID: null,
+            selectedUserID: null,
+            userRoleSelected: null
+        });
+    };
+
+    callBackFromAlertBox = confirmed => {
+        if (confirmed && this.state.Action === 'UserDelete') {
+            const user = this.props.userData;
+            if (user.role === 'System Admin') {
+                this.setState({
+                    isPopUpOpen: !this.state.isPopUpOpen,
+                    popUpMessage: 'Not allowed to delete System Admin',
+                    Action: null
+                });
+            } else {
+                //Delete User
+                deleteUser(user.uuid).then(() => {
+                    this.props.callback();
+                    this.resetState();
+                });
+            }
+        } else if (confirmed && this.state.Action === 'UserProjectDelete') {
+            const { selectedProjectID, selectedUserID } = this.state;
+            unregisterUserFromProject(selectedProjectID, selectedUserID).then(res => {
+                if (res) {
+                    if (res.result === true) {
+                        this.getProjectsForUser();
+                        this.resetState();
+                    } else {
+                        this.setState({
+                            isPopUpOpen: true,
+                            popUpMessage: 'Something went wrong, Please try again',
+                            Action: null,
+                            selectedProjectID: null,
+                            selectedUserID: null
+                        });
+                    }
+                }
+            });
+        } else if (confirmed && this.state.Action === 'UserProjectAdd') {
+            const { selectedProjectID, selectedUserID } = this.state;
+            addUserToProject(selectedProjectID, selectedUserID).then(res => {
+                if (res.result === true) {
+                    this.getProjectsForUser();
+                    this.resetState();
+                } else {
+                    console.warn(res);
+                    this.resetState();
+                }
+            });
+        } else if (confirmed && this.state.Action === 'UpdateUserRole') {
+            const newRole = {
+                user_id: this.state.selectedUserID,
+                role_id: this.state.userRoleSelected.roleId
+            };
+            updateUserRole(newRole).then(response => {
+                if (response === 'true') {
+                    console.info('user role updated successfully');
+                    this.resetState();
+                } else {
+                    console.warn(response);
+                    this.resetState();
+                }
+            });
+        }
     };
 
     extractRow = () => {
@@ -284,7 +339,19 @@ class DashboardItem extends Component {
     };
 
     render() {
-        return <tr>{this.extractRow()}</tr>;
+        return (
+            <>
+                <AlertPopUp
+                    bodyText={this.state.popUpMessage}
+                    isOpen={this.state.isPopUpOpen}
+                    onClose={() => {
+                        this.setState({ isPopUpOpen: !this.state.isPopUpOpen });
+                    }}
+                    isConfirm={this.callBackFromAlertBox}
+                />
+                <tr>{this.extractRow()}</tr>
+            </>
+        );
     }
 }
 
