@@ -9,12 +9,14 @@ import { colorStyled } from '../styledComponents/styledColor';
 import { fontStyled } from '../styledComponents/styledFont';
 
 import ReactGoogleSlides from 'react-google-slides';
+import { Link } from 'react-router-dom';
 export default class Training extends Component {
     constructor(props) {
         super(props);
         this.state = {
             collapseSection1: false,
-            collapseSection2: false
+            collapseSection2: false,
+            collapseSection3: false
         };
     }
 
@@ -24,6 +26,10 @@ export default class Training extends Component {
 
     toggleSection2 = () => {
         this.setState({ collapseSection2: !this.state.collapseSection2 });
+    };
+
+    toggleSection3 = () => {
+        this.setState({ collapseSection3: !this.state.collapseSection3 });
     };
 
     render() {
@@ -69,6 +75,39 @@ export default class Training extends Component {
                         </Button>
                         <Collapse isOpen={this.state.collapseSection2}>
                             <StyledText> Here will go the Video</StyledText>
+                        </Collapse>
+                        <Button
+                            style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
+                            className="btn"
+                            onClick={this.toggleSection3}
+                        >
+                            <Icon icon={!this.state.collapseSection3 ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                            Scientific Publication
+                        </Button>
+                        <Collapse isOpen={this.state.collapseSection3}>
+                            <a href="https://ceur-ws.org/Vol-3376/paper10.pdf" />
+                            <div style={{ padding: '20px 20px 20px 20px' }}>
+                                <li>
+                                    <a target="_blank" href="https://ceur-ws.org/Vol-3376/paper11.pdf" rel="noreferrer">
+                                        Collaborative and Cross-Stakeholder Ontology Engineering
+                                    </a>
+                                </li>
+                                <li>
+                                    <a target="_blank" href="https://ceur-ws.org/Vol-3376/paper10.pdf " rel="noreferrer">
+                                        Collaborative Work on Ontologies - A Report
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        target="_blank"
+                                        href="https://www.researchgate.net/profile/Nour-Ramzy/publication/358523968_The_Digital_Reference_Semantically_Connecting_Semiconductor_Supply_Chains_to_Customers_-The_Open_Online_Sales_and_Marketing_Vision/links/620619e2634ff774f4c214cf/The-Digital-Reference-Semantically-Connecting-Semiconductor-Supply-Chains-to-Customers-The-Open-Online-Sales-and-Marketing-Vision.pdf"
+                                        rel="noreferrer"
+                                    >
+                                        The Digital Reference: Semantically Connecting Semiconductor Supply Chains to Customers -The Open Online Sales
+                                        and Marketing Vision
+                                    </a>
+                                </li>
+                            </div>
                         </Collapse>
                     </Container>
                 </div>
