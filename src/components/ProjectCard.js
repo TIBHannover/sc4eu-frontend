@@ -30,13 +30,18 @@ class ProjectIndexCards extends Component {
         };
     }
 
+    // Function to open the alert popup box asking the user if they want to delete the project
     deleteProject = async event => {
-        //delete Project...
         event.preventDefault();
         event.stopPropagation();
-        this.setState({ isPopUpOpen: !this.state.isPopUpOpen, popUpMessage: 'Are you sure you want to Delete this project?', isAuthorized: true });
+        this.setState({
+            isPopUpOpen: !this.state.isPopUpOpen,
+            popUpMessage: 'Are you sure you want to delete this project?',
+            isAuthorized: true
+        });
     };
 
+    // Callback function for the alert popup box to handle the user's confirmation
     PopUpCallbackToDeleteProject = async confirmed => {
         if (confirmed && this.state.isAuthorized) {
             this.setState({
@@ -47,8 +52,10 @@ class ProjectIndexCards extends Component {
                 const allows = await userIsAllowdToUploadOntology();
                 if (allows.result === true) {
                     if (this.props.inputData.unlock === true) {
+                        // Calls the deleteProject function to delete the project
                         deleteProject(this.props.inputData.uuid).then(res => {
                             if (res.success === true) {
+                                // Calls the callback function with the result if deletion is successful
                                 this.props.callback(res.result);
                             }
                         });

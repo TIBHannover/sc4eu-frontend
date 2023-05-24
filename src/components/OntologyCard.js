@@ -50,6 +50,7 @@ class OntologyCard extends Component {
         });
     };
 
+    // Function to open the alert popup box asking the user if they want to delete the project
     deleteOntology = async event => {
         //delete Ontology...
         event.preventDefault();
@@ -62,6 +63,7 @@ class OntologyCard extends Component {
         Cookies.set(MODE_OF_OPERATIONS, 'hybrid');
     };
 
+    // Callback function for the alert popup box to handle the user's confirmation
     PopUpCallbackToDeleteOntology = async confirmed => {
         if (confirmed && this.state.isAuthorized) {
             try {

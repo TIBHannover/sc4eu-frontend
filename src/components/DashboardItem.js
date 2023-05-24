@@ -57,6 +57,7 @@ class DashboardItem extends Component {
         });
     };
 
+    // Function to open the alert popup box asking the user if they want to delete the user
     deleteUser = () => {
         const user = this.props.userData;
         this.setState({
@@ -75,6 +76,7 @@ class DashboardItem extends Component {
         this.setState({ userProjectDropDown: !this.state.userProjectDropDown });
     };
 
+    // Function to open the alert popup box asking the user if they want to delete the userProject
     deleteProjectFromUser = async (project, user) => {
         this.setState({
             isPopUpOpen: !this.state.isPopUpOpen,
@@ -85,6 +87,7 @@ class DashboardItem extends Component {
         });
     };
 
+    // Function to open the alert popup box asking the user if they want to add the NewProjectFromUser
     addNewProjectFromUser = async (user, project) => {
         this.setState({
             isPopUpOpen: true,
@@ -95,6 +98,7 @@ class DashboardItem extends Component {
         });
     };
 
+    // Function to open the alert popup box asking the user if they want to update the UserRole
     updateUserRole = async (user, roleSelected) => {
         this.setState({
             roleValue: roleSelected,
@@ -117,25 +121,31 @@ class DashboardItem extends Component {
         });
     };
 
+    // Callback function for the alert popup box to handle the user's confirmation
     callBackFromAlertBox = confirmed => {
         if (confirmed && this.state.Action === 'UserDelete') {
+            // If confirmed is true and the action is UserDelete
             const user = this.props.userData;
             if (user.role === 'System Admin') {
+                // If the user is a System Admin, not allowed to delete System Admin
                 this.setState({
                     isPopUpOpen: !this.state.isPopUpOpen,
                     popUpMessage: 'Not allowed to delete System Admin',
                     Action: null
                 });
             } else {
-                //Delete User
+                // Delete User
                 deleteUser(this.state.selectedUserID).then(() => {
+                    // Calls the deleteUser function and handles the response
                     this.props.callback();
                     this.resetState();
                 });
             }
         } else if (confirmed && this.state.Action === 'UserProjectDelete') {
+            // If confirmed is true and the action is UserProjectDelete
             const { selectedProjectID, selectedUserID } = this.state;
             unregisterUserFromProject(selectedProjectID, selectedUserID).then(res => {
+                // Calls the unregisterUserFromProject function and handles the response
                 if (res) {
                     if (res.result === true) {
                         this.getProjectsForUser();
@@ -152,8 +162,10 @@ class DashboardItem extends Component {
                 }
             });
         } else if (confirmed && this.state.Action === 'UserProjectAdd') {
+            // If confirmed is true and the action is UserProjectAdd
             const { selectedProjectID, selectedUserID } = this.state;
             addUserToProject(selectedProjectID, selectedUserID).then(res => {
+                // Calls the addUserToProject function and handles the response
                 if (res.result === true) {
                     this.getProjectsForUser();
                     this.resetState();
@@ -163,13 +175,15 @@ class DashboardItem extends Component {
                 }
             });
         } else if (confirmed && this.state.Action === 'UpdateUserRole') {
+            // If confirmed is true and the action is UpdateUserRole
             const newRole = {
                 user_id: this.state.selectedUserID,
                 role_id: this.state.userRoleSelected.roleId
             };
             updateUserRole(newRole).then(response => {
+                // Calls the updateUserRole function and handles the response
                 if (response === 'true') {
-                    console.info('user role updated successfully');
+                    console.info('User role updated successfully');
                     this.resetState();
                 } else {
                     console.warn(response);

@@ -52,6 +52,7 @@ export default class DashboardProjects extends Component {
         return usersNames;
     };
 
+    // Function to open the alert popup box asking the user if they want to delete the UserFromProject
     deleteUserFromProject = async (projectUUID, userUUID, userName) => {
         this.setState({
             isPopUpOpen: !this.state.isPopUpOpen,
@@ -62,6 +63,7 @@ export default class DashboardProjects extends Component {
         });
     };
 
+    // Callback function for the alert popup box to handle the user's confirmation
     callBackFromAlertBox = confirmed => {
         if (confirmed && this.state.isAuthorized) {
             const { selectedProjectID, selectedUserID } = this.state;
