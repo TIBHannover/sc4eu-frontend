@@ -257,6 +257,7 @@ class RightSideBar extends Component {
     showComparison = async () => {
         this.setState({ isLoading: true });
         if (this.state.firstSelectedCommit === '' || this.state.secondSelectedCommit === '') {
+            // PopUp open to show the alert message
             this.setState({
                 isPopUpOpen: !this.state.isPopUpOpen,
                 popUpMessage: 'Please selected the two commits to compare',
@@ -290,6 +291,7 @@ class RightSideBar extends Component {
                         this.setState({ isLoadingForWidoco: false });
                     }, 2000);
                 } else {
+                    // PopUp open to show the alert message
                     this.setState({
                         isPopUpOpen: !this.state.isPopUpOpen,
                         popUpMessage: 'Something went wrong, please try again after some time',
@@ -297,6 +299,7 @@ class RightSideBar extends Component {
                     });
                 }
             } catch (error) {
+                // PopUp open to show the alert message
                 this.setState({
                     isPopUpOpen: !this.state.isPopUpOpen,
                     popUpMessage: error,
@@ -304,6 +307,7 @@ class RightSideBar extends Component {
                 });
             }
         } else {
+            // PopUp open to show the alert message
             this.setState({
                 isPopUpOpen: !this.state.isPopUpOpen,
                 popUpMessage: 'Something went wrong, Please Try again after some times'
