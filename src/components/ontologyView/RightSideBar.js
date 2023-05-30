@@ -16,6 +16,7 @@ import { URL_GET_HTML_FILE_WIDOCO } from '../../constants/services';
 import { colorStyled } from '../../styledComponents/styledColor';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { fontStyled } from '../../styledComponents/styledFont';
+import AlertPopUp from '../ReusableComponents/AlertPopUp';
 
 class RightSideBar extends Component {
     constructor(props) {
@@ -36,7 +37,9 @@ class RightSideBar extends Component {
             licenceInfo: 'No Licence Available',
             licenseURL: null,
             gitCollapse: true,
-            isLoadingForWidoco: false
+            isLoadingForWidoco: false,
+            isPopUpOpen: false,
+            popUpMessage: ''
         };
     }
 
@@ -254,7 +257,12 @@ class RightSideBar extends Component {
     showComparison = async () => {
         this.setState({ isLoading: true });
         if (this.state.firstSelectedCommit === '' || this.state.secondSelectedCommit === '') {
-            alert('Please selected the two commits to compare');
+            // PopUp open to show the alert message
+            this.setState({
+                isPopUpOpen: !this.state.isPopUpOpen,
+                popUpMessage: 'Please selected the two commits to compare',
+                isLoading: false
+            });
             return;
         }
         const index_first = this.state.allCommits.findIndex(item => item.value === this.state.firstSelectedCommit);
@@ -283,15 +291,27 @@ class RightSideBar extends Component {
                         this.setState({ isLoadingForWidoco: false });
                     }, 2000);
                 } else {
-                    this.setState({ isLoadingForWidoco: false });
-                    alert('Something went wrong, please try again after some time');
+                    // PopUp open to show the alert message
+                    this.setState({
+                        isPopUpOpen: !this.state.isPopUpOpen,
+                        popUpMessage: 'Something went wrong, please try again after some time',
+                        isLoadingForWidoco: false
+                    });
                 }
             } catch (error) {
-                this.setState({ isLoadingForWidoco: false });
-                alert(error);
+                // PopUp open to show the alert message
+                this.setState({
+                    isPopUpOpen: !this.state.isPopUpOpen,
+                    popUpMessage: error,
+                    isLoadingForWidoco: false
+                });
             }
         } else {
-            alert('Something went wrong, Please Try again after some times');
+            // PopUp open to show the alert message
+            this.setState({
+                isPopUpOpen: !this.state.isPopUpOpen,
+                popUpMessage: 'Something went wrong, Please Try again after some times'
+            });
         }
     };
 
@@ -368,6 +388,16 @@ class RightSideBar extends Component {
         }
         return (
             <>
+                <AlertPopUp
+                    bodyText={this.state.popUpMessage}
+                    isOpen={this.state.isPopUpOpen}
+                    onClose={() => {
+                        this.setState({ isPopUpOpen: !this.state.isPopUpOpen });
+                    }}
+                    isConfirm={() => {
+                        this.setState({ isPopUpOpen: !this.state.isPopUpOpen });
+                    }}
+                />
                 <StyledHeadingDiv>
                     <h4 style={{ width: '100%', margin: '0 auto' }}>Metadata</h4>
                 </StyledHeadingDiv>

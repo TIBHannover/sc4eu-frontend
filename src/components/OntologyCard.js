@@ -19,8 +19,17 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
+import AlertPopUp from './ReusableComponents/AlertPopUp';
 
 class OntologyCard extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isPopUpOpen: false,
+            popUpMessage: '',
+            isAuthorized: false
+        };
+    }
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
@@ -41,29 +50,11 @@ class OntologyCard extends Component {
         });
     };
 
+    // Function to open the alert popup box asking the user if they want to delete the project
     deleteOntology = async event => {
         //delete Ontology...
         event.preventDefault();
-
-        const isConfirmed = window.confirm('Are you sure you want to Delete this ontology?');
-        if (!isConfirmed) {
-            return;
-        }
-
-        try {
-            const allows = await userIsAllowdToUploadOntology();
-            if (allows.result === true) {
-                deleteOntology(this.props.inputData.uuid).then(res => {
-                    if (res.success === true) {
-                        this.props.callback(res.result);
-                    }
-                });
-            } else {
-                alert('You are not authorized to delete this ontology');
-            }
-        } catch (rejectedValue) {
-            console.log(rejectedValue);
-        }
+        this.setState({ isPopUpOpen: !this.state.isPopUpOpen, popUpMessage: 'Are you sure you want to Delete this ontology ?', isAuthorized: true });
     };
 
     onclick = () => {
@@ -72,10 +63,41 @@ class OntologyCard extends Component {
         Cookies.set(MODE_OF_OPERATIONS, 'hybrid');
     };
 
+    // Callback function for the alert popup box to handle the user's confirmation
+    PopUpCallbackToDeleteOntology = async confirmed => {
+        if (confirmed && this.state.isAuthorized) {
+            try {
+                const allows = await userIsAllowdToUploadOntology();
+                if (allows.result === true) {
+                    deleteOntology(this.props.inputData.uuid).then(res => {
+                        if (res.success === true) {
+                            this.props.callback(res.result);
+                        }
+                    });
+                } else {
+                    this.setState({
+                        isPopUpOpen: !this.state.isPopUpOpen,
+                        popUpMessage: 'You are not authorized to delete this ontology',
+                        isAuthorized: false
+                    });
+                }
+            } catch (rejectedValue) {
+                console.log(rejectedValue);
+            }
+        }
+    };
+
     render() {
+        const { isPopUpOpen, popUpMessage } = this.state;
         return (
             <div>
                 <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
+                    <AlertPopUp
+                        bodyText={popUpMessage}
+                        isOpen={isPopUpOpen}
+                        onClose={() => this.setState({ isPopUpOpen: false })}
+                        isConfirm={confirmed => this.PopUpCallbackToDeleteOntology(confirmed)}
+                    />
                     <StyledCardHeader>
                         {this.props.currentUser !== 0 && this.props.currentUser !== null && (
                             <StyledButton

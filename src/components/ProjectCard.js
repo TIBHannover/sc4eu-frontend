@@ -17,42 +17,65 @@ import { redux_addProject, redux_removeAlreadyLoadedOntology, redux_removeOntolo
 import { connect } from 'react-redux';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
+import AlertPopUp from './ReusableComponents/AlertPopUp';
 
 class ProjectIndexCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showEditProjectModal: false
+            showEditProjectModal: false,
+            isPopUpOpen: false,
+            popUpMessage: '',
+            isAuthorized: false
         };
     }
 
+    // Function to open the alert popup box asking the user if they want to delete the project
     deleteProject = async event => {
-        //delete Project...
         event.preventDefault();
         event.stopPropagation();
+        this.setState({
+            isPopUpOpen: !this.state.isPopUpOpen,
+            popUpMessage: 'Are you sure you want to delete this project?',
+            isAuthorized: true
+        });
+    };
 
-        const isConfirmed = window.confirm('Are you sure you want to Delete this ontology?');
-        if (!isConfirmed) {
-            return;
-        }
-
-        try {
-            const allows = await userIsAllowdToUploadOntology();
-            if (allows.result === true) {
-                if (this.props.inputData.unlock === true) {
-                    deleteProject(this.props.inputData.uuid).then(res => {
-                        if (res.success === true) {
-                            this.props.callback(res.result);
-                        }
-                    });
+    // Callback function for the alert popup box to handle the user's confirmation
+    PopUpCallbackToDeleteProject = async confirmed => {
+        if (confirmed && this.state.isAuthorized) {
+            this.setState({
+                isPopUpOpen: false,
+                popUpMessage: ''
+            });
+            try {
+                const allows = await userIsAllowdToUploadOntology();
+                if (allows.result === true) {
+                    if (this.props.inputData.unlock === true) {
+                        // Calls the deleteProject function to delete the project
+                        deleteProject(this.props.inputData.uuid).then(res => {
+                            if (res.success === true) {
+                                // Calls the callback function with the result if deletion is successful
+                                this.props.callback(res.result);
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            isPopUpOpen: !this.state.isPopUpOpen,
+                            popUpMessage: 'You are not authorized to delete this project',
+                            isAuthorized: false
+                        });
+                    }
                 } else {
-                    alert('You are not authorized to delete this project');
+                    this.setState({
+                        isPopUpOpen: !this.state.isPopUpOpen,
+                        popUpMessage: 'You are not authorized to delete this project',
+                        isAuthorized: false
+                    });
                 }
-            } else {
-                alert('You are not authorized to delete this project');
+            } catch (rejectedValue) {
+                console.log(rejectedValue);
             }
-        } catch (rejectedValue) {
-            console.log(rejectedValue);
         }
     };
 
@@ -75,7 +98,10 @@ class ProjectIndexCards extends Component {
             this.props.redux_addProject(this.props.inputData);
             this.props.history.push(reverse(ROUTES.ONTOLOGY));
         } else {
-            alert('This is Private Project You can not open it');
+            this.setState({
+                isPopUpOpen: !this.state.isPopUpOpen,
+                popUpMessage: 'This is Private Project You can not open it'
+            });
         }
     };
 
@@ -83,6 +109,14 @@ class ProjectIndexCards extends Component {
         return (
             <div>
                 <StyledCard onDragStart={this.preventDraggingOfItem}>
+                    <AlertPopUp
+                        bodyText={this.state.popUpMessage}
+                        isOpen={this.state.isPopUpOpen}
+                        onClose={() => {
+                            this.setState({ isPopUpOpen: !this.state.isPopUpOpen });
+                        }}
+                        isConfirm={this.PopUpCallbackToDeleteProject}
+                    />
                     <StyledCardHeader>
                         {this.props.currentUser !== 0 && this.props.currentUser !== null && (
                             <>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { addUserToProject, getProjectUsersDetail, getUserProjectsDetail, unregisterUserFromProject } from '../network/UserProfileCalls';
 import DashboardProjectsTable from './DashboardProjectsTable';
+import AlertPopUp from './ReusableComponents/AlertPopUp';
 
 export default class DashboardProjects extends Component {
     constructor(props) {
@@ -9,7 +10,12 @@ export default class DashboardProjects extends Component {
 
         this.state = {
             userProjectsDetail: null,
-            updateFlipFlop: false
+            updateFlipFlop: false,
+            isPopUpOpen: false,
+            popUpMessage: '',
+            isAuthorized: false,
+            selectedProjectID: null,
+            selectedUserID: null
         };
     }
 
@@ -46,18 +52,36 @@ export default class DashboardProjects extends Component {
         return usersNames;
     };
 
+    // Function to open the alert popup box asking the user if they want to delete the UserFromProject
     deleteUserFromProject = async (projectUUID, userUUID, userName) => {
-        const isConfirmed = window.confirm(`Are you sure you want to Delete ${userName} User?`);
-        if (!isConfirmed) {
-            return;
-        }
-        unregisterUserFromProject(projectUUID, userUUID).then(res => {
-            if (res) {
-                this.getProjectsFromBackend().then(() => {
-                    this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
-                });
-            }
+        this.setState({
+            isPopUpOpen: !this.state.isPopUpOpen,
+            popUpMessage: `Are you sure you want to Delete ${userName} User?`,
+            isAuthorized: true,
+            selectedProjectID: projectUUID,
+            selectedUserID: userUUID
         });
+    };
+
+    // Callback function for the alert popup box to handle the user's confirmation
+    callBackFromAlertBox = confirmed => {
+        if (confirmed && this.state.isAuthorized) {
+            const { selectedProjectID, selectedUserID } = this.state;
+            unregisterUserFromProject(selectedProjectID, selectedUserID).then(res => {
+                if (res) {
+                    this.getProjectsFromBackend().then(() => {
+                        this.setState({
+                            updateFlipFlop: !this.state.updateFlipFlop,
+                            isPopUpOpen: false,
+                            popUpMessage: '',
+                            isAuthorized: false,
+                            selectedProjectID: null,
+                            selectedUserID: null
+                        });
+                    });
+                }
+            });
+        }
     };
 
     addUserToProject = async (projectUUID, userUUID) => {
@@ -100,6 +124,14 @@ export default class DashboardProjects extends Component {
     render() {
         return (
             <div key={this.state.updateFlipFlop}>
+                <AlertPopUp
+                    bodyText={this.state.popUpMessage}
+                    isOpen={this.state.isPopUpOpen}
+                    onClose={() => {
+                        this.setState({ isPopUpOpen: !this.state.isPopUpOpen });
+                    }}
+                    isConfirm={this.callBackFromAlertBox}
+                />
                 {this.state.userProjectsDetail ? (
                     <DashboardProjectsTable
                         columns={this.COLUMNS}
