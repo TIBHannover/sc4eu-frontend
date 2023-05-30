@@ -30,8 +30,9 @@ class ProjectView extends Component {
             flipflop: false,
             isEditing: { description: false, title: false, version: false, iri: false },
             canNotAddProject: true,
-            collapsePrivateProject: true,
-            collapsePublicProject: true,
+            collapsePrivateProject: false,
+            collapsePublicProject: false,
+            collapseSC3Project: false,
             showEmailModal: false
         };
     }
@@ -116,13 +117,27 @@ class ProjectView extends Component {
         this.setState({ collapsePublicProject: !this.state.collapsePublicProject });
     };
 
+    toggleSC3Project = () => {
+        this.setState({ collapseSC3Project: !this.state.collapseSC3Project });
+    };
+
     emailSent = () => {
         this.setState({ showEmailModal: false });
     };
 
     ProjectSection = ({ project, AccessType }) => {
         let isProjectAvailable = false;
-        const filteredProject = project.filter(item => item.unlock && item.access_type === AccessType);
+        // SC3ProjectName have that project which project name contain SC3 word  and this project is visible in the SC3 Project Section in List of project view  page
+        const SC3ProjectName = project.filter(item => item.name.toLowerCase().includes('sc 3') || item.name.toLowerCase().includes('sc3'));
+        const PublicAndPrivateProject = project.filter(item => item.unlock && item.access_type === AccessType && !SC3ProjectName.includes(item));
+
+        let filteredProject;
+
+        if (AccessType === 'SC3') {
+            filteredProject = SC3ProjectName;
+        } else {
+            filteredProject = PublicAndPrivateProject;
+        }
         if (filteredProject.length > 0) {
             isProjectAvailable = true;
         }
@@ -218,7 +233,28 @@ class ProjectView extends Component {
                 </StyledSubHeadingDiv>
                 <StyledScrollbarDiv>
                     <Scrollbars>
-                        <StyledButton onClick={this.togglePrivateProject}>
+                        <StyledButton onClick={this.toggleSC3Project}>
+                            <FontAwesomeIcon
+                                style={{
+                                    width: '3%',
+                                    margin: '4px 0px 0px 0px'
+                                }}
+                                color={colorStyled.PRIMARY.dark}
+                                icon={!this.state.collapseSC3Project ? faCaretRight : faCaretDown}
+                            />
+                            <StyledH4>
+                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>SC3 Projects</span>
+                            </StyledH4>
+                            <FontAwesomeIcon
+                                color={colorStyled.PRIMARY.dark}
+                                style={{ width: '3%', margin: '4px 0px 0px 0px' }}
+                                icon={!this.state.collapseSC3Project ? faCaretLeft : faCaretDown}
+                            />
+                        </StyledButton>
+                        <Collapse isOpen={this.state.collapseSC3Project}>
+                            {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="SC3" /> : 'Still Loading'}
+                        </Collapse>
+                        <StyledButton style={{ marginTop: '1%' }} onClick={this.togglePrivateProject}>
                             <FontAwesomeIcon
                                 style={{
                                     width: '3%',

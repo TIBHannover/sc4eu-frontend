@@ -17,7 +17,8 @@ class CreateProject extends Component {
             projectDescription: '',
             accessType: '',
             allowedToCreateProjects: false,
-            showWarning: ''
+            showWarning: '',
+            isDropdownDisabled: false
         };
     }
 
@@ -35,6 +36,15 @@ class CreateProject extends Component {
 
     handleOnChangeName = event => {
         this.setState({ projectName: event.target.value });
+
+        // Check if the entered value contains 'sc3' or 'sc 3' (case-insensitive).
+        if (event.target.value.toLowerCase().includes('sc3') || event.target.value.toLowerCase().includes('sc 3')) {
+            // If it does, set the accessType to 'Public' and disable the dropdown because SC3 project will be always public projects.
+            this.setState({ accessType: 'Public', isDropdownDisabled: true });
+        } else {
+            // If it doesn't, clear the accessType and enable the dropdown.
+            this.setState({ accessType: '', isDropdownDisabled: false });
+        }
     };
     handleOnChangeDesc = event => {
         this.setState({ projectDescription: event.target.value });
@@ -48,6 +58,7 @@ class CreateProject extends Component {
         this.setState({
             projectName: '',
             projectDescription: '',
+            accessType: '',
             showWarning: ''
         });
     };
@@ -142,11 +153,17 @@ class CreateProject extends Component {
                                     id="exampleSelect"
                                     value={this.state.accessType}
                                     onChange={this.handleOnChangeAccess}
+                                    disabled={this.state.isDropdownDisabled}
                                 >
                                     <option>Select Access Type....</option>
                                     <option>Public</option>
                                     <option>Private</option>
                                 </Input>
+                                {this.state.isDropdownDisabled && (
+                                    <p className="text-info mt-2">
+                                        You have the word "SC3" in the Name field. So it's by default access type is Public{' '}
+                                    </p>
+                                )}
                             </FormGroup>
                         </div>
                     ) : (
