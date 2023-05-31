@@ -14,7 +14,8 @@ export default class EditProjectModal extends Component {
                 uuid: '',
                 projectName: '',
                 projectDescription: '',
-                accessType: ''
+                accessType: '',
+                isDropdownDisabled: false
             },
             allowedToEditProjects: false
         };
@@ -22,14 +23,26 @@ export default class EditProjectModal extends Component {
 
     componentDidMount() {
         const projectData = this.props.projectData;
-        this.setState({
-            projectItems: {
-                uuid: projectData.uuid,
-                projectName: projectData.name,
-                projectDescription: projectData.description,
-                accessType: projectData.access_type
+        this.setState(
+            {
+                projectItems: {
+                    uuid: projectData.uuid,
+                    projectName: projectData.name,
+                    projectDescription: projectData.description,
+                    accessType: projectData.access_type
+                }
+            },
+            // Check if the entered value contains 'sc3' or 'sc 3' (case-insensitive).
+            () => {
+                if (
+                    this.state.projectItems.projectName.toLowerCase().includes('sc3') ||
+                    this.state.projectItems.projectName.toLowerCase().includes('sc 3')
+                ) {
+                    // If it does, set the accessType to 'Public' and disable the dropdown because SC3 project will be always public projects.
+                    this.setState({ accessType: 'Public', isDropdownDisabled: true });
+                }
             }
-        });
+        );
     }
 
     componentDidUpdate = async prevProps => {
@@ -42,9 +55,24 @@ export default class EditProjectModal extends Component {
     handelOnChange = event => {
         const newProjectItems = { ...this.state.projectItems };
         newProjectItems[event.target.name] = event.target.value;
-        this.setState({
-            projectItems: newProjectItems
-        });
+        this.setState(
+            {
+                projectItems: newProjectItems
+            },
+            () => {
+                // Check if the entered value contains 'sc3' or 'sc 3' (case-insensitive).
+                if (
+                    this.state.projectItems.projectName.toLowerCase().includes('sc3') ||
+                    this.state.projectItems.projectName.toLowerCase().includes('sc 3')
+                ) {
+                    // If it does, set the accessType to 'Public' and disable the dropdown because SC3 project will be always public projects.
+                    this.setState({ accessType: 'Public', isDropdownDisabled: true });
+                } else {
+                    // If it doesn't, clear the accessType and enable the dropdown.
+                    this.setState({ accessType: '', isDropdownDisabled: false });
+                }
+            }
+        );
     };
 
     editProject = () => {
@@ -100,6 +128,7 @@ export default class EditProjectModal extends Component {
                                     id="accessType"
                                     defaultValue={this.state.projectItems.accessType || 'Select Access Type...'}
                                     onChange={this.handelOnChange}
+                                    disabled={this.state.isDropdownDisabled}
                                 >
                                     <option defaultValue={this.state.projectItems.accessType || 'Select Access Type...'} disabled>
                                         {this.state.projectItems.accessType || 'Select Access Type...'}
@@ -107,6 +136,11 @@ export default class EditProjectModal extends Component {
                                     <option>Public</option>
                                     <option>Private</option>
                                 </Input>
+                                {this.state.isDropdownDisabled && (
+                                    <p className="text-info mt-2">
+                                        You have the word "SC3" in the Name field. So it's by default access type is Public{' '}
+                                    </p>
+                                )}
                             </FormGroup>
                         </div>
                     ) : (
