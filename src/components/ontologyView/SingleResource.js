@@ -11,6 +11,7 @@ import CardWidgetVis from '../ontologyView/CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { GraphVisButton, WidgetVisButton, CollapsibleItem } from './StyledComponents';
 import { PRIMARY } from '../RRView/StyledComponents';
+import AnnotationsDropDown from './AnnotationsDropDown';
 class SingleResource extends Component {
     constructor(props) {
         super(props);
@@ -20,7 +21,7 @@ class SingleResource extends Component {
             showingGraphVis: false,
             showingWidgetVis: false,
             showBody: false,
-
+            showingWidgetAnnotation: false,
             graphVisInitialRendering: true,
             bodyInitialRendering: true,
             widgetInitialRendering: true,
@@ -55,6 +56,11 @@ class SingleResource extends Component {
     showWidgetVis = () => {
         this.setState({ showingWidgetVis: !this.state.showingWidgetVis, widgetInitialRendering: false });
     };
+
+    showWidgetAnnotation = () => {
+        this.setState({ showingWidgetAnnotation: !this.state.showingWidgetAnnotation, widgetInitialRendering: false });
+    };
+
     createGraphVisForResource = () => {
         this.setState({ showingGraphVis: !this.state.showingGraphVis, graphVisInitialRendering: false });
     };
@@ -90,6 +96,12 @@ class SingleResource extends Component {
         const currentResource = this.props.resourceContext;
         const isVisible = currentResource.isFilteredOut === true ? 'none' : 'block';
         this.props.arrayOfRef.push({ identifier: currentResource.identifier, ref: this.ref });
+        const props = {
+            itemType: 'Resource',
+            itemIdentifier: this.props.resourceContext.identifier,
+            itemOfInterest: this.props.resourceContext,
+            callback: this.updateSiblings
+        };
         return (
             <div
                 ref={this.ref}
@@ -119,6 +131,8 @@ class SingleResource extends Component {
                         showingBody={this.state.showBody}
                         showingWidget={this.state.showingWidgetVis}
                         showingGraph={this.state.showingGraphVis}
+                        showWidgetAnnotation={this.showWidgetAnnotation}
+                        showingWidgetAnnotation={this.state.showingWidgetAnnotation}
                     />
                 )}
 
@@ -158,6 +172,9 @@ class SingleResource extends Component {
                         itemType="Resource"
                         callback={this.updateSiblings}
                     />
+                </CollapsibleItem>
+                <CollapsibleItem isOpen={this.state.showingWidgetAnnotation}>
+                    <AnnotationsDropDown {...props} />
                 </CollapsibleItem>
                 {!this.props.experimentalLayout && (
                     <div style={{ display: 'flex', width: '100%' }}>

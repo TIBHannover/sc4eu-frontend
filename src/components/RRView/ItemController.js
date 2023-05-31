@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faProjectDiagram, faCubesStacked } from '@fortawesome/free-solid-svg-icons';
+import { faProjectDiagram, faCubesStacked, faAlignJustify, faCircleNodes } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
 import { PRIMARY, SECONDARY } from './StyledComponents';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
@@ -81,10 +81,9 @@ class ItemController extends Component {
             <StyledController style={{ padding: 0, height: '30px', width: '100%', overflow: 'hidden', display: 'flex' }}>
                 {/*TEXT VIEW*/}
                 <div style={{ width: '250px', minWidth: '100px', display: 'flex' }}>
-                    {/*--------Temporarilty disabling showing Body Icon*/}
-                    {/*<ControlButton size="sm" onClick={this.props.showBody} active={this.props.showingBody}>*/}
-                    {/*    <Icon icon={faAlignJustify} />*/}
-                    {/*</ControlButton>*/}
+                    <ControlButton size="sm" onClick={this.props.showBody} active={this.props.showingBody}>
+                        <Icon icon={faAlignJustify} />
+                    </ControlButton>
 
                     {/*GRAPH VIEW*/}
                     <Tippy content={'Show Graph'}>
@@ -94,13 +93,18 @@ class ItemController extends Component {
                     </Tippy>
 
                     {/*PROTEGE VIEW */}
-                    <Tippy content={'Show Widget'}>
+                    <Tippy content={'Show Description'}>
                         <ControlButton size="sm" onClick={this.props.showWidget} active={this.props.showingWidget}>
                             <Icon icon={faCubesStacked} />
                         </ControlButton>
                     </Tippy>
+                    <Tippy content={'Show Annotation'}>
+                        <ControlButton size="sm" onClick={this.props.showWidgetAnnotation} active={this.props.showingWidgetAnnotation}>
+                            <Icon icon={faCircleNodes} />
+                        </ControlButton>
+                    </Tippy>
                 </div>
-                <div style={{ width: '100%', float: 'center' }}>
+                <div style={{ width: '100%' }}>
                     <Tippy content={this.state.headerLabel}>
                         <LabelDiv
                             isHighlighted={itemHighlighted}
@@ -110,36 +114,6 @@ class ItemController extends Component {
                             {this.state.headerLabel}
                         </LabelDiv>
                     </Tippy>
-                </div>
-
-                {/*--------CONTROLS  (FLOAT RIGHT reverses the order of items )*/}
-                <div style={{ width: '250px', minWidth: '100px', float: 'right' }}>
-                    {/*DELETE*/}
-                    {/* <ControlButton
-                        size="sm"
-                        color="primary"
-                        type="control"
-                        style={{ marginRight: 0, float: 'right' }}
-                        onClick={this.props.deleteResource}
-                    >
-                        <Icon icon={faTrash} />
-                    </ControlButton>*/}
-                    {/* EDIT  */}
-                    {/* <ControlButton
-                        size="sm"
-                        color="primary"
-                        type="control"
-                        style={{ float: 'right' }}
-                        onClick={() => {
-                            this.props.toggleEditButton(!this.props.isEditing);
-                        }}
-                    >
-                        <Icon icon={faPen} />
-                    </ControlButton>*/}
-                    {/* EDIT  */}
-                    {/*<ControlButton size="sm" color="primary" type="control" style={{ float: 'right' }}>
-                        <Icon icon={faEyeSlash} />
-                    </ControlButton>*/}
                 </div>
             </StyledController>
         );
@@ -155,7 +129,6 @@ const mapStateToProps = state => {
 
 ItemController.propTypes = {
     itemType: PropTypes.string.isRequired,
-    forcedReRendering: PropTypes.bool.isRequired,
     itemContext: PropTypes.object.isRequired,
     isEditing: PropTypes.bool.isRequired,
     toggleEditButton: PropTypes.func.isRequired,
@@ -167,7 +140,9 @@ ItemController.propTypes = {
     isBodyExpanded: PropTypes.bool.isRequired,
     showingBody: PropTypes.bool.isRequired,
     showingGraph: PropTypes.bool.isRequired,
-    showingWidget: PropTypes.bool.isRequired
+    showingWidget: PropTypes.bool.isRequired,
+    showWidgetAnnotation: PropTypes.func.isRequired,
+    showingWidgetAnnotation: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
@@ -193,12 +168,11 @@ const LabelDiv = styled.div`
     max-width: 260px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding: 5px;
     border-radius: 10px 10px 0 0;
     border-bottom: none;
     padding: 5px;
     color: white;
-    text-align: center;
+    text-align: left;
     margin-left: auto;
     margin-right: auto;
     height: 30px;

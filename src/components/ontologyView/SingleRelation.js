@@ -11,6 +11,7 @@ import CardWidgetVis from './CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { CollapsibleItem, GraphVisButton, WidgetVisButton } from './StyledComponents';
 import { PRIMARY } from '../RRView/StyledComponents';
+import AnnotationsDropDown from './AnnotationsDropDown';
 
 class SingleRelation extends Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class SingleRelation extends Component {
             showingGraphVis: false,
             showingWidgetVis: false,
             showBody: false,
-
+            showingWidgetAnnotation: false,
             graphVisInitialRendering: true,
             bodyInitialRendering: true,
             widgetInitialRendering: true,
@@ -62,6 +63,11 @@ class SingleRelation extends Component {
     showWidgetVis = () => {
         this.setState({ showingWidgetVis: !this.state.showingWidgetVis, widgetInitialRendering: false });
     };
+
+    showWidgetAnnotation = () => {
+        this.setState({ showingWidgetAnnotation: !this.state.showingWidgetAnnotation, widgetInitialRendering: false });
+    };
+
     createGraphVisForRelation = () => {
         this.setState({ showingGraphVis: !this.state.showingGraphVis, graphVisInitialRendering: false });
     };
@@ -108,7 +114,12 @@ class SingleRelation extends Component {
         this.props.arrayOfRef.push({ identifier: currentRelation.identifier, ref: this.ref });
         const isFiltered = this.props.relationContext.isFilteredOut;
         const isVisible = isFiltered === true ? 'none' : 'block';
-
+        const props = {
+            itemType: 'Relation',
+            itemIdentifier: this.props.relationContext.identifier,
+            itemOfInterest: this.props.relationContext,
+            callback: this.updateSiblings
+        };
         return (
             <div
                 ref={this.ref}
@@ -143,6 +154,8 @@ class SingleRelation extends Component {
                         showingBody={this.state.showBody}
                         showingWidget={this.state.showingWidgetVis}
                         showingGraph={this.state.showingGraphVis}
+                        showWidgetAnnotation={this.showWidgetAnnotation}
+                        showingWidgetAnnotation={this.state.showingWidgetAnnotation}
                     />
                 )}
 
@@ -186,6 +199,9 @@ class SingleRelation extends Component {
                         itemType="Relation"
                         callback={this.updateSiblings}
                     />
+                </CollapsibleItem>
+                <CollapsibleItem isOpen={this.state.showingWidgetAnnotation}>
+                    <AnnotationsDropDown {...props} />
                 </CollapsibleItem>
                 {!this.props.experimentalLayout && (
                     <div style={{ display: 'flex', width: '100%' }}>
