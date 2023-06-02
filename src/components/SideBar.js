@@ -1,96 +1,68 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import 'react-modern-drawer/dist/index.css';
-import {
-    faAlignJustify,
-    faBook,
-    faBrain,
-    faChalkboardTeacher,
-    faFile,
-    faHome,
-    faProjectDiagram,
-    faQuestion,
-    faShieldAlt,
-    faStamp
-} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import WebProtege from '../assets/images/webprotege.png';
-import ontology from '../assets/images/Ontology.png';
 import Cookies from 'js-cookie';
 import { useSelector } from 'react-redux';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
+import List from '@mui/material/List';
+import { ListItem } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import PropTypes from 'prop-types';
+
+import {
+    HomeOutlined,
+    InsertDriveFileOutlined,
+    LiveHelpOutlined,
+    LibraryBooksOutlined,
+    PrivacyTipOutlined,
+    ApprovalOutlined,
+    FormatAlignJustifyOutlined,
+    AccountTreeOutlined,
+    HubOutlined,
+    LegendToggleOutlined,
+    BorderColorOutlined,
+    MenuBookOutlined
+} from '@mui/icons-material';
 
 const StyledText = styled.span`
     margin-left: 20px;
+    white-space: nowrap;
 
     @media (max-width: ${MAX_WIDTH}) {
-        margin-left: 5px;
+        margin-left: 20px;
     }
 `;
 const StyledLink = styled(NavLink)`
     width: 100%;
-    height: 50px;
+    height: 40px;
     display: inline-block;
     border-radius: 4px;
-    padding: 15px;
+    padding: 7px 10px 7px 11px;
     border: 1px;
     background: transparent;
     color: black;
     text-decoration: none;
     text-decoration: none !important;
-    font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    font-size: 15px;
     :hover {
-        background-color: ${colorStyled.SECONDARY.dark};
-        color: white;
+        background-color: ${colorStyled.PRIMARY.light};
+        color: black;
     }
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 30px;
-        padding: 7px;
-        font-size: font-size: ${fontStyled.fontSize.MobileViewLeftSidebarLabelText};
+         padding: 3px 10px 10px 5px;
+        font-size: font-size:  ${colorStyled.PRIMARY.light};
     }
 `;
 
-const StyledHr = styled.hr`
-    margin: 0rem;
-    color: black;
-    height: 0.02rem;
-`;
-
-const StyledIcon = styled(Icon)`
-    font-size: ${fontStyled.fontSize.LeftSidebarText};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewLeftSidebarText};s
-    }
-`;
-
-const StyledImage = styled.img`
-    height: 17px;
-    width: 17px;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: 10px;
-        width: 10px;
-    }
-`;
-
-const StyledHeadingDiv = styled.div`
-    text-align: center;
-    font-size: ${fontStyled.fontSize.LeftSidebarText};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewLeftSidebarText};
-    }
-`;
-
-const SideBar = () => {
+const SideBar = props => {
     const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
     const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
@@ -102,113 +74,120 @@ const SideBar = () => {
     };
 
     const ActiveStyle = {
-        backgroundColor: colorStyled.SECONDARY.dark,
-        color: 'white'
+        backgroundColor: `${colorStyled.PRIMARY.light}`,
+        color: 'black'
     };
 
     return (
-        <div style={{ background: colorStyled.PRIMARY.light, fontFamily: fontStyled.fontFamily }}>
-            <StyledLink title="Open Home" exact activeStyle={ActiveStyle} to={ROUTES.HOME} size="lg">
-                <StyledIcon icon={faHome} />
-                <StyledText>Home</StyledText>
-            </StyledLink>
-            <StyledHr />
-            <StyledHeadingDiv>
-                <span>Management & Visualization</span>
-            </StyledHeadingDiv>
-            <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>
-                <StyledIcon icon={faFile} />
-                <StyledText>Projects</StyledText>
-            </StyledLink>
-            {selectedProject ? (
-                <div>
-                    <StyledLink
-                        to={{
-                            pathname: reverse(ROUTES.ONTOLOGY),
-                            project: selectedProject
-                        }}
-                        activeStyle={ActiveStyle}
-                        title="Open Ontology List"
-                    >
-                        <StyledImage src={ontology} alt="ontology icon" />
-                        <StyledText>Ontologies</StyledText>
+        <List style={{ fontFamily: fontStyled.fontFamily }}>
+            <ListItem>
+                <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                    <StyledLink title="Open Home" exact activeStyle={ActiveStyle} to={ROUTES.HOME} size="lg">
+                        <HomeOutlined color="action" />
+                        <StyledText>Home</StyledText>
                     </StyledLink>
-                    {selectedOntology ? (
-                        <div style={{ marginLeft: '30px' }}>
+                    <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>
+                        <InsertDriveFileOutlined color="action" />
+                        <StyledText>Projects</StyledText>
+                    </StyledLink>
+                    {selectedProject ? (
+                        <div>
                             <StyledLink
-                                title="Open Hybrid View"
                                 to={{
-                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntology.uuid}`
+                                    pathname: reverse(ROUTES.ONTOLOGY),
+                                    project: selectedProject
                                 }}
-                                onClick={() => selectModeOfOperation('hybrid')}
-                                activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
+                                activeStyle={ActiveStyle}
+                                title="Open Ontology List"
                             >
-                                <StyledIcon icon={faBrain} />
-                                <StyledText>Hybrid</StyledText>
+                                <HubOutlined color="action" />
+                                <StyledText>Ontologies</StyledText>
                             </StyledLink>
-                            <StyledLink
-                                title="Open Graph View"
-                                to={{
-                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntology.uuid}`
-                                }}
-                                onClick={() => selectModeOfOperation('graph')}
-                                activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
-                            >
-                                <StyledIcon icon={faProjectDiagram} />
-                                <StyledText>Graph</StyledText>
-                            </StyledLink>
-                            <StyledLink
-                                title="Open Text View"
-                                to={{
-                                    pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                    search: `?ontologyId=${selectedOntology.uuid}`
-                                }}
-                                onClick={() => selectModeOfOperation('text')}
-                                activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
-                            >
-                                <StyledIcon icon={faAlignJustify} />
-                                <StyledText>Text</StyledText>
-                            </StyledLink>
+                            <Divider />
+                            {selectedOntology ? (
+                                <div
+                                    style={{
+                                        marginLeft: props.isOpen ? '30px' : '0px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        transition: '0.6s'
+                                    }}
+                                >
+                                    <StyledLink
+                                        title="Open Hybrid View"
+                                        to={{
+                                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                            search: `?ontologyId=${selectedOntology.uuid}`
+                                        }}
+                                        onClick={() => selectModeOfOperation('hybrid')}
+                                        activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
+                                    >
+                                        <LegendToggleOutlined color="action" />
+                                        <StyledText>Hybrid</StyledText>
+                                    </StyledLink>
+                                    <StyledLink
+                                        title="Open Graph View"
+                                        to={{
+                                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                            search: `?ontologyId=${selectedOntology.uuid}`
+                                        }}
+                                        onClick={() => selectModeOfOperation('graph')}
+                                        activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
+                                    >
+                                        <AccountTreeOutlined color="action" />
+                                        <StyledText>Graph</StyledText>
+                                    </StyledLink>
+                                    <StyledLink
+                                        title="Open Text View"
+                                        to={{
+                                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                            search: `?ontologyId=${selectedOntology.uuid}`
+                                        }}
+                                        onClick={() => selectModeOfOperation('text')}
+                                        activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
+                                    >
+                                        <FormatAlignJustifyOutlined color="action" />
+                                        <StyledText>Text</StyledText>
+                                    </StyledLink>
+                                </div>
+                            ) : null}
                         </div>
                     ) : null}
+                    <Divider />
+                    <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE}>
+                        <BorderColorOutlined color="action" />
+                        <StyledText>WebProtege</StyledText>
+                    </StyledLink>
+                    <Divider />
+                    <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>
+                        <LibraryBooksOutlined color="action" />
+                        <StyledText>Documentation</StyledText>
+                    </StyledLink>
+                    <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ}>
+                        <LiveHelpOutlined color="action" />
+                        <StyledText>FAQ</StyledText>
+                    </StyledLink>
+                    <StyledLink title="Open Training" activeStyle={ActiveStyle} to={ROUTES.TRAINING}>
+                        <MenuBookOutlined color="action" />
+                        <StyledText>Training</StyledText>
+                    </StyledLink>
+                    <Divider />
+                    <StyledLink title="Open Data Policy" activeStyle={ActiveStyle} to={ROUTES.Dataprotections}>
+                        <PrivacyTipOutlined color="action" />
+                        <StyledText>Data Policy</StyledText>
+                    </StyledLink>
+                    <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint}>
+                        <ApprovalOutlined color="action" />
+                        <StyledText>Imprint</StyledText>
+                    </StyledLink>
                 </div>
-            ) : null}
-            <StyledHr />
-            <StyledHeadingDiv>
-                <span>Editing & Documentation</span>
-            </StyledHeadingDiv>
-            <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE}>
-                <StyledImage src={WebProtege} alt="WebProtege icon" />
-                <StyledText>WebProtege</StyledText>
-            </StyledLink>
-            <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>
-                <StyledIcon icon={faBook} />
-                <StyledText>Documentation</StyledText>
-            </StyledLink>
-            <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ}>
-                <StyledIcon icon={faQuestion} />
-                <StyledText>FAQ</StyledText>
-            </StyledLink>
-            <StyledLink title="Open Training" activeStyle={ActiveStyle} to={ROUTES.TRAINING}>
-                <StyledIcon icon={faChalkboardTeacher} />
-                <StyledText>Training</StyledText>
-            </StyledLink>
-            <StyledHr />
-            <StyledHeadingDiv>
-                <span>General & About</span>
-            </StyledHeadingDiv>
-            <StyledLink title="Open Data Policy" activeStyle={ActiveStyle} to={ROUTES.Dataprotections}>
-                <StyledIcon icon={faShieldAlt} />
-                <StyledText>Data Policy</StyledText>
-            </StyledLink>
-            <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint}>
-                <StyledIcon icon={faStamp} />
-                <StyledText>Imprint</StyledText>
-            </StyledLink>
-        </div>
+            </ListItem>
+        </List>
     );
+};
+
+SideBar.propTypes = {
+    isOpen: PropTypes.bool.isRequired
 };
 
 export default SideBar;

@@ -38,9 +38,9 @@ export default class WebProtege extends Component {
                 <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
                 <StyledDiv>
                     {this.state.isLoading ? (
-                        <Button variant="primary" disabled>
-                            <Spinner as="span" animation="grow" size="sm" role="status" aria-hidden="true" />
-                            Loading WebProtege...
+                        <Button style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                            <Spinner animation="grow" size="sm" role="status" aria-hidden="true" style={{ marginBottom: '5px' }} />
+                            <span>Loading WebProtege...</span>
                         </Button>
                     ) : null}
                     {this.getWebProtege()}
@@ -56,6 +56,9 @@ const StyledDiv = styled.div`
     height: calc(100% - 80px);
     width: 100%;
     overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     @media (max-width: ${MAX_WIDTH}) {
         display: none;
