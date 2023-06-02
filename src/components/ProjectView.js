@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Collapse } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
@@ -251,9 +251,9 @@ class ProjectView extends Component {
                                 icon={!this.state.collapseSC3Project ? faCaretLeft : faCaretDown}
                             />
                         </StyledButton>
-                        <Collapse isOpen={this.state.collapseSC3Project}>
+                        <StyledCollapseDiv collapse={this.state.collapseSC3Project}>
                             {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="SC3" /> : 'Still Loading'}
-                        </Collapse>
+                        </StyledCollapseDiv>
                         <StyledButton style={{ marginTop: '1%' }} onClick={this.togglePrivateProject}>
                             <FontAwesomeIcon
                                 style={{
@@ -272,9 +272,9 @@ class ProjectView extends Component {
                                 icon={!this.state.collapsePrivateProject ? faCaretLeft : faCaretDown}
                             />
                         </StyledButton>
-                        <Collapse isOpen={this.state.collapsePrivateProject}>
+                        <StyledCollapseDiv collapse={this.state.collapsePrivateProject}>
                             {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Private" /> : 'Still Loading'}
-                        </Collapse>
+                        </StyledCollapseDiv>
                         <StyledButton style={{ marginTop: '1%' }} onClick={this.togglePublicProject}>
                             <FontAwesomeIcon
                                 color={colorStyled.PRIMARY.dark}
@@ -290,9 +290,9 @@ class ProjectView extends Component {
                                 icon={!this.state.collapsePublicProject ? faCaretLeft : faCaretDown}
                             />
                         </StyledButton>
-                        <Collapse isOpen={this.state.collapsePublicProject}>
+                        <StyledCollapseDiv collapse={this.state.collapsePublicProject}>
                             {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Public" /> : 'Still Loading'}
-                        </Collapse>
+                        </StyledCollapseDiv>
                     </Scrollbars>
                 </StyledScrollbarDiv>
             </StyledRootDiv>
@@ -344,6 +344,7 @@ const StyledButton = styled.button`
     background: none;
     display: flex;
     padding-top: 10px;
+    transition: 0.9s;
 `;
 
 const StyledSubHeadingDiv = styled.div`
@@ -394,5 +395,15 @@ const StyledH4 = styled.h4`
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.Heading};
+    }
+`;
+
+const StyledCollapseDiv = styled.div`
+    max-height: ${props => (props.collapse ? '100%' : '0')};
+    overflow: hidden;
+    transition: max-height 0.9s;
+
+    & > * {
+        transition: all 0.9s;
     }
 `;
