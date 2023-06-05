@@ -351,7 +351,8 @@ class GraphVisUi extends Component {
         }
 
         html2canvas(MainRenderingContainer, {
-            scale: 3
+            scale: 3,
+            x: 80
         }).then(canvas => {
             const screenshotUrl = canvas.toDataURL();
 
@@ -382,7 +383,7 @@ class GraphVisUi extends Component {
                         width: 'auto',
                         marginRight: '50px',
                         marginBottom: '10px',
-                        paddingLeft: '10px',
+                        paddingLeft: '90px',
                         paddingRight: '10px',
                         background: PRIMARY.lighter,
                         position: 'relative',
@@ -428,7 +429,7 @@ class GraphVisUi extends Component {
 
                 <div id="MainRenderingContainer" ref={this.componentRef}>
                     <SelectionSideBar
-                        style={{ position: 'absolute', backgroundColor: 'white' }}
+                        style={{ position: 'absolute', backgroundColor: 'white', marginLeft: '80px' }}
                         expanded={this.state.leftSideBarExpanded}
                         width={350}
                     >

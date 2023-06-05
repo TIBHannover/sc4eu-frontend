@@ -258,6 +258,7 @@ const StyledHeaderDiv = styled.div`
      @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
         overflow: hide;
+        background-image: none;
     }
 `;
 
