@@ -120,7 +120,7 @@ class Dashboard extends Component {
 
     render() {
         return (
-            <div style={{ height: '100%', width: '100%', overflow: 'auto', marginLeft: '80px' }}>
+            <div style={{ height: '100%', width: 'calc(100% - 80px)', overflow: 'auto', marginLeft: '80px' }}>
                 {this.state.loading && (
                     <div>
                         <h2 className="h5" style={{ textAlign: 'center' }}>
