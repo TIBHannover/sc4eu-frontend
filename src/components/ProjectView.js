@@ -399,11 +399,12 @@ const StyledH4 = styled.h4`
 `;
 
 const StyledCollapseDiv = styled.div`
-    max-height: ${props => (props.collapse ? '100%' : '0')};
     overflow: hidden;
-    transition: max-height 0.9s;
+    transition: max-height 0.9s ease-out;
+    max-height: ${props => (props.collapse ? 'auto' : '0')};
 
     & > * {
-        transition: all 0.9s;
+        transition: opacity 0.9s;
+        opacity: ${props => (props.collapse ? '1' : '0')};
     }
 `;
