@@ -24,7 +24,7 @@ export default class WebProtege extends Component {
         return (
             <iframe
                 title="WebProtege"
-                style={{ position: 'absolute', height: 'calc(85% - 80px)', width: '100%', border: 'none' }}
+                style={{ position: 'absolute', height: 'calc(85% - 80px)', width: 'calc(100% - 80px)', border: 'none', marginLeft: '80px' }}
                 loading="lazy"
                 src="https://service.tib.eu/wp4tib/"
                 onLoad={this.hideSpinner}
