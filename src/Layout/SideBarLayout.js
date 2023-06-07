@@ -12,9 +12,11 @@ import { styled } from '@mui/material/styles';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import { Button } from 'reactstrap';
 import { colorStyled } from '../styledComponents/styledColor';
+import { useLocation } from 'react-router-dom';
 
 export default function SideBarLayout() {
     const [open, setOpen] = React.useState(false);
+    const location = useLocation();
 
     const handleDrawer = () => {
         setOpen(!open);
@@ -25,7 +27,7 @@ export default function SideBarLayout() {
             <StyledButtonMobileView color="none" title="Open Menu" onMouseOver={handleDrawer}>
                 <Icon icon={faBars} />
             </StyledButtonMobileView>
-            <Drawer variant="permanent" open={open}>
+            <Drawer variant="permanent" open={open} currentpage={location.pathname}>
                 <StyledDiv open={open}>
                     <IconButton onClick={handleDrawer} style={{ padding: '10px 10px 10px 10px' }}>
                         {open ? (
@@ -70,17 +72,16 @@ const StyledDiv = styled('div')(({ open }) => ({
     }
 }));
 
-const Drawer = styled(MuiDrawer)(({ open }) => ({
+const Drawer = styled(MuiDrawer)(({ open, currentpage }) => ({
     '& .MuiDrawer-paper': {
         width: open ? '220px' : '80px',
-        height: 'calc(100% - 180px)',
+        height: currentpage === '/' ? 'calc(100% - 155px)' : 'calc(100% - 100px)',
         top: 100,
         bot: 80,
         overflow: 'hidden',
         transition: '0.6s',
         whiteSpace: 'nowrap',
         backgroundColor: `${colorStyled.PRIMARY.lighter}`,
-        borderBottom: '1px solid #d9dcdd',
 
         [`@media (max-width: ${MAX_WIDTH})`]: {
             width: open ? '220px' : '0px',

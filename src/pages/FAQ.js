@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Footer from '../Layout/Footer';
 import { Collapse, Button, Container, Table } from 'reactstrap';
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -66,101 +65,98 @@ export default class Faq extends Component {
             }
         ];
         return (
-            <>
-                <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-                    <Container
-                        style={{
-                            borderTop: 'none',
-                            overflow: 'auto',
-                            position: 'relative',
-                            backgroundColor: '#ffffff',
-                            borderRadius: '10px 10px 10px 10px ',
-                            height: 'calc(100% - 80px)',
-                            fontFamily: fontStyled.fontFamily
-                        }}
+            <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+                <Container
+                    style={{
+                        borderTop: 'none',
+                        overflow: 'auto',
+                        position: 'relative',
+                        backgroundColor: '#ffffff',
+                        borderRadius: '10px 10px 10px 10px ',
+                        height: '100%',
+                        fontFamily: fontStyled.fontFamily
+                    }}
+                >
+                    <Button
+                        style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
+                        className="btn"
+                        onClick={this.toggleUserRole}
                     >
-                        <Button
-                            style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
-                            className="btn"
-                            onClick={this.toggleUserRole}
-                        >
-                            <Icon icon={!this.state.collapseUserRole ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                            Definition of User Roles
-                        </Button>
-                        <Collapse isOpen={this.state.collapseUserRole}>
-                            <Table style={{ marginTop: '20px' }} bordered responsive>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Role</th>
+                        <Icon icon={!this.state.collapseUserRole ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                        Definition of User Roles
+                    </Button>
+                    <Collapse isOpen={this.state.collapseUserRole}>
+                        <Table style={{ marginTop: '20px' }} bordered responsive>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                </tr>
+                            </thead>
+                            <tbody style={{ whiteSpace: 'pre' }}>
+                                {items?.map((item, id) => (
+                                    <tr key={id}>
+                                        <td style={{ fontWeight: 600, color: colorStyled.TEXTCOLOR }}>{item.name}</td>
+                                        <td style={{ color: colorStyled.TEXTCOLOR }}>{item.role}</td>
                                     </tr>
-                                </thead>
-                                <tbody style={{ whiteSpace: 'pre' }}>
-                                    {items?.map((item, id) => (
-                                        <tr key={id}>
-                                            <td style={{ fontWeight: 600, color: colorStyled.TEXTCOLOR }}>{item.name}</td>
-                                            <td style={{ color: colorStyled.TEXTCOLOR }}>{item.role}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </Collapse>
-                        <Button
-                            style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
-                            className="btn"
-                            onClick={this.toggleIssueManagement}
-                        >
-                            <Icon icon={!this.state.collapseIssueManagement ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                            Issue Management
-                        </Button>
-                        <Collapse isOpen={this.state.collapseIssueManagement}>
-                            <StyledText>
-                                If you face any problems with our portal, face any issues with our running system or if you have any further
-                                questions, please get in contact with us via our issue management system that you will find here :&nbsp;
-                                <a
-                                    style={{ color: colorStyled.SECONDARY.link }}
-                                    target="_blank"
-                                    href="https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues"
-                                    rel="noreferrer"
-                                >
-                                    SC<sup>3</sup> Issue Management
-                                </a>
-                            </StyledText>
-                        </Collapse>
-                        <Button
-                            style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
-                            className="btn"
-                            onClick={this.toggleWebProtege}
-                        >
-                            <Icon icon={!this.state.collapseWebProtege ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                            WebProtege
-                        </Button>
-                        <Collapse isOpen={this.state.collapseWebProtege}>
-                            <StyledText>
-                                WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC<sup>3</sup>{' '}
-                                Ontology Curation Portal ( &nbsp;
-                                <a style={{ color: colorStyled.SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
-                                    SC<sup>3</sup> Ontology Curation Portal
-                                </a>
-                                &nbsp;) and WebProtege (&nbsp;
-                                <a
-                                    style={{ color: colorStyled.SECONDARY.link }}
-                                    target="_blank"
-                                    href="https://service.tib.eu/sc3/webprotege"
-                                    rel="noreferrer"
-                                >
-                                    WebProtege
-                                </a>
-                                &nbsp;) are only loosely coupled. Both have their own authentication solutions and data management systems. It is
-                                therefore not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first
-                                work collaboratively Web-protege. Then download the ontology from WebProtege and from there into the visualization
-                                tool. A more integrated solution is coming.
-                            </StyledText>
-                        </Collapse>
-                    </Container>
-                </div>
-                <Footer />
-            </>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </Collapse>
+                    <Button
+                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
+                        className="btn"
+                        onClick={this.toggleIssueManagement}
+                    >
+                        <Icon icon={!this.state.collapseIssueManagement ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                        Issue Management
+                    </Button>
+                    <Collapse isOpen={this.state.collapseIssueManagement}>
+                        <StyledText>
+                            If you face any problems with our portal, face any issues with our running system or if you have any further questions,
+                            please get in contact with us via our issue management system that you will find here :&nbsp;
+                            <a
+                                style={{ color: colorStyled.SECONDARY.link }}
+                                target="_blank"
+                                href="https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues"
+                                rel="noreferrer"
+                            >
+                                SC<sup>3</sup> Issue Management
+                            </a>
+                        </StyledText>
+                    </Collapse>
+                    <Button
+                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
+                        className="btn"
+                        onClick={this.toggleWebProtege}
+                    >
+                        <Icon icon={!this.state.collapseWebProtege ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                        WebProtege
+                    </Button>
+                    <Collapse isOpen={this.state.collapseWebProtege}>
+                        <StyledText>
+                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC<sup>3</sup> Ontology
+                            Curation Portal ( &nbsp;
+                            <a style={{ color: colorStyled.SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
+                                SC<sup>3</sup> Ontology Curation Portal
+                            </a>
+                            &nbsp;) and WebProtege (&nbsp;
+                            <a
+                                style={{ color: colorStyled.SECONDARY.link }}
+                                target="_blank"
+                                href="https://service.tib.eu/sc3/webprotege"
+                                rel="noreferrer"
+                            >
+                                WebProtege
+                            </a>
+                            &nbsp;) are only loosely coupled. Both have their own authentication solutions and data management systems. It is
+                            therefore not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first work
+                            collaboratively Web-protege. Then download the ontology from WebProtege and from there into the visualization tool. A more
+                            integrated solution is coming.
+                        </StyledText>
+                    </Collapse>
+                </Container>
+            </div>
         );
     }
 }

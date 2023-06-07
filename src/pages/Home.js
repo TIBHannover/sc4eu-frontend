@@ -70,7 +70,7 @@ const StyledRootDiv = styled.div`
 `;
 
 const StyledBody = styled.div`
-    height: 88%;
+    height: 100%;
     margin: auto;
     text-align: center;
     padding-top: 5%;
@@ -80,7 +80,7 @@ const StyledBody = styled.div`
     color: black;
 
     @media (max-width: ${MAX_WIDTH}) {
-        height: 83%;
+        height: 100%;
         flex-direction: column;
         text-align: center;
         margin-left: 2%;
