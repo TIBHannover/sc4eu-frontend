@@ -62,7 +62,7 @@ const StyledBodyDiv = styled.div`
     right: 0;
     padding-left: 3%;
     padding-right: 6%;
-    height: 80px;
+    height: 55px;
     background: ${colorStyled.PRIMARY.light};
     overflow: hidden;
 
@@ -104,8 +104,8 @@ const LogoOntologyPortal = styled.img`
     }
 
     @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 60px;
-        width: 80px;
+        height: 40px;
+        width: 75px;
     }
 `;
 
@@ -118,7 +118,7 @@ const Image = styled.img`
     }
 
     @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 35px;
+        height: 30px;
     }
 `;
 
@@ -126,7 +126,7 @@ const StyledRightDiv = styled.div`
     display: flex;
 
     @media (max-width: ${MAX_WIDTH}) {
-        transform: translate(-30%, 30%);
+        transform: translate(-30%, 15%);
     }
 `;
 
@@ -138,12 +138,12 @@ const StyledImage = styled.img`
     @media (max-width: ${MAX_WIDTH}) {
         height: 40px;
         width: 100px;
-        margin-top: 2%;
+        margin-top: 1px;
     }
 
     @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        height: 55px;
-        width: 150px;
+        height: 40px;
+        width: 130px;
     }
 `;
 
@@ -156,7 +156,6 @@ const StyledText = styled.p`
     white-space: nowrap;
 
     @media (max-width: ${MAX_WIDTH}) {
-        margin-top: 2%;
         margin-left: 1%;
         font-size: 10px;
         padding-left: 0.5%;
@@ -175,6 +174,6 @@ const StyledLogo = styled.img`
 
     @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         height: 40px;
-        width: 50px;
+        width: 40px;
     }
 `;

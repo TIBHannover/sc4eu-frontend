@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Spinner } from 'reactstrap';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import Footer from '../Layout/Footer';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
 
@@ -24,7 +23,7 @@ export default class WebProtege extends Component {
         return (
             <iframe
                 title="WebProtege"
-                style={{ position: 'absolute', height: 'calc(85% - 80px)', width: 'calc(100% - 80px)', border: 'none', marginLeft: '80px' }}
+                style={{ position: 'absolute', height: '85%', width: 'calc(100% - 80px)', border: 'none', marginLeft: '80px' }}
                 loading="lazy"
                 src="https://service.tib.eu/wp4tib/"
                 onLoad={this.hideSpinner}
@@ -45,7 +44,6 @@ export default class WebProtege extends Component {
                     ) : null}
                     {this.getWebProtege()}
                 </StyledDiv>
-                <Footer />
             </>
         );
     }
@@ -53,7 +51,7 @@ export default class WebProtege extends Component {
 
 const StyledDiv = styled.div`
     background-color: ${colorStyled.PRIMARY.lighter};
-    height: calc(100% - 80px);
+    height: 100%;
     width: 100%;
     overflow-y: auto;
     display: flex;
