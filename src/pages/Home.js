@@ -27,9 +27,7 @@ export default class Home extends Component {
                     <IntroductoryPopUp />
                     <div style={{ display: 'flex', justifyContent: 'center', height: '10%' }}>
                         <StyledLogo src={Logo} alt="SC3 Logo" />
-                        <StyledHeading>
-                            The SC3 Portal Enables Effective Ontology Management and Visualization for Cross-stakeholder Ontology Engineering
-                        </StyledHeading>
+                        <StyledHeading>Semantically Connected Semiconductor Supply Chains Project</StyledHeading>
                     </div>
                     <StyledBody>
                         <StyledBodyDiv>
@@ -188,7 +186,7 @@ const StyledBodyLink = styled(Link)`
     }
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.mainHeading};
+        font-size: ${fontStyled.fontSize.DesktopViewSubHeading};
     }
 `;
 
