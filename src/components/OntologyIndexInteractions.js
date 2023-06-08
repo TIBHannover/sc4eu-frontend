@@ -48,7 +48,7 @@ class OntologyIndexInteractions extends Component {
     };
 
     render() {
-        const projectName = this.props.project_name.length > 10 ? this.props.project_name.substring(0, 10) + ' ...' : this.props.project_name;
+        const projectName = this.props.project_name.length > 50 ? this.props.project_name.substring(0, 50) + ' ...' : this.props.project_name;
         return (
             <div style={{ height: '100%', fontFamily: fontStyled.fontFamily }}>
                 <StyledHeadingDiv>
@@ -57,13 +57,16 @@ class OntologyIndexInteractions extends Component {
                         <span>Projects</span>
                     </Link>
                     <h4 style={{ padding: '10px', margin: '0 auto', color: 'white' }}>
-                        Select Ontology from <u id="tootlipTarget">{projectName}</u> Project
+                        <u id="tootlipTarget">{projectName}</u> Project
                     </h4>
                     <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
                         <u>{this.props.project_name}</u>
                     </UncontrolledTooltip>
                 </StyledHeadingDiv>
                 <StyledSubHeadingDiv>
+                    <StyledInfoSpan style={{ margin: '15px 15px 15px 15px', float: 'left' }}>
+                        Click on one of the ontology below to view
+                    </StyledInfoSpan>
                     <StyledButtonToUploadOntology
                         disabled={this.state.canNotUploadOntology}
                         title={'Please login to upload ontology'}
@@ -143,9 +146,18 @@ const StyledContentDiv = styled.div`
 `;
 
 const StyledButtonToUploadOntology = styled(Button)`
+    float: right;
     margin: 10px 15px 15px 0px;
     background-color: ${colorStyled.SECONDARY.dark};
     margin-left: 1%;
+    font-size: ${fontStyled.fontSize.NormalText};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledInfoSpan = styled.span`
     font-size: ${fontStyled.fontSize.NormalText};
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
