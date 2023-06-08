@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import ROUTES from 'constants/routes';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
+import Logo from '../assets/images/logo.png';
 
 export default class Home extends Component {
     constructor(props) {
@@ -24,6 +25,12 @@ export default class Home extends Component {
             <>
                 <StyledRootDiv>
                     <IntroductoryPopUp />
+                    <div style={{ display: 'flex', justifyContent: 'center', height: '10%' }}>
+                        <StyledLogo src={Logo} alt="SC3 Logo" />
+                        <StyledHeading>
+                            The SC3 Portal Enables Effective Ontology Management and Visualization for Cross-stakeholder Ontology Engineering
+                        </StyledHeading>
+                    </div>
                     <StyledBody>
                         <StyledBodyDiv>
                             <StyledBodyLogo src={collection} alt="collection" />
@@ -69,18 +76,54 @@ const StyledRootDiv = styled.div`
     overflow: auto;
 `;
 
+const StyledHeading = styled.div`
+    font-size: ${fontStyled.fontSize.subHeading};
+    margin-top: 4%;
+    color: black;
+    font-weight: 600;
+    font-family: sans-serif;
+    text-align-last: center;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        font-size: 12px;
+        margin-top: 3%;
+        text-align: center;
+        color: black;
+        font-weight: 600;
+        font-family: sans-serif;
+        margin-right: 25px;
+    }
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.mainHeading};
+    }
+`;
+
+const StyledLogo = styled.img`
+    height: 80px;
+    width: 70px;
+    margin-right: 10px;
+    float: left;
+    margin-top: 3%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        height: 25px;
+        width: 45px;
+    }
+    overflow: auto;
+`;
+
 const StyledBody = styled.div`
-    height: 100%;
+    height: 90%;
     margin: auto;
     text-align: center;
-    padding-top: 5%;
+    padding-top: 100px;
     margin-left: 10%;
     margin-right: 10%;
     display: flex;
     color: black;
 
     @media (max-width: ${MAX_WIDTH}) {
-        height: 100%;
+        height: 90%;
         flex-direction: column;
         text-align: center;
         margin-left: 2%;
