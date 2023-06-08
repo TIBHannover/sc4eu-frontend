@@ -45,7 +45,7 @@ const StyledRootDiv = styled.div`
 `;
 
 const CenterDisplayDiv = styled.div`
-    width: ${({ isSidebarOpen }) => (isSidebarOpen ? '55%' : '80%')};
+    width: ${({ isSidebarOpen }) => (isSidebarOpen ? '65%' : '90%')};
     transition: width 0.5s ease-out;
     background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     margin-left: auto;

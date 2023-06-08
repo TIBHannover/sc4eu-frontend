@@ -1,23 +1,19 @@
 import React, { Component } from 'react';
 import ROUTES from 'constants/routes';
-
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { Link, Redirect, withRouter } from 'react-router-dom';
 import { reverse } from 'named-urls';
-
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth, toggleAuthDialog } from '../redux/actions/auth';
 import greetingTime from 'greeting-time';
 import { Button, ButtonGroup, Row } from 'reactstrap';
 import SignInModal from '../components/Signin/SignInModal';
-
 import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import SideBarLayout from './SideBarLayout';
 import background from '../assets/images/Curve Line.svg';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
@@ -131,9 +127,6 @@ class Header extends Component {
         return (
             <StyledRootDiv>
                 <StyledHeaderDiv>
-                    <div style={{ marginRight: 'auto' }}>
-                        <SideBarLayout />
-                    </div>
                     <StyledRightSideDiv>
                         {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
                             <div>

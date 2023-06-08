@@ -4,12 +4,13 @@ import Header from './Header';
 import PropTypes from 'prop-types';
 import { colorStyled } from '../styledComponents/styledColor';
 import { fontStyled } from '../styledComponents/styledFont';
+import SideBarLayout from './SideBarLayout';
 
 export default function DefaultLayout(props) {
     return (
         <StyledBody>
             <Header />
-            <StyledAppContent>{props.children}</StyledAppContent>
+            <SideBarLayout children={props.children} />
         </StyledBody>
     );
 }
@@ -25,9 +26,4 @@ const StyledBody = styled.div`
     height: 100%;
     background-color: ${colorStyled.PRIMARY.lighter};
     font-family: ${fontStyled.fontFamily};
-`;
-
-const StyledAppContent = styled.div`
-    height: calc(100vh - 100px);
-    overflow: hidden;
 `;

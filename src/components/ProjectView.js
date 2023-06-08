@@ -316,7 +316,7 @@ ProjectView.propTypes = {
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
 
 const StyledRootDiv = styled.div`
-    width: 60%;
+    width: 65%;
     margin-left: auto;
     background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     margin-top: 0.5%;
