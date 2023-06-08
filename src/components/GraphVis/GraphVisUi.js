@@ -351,8 +351,7 @@ class GraphVisUi extends Component {
         }
 
         html2canvas(MainRenderingContainer, {
-            scale: 3,
-            x: 80
+            scale: 3
         }).then(canvas => {
             const screenshotUrl = canvas.toDataURL();
 
@@ -383,7 +382,7 @@ class GraphVisUi extends Component {
                         width: 'auto',
                         marginRight: '50px',
                         marginBottom: '10px',
-                        paddingLeft: '90px',
+                        paddingLeft: '10px',
                         paddingRight: '10px',
                         background: PRIMARY.lighter,
                         position: 'relative',
@@ -428,26 +427,23 @@ class GraphVisUi extends Component {
                 </div>
 
                 <div id="MainRenderingContainer" ref={this.componentRef}>
-                    <SelectionSideBar
-                        style={{ position: 'absolute', backgroundColor: 'white', marginLeft: '80px' }}
-                        expanded={this.state.leftSideBarExpanded}
-                        width={350}
-                    >
-                        <div style={{ position: 'relative', left: '345px' }}>
-                            <Button
-                                onClick={() => {
-                                    this.setState({ leftSideBarExpanded: !this.state.leftSideBarExpanded });
-                                }}
-                                style={{ backgroundColor: SECONDARY.dark }}
-                            >
-                                {this.state.leftSideBarExpanded ? '<' : '>'}
-                            </Button>
-                        </div>
-                        <div style={{ position: 'relative', top: '-40px', padding: '5px' }}>
-                            <h3>Customization Options</h3>
-                            <div>Selected Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
-                            {this.state.selectedItem && this.renderCustomizationOptions()}
-                        </div>
+                    <SelectionSideBar expanded={this.state.leftSideBarExpanded}>
+                        <StyledButton
+                            expanded={this.state.leftSideBarExpanded}
+                            onClick={() => {
+                                this.setState({ leftSideBarExpanded: !this.state.leftSideBarExpanded });
+                            }}
+                            style={{ backgroundColor: SECONDARY.dark }}
+                        >
+                            {this.state.leftSideBarExpanded ? '<' : '>'}
+                        </StyledButton>
+                        {this.state.leftSideBarExpanded && (
+                            <div>
+                                <h3>Customization Options</h3>
+                                <div>Selected Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
+                                {this.state.selectedItem && this.renderCustomizationOptions()}
+                            </div>
+                        )}
                     </SelectionSideBar>
 
                     <SelectionRightSidebar
@@ -521,17 +517,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GraphVisUi);
-const expandContentContainerAnimation = ({ expanded, width }) => {
-    return keyframes`
-  from {
-    left: ${expanded ? -width : 0}px;
-  }
-  to {
-    left: ${expanded ? 0 : -width}px;
-   
-  }
-`;
-};
 
 const expandContentContainerAnimationRight = ({ expanded, width }) => {
     return keyframes`
@@ -545,12 +530,12 @@ const expandContentContainerAnimationRight = ({ expanded, width }) => {
 `;
 };
 export const SelectionSideBar = styled.div`
-    background-color: red;
-    border: 1px solid black;
-    color: black;
-    width: 350px;
+    position: absolute;
+    width: ${props => (props.expanded ? '350px' : '0')};
     height: calc(100% - 140px);
-    background: white;
+    transition: width 0.3s ease;
+    background-color: white;
+    border: ${props => (props.expanded ? '1px solid black' : 'none')};
     :focus {
         outline: none;
     }
@@ -559,15 +544,14 @@ export const SelectionSideBar = styled.div`
     }
     word-break: none;
     white-space: nowrap;
-
-    border-bottom: 1px solid black;
-    padding: 2px;
-    position: relative;
-    animation-name: ${expandContentContainerAnimation};
-    animation-duration: 400ms;
-    // opacity: 0.5;
-    left: ${props => (props.expanded ? 0 : -props.width)}px;
 `;
+
+const StyledButton = styled(Button)`
+    position: absolute;
+    left: ${props => (props.expanded ? '350px' : '0px')};
+    transition: left 0.3s ease;
+`;
+
 export const SelectionRightSidebar = styled.div`
     background-color: red;
     border: 1px solid black;

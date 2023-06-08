@@ -120,7 +120,7 @@ class Dashboard extends Component {
 
     render() {
         return (
-            <div style={{ height: '100%', width: 'calc(100% - 80px)', overflow: 'auto', marginLeft: '80px' }}>
+            <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
                 {this.state.loading && (
                     <div>
                         <h2 className="h5" style={{ textAlign: 'center' }}>
@@ -131,7 +131,7 @@ class Dashboard extends Component {
                         </h2>
                     </div>
                 )}
-                <Nav tabs style={{ alignContent: 'center', fontStyle: 'normal' }}>
+                <Nav tabs style={{ alignContent: 'center', fontStyle: 'normal', cursor: 'pointer' }}>
                     <NavItem>
                         <NavLink
                             className={classnames({ active: this.state.activeTab === '1' })}

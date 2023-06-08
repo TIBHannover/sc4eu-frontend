@@ -65,7 +65,7 @@ export default class Home extends Component {
 
 const StyledRootDiv = styled.div`
     width: 100%;
-    height: calc(100% - 80px);
+    height: 100%;
     overflow: auto;
 `;
 

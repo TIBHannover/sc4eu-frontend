@@ -160,11 +160,15 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps)(RightSideProjectBar);
 
 const StyledRootDiv = styled.div`
-    width: 22%;
+    width: 25%;
     margin-top: 0.5%;
     height: 95%;
     background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     font-family: ${fontStyled.fontFamily};
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        width: 22%;
+    }
 `;
 
 const StyledHeadingDiv = styled.div`
