@@ -133,7 +133,12 @@ class ProjectView extends Component {
     ProjectSection = ({ project, AccessType }) => {
         let isProjectAvailable = false;
         // SC3ProjectName have that project which project name contain SC3 word  and this project is visible in the SC3 Project Section in List of project view  page
-        const SC3ProjectName = project.filter(item => item.name.toLowerCase().includes('sc 3') || item.name.toLowerCase().includes('sc3'));
+        const SC3ProjectName = project.filter(
+            item =>
+                item.name.toLowerCase().includes('sc 3') ||
+                item.name.toLowerCase().includes('sc3') ||
+                item.name.toLowerCase().includes('semantically connected semiconductor supply chains')
+        );
         const SandboxProject = project.filter(item => item.name.toLowerCase().includes('sandbox'));
         const PublicAndPrivateProject = project.filter(
             item => item.unlock && item.access_type === AccessType && !SC3ProjectName.includes(item) && !SandboxProject.includes(item)
@@ -253,7 +258,9 @@ class ProjectView extends Component {
                                 icon={!this.state.collapseSC3Project ? faCaretRight : faCaretDown}
                             />
                             <StyledH4>
-                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>SC3 Collection</span>
+                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>
+                                    Semantically Connected Semiconductor Supply Chains Collection
+                                </span>
                             </StyledH4>
                             <FontAwesomeIcon
                                 color={colorStyled.PRIMARY.dark}
