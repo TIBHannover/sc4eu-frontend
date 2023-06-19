@@ -139,7 +139,7 @@ class OntologyCard extends Component {
                             ) : (
                                 <StyledIcon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
                             )}
-                            <div style={{ fontWeight: '500' }}>
+                            <div style={{ fontWeight: '500', textDecoration: 'underline' }}>
                                 <span>{this.props.inputData.name}</span>
                             </div>
                         </StyledLink>
@@ -149,25 +149,24 @@ class OntologyCard extends Component {
                         {this.props.inputData.lookup_type === 'online' || this.props.inputData.lookup_type === 'online-gitlab' ? (
                             <div style={{ marginBottom: '0.5%' }}>
                                 <span style={{ fontWeight: '500' }}>Git Branch:</span>
-                                <span style={{ marginLeft: '5px' }}>
-                                    <a href={this.props.inputData.lookup_path} target={'_blank'} rel="noreferrer">
-                                        {this.props.inputData.gitBranch}
-                                    </a>
-                                </span>
+                                <span style={{ marginLeft: '5px' }}>{this.props.inputData.gitBranch}</span>
                                 <span style={{ fontWeight: '500', marginLeft: '8px' }}>Version: </span>
                                 <span> {this.props.inputData.commitStatus}</span>
                             </div>
                         ) : (
                             <></>
                         )}
-                        <ClampLines
-                            text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                            id="custom"
-                            lines={2}
-                            moreText="Read More"
-                            lessText="Show less"
-                            className="custom-class"
-                        />
+                        <span style={{ fontWeight: '500', display: 'block', float: 'left', marginRight: '5px' }}>Description:</span>
+                        <span style={{ display: 'block' }}>
+                            <ClampLines
+                                text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                                id="custom"
+                                lines={2}
+                                moreText="Read More"
+                                lessText="Show less"
+                                className="custom-class"
+                            />
+                        </span>
                     </StyledCardBody>
                 </StyledCard>
             </div>

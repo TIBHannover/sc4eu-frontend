@@ -33,6 +33,7 @@ class ProjectView extends Component {
             collapsePrivateProject: false,
             collapsePublicProject: false,
             collapseSC3Project: false,
+            collapseSandBoxProject: false,
             showEmailModal: false
         };
     }
@@ -121,6 +122,10 @@ class ProjectView extends Component {
         this.setState({ collapseSC3Project: !this.state.collapseSC3Project });
     };
 
+    toggleSandBoxProject = () => {
+        this.setState({ collapseSandBoxProject: !this.state.collapseSandBoxProject });
+    };
+
     emailSent = () => {
         this.setState({ showEmailModal: false });
     };
@@ -129,12 +134,17 @@ class ProjectView extends Component {
         let isProjectAvailable = false;
         // SC3ProjectName have that project which project name contain SC3 word  and this project is visible in the SC3 Project Section in List of project view  page
         const SC3ProjectName = project.filter(item => item.name.toLowerCase().includes('sc 3') || item.name.toLowerCase().includes('sc3'));
-        const PublicAndPrivateProject = project.filter(item => item.unlock && item.access_type === AccessType && !SC3ProjectName.includes(item));
+        const SandboxProject = project.filter(item => item.name.toLowerCase().includes('sandbox'));
+        const PublicAndPrivateProject = project.filter(
+            item => item.unlock && item.access_type === AccessType && !SC3ProjectName.includes(item) && !SandboxProject.includes(item)
+        );
 
         let filteredProject;
 
         if (AccessType === 'SC3') {
             filteredProject = SC3ProjectName;
+        } else if (AccessType === 'Sandbox') {
+            filteredProject = SandboxProject;
         } else {
             filteredProject = PublicAndPrivateProject;
         }
@@ -233,7 +243,7 @@ class ProjectView extends Component {
                 </StyledSubHeadingDiv>
                 <StyledScrollbarDiv>
                     <Scrollbars>
-                        <StyledButton onClick={this.toggleSC3Project}>
+                        <StyledButton style={{ marginTop: '1%' }} onClick={this.toggleSC3Project}>
                             <FontAwesomeIcon
                                 style={{
                                     width: '3%',
@@ -243,7 +253,7 @@ class ProjectView extends Component {
                                 icon={!this.state.collapseSC3Project ? faCaretRight : faCaretDown}
                             />
                             <StyledH4>
-                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>SC3 Projects</span>
+                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>SC3 Collection</span>
                             </StyledH4>
                             <FontAwesomeIcon
                                 color={colorStyled.PRIMARY.dark}
@@ -253,6 +263,27 @@ class ProjectView extends Component {
                         </StyledButton>
                         <StyledCollapseDiv collapse={this.state.collapseSC3Project}>
                             {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="SC3" /> : 'Still Loading'}
+                        </StyledCollapseDiv>
+                        <StyledButton style={{ marginTop: '1%' }} onClick={this.toggleSandBoxProject}>
+                            <FontAwesomeIcon
+                                style={{
+                                    width: '3%',
+                                    margin: '4px 0px 0px 0px'
+                                }}
+                                color={colorStyled.PRIMARY.dark}
+                                icon={!this.state.collapseSandBoxProject ? faCaretRight : faCaretDown}
+                            />
+                            <StyledH4>
+                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>Sandbox Collection</span>
+                            </StyledH4>
+                            <FontAwesomeIcon
+                                color={colorStyled.PRIMARY.dark}
+                                style={{ width: '3%', margin: '4px 0px 0px 0px' }}
+                                icon={!this.state.collapseSandBoxProject ? faCaretLeft : faCaretDown}
+                            />
+                        </StyledButton>
+                        <StyledCollapseDiv collapse={this.state.collapseSandBoxProject}>
+                            {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="Sandbox" /> : 'Still Loading'}
                         </StyledCollapseDiv>
                         <StyledButton style={{ marginTop: '1%' }} onClick={this.togglePrivateProject}>
                             <FontAwesomeIcon
@@ -264,7 +295,7 @@ class ProjectView extends Component {
                                 icon={!this.state.collapsePrivateProject ? faCaretRight : faCaretDown}
                             />
                             <StyledH4>
-                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>My Projects</span>
+                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>My Collection</span>
                             </StyledH4>
                             <FontAwesomeIcon
                                 color={colorStyled.PRIMARY.dark}
@@ -282,7 +313,7 @@ class ProjectView extends Component {
                                 icon={!this.state.collapsePublicProject ? faCaretRight : faCaretDown}
                             />
                             <StyledH4>
-                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>Public Projects</span>
+                                <span style={{ background: colorStyled.CONTAINER_BACKGROUND_COLOR, padding: '0 10px' }}>Public Collection</span>
                             </StyledH4>
                             <FontAwesomeIcon
                                 color={colorStyled.PRIMARY.dark}
@@ -386,7 +417,7 @@ const StyledScrollbarDiv = styled.div`
 
 const StyledH4 = styled.h4`
     width: 98%;
-    text-align: center;
+    text-align: left;
     color: ${colorStyled.PRIMARY.dark};
     border-bottom: 2px solid ${colorStyled.BORDER_COLOR};
     line-height: 0.1em;
