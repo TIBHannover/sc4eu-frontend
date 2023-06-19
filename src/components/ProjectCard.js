@@ -120,32 +120,36 @@ class ProjectIndexCards extends Component {
                     <StyledCardHeader>
                         {this.props.currentUser !== 0 && this.props.currentUser !== null && (
                             <>
-                                <StyledButton
-                                    color="none"
-                                    size="sm"
-                                    title="Delete Project"
-                                    onClick={this.deleteProject}
-                                    style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                                >
-                                    <StyledIcon icon={faTrash} />
-                                </StyledButton>
-                                <StyledButton
-                                    color="white"
-                                    size="sm"
-                                    title="Edit Project"
-                                    onClick={() => {
-                                        this.setState({ showEditProjectModal: true });
-                                    }}
-                                    style={{
-                                        float: 'right',
-                                        padding: '0px',
-                                        paddingLeft: '5px',
-                                        marginLeft: 'auto',
-                                        marginRight: '5px'
-                                    }}
-                                >
-                                    <StyledIcon icon={faPen} />
-                                </StyledButton>
+                                {this.props.inputData.name.toLowerCase() !== 'sandbox' && (
+                                    <>
+                                        <StyledButton
+                                            color="none"
+                                            size="sm"
+                                            title="Delete Project"
+                                            onClick={this.deleteProject}
+                                            style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
+                                        >
+                                            <StyledIcon icon={faTrash} />
+                                        </StyledButton>
+                                        <StyledButton
+                                            color="white"
+                                            size="sm"
+                                            title="Edit Project"
+                                            onClick={() => {
+                                                this.setState({ showEditProjectModal: true });
+                                            }}
+                                            style={{
+                                                float: 'right',
+                                                padding: '0px',
+                                                paddingLeft: '5px',
+                                                marginLeft: 'auto',
+                                                marginRight: '5px'
+                                            }}
+                                        >
+                                            <StyledIcon icon={faPen} />
+                                        </StyledButton>
+                                    </>
+                                )}
                             </>
                         )}
                         <EditProjectModal
@@ -166,7 +170,8 @@ class ProjectIndexCards extends Component {
                                         fontWeight: '500',
                                         width: '97%',
                                         whiteSpace: 'normal',
-                                        wordBreak: 'break-all'
+                                        wordBreak: 'break-all',
+                                        textDecoration: 'underline'
                                     }}
                                 >
                                     {this.props.inputData.name}
@@ -175,14 +180,16 @@ class ProjectIndexCards extends Component {
                         </StyledLink>
                     </StyledCardHeader>
                     <StyledCardBody>
-                        <ClampLines
-                            text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                            id="custom"
-                            lines={2}
-                            moreText="Read More"
-                            lessText="Show less"
-                            className="custom-class"
-                        />
+                        <span style={{ fontWeight: '500', display: 'block', float: 'left', marginRight: '5px' }}>Description:</span>
+                        <span style={{ display: 'block' }}>
+                            <ClampLines
+                                text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
+                                id="custom"
+                                lines={2}
+                                ellipsis=""
+                                className="custom-class"
+                            />
+                        </span>
                     </StyledCardBody>
                 </StyledCard>
             </div>

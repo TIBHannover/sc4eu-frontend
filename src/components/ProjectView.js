@@ -243,7 +243,7 @@ class ProjectView extends Component {
                 </StyledSubHeadingDiv>
                 <StyledScrollbarDiv>
                     <Scrollbars>
-                        <StyledButton onClick={this.toggleSC3Project}>
+                        <StyledButton style={{ marginTop: '1%' }} onClick={this.toggleSC3Project}>
                             <FontAwesomeIcon
                                 style={{
                                     width: '3%',
@@ -264,7 +264,7 @@ class ProjectView extends Component {
                         <StyledCollapseDiv collapse={this.state.collapseSC3Project}>
                             {this.state.results ? <this.ProjectSection project={this.state.results} AccessType="SC3" /> : 'Still Loading'}
                         </StyledCollapseDiv>
-                        <StyledButton onClick={this.toggleSandBoxProject}>
+                        <StyledButton style={{ marginTop: '1%' }} onClick={this.toggleSandBoxProject}>
                             <FontAwesomeIcon
                                 style={{
                                     width: '3%',
@@ -417,7 +417,7 @@ const StyledScrollbarDiv = styled.div`
 
 const StyledH4 = styled.h4`
     width: 98%;
-    text-align: center;
+    text-align: left;
     color: ${colorStyled.PRIMARY.dark};
     border-bottom: 2px solid ${colorStyled.BORDER_COLOR};
     line-height: 0.1em;
