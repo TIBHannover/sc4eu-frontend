@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 import { Button } from 'reactstrap';
 import IconButton from '@mui/material/IconButton';
 import { CloseOutlined, KeyboardDoubleArrowLeftOutlined, KeyboardDoubleArrowRightOutlined, Menu } from '@mui/icons-material';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 const StyledButtonMobileView = styled('div')(() => ({
     display: 'none',
@@ -39,28 +40,28 @@ const createMixin = activePage => ({
     }
 });
 
-const openedMixin = activePage => ({
+const openedMixin = activepage => ({
     width: '220px',
-    ...createMixin(activePage)
+    ...createMixin(activepage)
 });
 
-const closedMixin = activePage => ({
+const closedMixin = activepage => ({
     width: '80px',
-    ...createMixin(activePage),
+    ...createMixin(activepage),
     [`@media (max-width: ${MAX_WIDTH})`]: {
         width: '0px'
     }
 });
 
-const Drawer = styled(MuiDrawer)(({ open, activePage }) => ({
+const Drawer = styled(MuiDrawer)(({ open, activepage }) => ({
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
-    ...(open ? openedMixin(activePage) : closedMixin(activePage)),
+    ...(open ? openedMixin(activepage) : closedMixin(activepage)),
     [`@media (max-width: ${MAX_WIDTH})`]: {
         width: '0px'
     },
     '& .MuiDrawer-paper': {
-        ...(open ? openedMixin(activePage) : closedMixin(activePage))
+        ...(open ? openedMixin(activepage) : closedMixin(activepage))
     }
 }));
 
@@ -74,7 +75,7 @@ const StyledDiv = styled('div')(({ open }) => ({
 }));
 
 export default function SideBarLayout(props) {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(true);
     const location = useLocation();
 
     const handleDrawer = () => {
@@ -88,23 +89,25 @@ export default function SideBarLayout(props) {
                     {open ? <CloseOutlined /> : <Menu />}
                 </Button>
             </StyledButtonMobileView>
-            <Drawer variant="permanent" open={open} activePage={location.pathname}>
-                <StyledDiv open={open}>
-                    <IconButton onClick={handleDrawer} style={{ padding: '10px 10px 10px 10px' }}>
-                        {open ? (
-                            <div style={{ display: 'flex', alignItems: 'center', marginLeft: '15px' }}>
-                                <KeyboardDoubleArrowLeftOutlined />
-                                <span style={{ fontSize: '15px', marginLeft: '5px' }}>Collapse Sidebar</span>
-                            </div>
-                        ) : (
-                            <KeyboardDoubleArrowRightOutlined />
-                        )}
-                    </IconButton>
-                </StyledDiv>
-                <Divider />
-                <List style={{ marginTop: '-20px' }}>
-                    <SideBar isOpen={open} />
-                </List>
+            <Drawer variant="permanent" open={open} activepage={location.pathname}>
+                <Scrollbars style={{ overflowX: 'hidden' }}>
+                    <StyledDiv open={open}>
+                        <IconButton onClick={handleDrawer} style={{ padding: '10px 10px 10px 10px' }}>
+                            {open ? (
+                                <div style={{ display: 'flex', alignItems: 'center', marginLeft: '15px' }}>
+                                    <KeyboardDoubleArrowLeftOutlined />
+                                    <span style={{ fontSize: '15px', marginLeft: '5px' }}>Collapse Sidebar</span>
+                                </div>
+                            ) : (
+                                <KeyboardDoubleArrowRightOutlined />
+                            )}
+                        </IconButton>
+                    </StyledDiv>
+                    <Divider />
+                    <List style={{ marginTop: '-20px' }}>
+                        <SideBar isOpen={open} />
+                    </List>
+                </Scrollbars>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3, margin: 0, padding: 0 }}>
                 <StyledAppContent activePage={location.pathname}>{props.children}</StyledAppContent>

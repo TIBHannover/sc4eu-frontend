@@ -54,7 +54,7 @@ class OntologyIndexInteractions extends Component {
                 <StyledHeadingDiv>
                     <Link title="Projects List" to={ROUTES.PROJECT} style={{ color: colorStyled.CONTAINER_BACKGROUND_COLOR, marginLeft: '1%' }}>
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
-                        <span>Projects</span>
+                        <span>Back</span>
                     </Link>
                     <h4 style={{ padding: '10px', margin: '0 auto', color: 'white' }}>
                         <u id="tootlipTarget">{projectName}</u> Project

@@ -258,7 +258,7 @@ export default class UploadOntology extends Component {
     render() {
         return (
             <Modal
-                style={{ width: '80%', maxWidth: '80%', fontFamily: fontStyled.fontFamily }}
+                style={{ width: '70%', maxWidth: '80%', fontFamily: fontStyled.fontFamily }}
                 isOpen={this.props.showDialog}
                 toggle={this.props.toggle}
                 autoFocus={false}
