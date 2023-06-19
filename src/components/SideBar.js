@@ -17,7 +17,6 @@ import PropTypes from 'prop-types';
 
 import {
     HomeOutlined,
-    InsertDriveFileOutlined,
     LiveHelpOutlined,
     LibraryBooksOutlined,
     PrivacyTipOutlined,
@@ -27,7 +26,8 @@ import {
     HubOutlined,
     LegendToggleOutlined,
     BorderColorOutlined,
-    MenuBookOutlined
+    MenuBookOutlined,
+    CollectionsOutlined
 } from '@mui/icons-material';
 
 const StyledText = styled.span`
@@ -87,7 +87,7 @@ const SideBar = props => {
                         <StyledText>Home</StyledText>
                     </StyledLink>
                     <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>
-                        <InsertDriveFileOutlined color="action" />
+                        <CollectionsOutlined color="action" />
                         <StyledText>Projects</StyledText>
                     </StyledLink>
                     {selectedProject ? (

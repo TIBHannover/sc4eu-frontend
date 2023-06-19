@@ -11,7 +11,7 @@ class ShowOntologyComparisonModal extends Component {
     render() {
         return (
             <Modal
-                style={{ width: '100%', maxWidth: '80%', height: '100%', maxHeight: '50%', fontFamily: fontStyled.fontFamily }}
+                style={{ width: '70%', maxWidth: '80%', height: '100%', maxHeight: '50%', fontFamily: fontStyled.fontFamily }}
                 isOpen={this.props.showDialog}
                 toggle={this.props.toggle}
                 autoFocus={false}
