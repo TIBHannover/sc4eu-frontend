@@ -11,6 +11,7 @@ import ROUTES from 'constants/routes';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import Logo from '../assets/images/logo.png';
+import GoogleSurvey from '../components/GoogleSurvey';
 
 export default class Home extends Component {
     constructor(props) {
@@ -62,6 +63,15 @@ export default class Home extends Component {
                         </StyledBodyDiv>
                     </StyledBody>
                 </StyledRootDiv>
+                <div
+                    style={{
+                        position: 'fixed',
+                        bottom: '80px',
+                        right: 0
+                    }}
+                >
+                    <GoogleSurvey />
+                </div>
                 <Footer />
             </>
         );
