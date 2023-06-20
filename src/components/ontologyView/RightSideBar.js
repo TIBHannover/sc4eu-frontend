@@ -24,7 +24,7 @@ class RightSideBar extends Component {
         this.state = {
             collapse: true,
             collapseComparison: true,
-            collapseMetaInfo: true,
+            collapseMetaInfo: false,
             openOntology: '',
             openProject: '',
             ontologyVersion: '',
@@ -36,7 +36,7 @@ class RightSideBar extends Component {
             isLoading: false,
             licenceInfo: 'No Licence Available',
             licenseURL: null,
-            gitCollapse: true,
+            gitCollapse: false,
             isLoadingForWidoco: false,
             isPopUpOpen: false,
             popUpMessage: ''
