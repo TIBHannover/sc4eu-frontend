@@ -528,10 +528,10 @@ const OpenCloseButton = styled(Button)`
 `;
 
 const HeadingSpan = styled.span`
-    font-size: ${fontStyled.fontSize.NormalText};
+    font-size: 12px;
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+        font-size: 12px;
     }
 `;
 
