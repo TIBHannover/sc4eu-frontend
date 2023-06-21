@@ -34,7 +34,7 @@ class CardWidgetVis extends Component {
 
         return (
             <div>
-                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
+                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', background: PRIMARY.lighter }}>
                     <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
                     <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
                         {this.renderResourceDescription(itemOfInterest)}

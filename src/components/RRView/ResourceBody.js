@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { StyledResourceBody, StyledBodyInput, PRIMARY } from './StyledComponents';
 
 import { transformResourceToTTL, calculateBodyRows } from '../../mappers/ResToTTL';
+import CardWidgetVis from '../ontologyView/CardWidgetVis';
+import AnnotationsDropDown from '../ontologyView/AnnotationsDropDown';
 
 class ResourceBody extends Component {
     constructor(props) {
@@ -27,15 +29,25 @@ class ResourceBody extends Component {
         const prefixList = this.props.metaInformation.prefixList.longToShort;
         const content = transformResourceToTTL(resDef, prefixList);
         const numRowsRequired = calculateBodyRows(content);
-        if (numRowsRequired === 0) {
-            return <> </>;
-        } else {
-            return (
-                <StyledResourceBody ref={this.bodyRef}>
-                    <div style={{ backgroundColor: 'red', height: 'auto', display: 'block', maxHeight: '100%', maxWidth: '100%' }}>
+        // if (numRowsRequired === 0) {
+        //     return <> </>;
+        // } else {
+        return (
+            <StyledResourceBody ref={this.bodyRef}>
+                <CardWidgetVis
+                    itemIdentifier={this.props.resourceContext.identifier}
+                    itemContext={this.props.resourceContext}
+                    isExpanded={this.props.isBodyExpanded}
+                    itemType="Resource"
+                    // callback={this.updateSiblings}
+                />
+                {numRowsRequired !== 0 && (
+                    <div style={{ height: 'auto', display: 'flex', width: '100%', maxHeight: '100%', maxWidth: '100%' }}>
                         <StyledBodyInput
                             style={{ background: PRIMARY.lighter }}
                             type="textarea"
+                            display={'flex'}
+                            width="100%"
                             readOnly
                             name="text"
                             id="ontologyContent"
@@ -43,9 +55,9 @@ class ResourceBody extends Component {
                             value={content}
                         />
                     </div>
-                </StyledResourceBody>
-            );
-        }
+                )}
+            </StyledResourceBody>
+        );
     }
 }
 

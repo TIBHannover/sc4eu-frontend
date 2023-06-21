@@ -81,10 +81,6 @@ class ItemController extends Component {
             <StyledController style={{ padding: 0, height: '30px', width: '100%', overflow: 'hidden', display: 'flex' }}>
                 {/*TEXT VIEW*/}
                 <div style={{ width: '250px', minWidth: '100px', display: 'flex' }}>
-                    <ControlButton size="sm" onClick={this.props.showBody} active={this.props.showingBody}>
-                        <Icon icon={faAlignJustify} />
-                    </ControlButton>
-
                     {/*GRAPH VIEW*/}
                     <Tippy content={'Show Graph'}>
                         <ControlButton size="sm" onClick={this.props.showGraphVis} active={this.props.showingGraph}>
@@ -92,17 +88,23 @@ class ItemController extends Component {
                         </ControlButton>
                     </Tippy>
 
+                    <Tippy content={'Show Text View'}>
+                        <ControlButton size="sm" onClick={this.props.showBody} active={this.props.showingBody}>
+                            <Icon icon={faAlignJustify} />
+                        </ControlButton>
+                    </Tippy>
+
                     {/*PROTEGE VIEW */}
-                    <Tippy content={'Show Description'}>
-                        <ControlButton size="sm" onClick={this.props.showWidget} active={this.props.showingWidget}>
-                            <Icon icon={faCubesStacked} />
-                        </ControlButton>
-                    </Tippy>
-                    <Tippy content={'Show Annotation'}>
-                        <ControlButton size="sm" onClick={this.props.showWidgetAnnotation} active={this.props.showingWidgetAnnotation}>
-                            <Icon icon={faCircleNodes} />
-                        </ControlButton>
-                    </Tippy>
+                    {/*<Tippy content={'Show Description'}>*/}
+                    {/*    <ControlButton size="sm" onClick={this.props.showWidget} active={this.props.showingWidget}>*/}
+                    {/*        <Icon icon={faCubesStacked} />*/}
+                    {/*    </ControlButton>*/}
+                    {/*</Tippy>*/}
+                    {/*<Tippy content={'Show Annotation'}>*/}
+                    {/*    <ControlButton size="sm" onClick={this.props.showWidgetAnnotation} active={this.props.showingWidgetAnnotation}>*/}
+                    {/*        <Icon icon={faCircleNodes} />*/}
+                    {/*    </ControlButton>*/}
+                    {/*</Tippy>*/}
                 </div>
                 <div style={{ width: '100%' }}>
                     <Tippy content={this.state.headerLabel}>

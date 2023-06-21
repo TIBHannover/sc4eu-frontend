@@ -24,7 +24,7 @@ class RightSideBar extends Component {
         this.state = {
             collapse: true,
             collapseComparison: true,
-            collapseMetaInfo: true,
+            collapseMetaInfo: false,
             openOntology: '',
             openProject: '',
             ontologyVersion: '',
@@ -36,7 +36,7 @@ class RightSideBar extends Component {
             isLoading: false,
             licenceInfo: 'No Licence Available',
             licenseURL: null,
-            gitCollapse: true,
+            gitCollapse: false,
             isLoadingForWidoco: false,
             isPopUpOpen: false,
             popUpMessage: ''
@@ -528,10 +528,10 @@ const OpenCloseButton = styled(Button)`
 `;
 
 const HeadingSpan = styled.span`
-    font-size: ${fontStyled.fontSize.NormalText};
+    font-size: 12px;
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+        font-size: 12px;
     }
 `;
 
