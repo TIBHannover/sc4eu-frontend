@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Modal, Button } from '@mui/material';
+import { Box, Modal, Button, Backdrop, CircularProgress } from '@mui/material';
 import { ThumbUp } from '@mui/icons-material';
 import { colorStyled } from '../styledComponents/styledColor';
 
@@ -26,9 +26,25 @@ const closeBtnStyle = {
 
 const GoogleSurvey = () => {
     const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handleModalToggle = () => {
         setOpen(!open);
+    };
+
+    const hideSpinner = () => {
+        setIsLoading(false);
+    };
+
+    const getGoogleSurvey = () => {
+        return (
+            <iframe
+                title="Survey"
+                src="https://docs.google.com/forms/d/e/1FAIpQLScrlKvjAOUudSIGJ5gQnxqFccnfWeyXAWNjreauTq5ERdfKqA/viewform"
+                style={{ width: '100%', height: 'calc(100% - 130px)', border: 'none', backgroundColor: '#ffffff' }}
+                onLoad={hideSpinner}
+            />
+        );
     };
 
     return (
@@ -51,17 +67,33 @@ const GoogleSurvey = () => {
                 <ThumbUp />
                 Rate Us
             </Button>
-            <Modal open={open} onClose={handleModalToggle}>
+            <Modal
+                open={open}
+                onClose={handleModalToggle}
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    invisible: true,
+                    onClick: null
+                }}
+            >
                 <Box sx={style}>
                     <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Survey</h2>
                     <span style={closeBtnStyle} onClick={handleModalToggle}>
                         X
                     </span>
-                    <iframe
-                        title="Survey"
-                        src="https://docs.google.com/forms/d/e/1FAIpQLScrlKvjAOUudSIGJ5gQnxqFccnfWeyXAWNjreauTq5ERdfKqA/viewform"
-                        style={{ width: '100%', height: 'calc(100% - 130px)', border: 'none', backgroundColor: '#ffffff' }}
-                    />
+                    {isLoading ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                height: 'calc(100% - 130px)'
+                            }}
+                        >
+                            <CircularProgress />
+                        </Box>
+                    ) : null}
+                    {getGoogleSurvey()}
                     <Button
                         type="button"
                         variant="contained"
