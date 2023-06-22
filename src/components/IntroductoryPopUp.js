@@ -73,9 +73,9 @@ class IntroductoryPopUp extends Component {
                 <Modal
                     isOpen={this.state.firstModal}
                     style={{
-                        maxWidth: '80%',
+                        maxWidth: '70%',
                         width: '100%',
-                        marginLeft: '10%',
+                        marginLeft: '20%',
                         marginRight: '10%',
                         borderRadius: '15px',
                         overflow: 'hidden',
