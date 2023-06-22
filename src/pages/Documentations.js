@@ -174,16 +174,6 @@ class Documentations extends Component {
                         </span>
                     </p>
                 </StyledDiv>
-                <div style={{ marginTop: '30px', textAlign: 'center' }}>
-                    <iframe
-                        width="50%"
-                        height="350"
-                        src={`https://www.youtube.com/embed/R-lJrUgmZJc`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        title="Embedded youtube"
-                    />
-                </div>
             </div>
         );
     }
