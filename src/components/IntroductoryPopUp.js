@@ -8,15 +8,14 @@ const SliderText = [
     {
         id: 0,
         value:
-            'You are visiting the SC3 portal for the first time, you can get a brief overview of the portal by reading our\n' +
-            '                            documentation page. If you want to try out the portal yourself, you should first register with your e-mail address.'
+            'You are visiting the Ontology Curation portal for the first time, you can get a brief overview of the portal by reading our\n' +
+            '                            training page. If you want to try out the portal yourself, you should first register with your e-mail address.'
     },
     {
         id: 1,
         value:
             ' If you register successfully than it will allow you to browse our test projects (sandbox) and try out the functionality\n' +
-            '                            with pre-installed or custom ontologies. To select the sandbox project, simply click on the menu icon (three bars in the\n' +
-            '                            upper left corner) and select "Projects from". In the list of all projects, select the "Sandbox project". In the sandbox\n' +
+            '                            with pre-installed or custom ontologies. To select the sandbox project, simply click on the sidebar bar "projects" tab. In the list of all projects, select the "Sandbox Collection". In the sandbox\n' +
             '                            project you can load your own ontology or select one of the preloaded ontologies.Once you have selected an ontology, new\n' +
             '                            visualization options will appear in the menu for you to choose from.'
     },
@@ -25,7 +24,7 @@ const SliderText = [
         value:
             ' All ontologies loaded from a Git repository can also be compared in terms of changes to all other commits (Ontology\n' +
             '                            Comparison).\n' +
-            '                            By the way, the SC3 portal also includes a WebProtégé installation. You can use it to collaboratively edit your\n' +
+            '                            By the way, the Ontology Curation portal also includes a WebProtégé installation. You can use it to collaboratively edit your\n' +
             '                            ontologies. This WebProtégé instance has been extended by us so that you can load your ontologies directly from Git and\n' +
             '                            restore changes. Currently our extended WebProtege installation still requires a separate registration.'
     }
