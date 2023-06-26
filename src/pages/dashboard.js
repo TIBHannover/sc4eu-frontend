@@ -88,7 +88,6 @@ class Dashboard extends Component {
             } else {
                 return (
                     <div>
-                        <h1 style={{ textAlign: 'center', padding: '20px 0px 20px 0px' }}>USER INFORMATION </h1>
                         <div style={{ textAlign: 'center' }}>
                             <StyledTable bordered>
                                 <thead>
@@ -122,7 +121,14 @@ class Dashboard extends Component {
         return (
             <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
                 {this.state.loading && (
-                    <div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100vh'
+                        }}
+                    >
                         <h2 className="h5" style={{ textAlign: 'center' }}>
                             <span>
                                 <Icon icon={faSpinner} spin />
@@ -159,7 +165,7 @@ class Dashboard extends Component {
                         <DashboardProjects currentUser={this.props.user} />
                     </TabPane>
                     <TabPane tabId="2">
-                        <div style={{ marginLeft: '1%', marginRight: '1%' }}>{!this.state.loading && this.renderUserDashboard()}</div>
+                        <div>{!this.state.loading && this.renderUserDashboard()}</div>
                     </TabPane>
                 </TabContent>
 
