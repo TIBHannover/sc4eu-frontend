@@ -10,6 +10,7 @@ import { addUserToProject } from '../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { colorStyled } from '../styledComponents/styledColor';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
+import styled from 'styled-components';
 
 class DashboardItem extends Component {
     constructor(props) {
@@ -213,7 +214,9 @@ class DashboardItem extends Component {
                                     {this.state.roleValue?.value}
                                 </DropdownToggle>
                                 <DropdownMenu style={{ width: '100%' }}>
-                                    <DropdownItem header>Select and change the role</DropdownItem>
+                                    <CustomDropdownItem className="custom-dropdown-item" header>
+                                        Select and change the role
+                                    </CustomDropdownItem>
                                     {this.props.roleOptions.map(option => (
                                         <div key={option.value}>
                                             <hr style={{ margin: '0px 0px 0px 0px' }} />
@@ -383,3 +386,13 @@ const mapStateToProps = state => ({
 });
 
 export default compose(connect(mapStateToProps))(DashboardItem);
+
+const CustomDropdownItem = styled(DropdownItem)`
+    &&& {
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 0;
+        margin-right: 0;
+        text-align: center;
+    }
+`;
