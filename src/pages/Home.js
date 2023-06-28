@@ -26,10 +26,10 @@ export default class Home extends Component {
             <>
                 <StyledRootDiv>
                     <IntroductoryPopUp />
-                    <div style={{ display: 'flex', justifyContent: 'center', height: '10%' }}>
+                    <StyledHeadingDiv>
                         <StyledLogo src={Logo} alt="SC3 Logo" />
                         <StyledHeading>Semantically Connected Semiconductor Supply Chains Project</StyledHeading>
-                    </div>
+                    </StyledHeadingDiv>
                     <StyledBody>
                         <StyledBodyDiv>
                             <StyledBodyLogo src={collection} alt="collection" />
@@ -63,15 +63,9 @@ export default class Home extends Component {
                         </StyledBodyDiv>
                     </StyledBody>
                 </StyledRootDiv>
-                <div
-                    style={{
-                        position: 'fixed',
-                        bottom: '80px',
-                        right: 0
-                    }}
-                >
+                <StyledSurveyDiv>
                     <GoogleSurvey />
-                </div>
+                </StyledSurveyDiv>
                 <Footer />
             </>
         );
@@ -82,6 +76,16 @@ const StyledRootDiv = styled.div`
     width: 100%;
     height: 100%;
     overflow: auto;
+`;
+
+const StyledHeadingDiv = styled.div`
+    display: flex;
+    justify-content: center;
+    height: 10%;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
 `;
 
 const StyledHeading = styled.div`
@@ -251,5 +255,16 @@ const StyledEditLogo = styled.img`
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         width: 220px;
         height: 160px;
+    }
+`;
+
+const StyledSurveyDiv = styled.div`
+    position: fixed;
+    display: block;
+    bottom: 80px;
+    right: 0;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
     }
 `;
