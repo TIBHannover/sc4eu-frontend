@@ -671,7 +671,9 @@ module.exports = {
                 subject: req.body.emailSubject,
                 body: req.body.emailContent
             };
+            console.log(emailFields);
             sendProjectPermissionEmail(emailFields).then(response => {
+                console.log(response);
                 if (response.success) {
                     res.json({
                         success: true,

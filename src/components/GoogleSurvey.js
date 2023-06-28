@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Box, Modal, Button, Backdrop, CircularProgress } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { ThumbUp } from '@mui/icons-material';
 import { colorStyled } from '../styledComponents/styledColor';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 
 const style = {
     position: 'fixed',
@@ -49,24 +51,10 @@ const GoogleSurvey = () => {
 
     return (
         <div>
-            <Button
-                variant="extended"
-                size="large"
-                aria-label="add"
-                onClick={handleModalToggle}
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-around',
-                    right: '60px',
-                    minWidth: '150px',
-                    backgroundColor: '#ee7356',
-                    color: 'white',
-                    borderRadius: '4px'
-                }}
-            >
+            <StyledButton variant="extended" size="large" aria-label="add" onClick={handleModalToggle}>
                 <ThumbUp />
-                Rate Us
-            </Button>
+                <StyledSpan>Rate Us</StyledSpan>
+            </StyledButton>
             <Modal
                 open={open}
                 onClose={handleModalToggle}
@@ -114,3 +102,26 @@ const GoogleSurvey = () => {
 };
 
 export default GoogleSurvey;
+
+const StyledButton = styled(Button)`
+    display: flex;
+    justify-content: space-around;
+    right: 60px;
+    min-width: 150px;
+    background-color: #ee7356;
+    color: white;
+    border-radius: 4px;
+
+    @media (max-width: 1300px) {
+        right: 50px;
+        min-width: 50px;
+    }
+`;
+
+const StyledSpan = styled('span')`
+    display: block;
+
+    @media (max-width: 1300px) {
+        display: none;
+    }
+`;
