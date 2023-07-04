@@ -34,25 +34,37 @@ export const StyledGravatar = styled(Gravatar)`
 export const StyledAuthTooltip = styled(Tooltip)`
     & .tooltip {
         opacity: 1 !important;
-    }
-    & .tooltip-inner {
-        font-size: 16px;
-        background-color: #5f6474;
-        max-width: 410px;
-        box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 10);
+        margin-top: 65px;
+        margin-right: -5px;
+        padding: 0;
+        border-radius: 20px;
+        box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
 
-        .btn {
-            border-color: black;
-            background-color: ##007bff;
-
-            &:hover {
-                background-color: #0056b3;
-            }
+        .arrow {
+            display: none !important;
         }
     }
+    }
 
-    & .arrow:before {
-        border-bottom-color: black !important;
+    & .tooltip-inner {
+        font-size: 16px;
+        background-color: #fff;
+        max-width: 410px;
+        padding: 15px;
+        border-radius: 20px;
+
+        .tooltip-content {
+            margin-bottom: 8px;
+        }
+
+        .user-profile-link {
+            color: #fff;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 `;
 

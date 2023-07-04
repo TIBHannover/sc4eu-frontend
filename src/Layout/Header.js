@@ -9,7 +9,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth, toggleAuthDialog } from '../redux/actions/auth';
 import greetingTime from 'greeting-time';
-import { Button, ButtonGroup, Row } from 'reactstrap';
+import { Button } from 'reactstrap';
 import SignInModal from '../components/Signin/SignInModal';
 import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
@@ -17,6 +17,7 @@ import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import background from '../assets/images/Curve Line.svg';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
+import { SettingsOutlined, LogoutOutlined, AccountCircleOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
 
 class Header extends Component {
     constructor(props) {
@@ -87,9 +88,12 @@ class Header extends Component {
             this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase()
         ) {
             return (
-                <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.ADMIN_DASHBOARD}>
-                    Dashboard
-                </Button>
+                <StyledButton onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.ADMIN_DASHBOARD}>
+                    <ButtonIcon>
+                        <DashboardCustomizeOutlined />
+                    </ButtonIcon>
+                    <ButtonText>Dashboard</ButtonText>
+                </StyledButton>
             );
         }
     };
@@ -134,49 +138,59 @@ class Header extends Component {
                                 <StyledAuthTooltip
                                     fade={false}
                                     trigger="click"
-                                    innerClassName="pr-3 pl-3 pt-3 pb-3 clearfix"
+                                    innerClassName="clearfix"
                                     placement="bottom-end"
                                     isOpen={this.state.userTooltipOpen}
                                     target="TooltipExample"
                                     toggle={this.toggleUserTooltip}
                                     innerRef={this.userPopup}
                                 >
-                                    <Row>
-                                        <div className="col-3 text-center">
-                                            <Link
-                                                onClick={this.toggleUserTooltip}
-                                                to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
-                                            >
-                                                <StyledGravatar
-                                                    className="rounded-circle"
-                                                    style={{ border: '3px solid #fff' }}
-                                                    md5={this.props.user.gravatarId}
-                                                    size={64}
-                                                    id="TooltipExample"
-                                                />
-                                            </Link>
-                                        </div>
-                                        <div className="col-9 text-left">
-                                            <span className="ml-1">
-                                                {greeting} {this.props.user.displayName}
-                                            </span>
-                                            <ButtonGroup className="mt-2" size="sm">
-                                                {this.showDashboard()}
-                                                <Button
-                                                    color="secondary"
-                                                    onClick={this.toggleUserTooltip}
-                                                    tag={Link}
-                                                    to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
-                                                >
-                                                    Profile
-                                                </Button>
-                                                <Button color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.USER_SETTINGS}>
-                                                    Settings
-                                                </Button>
-                                                <Button onClick={this.handleSignOut}>Sign out</Button>
-                                            </ButtonGroup>
-                                        </div>
-                                    </Row>
+                                    <div>
+                                        <Link
+                                            onClick={this.toggleUserTooltip}
+                                            to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
+                                            className="user-profile-link"
+                                        >
+                                            <StyledGravatar
+                                                className="rounded-circle"
+                                                style={{ border: '3px solid #fff' }}
+                                                md5={this.props.user.gravatarId}
+                                                size={40}
+                                                id="TooltipExample"
+                                            />
+                                        </Link>
+                                    </div>
+                                    <span style={{ fontSize: '14px', color: '#000000' }}>
+                                        {greeting} {this.props.user.displayName}
+                                    </span>
+                                    <div className="user-details">
+                                        {this.showDashboard()}
+                                        <StyledButton
+                                            color="secondary"
+                                            onClick={this.toggleUserTooltip}
+                                            tag={Link}
+                                            to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
+                                        >
+                                            <ButtonIcon>
+                                                <AccountCircleOutlined />
+                                            </ButtonIcon>
+                                            <ButtonText>Profile</ButtonText>
+                                        </StyledButton>
+
+                                        <StyledButton color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.USER_SETTINGS}>
+                                            <ButtonIcon>
+                                                <SettingsOutlined />
+                                            </ButtonIcon>
+                                            <ButtonText>Settings</ButtonText>
+                                        </StyledButton>
+
+                                        <StyledButton onClick={this.handleSignOut}>
+                                            <ButtonIcon>
+                                                <LogoutOutlined />
+                                            </ButtonIcon>
+                                            <ButtonText>Sign out</ButtonText>
+                                        </StyledButton>
+                                    </div>
                                 </StyledAuthTooltip>
                             </div>
                         ) : (
@@ -262,4 +276,34 @@ const StyledRightSideDiv = styled.div`
     @media (max-width: ${MAX_WIDTH}) {
         display: none;
     }
+`;
+
+const StyledButton = styled(Button)`
+    background: #d6e6f2;
+    color: #000;
+    font-size: 14px;
+    border-radius: 14px;
+    border: none !important;
+    display: flex;
+    align-items: center;
+    // justify-content: center;
+    width: 100%;
+    margin: 10px 0;
+    margin-bottom: 8px;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+
+    &:hover {
+        background-color: ${colorStyled.SECONDARY.dark};
+        color: #fff;
+        border: none !important;
+    }
+`;
+
+const ButtonIcon = styled.span`
+    margin-right: 20px;
+`;
+
+const ButtonText = styled.span`
+    text-align: left;
 `;

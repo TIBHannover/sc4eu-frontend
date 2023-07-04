@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { addUserToProject, getProjectUsersDetail, getUserProjectsDetail, unregisterUserFromProject } from '../network/UserProfileCalls';
 import DashboardProjectsTable from './DashboardProjectsTable';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 export default class DashboardProjects extends Component {
     constructor(props) {
@@ -141,7 +143,21 @@ export default class DashboardProjects extends Component {
                         currentUser={this.props.currentUser}
                     />
                 ) : (
-                    <div> ...loading</div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100vh'
+                        }}
+                    >
+                        <h2 className="h5" style={{ textAlign: 'center' }}>
+                            <span>
+                                <Icon icon={faSpinner} spin />
+                            </span>
+                            Loading
+                        </h2>
+                    </div>
                 )}
             </div>
         );
