@@ -3,6 +3,8 @@ import { Modal, ModalBody, Button } from 'reactstrap';
 import Cookies from 'js-cookie';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
+import styled from 'styled-components';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 
 const SliderText = [
     {
@@ -69,19 +71,8 @@ class IntroductoryPopUp extends Component {
 
     render() {
         return (
-            <div>
-                <Modal
-                    isOpen={this.state.firstModal}
-                    style={{
-                        maxWidth: '70%',
-                        width: '100%',
-                        marginLeft: '20%',
-                        marginRight: '10%',
-                        borderRadius: '15px',
-                        overflow: 'hidden',
-                        fontFamily: fontStyled.fontFamily
-                    }}
-                >
+            <StyledRootDiv>
+                <StyledModal isOpen={this.state.firstModal}>
                     <ModalBody style={{ backgroundColor: 'rgba(214, 230, 242, .3)' }}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <h4 style={{ marginLeft: 'auto' }}>
@@ -137,9 +128,32 @@ class IntroductoryPopUp extends Component {
                             ))}
                         </div>
                     </ModalBody>
-                </Modal>
-            </div>
+                </StyledModal>
+            </StyledRootDiv>
         );
     }
 }
 export default IntroductoryPopUp;
+
+const StyledRootDiv = styled.div`
+    display: block;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+`;
+
+const StyledModal = styled(Modal)`
+    display: block;
+    max-width: 70%;
+    width: 100%;
+    margin-left: 20%;
+    margin-right: 10%;
+    border-radius: 15px;
+    overflow: hidden;
+    font-family: ${fontStyled.fontFamily};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+`;
