@@ -25,7 +25,9 @@ export default class Home extends Component {
         return (
             <>
                 <StyledRootDiv>
-                    <IntroductoryPopUp />
+                    <StyledDivPopUp>
+                        <IntroductoryPopUp />
+                    </StyledDivPopUp>
                     <StyledHeadingDiv>
                         <StyledLogo src={Logo} alt="SC3 Logo" />
                         <StyledHeading>Semantically Connected Semiconductor Supply Chains Project</StyledHeading>
@@ -263,6 +265,14 @@ const StyledSurveyDiv = styled.div`
     display: block;
     bottom: 80px;
     right: 0;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        display: none;
+    }
+`;
+
+const StyledDivPopUp = styled.div`
+    display: block;
 
     @media (max-width: ${MAX_WIDTH}) {
         display: none;
