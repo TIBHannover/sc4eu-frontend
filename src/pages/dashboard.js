@@ -13,6 +13,8 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
+import AlertPopUp from '../components/ReusableComponents/AlertPopUp';
+import { withRouter } from 'react-router-dom';
 
 class Dashboard extends Component {
     constructor(props) {
@@ -23,7 +25,8 @@ class Dashboard extends Component {
             userRoles: [],
             ontologies: [],
             projects: [],
-            activeTab: '1'
+            activeTab: '1',
+            isPopUpOpen: false
         };
     }
 
@@ -34,27 +37,21 @@ class Dashboard extends Component {
     getBackendData = () => {
         // request dashboard content from Users
         requestDashboard().then(userFromBackend => {
-            this.setState({ loading: false, users: userFromBackend });
+            if (userFromBackend.error) {
+                this.setState({ isPopUpOpen: true, loading: false, users: userFromBackend });
+            } else {
+                //request user roles
+                getAllRoles().then(roles => {
+                    const roleLabels = [];
+                    roles.forEach(role => {
+                        roleLabels.push({ value: role.role, label: role.role, roleId: role.role_id });
+                    });
+                    this.setState({ userRoles: roleLabels }, () => {
+                        this.setState({ loading: false, users: userFromBackend });
+                    });
+                });
+            }
         });
-
-        //request user roles
-        getAllRoles().then(roles => {
-            const roleLabels = [];
-            roles.forEach(role => {
-                roleLabels.push({ value: role.role, label: role.role, roleId: role.role_id });
-            });
-            this.setState({ userRoles: roleLabels });
-        });
-
-        //request ontologies
-        // getAllOntologies().then(ontologiesFromBackend => {
-        //     const ontologyLabels = [];
-        //     console.log(ontologiesFromBackend);
-        //     ontologiesFromBackend.forEach(ontology => {
-        //         ontologyLabels.push({ value: ontology.name, label: ontology.name });
-        //     });
-        //     this.setState({ ontologies: ontologyLabels });
-        // });
 
         //request projects
         getAllProjects().then(getProjectsFromBackend => {
@@ -81,10 +78,28 @@ class Dashboard extends Component {
         });
     };
 
+    PopUpCallback = confirmed => {
+        if (confirmed || !this.state.isPopUpOpen) {
+            this.props.history.push('/');
+        }
+    };
+
+    handlePopUpClose = () => {
+        this.setState({ isPopUpOpen: false });
+        this.props.history.push('/');
+    };
+
     renderUserDashboard = () => {
         if (this.state.users) {
             if (this.state.users.error) {
-                return <h1>{this.state.users.error}</h1>;
+                return (
+                    <AlertPopUp
+                        bodyText={this.state.users.error}
+                        isOpen={this.state.isPopUpOpen}
+                        onClose={this.handlePopUpClose}
+                        isConfirm={confirmed => this.PopUpCallback(confirmed)}
+                    />
+                );
             } else {
                 return (
                     <div>
@@ -176,14 +191,15 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    history: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
     user: state.auth.user
 });
 
-export default compose(connect(mapStateToProps))(Dashboard);
+export default compose(connect(mapStateToProps))(withRouter(Dashboard));
 
 const StyledTable = styled.table`
     border-collapse: collapse;
