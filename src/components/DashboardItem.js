@@ -215,7 +215,7 @@ class DashboardItem extends Component {
                                 </DropdownToggle>
                                 <DropdownMenu style={{ width: '100%' }}>
                                     <CustomDropdownItem className="custom-dropdown-item" header>
-                                        Select and change the role
+                                        <p style={{ fontSize: '14px' }}> Select and change the role</p>
                                     </CustomDropdownItem>
                                     {this.props.roleOptions.map(option => (
                                         <div key={option.value}>
