@@ -26,11 +26,10 @@ class RightSideProjectBar extends Component {
         await getAllUsers().then(allUsers => {
             const onlyProjectAdmins = [];
             allUsers.forEach(user => {
-                if (user.role === 'Project Admin') {
+                if (user.role === 'Project Admin' || user.role === 'System Admin') {
                     onlyProjectAdmins.push(user);
                 }
             });
-
             this.state.results.forEach(project => {
                 project.projectAdmins = [];
                 onlyProjectAdmins.forEach(projectAdmin => {
