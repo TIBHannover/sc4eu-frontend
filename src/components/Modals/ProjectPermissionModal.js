@@ -40,7 +40,7 @@ export default class ProjectPermissionModal extends Component {
             mailReceiver = SystemAdminsEmail;
             emailContent = roleUpdateRequest(this.state.message, this.props.userName).body;
         } else {
-            mailReceiver = projectDetails?.projectAdmins?.length > 0 ? projectDetails.projectAdmins[0].email : SystemAdminsEmail[0];
+            mailReceiver = projectDetails?.projectAdmins?.map(admin => admin.email) || [SystemAdminsEmail[0]];
             emailContent = projectAccessEmailHTML(projectDetails.name, this.state.message, mailReceiver, this.props.userName, this.props.userEmail)
                 .body;
         }
