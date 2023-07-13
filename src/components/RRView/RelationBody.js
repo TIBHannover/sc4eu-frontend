@@ -7,6 +7,7 @@ import { Input } from 'reactstrap';
 
 import { transformRelationToTTL, calculateBodyRows } from '../../mappers/RelationToTTL';
 import { PRIMARY } from './StyledComponents';
+import CardWidgetVis from '../ontologyView/CardWidgetVis';
 
 class RelationBody extends Component {
     constructor(props) {
@@ -29,14 +30,20 @@ class RelationBody extends Component {
         const prefixList = this.props.metaInformation.prefixList.longToShort;
         const content = transformRelationToTTL(resDef, prefixList);
         const numRowsRequired = calculateBodyRows(content);
-        if (numRowsRequired === 0) {
-            return <> </>;
-        } else {
-            return (
-                <StyledRelationBody ref={this.bodyRef} isExpanded={this.props.isBodyExpanded} initialRendering={this.props.initialRendering}>
-                    {this.props.isBodyExpanded && (
+        return (
+            <StyledRelationBody ref={this.bodyRef}>
+                <CardWidgetVis
+                    itemIdentifier={this.props.relationContext.itemIdentifier}
+                    itemContext={this.props.relationContext}
+                    isExpanded={this.props.isBodyExpanded}
+                    itemType="Relation"
+                />
+                {numRowsRequired !== 0 && (
+                    <div style={{ height: 'auto', display: 'flex', width: '100%', maxHeight: '100%', maxWidth: '100%' }}>
                         <StyledBodyInput
                             type="textarea"
+                            display={'flex'}
+                            width="100%"
                             readOnly
                             name="text"
                             id="ontologyContent"
@@ -44,10 +51,10 @@ class RelationBody extends Component {
                             value={content}
                             style={{ padding: '2px', backgroundColor: PRIMARY.lighter }}
                         />
-                    )}
-                </StyledRelationBody>
-            );
-        }
+                    </div>
+                )}
+            </StyledRelationBody>
+        );
     }
 }
 
