@@ -50,12 +50,12 @@ class CardWidgetVis extends Component {
 
         return (
             <div>
-                <div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>
-                    <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
-                        <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
-                        <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>{this.renderDescription(itemOfInterest)}</CardBody>
-                    </Card>
-                </div>
+                {/*<div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>*/}
+                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', background: PRIMARY.lighter }}>
+                    <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
+                    <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>{this.renderDescription(itemOfInterest)}</CardBody>
+                </Card>
+                {/*</div>*/}
             </div>
         );
     };
