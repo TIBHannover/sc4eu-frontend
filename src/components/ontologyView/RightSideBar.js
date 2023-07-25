@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, Button, Card, CardBody, Collapse, Input, Table } from 'reactstrap';
+import { FormGroup, Button, Collapse, Input, Table } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight, faBook, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
 import { connect } from 'react-redux';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { getAllCommits, getBranchFromUrl, getLicense, getRawUrlforCommit } from '../../network/GithubAPICalls';
@@ -119,131 +118,6 @@ class RightSideBar extends Component {
 
     toggleGitCollapse = () => {
         this.setState({ gitCollapse: !this.state.gitCollapse });
-    };
-
-    toggleMetaInformation = () => {
-        this.setState({ collapseMetaInfo: !this.state.collapseMetaInfo });
-    };
-
-    renderMetaInformation = () => {
-        const metaInformation = this.props.metaInformation;
-
-        return Object.keys(metaInformation).map(key => {
-            if (key === 'metaDescriptions') {
-                return (
-                    <div key={'metaInformation_' + key} className="root" style={{ padding: '0 10px' }}>
-                        <StyledButton onClick={() => this.toggleMetaInformation()}>
-                            <StyledIcon icon={this.state.collapseMetaInfo ? faChevronCircleRight : faChevronCircleDown} />
-                            Meta Information
-                        </StyledButton>
-                        <Collapse isOpen={!this.state.collapseMetaInfo}>
-                            <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
-                                <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
-                                    <table style={{ width: '100%' }}>
-                                        <tbody>{this.renderMetaDescription(metaInformation[key])}</tbody>
-                                    </table>
-                                </CardBody>
-                            </Card>
-                        </Collapse>
-                    </div>
-                );
-            } else if (key === 'prefixList') {
-                return (
-                    <div key={'prefixList' + key} className="root" style={{ padding: '0 10px' }}>
-                        <StyledButton onClick={() => this.toggle()}>
-                            <StyledIcon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} />
-                            Ontology Prefixes
-                        </StyledButton>
-                        <Collapse isOpen={!this.state.collapse}>
-                            <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, marginLeft: '1%', width: '98%' }}>
-                                <CardBody style={{ padding: '0 5px', paddingBottom: '5px', width: '100%', overflow: 'hidden' }}>
-                                    <table id="simple-board" style={{ backgroundColor: 'solid black', width: '100%' }}>
-                                        <tbody key={'prefixTable_' + key} style={{}}>
-                                            <tr key={'prefixRow_' + key}>
-                                                <td>
-                                                    <b>Prefix</b>
-                                                </td>
-                                                <td style={{ paddingLeft: '10px' }}>
-                                                    <b>IRI</b>
-                                                </td>
-                                            </tr>
-                                            {this.renderPrefixList(metaInformation[key])}
-                                        </tbody>
-                                    </table>
-                                </CardBody>
-                            </Card>
-                        </Collapse>
-                    </div>
-                );
-            } else {
-                return <>No Meta Information Available</>;
-            }
-        });
-    };
-
-    renderMetaDescription = obj => {
-        let keyIndex = 0;
-        return Object.keys(obj).map(itemKey => {
-            const metaDescriptionsItem = obj[itemKey];
-            if (itemKey === 'description' || itemKey === 'title') {
-                return Object.keys(metaDescriptionsItem).map(language => {
-                    const itemValueInLang = metaDescriptionsItem[language];
-
-                    return (
-                        <tr style={{ fontSize: '12px' }} key={'description_title_' + itemKey + keyIndex++}>
-                            <td style={{ paddingRight: '5px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                                <div style={{ float: 'left' }}>
-                                    <b>{itemKey}:</b>
-                                </div>
-                            </td>
-                            <td>{itemValueInLang}</td>
-                        </tr>
-                    );
-                });
-            } else if (itemKey === 'iri' || itemKey === 'version') {
-                return (
-                    <tr style={{ fontSize: '12px' }} key={'iri_version_' + itemKey + keyIndex++}>
-                        <td style={{ paddingRight: '5px', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
-                            <div style={{ float: 'left' }}>
-                                <b>{itemKey}:</b>
-                            </div>
-                        </td>
-                        <td>{obj[itemKey]}</td>
-                    </tr>
-                );
-            }
-            return <tr key={itemKey + keyIndex + '_ERROR'}>{/*<td>ERROR HERE</td>*/}</tr>;
-        });
-    };
-
-    renderPrefixList = obj => {
-        if (obj.hasOwnProperty('shortToLong')) {
-            const shortToLongValues = obj['shortToLong'];
-            return Object.keys(shortToLongValues).map(shortKey => {
-                // const shortToLong = shortKey + ':' + prefixList[shortKey];
-                return (
-                    <tr key={'prefix_' + shortKey} style={{ borderBottom: '1px solid', width: '100%', fontSize: '12px' }}>
-                        <td style={{ textAlign: 'left' }}>{shortKey}:</td>
-                        <Tippy content={shortToLongValues[shortKey]}>
-                            <td
-                                style={{
-                                    maxWidth: '65%',
-                                    whiteSpace: 'nowrap',
-                                    display: 'block',
-                                    paddingLeft: '10px',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                }}
-                            >
-                                {shortToLongValues[shortKey]}
-                            </td>
-                        </Tippy>
-                    </tr>
-                );
-            });
-        } else {
-            return <div>No Prefix List provided :(</div>;
-        }
     };
 
     handleFirstCommitChange = event => {
@@ -460,7 +334,6 @@ class RightSideBar extends Component {
                         ) : (
                             <div />
                         )}
-                        <div>{this.renderMetaInformation()}</div>
                         {comparisonButton}
                         <div style={{ padding: '0 10px' }}>
                             <StyledButton title="Ontology Documentation" onClick={this.getOntologyFileForDocumentation}>

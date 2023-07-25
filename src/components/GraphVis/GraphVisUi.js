@@ -403,7 +403,12 @@ class GraphVisUi extends Component {
                     >
                         <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
-                    {this.createDropDownForNotations()}
+                    {/*TODO: Enable UML Notation view once the error has been resolved*/}
+                    {/*/ As of Now we disabled the VOWl TO UML view in Graph Visualization because when we are switching from VOWL to
+                    UML it is throwing error The Problem could be in all-services\frontend\src\GraphVisLib\implementation\Renderes\gizmoRenderer\LineTools.js
+                     it has function computeIntersectionPointsWithProperty has domain and range Parameter so sometimes domain.x has value,
+                      but it is returning 0 same as the range so that could be problem but still further investigation needed  */}
+                    {/*{this.createDropDownForNotations()}*/}
                     <Button
                         onClick={() => {
                             this.graph.zoomToExtent();
