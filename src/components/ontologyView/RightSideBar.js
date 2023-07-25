@@ -2,16 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, Button, Collapse, Input, Table } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faAngleRight, faBook, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faAngleRight, faChevronCircleDown, faChevronCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { getAllCommits, getBranchFromUrl, getLicense, getRawUrlforCommit } from '../../network/GithubAPICalls';
 import { getGitlabBranchFromUrl, getGitlabCommits, getRawUrlForGitlabCommit, getGitlabLicense } from '../../network/GitlabAPICalls';
 import ShowOntologyComparisonModal from './ShowOntologyComparisonModal';
-import { getOntologyComparison, getWidocoDocumentation } from '../../network/GetOntologyData';
-import { getOntologyById } from '../../network/ontologyIndexing';
-import { URL_GET_HTML_FILE_WIDOCO } from '../../constants/services';
+import { getOntologyComparison } from '../../network/GetOntologyData';
 import { colorStyled } from '../../styledComponents/styledColor';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { fontStyled } from '../../styledComponents/styledFont';
@@ -23,7 +21,6 @@ class RightSideBar extends Component {
         this.state = {
             collapse: true,
             collapseComparison: true,
-            collapseMetaInfo: false,
             openOntology: '',
             openProject: '',
             ontologyVersion: '',
@@ -148,43 +145,6 @@ class RightSideBar extends Component {
             url_second = this.state.allCommits[index_second].raw_url;
             getOntologyComparison(url_first, url_second).then(data => {
                 this.setState({ compareResults: data, showCompareModal: true, isLoading: false });
-            });
-        }
-    };
-
-    getOntologyFileForDocumentation = async () => {
-        if (this.props.selectedOntology) {
-            try {
-                this.setState({ isLoadingForWidoco: true });
-                const res = await getOntologyById(this.props.selectedOntology.uuid);
-                const file = new File([res.ontology_data], this.props.selectedOntology.name, { type: 'text/turtle' });
-                const widocoRes = await getWidocoDocumentation(file);
-                if (widocoRes === true) {
-                    setTimeout(() => {
-                        window.open(URL_GET_HTML_FILE_WIDOCO, '_blank');
-                        this.setState({ isLoadingForWidoco: false });
-                    }, 2000);
-                } else {
-                    // PopUp open to show the alert message
-                    this.setState({
-                        isPopUpOpen: !this.state.isPopUpOpen,
-                        popUpMessage: 'Something went wrong, please try again after some time',
-                        isLoadingForWidoco: false
-                    });
-                }
-            } catch (error) {
-                // PopUp open to show the alert message
-                this.setState({
-                    isPopUpOpen: !this.state.isPopUpOpen,
-                    popUpMessage: error,
-                    isLoadingForWidoco: false
-                });
-            }
-        } else {
-            // PopUp open to show the alert message
-            this.setState({
-                isPopUpOpen: !this.state.isPopUpOpen,
-                popUpMessage: 'Something went wrong, Please Try again after some times'
             });
         }
     };
@@ -335,22 +295,6 @@ class RightSideBar extends Component {
                             <div />
                         )}
                         {comparisonButton}
-                        <div style={{ padding: '0 10px' }}>
-                            <StyledButton title="Ontology Documentation" onClick={this.getOntologyFileForDocumentation}>
-                                <StyledIcon icon={faBook} style={{ marginRight: '8px' }} />
-                                Widoco Documentation
-                            </StyledButton>
-                            {this.state.isLoadingForWidoco && (
-                                <div className="text-center text-primary" style={{ marginTop: '10px' }}>
-                                    <h2 className="h5">
-                                        <span>
-                                            <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                                        </span>
-                                        Loading Document
-                                    </h2>
-                                </div>
-                            )}
-                        </div>
                     </Scrollbars>
                 </StyledScrollbarDiv>
             </>
