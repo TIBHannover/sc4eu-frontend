@@ -14,6 +14,7 @@ import List from '@mui/material/List';
 import { ListItem } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import PropTypes from 'prop-types';
+import MetaDataModal from './Modals/metaData';
 
 import {
     HomeOutlined,
@@ -27,7 +28,8 @@ import {
     LegendToggleOutlined,
     BorderColorOutlined,
     MenuBookOutlined,
-    CollectionsOutlined
+    CollectionsOutlined,
+    DiscountOutlined
 } from '@mui/icons-material';
 
 const StyledText = styled.span`
@@ -67,6 +69,7 @@ const SideBar = props => {
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
     const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
     const [isActiveTab, setIsActiveTab] = useState(modeOfOperations ? modeOfOperations : 'hybrid');
+    const [isMetaDataModalOpen, setMetaDataModalOpen] = useState(false);
 
     const selectModeOfOperation = val => {
         Cookies.set(MODE_OF_OPERATIONS, val);
@@ -105,51 +108,76 @@ const SideBar = props => {
                             </StyledLink>
                             <Divider />
                             {selectedOntology ? (
-                                <div
-                                    style={{
-                                        marginLeft: props.isOpen ? '30px' : '0px',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        transition: '0.6s'
-                                    }}
-                                >
-                                    <StyledLink
-                                        title="Open Hybrid View"
-                                        to={{
-                                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                            search: `?ontologyId=${selectedOntology.uuid}`
+                                <>
+                                    <div
+                                        style={{
+                                            marginLeft: props.isOpen ? '30px' : '0px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            transition: '0.6s'
                                         }}
-                                        onClick={() => selectModeOfOperation('hybrid')}
-                                        activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
                                     >
-                                        <LegendToggleOutlined color="action" />
-                                        <StyledText>Hybrid</StyledText>
-                                    </StyledLink>
-                                    <StyledLink
-                                        title="Open Graph View"
-                                        to={{
-                                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                            search: `?ontologyId=${selectedOntology.uuid}`
-                                        }}
-                                        onClick={() => selectModeOfOperation('graph')}
-                                        activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
-                                    >
-                                        <AccountTreeOutlined color="action" />
-                                        <StyledText>Graph</StyledText>
-                                    </StyledLink>
-                                    <StyledLink
-                                        title="Open Text View"
-                                        to={{
-                                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                            search: `?ontologyId=${selectedOntology.uuid}`
-                                        }}
-                                        onClick={() => selectModeOfOperation('text')}
-                                        activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
-                                    >
-                                        <FormatAlignJustifyOutlined color="action" />
-                                        <StyledText>Text</StyledText>
-                                    </StyledLink>
-                                </div>
+                                        <p
+                                            style={{
+                                                display: props.isOpen ? 'block' : 'none',
+                                                marginLeft: props.isOpen ? '-30px' : '0px',
+                                                paddingTop: '5px',
+                                                fontSize: '13px',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            Visualization
+                                        </p>
+                                        <StyledLink
+                                            title="Open Hybrid View"
+                                            to={{
+                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                search: `?ontologyId=${selectedOntology.uuid}`
+                                            }}
+                                            onClick={() => selectModeOfOperation('hybrid')}
+                                            activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
+                                        >
+                                            <LegendToggleOutlined color="action" />
+                                            <StyledText>Hybrid</StyledText>
+                                        </StyledLink>
+                                        <StyledLink
+                                            title="Open Graph View"
+                                            to={{
+                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                search: `?ontologyId=${selectedOntology.uuid}`
+                                            }}
+                                            onClick={() => selectModeOfOperation('graph')}
+                                            activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
+                                        >
+                                            <AccountTreeOutlined color="action" />
+                                            <StyledText>Graph</StyledText>
+                                        </StyledLink>
+                                        <StyledLink
+                                            title="Open Text View"
+                                            to={{
+                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                search: `?ontologyId=${selectedOntology.uuid}`
+                                            }}
+                                            onClick={() => selectModeOfOperation('text')}
+                                            activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
+                                        >
+                                            <FormatAlignJustifyOutlined color="action" />
+                                            <StyledText>Text</StyledText>
+                                        </StyledLink>
+                                        <StyledLink to="#" title="Open Text View" onClick={() => setMetaDataModalOpen(true)}>
+                                            <DiscountOutlined color="action" />
+                                            <StyledText>Meta Data</StyledText>
+                                        </StyledLink>
+                                        {isMetaDataModalOpen && (
+                                            <MetaDataModal
+                                                toggle={() => {
+                                                    setMetaDataModalOpen(false);
+                                                }}
+                                                isModalOpen={isMetaDataModalOpen}
+                                            />
+                                        )}
+                                    </div>
+                                </>
                             ) : null}
                         </div>
                     ) : null}
