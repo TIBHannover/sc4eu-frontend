@@ -29,8 +29,15 @@ import {
     BorderColorOutlined,
     MenuBookOutlined,
     CollectionsOutlined,
-    DiscountOutlined
+    DiscountOutlined,
+    ArticleOutlined
 } from '@mui/icons-material';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { getOntologyById } from '../network/ontologyIndexing';
+import { getWidocoDocumentation } from '../network/GetOntologyData';
+import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
+import AlertPopUp from './ReusableComponents/AlertPopUp';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -70,6 +77,9 @@ const SideBar = props => {
     const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
     const [isActiveTab, setIsActiveTab] = useState(modeOfOperations ? modeOfOperations : 'hybrid');
     const [isMetaDataModalOpen, setMetaDataModalOpen] = useState(false);
+    const [isLoadingForWidoco, setIsLoadingForWidoco] = useState(false);
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const [popUpMessage, setPopUpMessage] = useState('');
 
     const selectModeOfOperation = val => {
         Cookies.set(MODE_OF_OPERATIONS, val);
@@ -81,8 +91,49 @@ const SideBar = props => {
         color: 'black'
     };
 
+    const getOntologyFileForDocumentation = async () => {
+        if (selectedOntology) {
+            try {
+                setIsLoadingForWidoco(true);
+                const res = await getOntologyById(selectedOntology.uuid);
+                const file = new File([res.ontology_data], selectedOntology.name, { type: 'text/turtle' });
+                const widocoRes = await getWidocoDocumentation(file);
+                if (widocoRes === true) {
+                    setTimeout(() => {
+                        window.open(URL_GET_HTML_FILE_WIDOCO, '_blank');
+                        setIsLoadingForWidoco(false);
+                    }, 2000);
+                } else {
+                    // PopUp open to show the alert message
+                    setIsPopUpOpen(!isPopUpOpen);
+                    setPopUpMessage('Something went wrong, please try again after some time');
+                    setIsLoadingForWidoco(false);
+                }
+            } catch (error) {
+                // PopUp open to show the alert message
+                setIsPopUpOpen(!isPopUpOpen);
+                setPopUpMessage(error);
+                setIsLoadingForWidoco(false);
+            }
+        } else {
+            // PopUp open to show the alert message
+            setPopUpMessage('Something went wrong, Please Try again after some times');
+            setIsPopUpOpen(!isPopUpOpen);
+        }
+    };
+
     return (
         <List style={{ fontFamily: fontStyled.fontFamily }}>
+            <AlertPopUp
+                bodyText={popUpMessage}
+                isOpen={isPopUpOpen}
+                onClose={() => {
+                    setIsPopUpOpen(!isPopUpOpen);
+                }}
+                isConfirm={() => {
+                    setIsPopUpOpen(!isPopUpOpen);
+                }}
+            />
             <ListItem>
                 <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                     <StyledLink title="Open Home" exact activeStyle={ActiveStyle} to={ROUTES.HOME} size="lg">
@@ -122,6 +173,7 @@ const SideBar = props => {
                                                 display: props.isOpen ? 'block' : 'none',
                                                 marginLeft: props.isOpen ? '-30px' : '0px',
                                                 paddingTop: '5px',
+                                                marginBottom: '1px',
                                                 fontSize: '13px',
                                                 textAlign: 'center'
                                             }}
@@ -175,6 +227,42 @@ const SideBar = props => {
                                                 }}
                                                 isModalOpen={isMetaDataModalOpen}
                                             />
+                                        )}
+                                    </div>
+                                    <Divider />
+                                    <div
+                                        style={{
+                                            marginLeft: props.isOpen ? '30px' : '0px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            transition: '0.6s'
+                                        }}
+                                    >
+                                        <p
+                                            style={{
+                                                display: props.isOpen ? 'block' : 'none',
+                                                marginLeft: props.isOpen ? '-30px' : '0px',
+                                                paddingTop: '5px',
+                                                marginBottom: '1px',
+                                                fontSize: '13px',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            Tool
+                                        </p>
+                                        <StyledLink to="#" title="Open Text View" path={''} onClick={getOntologyFileForDocumentation}>
+                                            <ArticleOutlined color="action" />
+                                            <StyledText>Widoco</StyledText>
+                                        </StyledLink>
+                                        {isLoadingForWidoco && (
+                                            <div className="text-center text-primary" style={{ marginTop: '10px' }}>
+                                                <h6 className="h6">
+                                                    <span>
+                                                        <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                                                    </span>
+                                                    Loading Document
+                                                </h6>
+                                            </div>
                                         )}
                                     </div>
                                 </>
