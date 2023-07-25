@@ -15,7 +15,6 @@ import { ListItem } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import PropTypes from 'prop-types';
 import MetaDataModal from './Modals/metaData';
-
 import {
     HomeOutlined,
     LiveHelpOutlined,
@@ -30,7 +29,8 @@ import {
     MenuBookOutlined,
     CollectionsOutlined,
     DiscountOutlined,
-    ArticleOutlined
+    ArticleOutlined,
+    DifferenceOutlined
 } from '@mui/icons-material';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -38,6 +38,7 @@ import { getOntologyById } from '../network/ontologyIndexing';
 import { getWidocoDocumentation } from '../network/GetOntologyData';
 import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
+import OntoComparisonModal from './Modals/OntoComparisonModal';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -80,6 +81,7 @@ const SideBar = props => {
     const [isLoadingForWidoco, setIsLoadingForWidoco] = useState(false);
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpMessage, setPopUpMessage] = useState('');
+    const [isOntoComparisonModalOpen, setIsOntoComparisonModalOpen] = useState(false);
 
     const selectModeOfOperation = val => {
         Cookies.set(MODE_OF_OPERATIONS, val);
@@ -216,7 +218,14 @@ const SideBar = props => {
                                             <FormatAlignJustifyOutlined color="action" />
                                             <StyledText>Text</StyledText>
                                         </StyledLink>
-                                        <StyledLink to="#" title="Open Text View" onClick={() => setMetaDataModalOpen(true)}>
+                                        <StyledLink
+                                            to={{
+                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                search: `?ontologyId=${selectedOntology.uuid}`
+                                            }}
+                                            title="metaData"
+                                            onClick={() => setMetaDataModalOpen(true)}
+                                        >
                                             <DiscountOutlined color="action" />
                                             <StyledText>Meta Data</StyledText>
                                         </StyledLink>
@@ -250,7 +259,14 @@ const SideBar = props => {
                                         >
                                             Tool
                                         </p>
-                                        <StyledLink to="#" title="Open Text View" path={''} onClick={getOntologyFileForDocumentation}>
+                                        <StyledLink
+                                            to={{
+                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                search: `?ontologyId=${selectedOntology.uuid}`
+                                            }}
+                                            title="widoco documentation"
+                                            onClick={getOntologyFileForDocumentation}
+                                        >
                                             <ArticleOutlined color="action" />
                                             <StyledText>Widoco</StyledText>
                                         </StyledLink>
@@ -263,6 +279,31 @@ const SideBar = props => {
                                                     Loading Document
                                                 </h6>
                                             </div>
+                                        )}
+                                        {selectedOntology.lookup_type === 'online' || selectedOntology.lookup_type === 'online-gitlab' ? (
+                                            <>
+                                                <StyledLink
+                                                    to={{
+                                                        pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                        search: `?ontologyId=${selectedOntology.uuid}`
+                                                    }}
+                                                    title="Ontology Git commit Comparison"
+                                                    onClick={() => setIsOntoComparisonModalOpen(true)}
+                                                >
+                                                    <DifferenceOutlined color="action" />
+                                                    <StyledText>Onto Compare</StyledText>
+                                                </StyledLink>
+                                                {isOntoComparisonModalOpen && (
+                                                    <OntoComparisonModal
+                                                        toggle={() => {
+                                                            setIsOntoComparisonModalOpen(false);
+                                                        }}
+                                                        isModalOpen={isOntoComparisonModalOpen}
+                                                    />
+                                                )}
+                                            </>
+                                        ) : (
+                                            <></>
                                         )}
                                     </div>
                                 </>
