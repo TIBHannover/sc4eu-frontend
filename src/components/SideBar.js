@@ -59,7 +59,7 @@ const StyledLink = styled(NavLink)`
     color: black;
     text-decoration: none;
     text-decoration: none !important;
-    font-size: 15px;
+    font-size: 14px;
     :hover {
         background-color: ${colorStyled.PRIMARY.light};
         color: black;
@@ -69,6 +69,21 @@ const StyledLink = styled(NavLink)`
         height: 30px;
          padding: 3px 10px 10px 5px;
         font-size: font-size:  ${colorStyled.PRIMARY.light};
+    }
+`;
+
+const StyledButton = styled.button`
+    width: 100%;
+    height: 40px;
+    display: inline-block;
+    padding: 7px 100px 7px 11px;
+    background: transparent;
+    color: black;
+    border-radius: 4px;
+    border: none;
+    font-size: 14px;
+    :hover {
+        background-color: ${colorStyled.PRIMARY.light};
     }
 `;
 
@@ -164,7 +179,7 @@ const SideBar = props => {
                                 <>
                                     <div
                                         style={{
-                                            marginLeft: props.isOpen ? '30px' : '0px',
+                                            marginLeft: props.isOpen ? '25px' : '0px',
                                             display: 'flex',
                                             flexDirection: 'column',
                                             transition: '0.6s'
@@ -173,14 +188,14 @@ const SideBar = props => {
                                         <p
                                             style={{
                                                 display: props.isOpen ? 'block' : 'none',
-                                                marginLeft: props.isOpen ? '-30px' : '0px',
+                                                marginLeft: props.isOpen ? '-25px' : '0px',
                                                 paddingTop: '5px',
                                                 marginBottom: '1px',
                                                 fontSize: '13px',
                                                 textAlign: 'center'
                                             }}
                                         >
-                                            Visualization
+                                            Visualizations
                                         </p>
                                         <StyledLink
                                             title="Open Hybrid View"
@@ -218,17 +233,10 @@ const SideBar = props => {
                                             <FormatAlignJustifyOutlined color="action" />
                                             <StyledText>Text</StyledText>
                                         </StyledLink>
-                                        <StyledLink
-                                            to={{
-                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?ontologyId=${selectedOntology.uuid}`
-                                            }}
-                                            title="metaData"
-                                            onClick={() => setMetaDataModalOpen(true)}
-                                        >
+                                        <StyledButton title="metaData" onClick={() => setMetaDataModalOpen(true)}>
                                             <DiscountOutlined color="action" />
                                             <StyledText>Meta Data</StyledText>
-                                        </StyledLink>
+                                        </StyledButton>
                                         {isMetaDataModalOpen && (
                                             <MetaDataModal
                                                 toggle={() => {
@@ -241,7 +249,7 @@ const SideBar = props => {
                                     <Divider />
                                     <div
                                         style={{
-                                            marginLeft: props.isOpen ? '30px' : '0px',
+                                            marginLeft: props.isOpen ? '25px' : '0px',
                                             display: 'flex',
                                             flexDirection: 'column',
                                             transition: '0.6s'
@@ -250,26 +258,19 @@ const SideBar = props => {
                                         <p
                                             style={{
                                                 display: props.isOpen ? 'block' : 'none',
-                                                marginLeft: props.isOpen ? '-30px' : '0px',
+                                                marginLeft: props.isOpen ? '-25px' : '0px',
                                                 paddingTop: '5px',
                                                 marginBottom: '1px',
                                                 fontSize: '13px',
                                                 textAlign: 'center'
                                             }}
                                         >
-                                            Tool
+                                            Tools
                                         </p>
-                                        <StyledLink
-                                            to={{
-                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?ontologyId=${selectedOntology.uuid}`
-                                            }}
-                                            title="widoco documentation"
-                                            onClick={getOntologyFileForDocumentation}
-                                        >
+                                        <StyledButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
                                             <ArticleOutlined color="action" />
-                                            <StyledText>Widoco</StyledText>
-                                        </StyledLink>
+                                            <StyledText>Onto Document</StyledText>
+                                        </StyledButton>
                                         {isLoadingForWidoco && (
                                             <div className="text-center text-primary" style={{ marginTop: '10px' }}>
                                                 <h6 className="h6">
@@ -282,17 +283,13 @@ const SideBar = props => {
                                         )}
                                         {selectedOntology.lookup_type === 'online' || selectedOntology.lookup_type === 'online-gitlab' ? (
                                             <>
-                                                <StyledLink
-                                                    to={{
-                                                        pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                        search: `?ontologyId=${selectedOntology.uuid}`
-                                                    }}
+                                                <StyledButton
                                                     title="Ontology Git commit Comparison"
                                                     onClick={() => setIsOntoComparisonModalOpen(true)}
                                                 >
                                                     <DifferenceOutlined color="action" />
-                                                    <StyledText>Onto Compare</StyledText>
-                                                </StyledLink>
+                                                    <StyledText>Version Compare</StyledText>
+                                                </StyledButton>
                                                 {isOntoComparisonModalOpen && (
                                                     <OntoComparisonModal
                                                         toggle={() => {
@@ -318,7 +315,7 @@ const SideBar = props => {
                     <Divider />
                     <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>
                         <LibraryBooksOutlined color="action" />
-                        <StyledText>Documentation</StyledText>
+                        <StyledText>About Portal</StyledText>
                     </StyledLink>
                     <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ}>
                         <LiveHelpOutlined color="action" />
