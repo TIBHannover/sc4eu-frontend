@@ -41,7 +41,7 @@ const createMixin = activePage => ({
 });
 
 const openedMixin = activepage => ({
-    width: '220px',
+    width: '230px',
     ...createMixin(activepage)
 });
 
