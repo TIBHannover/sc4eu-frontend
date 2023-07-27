@@ -29,16 +29,20 @@ class OntologyContentViewer extends Component {
         return (
             <div style={{ height: '100%' }}>
                 <div style={{ paddingBottom: '3.1em', height: '55px' }}>
-                    <ControlLink
-                        to={{
-                            pathname: reverse(ROUTES.ONTOLOGY),
-                            project: this.props.selectedProject
-                        }}
-                        title="Open Ontology List"
-                    >
-                        <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
-                        <span>List of Ontology</span>
-                    </ControlLink>
+                    {this.props.selectedProject ? (
+                        <ControlLink
+                            to={{
+                                pathname: reverse(ROUTES.ONTOLOGY),
+                                project: this.props.selectedProject
+                            }}
+                            title="Open Ontology List"
+                        >
+                            <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
+                            <span>List of Ontology</span>
+                        </ControlLink>
+                    ) : (
+                        <></>
+                    )}
                     <ControlButton
                         onClick={() => {
                             // emit this as signal;
