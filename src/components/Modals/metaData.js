@@ -11,6 +11,8 @@ import { fontStyled } from '../../styledComponents/styledFont';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { colorStyled } from '../../styledComponents/styledColor';
 import Tippy from '@tippyjs/react';
+import { getBranchFromUrl, getLicense } from '../../network/GithubAPICalls';
+import { getGitlabBranchFromUrl, getGitlabLicense } from '../../network/GitlabAPICalls';
 
 const ModalFooter = styled.div`
     height: 60px;
@@ -32,9 +34,51 @@ class MetaDataModal extends React.Component {
         this.state = {
             collapse: false,
             collapseComparison: false,
-            collapseMetaInfo: false
+            collapseMetaInfo: false,
+            ontologyVersion: '',
+            licenceInfo: 'No Licence Available',
+            licenseURL: null,
+            gitCollapse: false
         };
     }
+
+    componentDidMount = async () => {
+        const theOntology = this.props.selectedOntology;
+        let version = 'internal';
+        let license = null;
+        if (theOntology.lookup_type === 'online') {
+            version = getBranchFromUrl(theOntology.lookup_path);
+            license = await getLicense(theOntology.lookup_path).then(lic => {
+                license = lic;
+                return lic;
+            });
+        } else if (theOntology.lookup_type === 'online-gitlab') {
+            version = getGitlabBranchFromUrl(theOntology.lookup_path);
+            license = await getGitlabLicense(theOntology.lookup_path).then(lic => {
+                license = lic;
+                return lic;
+            });
+        }
+        let licenseName = 'No Licence Available';
+        let licenseURL = '';
+        if (license && theOntology.lookup_type === 'online') {
+            licenseName = license.data.license.name;
+            licenseURL = license.data.html_url;
+        } else if (license && theOntology.lookup_type === 'online-gitlab') {
+            if (license.license) {
+                licenseName = license.license.name;
+                licenseURL = license.license_url;
+            } else {
+                licenseName = 'No Licence Available';
+            }
+        }
+
+        this.setState({
+            ontologyVersion: version,
+            licenceInfo: licenseName,
+            licenseURL: licenseURL
+        });
+    };
 
     toggle = () => {
         this.setState(prevState => ({
@@ -45,6 +89,12 @@ class MetaDataModal extends React.Component {
     toggleMetaInformation = () => {
         this.setState(prevState => ({
             collapseMetaInfo: !prevState.collapseMetaInfo
+        }));
+    };
+
+    toggleGitCollapse = () => {
+        this.setState(prevState => ({
+            gitCollapse: !prevState.gitCollapse
         }));
     };
 
@@ -189,7 +239,58 @@ class MetaDataModal extends React.Component {
                         >
                             <h3>Metadata Information</h3>
                         </div>
-                        <div style={{ height: 'calc(100% - 120px)', overflow: 'auto' }}>{this.renderMetaInformation()}</div>
+                        <div style={{ height: 'calc(100% - 120px)', overflow: 'auto' }}>
+                            <div>
+                                <div style={{ textAlign: 'left', marginLeft: '15px', margin: '15px' }}>
+                                    <HeadingSpan style={{ fontWeight: 600 }}>Project Name: </HeadingSpan>
+                                    <HeadingSpan>{this.props.selectedProject.name}</HeadingSpan>
+                                </div>
+                                <div style={{ textAlign: 'left', marginLeft: '15px', margin: '15px' }}>
+                                    <HeadingSpan style={{ fontWeight: 600 }}>Ontology Name: </HeadingSpan>
+                                    <HeadingSpan>{this.props.selectedOntology.name}</HeadingSpan>
+                                </div>
+                            </div>
+                            <div>{this.renderMetaInformation()}</div>
+                            <div>
+                                {this.props.selectedOntology.lookup_type === 'online' ||
+                                this.props.selectedOntology.lookup_type === 'online-gitlab' ? (
+                                    <div style={{ padding: '0 10px' }}>
+                                        <StyledButton onClick={() => this.toggleGitCollapse()}>
+                                            <StyledIcon icon={this.state.gitCollapse ? faChevronCircleRight : faChevronCircleDown} />
+                                            {this.props.selectedOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
+                                        </StyledButton>
+                                        <Collapse isOpen={!this.state.gitCollapse}>
+                                            <Table striped>
+                                                <tbody>
+                                                    <tr>
+                                                        <th style={{ textAlign: 'left' }}>URL</th>
+                                                        <td style={{ textAlign: 'left' }}>{this.props.selectedOntology.lookup_path}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style={{ textAlign: 'left' }}>License</th>
+                                                        <td style={{ textAlign: 'left' }}>
+                                                            <a
+                                                                href={this.state.licenseURL ? this.state.licenseURL : null}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                            >
+                                                                {this.state.licenceInfo}
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style={{ textAlign: 'left' }}>Branch</th>
+                                                        <td style={{ textAlign: 'left' }}>{this.state.ontologyVersion}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </Table>
+                                        </Collapse>
+                                    </div>
+                                ) : (
+                                    <div />
+                                )}
+                            </div>
+                        </div>
                         <ModalFooter>
                             <div style={{ textAlign: 'right' }}>
                                 <CloseButton onClick={this.props.toggle}>Close</CloseButton>
@@ -205,16 +306,24 @@ class MetaDataModal extends React.Component {
 MetaDataModal.propTypes = {
     isModalOpen: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
-    metaInformation: PropTypes.object
+    selectedOntology: PropTypes.object.isRequired,
+    metaInformation: PropTypes.object,
+    selectedProject: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
     return {
-        metaInformation: state.ResourceRelationModelReducer.metaInformation
+        metaInformation: state.ResourceRelationModelReducer.metaInformation,
+        selectedOntology: state.ResourceRelationModelReducer.ontology,
+        selectedProject: state.ResourceRelationModelReducer.project
     };
 };
 
 export default connect(mapStateToProps)(MetaDataModal);
+
+const HeadingSpan = styled.span`
+    font-size: 16px;
+`;
 
 const StyledIcon = styled(Icon)`
     font-size: ${fontStyled.fontSize.NormalText};
