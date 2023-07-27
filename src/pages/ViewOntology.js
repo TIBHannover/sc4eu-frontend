@@ -76,7 +76,7 @@ class ViewOntology extends Component {
     };
 
     render() {
-        const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
+        const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS) || 'hybrid';
         return (
             <>
                 <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
