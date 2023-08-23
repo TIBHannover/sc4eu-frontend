@@ -92,6 +92,23 @@ const documentData = [
     },
     {
         id: '5',
+        heading: ' Bosch Demonstrator (Requirements Gatherings & Use Case Definition ) ',
+        content:
+            'Integrating Generic Data Model Updates with Domain Ontology: Elevating Digital References\n' +
+            '\n' +
+            'Efficient digital reference systems rely on accurate information retrieval. By seamlessly incorporating updates from a generic data model into a domain ontology, we can enhance the precision and relevance of digital references. This fusion of data structure and domain-specific semantics aims to close the gap between raw data and user queries, promising a new era of improved digital reference experiences.' +
+            '<br><br>' +
+            `<iframe
+            width="100%"
+                title="gitVersionComparison"
+                height="425"
+                src="https://www.youtube.com/embed/ioDXJezVgq0?autoplay=1&controls=0&loop=1&playlist=ioDXJezVgq0&vq=highest"
+                allowFullScreen
+                allow="autoplay"
+    />`
+    },
+    {
+        id: '6',
         heading: 'Portal Use Case',
         content:
             'This use case illustrates the process of introducing a new team member to the work on the Digital Reference ontology.<br><br>' +
@@ -104,7 +121,7 @@ const documentData = [
             'In the subsequent meeting, the team discusses the proposed changes by visualizing the differences at the textual level. Additionally, the Hybrid view is utilized to showcase direct connections and further aid the discussion.'
     },
     {
-        id: '6',
+        id: '7',
         heading: 'Establish and Maintain Ontology\n',
         content:
             'As a basic best practice, an ontology should be created and maintained from the beginning in a version control system. Like <a href="https://github.com/" target="_blank">GitHub</a> or <a href="https://gitlab.com/" target="_blank">GitLab</a>. This is important to track all changes to the ontology in terms of who made which change and when. For the Digital Reference Ontology we use the version control system <a href="https://github.com/tibonto/dr/tree/master" target="_blank">GitHub</a>.<br><br>' +
@@ -114,7 +131,7 @@ const documentData = [
             ' " alt="ScreenShot" style="width: 100%; height: 100%; margin-right: 10px; margin-top: 10px; border: 1px solid black;"/>'
     },
     {
-        id: '7',
+        id: '8',
         heading: 'OCP: Using the Portal with or without a Registration',
         content:
             'Our portal can basically be used with and without registration. Without registration, many functionalities can already be used in the public projects. However, some functionalities are only available for registered users. These include uploading ontologies to the portal, managing collaborators in projects, but also customizing the project description.\n' +
@@ -130,7 +147,7 @@ const documentData = [
             />`
     },
     {
-        id: '8',
+        id: '9',
         heading: 'OCP: Collect Relevant Ontologies in Projects',
         content:
             'The Ontology Curation Portal manages ontologies in Collections and Projects. A collection can be understood as a general filtering criteria. By now we have four collections: <br><br>' +
@@ -150,7 +167,7 @@ const documentData = [
             />`
     },
     {
-        id: '9',
+        id: '10',
         heading: 'OCP: Import an Ontology in the Portal\n',
         content:
             'Before you can visualize and work with your ontology, you have to import them into our portal. The import functionality is accessible in any project in the upper left corner and can be used by users with Project Admin or System Admin roles. The portal provides two ways for you to import (make available) your ontologies in your portal projects.<br><br>' +
@@ -168,7 +185,7 @@ const documentData = [
             />`
     },
     {
-        id: '10',
+        id: '11',
         heading: 'OCP: Get an Overview-Visualisation of an Ontology',
         content:
             'To get a general overview of your ontology, you can use the graph-based visualization. \n' +
@@ -186,7 +203,7 @@ const documentData = [
             />`
     },
     {
-        id: '11',
+        id: '12',
         heading: 'OCP: Visualize Details of an Ontology',
         content:
             'If you are interested in certain details of your ontology you can use the hybrid mode of operation, that can be accessed via the "Hybrid" tab from the fly out menu. in this view you find the ontologie splitted in Ressources, Relations and metadata. Ressources are all the concepts of your ontology and relations are all the connections (properties) between the concepts. For ressources and relations, the portal provides the same set of functionality: <br><br>' +
@@ -205,7 +222,7 @@ const documentData = [
             />`
     },
     {
-        id: '12',
+        id: '13',
         heading: 'OCP: WebProtege for Collaborative Work on the Ontology',
         content:
             'WebProtege is the web-based software of the widely used <a href="https://protege.stanford.edu/" target="_blank">Protege</a> tool from <a href="https://www.stanford.edu/" target="_blank">Stanford University</a>. TIB hosts its own WebProtege service for research projects. This service is a further development of the standard software and is currently loosely integrated into the OCP. Due to the loose coupling, a new registration or login is currently still required. A closer coupling of the two systems is being sought.<br>' +
@@ -236,13 +253,13 @@ const documentData = [
             'Your project will automatically be created. For further interaction from WebProtege to Git, you have to use the menus on the WebProtege Project List view.'
     },
     {
-        id: '13',
+        id: '14',
         heading: 'OCP: Create Ontology Documentation',
         content:
             'If you want to automatically create a documentation of the ontology of interest you can in the hybrid view Metadata tab, use the Widoco Documentation functionality. If you press on the Widoco Documentation tab the ontology will be processed into a document that is structured in Release information, Abstract, Table of content, and the specification of all concepts and relations. From this documentation you can as well download various serialization formats (JSON LD, RDF/XML, N Triple, and TTL) of your ontology to your local computer.'
     },
     {
-        id: '14',
+        id: '15',
         heading: 'OCP: Visualize Differences Between Ontology Versions',
         content:
             'In some cases it is important to understand what the differences between two ontology versions are. For such use cases the portal provides in the Hybrid view, in the metadata tab the “Ontology Comparison”.  Here for the given ontologie you find two selection boxes. The first box provides you with proposals for the ontology version you want to see changes made the second selection box the ontology version to compare against.' +
@@ -257,7 +274,7 @@ const documentData = [
             />`
     },
     {
-        id: '15',
+        id: '16',
         heading: 'OCP: User Roles',
         content: `
       <table style="margin-top: 20px;" border="1" responsive>
@@ -283,7 +300,7 @@ const documentData = [
     `
     },
     {
-        id: '16',
+        id: '17',
         heading: ' Presentation Material',
         content: `<iframe
             src="https://docs.google.com/presentation/d/154vcWKt-ei4W5b6LdTEeRhO26WPGQ0z1A5OO_UBStnw/embed"
@@ -293,7 +310,7 @@ const documentData = [
             />`
     },
     {
-        id: '17',
+        id: '18',
         heading: 'Scientific Publication',
         content: `
             <div>
