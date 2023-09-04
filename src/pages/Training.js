@@ -71,6 +71,23 @@ const documentData = [
     },
     {
         id: '4',
+        heading: 'Digital Reference – a holistic ontology for the semiconductor supply chains and supply chains containing semiconductors',
+        content:
+            'Digital Reference ontology reflects the supply chain-related Semantic Web of the semiconductor industry and the corresponding supply chains. It combines different supply chain structures and semiconductor production concepts and entities, like Supply Chain Networks, Digital Production and Product Lifecycle Management. Digital Reference can be seen as an enabler for industry digitalization. In the Semantic Web, the well-defined and structured information enables computers and people to work in cooperation and to automate industrial, collaborative B2B processes, e.g. in supply chain management and product development.<br/>' +
+            '<br>' +
+            'Digital Reference is the current emerging standard of ontologies for semiconductor and supply chains containing semiconductors. Various organizations can use it as a standard to represent their supply chain, in part or in full. This ontology can be used as a base to connect different data sources for semiconductor companies and connected supply chains. It has also been recognized by <a href="https://www.semi.org/en/" target="_blank">SEMI</a> ,  the industry association serving the global electronics manufacturing and design supply chain, as one of the solutions to better withstand supply chain disruptions and to advance and agile global electronics supply chain.  <br><br>' +
+            'Within the <a href="https://www.semi.org/en/industry-groups/supply-chain-management" target="_blank">Supply Chain Management (SCM) Initiative</a>, of which Infineon Technologies is a founding member and leader of German and European activities, Digital Reference has been introduces as a key component to mitigate the bullwhip effect by obtaining high-quality, reliable data for semiconductor demand forecasting. In the proposed solution, data should be gathered via an anonymous survey based on Multi-Party Computation technology. Anonymity and security of data flow will encourage business partners to share their true demand data. Then, the gathered data will be mapped onto the Digital Reference and processed with AI tools for demand breakdown of fine granularity.<br/><br/>' +
+            'The Digital Reference consists of thematic clusters, covering all stages of the supply chain and providing both human and machine with a concise knowledge base. It contains approximately 1000 classes, which enable to define several concepts in different domains. Based on the structure of the human brain, parts of the ontology are represented as lobes, i.e. taxonomies for classes and properties clusters: Cloud, Organization, Planning, Power, Process, Product, Semiconductor Development, Semiconductor Production, Sensor, Sensor, Supply Chain, Sustainability, System, Time, and Wired Communication.' +
+            '<br><br>' +
+            `<iframe
+                width="100%"
+                height="500"
+                src="https://docs.google.com/presentation/d/1EHcWTO4t-FjX81S4k_DEDfZGWIL4HWK3/embed"
+                allowFullScreen
+    />`
+    },
+    {
+        id: '5',
         heading: 'The Semantic Web',
         content:
             'The Semantic Web enables the automatic processing of resources described by ontologies. For the description, dissemination and retrieval of resources described by ontologies, the Semantic Web provides a stack of technologies that build on each other.<br><br>' +
@@ -91,7 +108,7 @@ const documentData = [
             '<b>Web Ontology Language:</b> RDFS is limited in its expressiveness to the specification of classes and certain properties of relations. Other properties, such as the disjointness of classes, the combination of classes (union, intersection, complement of classes), restrictions on cardinality or certain peculiarities of properties such as their transitivity or uniqueness cannot be expressed in RDFS. The W3C therefore specifies the ontology language OWL. The OWL specification exists in three variants: OWL Lite, OWL DL and OWL Full. Based on the language scope of OWL Lite, the following two variants OWL DL and OWL Full build on each other in their expressive power in the order mentioned.'
     },
     {
-        id: '5',
+        id: '6',
         heading: ' Bosch Demonstrator (Requirements Gatherings & Use Case Definition ) ',
         content:
             'Integrating Generic Data Model Updates with Domain Ontology: Elevating Digital References\n' +
@@ -108,7 +125,7 @@ const documentData = [
     />`
     },
     {
-        id: '6',
+        id: '7',
         heading: 'Portal Use Case',
         content:
             'This use case illustrates the process of introducing a new team member to the work on the Digital Reference ontology.<br><br>' +
@@ -121,7 +138,7 @@ const documentData = [
             'In the subsequent meeting, the team discusses the proposed changes by visualizing the differences at the textual level. Additionally, the Hybrid view is utilized to showcase direct connections and further aid the discussion.'
     },
     {
-        id: '7',
+        id: '8',
         heading: 'Establish and Maintain Ontology\n',
         content:
             'As a basic best practice, an ontology should be created and maintained from the beginning in a version control system. Like <a href="https://github.com/" target="_blank">GitHub</a> or <a href="https://gitlab.com/" target="_blank">GitLab</a>. This is important to track all changes to the ontology in terms of who made which change and when. For the Digital Reference Ontology we use the version control system <a href="https://github.com/tibonto/dr/tree/master" target="_blank">GitHub</a>.<br><br>' +
@@ -131,7 +148,7 @@ const documentData = [
             ' " alt="ScreenShot" style="width: 100%; height: 100%; margin-right: 10px; margin-top: 10px; border: 1px solid black;"/>'
     },
     {
-        id: '8',
+        id: '9',
         heading: 'OCP: Using the Portal with or without a Registration',
         content:
             'Our portal can basically be used with and without registration. Without registration, many functionalities can already be used in the public projects. However, some functionalities are only available for registered users. These include uploading ontologies to the portal, managing collaborators in projects, but also customizing the project description.\n' +
@@ -147,7 +164,7 @@ const documentData = [
             />`
     },
     {
-        id: '9',
+        id: '10',
         heading: 'OCP: Collect Relevant Ontologies in Projects',
         content:
             'The Ontology Curation Portal manages ontologies in Collections and Projects. A collection can be understood as a general filtering criteria. By now we have four collections: <br><br>' +
@@ -167,7 +184,7 @@ const documentData = [
             />`
     },
     {
-        id: '10',
+        id: '11',
         heading: 'OCP: Import an Ontology in the Portal\n',
         content:
             'Before you can visualize and work with your ontology, you have to import them into our portal. The import functionality is accessible in any project in the upper left corner and can be used by users with Project Admin or System Admin roles. The portal provides two ways for you to import (make available) your ontologies in your portal projects.<br><br>' +
@@ -185,7 +202,7 @@ const documentData = [
             />`
     },
     {
-        id: '11',
+        id: '12',
         heading: 'OCP: Get an Overview-Visualisation of an Ontology',
         content:
             'To get a general overview of your ontology, you can use the graph-based visualization. \n' +
@@ -203,7 +220,7 @@ const documentData = [
             />`
     },
     {
-        id: '12',
+        id: '13',
         heading: 'OCP: Visualize Details of an Ontology',
         content:
             'If you are interested in certain details of your ontology you can use the hybrid mode of operation, that can be accessed via the "Hybrid" tab from the fly out menu. in this view you find the ontologie splitted in Ressources, Relations and metadata. Ressources are all the concepts of your ontology and relations are all the connections (properties) between the concepts. For ressources and relations, the portal provides the same set of functionality: <br><br>' +
@@ -222,7 +239,7 @@ const documentData = [
             />`
     },
     {
-        id: '13',
+        id: '14',
         heading: 'OCP: WebProtege for Collaborative Work on the Ontology',
         content:
             'WebProtege is the web-based software of the widely used <a href="https://protege.stanford.edu/" target="_blank">Protege</a> tool from <a href="https://www.stanford.edu/" target="_blank">Stanford University</a>. TIB hosts its own WebProtege service for research projects. This service is a further development of the standard software and is currently loosely integrated into the OCP. Due to the loose coupling, a new registration or login is currently still required. A closer coupling of the two systems is being sought.<br>' +
@@ -253,13 +270,13 @@ const documentData = [
             'Your project will automatically be created. For further interaction from WebProtege to Git, you have to use the menus on the WebProtege Project List view.'
     },
     {
-        id: '14',
+        id: '15',
         heading: 'OCP: Create Ontology Documentation',
         content:
             'If you want to automatically create a documentation of the ontology of interest you can in the hybrid view Metadata tab, use the Widoco Documentation functionality. If you press on the Widoco Documentation tab the ontology will be processed into a document that is structured in Release information, Abstract, Table of content, and the specification of all concepts and relations. From this documentation you can as well download various serialization formats (JSON LD, RDF/XML, N Triple, and TTL) of your ontology to your local computer.'
     },
     {
-        id: '15',
+        id: '16',
         heading: 'OCP: Visualize Differences Between Ontology Versions',
         content:
             'In some cases it is important to understand what the differences between two ontology versions are. For such use cases the portal provides in the Hybrid view, in the metadata tab the “Ontology Comparison”.  Here for the given ontologie you find two selection boxes. The first box provides you with proposals for the ontology version you want to see changes made the second selection box the ontology version to compare against.' +
@@ -274,7 +291,7 @@ const documentData = [
             />`
     },
     {
-        id: '16',
+        id: '17',
         heading: 'OCP: User Roles',
         content: `
       <table style="margin-top: 20px;" border="1" responsive>
@@ -300,7 +317,7 @@ const documentData = [
     `
     },
     {
-        id: '17',
+        id: '18',
         heading: ' Presentation Material',
         content: `<iframe
             src="https://docs.google.com/presentation/d/154vcWKt-ei4W5b6LdTEeRhO26WPGQ0z1A5OO_UBStnw/embed"
@@ -310,7 +327,7 @@ const documentData = [
             />`
     },
     {
-        id: '18',
+        id: '19',
         heading: 'Scientific Publication',
         content: `
             <div>
