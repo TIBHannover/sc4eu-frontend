@@ -130,13 +130,13 @@ processing.getHtmlForWidoco(router);
 router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
 router.get(
     '/auth/github/callback',
-    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/sc3/LoginFailedRedirect` }),
+    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         // Successful authentication, redirect home.
         // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
         res.redirect(
             url.format({
-                pathname: `${process.env.CALLBACK_URL}/sc3/loggedIn`,
+                pathname: `${process.env.CALLBACK_URL}/ocp/loggedIn`,
                 query: {
                     success: true,
                     token: req.user.jwt
@@ -153,7 +153,7 @@ router.get(
     (req, res) => {
         res.redirect(
             url.format({
-                pathname: `${process.env.CALLBACK_URL}/sc3/loggedIn`,
+                pathname: `${process.env.CALLBACK_URL}/ocp/loggedIn`,
                 query: {
                     success: true,
                     token: req.user.jwt
@@ -164,7 +164,7 @@ router.get(
 );
 
 router.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, '..', 'build/sc3', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'build/ocp', 'index.html'));
 });
 
-app.use('/sc3', router);
+app.use('/ocp', router);
