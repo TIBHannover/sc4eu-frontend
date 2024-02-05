@@ -13,6 +13,24 @@ import { colorStyled } from '../styledComponents/styledColor';
 import Logo from '../assets/images/logo.png';
 import GoogleSurvey from '../components/GoogleSurvey';
 
+const CurationTxt = (
+    <>
+        {'The SC4EU Ontology Curation Portal enables you to collect all ontologies relevant for your research project.' +
+            ' You can create new collections and add as much ontologies as you like.'}
+    </>
+);
+const VisualizationTxt = (
+    <>
+        {'Creation of ontologies requires expertise from various stakeholders with different ontology proficiency levels.' +
+            ' The portal allows easy translation of visualizations for various expert groups.'}
+    </>
+);
+const EditingTxt = (
+    <>
+        {'Collaborative editing of ontologies is the next step in the ontology agreement process. The SC4EU Ontology ' +
+            'Curation Portal integrates the broadly known WebProtege for collaborative editing.'}
+    </>
+);
 export default class Home extends Component {
     constructor(props) {
         super(props);
@@ -38,30 +56,21 @@ export default class Home extends Component {
                             <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '-10px' }}>
                                 Collaborative Ontology Curation
                             </StyledBodyLink>
-                            <StyledBodyText>
-                                The SC<sup>3</sup> Ontology Curation Portal enables you to collect all ontologies relevant for your research project.
-                                You can create new collections and add as much ontologies as you like.
-                            </StyledBodyText>
+                            <StyledBodyText>{CurationTxt}</StyledBodyText>
                         </StyledBodyDiv>
                         <StyledBodyDiv>
                             <StyledVisLogo src={visualisation} alt="visualisation" />
                             <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
                                 Ontology Visualisation
                             </StyledBodyLink>
-                            <StyledBodyText>
-                                Creation of ontologies requires expertise from various stakeholders with different ontology proficiency levels. The
-                                portal allows easy translation of visualizations for various expert groups.
-                            </StyledBodyText>
+                            <StyledBodyText>{VisualizationTxt}</StyledBodyText>
                         </StyledBodyDiv>
                         <StyledBodyDiv>
                             <StyledEditLogo src={edite} alt="edite" />
                             <StyledBodyLink to={ROUTES.WEBPROTEGE} style={{ marginTop: '20px' }}>
                                 Collaborative Ontology Editing
                             </StyledBodyLink>
-                            <StyledBodyText>
-                                Collaborative editing of ontologies is the next step in the ontology agreement process. The SC<sup>3</sup> Ontology
-                                Curation Portal integrates the broadly known WebProtege for collaborative editing.
-                            </StyledBodyText>
+                            <StyledBodyText>{EditingTxt}</StyledBodyText>
                         </StyledBodyDiv>
                     </StyledBody>
                 </StyledRootDiv>

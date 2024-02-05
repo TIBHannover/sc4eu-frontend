@@ -93,11 +93,9 @@ class Documentations extends Component {
                             {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
                         </span>
                     </StyledText>
-                    <h5>
-                        About SC<sup>3</sup> Ontology Curation Portal
-                    </h5>
+                    <h5>About SC4EU Ontology Curation Portal</h5>
                     <StyledText>
-                        SC<sup>3</sup> Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and
+                        SC4EU Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and machines, as
                         machines, as well as all other partners.The key objective of this platform is to implement data documentation of an actionable
                         ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by
                         new ones for other subdomains to ensure interoperability of data. "Further information about the project you can find on our
@@ -108,7 +106,7 @@ class Documentations extends Component {
                             rel="noopener noreferrer"
                             href="https://sc3-project.automotive.oth-aw.de/"
                         >
-                            SC<sup>3</sup> webpage
+                            SC4EU webpage
                         </a>
                         , on our&nbsp;
                         <a
@@ -137,11 +135,9 @@ class Documentations extends Component {
                         </span>
                     </p>
 
-                    <h5>
-                        Be part of the SC<sup>3</sup> Community and Collaborate with us{' '}
-                    </h5>
+                    <h5>Be part of the SC4EU Community and Collaborate with us </h5>
                     <StyledText>
-                        SC<sup>3</sup> is a{' '}
+                        SC4EU is a{' '}
                         <a
                             style={{ color: colorStyled.SECONDARY.link }}
                             target="_blank"
@@ -153,15 +149,14 @@ class Documentations extends Component {
                         funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited to
                         participate in the project development.
                         <br />
-                        If you would like to setup your own SC<sup>3</sup> Portal or if you would like to contribute to our codebase, please
-                        visit:&nbsp;
+                        If you would like to setup your own SC4EU Portal or if you would like to contribute to our codebase, please visit:&nbsp;
                         <a
                             style={{ color: colorStyled.SECONDARY.link }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://gitlab.com/TIBHannover/sc3-project/"
                         >
-                            SC<sup>3</sup> Project GitLab
+                            SC4EU Project GitLab
                         </a>
                         <br />
                         You will find all our code under MIT licence, instructions. Check it out!

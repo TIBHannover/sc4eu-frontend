@@ -121,7 +121,7 @@ export default class Faq extends Component {
                                 href="https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues"
                                 rel="noreferrer"
                             >
-                                SC<sup>3</sup> Issue Management
+                                SC4EU Issue Management
                             </a>
                         </StyledText>
                     </Collapse>
@@ -135,10 +135,10 @@ export default class Faq extends Component {
                     </Button>
                     <Collapse isOpen={this.state.collapseWebProtege}>
                         <StyledText>
-                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC<sup>3</sup> Ontology
+                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology Curation
                             Curation Portal ( &nbsp;
                             <a style={{ color: colorStyled.SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
-                                SC<sup>3</sup> Ontology Curation Portal
+                                SC4EU Ontology Curation Portal
                             </a>
                             &nbsp;) and WebProtege (&nbsp;
                             <a
