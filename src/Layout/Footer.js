@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import KDT_logo from '../assets/images/KDT-JU-logo-full.gif';
+import ChipsJu_logo from '../assets/images/chipsju.png';
 import infinion_logo from '../assets/images/infineon.png';
 import tib_logo from '../assets/images/TIB2.png';
 import ftk_logo from '../assets/images/FTK.png';
@@ -21,7 +22,7 @@ class Footer extends Component {
                     <StyledLeftDiv>
                         <LogoOntologyPortal src={OntologyPortal} alt="OntologyPortal" />
                         <StyledNoteText>
-                            <span style={{ fontWeight: 600 }}>Note :</span> This is a Minimal Viable Product of the SC<sup>3</sup> project.
+                            <span style={{ fontWeight: 600 }}>Note :</span> This is a Minimal Viable Product of the SC4EU project.
                             <br /> I.e., We don't provide any backup solution yet.
                         </StyledNoteText>
                     </StyledLeftDiv>
@@ -35,12 +36,12 @@ class Footer extends Component {
                         <Image src={mines_logo} alt="Mines Logo" style={{ paddingLeft: '5px' }} />
                     </div>
                     <StyledRightDiv>
-                        <a href={'https://www.kdt-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
-                            <StyledImage src={KDT_logo} alt="DFG Logo" />
+                        <a href={'https://www.chips-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
+                            <StyledImage src={ChipsJu_logo} alt="DFG Logo" />
                         </a>
                         <StyledText>
-                            SC<sup>3</sup> is Supported by KDT JU <br />
-                            Under Grant number 101007312
+                            SC4EU is Supported by Chips JU <br />
+                            Under Grant number 101139949
                         </StyledText>
                         <StyledLogo src={Logo} alt="SC3 Logo" />
                     </StyledRightDiv>

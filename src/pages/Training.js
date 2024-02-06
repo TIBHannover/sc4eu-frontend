@@ -53,7 +53,7 @@ const documentData = [
     },
     {
         id: '2',
-        heading: 'SC3 Project Motivation: Consistent Communication in Complex Semiconductor Supply Chains',
+        heading: 'SC4EU Project Motivation: Consistent Communication in Complex Semiconductor Supply Chains',
         content:
             'The semiconductor production industry is a highly intricate field. It involves complex supply chains characterized by short product cycles, strong interdependencies with other industries, and numerous partners. Clear communication plays a crucial role in achieving success within this environment.<br><br>' +
             'Similar to other domains, the semiconductor industry possesses its own body of knowledge, encompassing specialized concepts and their relationships, along with the necessary vocabulary for effective communication. Hence, having a well-defined terminology is paramount for collaboration among experts, enabling them to articulate requirements, technical or non-technical specifications, and reports, among other things. To fulfill this requirement, a common language is essential, encompassing precise definitions of terms and resolving synonyms by establishing their interdependencies.<br><br>' +
@@ -129,9 +129,9 @@ const documentData = [
         heading: 'Portal Use Case',
         content:
             'This use case illustrates the process of introducing a new team member to the work on the Digital Reference ontology.<br><br>' +
-            "To provide a more detailed scope, the new team member is external to my organization and operates from a different city. As a Knowledge Worker unfamiliar with the Digital Reference Ontology, I begin by requesting the new member to acquaint themselves with the ontology and other relevant ontologies through our platform's SC3 collection. To facilitate this, I guide them to register in our system (OCP: Using the Portal with or without Registration). Following successful registration, the new member gains access to all public projects (OCP: Collect Relevant Ontologies in Projects) available on the platform.<br><br>" +
-            'Next, I invite the new team member to a virtual meeting to delve into the intricacies of the DR ontology. To prepare for this, I import (OCP: Import an Ontology in the Portal) the latest version of the DR ontology directly from GitHub into our SC3 collection on the platform.<br><br>' +
-            "During our virtual meeting, I aim to provide an overview of the complexity of the DR ontology. To achieve this, we utilize the SC3 Platform's Graph View (OCP: Visualize Details of an Ontology), which presents a comprehensive visualization of all classes, properties, and their interconnections.<br><br>" +
+            "To provide a more detailed scope, the new team member is external to my organization and operates from a different city. As a Knowledge Worker unfamiliar with the Digital Reference Ontology, I begin by requesting the new member to acquaint themselves with the ontology and other relevant ontologies through our platform's SC4EU collection. To facilitate this, I guide them to register in our system (OCP: Using the Portal with or without Registration). Following successful registration, the new member gains access to all public projects (OCP: Collect Relevant Ontologies in Projects) available on the platform.<br><br>" +
+            'Next, I invite the new team member to a virtual meeting to delve into the intricacies of the DR ontology. To prepare for this, I import (OCP: Import an Ontology in the Portal) the latest version of the DR ontology directly from GitHub into our SC4EU collection on the platform.<br><br>' +
+            "During our virtual meeting, I aim to provide an overview of the complexity of the DR ontology. To achieve this, we utilize the SC4EU Platform's Graph View (OCP: Visualize Details of an Ontology), which presents a comprehensive visualization of all classes, properties, and their interconnections.<br><br>" +
             'To focus the introduction, I highlight various ontology modules. We employ color-coding in the Graph View to indicate existing modules and their positions within the overall ontology.<br><br>' +
             'Following the general introduction, I assign the new team member the task of addressing inconsistencies in the modeling of a "Person" and their "Roles" within the DR ontology. To facilitate this, I open the widget-based view, search for the "Person" concept, and engage in discussions about its recent modeling.<br><br>' +
             'After our introductory session, the new member accesses the DR ontology through the WebProtege application on the platform (OCP: WebProtege for Collaborative Work on the Ontology). They clone the latest version of the DR ontology from GitHub within WebProtege and proceed to make necessary modifications. To facilitate collaboration and discussion with other colleagues, they push their changes via WebProtege to a feature branch in GitHub.<br><br>' +
@@ -168,7 +168,7 @@ const documentData = [
         heading: 'OCP: Collect Relevant Ontologies in Projects',
         content:
             'The Ontology Curation Portal manages ontologies in Collections and Projects. A collection can be understood as a general filtering criteria. By now we have four collections: <br><br>' +
-            '<li>SC3 Collection: here you find all projects that relates to SC3</li>' +
+            '<li>SC4EU Collection: here you find all projects that relates to SC4EU</li>' +
             '<li>SandBox is our playground that can be used to get familiar with the OCP</li>' +
             '<li>Public: all public projects \n</li>' +
             '<li>Private: all private projects </li> <br>' +
