@@ -6,6 +6,9 @@ import tib_logo from '../assets/images/TIB2.png';
 import ftk_logo from '../assets/images/FTK.png';
 import bosch_logo from '../assets/images/Bosch.png';
 import mines_logo from '../assets/images/MINES.png';
+import STMicroelectronics_logo from '../assets/images/st-logo.png';
+import SAP_logo from '../assets/images/sap-logo.png';
+import NXP_logo from '../assets/images/NXP-Logo.png';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
@@ -17,36 +20,37 @@ import { colorStyled } from '../styledComponents/styledColor';
 class Footer extends Component {
     render() {
         return (
-            <div>
-                <StyledBodyDiv>
-                    <StyledLeftDiv>
-                        <LogoOntologyPortal src={OntologyPortal} alt="OntologyPortal" />
-                        <StyledNoteText>
-                            <span style={{ fontWeight: 600 }}>Note :</span> This is a Minimal Viable Product of the SC4EU project.
-                            <br /> I.e., We don't provide any backup solution yet.
-                        </StyledNoteText>
-                    </StyledLeftDiv>
-                    <div>
-                        <Image src={infinion_logo} alt="Infinion Logo" />
-                        <a href={'https://www.tib.eu/de/'} target="_blank" rel="noopener noreferrer">
-                            <Image src={tib_logo} alt="TIB Logo" style={{ paddingLeft: '15px' }} />
-                        </a>
-                        <Image src={ftk_logo} alt="FTK Logo" style={{ paddingLeft: '15px' }} />
-                        <Image src={bosch_logo} alt="Bosch Logo" style={{ paddingLeft: '15px' }} />
-                        <Image src={mines_logo} alt="Mines Logo" style={{ paddingLeft: '5px' }} />
-                    </div>
-                    <StyledRightDiv>
-                        <a href={'https://www.chips-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
-                            <StyledImage src={ChipsJu_logo} alt="DFG Logo" />
-                        </a>
-                        <StyledText>
-                            SC4EU is Supported by Chips JU <br />
-                            Under Grant number 101139949
-                        </StyledText>
-                        <StyledLogo src={Logo} alt="SC3 Logo" />
-                    </StyledRightDiv>
-                </StyledBodyDiv>
-            </div>
+            <StyledBodyDiv>
+                <StyledLeftDiv>
+                    <LogoOntologyPortal src={OntologyPortal} alt="OntologyPortal" />
+                    <StyledNoteText>
+                        <span style={{ fontWeight: 600 }}>Note :</span> This is a Minimal Viable Product of the SC4EU project.
+                        <br /> I.e., We don't provide any backup solution yet.
+                    </StyledNoteText>
+                </StyledLeftDiv>
+                <div>
+                    <Image src={infinion_logo} alt="Infinion Logo" />
+                    <a href={'https://www.tib.eu/de/'} target="_blank" rel="noopener noreferrer">
+                        <Image src={tib_logo} alt="TIB Logo" style={{ paddingLeft: '15px' }} />
+                    </a>
+                    <Image src={ftk_logo} alt="FTK Logo" style={{ paddingLeft: '15px' }} />
+                    <Image src={bosch_logo} alt="Bosch Logo" style={{ paddingLeft: '15px' }} />
+                    <Image src={mines_logo} alt="Mines Logo" style={{ paddingLeft: '15px' }} />
+                    <Image src={STMicroelectronics_logo} alt="ST Microelectronics Logo" style={{ paddingLeft: '15px' }} />
+                    <Image src={SAP_logo} alt="SAP Logo" style={{ paddingLeft: '15px' }} />
+                    <Image src={NXP_logo} alt="NXP Logo" style={{ paddingLeft: '15px' }} />
+                </div>
+                <StyledRightDiv>
+                    <a href={'https://www.chips-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
+                        <StyledImage src={ChipsJu_logo} alt="DFG Logo" />
+                    </a>
+                    <StyledText>
+                        SC4EU is Supported by Chips JU <br />
+                        Under Grant number 101139949
+                    </StyledText>
+                    <StyledLogo src={Logo} alt="SC3 Logo" />
+                </StyledRightDiv>
+            </StyledBodyDiv>
         );
     }
 }
@@ -73,8 +77,8 @@ const StyledBodyDiv = styled.div`
     }
 
     @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        padding-left: 15%;
-        padding-right: 15%;
+        padding-left: 5%;
+        padding-right: 5%;
     }
 `;
 
