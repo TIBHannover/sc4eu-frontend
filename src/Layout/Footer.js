@@ -4,11 +4,16 @@ import ChipsJu_logo from '../assets/images/chipsju.png';
 import infinion_logo from '../assets/images/infineon.png';
 import tib_logo from '../assets/images/TIB2.png';
 import ftk_logo from '../assets/images/FTK.png';
-import bosch_logo from '../assets/images/Bosch.png';
+import ASML_logo from '../assets/images/ASML_logo.png';
 import mines_logo from '../assets/images/MINES.png';
 import STMicroelectronics_logo from '../assets/images/st-logo.png';
 import SAP_logo from '../assets/images/sap-logo.png';
 import NXP_logo from '../assets/images/NXP-Logo.png';
+import hua_logo from '../assets/images/hua_logo.png';
+import TACEO_logo from '../assets/images/TACEO_logo.png';
+import Involvation_logo from '../assets/images/Involvation_logo.png';
+import tilburg_university_logo from '../assets/images/tilburg_university_logo.png';
+import Flostock_logo from '../assets/images/Flostock_logo.png';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
@@ -29,16 +34,21 @@ class Footer extends Component {
                     </StyledNoteText>
                 </StyledLeftDiv>
                 <div>
-                    <Image src={infinion_logo} alt="Infinion Logo" />
                     <a href={'https://www.tib.eu/de/'} target="_blank" rel="noopener noreferrer">
-                        <Image src={tib_logo} alt="TIB Logo" style={{ paddingLeft: '15px' }} />
+                        <Image src={tib_logo} alt="TIB Logo" />
                     </a>
-                    <Image src={ftk_logo} alt="FTK Logo" style={{ paddingLeft: '15px' }} />
-                    <Image src={bosch_logo} alt="Bosch Logo" style={{ paddingLeft: '15px' }} />
-                    <Image src={mines_logo} alt="Mines Logo" style={{ paddingLeft: '15px' }} />
-                    <Image src={STMicroelectronics_logo} alt="ST Microelectronics Logo" style={{ paddingLeft: '15px' }} />
-                    <Image src={SAP_logo} alt="SAP Logo" style={{ paddingLeft: '15px' }} />
-                    <Image src={NXP_logo} alt="NXP Logo" style={{ paddingLeft: '15px' }} />
+                    <Image src={infinion_logo} alt="Infinion Logo" />
+                    {/*<Image src={ftk_logo} alt="FTK Logo" />*/}
+                    {/*<Image src={ASML_logo} alt="ASML Logo" />*/}
+                    {/*<Image src={mines_logo} alt="Mines Logo" />*/}
+                    {/*<Image src={STMicroelectronics_logo} alt="ST Microelectronics Logo" />*/}
+                    {/*<Image src={SAP_logo} alt="SAP Logo" />*/}
+                    {/*<Image src={NXP_logo} alt="NXP Logo" />*/}
+                    {/*<Image src={TACEO_logo} alt="TACEO Logo" style={{ height: '15px' }} />*/}
+                    {/*<Image src={hua_logo} alt="Harokopio University of Athens Logo" />*/}
+                    {/*<Image src={Flostock_logo} alt="Flostock Logo" />*/}
+                    {/*<Image src={Involvation_logo} alt="Involvation Logo" style={{ height: '20px' }} />*/}
+                    {/*<Image src={tilburg_university_logo} alt="tilburg university Logo" style={{ height: '35px' }} />*/}
                 </div>
                 <StyledRightDiv>
                     <a href={'https://www.chips-ju.europa.eu/'} target="_blank" rel="noopener noreferrer">
@@ -66,7 +76,7 @@ const StyledBodyDiv = styled.div`
     bottom: 0;
     right: 0;
     padding-left: 3%;
-    padding-right: 6%;
+    padding-right: 3%;
     height: 55px;
     background: ${colorStyled.PRIMARY.light};
     overflow: hidden;
@@ -77,8 +87,8 @@ const StyledBodyDiv = styled.div`
     }
 
     @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        padding-left: 5%;
-        padding-right: 5%;
+        padding-left: 3%;
+        padding-right: 3%;
     }
 `;
 
@@ -117,6 +127,7 @@ const LogoOntologyPortal = styled.img`
 const Image = styled.img`
     height: 25px;
     margin-top: 3%;
+    padding-left: 5px;
 
     @media (max-width: ${MAX_WIDTH}) {
         display: none;
