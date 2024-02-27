@@ -14,7 +14,7 @@ import SignInModal from '../components/Signin/SignInModal';
 import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import background from '../assets/images/Curve Line.svg';
+import background from '../assets/images/Curve_Line.svg';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
 import { SettingsOutlined, LogoutOutlined, AccountCircleOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
@@ -250,7 +250,7 @@ const StyledRootDiv = styled.div`
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
-        overflow: hide;
+        overflow: hidden;
     }
 `;
 
@@ -264,7 +264,7 @@ const StyledHeaderDiv = styled.div`
     
      @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
-        overflow: hide;
+        overflow: hidden;
         background-image: none;
     }
 `;

@@ -16,6 +16,7 @@ export default {
     Documentations: '/Documentations',
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
+    VOCABULARY_SUPPORT: '/vocabulary_support',
     FAQ: '/FAQ',
     TRAINING: '/Training',
     WEBPROTEGE: '/WEBPROTEGE',

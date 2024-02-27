@@ -13,6 +13,7 @@ import { CookiesProvider } from 'react-cookie';
 import { DndProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import ReactPiwik from 'react-piwik';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // To connect Matomo Use React library react-piwik
 
@@ -24,13 +25,16 @@ const piwik = new ReactPiwik({
 ReactPiwik.push(['trackEvent', 'trackPageView']);
 
 const { store, persistor } = configureStore();
+const queryClient = new QueryClient();
 const render = () => {
     ReactDOM.render(
         <DndProvider backend={HTML5Backend}>
             <CookiesProvider>
                 <Provider store={store}>
                     <PersistGate loading={null} persistor={persistor}>
-                        <App history={piwik.connectToHistory(history)} />
+                        <QueryClientProvider client={queryClient}>
+                            <App history={piwik.connectToHistory(history)} />
+                        </QueryClientProvider>
                     </PersistGate>
                 </Provider>
             </CookiesProvider>

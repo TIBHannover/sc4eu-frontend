@@ -30,7 +30,8 @@ import {
     CollectionsOutlined,
     DiscountOutlined,
     ArticleOutlined,
-    DifferenceOutlined
+    DifferenceOutlined,
+    NoteAddOutlined
 } from '@mui/icons-material';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -333,6 +334,10 @@ const SideBar = props => {
                     <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint}>
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
+                    </StyledLink>
+                    <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
+                        <NoteAddOutlined color="action" />
+                        <StyledText>Vocabulary Dev</StyledText>
                     </StyledLink>
                 </div>
             </ListItem>
