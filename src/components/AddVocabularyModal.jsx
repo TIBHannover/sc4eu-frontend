@@ -3,24 +3,8 @@ import { MaterialReactTable, MRT_EditActionButtons, useMaterialReactTable } from
 import { Box, Button, DialogActions, DialogContent, DialogTitle, IconButton, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
-const fetchedTerms = [
-    {
-        label: 'John',
-        id: 'Doe',
-        description: '261 Erdman Ford',
-        status: 'East Daphne',
-        comment: 'Kentucky'
-    },
-    {
-        label: 'Khan',
-        id: 'yousafzai',
-        description: 'swabi',
-        status: 'happy',
-        comment: 'great guy'
-    }
-];
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getFileContent, saveNewContent } from '../network/GitAPICalls';
 
 export default function AddVocabulary(factory, deps) {
     const [validationErrors, setValidationErrors] = useState({});
@@ -87,6 +71,7 @@ export default function AddVocabulary(factory, deps) {
 
     //CREATE action
     const handleCreateTerm = async ({ values, table }) => {
+        const uuid = crypto.randomUUID();
         const newValidationErrors = validateTerm(values);
         if (Object.values(newValidationErrors).some(error => error)) {
             setValidationErrors(newValidationErrors);
@@ -99,7 +84,6 @@ export default function AddVocabulary(factory, deps) {
     };
 
     //UPDATE action
-
     const handleSaveTerm = async ({ values, table }) => {
         const newValidationErrors = validateTerm(values);
         if (Object.values(newValidationErrors).some(error => error)) {
@@ -204,12 +188,20 @@ export default function AddVocabulary(factory, deps) {
 
 async function fetchAllTermsFromGitHub() {
     //get this data from GitHub
-    return await wait(1000).then(() => [...fetchedTerms]);
+    return await getFileContent('https://github.com/tib-ts/vocabulary_development/blob/main/vocabulary.json');
+    //const gitHubFileContent = await getGitHubFileContent('https://github.com/tgfawad/Ontologies/blob/main/vocabulary.json');
+    //console.log(data);
+    //return await wait(1000).then(() => [...fetchedTerms]);
 }
 
 async function fetchAllTerms() {
     //get this data from GitHub
-    return await wait(1000).then(() => [...fetchedTerms]);
+    return await fetchAllTermsFromGitHub();
+    //return await wait(1000).then(() => [...fetchedTerms]);
+}
+
+async function saveAllTerms(newData) {
+    return await saveNewContent('https://github.com/tib-ts/vocabulary_development/blob/main/vocabulary.json', newData);
 }
 function wait(duration) {
     return new Promise(resolve => setTimeout(resolve, duration));
@@ -245,13 +237,14 @@ function useCreateTerm() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async newTerm => {
-            await wait(1000); //.then(() => fetchedTerms.push(term)); //fake api call
+        mutationFn: async () => {
+            const dataToCommit = queryClient.getQueryData(['terms']);
+            const stringData = JSON.stringify(dataToCommit);
+            await saveAllTerms(stringData);
             return Promise.resolve();
         },
         //client side optimistic update
         onMutate: newTerm => {
-            //            fetchedTerms.push(newTerm);
             queryClient.setQueryData(['terms'], prevTerms => [
                 ...prevTerms,
                 {
@@ -259,7 +252,16 @@ function useCreateTerm() {
                 }
             ]);
         },
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] }) //refetch terms after mutation, disabled for demo
+        onSettled: () => {
+            // const dataToCommit = queryClient.getQueryData(['terms']);
+            // const stringData = JSON.stringify(dataToCommit);
+            // console.log(stringData);
+            // saveAllTerms(stringData).then(r => {
+            //     console.log('data saved successfully');
+            //     queryClient.invalidateQueries({ queryKey: ['terms'] });
+            // });
+            queryClient.invalidateQueries({ queryKey: ['terms'] }); //refetch terms after mutation, disabled for demo
+        }
     });
 }
 
@@ -267,17 +269,18 @@ function useCreateTerm() {
 function useUpdateTerm() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async term => {
-            //send api update request here
-            await new Promise(resolve => setTimeout(resolve, 1000)); //fake api call
+        mutationFn: async () => {
+            const dataToCommit = queryClient.getQueryData(['terms']);
+            const stringData = JSON.stringify(dataToCommit);
+            await saveAllTerms(stringData);
             return Promise.resolve();
         },
 
         //client side optimistic update
         onMutate: newTerm => {
             queryClient.setQueryData(['terms'], prevTerms => prevTerms?.map(prevTerm => (prevTerm.id === newTerm.id ? newTerm : prevTerm)));
-        }
-        // onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] }), //refetch users after mutation, disabled for demo
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] }) //refetch users after mutation, disabled for demo
     });
 }
 
@@ -286,15 +289,16 @@ function useDeleteTerm() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async termId => {
-            //send api update request here
-            await new Promise(resolve => setTimeout(resolve, 1000)); //fake api call
+            const dataToCommit = queryClient.getQueryData(['terms']);
+            const stringData = JSON.stringify(dataToCommit);
+            await saveAllTerms(stringData);
             return Promise.resolve();
         },
         //client side optimistic update
         onMutate: termId => {
             queryClient.setQueryData(['terms'], prevTerms => prevTerms?.filter(term => term.id !== termId));
-        }
-        // onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] }), //refetch users after mutation, disabled for demo
+        },
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] }) //refetch users after mutation, disabled for demo
     });
 }
 

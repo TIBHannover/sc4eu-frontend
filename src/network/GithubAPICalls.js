@@ -1,5 +1,5 @@
 import { Octokit } from '@octokit/rest';
-
+const Buffer = require('buffer/').Buffer;
 const octokit = new Octokit({
     auth: process.env.GITHUB_ACCESS_TOKEN
 });
