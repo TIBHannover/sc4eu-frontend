@@ -77,7 +77,6 @@ export const saveNewContent = async (GitHubAPIUrl, newData) => {
 
     const newContent = Buffer.from(newData).toString('base64');
     const result = await getFileDataFromGitHub(GitHubAPIUrl);
-    console.log(result);
     const my_sha = result.sha;
 
     try {
