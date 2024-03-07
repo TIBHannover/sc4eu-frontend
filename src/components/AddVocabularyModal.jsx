@@ -143,8 +143,12 @@ export default function AddVocabulary(factory, deps) {
         muiToolbarAlertBannerProps: isLoadingTermsError
             ? {
                   color: 'error',
-
-                  children: 'Error loading data'
+                  children: 'Error Loading Data'
+              }
+            : isLoadingTerms
+            ? {
+                  color: 'info',
+                  children: 'Loading Data from GitHub'
               }
             : undefined,
 
