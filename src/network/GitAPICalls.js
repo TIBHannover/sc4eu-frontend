@@ -81,7 +81,7 @@ export const saveNewContent = async (GitHubAPIUrl, newData) => {
 
     try {
         // update the file content on GitHub
-        const { updated, data } = await octokit.rest.repos.createOrUpdateFileContents({
+        const response = await octokit.rest.repos.createOrUpdateFileContents({
             owner,
             repo,
             path,
@@ -91,26 +91,14 @@ export const saveNewContent = async (GitHubAPIUrl, newData) => {
             committer: { ...user_info },
             author: { ...user_info }
         });
-        if (updated) {
-            console.log('file updated successfully');
-        }
+        console.log('file updated successfully before update', response.data);
+        // if (updated) {
+        //     console.log('file updated successfully');
+        //     return data;
+        // }
+        return response.data;
     } catch (e) {
         console.log(e.toString());
     }
-    // try {
-    //     const { data } = await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-    //         owner: owner,
-    //         repo: repo,
-    //         path: path,
-    //         message: 'my commit message',
-    //         content: newContent,
-    //         sha: sha_my,
-    //         committer: { ...user_info },
-    //         author: { ...user_info }
-    //     });
-    // } catch (e) {
-    //     console.log(e.toString());
-    // }
-
     return null;
 };

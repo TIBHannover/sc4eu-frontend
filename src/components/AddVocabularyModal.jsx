@@ -5,6 +5,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getFileContent, saveNewContent } from '../network/GitAPICalls';
+import { parseRDF, writeRDF } from '../network/parseRDFCalls';
+import { useEffect } from 'react';
 
 export default function AddVocabulary(factory, deps) {
     const [validationErrors, setValidationErrors] = useState({});
@@ -54,7 +56,17 @@ export default function AddVocabulary(factory, deps) {
             {
                 accessorKey: 'comment',
                 header: 'Comment',
-                size: 150
+                size: 150,
+                muiEditTextFieldProps: {
+                    required: true,
+                    error: !!validationErrors?.id,
+                    helperText: validationErrors?.id,
+                    onFocus: () =>
+                        setValidationErrors({
+                            ...validationErrors,
+                            comment: undefined
+                        })
+                }
             }
         ],
         [validationErrors]
@@ -78,7 +90,7 @@ export default function AddVocabulary(factory, deps) {
             return;
         }
         setValidationErrors({});
-
+        values.id = uuid;
         await createTerm(values);
         table.setCreatingRow(null); //exit creating mode
     };
@@ -97,8 +109,10 @@ export default function AddVocabulary(factory, deps) {
 
     //DELETE action
     const openDeleteConfirmModal = row => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
-            deleteTerm(row.original.id);
+        if (window.confirm('Are you sure you want to delete this term?')) {
+            deleteTerm(row.original.id).then(() => {
+                console.log('Term Deleted');
+            });
         }
     };
 
@@ -139,7 +153,7 @@ export default function AddVocabulary(factory, deps) {
         enableEditing: true,
         getRowId: row => row.id,
         positionActionsColumn: 'last',
-        initialState: { columnVisibility: { description: false } },
+        initialState: { columnVisibility: { description: true } },
         muiToolbarAlertBannerProps: isLoadingTermsError
             ? {
                   color: 'error',
@@ -190,93 +204,96 @@ export default function AddVocabulary(factory, deps) {
     return <MaterialReactTable table={table} />;
 }
 
+// This needs to be read from user input
+const gitHubFileUrl = 'https://raw.githubusercontent.com/tib-ts/vocabulary_development/main/testexample.ttl';
+
 async function fetchAllTermsFromGitHub() {
-    //get this data from GitHub
-    return await getFileContent('https://github.com/tib-ts/vocabulary_development/blob/main/vocabulary.json');
-    //const gitHubFileContent = await getGitHubFileContent('https://github.com/tgfawad/Ontologies/blob/main/vocabulary.json');
-    //console.log(data);
-    //return await wait(1000).then(() => [...fetchedTerms]);
+    try {
+        return await getFileContent('https://github.com/tib-ts/vocabulary_development/blob/main/vocabulary.json');
+    } catch (e) {
+        //console.log('Error in fetching data from GitHub ' + e);
+        return null;
+    }
+}
+
+async function fetchAllTermsFromGitHubRDF() {
+    try {
+        // console.log('fetching data from GitHub' + gitHubFileUrl);
+        return await parseRDF(gitHubFileUrl);
+    } catch (e) {
+        console.log('Error in fetching data from GitHub ' + e);
+        return null;
+    }
 }
 
 async function fetchAllTerms() {
-    //get this data from GitHub
-    return await fetchAllTermsFromGitHub();
-    //return await wait(1000).then(() => [...fetchedTerms]);
+    //get data from GitHub RDF file
+    return await fetchAllTermsFromGitHubRDF();
+    //get this data from GitHub JSON file
+    //return await fetchAllTermsFromGitHub();
 }
 
-async function saveAllTerms(newData) {
-    return await saveNewContent('https://github.com/tib-ts/vocabulary_development/blob/main/vocabulary.json', newData);
-}
-function wait(duration) {
-    return new Promise(resolve => setTimeout(resolve, duration));
-}
-//READ hook (get users from api)
+//READ hook (get terms from api)
 function useGetTerms() {
     return useQuery({
         queryKey: ['terms'],
-        queryFn: fetchAllTerms
-        //refetchOnWindowFocus: false
+        queryFn: fetchAllTerms,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
+        staleTime: 1000 //cache for 1 second
     });
-    // const termsQuery = useQuery({
-    //     queryKey: ['terms'],
-    //     queryFn: () => wait(1000).then(() => [...fetchedTerms]),
-    //     // {
-    //     //     //send api request here
-    //     //     wait(1000).then(() => [...fetchedTerms]);
-    //     //     //return Promise.resolve(fetchedTerms);
-    //     // }
-    //     refetchOnWindowFocus: false
-    // });
-    //
-    // if (termsQuery.isLoading) {
-    //     return <h1>Loading ... </h1>;
-    // }
-    // if (termsQuery.isError) {
-    //     return <pre>{JSON.stringify(termsQuery.error)}</pre>;
-    // }
-    // return termsQuery;
 }
+async function saveAllTerms(newData) {
+    console.log('new data to save', newData);
+    //return await saveNewContent('https://github.com/tib-ts/vocabulary_development/blob/main/vocabulary.json', newData);
+
+    return await writeRDF(gitHubFileUrl, newData);
+}
+
 //CREATE hook (post new term to api)
 function useCreateTerm() {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async () => {
-            const dataToCommit = queryClient.getQueryData(['terms']);
-            const stringData = JSON.stringify(dataToCommit);
-            await saveAllTerms(stringData);
-            return Promise.resolve();
+            try {
+                const dataToCommit = queryClient.getQueryData(['terms']);
+                const stringData = JSON.stringify(dataToCommit);
+                return await saveAllTerms(dataToCommit);
+                //return Promise.resolve();
+            } catch (e) {
+                console.log('Error in mutationFn' + e);
+            }
         },
         //client side optimistic update
-        onMutate: newTerm => {
+        onMutate: async newTerm => {
             queryClient.setQueryData(['terms'], prevTerms => [
                 ...prevTerms,
                 {
                     ...newTerm
                 }
             ]);
+            console.log(' in the onMutate: ', queryClient.getQueryData(['terms']));
+            //console.log('new term added :' + queryClient.getQueryData(['terms']));
+            // writeRDF(gitHubFileUrl, queryClient.getQueryData(['terms'])).then(r => console.log('data saved successfully'));
         },
-        onSettled: () => {
-            // const dataToCommit = queryClient.getQueryData(['terms']);
-            // const stringData = JSON.stringify(dataToCommit);
-            // console.log(stringData);
-            // saveAllTerms(stringData).then(r => {
-            //     console.log('data saved successfully');
-            //     queryClient.invalidateQueries({ queryKey: ['terms'] });
-            // });
-            queryClient.invalidateQueries({ queryKey: ['terms'] }); //refetch terms after mutation, disabled for demo
+        onSettled: async () => {
+            console.log('data saved successfully');
+            console.log('Query data before invalidation:', queryClient.getQueryData(['terms']));
+            queryClient.invalidateQueries({ queryKey: ['terms'] });
+            console.log('Query data after invalidation:', queryClient.getQueryData(['terms']));
         }
     });
 }
 
-//UPDATE hook (put user in api)
+//UPDATE hook (put term in api)
 function useUpdateTerm() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async () => {
             const dataToCommit = queryClient.getQueryData(['terms']);
             const stringData = JSON.stringify(dataToCommit);
-            await saveAllTerms(stringData);
+            await saveAllTerms(dataToCommit);
             return Promise.resolve();
         },
 
@@ -284,25 +301,25 @@ function useUpdateTerm() {
         onMutate: newTerm => {
             queryClient.setQueryData(['terms'], prevTerms => prevTerms?.map(prevTerm => (prevTerm.id === newTerm.id ? newTerm : prevTerm)));
         },
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] }) //refetch users after mutation, disabled for demo
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] }) //refetch terms after mutation, disabled for demo
     });
 }
 
-//DELETE hook (delete user in api)
+//DELETE hook (delete term in api)
 function useDeleteTerm() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async termId => {
             const dataToCommit = queryClient.getQueryData(['terms']);
             const stringData = JSON.stringify(dataToCommit);
-            await saveAllTerms(stringData);
+            await saveAllTerms(dataToCommit);
             return Promise.resolve();
         },
         //client side optimistic update
         onMutate: termId => {
             queryClient.setQueryData(['terms'], prevTerms => prevTerms?.filter(term => term.id !== termId));
         },
-        onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] }) //refetch users after mutation, disabled for demo
+        onSettled: () => queryClient.invalidateQueries({ queryKey: ['terms'] })
     });
 }
 
@@ -310,6 +327,7 @@ const validateRequired = value => !!value.length;
 function validateTerm(term) {
     return {
         label: !validateRequired(term.label) ? 'Label is Required' : '',
-        id: !validateRequired(term.id) ? 'ID is Required' : ''
+        id: !validateRequired(term.id) ? 'ID is Required' : '',
+        comment: !validateRequired(term.id) ? 'Comment is Required' : ''
     };
 }
