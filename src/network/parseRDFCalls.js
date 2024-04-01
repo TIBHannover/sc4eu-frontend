@@ -71,7 +71,7 @@ export const writeRDF = async (rdfGitHubURL, newTerms, commitMessage) => {
     newTerms.forEach(item => {
         const subject = `https://example.com#${item.id}`;
         writer.addQuad(
-            N3.DataFactory.quad(N3.DataFactory.namedNode(subject), N3.DataFactory.namedNode(`rdf:type`), N3.DataFactory.namedNode(`owl:Thing`))
+            N3.DataFactory.quad(N3.DataFactory.namedNode(subject), N3.DataFactory.namedNode(`rdf:type`), N3.DataFactory.namedNode(`rdfs:Resource`))
         );
         delete item.id;
 
