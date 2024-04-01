@@ -3,7 +3,7 @@ import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import styled from 'styled-components';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
-import AddVocabulary from '../components/AddVocabularyModal';
+import AddVocabulary from '../components/VocabularySupport/AddVocabularyModal';
 
 export default function Vocabulary_support() {
     return (

@@ -66,7 +66,7 @@ export const getFileContent = async GitHubAPIUrl => {
     return null;
 };
 
-export const saveNewContent = async (GitHubAPIUrl, newData) => {
+export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
     const owner = getUserFromUrl(GitHubAPIUrl);
     const repo = getRepoFromUrl(GitHubAPIUrl); // the name of the repository
     const path = getFilePath(GitHubAPIUrl); // the path of the file to fetch
@@ -85,7 +85,7 @@ export const saveNewContent = async (GitHubAPIUrl, newData) => {
             owner,
             repo,
             path,
-            message: 'update file content with octokit', // the commit message
+            message: commitMessage, // the commit message
             content: newContent, // the new content
             sha: my_sha,
             committer: { ...user_info },

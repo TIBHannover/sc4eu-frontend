@@ -55,9 +55,10 @@ export const parseRDF = async rdfGitHubURL => {
  *
  * @param {string} rdfGitHubURL - The URL to commit the changes to.
  * @param {Array} newTerms - The data to write into RDF format.
+ * @param commitMessage
  * @returns {Promise} A promise that resolves when the data has been written and the changes have been committed.
  */
-export const writeRDF = async (rdfGitHubURL, newTerms) => {
+export const writeRDF = async (rdfGitHubURL, newTerms, commitMessage) => {
     const writer = new N3.Writer({
         format: 'text/turtle',
         prefixes: {
@@ -94,7 +95,7 @@ export const writeRDF = async (rdfGitHubURL, newTerms) => {
             }
         });
     });
-    return await saveNewContent(rdfGitHubURL, rdfData);
+    return await saveNewContent(rdfGitHubURL, rdfData, commitMessage);
     // Here you would normally commit the changes to the rdfGitHubURL.
     // However, committing changes to a file hosted on GitHub requires a more complex process involving the GitHub API.
     // For the sake of simplicity, this function will only return the RDF data.
