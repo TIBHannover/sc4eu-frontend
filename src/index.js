@@ -3,7 +3,6 @@ import 'react-app-polyfill/stable';
 import React from 'react';
 //import 'fast-text-encoding/text';
 import ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
 import App from './App';
 import { unregister } from './registerServiceWorker';
 import { Provider } from 'react-redux';
@@ -29,9 +28,8 @@ ReactPiwik.push(['trackEvent', 'trackPageView']);
 const { store, persistor } = configureStore();
 const queryClient = new QueryClient();
 
-const root = createRoot(document.getElementById('root'));
 const render = () => {
-    root.render(
+    ReactDOM.render(
         <DndProvider backend={HTML5Backend}>
             <CookiesProvider>
                 <Provider store={store}>
@@ -43,7 +41,8 @@ const render = () => {
                     </PersistGate>
                 </Provider>
             </CookiesProvider>
-        </DndProvider>
+        </DndProvider>,
+        document.getElementById('root')
     );
 };
 
