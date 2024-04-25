@@ -1,4 +1,4 @@
-FROM node:12.11-alpine
+FROM node:16.0-alpine
 LABEL maintainer="Vitalis Wiens <vitalis.wiens@tib.eu>"
 
 
