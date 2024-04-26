@@ -1,6 +1,6 @@
 import { Button, Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import React, { Component, createRef } from 'react';
-import ReactHtmlParser from 'react-html-parser';
+import parse from 'html-react-parser';
 import { preInitializeOntologyUpload, uploadOntology, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { getGitHubFileContent, getLatestCommit } from '../network/GithubAPICalls';
 import { getGitlabFileContent, getGitlabLatestCommit } from '../network/GitlabAPICalls';
@@ -410,7 +410,7 @@ export default class UploadOntology extends Component {
                             )}
                             {!this.state.waitingForResult && this.state.preInitResult.validation === 'failed' && (
                                 <div>
-                                    Validation Warning: <div> {ReactHtmlParser(this.state.preInitResult.validationErrors)}</div>
+                                    Validation Warning: <div> {parse(this.state.preInitResult.validationErrors.toString())}</div>
                                 </div>
                             )}
                             {this.state.hasContent && this.state.preInitResult.stats && this.renderStats()}

@@ -2,7 +2,7 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import React, { Component } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import ReactHtmlParser from 'react-html-parser';
+import parse from 'html-react-parser';
 import PropTypes from 'prop-types';
 import { colorStyled } from '../../styledComponents/styledColor';
 import { fontStyled } from '../../styledComponents/styledFont';
@@ -18,7 +18,7 @@ class ShowOntologyComparisonModal extends Component {
             >
                 <ModalHeader autoFocus={false}>Ontology Comparison</ModalHeader>
                 <ModalBody id="createProjectBody" style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
-                    {ReactHtmlParser(this.props.comparisonContent)}
+                    {parse(this.props.comparisonContent.toString())}
                 </ModalBody>
                 <ModalFooter>
                     <Button

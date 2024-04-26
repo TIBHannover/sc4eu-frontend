@@ -13,7 +13,7 @@ import { fontStyled } from '../../styledComponents/styledFont';
 import { colorStyled } from '../../styledComponents/styledColor';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { getOntologyComparison } from '../../network/GetOntologyData';
-import ReactHtmlParser from 'react-html-parser';
+import parse from 'html-react-parser';
 
 const ModalFooter = styled.div`
     height: 60px;
@@ -199,7 +199,9 @@ class OntoComparisonModal extends React.Component {
                                         </Input>
                                     </FormGroup>
                                     <ShowComparisonButton onClick={this.showComparison}> Show Comparison </ShowComparisonButton>
-                                    <div style={{ height: 'calc(100% - 150px)', overflow: 'auto' }}>{ReactHtmlParser(this.state.compareResults)}</div>
+                                    <div style={{ height: 'calc(100% - 150px)', overflow: 'auto' }}>
+                                        {parse(this.state.compareResults.toString())}
+                                    </div>
                                 </>
                             )}
                         </div>

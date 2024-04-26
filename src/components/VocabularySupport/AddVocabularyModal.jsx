@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createRow, MaterialReactTable, MRT_EditActionButtons, useMaterialReactTable } from 'material-react-table';
 import {
     Box,
