@@ -22,65 +22,77 @@ class RightSideProjectBar extends Component {
     }
 
     componentDidMount = async () => {
-        await this.getProjectsFromBackend();
-        await getAllUsers().then(allUsers => {
-            const onlyProjectAdmins = [];
-            allUsers.forEach(user => {
-                if (user.role === 'Project Admin' || user.role === 'System Admin') {
-                    onlyProjectAdmins.push(user);
-                }
-            });
-            this.state.results.forEach(project => {
-                project.projectAdmins = [];
-                onlyProjectAdmins.forEach(projectAdmin => {
-                    getUserProjects(projectAdmin.uuid).then(thisAdminProjects => {
-                        if (thisAdminProjects.some(adminProject => adminProject === project.uuid)) {
-                            project.projectAdmins.push({ name: projectAdmin.display_name, email: projectAdmin.email_address });
-                        }
+        try {
+            await this.getProjectsFromBackend();
+            await getAllUsers().then(allUsers => {
+                const onlyProjectAdmins = [];
+                allUsers.forEach(user => {
+                    if (user.role === 'Project Admin' || user.role === 'System Admin') {
+                        onlyProjectAdmins.push(user);
+                    }
+                });
+                this.state.results.forEach(project => {
+                    project.projectAdmins = [];
+                    onlyProjectAdmins.forEach(projectAdmin => {
+                        getUserProjects(projectAdmin.uuid).then(thisAdminProjects => {
+                            if (thisAdminProjects.some(adminProject => adminProject === project.uuid)) {
+                                project.projectAdmins.push({
+                                    name: projectAdmin.display_name,
+                                    email: projectAdmin.email_address
+                                });
+                            }
+                        });
                     });
                 });
             });
-        });
+        } catch (error) {
+            console.log('Error in componentDidMount: ', error);
+        }
     };
 
     componentDidUpdate = async (prevProps, prevState) => {
-        if (prevProps.updateFlipFlop !== this.props.updateFlipFlop) {
-            // this.setState({ initialRendering: false });
-            this.getProjectsFromBackend();
-        }
-        if (prevProps.user !== this.props.user) {
-            await this.getProjectsFromBackend();
+        try {
+            if (prevProps.updateFlipFlop !== this.props.updateFlipFlop) {
+                // this.setState({ initialRendering: false });
+                await this.getProjectsFromBackend();
+            }
+            if (prevProps.user !== this.props.user) {
+                await this.getProjectsFromBackend();
+            }
+        } catch (error) {
+            console.log('Error in componentDidUpdate: ', error);
         }
     };
 
     getProjectsFromBackend = async () => {
-        await getAllProjects().then(allProjects => {
-            allProjects.reverse().forEach(singleProject => {
-                singleProject.unlock = false;
-                if (singleProject.access_type === 'Public' || singleProject.access_type === 'public') {
-                    singleProject.unlock = true;
-                }
-                if (this.props.user) {
-                    if (this.props.user.role === 'System Admin' || this.props.user.role === 'system admin') {
-                        singleProject.unlock = true;
-                    }
-                    getUserProjects(this.props.user.userId).then(userProjectsUUID => {
-                        userProjectsUUID.forEach(userProjectID => {
-                            if (singleProject.uuid === userProjectID) {
-                                singleProject.unlock = true;
-                            }
+        try {
+            await getAllProjects().then(allProjects => {
+                allProjects.reverse().forEach(singleProject => {
+                    singleProject.unlock = singleProject.access_type === 'Public' || singleProject.access_type === 'public';
+                    if (this.props.user) {
+                        if (this.props.user.role === 'System Admin' || this.props.user.role === 'system admin') {
+                            singleProject.unlock = true;
+                        }
+                        getUserProjects(this.props.user.userId).then(userProjectsUUID => {
+                            userProjectsUUID.forEach(userProjectID => {
+                                if (singleProject.uuid === userProjectID) {
+                                    singleProject.unlock = true;
+                                }
+                            });
+                            this.setState({ flipflop: !this.state.flipflop, isLoading: false });
                         });
-                        this.setState({ flipflop: !this.state.flipflop, isLoading: false });
-                    });
-                }
-            });
-            this.getOnlySideBarProjects(allProjects).then(sortedSideBarProjects => {
-                this.setState({ results: sortedSideBarProjects });
-            });
+                    }
+                });
+                this.getOnlySideBarProjects(allProjects).then(sortedSideBarProjects => {
+                    this.setState({ results: sortedSideBarProjects });
+                });
 
-            // const sortProjects = [...allProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
-            // this.setState({ results: sortProjects });
-        });
+                // const sortProjects = [...allProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
+                // this.setState({ results: sortProjects });
+            });
+        } catch (e) {
+            console.log('Failed to load projects from backend. Error: ', e);
+        }
     };
 
     getOnlySideBarProjects = async allProjects => {
@@ -91,13 +103,11 @@ class RightSideProjectBar extends Component {
             }
         });
 
-        const sortSideBarProjects = [...sideBarProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
-        return sortSideBarProjects;
+        return [...sideBarProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
     };
 
     getProjectsForUser = async admin => {
-        const userProjects = await getUserProjects(admin.uuid);
-        return userProjects;
+        return await getUserProjects(admin.uuid);
     };
 
     render() {
