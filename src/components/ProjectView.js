@@ -25,6 +25,7 @@ import private_collection from '../assets/images/private_collection.png';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import theme from '../theme';
+import BreadcrumbBar from './ReusableComponents/BreadcrumbBar';
 class ProjectView extends Component {
     constructor(props) {
         super(props);
@@ -48,6 +49,7 @@ class ProjectView extends Component {
             selectedCollection: null,
             viewMode: 'collections'
         };
+        this.setViewMode = this.setViewMode.bind(this);
     }
 
     componentDidMount() {
@@ -77,6 +79,10 @@ class ProjectView extends Component {
             }
         }
     };
+
+    setViewMode(mode) {
+        this.setState({ viewMode: mode });
+    }
 
     getProjectsFromBackend = () => {
         getAllProjects().then(allProjects => {
@@ -116,53 +122,34 @@ class ProjectView extends Component {
     };
 
     ProjectSection = ({ project }) => {
-        const currentCollection = this.state.selectedCollection;
-        let isProjectAvailable = false;
-        // SC3ProjectName have that project which project name contain SC3 word  and this project is visible in the SC3 Project Section in List of project view  page
-        const SC3ProjectName = project.filter(
-            item =>
-                item.name.toLowerCase().includes('sc 3') ||
+        const selectedCollection = this.state.selectedCollection;
+        const user = this.props.user;
+        const filteredProject = project.filter(item => {
+            const isSC3 =
                 item.name.toLowerCase().includes('sc3') ||
-                item.name.toLowerCase().includes('semantically connected semiconductor supply chains')
-        );
-        const SandboxProject = project.filter(item => item.name.toLowerCase().includes('sandbox'));
-        const PublicAndPrivateProject = project.filter(
-            item =>
-                item.unlock && item.access_type === currentCollection.collectionId && !SC3ProjectName.includes(item) && !SandboxProject.includes(item)
-        );
+                item.name.toLowerCase().includes('sc3') ||
+                item.name.toLowerCase().includes('semantically connected semiconductor supply chains');
+            const isSandbox = item.name.toLowerCase().includes('sandbox');
+            const isPublicOrPrivate = item.unlock && item.access_type === selectedCollection.collectionId;
 
-        let filteredProject;
+            if (selectedCollection.collectionId === 'sc4eu') {
+                return isSC3;
+            }
+            if (selectedCollection.collectionId === 'Sandbox') {
+                return isSandbox;
+            }
+            return isPublicOrPrivate && !isSC3 && !isSandbox;
+        });
 
-        if (currentCollection.collectionId === 'sc4eu') {
-            filteredProject = SC3ProjectName;
-        } else if (currentCollection.collectionId === 'Sandbox') {
-            filteredProject = SandboxProject;
-        } else {
-            filteredProject = PublicAndPrivateProject;
-        }
-        if (filteredProject.length > 0) {
-            isProjectAvailable = true;
-        }
         return (
             <>
-                {isProjectAvailable ? (
+                {filteredProject.length > 0 ? (
                     filteredProject.map(item => (
-                        <ProjectCard
-                            key={'ProjectCard_' + item.name}
-                            inputData={item}
-                            currentUser={this.props.user}
-                            callback={param => {
-                                this.props.reloadAfterUpdate(param);
-                            }}
-                        />
+                        <ProjectCard key={'ProjectCard_' + item.name} inputData={item} currentUser={user} callback={this.props.reloadAfterUpdate} />
                     ))
                 ) : (
                     <div style={{ paddingLeft: '3.5%' }}>
-                        {this.props.user === 0 || this.props.user === null ? (
-                            <StyledInfoSpan>Please log in to see your own projects</StyledInfoSpan>
-                        ) : (
-                            <StyledInfoSpan>You do not have project</StyledInfoSpan>
-                        )}
+                        <StyledInfoSpan>{user ? 'You do not have project' : 'Please log in to see your own projects'}</StyledInfoSpan>
                     </div>
                 )}
             </>
@@ -204,40 +191,42 @@ class ProjectView extends Component {
                 image: public_collection
             }
         ];
-        const BreadcrumbBar = collection => {
-            const classes = useStyles();
-            return (
-                <div className={classes.breadcrumbContainer}>
-                    <Breadcrumbs aria-label="breadcrumb" separator=">">
-                        <Link
-                            className={classes.link}
-                            onClick={event => {
-                                event.preventDefault();
-                                this.setState({ viewMode: 'collections' });
-                            }}
-                        >
-                            Collections
-                        </Link>
-                        <Link
-                            className={classes.current}
-                            color="textPrimary"
-                            onClick={event => {
-                                event.preventDefault();
-                                this.setState({ viewMode: 'projects' });
-                            }}
-                        >
-                            Projects
-                        </Link>
-                    </Breadcrumbs>
-                </div>
-            );
-        };
+        // const BreadcrumbBar = collection => {
+        //     const classes = useStyles();
+        //     return (
+        //         <div className={classes.breadcrumbContainer}>
+        //             <Breadcrumbs aria-label="breadcrumb" separator=">">
+        //                 <Link
+        //                     className={classes.link}
+        //                     onClick={event => {
+        //                         event.preventDefault();
+        //                         this.setState({ viewMode: 'collections' });
+        //                     }}
+        //                 >
+        //                     Collections
+        //                 </Link>
+        //                 <Link
+        //                     className={classes.current}
+        //                     color="textPrimary"
+        //                     onClick={event => {
+        //                         event.preventDefault();
+        //                         this.setState({ viewMode: 'projects' });
+        //                     }}
+        //                 >
+        //                     Projects
+        //                 </Link>
+        //             </Breadcrumbs>
+        //         </div>
+        //     );
+        // };
         return (
             <StyledRootDiv>
                 {/*<StyledHeadingDiv>*/}
                 {/*    <h4 style={{ width: '100%', margin: '0 auto' }}>{this.state.title}</h4>*/}
                 {/*</StyledHeadingDiv>*/}
-                {this.state.viewMode === 'projects' && this.state.selectedCollection && <BreadcrumbBar collection={this.state.selectedCollection} />}
+                {this.state.viewMode === 'projects' && (
+                    <BreadcrumbBar setViewMode={this.setViewMode} isOntologyView={false} currentViewMode={this.state.viewMode} />
+                )}
                 <StyledSubHeadingDiv>
                     <StyledInfoSpan style={{ margin: '15px 15px 15px 15px', float: 'left' }}>
                         Click on one of the projects below to view its ontologies
@@ -348,31 +337,31 @@ ProjectView.propTypes = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
 
-const useStyles = makeStyles(theme => ({
-    breadcrumbContainer: {
-        backgroundColor: colorStyled.CONTAINER_BACKGROUND_COLOR,
-        borderRadius: '12px',
-        padding: '8px 16px',
-        display: 'inline-block',
-        width: '100%'
-    },
-    link: {
-        color: '#4285f4',
-        textDecoration: 'none',
-        '&:hover': {
-            textDecoration: 'underline'
-        }
-    },
-    current: {
-        color: '#000000',
-        textDecoration: 'none',
-        cursor: 'default'
-    },
-    separator: {
-        color: '#000000',
-        fontWeight: 'bold'
-    }
-}));
+// const useStyles = makeStyles(theme => ({
+//     breadcrumbContainer: {
+//         backgroundColor: colorStyled.CONTAINER_BACKGROUND_COLOR,
+//         borderRadius: '12px',
+//         padding: '8px 16px',
+//         display: 'inline-block',
+//         width: '100%'
+//     },
+//     link: {
+//         color: '#4285f4',
+//         textDecoration: 'none',
+//         '&:hover': {
+//             textDecoration: 'underline'
+//         }
+//     },
+//     current: {
+//         color: '#000000',
+//         textDecoration: 'none',
+//         cursor: 'default'
+//     },
+//     separator: {
+//         color: '#000000',
+//         fontWeight: 'bold'
+//     }
+// }));
 
 const StyledCollectionGrid = styled.div`
     display: flex;
