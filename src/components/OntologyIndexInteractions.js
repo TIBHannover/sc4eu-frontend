@@ -52,9 +52,9 @@ class OntologyIndexInteractions extends Component {
         return (
             <div style={{ height: '100%', fontFamily: fontStyled.fontFamily }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ color: colorStyled.SECONDARY.darker, marginLeft: '1%' }}>
+                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginLeft: '1%' }}>
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
-                        <span>Go Back</span>
+                        <span>Back</span>
                     </Link>
                     <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.SECONDARY.dark }}>
                         <u id="tootlipTarget">{projectName}</u> Project
