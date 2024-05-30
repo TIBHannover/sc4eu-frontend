@@ -85,23 +85,25 @@ class ProjectIndexCards extends Component {
             this.props.callback();
         }
     };
-
-    showOntologies = () => {
-        // redux_removeProjects, redux_removeOntology and redux_removeAlreadyLoadedOntology will remove previous open project and ontology
-        this.props.redux_removeProject();
-        this.props.redux_removeOntology();
-        this.props.redux_removeAlreadyLoadedOntology();
-        //TODO Get all ontologies related Only to this Project
-        if (this.props.inputData.unlock === true) {
-            //change color of select card
-            //StyledCardHeader.backgroundColor = 'black';
-            this.props.redux_addProject(this.props.inputData);
-            this.props.history.push(reverse(ROUTES.ONTOLOGY));
-        } else {
+    isUserAuthorized = () => {
+        if (this.props.inputData.unlock !== true) {
             this.setState({
                 isPopUpOpen: !this.state.isPopUpOpen,
                 popUpMessage: 'This is Private Project You can not open it'
             });
+            return false;
+        }
+        return true;
+    };
+
+    showOntologies = () => {
+        this.props.redux_removeProject();
+        this.props.redux_removeOntology();
+        this.props.redux_removeAlreadyLoadedOntology();
+
+        if (this.isUserAuthorized()) {
+            this.props.redux_addProject(this.props.inputData);
+            this.props.history.push(reverse(ROUTES.ONTOLOGY));
         }
     };
 
