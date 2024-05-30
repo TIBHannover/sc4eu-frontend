@@ -51,18 +51,18 @@ class OntologyIndexInteractions extends Component {
         const projectName = this.props.project_name.length > 50 ? this.props.project_name.substring(0, 50) + ' ...' : this.props.project_name;
         return (
             <div style={{ height: '100%', fontFamily: fontStyled.fontFamily }}>
-                <StyledHeadingDiv>
-                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ color: colorStyled.CONTAINER_BACKGROUND_COLOR, marginLeft: '1%' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ color: colorStyled.SECONDARY.darker, marginLeft: '1%' }}>
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
-                        <span>Back</span>
+                        <span>Go Back</span>
                     </Link>
-                    <h4 style={{ padding: '10px', margin: '0 auto', color: 'white' }}>
+                    <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.SECONDARY.dark }}>
                         <u id="tootlipTarget">{projectName}</u> Project
                     </h4>
                     <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
                         <u>{this.props.project_name}</u>
                     </UncontrolledTooltip>
-                </StyledHeadingDiv>
+                </div>
                 <StyledSubHeadingDiv>
                     <StyledInfoSpan style={{ margin: '15px 15px 15px 15px', float: 'left' }}>
                         Click on one of the ontology below to view

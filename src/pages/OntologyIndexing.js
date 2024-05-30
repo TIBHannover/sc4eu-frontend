@@ -145,8 +145,9 @@ export default connect(mapStateToProps, null)(OntologyIndexing);
 const StyledContainer = styled(Container)`
     height: 95%;
     width: 100%;
-    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    padding: 0.5% 0px 0px 0px;
+    background-color: ${colorStyled.PRIMARY.lighter};
+    padding-top: 0.5%;
+    margin-left: 10%;
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         width: 100%;
