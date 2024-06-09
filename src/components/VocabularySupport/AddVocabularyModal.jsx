@@ -29,11 +29,36 @@ import { getAutoCompleteResult, getJumpToResult } from './VocabularySearch/api/s
 import { colorStyled } from '../../styledComponents/styledColor';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import Divider from '@mui/material/Divider';
+import PropTypes from 'prop-types';
 
 export default function AddVocabulary() {
     const [validationErrors, setValidationErrors] = useState({});
     const [openCommit, setOpenCommit] = useState(false);
     const [commitMessage, setCommitMessage] = useState('');
+
+    // Define the Cell component separately
+    const TerminologyCellComponent = ({ row }) => {
+        const value = row.original.description;
+        const Label = row.original.label;
+        if (value.startsWith('url:')) {
+            const url = value.slice(4); // remove "url:" prefix
+            return (
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                    {Label}
+                </a>
+            );
+        } else {
+            return <span>{value}</span>;
+        }
+    };
+    TerminologyCellComponent.propTypes = {
+        row: PropTypes.shape({
+            original: PropTypes.shape({
+                description: PropTypes.string.isRequired,
+                label: PropTypes.string.isRequired
+            }).isRequired
+        }).isRequired
+    };
 
     const columns = useMemo(
         () => [
@@ -85,8 +110,9 @@ export default function AddVocabulary() {
             },
             {
                 accessorKey: 'description',
-                header: 'Term Definition',
-                size: 200
+                header: 'Definition/Go To Term',
+                size: 200,
+                Cell: TerminologyCellComponent
             },
             {
                 accessorKey: 'status',
@@ -112,6 +138,7 @@ export default function AddVocabulary() {
 
     const handleCreateTerm = async ({ values, table }) => {
         const uuid = crypto.randomUUID();
+        console.log('creating term', values);
         const newValidationErrors = validateTerm(values);
         if (Object.values(newValidationErrors).some(error => error)) {
             setValidationErrors(newValidationErrors);
@@ -192,12 +219,24 @@ export default function AddVocabulary() {
 
         const handleAddTermFromTerminology = async value => {
             console.log('Adding term from terminology: ', value);
+            const url =
+                process.env.REACT_APP_TS_ONTOLOGIES_URL +
+                encodeURIComponent(value['ontology_name']) +
+                '/terms?iri=' +
+                encodeURIComponent(value['iri']);
             const creatTermFromTerminology = {
                 label: value['label'],
                 id: value['id'],
-                comment: value['description'] ? value['description'][0] : '',
-                description: value['description'] ? value['description'][0] : '',
+                comment: value['description'] ? value['description'][0] : 'Not Available',
+                //description: value['description'] ? value['description'][0] : '',
+                description: 'url:' + url,
                 status: 'draft'
+
+                // description: (
+                //     <a href={url} target="_blank" rel="noopener noreferrer">
+                //         {value['label']}
+                //     </a>
+                // ),
             };
             await handleCreateTerm({ values: creatTermFromTerminology, table: table });
             console.log('Adding term from terminology: ', creatTermFromTerminology);
@@ -346,7 +385,21 @@ export default function AddVocabulary() {
         enableEditing: true,
         getRowId: row => row.id,
         positionActionsColumn: 'last',
-        initialState: { columnVisibility: { comment: false } },
+        enableRowExpansion: true,
+        renderDetailPanel: ({ row }) => (
+            <Box sx={{ padding: '16px' }}>
+                <strong>ID:</strong> {row.original.id}
+                <br />
+                <strong>Label:</strong> {row.original.label}
+                <br />
+                <strong>Comment:</strong> {row.original.comment}
+                <br />
+                <strong>Definition/URL:</strong> <TerminologyCellComponent row={row} />
+                <br />
+                <strong>Status:</strong> {row.original.status}
+            </Box>
+        ),
+        initialState: { columnVisibility: { id: false } },
         muiToolbarAlertBannerProps: isLoadingTermsError
             ? {
                   color: 'error',
