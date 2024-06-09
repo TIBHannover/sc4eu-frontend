@@ -43,7 +43,9 @@ export async function getJumpToResult(inputData, count = 10) {
     try {
         let autocompleteApiBaseUrl = process.env.REACT_APP_SEARCH_URL;
         autocompleteApiBaseUrl = autocompleteApiBaseUrl.split('search')[0] + 'search';
-        const url = `${autocompleteApiBaseUrl}?q=${inputData['searchQuery']}&rows=${count}`;
+        let url = `${autocompleteApiBaseUrl}?q=${inputData['searchQuery']}&rows=${count}`;
+        url = url + `&type=class&type=property`; //For now we are only searching for classes and properties, this
+        // can change later
         // url = inputData['ontologyIds'] ? url + `&ontology=${inputData['ontologyIds']}` : url;
         // url = inputData['types'] ? url + `&type=${inputData['types']}` : url;
         // url = inputData['obsoletes'] ? url + '&obsoletes=true' : url;
