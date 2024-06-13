@@ -8,9 +8,7 @@ import AddVocabulary from '../components/VocabularySupport/AddVocabularyModal';
 export default function Vocabulary_support() {
     return (
         <StyledDiv>
-            <h3 style={{ textAlign: 'center' }}>
-                <StyledHeadingDiv> Vocabulary Development Support </StyledHeadingDiv>{' '}
-            </h3>
+            {/*<StyledHeadingDiv> Vocabulary Development Support </StyledHeadingDiv>*/}
             <AddVocabulary />
         </StyledDiv>
     );
@@ -31,7 +29,9 @@ const StyledDiv = styled.div`
     padding-top: 10px;
     padding-left: 5%;
     padding-right: 5%;
+    padding-bottom: 2%;
     font-family: ${fontStyled.fontFamily};
+    overflow-y: auto;
 
     @media (max-width: ${MAX_WIDTH}) {
         padding-left: 5%;

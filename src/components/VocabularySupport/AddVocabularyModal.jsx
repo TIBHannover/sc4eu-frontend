@@ -27,9 +27,11 @@ import TextField from '@material-ui/core/TextField';
 import List from '@mui/material/List';
 import { getAutoCompleteResult, getJumpToResult } from './VocabularySearch/api/search';
 import { colorStyled } from '../../styledComponents/styledColor';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
+import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import Divider from '@mui/material/Divider';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { fontStyled } from '../../styledComponents/styledFont';
 
 export default function AddVocabulary() {
     const [validationErrors, setValidationErrors] = useState({});
@@ -38,23 +40,24 @@ export default function AddVocabulary() {
 
     // Define the Cell component separately
     const TerminologyCellComponent = ({ row }) => {
-        const value = row.original.description;
+        const description = row.original.description;
         const Label = row.original.label;
-        if (value.startsWith('url:')) {
-            const url = value.slice(4); // remove "url:" prefix
+        //It may as well be possible that we are adding bran new term and description is not available
+        if (description?.startsWith('url:')) {
+            const url = description.slice(4); // remove "url:" prefix
             return (
                 <a href={url} target="_blank" rel="noopener noreferrer">
                     {Label}
                 </a>
             );
         } else {
-            return <span>{value}</span>;
+            return <span>{description ? description : ''}</span>;
         }
     };
     TerminologyCellComponent.propTypes = {
         row: PropTypes.shape({
             original: PropTypes.shape({
-                description: PropTypes.string.isRequired,
+                description: PropTypes.string,
                 label: PropTypes.string.isRequired
             }).isRequired
         }).isRequired
@@ -470,9 +473,9 @@ export default function AddVocabulary() {
     });
 
     return (
-        <>
+        <ScrollableDiv>
             <MaterialReactTable table={table} />
-        </>
+        </ScrollableDiv>
     );
 }
 
@@ -485,3 +488,9 @@ function validateTerm(term) {
         comment: !validateRequired(term.comment) ? 'Comment is Required' : ''
     };
 }
+
+const ScrollableDiv = styled.div`
+    overflow-y: auto;
+    padding-bottom: 5px;
+    height: 80vh; // Adjust this value as needed
+`;
