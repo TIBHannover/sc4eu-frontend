@@ -19,6 +19,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Breadcrumbs, CardActionArea, CardMedia } from '@mui/material';
 import microchip from '../assets/images/cpu.png';
+import sc4euLogo from '../assets/images/logo.png';
 import sandboxIcon from '../assets/images/sandbox.png';
 import public_collection from '../assets/images/public_collection.png';
 import private_collection from '../assets/images/private_collection.png';
@@ -85,29 +86,33 @@ class ProjectView extends Component {
     }
 
     getProjectsFromBackend = () => {
-        getAllProjects().then(allProjects => {
-            allProjects.reverse().forEach(singleProject => {
-                if (singleProject.access_type === 'Public' || singleProject.access_type === 'public') {
-                    singleProject.unlock = true;
-                }
-                if (this.props.user) {
-                    if (this.props.user.role === 'System Admin' || this.props.user.role === 'system admin') {
+        try {
+            getAllProjects().then(allProjects => {
+                allProjects.reverse().forEach(singleProject => {
+                    if (singleProject.access_type === 'Public' || singleProject.access_type === 'public') {
                         singleProject.unlock = true;
                     }
-                    getUserProjects(this.props.user.userId).then(userProjectsUUID => {
-                        userProjectsUUID.forEach(userProjectID => {
-                            if (singleProject.uuid === userProjectID) {
-                                singleProject.unlock = true;
-                            }
+                    if (this.props.user) {
+                        if (this.props.user.role === 'System Admin' || this.props.user.role === 'system admin') {
+                            singleProject.unlock = true;
+                        }
+                        getUserProjects(this.props.user.userId).then(userProjectsUUID => {
+                            userProjectsUUID.forEach(userProjectID => {
+                                if (singleProject.uuid === userProjectID) {
+                                    singleProject.unlock = true;
+                                }
+                            });
+                            this.setState({ flipflop: !this.state.flipflop });
                         });
-                        this.setState({ flipflop: !this.state.flipflop });
-                    });
-                }
-            });
+                    }
+                });
 
-            const sortProjects = [...allProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
-            this.setState({ results: sortProjects });
-        });
+                const sortProjects = [...allProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
+                this.setState({ results: sortProjects });
+            });
+        } catch (e) {
+            console.log('Error in getting projects from backend, docker might be down', e);
+        }
     };
 
     projectCreated = param => {
@@ -167,7 +172,7 @@ class ProjectView extends Component {
                 title: 'Semantically Connected Semiconductor Supply Chains',
                 collectionId: 'sc4eu',
                 description: 'This is collection of all project related to Semantically Connected Semiconductor' + ' Supply Chains',
-                image: microchip
+                image: sc4euLogo
             },
             {
                 id: 2,
