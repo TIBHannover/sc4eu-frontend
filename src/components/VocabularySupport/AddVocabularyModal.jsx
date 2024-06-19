@@ -32,6 +32,7 @@ import Divider from '@mui/material/Divider';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { fontStyled } from '../../styledComponents/styledFont';
+import Comments from './Comments';
 
 export default function AddVocabulary() {
     const [validationErrors, setValidationErrors] = useState({});
@@ -400,6 +401,7 @@ export default function AddVocabulary() {
                 <strong>Definition/URL:</strong> <TerminologyCellComponent row={row} />
                 <br />
                 <strong>Status:</strong> {row.original.status}
+                <Comments />
             </Box>
         ),
         initialState: { columnVisibility: { id: false } },
