@@ -95,18 +95,12 @@ const Comments = () => {
     const [newCommentText, setNewCommentText] = useState('');
 
     const [comments, setComments] = useState([
-        // {
-        //     avatar: 'Fawad Khan',
-        //     author: 'Fawad Khan',
-        //     date: new Date(),
-        //     text: "This is just a first comment, I don't like the Label"
-        // },
-        // {
-        //     avatar: 'Jawad Khan',
-        //     author: 'Jawad Khan',
-        //     date: new Date(),
-        //     text: 'This looks great'
-        // }
+        {
+            avatar: 'Fawad Khan',
+            author: 'Fawad Khan',
+            date: new Date(),
+            text: "This is just a first comment, I don't like the Label"
+        }
     ]);
     const addComment = (author, text) => {
         const newComment = {
