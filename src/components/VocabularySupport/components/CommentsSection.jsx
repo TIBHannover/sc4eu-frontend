@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import { colorStyled } from '../../styledComponents/styledColor';
+import { colorStyled } from '../../../styledComponents/styledColor';
 import { Box, ListItem, ListItemAvatar, Paper } from '@mui/material';
 import List from '@mui/material/List';
 
@@ -91,7 +91,7 @@ function getTimeDifferenceString(date) {
     }
 }
 
-const Comments = () => {
+const CommentsSection = () => {
     const [newCommentText, setNewCommentText] = useState('');
 
     const [comments, setComments] = useState([
@@ -166,4 +166,4 @@ const Comments = () => {
     );
 };
 
-export default Comments;
+export default CommentsSection;
