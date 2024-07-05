@@ -33,10 +33,10 @@ const ExpandedRow = ({ term }) => {
                         <strong>Label:</strong> {term.label}
                     </Typography>
                     <Typography>
-                        <strong>Comment:</strong> {term.comment}
+                        <strong>Description:</strong> {term.description}
                     </Typography>
                     <Typography>
-                        <strong>Definition:</strong> {term.description}
+                        <strong>See Also:</strong> {term.seeAlso}
                     </Typography>
                     {/*<AlternativeDefinitionsSection alternatives={term.alternativeDefinitions} />*/}
                     {/*<AlternativeLabelsSection alternatives={term.alternativeLabels} />*/}
@@ -48,7 +48,7 @@ const ExpandedRow = ({ term }) => {
                     {/*    <Typography style={{ marginRight: '10px' }}>Status:</Typography>*/}
                     {/*    <StatusDropdown status={term.status} onChange={value => setUpdatedTerm({ ...term, status: value })} />*/}
                     {/*</Box>*/}
-                    <CommentsSection />
+                    <CommentsSection comments={term.comments} />
                     <Button onClick={() => setEditMode(true)}>Edit</Button>
                 </>
             ) : (
@@ -62,8 +62,8 @@ ExpandedRow.propTypes = {
     term: PropTypes.shape({
         id: PropTypes.string,
         label: PropTypes.string,
-        comment: PropTypes.string,
         description: PropTypes.string,
+        seeAlso: PropTypes.string,
         alternativeDefinitions: PropTypes.array,
         alternativeLabels: PropTypes.array,
         comments: PropTypes.array,

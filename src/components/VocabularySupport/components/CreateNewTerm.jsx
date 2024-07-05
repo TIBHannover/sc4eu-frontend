@@ -43,9 +43,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
         const creatTermFromTerminology = {
             label: value['label'],
             id: value['id'],
-            comment: value['description'] ? value['description'][0] : 'Not Available',
+            description: value['description'] ? value['description'][0] : 'Not Available',
             //description: value['description'] ? value['description'][0] : '',
-            description: 'url:' + url,
+            seeAlso: 'url:' + url,
             status: 'draft'
 
             // description: (
@@ -155,6 +155,6 @@ function validateTerm(term) {
     return {
         label: !validateRequired(term.label) ? 'Label is Required' : '',
         // id: !validateRequired(term.id) ? 'ID is Required' : '',
-        comment: !validateRequired(term.comment) ? 'Comment is Required' : ''
+        description: !validateRequired(term.description) ? 'Description is Required' : ''
     };
 }

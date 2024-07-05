@@ -7,11 +7,18 @@ import PropTypes from 'prop-types';
 
 const EditForm = ({ term, setEditMode, handleSave, handleInputChange }) => {
     return (
-        <Box sx={{ padding: 2 }}>
+        <Box>
             <Typography variant="h6">Edit Term</Typography>
-            <TextField label="Label" name="label" value={term.label} onChange={handleInputChange} fullWidth />
-            <TextField label="Comment" name="comment" value={term.comment} onChange={handleInputChange} fullWidth />
-            <TextField label="Definition" name="definition" value={term.definition} onChange={handleInputChange} fullWidth />
+            <TextField label="Label" name="label" sx={{ marginTop: '10px' }} value={term.label} onChange={handleInputChange} fullWidth />
+            <TextField
+                label="Description"
+                name="comment"
+                sx={{ marginTop: '10px' }}
+                value={term.description}
+                onChange={handleInputChange}
+                fullWidth
+            />
+            <TextField label="See Also" name="definition" sx={{ marginTop: '10px' }} value={term.seeAlso} onChange={handleInputChange} fullWidth />
             {/*<AlternativeDefinitionsSection alternatives={term.alternativeDefinitions} isEditable onChange={handleInputChange} />*/}
             {/*<AlternativeLabelsSection alternatives={term.alternativeLabels} isEditable onChange={handleInputChange} />*/}
             {/*<DiscussionSection comments={term.comments} isEditable onChange={handleInputChange} />*/}
@@ -25,8 +32,8 @@ const EditForm = ({ term, setEditMode, handleSave, handleInputChange }) => {
 EditForm.propTypes = {
     term: PropTypes.shape({
         label: PropTypes.string,
-        comment: PropTypes.string,
-        definition: PropTypes.string,
+        description: PropTypes.string,
+        seeAlso: PropTypes.string,
         alternativeDefinitions: PropTypes.array,
         alternativeLabels: PropTypes.array,
         comments: PropTypes.array,

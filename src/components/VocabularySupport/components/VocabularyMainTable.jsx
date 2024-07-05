@@ -24,24 +24,24 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     const [openCommit, setOpenCommit] = useState(false);
 
     const TerminologyCellComponent = ({ row }) => {
-        const description = row.original.description;
+        const seeAlso = row.original.seeAlso;
         const Label = row.original.label;
         //It may as well be possible that we are adding brand-new term and description is not available
-        if (description?.startsWith('url:')) {
-            const url = description.slice(4); // remove "url:" prefix
+        if (seeAlso?.startsWith('url:')) {
+            const url = seeAlso.slice(4); // remove "url:" prefix
             return (
                 <a href={url} target="_blank" rel="noopener noreferrer">
                     {Label}
                 </a>
             );
         } else {
-            return <span>{description ? description : ''}</span>;
+            return <span>{seeAlso ? seeAlso : ''}</span>;
         }
     };
     TerminologyCellComponent.propTypes = {
         row: PropTypes.shape({
             original: PropTypes.shape({
-                description: PropTypes.string,
+                seeAlso: PropTypes.string,
                 label: PropTypes.string.isRequired
             }).isRequired
         }).isRequired
@@ -80,23 +80,23 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 }
             },
             {
-                accessorKey: 'comment',
-                header: 'Comment',
+                accessorKey: 'description',
+                header: 'Description',
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
-                    error: !!validationErrors?.comment,
-                    helperText: validationErrors?.comment,
+                    error: !!validationErrors?.description,
+                    helperText: validationErrors?.description,
                     onFocus: () =>
                         setValidationErrors({
                             ...validationErrors,
-                            comment: undefined
+                            description: undefined
                         })
                 }
             },
             {
-                accessorKey: 'description',
-                header: 'Definition/Go To Term',
+                accessorKey: 'seeAlso',
+                header: 'See Also',
                 size: 200,
                 Cell: TerminologyCellComponent
             },
@@ -255,7 +255,7 @@ function validateTerm(term) {
     console.log('validating term', term);
     return {
         label: !validateRequired(term.label) ? 'Label is Required' : '',
-        comment: !validateRequired(term.comment) ? 'Comment is Required' : ''
+        description: !validateRequired(term.description) ? 'Description is Required' : ''
     };
 }
 
