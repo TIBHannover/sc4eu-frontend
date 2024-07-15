@@ -83,6 +83,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 accessorKey: 'description',
                 header: 'Description',
                 size: 150,
+                Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
                 muiEditTextFieldProps: {
                     required: true,
                     error: !!validationErrors?.description,
@@ -194,7 +195,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 variant="contained"
                 onClick={() => {
                     setNewTermOpen(true);
-                    table.setCreatingRow(createRow(table, { id: crypto.randomUUID() }));
+                    table.setCreatingRow(createRow(table, { id: crypto.randomUUID(), status: 'draft' }));
                 }}
                 style={{ backgroundColor: colorStyled.SECONDARY.dark }}
             >
@@ -264,3 +265,18 @@ const ScrollableDiv = styled.div`
     padding-bottom: 5px;
     height: 80vh;
 `;
+
+const CellContent = styled.div`
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+`;
+
+const EllipsisTextCell = ({ value }) => {
+    const displayValue = value && value.length > 30 ? `${value.slice(0, 30)}...` : value;
+    return <CellContent title={value}> {displayValue}</CellContent>;
+};
+EllipsisTextCell.propTypes = {
+    value: PropTypes.string.isRequired
+};
