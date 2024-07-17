@@ -47,9 +47,9 @@ const contentStyle = {
 };
 
 const dividerStyle = {
-    margin: '10px 0',
-    border: '0',
-    borderTop: '1px solid #ccc'
+    flexGrow: 1,
+    border: 'none',
+    borderBottom: '1px solid #ccc'
 };
 
 const authorDateStyle = {
@@ -64,7 +64,6 @@ const textAreaStyle = {
     minHeight: '50px' // Make the text box longer
 };
 const buttonStyle = {
-    marginTop: '10px',
     borderRadius: '20px', // Make the button rounder
     backgroundColor: colorStyled.SECONDARY.dark,
     display: 'flex'
@@ -114,14 +113,16 @@ const CommentsSection = () => {
     };
 
     return (
-        <Paper elevation={0} style={{ paddingLeft: '10px', background: 'inherit' }}>
-            <Typography variant="h5" component="div" style={{ marginTop: '6px' }}>
-                Comments
-            </Typography>
-            <hr style={dividerStyle} />
-            <List>
+        <Paper elevation={0} style={{ paddingLeft: '1px', background: 'inherit' }}>
+            <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="h7" component="div" style={{ marginRight: '10px' }}>
+                    Comments
+                </Typography>
+                <hr style={dividerStyle} />
+            </Box>
+            <List style={{ maxHeight: '220px', overflow: 'auto' }}>
                 {comments.map((comment, index) => (
-                    <ListItem key={index} alignItems="flex-start">
+                    <ListItem key={index} alignItems="flex-start" style={{ paddingBottom: '1px' }}>
                         <ListItemAvatar>
                             <Avatar {...stringAvatar(comment.avatar)} style={avatarStyle} />
                         </ListItemAvatar>
@@ -142,25 +143,26 @@ const CommentsSection = () => {
                 ))}
             </List>
 
-            <Box component="form" noValidate autoComplete="off">
+            <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: 'auto' }}>
                 <TextField
                     multiline
-                    rows={2}
+                    rows={4} // Adjust the rows as needed to ensure there's enough space for the button
                     variant="outlined"
                     placeholder="Add a comment"
                     fullWidth
-                    style={textAreaStyle}
+                    style={{ paddingRight: '1px' }}
                     value={newCommentText}
                     onChange={e => setNewCommentText(e.target.value)}
                 />
-                <Button
-                    variant="contained"
-                    style={buttonStyle}
-                    startIcon={<i className="edit icon" />}
-                    onClick={() => addComment('New Author', newCommentText)}
-                >
-                    Add Comment
-                </Button>
+                <Box style={{ position: 'absolute', right: 5, bottom: 5 }}>
+                    <Button
+                        variant="contained"
+                        style={buttonStyle} // Adjust styling as needed
+                        onClick={() => addComment('New Author', newCommentText)}
+                    >
+                        Add
+                    </Button>
+                </Box>
             </Box>
         </Paper>
     );
