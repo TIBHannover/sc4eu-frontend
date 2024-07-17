@@ -125,6 +125,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     };
 
     const handleSaveTerm = async ({ values, table }) => {
+        console.log('saving term', values);
         const newValidationErrors = validateTerm(values);
         if (Object.values(newValidationErrors).some(error => error)) {
             setValidationErrors(newValidationErrors);
@@ -151,7 +152,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         getRowId: row => row.id,
         positionActionsColumn: 'last',
         enableRowExpansion: true,
-        renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} />,
+        renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} updateTerm={updateTerm} />,
         initialState: { columnVisibility: { id: false } },
         // muiToolbarAlertBannerProps: isLoadingTermsError
         //     ? {

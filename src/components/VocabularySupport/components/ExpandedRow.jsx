@@ -9,7 +9,7 @@ import EditForm from './EditForm';
 import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
 
-const ExpandedRow = ({ term }) => {
+const ExpandedRow = ({ term, updateTerm }) => {
     const [editMode, setEditMode] = useState(false);
     const [updatedTerm, setUpdatedTerm] = useState(term);
 
@@ -19,38 +19,45 @@ const ExpandedRow = ({ term }) => {
     };
 
     const handleSave = () => {
+        // Save the updated term
+        console.log('Updated term:', updatedTerm);
+        updateTerm(updatedTerm);
         setEditMode(false);
     };
 
     return (
-        <Box sx={{ padding: 2 }}>
+        <Box sx={{ paddingLeft: 2 }}>
             {!editMode ? (
-                <>
-                    <Typography>
-                        <strong>ID:</strong> {term.id}
-                    </Typography>
-                    <Typography>
-                        <strong>Label:</strong> {term.label}
-                    </Typography>
-                    <Typography>
-                        <strong>Description:</strong> {term.description}
-                    </Typography>
-                    <Typography>
-                        <strong>See Also:</strong> {term.seeAlso}
-                    </Typography>
-                    {/*<AlternativeDefinitionsSection alternatives={term.alternativeDefinitions} />*/}
-                    {/*<AlternativeLabelsSection alternatives={term.alternativeLabels} />*/}
-                    {/*<DiscussionSection comments={term.comments} />*/}
-                    <Typography>
-                        <strong>Status:</strong> {term.status}
-                    </Typography>
-                    {/*<Box sx={{ display: 'flex', alignItems: 'center' }}>*/}
-                    {/*    <Typography style={{ marginRight: '10px' }}>Status:</Typography>*/}
-                    {/*    <StatusDropdown status={term.status} onChange={value => setUpdatedTerm({ ...term, status: value })} />*/}
-                    {/*</Box>*/}
-                    <CommentsSection comments={term.comments} />
-                    <Button onClick={() => setEditMode(true)}>Edit</Button>
-                </>
+                <Box sx={{ display: 'flex' }}>
+                    <Box sx={{ width: '50%' }}>
+                        <Typography>
+                            <strong>ID:</strong> {term.id}
+                        </Typography>
+                        <Typography>
+                            <strong>Label:</strong> {term.label}
+                        </Typography>
+                        <Typography>
+                            <strong>Description:</strong> {term.description}
+                        </Typography>
+                        <Typography>
+                            <strong>See Also:</strong> {term.seeAlso}
+                        </Typography>
+                        {/*<AlternativeDefinitionsSection alternatives={term.alternativeDefinitions} />*/}
+                        {/*<AlternativeLabelsSection alternatives={term.alternativeLabels} />*/}
+                        {/*<DiscussionSection comments={term.comments} />*/}
+                        <Typography>
+                            <strong>Status:</strong> {term.status}
+                        </Typography>
+                        {/*<Box sx={{ display: 'flex', alignItems: 'center' }}>*/}
+                        {/*    <Typography style={{ marginRight: '10px' }}>Status:</Typography>*/}
+                        {/*    <StatusDropdown status={term.status} onChange={value => setUpdatedTerm({ ...term, status: value })} />*/}
+                        {/*</Box>*/}
+                        <Button onClick={() => setEditMode(true)}>Edit Term</Button>
+                    </Box>
+                    <Box sx={{ width: '50%' }}>
+                        <CommentsSection comments={term.comments} />
+                    </Box>
+                </Box>
             ) : (
                 <EditForm term={updatedTerm} setEditMode={setEditMode} handleSave={handleSave} handleInputChange={handleInputChange} />
             )}
@@ -59,16 +66,18 @@ const ExpandedRow = ({ term }) => {
 };
 
 ExpandedRow.propTypes = {
-    term: PropTypes.shape({
-        id: PropTypes.string,
-        label: PropTypes.string,
-        description: PropTypes.string,
-        seeAlso: PropTypes.string,
-        alternativeDefinitions: PropTypes.array,
-        alternativeLabels: PropTypes.array,
-        comments: PropTypes.array,
-        status: PropTypes.string
-    }).isRequired
+    term: PropTypes.object.isRequired,
+    updateTerm: PropTypes.func.isRequired
+    // term: PropTypes.shape({
+    //     id: PropTypes.string,
+    //     label: PropTypes.string,
+    //     description: PropTypes.string,
+    //     seeAlso: PropTypes.string,
+    //     alternativeDefinitions: PropTypes.array,
+    //     alternativeLabels: PropTypes.array,
+    //     comments: PropTypes.array,
+    //     status: PropTypes.string
+    // }).isRequired
 };
 
 export default ExpandedRow;

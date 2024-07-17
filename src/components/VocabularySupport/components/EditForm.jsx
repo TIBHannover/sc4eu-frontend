@@ -12,13 +12,13 @@ const EditForm = ({ term, setEditMode, handleSave, handleInputChange }) => {
             <TextField label="Label" name="label" sx={{ marginTop: '10px' }} value={term.label} onChange={handleInputChange} fullWidth />
             <TextField
                 label="Description"
-                name="comment"
+                name="description"
                 sx={{ marginTop: '10px' }}
                 value={term.description}
                 onChange={handleInputChange}
                 fullWidth
             />
-            <TextField label="See Also" name="definition" sx={{ marginTop: '10px' }} value={term.seeAlso} onChange={handleInputChange} fullWidth />
+            <TextField label="See Also" name="seeAlso" sx={{ marginTop: '10px' }} value={term.seeAlso} onChange={handleInputChange} fullWidth />
             {/*<AlternativeDefinitionsSection alternatives={term.alternativeDefinitions} isEditable onChange={handleInputChange} />*/}
             {/*<AlternativeLabelsSection alternatives={term.alternativeLabels} isEditable onChange={handleInputChange} />*/}
             {/*<DiscussionSection comments={term.comments} isEditable onChange={handleInputChange} />*/}
@@ -30,15 +30,16 @@ const EditForm = ({ term, setEditMode, handleSave, handleInputChange }) => {
 };
 
 EditForm.propTypes = {
-    term: PropTypes.shape({
-        label: PropTypes.string,
-        description: PropTypes.string,
-        seeAlso: PropTypes.string,
-        alternativeDefinitions: PropTypes.array,
-        alternativeLabels: PropTypes.array,
-        comments: PropTypes.array,
-        status: PropTypes.string
-    }).isRequired,
+    term: PropTypes.object.isRequired,
+    // term: PropTypes.shape({
+    //     label: PropTypes.string,
+    //     description: PropTypes.string,
+    //     seeAlso: PropTypes.string,
+    //     alternativeDefinitions: PropTypes.array,
+    //     alternativeLabels: PropTypes.array,
+    //     comments: PropTypes.array,
+    //     status: PropTypes.string
+    // }).isRequired,
     setEditMode: PropTypes.func.isRequired,
     handleSave: PropTypes.func.isRequired,
     handleInputChange: PropTypes.func.isRequired
