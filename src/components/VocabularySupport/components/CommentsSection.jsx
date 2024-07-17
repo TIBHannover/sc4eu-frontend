@@ -64,7 +64,6 @@ const textAreaStyle = {
     minHeight: '50px' // Make the text box longer
 };
 const buttonStyle = {
-    marginTop: '10px',
     borderRadius: '20px', // Make the button rounder
     backgroundColor: colorStyled.SECONDARY.dark,
     display: 'flex'
@@ -121,9 +120,9 @@ const CommentsSection = () => {
                 </Typography>
                 <hr style={dividerStyle} />
             </Box>
-            <List>
+            <List style={{ maxHeight: '220px', overflow: 'auto' }}>
                 {comments.map((comment, index) => (
-                    <ListItem key={index} alignItems="flex-start">
+                    <ListItem key={index} alignItems="flex-start" style={{ paddingBottom: '1px' }}>
                         <ListItemAvatar>
                             <Avatar {...stringAvatar(comment.avatar)} style={avatarStyle} />
                         </ListItemAvatar>
@@ -144,25 +143,26 @@ const CommentsSection = () => {
                 ))}
             </List>
 
-            <Box component="form" noValidate autoComplete="off">
+            <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: 'auto' }}>
                 <TextField
                     multiline
-                    rows={2}
+                    rows={4} // Adjust the rows as needed to ensure there's enough space for the button
                     variant="outlined"
                     placeholder="Add a comment"
                     fullWidth
-                    style={textAreaStyle}
+                    style={{ paddingRight: '1px' }}
                     value={newCommentText}
                     onChange={e => setNewCommentText(e.target.value)}
                 />
-                <Button
-                    variant="contained"
-                    style={buttonStyle}
-                    startIcon={<i className="edit icon" />}
-                    onClick={() => addComment('New Author', newCommentText)}
-                >
-                    Add Comment
-                </Button>
+                <Box style={{ position: 'absolute', right: 5, bottom: 5 }}>
+                    <Button
+                        variant="contained"
+                        style={buttonStyle} // Adjust styling as needed
+                        onClick={() => addComment('New Author', newCommentText)}
+                    >
+                        Add
+                    </Button>
+                </Box>
             </Box>
         </Paper>
     );
