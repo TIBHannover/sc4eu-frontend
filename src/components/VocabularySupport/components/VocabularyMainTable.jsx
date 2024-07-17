@@ -104,14 +104,14 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'status',
                 header: 'Status',
-                size: 150
+                size: 150,
+                enableEditing: false
             }
         ],
         [validationErrors]
     );
 
     const handleCreateTerm = async ({ values, table }) => {
-        console.log(' I am going to create new term ' + values.id);
         const uuid = crypto.randomUUID();
         const newValidationErrors = validateTerm(values);
         if (Object.values(newValidationErrors).some(error => error)) {
