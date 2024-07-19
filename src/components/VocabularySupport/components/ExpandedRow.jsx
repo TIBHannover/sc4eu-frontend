@@ -1,6 +1,6 @@
 import { Box, Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import AlternativeDefinitionsSection from './AlternativeDefinitionsSection';
 import AlternativeLabelsSection from './AlternativeLabelsSection';
 import DiscussionSection from './DiscussionSection';
@@ -39,9 +39,14 @@ const ExpandedRow = ({ term, updateTerm }) => {
                         <Typography>
                             <strong>Description:</strong> {term.description}
                         </Typography>
-                        <Typography>
-                            <strong>See Also:</strong> {term.seeAlso}
-                        </Typography>
+                        {term.seeAlso?.startsWith('url:https://') && (
+                            <Typography>
+                                <strong>See Also:</strong>{' '}
+                                <a href={term.seeAlso?.slice(4)} target="_blank" rel="noopener noreferrer">
+                                    {term.label}
+                                </a>
+                            </Typography>
+                        )}
                         {/*<AlternativeDefinitionsSection alternatives={term.alternativeDefinitions} />*/}
                         {/*<AlternativeLabelsSection alternatives={term.alternativeLabels} />*/}
                         {/*<DiscussionSection comments={term.comments} />*/}
@@ -68,16 +73,6 @@ const ExpandedRow = ({ term, updateTerm }) => {
 ExpandedRow.propTypes = {
     term: PropTypes.object.isRequired,
     updateTerm: PropTypes.func.isRequired
-    // term: PropTypes.shape({
-    //     id: PropTypes.string,
-    //     label: PropTypes.string,
-    //     description: PropTypes.string,
-    //     seeAlso: PropTypes.string,
-    //     alternativeDefinitions: PropTypes.array,
-    //     alternativeLabels: PropTypes.array,
-    //     comments: PropTypes.array,
-    //     status: PropTypes.string
-    // }).isRequired
 };
 
 export default ExpandedRow;

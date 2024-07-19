@@ -31,15 +31,6 @@ const EditForm = ({ term, setEditMode, handleSave, handleInputChange }) => {
 
 EditForm.propTypes = {
     term: PropTypes.object.isRequired,
-    // term: PropTypes.shape({
-    //     label: PropTypes.string,
-    //     description: PropTypes.string,
-    //     seeAlso: PropTypes.string,
-    //     alternativeDefinitions: PropTypes.array,
-    //     alternativeLabels: PropTypes.array,
-    //     comments: PropTypes.array,
-    //     status: PropTypes.string
-    // }).isRequired,
     setEditMode: PropTypes.func.isRequired,
     handleSave: PropTypes.func.isRequired,
     handleInputChange: PropTypes.func.isRequired
