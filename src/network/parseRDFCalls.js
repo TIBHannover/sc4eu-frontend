@@ -1,7 +1,5 @@
 import axios from 'axios';
 import * as N3 from 'n3';
-
-import * as util from 'util';
 import { saveNewContent } from './GitAPICalls';
 
 /**
@@ -28,11 +26,13 @@ export const parseRDF = async rdfGitHubURL => {
             if (error) {
                 reject(error);
             } else if (quad) {
-                quads.push({
-                    subject: quad.subject.value.split('#')[1],
-                    predicate: quad.predicate.value.split('#')[1],
-                    object: quad.object.value
-                });
+                if(quad.predicate.value.split('#')[1] !== 'type') {
+                    quads.push({
+                        subject: quad.subject.value.split('#')[1],
+                        predicate: quad.predicate.value.split('#')[1],
+                        object: quad.object.value
+                    });
+                }
             } else {
                 // parser.parse is done when it calls the callback with null for the quad
                 resolve();
@@ -73,7 +73,7 @@ export const writeRDF = async (rdfGitHubURL, newTerms, commitMessage) => {
         writer.addQuad(
             N3.DataFactory.quad(N3.DataFactory.namedNode(subject), N3.DataFactory.namedNode(`rdf:type`), N3.DataFactory.namedNode(`rdfs:Resource`))
         );
-        delete item.id;
+        //delete item.id;
 
         for (const predicate in item) {
             writer.addQuad(
@@ -96,8 +96,4 @@ export const writeRDF = async (rdfGitHubURL, newTerms, commitMessage) => {
         });
     });
     return await saveNewContent(rdfGitHubURL, rdfData, commitMessage);
-    // Here you would normally commit the changes to the rdfGitHubURL.
-    // However, committing changes to a file hosted on GitHub requires a more complex process involving the GitHub API.
-    // For the sake of simplicity, this function will only return the RDF data.
-    //return Promise.resolve(rdfData);
 };

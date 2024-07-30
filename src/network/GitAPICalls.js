@@ -4,7 +4,6 @@ const Buffer = require('buffer/').Buffer;
 
 const octokit = new Octokit({
     auth: process.env.REACT_APP_GITHUB_TOKEN2
-    //auth: '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'
 });
 
 const getUserFromUrl = GitHubAPIUrl => {
@@ -37,33 +36,12 @@ const getFileDataFromGitHub = async GitHubAPIUrl => {
     const repo = getRepoFromUrl(GitHubAPIUrl); // the name of the repository
     const path = getFilePath(GitHubAPIUrl); // the path of the file to fetch
 
-    // get the file content and sha from GitHub
     const { data } = await octokit.repos.getContent({
         owner,
         repo,
         path
     });
     return data;
-};
-export const getFileContent = async GitHubAPIUrl => {
-    // const owner = getUserFromUrl(GitHubAPIUrl);
-    // const repo = getRepoFromUrl(GitHubAPIUrl); // the name of the repository
-    // const path = getFilePath(GitHubAPIUrl); // the path of the file to fetch
-    //
-    // // get the file content and sha from GitHub
-    // const { data } = await octokit.repos.getContent({
-    //     owner,
-    //     repo,
-    //     path
-    // });
-    const data = await getFileDataFromGitHub(GitHubAPIUrl);
-    const bufferObj = Buffer.from(data['content'], 'base64').toString();
-    try {
-        return JSON.parse(bufferObj);
-    } catch (e) {
-        console.log('parsing error', +e.toString());
-    }
-    return null;
 };
 
 export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
@@ -91,11 +69,6 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
             committer: { ...user_info },
             author: { ...user_info }
         });
-        console.log('file updated successfully before update', response.data);
-        // if (updated) {
-        //     console.log('file updated successfully');
-        //     return data;
-        // }
         return response.data;
     } catch (e) {
         console.log(e.toString());
