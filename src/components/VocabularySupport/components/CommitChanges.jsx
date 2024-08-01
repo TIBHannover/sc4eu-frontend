@@ -1,22 +1,20 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import TextField from '@material-ui/core/TextField';
-import React, { useEffect, useState } from 'react';
-import { useCommitChanges } from '../hooks/useCommitChanges';
+import React, { useState } from 'react';
+import { commitChanges } from '../utils/CommitChanges';
 import PropTypes from 'prop-types';
+import { useQueryClient } from '@tanstack/react-query';
 
 const CommitChanges = ({ refetch, openCommit, setOpenCommit }) => {
     const [commitMessage, setCommitMessage] = useState('');
-    const { mutateAsync: commitChanges } = useCommitChanges(refetch, commitMessage);
-
-    console.log('CommitChanges', refetch, commitMessage);
+    const queryClient = useQueryClient();
 
     const handleCommitMessageChange = event => {
         setCommitMessage(event.target.value);
     };
-    const handleCommit = () => {
-        commitChanges();
+    const handleCommit = async () => {
+        await commitChanges(queryClient, commitMessage);
         setOpenCommit(false);
-        setCommitMessage('');
     };
     return (
         <Dialog open={openCommit} onClose={() => setOpenCommit(false)} maxWidth="xl">

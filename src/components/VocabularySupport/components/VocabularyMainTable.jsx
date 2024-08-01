@@ -2,12 +2,10 @@ import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-r
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Box, Button, IconButton, Tooltip } from '@mui/material';
-import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
-import StatusDropdown from './StatusDropdown';
 import ExpandedRow from './ExpandedRow';
 import CreateNewTerm from './CreateNewTerm';
 import CommitChanges from './CommitChanges';

@@ -1,8 +1,7 @@
 import axios from 'axios';
 import * as N3 from 'n3';
-
-import * as util from 'util';
-import { saveNewContent } from './GitAPICalls';
+import { getFileDataFromGitHub, saveNewContent } from './GitAPICalls';
+import { Buffer } from 'buffer';
 
 /**
  * Parses RDF data from a given URL and returns an array of quads.
@@ -12,8 +11,10 @@ import { saveNewContent } from './GitAPICalls';
  * @returns {Promise<Array>} A promise that resolves to an array of quads.
  */
 export const parseRDF = async rdfGitHubURL => {
-    const response = await axios.get(rdfGitHubURL);
-    const data = response.data;
+    // const response = await axios.get(rdfGitHubURL);
+    // const data = response.data;
+    const rdfDataGithub = await getFileDataFromGitHub(rdfGitHubURL);
+    const rdfDecodedDataGithub = Buffer.from(rdfDataGithub['content'], 'base64').toString('utf8');
 
     const parser = new N3.Parser({ format: 'text/turtle' });
     const quads = [];
@@ -21,18 +22,20 @@ export const parseRDF = async rdfGitHubURL => {
 
     // Wrap parser.parse in a Promise to ensure it completes before processing quads
     await new Promise((resolve, reject) => {
-        parser.parse(data, (error, quad, prefixes) => {
+        parser.parse(rdfDecodedDataGithub, (error, quad, prefixes) => {
             // if (prefixes) {
             //     console.log('prefixes', prefixes);
             // }
             if (error) {
                 reject(error);
             } else if (quad) {
-                quads.push({
-                    subject: quad.subject.value.split('#')[1],
-                    predicate: quad.predicate.value.split('#')[1],
-                    object: quad.object.value
-                });
+                if(quad.predicate.value.split('#')[1] !== 'type') {
+                    quads.push({
+                        subject: quad.subject.value.split('#')[1],
+                        predicate: quad.predicate.value.split('#')[1],
+                        object: quad.object.value
+                    });
+                }
             } else {
                 // parser.parse is done when it calls the callback with null for the quad
                 resolve();
@@ -73,7 +76,7 @@ export const writeRDF = async (rdfGitHubURL, newTerms, commitMessage) => {
         writer.addQuad(
             N3.DataFactory.quad(N3.DataFactory.namedNode(subject), N3.DataFactory.namedNode(`rdf:type`), N3.DataFactory.namedNode(`rdfs:Resource`))
         );
-        delete item.id;
+        //delete item.id;
 
         for (const predicate in item) {
             writer.addQuad(
@@ -96,8 +99,4 @@ export const writeRDF = async (rdfGitHubURL, newTerms, commitMessage) => {
         });
     });
     return await saveNewContent(rdfGitHubURL, rdfData, commitMessage);
-    // Here you would normally commit the changes to the rdfGitHubURL.
-    // However, committing changes to a file hosted on GitHub requires a more complex process involving the GitHub API.
-    // For the sake of simplicity, this function will only return the RDF data.
-    //return Promise.resolve(rdfData);
 };

@@ -24,7 +24,13 @@ const piwik = new ReactPiwik({
     siteId: 40
 });
 
-ReactPiwik.push(['trackEvent', 'trackPageView']);
+let category = 'Default Category';  // Provide a default value
+let action = 'Default Action';      // Provide a default value
+
+ReactPiwik.push(['trackPageView']);
+ReactPiwik.push(['trackEvent', category, action]);
+
+const piwikHistory = piwik.connectToHistory(history);
 
 const { store, persistor } = configureStore();
 const queryClient = new QueryClient();
@@ -37,7 +43,7 @@ const render = () => {
                     <PersistGate loading={null} persistor={persistor}>
                         <QueryClientProvider client={queryClient}>
                             <ThemeProvider theme={theme}>
-                                <App history={piwik.connectToHistory(history)} />
+                                <App history={piwikHistory} />
                             </ThemeProvider>
                             <ReactQueryDevtools />
                         </QueryClientProvider>
