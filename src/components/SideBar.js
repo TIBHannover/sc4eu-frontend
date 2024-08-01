@@ -7,7 +7,7 @@ import { reverse } from 'named-urls';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import Cookies from 'js-cookie';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import List from '@mui/material/List';
@@ -88,6 +88,15 @@ const StyledButton = styled.button`
     }
 `;
 
+const DisabledStyledLink = styled(StyledLink)`
+    pointer-events: none;
+    color: gray;
+`;
+
+const StyledLinkWrapper = styled.div`
+    display: inline-block;
+`;
+
 const SideBar = props => {
     const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
@@ -98,6 +107,7 @@ const SideBar = props => {
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpMessage, setPopUpMessage] = useState('');
     const [isOntoComparisonModalOpen, setIsOntoComparisonModalOpen] = useState(false);
+
 
     const selectModeOfOperation = val => {
         Cookies.set(MODE_OF_OPERATIONS, val);
@@ -335,18 +345,32 @@ const SideBar = props => {
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
-                        <NoteAddOutlined color="action" />
-                        <StyledText>Vocabulary Dev</StyledText>
-                    </StyledLink>
+                    <StyledLinkWrapper
+                        title={props.user ? "Open Vocabulary Development Support" : "Please login to see Vocabulary Development Support"}
+                    >
+                        <StyledLink
+                                    activeStyle={ActiveStyle}
+                                    to={ROUTES.VOCABULARY_SUPPORT}
+                                    as={!props.user ? DisabledStyledLink : undefined}
+                        >
+                            <NoteAddOutlined color="action" />
+                            <StyledText>Vocabulary Dev</StyledText>
+                        </StyledLink>
+                    </StyledLinkWrapper>
                 </div>
             </ListItem>
         </List>
     );
 };
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+const mapDispatchToProps = dispatch => ({});
 
 SideBar.propTypes = {
-    isOpen: PropTypes.bool.isRequired
+    isOpen: PropTypes.bool.isRequired,
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 
-export default SideBar;
+export default connect(mapStateToProps, mapDispatchToProps)(SideBar);
