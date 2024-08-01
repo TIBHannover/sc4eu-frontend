@@ -12,6 +12,7 @@ import CommitChanges from './CommitChanges';
 import { useCreateTerm } from '../hooks/useCreateTerm';
 import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import { useDeleteTerm } from '../hooks/useDeleteTerm';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsError, isFetchingTerms }) => {
     const [validationErrors, setValidationErrors] = useState({});
@@ -48,7 +49,14 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         () => [
             {
                 accessorKey: 'id',
-                header: 'ID',
+                header: (
+                    <Tooltip title="Unique identifier for the term">
+                        <span>ID</span>
+                        <IconButton style={{ marginBottom: '3px'}} size="small">
+                            <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                ),
                 size: 150,
                 enableEditing: false
                 // muiEditTextFieldProps: {
@@ -64,7 +72,15 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             },
             {
                 accessorKey: 'label',
-                header: 'Label',
+                header: (
+                    <Tooltip
+                        title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
+                        <span>Label</span>
+                        <IconButton style={{ marginBottom: '3px'}} size="small">
+                            <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                ),
                 size: 150,
                 muiEditTextFieldProps: {
                     required: true,
@@ -79,7 +95,14 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             },
             {
                 accessorKey: 'description',
-                header: 'Description',
+                header: (
+                    <Tooltip title="Provides a human-readable description of a Term">
+                        <span>Description</span>
+                        <IconButton style={{ marginBottom: '3px'}} size="small">
+                            <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                ),
                 size: 150,
                 Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
                 muiEditTextFieldProps: {
@@ -95,13 +118,30 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             },
             {
                 accessorKey: 'seeAlso',
-                header: 'See Also',
+                header: (
+                    <Tooltip
+                        title="Indicates a resource that might provide additional information about the subject resource">
+                        <span>See Also</span>
+                        <IconButton style={{ marginBottom: '3px'}} size="small">
+                            <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                ),
                 size: 200,
                 Cell: TerminologyCellComponent
             },
             {
                 accessorKey: 'status',
-                header: 'Status',
+                header: (
+                    <Tooltip title="Three possible options for status. Draft, Ready, Accpeted.
+                             Draft is still under discussion, Ready when the consensus is reached,
+                             Accpeted when it is final and becomes part of the vocabulary">
+                        <span>Status</span>
+                        <IconButton style={{ marginBottom: '3px'}} size="small">
+                            <HelpOutlineIcon fontSize="small" />
+                        </IconButton>
+                    </Tooltip>
+                ),
                 size: 150,
                 enableEditing: false
             }

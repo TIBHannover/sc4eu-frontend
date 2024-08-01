@@ -1,6 +1,7 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Tooltip, IconButton } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AlternativeDefinitionsSection from './AlternativeDefinitionsSection';
 import AlternativeLabelsSection from './AlternativeLabelsSection';
 import DiscussionSection from './DiscussionSection';
@@ -31,21 +32,48 @@ const ExpandedRow = ({ term, updateTerm }) => {
                 <Box sx={{ display: 'flex' }}>
                     <Box sx={{ width: '50%' }}>
                         <Typography>
+                            <Tooltip title="Unique identifier for the term">
+                                <IconButton style={{ marginBottom: '4px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                             <strong>ID:</strong> {term.id}
                         </Typography>
                         <Typography>
+                            <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
+                                <IconButton style={{ marginBottom: '4px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                             <strong>Label:</strong> {term.label}
                         </Typography>
                         <Typography>
+                            <Tooltip title="Provides a human-readable description of a Term">
+                                <IconButton style={{ marginBottom: '4px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                             <strong>Description:</strong> {term.description}
                         </Typography>
                         <Typography>
+                            <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
+                                <IconButton style={{ marginBottom: '4px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                             <strong>See Also:</strong> {term.seeAlso}
                         </Typography>
                         {/*<AlternativeDefinitionsSection alternatives={term.alternativeDefinitions} />*/}
                         {/*<AlternativeLabelsSection alternatives={term.alternativeLabels} />*/}
                         {/*<DiscussionSection comments={term.comments} />*/}
                         <Typography>
+                            <Tooltip title="Three possible options for status. Draft, Ready, Accpeted.
+                             Draft is still under discussion, Ready when the consensus is reached,
+                             Accpeted when it is final and becomes part of the vocabulary">
+                                <IconButton style={{ marginBottom: '4px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                             <strong>Status:</strong> {term.status}
                         </Typography>
                         {/*<Box sx={{ display: 'flex', alignItems: 'center' }}>*/}
