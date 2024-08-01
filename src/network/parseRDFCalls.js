@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as N3 from 'n3';
-import { saveNewContent } from './GitAPICalls';
+import { getFileDataFromGitHub, saveNewContent } from './GitAPICalls';
+import { Buffer } from 'buffer';
 
 /**
  * Parses RDF data from a given URL and returns an array of quads.
@@ -10,8 +11,10 @@ import { saveNewContent } from './GitAPICalls';
  * @returns {Promise<Array>} A promise that resolves to an array of quads.
  */
 export const parseRDF = async rdfGitHubURL => {
-    const response = await axios.get(rdfGitHubURL);
-    const data = response.data;
+    // const response = await axios.get(rdfGitHubURL);
+    // const data = response.data;
+    const rdfDataGithub = await getFileDataFromGitHub(rdfGitHubURL);
+    const rdfDecodedDataGithub = Buffer.from(rdfDataGithub['content'], 'base64').toString('utf8');
 
     const parser = new N3.Parser({ format: 'text/turtle' });
     const quads = [];
@@ -19,7 +22,7 @@ export const parseRDF = async rdfGitHubURL => {
 
     // Wrap parser.parse in a Promise to ensure it completes before processing quads
     await new Promise((resolve, reject) => {
-        parser.parse(data, (error, quad, prefixes) => {
+        parser.parse(rdfDecodedDataGithub, (error, quad, prefixes) => {
             // if (prefixes) {
             //     console.log('prefixes', prefixes);
             // }

@@ -31,7 +31,7 @@ const getFilePath = GitHubAPIUrl => {
     return repoPath;
 };
 
-const getFileDataFromGitHub = async GitHubAPIUrl => {
+export const getFileDataFromGitHub = async GitHubAPIUrl => {
     const owner = getUserFromUrl(GitHubAPIUrl);
     const repo = getRepoFromUrl(GitHubAPIUrl); // the name of the repository
     const path = getFilePath(GitHubAPIUrl); // the path of the file to fetch
