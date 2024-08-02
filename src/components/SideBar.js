@@ -88,15 +88,6 @@ const StyledButton = styled.button`
     }
 `;
 
-const DisabledStyledLink = styled(StyledLink)`
-    pointer-events: none;
-    color: gray;
-`;
-
-const StyledLinkWrapper = styled.div`
-    display: inline-block;
-`;
-
 const SideBar = props => {
     const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
@@ -345,32 +336,18 @@ const SideBar = props => {
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
                     </StyledLink>
-                    <StyledLinkWrapper
-                        title={props.user ? "Open Vocabulary Development Support" : "Please login to see Vocabulary Development Support"}
-                    >
-                        <StyledLink
-                                    activeStyle={ActiveStyle}
-                                    to={ROUTES.VOCABULARY_SUPPORT}
-                                    as={!props.user ? DisabledStyledLink : undefined}
-                        >
-                            <NoteAddOutlined color="action" />
-                            <StyledText>Vocabulary Dev</StyledText>
-                        </StyledLink>
-                    </StyledLinkWrapper>
+                    <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
+                        <NoteAddOutlined color="action" />
+                        <StyledText>Vocabulary Dev</StyledText>
+                    </StyledLink>
                 </div>
             </ListItem>
         </List>
     );
 };
-const mapStateToProps = state => ({
-    user: state.auth.user
-});
-
-const mapDispatchToProps = dispatch => ({});
 
 SideBar.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+    isOpen: PropTypes.bool.isRequired
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SideBar);
+export default SideBar;
