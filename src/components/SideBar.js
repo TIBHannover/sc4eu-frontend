@@ -7,7 +7,7 @@ import { reverse } from 'named-urls';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import Cookies from 'js-cookie';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import List from '@mui/material/List';
@@ -98,6 +98,7 @@ const SideBar = props => {
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [popUpMessage, setPopUpMessage] = useState('');
     const [isOntoComparisonModalOpen, setIsOntoComparisonModalOpen] = useState(false);
+
 
     const selectModeOfOperation = val => {
         Cookies.set(MODE_OF_OPERATIONS, val);

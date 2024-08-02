@@ -51,10 +51,12 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 accessorKey: 'id',
                 header: (
                     <Tooltip title="Unique identifier for the term">
-                        <span>ID</span>
-                        <IconButton style={{ marginBottom: '3px'}} size="small">
-                            <HelpOutlineIcon fontSize="small" />
-                        </IconButton>
+                        <>
+                            <span>ID</span>
+                            <IconButton style={{ marginBottom: '3px'}} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </>
                     </Tooltip>
                 ),
                 size: 150,
@@ -75,10 +77,12 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 header: (
                     <Tooltip
                         title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
-                        <span>Label</span>
-                        <IconButton style={{ marginBottom: '3px'}} size="small">
-                            <HelpOutlineIcon fontSize="small" />
-                        </IconButton>
+                        <>
+                            <span>Label</span>
+                            <IconButton style={{ marginBottom: '3px'}} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </>
                     </Tooltip>
                 ),
                 size: 150,
@@ -97,10 +101,12 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 accessorKey: 'description',
                 header: (
                     <Tooltip title="Provides a human-readable description of a Term">
-                        <span>Description</span>
-                        <IconButton style={{ marginBottom: '3px'}} size="small">
-                            <HelpOutlineIcon fontSize="small" />
-                        </IconButton>
+                        <>
+                            <span>Description</span>
+                            <IconButton style={{ marginBottom: '3px'}} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </>
                     </Tooltip>
                 ),
                 size: 150,
@@ -121,10 +127,12 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 header: (
                     <Tooltip
                         title="Indicates a resource that might provide additional information about the subject resource">
-                        <span>See Also</span>
-                        <IconButton style={{ marginBottom: '3px'}} size="small">
-                            <HelpOutlineIcon fontSize="small" />
-                        </IconButton>
+                        <>
+                            <span>See Also</span>
+                            <IconButton style={{ marginBottom: '3px'}} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </>
                     </Tooltip>
                 ),
                 size: 200,
@@ -136,10 +144,12 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                     <Tooltip title="Three possible options for status. Draft, Ready, Accpeted.
                              Draft is still under discussion, Ready when the consensus is reached,
                              Accpeted when it is final and becomes part of the vocabulary">
-                        <span>Status</span>
-                        <IconButton style={{ marginBottom: '3px'}} size="small">
-                            <HelpOutlineIcon fontSize="small" />
-                        </IconButton>
+                        <>
+                            <span>Status</span>
+                            <IconButton style={{ marginBottom: '3px'}} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </>
                     </Tooltip>
                 ),
                 size: 150,

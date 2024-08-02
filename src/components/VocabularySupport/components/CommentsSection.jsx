@@ -7,6 +7,8 @@ import TextField from '@mui/material/TextField';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import { Box, ListItem, ListItemAvatar, Paper } from '@mui/material';
 import List from '@mui/material/List';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 function stringToColor(string) {
     let hash = 0;
@@ -90,7 +92,8 @@ function getTimeDifferenceString(date) {
     }
 }
 
-const CommentsSection = () => {
+const CommentsSection = ({user}) => {
+    const userDisplayName = user?.['displayName'];
     const [newCommentText, setNewCommentText] = useState('');
 
     const [comments, setComments] = useState([
@@ -157,8 +160,12 @@ const CommentsSection = () => {
                 <Box style={{ position: 'absolute', right: 5, bottom: 5 }}>
                     <Button
                         variant="contained"
-                        style={buttonStyle} // Adjust styling as needed
-                        onClick={() => addComment('New Author', newCommentText)}
+                        style={{
+                            ...buttonStyle,
+                            backgroundColor: newCommentText.trim() ? colorStyled.SECONDARY.dark : 'gray'
+                    }} // Adjust styling as needed
+                        onClick={() => addComment(userDisplayName, newCommentText)}
+                        disabled={!newCommentText.trim()}
                     >
                         Add
                     </Button>
@@ -168,4 +175,12 @@ const CommentsSection = () => {
     );
 };
 
-export default CommentsSection;
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+CommentsSection.propTypes = {
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+};
+
+export default connect(mapStateToProps)(CommentsSection);
