@@ -50,14 +50,14 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'id',
                 header: (
-                    <Tooltip title="Unique identifier for the term">
                         <>
                             <span>ID</span>
-                            <IconButton style={{ marginBottom: '3px'}} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
+                            <Tooltip title="Unique identifier for the term">
+                                <IconButton style={{ marginBottom: '3px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                         </>
-                    </Tooltip>
                 ),
                 size: 150,
                 enableEditing: false
@@ -75,15 +75,15 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'label',
                 header: (
-                    <Tooltip
-                        title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
                         <>
                             <span>Label</span>
-                            <IconButton style={{ marginBottom: '3px'}} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
+                            <Tooltip
+                                title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
+                                <IconButton style={{ marginBottom: '3px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                         </>
-                    </Tooltip>
                 ),
                 size: 150,
                 muiEditTextFieldProps: {
@@ -100,14 +100,14 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'description',
                 header: (
-                    <Tooltip title="Provides a human-readable description of a Term">
                         <>
                             <span>Description</span>
-                            <IconButton style={{ marginBottom: '3px'}} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
+                            <Tooltip title="Provides a human-readable description of a Term">
+                                <IconButton style={{ marginBottom: '3px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                         </>
-                    </Tooltip>
                 ),
                 size: 150,
                 Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
@@ -125,15 +125,15 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'seeAlso',
                 header: (
-                    <Tooltip
-                        title="Indicates a resource that might provide additional information about the subject resource">
                         <>
                             <span>See Also</span>
-                            <IconButton style={{ marginBottom: '3px'}} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
+                            <Tooltip
+                                title="Indicates a resource that might provide additional information about the subject resource">
+                                <IconButton style={{ marginBottom: '3px'}} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
                         </>
-                    </Tooltip>
                 ),
                 size: 200,
                 Cell: TerminologyCellComponent
@@ -141,16 +141,16 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'status',
                 header: (
-                    <Tooltip title="Three possible options for status. Draft, Ready, Accpeted.
+                    <>
+                        <span>Status</span>
+                        <Tooltip title="Three possible options for status. Draft, Ready, Accpeted.
                              Draft is still under discussion, Ready when the consensus is reached,
                              Accpeted when it is final and becomes part of the vocabulary">
-                        <>
-                            <span>Status</span>
                             <IconButton style={{ marginBottom: '3px'}} size="small">
                                 <HelpOutlineIcon fontSize="small" />
                             </IconButton>
-                        </>
-                    </Tooltip>
+                        </Tooltip>
+                    </>
                 ),
                 size: 150,
                 enableEditing: false
