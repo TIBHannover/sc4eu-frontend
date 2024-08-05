@@ -181,11 +181,9 @@ const StyledRootDiv = styled.div`
 `;
 
 const StyledHeadingDiv = styled.div`
-    border-radius: 10px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
+    border-radius: 10px 0 0 0;
     color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background-color: ${colorStyled.PRIMARY.dark};
+    background-color: ${colorStyled.SECONDARY.dark};
     height: 60px;
     display: flex;
     align-items: center;

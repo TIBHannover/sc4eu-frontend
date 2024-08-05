@@ -29,13 +29,13 @@ const StyledButtonMobileView = styled('div')(() => ({
 }));
 
 const createMixin = activePage => ({
-    height: activePage === '/' ? 'calc(100% - 155px)' : 'calc(100% - 100px)',
-    top: 100,
+    height: activePage === '/' ? 'calc(100% - 55px)' : 'calc(100% - 0px)',
+    top: 0,
     overflow: 'hidden',
     transition: '0.6s',
     backgroundColor: `${colorStyled.PRIMARY.lighter}`,
     [`@media (max-width: ${MAX_WIDTH})`]: {
-        height: activePage === '/' ? 'calc(100% - 105px)' : 'calc(100% - 50px)',
+        height: activePage === '/' ? 'calc(100% - 55px)' : 'calc(100% - 0px)',
         top: 50
     }
 });
