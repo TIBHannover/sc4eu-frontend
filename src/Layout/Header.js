@@ -244,9 +244,9 @@ Header.propTypes = {
 export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(Header);
 
 const StyledRootDiv = styled.div`
-    height: 100px;
+    height: 50px;
     overflow: auto;
-    background: ${colorStyled.PRIMARY.light};
+    //background: ${colorStyled.PRIMARY.light};
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
@@ -260,7 +260,7 @@ const StyledHeaderDiv = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("${background}");
+    //background-image: url("${background}");
     
      @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
