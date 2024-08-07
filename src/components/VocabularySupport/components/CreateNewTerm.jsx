@@ -56,7 +56,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
         };
         await handleCreateTerm({ values: creatTermFromTerminology, table: table });
         console.log('Adding term from terminology: ', creatTermFromTerminology);
-        setSelectedItem(value['id']);
+        //setSelectedItem(value['id']);
     };
 
     return (
