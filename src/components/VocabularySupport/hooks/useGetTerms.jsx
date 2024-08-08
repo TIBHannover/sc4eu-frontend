@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { parseRDF } from '../../../network/parseRDFCalls';
 
-const gitHubFileUrl = 'https://raw.githubusercontent.com/tib-ts/vocabulary_development/main/testexample.ttl';
+//const gitHubFileUrl = 'https://raw.githubusercontent.com/tib-ts/vocabulary_development/main/testexample.ttl';
+const gitHubFileUrl = process.env.REACT_APP_VOCABULARY_SERVICE_URL;
 
 async function fetchAllTermsFromGitHubRDF() {
     try {

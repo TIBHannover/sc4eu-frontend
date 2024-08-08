@@ -96,14 +96,7 @@ const CommentsSection = ({user}) => {
     const userDisplayName = user?.['displayName'];
     const [newCommentText, setNewCommentText] = useState('');
 
-    const [comments, setComments] = useState([
-        {
-            avatar: 'Fawad Khan',
-            author: 'Fawad Khan',
-            date: new Date(),
-            text: "This is just a first comment, I don't like the Label"
-        }
-    ]);
+    const [comments, setComments] = useState([]);
     const addComment = (author, text) => {
         const newComment = {
             avatar: author,
