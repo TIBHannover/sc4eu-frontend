@@ -1,4 +1,4 @@
-import { Box, Button, Tooltip, IconButton } from '@mui/material';
+import { Box, Button, Tooltip, IconButton, Link } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -24,6 +24,18 @@ const ExpandedRow = ({ term, updateTerm }) => {
         console.log('Updated term:', updatedTerm);
         updateTerm(updatedTerm);
         setEditMode(false);
+    };
+
+    const renderSeeAlso = () => {
+        if (term.seeAlso.startsWith('url:')) {
+            const url = term.seeAlso.substring(4);
+            return (
+                <Link href={url} target="_blank" rel="noopener noreferrer">
+                    {term.label}
+                </Link>
+            );
+        }
+        return term.seeAlso;
     };
 
     return (
@@ -61,7 +73,7 @@ const ExpandedRow = ({ term, updateTerm }) => {
                                     <HelpOutlineIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
-                            <strong>See Also:</strong> {term.seeAlso}
+                            <strong>See Also:</strong> {renderSeeAlso()}
                         </Typography>
                         {/*<AlternativeDefinitionsSection alternatives={term.alternativeDefinitions} />*/}
                         {/*<AlternativeLabelsSection alternatives={term.alternativeLabels} />*/}
