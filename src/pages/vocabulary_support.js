@@ -8,8 +8,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 const Vocabulary_support = props =>{
-    console.log('Vocabulary_support');
-    console.log(props.user);
     return (
         <StyledDiv>
             {/*<StyledHeadingDiv> Vocabulary Development Support </StyledHeadingDiv>*/}
