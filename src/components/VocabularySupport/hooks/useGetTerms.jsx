@@ -6,7 +6,6 @@ const gitHubFileUrl = process.env.REACT_APP_VOCABULARY_SERVICE_URL;
 
 async function fetchAllTermsFromGitHubRDF() {
     try {
-        console.log('fetching data from GitHub');
         return await parseRDF(gitHubFileUrl);
     } catch (e) {
         console.log('Error in fetching data from GitHub ' + e);

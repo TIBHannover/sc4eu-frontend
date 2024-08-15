@@ -16,7 +16,7 @@ export const parseRDF = async rdfGitHubURL => {
     const rdfDataGithub = await getFileDataFromGitHub(rdfGitHubURL);
     const rdfDecodedDataGithub = Buffer.from(rdfDataGithub['content'], 'base64').toString('utf8');
 
-    const parser = new N3.Parser({ format: 'text/turtle' });
+    const parser = new N3.Parser({ format: 'Turtle' });
     const quads = [];
     const result = {};
 
@@ -47,7 +47,16 @@ export const parseRDF = async rdfGitHubURL => {
         if (!result[quad.subject]) {
             result[quad.subject] = {};
         }
-        result[quad.subject][quad.predicate] = quad.object;
+        if (quad.predicate === 'altLabel') {
+            if (result[quad.subject][quad.predicate]) {
+                result[quad.subject][quad.predicate] += `, ${quad.object}`;
+            } else {
+                result[quad.subject][quad.predicate] = quad.object;
+            }
+        } else {
+            result[quad.subject][quad.predicate] = quad.object;
+        }
+        //result[quad.subject][quad.predicate] = quad.object;
     });
 
     return Object.entries(result).map(([id, value]) => ({ id, ...value }));
@@ -63,11 +72,12 @@ export const parseRDF = async rdfGitHubURL => {
  */
 export const writeRDF = async (rdfGitHubURL, newTerms, commitMessage) => {
     const writer = new N3.Writer({
-        format: 'text/turtle',
+        format: 'Turtle',
         prefixes: {
             owl: 'http://www.w3.org/2002/07/owl#',
             rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+            rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+            skos: 'http://www.w3.org/2004/02/skos/core#'
         }
     });
 
@@ -79,13 +89,28 @@ export const writeRDF = async (rdfGitHubURL, newTerms, commitMessage) => {
         //delete item.id;
 
         for (const predicate in item) {
-            writer.addQuad(
-                N3.DataFactory.quad(
-                    N3.DataFactory.namedNode(subject),
-                    N3.DataFactory.namedNode(`rdfs:${predicate}`),
-                    N3.DataFactory.literal(item[predicate])
-                )
-            );
+            if (predicate === 'altLabel') {
+                if(item[predicate]) {
+                    const altArray = item[predicate]?.split(',').map(label => label.trim());
+                    altArray.forEach(label => {
+                        writer.addQuad(
+                            N3.DataFactory.quad(
+                                N3.DataFactory.namedNode(subject),
+                                N3.DataFactory.namedNode('skos:altLabel'),
+                                N3.DataFactory.literal(label)
+                            )
+                        );
+                    });
+                }
+            } else{
+                writer.addQuad(
+                    N3.DataFactory.quad(
+                        N3.DataFactory.namedNode(subject),
+                        N3.DataFactory.namedNode(`rdfs:${predicate}`),
+                        N3.DataFactory.literal(item[predicate])
+                    )
+                );
+            }
         }
     });
 

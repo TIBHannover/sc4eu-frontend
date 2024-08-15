@@ -86,16 +86,42 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                         </>
                 ),
                 size: 150,
-                muiEditTextFieldProps: {
-                    required: true,
-                    error: !!validationErrors?.label,
-                    helperText: validationErrors?.label,
-                    onFocus: () =>
-                        setValidationErrors({
-                            ...validationErrors,
-                            label: undefined
-                        })
-                }
+                // muiEditTextFieldProps: {
+                //     required: true,
+                //     error: !!validationErrors?.label,
+                //     helperText: validationErrors?.label,
+                //     onFocus: () =>
+                //         setValidationErrors({
+                //             ...validationErrors,
+                //             label: undefined
+                //         })
+                // }
+            },
+            {
+                accessorKey: 'altLabel',
+                header: (
+                    <>
+                        <span>Alternative Labels</span>
+                        <Tooltip
+                            title="Provides alternative Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
+                            <IconButton style={{ marginBottom: '3px'}} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    </>
+                ),
+                size: 150,
+                internalEditComponent: 'MRT_EditArray',
+                // muiEditTextFieldProps: {
+                //     required: true,
+                //     error: !!validationErrors?.altLabel,
+                //     helperText: validationErrors?.altLabel,
+                //     onFocus: () =>
+                //         setValidationErrors({
+                //             ...validationErrors,
+                //             altLabel: undefined
+                //         })
+                // }
             },
             {
                 accessorKey: 'description',
@@ -111,16 +137,16 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 ),
                 size: 150,
                 Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
-                muiEditTextFieldProps: {
-                    required: true,
-                    error: !!validationErrors?.description,
-                    helperText: validationErrors?.description,
-                    onFocus: () =>
-                        setValidationErrors({
-                            ...validationErrors,
-                            description: undefined
-                        })
-                }
+                // muiEditTextFieldProps: {
+                //     required: true,
+                //     error: !!validationErrors?.description,
+                //     helperText: validationErrors?.description,
+                //     onFocus: () =>
+                //         setValidationErrors({
+                //             ...validationErrors,
+                //             description: undefined
+                //         })
+                // }
             },
             {
                 accessorKey: 'seeAlso',
@@ -173,7 +199,6 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     };
 
     const handleSaveTerm = async ({ values, table }) => {
-        console.log('saving term', values);
         const newValidationErrors = validateTerm(values);
         if (Object.values(newValidationErrors).some(error => error)) {
             setValidationErrors(newValidationErrors);
@@ -191,6 +216,25 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         }
     };
 
+    // Define the default values for a new row
+    const defaultValues = {
+        id: crypto.randomUUID(),   // Override 'id' with a new UUID
+        label: '',           // Default value for label
+        altLabel: [],        // Default value for altLabel
+        description: '',     // Default value for description
+        seeAlso: '',          // Default value for seeAlso
+        status: 'draft'            // Override 'status' with 'draft'
+    };
+    // Function to handle setting a creating row
+    const handleCreateRow = (row = {}) => {
+        table.setCreatingRow(createRow(table, {
+            ...defaultValues,           // Apply defaults
+            ...row,                     // Spread any existing row values (will override defaults if present)
+            id: crypto.randomUUID(),    // Override 'id' with a new UUID
+            status: 'draft'             // Set 'status' to 'draft'
+        }));
+    };
+
     const table = useMaterialReactTable({
         columns,
         data: terms,
@@ -201,7 +245,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         positionActionsColumn: 'last',
         enableRowExpansion: true,
         renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} updateTerm={updateTerm} />,
-        initialState: { columnVisibility: { id: false } },
+        initialState: { columnVisibility: { id: false, altLabel: false } },
         // muiToolbarAlertBannerProps: isLoadingTermsError
         //     ? {
         //           color: 'error',
@@ -221,30 +265,37 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         },
         onCreatingRowSave: handleCreateTerm,
         onEditingRowSave: handleSaveTerm,
-        renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
-            <CreateNewTerm
+        renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
+            return (<CreateNewTerm
                 displayType={'create'}
                 table={table}
                 row={row}
                 internalEditComponents={internalEditComponents}
                 handleCreateTerm={handleCreateTerm}
-            />
-        ),
-        renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
-            <CreateNewTerm
+            />);
+        },
+        renderEditRowDialogContent: ({ table, row, internalEditComponents }) => {
+            // Convert altLabel to an array
+            if (typeof row.original.altLabel === 'string') {
+                row.original.altLabel = row.original.altLabel.split(', ').map(label => label.trim());
+            } else if (!Array.isArray(row.original.altLabel)) {
+                row.original.altLabel = [];
+            }
+
+            return (<CreateNewTerm
                 displayType={'edit'}
                 table={table}
                 row={row}
                 internalEditComponents={internalEditComponents}
-                handleCreateTerm={handleCreateTerm}
-            />
-        ),
-        renderTopToolbarCustomActions: ({ table }) => (
+                handleCreateTerm={handleSaveTerm}
+            />)
+},
+        renderTopToolbarCustomActions: ({ table, row }) => (
             <Button
                 variant="contained"
                 onClick={() => {
                     setNewTermOpen(true);
-                    table.setCreatingRow(createRow(table, { id: crypto.randomUUID(), status: 'draft' }));
+                    handleCreateRow(row);
                 }}
                 style={{ backgroundColor: colorStyled.SECONDARY.dark }}
             >
@@ -302,10 +353,10 @@ export default VocabularyMainTable;
 
 const validateRequired = value => !!value.length;
 function validateTerm(term) {
-    console.log('validating term', term);
     return {
         label: !validateRequired(term.label) ? 'Label is Required' : '',
         description: !validateRequired(term.description) ? 'Description is Required' : ''
+        //altLabel: term.altLabel.some(label => !validateRequired(label)) ? 'All Alternative Labels are Required' : ''
     };
 }
 
