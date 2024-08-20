@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, IconButton, Tooltip } from '@mui/material';
+import { Modal, Box, Button, IconButton, Tooltip } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,6 +21,18 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     const { mutateAsync: deleteTerm, isPending: isDeletingTerm } = useDeleteTerm();
     const [openNewTerm, setNewTermOpen] = useState(false);
     const [openCommit, setOpenCommit] = useState(false);
+    const [openPopup, setOpenPopup] = useState(false);
+    const [selectedTerm, setSelectedTerm] = useState(null);
+
+    const handleRowClick = (row) => {
+        setSelectedTerm(row.original);
+        setOpenPopup(true);
+    };
+
+    const handleClosePopup = () => {
+        setOpenPopup(false);
+        setSelectedTerm(null);
+    };
 
     const TerminologyCellComponent = ({ row }) => {
         const seeAlso = row.original.seeAlso;
@@ -40,7 +52,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     TerminologyCellComponent.propTypes = {
         row: PropTypes.shape({
             original: PropTypes.shape({
-                seeAlso: PropTypes.string,
+                seeAlso: PropTypes.node,
                 label: PropTypes.string.isRequired
             }).isRequired
         }).isRequired
@@ -230,8 +242,8 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         table.setCreatingRow(createRow(table, {
             ...defaultValues,           // Apply defaults
             ...row,                     // Spread any existing row values (will override defaults if present)
-            id: crypto.randomUUID(),    // Override 'id' with a new UUID
-            status: 'draft'             // Set 'status' to 'draft'
+            id: row.id || crypto.randomUUID(),    // Override 'id' with a new UUID if not present
+            status: row.status || 'draft'         // Set 'status' to 'draft' if not present
         }));
     };
 
@@ -243,8 +255,14 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         enableEditing: true,
         getRowId: row => row.id,
         positionActionsColumn: 'last',
-        enableRowExpansion: true,
-        renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} updateTerm={updateTerm} />,
+        muiTableBodyRowProps: ({ row }) => ({
+            onClick: () => handleRowClick(row),
+            sx: {
+                cursor: 'pointer', //you might want to change the cursor too when adding an onClick
+            },
+        }),
+        //enableRowExpansion: true,
+        // renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} updateTerm={updateTerm} />,
         initialState: { columnVisibility: { id: false, altLabel: false } },
         // muiToolbarAlertBannerProps: isLoadingTermsError
         //     ? {
@@ -289,7 +307,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 internalEditComponents={internalEditComponents}
                 handleCreateTerm={handleSaveTerm}
             />)
-},
+        },
         renderTopToolbarCustomActions: ({ table, row }) => (
             <Button
                 variant="contained"
@@ -337,12 +355,17 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     return (
         <ScrollableDiv>
             <MaterialReactTable table={table} />
+            <Modal open={openPopup} onClose={handleClosePopup}>
+                <Box sx={{ padding: 2, backgroundColor: 'white', margin: 'auto', marginTop: '10%', width: '80%', maxHeight: '80%', overflowY: 'auto' }}>
+                    {selectedTerm && <ExpandedRow term={selectedTerm} updateTerm={updateTerm} />}
+                </Box>
+            </Modal>
         </ScrollableDiv>
     );
 };
 
 VocabularyMainTable.propTypes = {
-    terms: PropTypes.array.isRequired,
+    terms: PropTypes.arrayOf(PropTypes.object).isRequired,
     refetch: PropTypes.func.isRequired,
     isLoadingTerms: PropTypes.bool.isRequired,
     isLoadingTermsError: PropTypes.bool.isRequired,
@@ -351,7 +374,7 @@ VocabularyMainTable.propTypes = {
 
 export default VocabularyMainTable;
 
-const validateRequired = value => !!value.length;
+const validateRequired = value => value && value.length > 0;
 function validateTerm(term) {
     return {
         label: !validateRequired(term.label) ? 'Label is Required' : '',
@@ -378,5 +401,5 @@ const EllipsisTextCell = ({ value }) => {
     return <CellContent title={value}> {displayValue}</CellContent>;
 };
 EllipsisTextCell.propTypes = {
-    value: PropTypes.string.isRequired
+    value: PropTypes.string
 };
