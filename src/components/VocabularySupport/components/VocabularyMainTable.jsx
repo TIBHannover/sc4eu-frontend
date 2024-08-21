@@ -24,7 +24,10 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedTerm, setSelectedTerm] = useState(null);
 
-    const handleRowClick = (row) => {
+    const handleRowClick = (row, event) => {
+        if (event.target.closest('.action-button')) {
+            return;
+        }
         setSelectedTerm(row.original);
         setOpenPopup(true);
     };
@@ -222,7 +225,6 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     };
     const openDeleteConfirmModal = async row => {
         if (window.confirm('Are you sure you want to delete this term?')) {
-            console.log('deleting term', row.id);
             await deleteTerm(row.id);
             table.setEditingRow(null);
         }
@@ -256,7 +258,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         getRowId: row => row.id,
         positionActionsColumn: 'last',
         muiTableBodyRowProps: ({ row }) => ({
-            onClick: () => handleRowClick(row),
+            onClick: (event) => handleRowClick(row, event),
             sx: {
                 cursor: 'pointer', //you might want to change the cursor too when adding an onClick
             },
@@ -337,14 +339,14 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
 
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
-                <Tooltip title="Edit">
-                    <IconButton style={{ color: colorStyled.SECONDARY.dark }} onClick={() => table.setEditingRow(row)}>
-                        <EditIcon />
-                    </IconButton>
-                </Tooltip>
+                {/*<Tooltip title="Edit">*/}
+                {/*    <IconButton style={{ color: colorStyled.SECONDARY.dark }} onClick={() => table.setEditingRow(row)}>*/}
+                {/*        <EditIcon />*/}
+                {/*    </IconButton>*/}
+                {/*</Tooltip>*/}
 
                 <Tooltip title="Delete">
-                    <IconButton style={{ color: colorStyled.SECONDARY.dark }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" style={{ color: colorStyled.SECONDARY.dark }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
