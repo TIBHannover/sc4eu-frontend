@@ -1,5 +1,6 @@
-import { parseRDF, writeRDF } from '../../../network/parseRDFCalls';
+import { writeRDF } from '../../../network/parseRDFCalls';
 import { getFileDataFromGitHub } from '../../../network/GitAPICalls';
+import { writeJSON } from '../../../network/parseJSONCalls';
 
 //const gitHubFileUrl = 'https://raw.githubusercontent.com/tib-ts/vocabulary_development/main/testexample.ttl';
 const gitHubFileUrl = process.env.REACT_APP_VOCABULARY_SERVICE_URL;
@@ -7,10 +8,19 @@ async function saveAllTerms(newData, commitMessage) {
     return await writeRDF(gitHubFileUrl, newData, commitMessage);
 }
 
+const gitHubDiscussionUrl = process.env.REACT_APP_VOCABULARY_SERVICE_DISCUSSION_URL;
+async function saveAllDiscussion(newData, commitMessage) {
+    return await writeJSON(gitHubDiscussionUrl, newData, commitMessage);
+}
+
 export async function commitChanges(queryClient, commitMessage) {
     const dataToCommit = queryClient.getQueryData(['terms']);
     const saveResponse = await saveAllTerms(dataToCommit, commitMessage);
     const currentSha = saveResponse.content.sha;
+
+    const jsonDataToCommit = queryClient.getQueryData(['discussions']);
+    const saveDiscussionResponse = await saveAllDiscussion(jsonDataToCommit, commitMessage);
+    console.log('Discussion response: ' + saveDiscussionResponse);
 
     let attempts = 0;
     const maxAttempts = 10;

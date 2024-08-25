@@ -36,7 +36,7 @@ const EditForm = ({ term, setEditMode, handleSave, handleInputChange }) => {
                 </Box>
             </Box>
             <Box sx={{ width: '50%', height: '100%' }}>
-                <CommentsSection comments={term.comments} />
+                <CommentsSection comments={term.comments || []} />
             </Box>
         </Box>
     );

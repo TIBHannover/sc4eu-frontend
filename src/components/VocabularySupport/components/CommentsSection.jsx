@@ -14,7 +14,6 @@ function stringToColor(string) {
     let hash = 0;
     let i;
 
-    /* eslint-disable no-bitwise */
     for (i = 0; i < string.length; i += 1) {
         hash = string.charCodeAt(i) + ((hash << 5) - hash);
     }
@@ -25,7 +24,6 @@ function stringToColor(string) {
         const value = (hash >> (i * 8)) & 0xff;
         color += `00${value.toString(16)}`.slice(-2);
     }
-    /* eslint-enable no-bitwise */
 
     return color;
 }
@@ -39,39 +37,8 @@ function stringAvatar(name) {
     };
 }
 
-const avatarStyle = {
-    marginRight: '10px'
-};
-
-const contentStyle = {
-    display: 'flex',
-    flexDirection: 'column'
-};
-
-const dividerStyle = {
-    flexGrow: 1,
-    border: 'none',
-    borderBottom: '1px solid #ccc'
-};
-
-const authorDateStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px' // Adds a small gap between the author name and the date
-};
-const textAreaStyle = {
-    marginTop: '10px',
-    width: '100%',
-    borderRadius: '10px', // Make the text box rounder
-    minHeight: '50px' // Make the text box longer
-};
-const buttonStyle = {
-    borderRadius: '20px', // Make the button rounder
-    backgroundColor: colorStyled.SECONDARY.dark,
-    display: 'flex'
-};
-
-function getTimeDifferenceString(date) {
+function getTimeDifferenceString(isoDateString) {
+    const date = new Date(isoDateString);
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -92,19 +59,24 @@ function getTimeDifferenceString(date) {
     }
 }
 
-const CommentsSection = ({user}) => {
+const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion }) => {
+
     const userDisplayName = user?.['displayName'];
     const [newCommentText, setNewCommentText] = useState('');
+    const [comments, setComments] = useState(termComments);
 
-    const [comments, setComments] = useState([]);
-    const addComment = (author, text) => {
+    const addComment = async (author, content) => {
         const newComment = {
-            avatar: author,
+            "id": Math.random().toString(36).substring(2, 11),
             author,
-            date: new Date(),
-            text
+            content,
+            timestamp: (new Date()).toISOString()
         };
-        setComments([...comments, newComment]);
+
+        const updatedComments = [...comments, newComment];
+
+        await handleSaveDiscussion({"resourceId" : resourceId, "comments": updatedComments });
+        setComments(updatedComments);
         setNewCommentText(''); // Clear the text field after adding comment
     };
 
@@ -120,7 +92,7 @@ const CommentsSection = ({user}) => {
                 {comments.map((comment, index) => (
                     <ListItem key={index} alignItems="flex-start" style={{ paddingBottom: '1px' }}>
                         <ListItemAvatar>
-                            <Avatar {...stringAvatar(comment.avatar)} style={avatarStyle} />
+                            <Avatar {...stringAvatar(comment.author)} style={avatarStyle} />
                         </ListItemAvatar>
                         <Box style={contentStyle}>
                             <div style={authorDateStyle}>
@@ -128,11 +100,11 @@ const CommentsSection = ({user}) => {
                                     {comment.author}
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary">
-                                    {getTimeDifferenceString(comment.date)}
+                                    {getTimeDifferenceString(comment.timestamp)}
                                 </Typography>
                             </div>
                             <Typography variant="body1" gutterBottom>
-                                {comment.text}
+                                {comment.content}
                             </Typography>
                         </Box>
                     </ListItem>
@@ -173,7 +145,38 @@ const mapStateToProps = state => ({
 });
 
 CommentsSection.propTypes = {
-    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    resourceId: PropTypes.string.isRequired,
+    comments: PropTypes.array.isRequired,
+    handleSaveDiscussion: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps)(CommentsSection);
+
+// Styling
+const avatarStyle = {
+    marginRight: '10px'
+};
+
+const contentStyle = {
+    display: 'flex',
+    flexDirection: 'column'
+};
+
+const dividerStyle = {
+    flexGrow: 1,
+    border: 'none',
+    borderBottom: '1px solid #ccc'
+};
+
+const authorDateStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px' // Adds a small gap between the author name and the date
+};
+
+const buttonStyle = {
+    borderRadius: '20px', // Make the button rounder
+    backgroundColor: colorStyled.SECONDARY.dark,
+    display: 'flex'
+};
