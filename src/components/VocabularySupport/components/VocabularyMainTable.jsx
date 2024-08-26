@@ -3,7 +3,6 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Modal, Box, Button, IconButton, Tooltip } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
 import ExpandedRow from './ExpandedRow';
@@ -13,21 +12,30 @@ import { useCreateTerm } from '../hooks/useCreateTerm';
 import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import { useDeleteTerm } from '../hooks/useDeleteTerm';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 
-const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsError, isFetchingTerms }) => {
+const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsError, isFetchingTerms, discussions, handleSaveDiscussion }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
     const { mutateAsync: deleteTerm, isPending: isDeletingTerm } = useDeleteTerm();
-    const [openNewTerm, setNewTermOpen] = useState(false);
+    const { mutateAsync: createDiscussion } = useCreateDiscussion();
+    //const [openNewTerm, setNewTermOpen] = useState(false);
     const [openCommit, setOpenCommit] = useState(false);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedTerm, setSelectedTerm] = useState(null);
+    const [termComments, setTermComments] = useState([]);
+    const [openCreateModal, setOpenCreateModal] = useState(false);
 
-    const handleRowClick = (row, event) => {
+
+    const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
             return;
         }
+        const resourceId = row.original.id;
+        const currentResourceDiscussion = discussions.find((d) => d.resourceId === resourceId);
+        setTermComments(currentResourceDiscussion?.comments || []);
+        // console.log('rowComments: ', rowComments);
         setSelectedTerm(row.original);
         setOpenPopup(true);
     };
@@ -210,7 +218,11 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         setValidationErrors({});
         values.id = uuid;
         await createTerm(values);
+        //We have to create a new discussion for this term
+        const newDiscussion = { resourceId: uuid, comments: [] };
+        await createDiscussion(newDiscussion);
         table.setCreatingRow(null);
+        setOpenCreateModal(false); // Close the create modal
     };
 
     const handleSaveTerm = async ({ values, table }) => {
@@ -223,6 +235,11 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         await updateTerm(values);
         table.setEditingRow(null);
     };
+
+    // const handleSaveDiscussion = async ({ values }) => {
+    //     await updateDiscussion(values);
+    // };
+
     const openDeleteConfirmModal = async row => {
         if (window.confirm('Are you sure you want to delete this term?')) {
             await deleteTerm(row.id);
@@ -247,6 +264,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             id: row.id || crypto.randomUUID(),    // Override 'id' with a new UUID if not present
             status: row.status || 'draft'         // Set 'status' to 'draft' if not present
         }));
+        setOpenCreateModal(true); // Open the create modal
     };
 
     const table = useMaterialReactTable({
@@ -258,7 +276,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         getRowId: row => row.id,
         positionActionsColumn: 'last',
         muiTableBodyRowProps: ({ row }) => ({
-            onClick: (event) => handleRowClick(row, event),
+            onClick: (event) => handleRowClick(row, event, discussions),
             sx: {
                 cursor: 'pointer', //you might want to change the cursor too when adding an onClick
             },
@@ -278,11 +296,11 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         //       }
         //     : undefined,
 
-        muiTableContainerProps: {
-            sx: {
-                minHeight: '500px'
-            }
-        },
+        // muiTableContainerProps: {
+        //     sx: {
+        //         minHeight: '500px'
+        //     }
+        // },
         onCreatingRowSave: handleCreateTerm,
         onEditingRowSave: handleSaveTerm,
         renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
@@ -314,7 +332,6 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             <Button
                 variant="contained"
                 onClick={() => {
-                    setNewTermOpen(true);
                     handleCreateRow(row);
                 }}
                 style={{ backgroundColor: colorStyled.SECONDARY.dark }}
@@ -357,9 +374,9 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     return (
         <ScrollableDiv>
             <MaterialReactTable table={table} />
-            <Modal open={openPopup} onClose={handleClosePopup}>
+            <Modal open={openPopup} onClose={handleClosePopup} >
                 <Box sx={{ padding: 2, backgroundColor: 'white', margin: 'auto', marginTop: '10%', width: '80%', maxHeight: '80%', overflowY: 'auto' }}>
-                    {selectedTerm && <ExpandedRow term={selectedTerm} updateTerm={updateTerm} />}
+                    {selectedTerm && <ExpandedRow term={selectedTerm} updateTerm={updateTerm} termComments={termComments || []} handleSaveDiscussion={handleSaveDiscussion} />}
                 </Box>
             </Modal>
         </ScrollableDiv>
@@ -371,7 +388,9 @@ VocabularyMainTable.propTypes = {
     refetch: PropTypes.func.isRequired,
     isLoadingTerms: PropTypes.bool.isRequired,
     isLoadingTermsError: PropTypes.bool.isRequired,
-    isFetchingTerms: PropTypes.bool.isRequired
+    isFetchingTerms: PropTypes.bool.isRequired,
+    discussions: PropTypes.array.isRequired,
+    handleSaveDiscussion: PropTypes.func.isRequired
 };
 
 export default VocabularyMainTable;

@@ -2,14 +2,13 @@ import { Box, Button, Tooltip, IconButton, Link } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import EditForm from './EditForm';
 import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import { TextField } from '@material-ui/core';
 import StatusDropdown from './StatusDropdown';
 
-const ExpandedRow = ({ term, updateTerm }) => {
+const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) => {
     const splitAltLabels = (altLabel) => {
         return altLabel ? altLabel.split(',') : [];
     };
@@ -60,7 +59,7 @@ const ExpandedRow = ({ term, updateTerm }) => {
             {!editMode ? (
                 <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Box sx={{ width: '50%', height: '100%' }}>
-                        <Typography>
+                        <Typography key={"Id: " + updatedTerm.id}>
                             <Tooltip title="Unique identifier for the term">
                                 <IconButton style={{ marginBottom: '4px'}} size="small">
                                     <HelpOutlineIcon fontSize="small" />
@@ -68,7 +67,7 @@ const ExpandedRow = ({ term, updateTerm }) => {
                             </Tooltip>
                             <strong>ID:</strong> {updatedTerm.id}
                         </Typography>
-                        <Typography>
+                        <Typography key={"Label: " + updatedTerm.label}>
                             <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
                                 <IconButton style={{ marginBottom: '4px'}} size="small">
                                     <HelpOutlineIcon fontSize="small" />
@@ -76,7 +75,7 @@ const ExpandedRow = ({ term, updateTerm }) => {
                             </Tooltip>
                             <strong>Label:</strong> {updatedTerm.label}
                         </Typography>
-                        <Typography>
+                        <Typography key={"Description: " + updatedTerm.description}>
                             <Tooltip title="Provides a human-readable description of a Term">
                                 <IconButton style={{ marginBottom: '4px'}} size="small">
                                     <HelpOutlineIcon fontSize="small" />
@@ -84,7 +83,7 @@ const ExpandedRow = ({ term, updateTerm }) => {
                             </Tooltip>
                             <strong>Description:</strong> {updatedTerm.description}
                         </Typography>
-                        <Typography>
+                        <Typography key={"See_Also"}>
                             <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
                                 <IconButton style={{ marginBottom: '4px'}} size="small">
                                     <HelpOutlineIcon fontSize="small" />
@@ -93,7 +92,7 @@ const ExpandedRow = ({ term, updateTerm }) => {
                             <strong>See Also:</strong> {renderSeeAlso()}
                         </Typography>
                         {updatedTerm.altLabel && splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                            <Typography>
+                            <Typography key={"altLabel" + index}>
                                 <Tooltip title="Provides an alternative Label">
                                     <IconButton style={{ marginBottom: '4px'}} size="small">
                                         <HelpOutlineIcon fontSize="small" />
@@ -115,37 +114,37 @@ const ExpandedRow = ({ term, updateTerm }) => {
                         <Button onClick={() => setEditMode(true)}>Edit Term</Button>
                     </Box>
                     <Box sx={{ width: '50%', height: '100%' }}>
-                        <CommentsSection comments={updatedTerm.comments} />
+                        <CommentsSection resourceId={term.id} comments={termComments || []} handleSaveDiscussion={handleSaveDiscussion} />
                     </Box>
                 </Box>
             ) : (
                 // <EditForm term={updatedTerm} setEditMode={setEditMode} handleSave={handleSave} handleInputChange={handleInputChange} />
-                <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
+                <Box key={"edit_box"} sx={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Box sx={{ height: '100%', width: '50%', display: 'flex', flexDirection: 'column' }}>
                         {/*<Typography variant="h6">Edit Term</Typography>*/}
-                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '15px' }}>
+                        <Box key={"Label_" + updatedTerm.label} sx={{ display: 'flex', flexDirection: 'column', marginTop: '15px' }}>
                             <Typography sx={{ marginBottom: '5px' }}><strong>Label:</strong></Typography>
                             <TextField name="label" value={updatedTerm.label} onChange={handleInputChange} fullWidth
                                        InputProps={{ sx: { height: '30px' } }} />
                         </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                        <Box key={"Description_" + updatedTerm.description} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}><strong>Description:</strong></Typography>
                             <TextField name="description" value={updatedTerm.description} onChange={handleInputChange} fullWidth
                                        InputProps={{ sx: { height: '30px' } }} />
                         </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                        <Box key={"SeeAlso_" + updatedTerm.seeAlso} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}><strong>See Also:</strong></Typography>
                             <TextField name="seeAlso" value={updatedTerm.seeAlso} onChange={handleInputChange} fullWidth
                                        InputProps={{ sx: { height: '30px' } }} />
                         </Box>
                         {updatedTerm.altLabel && splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                            <Box key={"altLabel_" + index} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}><strong>Alternative Label {index + 1}:</strong></Typography>
                                 <TextField name={`altLabel-${index}`} value={label} onChange={handleInputChange} fullWidth
                                            InputProps={{ sx: { height: '30px' } }} />
                             </Box>
                         ))}
-                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                        <Box key={"Status" + updatedTerm.status} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}>
                                 <strong>Status:</strong>
                             </Typography>
@@ -157,8 +156,8 @@ const ExpandedRow = ({ term, updateTerm }) => {
                             <Button onClick={() => setEditMode(false)}>Cancel</Button>
                         </Box>
                     </Box>
-                    <Box sx={{ width: '50%', height: '100%' }}>
-                        <CommentsSection comments={updatedTerm.comments} />
+                    <Box key={"EditBox"} sx={{ width: '50%', height: '100%' }}>
+                        <CommentsSection resourceId={term.id} comments={updatedTerm.comments || []} handleSaveDiscussion={handleSaveDiscussion} />
                     </Box>
                 </Box>
             )}
@@ -171,7 +170,9 @@ const ExpandedRow = ({ term, updateTerm }) => {
 
 ExpandedRow.propTypes = {
     term: PropTypes.object.isRequired,
-    updateTerm: PropTypes.func.isRequired
+    updateTerm: PropTypes.func.isRequired,
+    termComments: PropTypes.array.isRequired,
+    handleSaveDiscussion: PropTypes.func.isRequired
 };
 
 export default ExpandedRow;
