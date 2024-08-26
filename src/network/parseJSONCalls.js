@@ -11,7 +11,7 @@ import { Buffer } from 'buffer';
 export const parseJSON = async jsonGitHubURL => {
     const jsonDataGithub = await getFileDataFromGitHub(jsonGitHubURL);
     const jsonDecodedDataGithub = Buffer.from(jsonDataGithub['content'], 'base64').toString('utf8');
-    return JSON.parse(jsonDecodedDataGithub);
+    return jsonDecodedDataGithub ? JSON.parse(jsonDecodedDataGithub) : [];
 };
 
 /**

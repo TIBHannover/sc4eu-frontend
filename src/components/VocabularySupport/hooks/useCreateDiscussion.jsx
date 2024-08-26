@@ -8,7 +8,7 @@ export function useCreateDiscussion() {
         },
         onMutate: async newDiscussion => {
             queryClient.setQueryData(['discussions'], prevDiscussion => [
-                ...prevDiscussion,
+                ...(prevDiscussion || []),
                 {
                     ...newDiscussion
                 }
