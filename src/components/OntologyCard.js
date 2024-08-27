@@ -125,7 +125,7 @@ class OntologyCard extends Component {
                         <StyledLink
                             to={{
                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                search: `?ontologyId=${this.props.inputData.uuid}`,
+                                search: `?view=hybrid&ontologyId=${this.props.inputData.uuid}`,
                                 ontologyVersion: this.props.ontologyVersion
                             }}
                             onMouseDown={this.onclick}

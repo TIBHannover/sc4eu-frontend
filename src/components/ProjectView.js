@@ -150,7 +150,7 @@ class ProjectView extends Component {
             <>
                 {filteredProject.length > 0 ? (
                     filteredProject.map(item => (
-                        <ProjectCard key={'ProjectCard_' + item.name} inputData={item} currentUser={user} callback={this.props.reloadAfterUpdate} />
+                        <ProjectCard key={'ProjectCard_' + item.uuid} inputData={item} currentUser={user} callback={this.props.reloadAfterUpdate} />
                     ))
                 ) : (
                     <div style={{ paddingLeft: '3.5%' }}>
@@ -295,7 +295,7 @@ class ProjectView extends Component {
                         {this.state.viewMode === 'collections' && (
                             <StyledCollectionGrid>
                                 {collections.map(collection => (
-                                    <StyledCard>
+                                    <StyledCard key={`collection_${collection.id}`}>
                                         <CardActionArea onClick={() => this.handleCardClick(collection)} style={{ height: '100%' }}>
                                             <CardMedia
                                                 component="img"
