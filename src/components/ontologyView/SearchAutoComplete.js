@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+//import Autocomplete from '@material-ui/lab/Autocomplete';
+import Autocomplete from '@material-ui/core/Autocomplete';
 import { createFilterOptions } from '@material-ui/core/Autocomplete';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -69,7 +70,7 @@ class SearchAutocomplete extends Component {
                         }
                         return uniqueFiltered;
                     }}
-                    getOptionSelected={option => null}
+                    getOptionSelected={(option, value) => option === value}
                     options={this.props.lookupList}
                     renderInput={params => (
                         <TextField style={{ marginTop: '0px' }} placeholder={this.props.placeholder} {...params} margin="normal" variant="outlined" />

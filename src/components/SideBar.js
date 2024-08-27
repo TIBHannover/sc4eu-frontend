@@ -203,7 +203,7 @@ const SideBar = props => {
                                             title="Open Hybrid View"
                                             to={{
                                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?ontologyId=${selectedOntology.uuid}`
+                                                search: `?view=hybrid&ontologyId=${selectedOntology.uuid}`
                                             }}
                                             onClick={() => selectModeOfOperation('hybrid')}
                                             activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
@@ -215,7 +215,7 @@ const SideBar = props => {
                                             title="Open Graph View"
                                             to={{
                                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?ontologyId=${selectedOntology.uuid}`
+                                                search: `?view=graph&ontologyId=${selectedOntology.uuid}`
                                             }}
                                             onClick={() => selectModeOfOperation('graph')}
                                             activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
@@ -227,7 +227,7 @@ const SideBar = props => {
                                             title="Open Text View"
                                             to={{
                                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?ontologyId=${selectedOntology.uuid}`
+                                                search: `?view=text&ontologyId=${selectedOntology.uuid}`
                                             }}
                                             onClick={() => selectModeOfOperation('text')}
                                             activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}

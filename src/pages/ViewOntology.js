@@ -25,7 +25,8 @@ class ViewOntology extends Component {
             ontologyFileContent: undefined,
             error: false,
             errorMsg: '',
-            ontologyID: ''
+            ontologyID: '',
+            modeOfOperations: 'hybrid'
         };
 
         this.DonatelloGraph = new DonatelloGraph();
@@ -51,7 +52,14 @@ class ViewOntology extends Component {
         });
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const urlParams = new URLSearchParams(this.props.location.search);
+        const response = Object.fromEntries(urlParams);
+        const newVisualizationMode = response.view || 'hybrid';
+        if (this.state.modeOfOperations !== newVisualizationMode) {
+            this.setState({ modeOfOperations: newVisualizationMode });
+        }
+    }
 
     /** Functions forwarded to view Root for handling state Updates **/
     setLeftSideExpanded = val => {
@@ -76,7 +84,7 @@ class ViewOntology extends Component {
     };
 
     render() {
-        const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS) || 'hybrid';
+        //const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS) || 'hybrid';
         return (
             <>
                 <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
@@ -95,7 +103,7 @@ class ViewOntology extends Component {
                             </div>
                         )}
                         {this.state.isLoading === false && this.state.error === true && <h1> {this.state.errorMsg}</h1>}
-                        {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'hybrid' && (
+                        {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'hybrid' && (
                             <OntologyViewRoot
                                 leftSideExpanded={this.leftSideExpanded}
                                 rightSideExpanded={this.rightSideExpanded}
@@ -104,9 +112,9 @@ class ViewOntology extends Component {
                                 ontologyVersion={this.props.location.ontologyVersion}
                             />
                         )}
-                        {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'text' && <OntologyViewAsTTL />}
-                        {this.state.isLoading === false && this.state.error === false && modeOfOperations === 'graph' && (
-                            <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={modeOfOperations === 'graph'} />
+                        {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'text' && <OntologyViewAsTTL />}
+                        {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'graph' && (
+                            <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperations === 'graph'} />
                         )}
                     </div>
                 </StyledRootDiv>

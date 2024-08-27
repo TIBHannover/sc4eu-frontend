@@ -5,7 +5,7 @@ import { URL_CREATE_PROJECT } from '../constants/services';
 export const getAllProjects = () => {
     // we use parameters from env.
 
-    console.log('IN network we want this page', URL_PROJECTINDEXING);
+    //console.log('IN network we want this page', URL_PROJECTINDEXING);
 
     // todo: make flexible based on the env.file
     return plainGetRequest(URL_PROJECTINDEXING, {

@@ -45,7 +45,7 @@ class CardWidgetVis extends Component {
     };
 
     renderRelationWidget = () => {
-        const itemIdentifier = this.props.itemIdentifier;
+        //const itemIdentifier = this.props.itemIdentifier;
         const itemOfInterest = this.props.itemContext;
 
         return (
@@ -71,16 +71,16 @@ class CardWidgetVis extends Component {
                     <hr style={{ marginTop: 0 }} />
                 </div>
                 {Object.keys(itemOfInterest.axioms).length > 0 || iri.length > 0 ? (
-                    Object.keys(itemOfInterest.axioms).map(axiom => {
+                    Object.keys(itemOfInterest.axioms).map((axiom, index) => {
                         return (
-                            <div key={itemOfInterest.itemIdentifier + axiom}>
+                            <div key={itemOfInterest.itemIdentifier + axiom + index}>
                                 <div>
                                     <StyledSpan>{axiom.split(':')[1]}</StyledSpan>
                                 </div>
                                 <div>
-                                    {Object.keys(itemOfInterest.axioms[axiom]).map(item => {
+                                    {Object.keys(itemOfInterest.axioms[axiom]).map((item, subIndex) => {
                                         return (
-                                            <div key={itemOfInterest.itemIdentifier + axiom + item} style={{ marginLeft: '1rem' }}>
+                                            <div key={itemOfInterest.itemIdentifier + axiom + item + subIndex} style={{ marginLeft: '1rem' }}>
                                                 <StyledSpan> {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}</StyledSpan>
                                             </div>
                                         );
@@ -122,8 +122,8 @@ class CardWidgetVis extends Component {
                     </div>
                     <StyledSpan>Domains</StyledSpan>
                 </div>
-                {domains.map(domain => (
-                    <div key={'domainKey_' + domain} style={{ marginLeft: '1rem' }}>
+                {domains.map((domain,index) => (
+                    <div key={'domainKey_' + domain + index} style={{ marginLeft: '1rem' }}>
                         <StyledSpan>{domain}</StyledSpan>
                         <hr style={{ marginTop: 0 }} />
                     </div>
@@ -131,8 +131,8 @@ class CardWidgetVis extends Component {
                 <div>
                     <StyledSpan>Ranges</StyledSpan>
                 </div>
-                {ranges.map(range => (
-                    <div key={'domainKey_' + range} style={{ marginLeft: '1rem' }}>
+                {ranges.map((range,index) => (
+                    <div key={'domainKey_' + range + index} style={{ marginLeft: '1rem' }}>
                         {range}
                     </div>
                 ))}
@@ -150,12 +150,12 @@ class CardWidgetVis extends Component {
 }
 CardWidgetVis.propTypes = {
     height: PropTypes.number,
-    itemIdentifier: PropTypes.string.isRequired,
+    itemIdentifier: PropTypes.string,
     itemType: PropTypes.string.isRequired,
     rrModel: PropTypes.object.isRequired,
     itemContext: PropTypes.object.isRequired,
     isExpanded: PropTypes.bool.isRequired,
-    callback: PropTypes.func.isRequired,
+    callback: PropTypes.func,
     metaInformation: PropTypes.object.isRequired
 };
 
