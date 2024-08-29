@@ -1,5 +1,5 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Modal, Box, Button, IconButton, Tooltip } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
@@ -13,8 +13,17 @@ import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import { useDeleteTerm } from '../hooks/useDeleteTerm';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
+import { useHistory } from 'react-router-dom';
 
-const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsError, isFetchingTerms, discussions, handleSaveDiscussion }) => {
+const VocabularyMainTable = ({
+                                 terms,
+                                 refetch,
+                                 isLoadingTerms,
+                                 isLoadingTermsError,
+                                 isFetchingTerms,
+                                 discussions,
+                                 handleSaveDiscussion
+                             }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
@@ -26,7 +35,35 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     const [selectedTerm, setSelectedTerm] = useState(null);
     const [termComments, setTermComments] = useState([]);
     const [openCreateModal, setOpenCreateModal] = useState(false);
+    const [hasUncommittedChanges, setHasUncommittedChanges] = useState(false);
+    const history = useHistory();
 
+    useEffect(() => {
+        const handleBeforeUnload = (event) => {
+            if (hasUncommittedChanges) {
+                event.preventDefault();
+                event.returnValue = 'You have uncommitted changes. Do you really want to leave?';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        const unblock = history.block((location, action) => {
+            if (hasUncommittedChanges) {
+                if (window.confirm('You have uncommitted changes. Do you really want to leave?')) {
+                    unblock();
+                    history.push(location.pathname);
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            unblock();
+        };
+    }, [hasUncommittedChanges, history]);
 
     const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
@@ -73,14 +110,14 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'id',
                 header: (
-                        <>
-                            <span>ID</span>
-                            <Tooltip title="Unique identifier for the term">
-                                <IconButton style={{ marginBottom: '3px'}} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                        </>
+                    <>
+                        <span>ID</span>
+                        <Tooltip title="Unique identifier for the term">
+                            <IconButton style={{ marginBottom: '3px' }} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    </>
                 ),
                 size: 150,
                 enableEditing: false
@@ -98,27 +135,27 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'label',
                 header: (
-                        <>
-                            <span>Label</span>
-                            <Tooltip
-                                title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
-                                <IconButton style={{ marginBottom: '3px'}} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                        </>
+                    <>
+                        <span>Label</span>
+                        <Tooltip
+                            title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
+                            <IconButton style={{ marginBottom: '3px' }} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    </>
                 ),
                 size: 150,
-                // muiEditTextFieldProps: {
-                //     required: true,
-                //     error: !!validationErrors?.label,
-                //     helperText: validationErrors?.label,
-                //     onFocus: () =>
-                //         setValidationErrors({
-                //             ...validationErrors,
-                //             label: undefined
-                //         })
-                // }
+                muiEditTextFieldProps: {
+                    required: true,
+                    error: !!validationErrors?.label,
+                    helperText: validationErrors?.label,
+                    onFocus: () =>
+                        setValidationErrors({
+                            ...validationErrors,
+                            label: undefined
+                        })
+                }
             },
             {
                 accessorKey: 'altLabel',
@@ -127,7 +164,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                         <span>Alternative Labels</span>
                         <Tooltip
                             title="Provides alternative Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
-                            <IconButton style={{ marginBottom: '3px'}} size="small">
+                            <IconButton style={{ marginBottom: '3px' }} size="small">
                                 <HelpOutlineIcon fontSize="small" />
                             </IconButton>
                         </Tooltip>
@@ -135,6 +172,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 ),
                 size: 150,
                 internalEditComponent: 'MRT_EditArray',
+                Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() })
                 // muiEditTextFieldProps: {
                 //     required: true,
                 //     error: !!validationErrors?.altLabel,
@@ -149,42 +187,43 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
             {
                 accessorKey: 'description',
                 header: (
-                        <>
-                            <span>Description</span>
-                            <Tooltip title="Provides a human-readable description of a Term">
-                                <IconButton style={{ marginBottom: '3px'}} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                        </>
+                    <>
+                        <span>Description</span>
+                        <Tooltip title="Provides a human-readable description of a Term">
+                            <IconButton style={{ marginBottom: '3px' }} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    </>
                 ),
                 size: 150,
                 Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
-                // muiEditTextFieldProps: {
-                //     required: true,
-                //     error: !!validationErrors?.description,
-                //     helperText: validationErrors?.description,
-                //     onFocus: () =>
-                //         setValidationErrors({
-                //             ...validationErrors,
-                //             description: undefined
-                //         })
-                // }
+                muiEditTextFieldProps: {
+                    required: true,
+                    error: !!validationErrors?.description,
+                    helperText: validationErrors?.description,
+                    onFocus: () =>
+                        setValidationErrors({
+                            ...validationErrors,
+                            description: undefined
+                        })
+                }
             },
             {
                 accessorKey: 'seeAlso',
                 header: (
-                        <>
-                            <span>See Also</span>
-                            <Tooltip
-                                title="Indicates a resource that might provide additional information about the subject resource">
-                                <IconButton style={{ marginBottom: '3px'}} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                        </>
+                    <>
+                        <span>See Also</span>
+                        <Tooltip
+                            title="Indicates a resource that might provide additional information about the subject resource">
+                            <IconButton style={{ marginBottom: '3px' }} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    </>
                 ),
                 size: 200,
+                enableEditing: false,
                 Cell: TerminologyCellComponent
             },
             {
@@ -195,7 +234,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                         <Tooltip title="Three possible options for status. Draft, Ready, Accpeted.
                              Draft is still under discussion, Ready when the consensus is reached,
                              Accpeted when it is final and becomes part of the vocabulary">
-                            <IconButton style={{ marginBottom: '3px'}} size="small">
+                            <IconButton style={{ marginBottom: '3px' }} size="small">
                                 <HelpOutlineIcon fontSize="small" />
                             </IconButton>
                         </Tooltip>
@@ -223,6 +262,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         await createDiscussion(newDiscussion);
         table.setCreatingRow(null);
         setOpenCreateModal(false); // Close the create modal
+        setHasUncommittedChanges(true);
     };
 
     const handleSaveTerm = async ({ values, table }) => {
@@ -234,6 +274,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         setValidationErrors({});
         await updateTerm(values);
         table.setEditingRow(null);
+        setHasUncommittedChanges(true);
     };
 
     // const handleSaveDiscussion = async ({ values }) => {
@@ -244,6 +285,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         if (window.confirm('Are you sure you want to delete this term?')) {
             await deleteTerm(row.id);
             table.setEditingRow(null);
+            setHasUncommittedChanges(true);
         }
     };
 
@@ -253,7 +295,7 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         label: '',           // Default value for label
         altLabel: [],        // Default value for altLabel
         description: '',     // Default value for description
-        seeAlso: '',          // Default value for seeAlso
+        seeAlso: 'N/A',          // Default value for seeAlso
         status: 'draft'            // Override 'status' with 'draft'
     };
     // Function to handle setting a creating row
@@ -278,12 +320,15 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
         muiTableBodyRowProps: ({ row }) => ({
             onClick: (event) => handleRowClick(row, event, discussions),
             sx: {
-                cursor: 'pointer', //you might want to change the cursor too when adding an onClick
-            },
+                cursor: 'pointer' //you might want to change the cursor too when adding an onClick
+            }
         }),
         //enableRowExpansion: true,
         // renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} updateTerm={updateTerm} />,
-        initialState: { columnVisibility: { id: false, altLabel: false } },
+        initialState: {
+            columnVisibility: { id: false },
+            density: 'compact'
+        },
         // muiToolbarAlertBannerProps: isLoadingTermsError
         //     ? {
         //           color: 'error',
@@ -326,25 +371,30 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 row={row}
                 internalEditComponents={internalEditComponents}
                 handleCreateTerm={handleSaveTerm}
-            />)
+            />);
         },
         renderTopToolbarCustomActions: ({ table, row }) => (
-            <Button
-                variant="contained"
-                onClick={() => {
-                    handleCreateRow(row);
-                }}
-                style={{ backgroundColor: colorStyled.SECONDARY.dark }}
-            >
-                Create New Term
-            </Button>
+            <>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        handleCreateRow(row);
+                    }}
+                    style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                >
+                    Create New Term
+                </Button>
+                {hasUncommittedChanges && <span style={{ fontSize: '0.8em', color: 'red' }}> You have made changes, Don't forget to commit your changes</span>}
+            </>
         ),
         renderBottomToolbarCustomActions: () => (
             <>
-                <Button variant="contained" onClick={() => setOpenCommit(true)} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                <Button variant="contained" onClick={() => setOpenCommit(true)}
+                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
                     Commit Changes
                 </Button>
-                {openCommit && <CommitChanges refetch={refetch} openCommit={openCommit} setOpenCommit={setOpenCommit} />}
+                {openCommit &&
+                    <CommitChanges refetch={refetch} openCommit={openCommit} setOpenCommit={setOpenCommit} setHasUncommittedChanges={setHasUncommittedChanges} />}
             </>
         ),
         state: {
@@ -363,7 +413,8 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
                 {/*</Tooltip>*/}
 
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: colorStyled.SECONDARY.dark }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" style={{ color: colorStyled.SECONDARY.dark }}
+                                onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -374,9 +425,19 @@ const VocabularyMainTable = ({ terms, refetch, isLoadingTerms, isLoadingTermsErr
     return (
         <ScrollableDiv>
             <MaterialReactTable table={table} />
-            <Modal open={openPopup} onClose={handleClosePopup} >
-                <Box sx={{ padding: 2, backgroundColor: 'white', margin: 'auto', marginTop: '10%', width: '80%', maxHeight: '80%', overflowY: 'auto' }}>
-                    {selectedTerm && <ExpandedRow term={selectedTerm} updateTerm={updateTerm} termComments={termComments || []} handleSaveDiscussion={handleSaveDiscussion} />}
+            <Modal open={openPopup} onClose={handleClosePopup}>
+                <Box sx={{
+                    padding: 2,
+                    backgroundColor: 'white',
+                    margin: 'auto',
+                    marginTop: '10%',
+                    width: '80%',
+                    maxHeight: '80%',
+                    overflowY: 'auto'
+                }}>
+                    {selectedTerm &&
+                        <ExpandedRow term={selectedTerm} updateTerm={updateTerm} termComments={termComments || []}
+                                     handleSaveDiscussion={handleSaveDiscussion} />}
                 </Box>
             </Modal>
         </ScrollableDiv>
@@ -396,6 +457,7 @@ VocabularyMainTable.propTypes = {
 export default VocabularyMainTable;
 
 const validateRequired = value => value && value.length > 0;
+
 function validateTerm(term) {
     return {
         label: !validateRequired(term.label) ? 'Label is Required' : '',
