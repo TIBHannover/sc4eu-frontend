@@ -14,16 +14,29 @@ import { Button } from 'reactstrap';
 import { SECONDARY } from '../RRView/StyledComponents';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { fontStyled } from '../../styledComponents/styledFont';
+import FadingNotification from '../ReusableComponents/FadingNotification';
 class OntologyContentViewer extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = {
+            showCopyNotification: false
+        };
     }
 
     componentDidMount() {}
 
     componentDidUpdate(prevProps, prevState, snapshot) {}
+
+    copyUrlToClipboard = () => {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            this.setState({ showCopyNotification: true });
+            setTimeout(() => {
+                this.setState({ showCopyNotification: false });
+            }, 2000);
+        });
+    };
 
     render() {
         return (
@@ -44,6 +57,11 @@ class OntologyContentViewer extends Component {
                         <></>
                     )}
                     <ControlButton
+                        onClick={this.copyUrlToClipboard}
+                    >
+                        Copy URL
+                    </ControlButton>
+                    <ControlButton
                         onClick={() => {
                             // emit this as signal;
                             this.props.expandAllBodies({
@@ -63,6 +81,9 @@ class OntologyContentViewer extends Component {
                         <RelationRenderer experimentalLayout={this.props.experimentalLayout} />
                     </div>
                 </StyledDiv>
+                {this.state.showCopyNotification && (
+                    <FadingNotification message="URL copied to clipboard" timeout={2000} />
+                )}
             </div>
         );
     }
@@ -107,6 +128,12 @@ const ControlButton = styled(Button)`
     ::-moz-focus-inner {
         border: 0;
     }
+`;
+
+const CopyButton = styled.button`
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
 `;
 
 const ControlLink = styled(Link)`

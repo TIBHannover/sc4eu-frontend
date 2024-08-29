@@ -11,6 +11,7 @@ import { PRIMARY, SECONDARY } from '../RRView/StyledComponents';
 import html2canvas from 'html2canvas';
 import ScreenCapture from '../ScreenCapture';
 import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
+import FadingNotification from '../ReusableComponents/FadingNotification';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -43,7 +44,8 @@ class GraphVisUi extends Component {
             updateFlipFlop: false,
             screenCapture: '',
             open: false,
-            startCapture: false
+            startCapture: false,
+            showCopyNotification: false
         };
         this.componentRef = React.createRef();
     }
@@ -288,7 +290,8 @@ class GraphVisUi extends Component {
             <div>
                 <div>
                     <div style={{ display: 'flex' }}>
-                        <div>Color:</div>{' '}
+                        <div>Color:</div>
+                        {' '}
                         <Input
                             type="color"
                             onChange={e => {
@@ -302,7 +305,7 @@ class GraphVisUi extends Component {
                     </div>
                 </div>
                 <div style={{ display: 'flex', padding: '5px' }}>
-                    <div>Font Size: </div>
+                    <div>Font Size:</div>
                     <Input
                         type="number"
                         value={fontsize}
@@ -328,7 +331,7 @@ class GraphVisUi extends Component {
                     Overwrite Shapesize
                 </div>
                 <div style={{ display: 'flex', padding: '5px' }}>
-                    <div>Offset: </div>
+                    <div>Offset:</div>
                     <Input
                         type="number"
                         value={overwriteOffset}
@@ -370,6 +373,16 @@ class GraphVisUi extends Component {
         });
     };
 
+    copyUrlToClipboard = () => {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            this.setState({ showCopyNotification: true });
+            setTimeout(() => {
+                this.setState({ showCopyNotification: false });
+            }, 2000);
+        });
+    };
+
     render() {
         if (this.props.visualizationTabIsActive === false) {
             return <div>This should never be visible</div>;
@@ -401,7 +414,8 @@ class GraphVisUi extends Component {
                             this.setState({ layoutPlay: !this.state.layoutPlay });
                         }}
                     >
-                        <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
+                        <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }}
+                              icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
                     {/*TODO: Enable UML Notation view once the error has been resolved*/}
                     {/*/ As of Now we disabled the VOWl TO UML view in Graph Visualization because when we are switching from VOWL to
@@ -413,21 +427,51 @@ class GraphVisUi extends Component {
                         onClick={() => {
                             this.graph.zoomToExtent();
                         }}
-                        style={{ backgroundColor: SECONDARY.dark, textAlign: 'center', marginLeft: '5px', marginTop: '2px', height: '35px' }}
+                        style={{
+                            backgroundColor: SECONDARY.dark,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
                     >
                         Zoom
                     </Button>
                     <Button
-                        style={{ backgroundColor: SECONDARY.dark, textAlign: 'center', marginLeft: '5px', marginTop: '2px', height: '35px' }}
+                        style={{
+                            backgroundColor: SECONDARY.dark,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
                         onClick={this.captureScreenshot}
                     >
                         Visible-page capture
                     </Button>
                     <Button
-                        style={{ backgroundColor: SECONDARY.dark, textAlign: 'center', marginLeft: '5px', marginTop: '2px', height: '35px' }}
+                        style={{
+                            backgroundColor: SECONDARY.dark,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
                         onClick={() => this.setState({ startCapture: true })}
                     >
                         Interactive Capture
+                    </Button>
+                    <Button
+                        style={{
+                            backgroundColor: SECONDARY.dark,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
+                        onClick={this.copyUrlToClipboard}
+                    >
+                        Copy URL
                     </Button>
                 </div>
 
@@ -445,7 +489,8 @@ class GraphVisUi extends Component {
                         {this.state.leftSideBarExpanded && (
                             <div>
                                 <h3>Customization Options</h3>
-                                <div>Selected Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
+                                <div>Selected
+                                    Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
                                 {this.state.selectedItem && this.renderCustomizationOptions()}
                             </div>
                         )}
@@ -466,7 +511,11 @@ class GraphVisUi extends Component {
                                 {this.state.rightSideBarExpanded ? '>' : '<'}
                             </Button>
                         </div>
-                        <div style={{ position: 'relative', top: '-40px', padding: '5px' }}>{this.renderGlobalCustomizationOptions()}</div>
+                        <div style={{
+                            position: 'relative',
+                            top: '-40px',
+                            padding: '5px'
+                        }}>{this.renderGlobalCustomizationOptions()}</div>
                     </SelectionRightSidebar>
 
                     <Container
@@ -492,7 +541,11 @@ class GraphVisUi extends Component {
                         screenCapture={this.state.screenCapture}
                     />
                 )}
-                {this.state.startCapture && <ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
+                {this.state.startCapture &&
+                    <ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
+                {this.state.showCopyNotification && (
+                    <FadingNotification message="URL copied to clipboard" timeout={2000} />
+                )}
             </div>
         );
     }
@@ -525,14 +578,14 @@ export default connect(mapStateToProps, mapDispatchToProps)(GraphVisUi);
 
 const expandContentContainerAnimationRight = ({ expanded, width }) => {
     return keyframes`
-  from {
-    right: ${expanded ? -width : 0}px;
-  }
-  to {
-    right: ${expanded ? 0 : -width}px;
-   
-  }
-`;
+        from {
+            right: ${expanded ? -width : 0}px;
+        }
+        to {
+            right: ${expanded ? 0 : -width}px;
+
+        }
+    `;
 };
 export const SelectionSideBar = styled.div`
     position: absolute;
@@ -541,12 +594,15 @@ export const SelectionSideBar = styled.div`
     transition: width 0.3s ease;
     background-color: white;
     border: ${props => (props.expanded ? '1px solid black' : 'none')};
+
     :focus {
         outline: none;
     }
+
     ::-moz-focus-inner {
         border: 0;
     }
+
     word-break: none;
     white-space: nowrap;
 `;
@@ -564,12 +620,15 @@ export const SelectionRightSidebar = styled.div`
     width: 350px;
     height: calc(100% - 140px);
     background: white;
+
     :focus {
         outline: none;
     }
+
     ::-moz-focus-inner {
         border: 0;
     }
+
     word-break: none;
     white-space: nowrap;
 
