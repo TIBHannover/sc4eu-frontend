@@ -5,7 +5,7 @@ import { commitChanges } from '../utils/CommitChanges';
 import PropTypes from 'prop-types';
 import { useQueryClient } from '@tanstack/react-query';
 
-const CommitChanges = ({ refetch, openCommit, setOpenCommit }) => {
+const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedChanges }) => {
     const [commitMessage, setCommitMessage] = useState('');
     const queryClient = useQueryClient();
 
@@ -14,6 +14,7 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit }) => {
     };
     const handleCommit = async () => {
         await commitChanges(queryClient, commitMessage);
+        setHasUncommittedChanges(false);
         setOpenCommit(false);
     };
     return (
@@ -54,7 +55,8 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit }) => {
 CommitChanges.propTypes = {
     refetch: PropTypes.func.isRequired,
     openCommit: PropTypes.bool.isRequired,
-    setOpenCommit: PropTypes.func.isRequired
+    setOpenCommit: PropTypes.func.isRequired,
+    setHasUncommittedChanges: PropTypes.func.isRequired
 };
 
 export default CommitChanges;

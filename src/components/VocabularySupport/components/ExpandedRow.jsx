@@ -144,6 +144,15 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
                                            InputProps={{ sx: { height: '30px' } }} />
                             </Box>
                         ))}
+                        {splitAltLabels(updatedTerm.altLabel).length < 5 && (
+                            <Button onClick={() => {
+                                const altLabels = splitAltLabels(updatedTerm.altLabel);
+                                altLabels.push('');
+                                setUpdatedTerm({ ...updatedTerm, altLabel: altLabels.join(',') });
+                            }}>
+                                + Add Alternative Label
+                            </Button>
+                        )}
                         <Box key={"Status" + updatedTerm.status} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}>
                                 <strong>Status:</strong>

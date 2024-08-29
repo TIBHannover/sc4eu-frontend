@@ -34,9 +34,7 @@ class OntologyViewRoot extends Component {
     }
 }
 
-OntologyViewRoot.propTypes = {
-    ontologyVersion: PropTypes.string.isRequired
-};
+OntologyViewRoot.propTypes = {};
 
 const StyledRootDiv = styled.div`
     display: flex;
