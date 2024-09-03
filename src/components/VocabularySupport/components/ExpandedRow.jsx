@@ -8,7 +8,7 @@ import { colorStyled } from '../../../styledComponents/styledColor';
 import { TextField } from '@material-ui/core';
 import StatusDropdown from './StatusDropdown';
 
-const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) => {
+const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges }) => {
     const splitAltLabels = (altLabel) => {
         return altLabel ? altLabel.split(',') : [];
     };
@@ -33,6 +33,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
         // Save the updated term
         console.log('Updated term:', updatedTerm);
         updateTerm(updatedTerm);
+        setHasUncommittedChanges(true);
         setEditMode(false);
     };
 
@@ -114,7 +115,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
                         <Button onClick={() => setEditMode(true)}>Edit Term</Button>
                     </Box>
                     <Box sx={{ width: '50%', height: '100%' }}>
-                        <CommentsSection resourceId={term.id} comments={termComments || []} handleSaveDiscussion={handleSaveDiscussion} />
+                        <CommentsSection resourceId={term.id} comments={termComments || []} handleSaveDiscussion={handleSaveDiscussion} setHasUncommittedChanges={setHasUncommittedChanges} />
                     </Box>
                 </Box>
             ) : (
@@ -181,7 +182,8 @@ ExpandedRow.propTypes = {
     term: PropTypes.object.isRequired,
     updateTerm: PropTypes.func.isRequired,
     termComments: PropTypes.array.isRequired,
-    handleSaveDiscussion: PropTypes.func.isRequired
+    handleSaveDiscussion: PropTypes.func.isRequired,
+    setHasUncommittedChanges: PropTypes.func.isRequired
 };
 
 export default ExpandedRow;
