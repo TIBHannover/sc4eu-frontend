@@ -59,7 +59,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
             {!editMode ? (
                 <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Box sx={{ width: '50%', height: '100%' }}>
-                        <Typography key={"Id: " + updatedTerm.id}>
+                        <Typography>
                             <Tooltip title="Unique identifier for the term">
                                 <IconButton style={{ marginBottom: '4px'}} size="small">
                                     <HelpOutlineIcon fontSize="small" />
@@ -67,7 +67,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
                             </Tooltip>
                             <strong>ID:</strong> {updatedTerm.id}
                         </Typography>
-                        <Typography key={"Label: " + updatedTerm.label}>
+                        <Typography>
                             <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
                                 <IconButton style={{ marginBottom: '4px'}} size="small">
                                     <HelpOutlineIcon fontSize="small" />
@@ -75,7 +75,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
                             </Tooltip>
                             <strong>Label:</strong> {updatedTerm.label}
                         </Typography>
-                        <Typography key={"Description: " + updatedTerm.description}>
+                        <Typography>
                             <Tooltip title="Provides a human-readable description of a Term">
                                 <IconButton style={{ marginBottom: '4px'}} size="small">
                                     <HelpOutlineIcon fontSize="small" />
@@ -83,7 +83,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
                             </Tooltip>
                             <strong>Description:</strong> {updatedTerm.description}
                         </Typography>
-                        <Typography key={"See_Also"}>
+                        <Typography>
                             <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
                                 <IconButton style={{ marginBottom: '4px'}} size="small">
                                     <HelpOutlineIcon fontSize="small" />
@@ -119,20 +119,20 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
                 </Box>
             ) : (
                 // <EditForm term={updatedTerm} setEditMode={setEditMode} handleSave={handleSave} handleInputChange={handleInputChange} />
-                <Box key={"edit_box"} sx={{ display: 'flex', width: '100%', height: '100%' }}>
+                <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
                     <Box sx={{ height: '100%', width: '50%', display: 'flex', flexDirection: 'column' }}>
                         {/*<Typography variant="h6">Edit Term</Typography>*/}
-                        <Box key={"Label_" + updatedTerm.label} sx={{ display: 'flex', flexDirection: 'column', marginTop: '15px' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '15px' }}>
                             <Typography sx={{ marginBottom: '5px' }}><strong>Label:</strong></Typography>
                             <TextField name="label" value={updatedTerm.label} onChange={handleInputChange} fullWidth
                                        InputProps={{ sx: { height: '30px' } }} />
                         </Box>
-                        <Box key={"Description_" + updatedTerm.description} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}><strong>Description:</strong></Typography>
                             <TextField name="description" value={updatedTerm.description} onChange={handleInputChange} fullWidth
                                        InputProps={{ sx: { height: '30px' } }} />
                         </Box>
-                        <Box key={"SeeAlso_" + updatedTerm.seeAlso} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}><strong>See Also:</strong></Typography>
                             <TextField name="seeAlso" value={updatedTerm.seeAlso} onChange={handleInputChange} fullWidth
                                        InputProps={{ sx: { height: '30px' } }} />
@@ -153,7 +153,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
                                 + Add Alternative Label
                             </Button>
                         )}
-                        <Box key={"Status" + updatedTerm.status} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}>
                                 <strong>Status:</strong>
                             </Typography>
@@ -165,7 +165,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion }) =
                             <Button onClick={() => setEditMode(false)}>Cancel</Button>
                         </Box>
                     </Box>
-                    <Box key={"EditBox"} sx={{ width: '50%', height: '100%' }}>
+                    <Box sx={{ width: '50%', height: '100%' }}>
                         <CommentsSection resourceId={term.id} comments={updatedTerm.comments || []} handleSaveDiscussion={handleSaveDiscussion} />
                     </Box>
                 </Box>
