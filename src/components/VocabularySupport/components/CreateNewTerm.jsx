@@ -7,7 +7,7 @@ import { getAutoCompleteResult, getJumpToResult } from '../VocabularySearch/api/
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 
-const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm, setOpenCreateModal }) => {
+const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm, setOpenCreateModal, handleCancelCreateTerm }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [jumpToResult, setJumpToResult] = useState([]);
@@ -97,8 +97,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
     };
 
     const handleCancel = () => {
-        setOpenCreateModal(false);
-        setNewTermOpen(false);
+        handleCancelCreateTerm(table);
     };
 
     return (
@@ -223,7 +222,8 @@ CreateNewTerm.propTypes = {
     internalEditComponents: PropTypes.array.isRequired,
     handleCreateTerm: PropTypes.func.isRequired,
     displayType: PropTypes.string.isRequired,
-    setOpenCreateModal: PropTypes.func.isRequired
+    setOpenCreateModal: PropTypes.func.isRequired,
+    handleCancelCreateTerm: PropTypes.func.isRequired
 };
 
 export default CreateNewTerm;

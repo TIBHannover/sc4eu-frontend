@@ -261,9 +261,15 @@ const VocabularyMainTable = ({
         const newDiscussion = { resourceId: uuid, comments: [] };
         await createDiscussion(newDiscussion);
         table.setCreatingRow(null);
+        //setNewTermOpen(false); // Close the create modal
         setOpenCreateModal(false); // Close the create modal
         setHasUncommittedChanges(true);
     };
+
+    const handleCancelCreateTerm = (table) => {
+        table.setCreatingRow(null);
+        setOpenCreateModal(false); // Close the create modal
+    }
 
     const handleSaveTerm = async ({ values, table }) => {
         const newValidationErrors = validateTerm(values);
@@ -356,6 +362,7 @@ const VocabularyMainTable = ({
                 internalEditComponents={internalEditComponents}
                 handleCreateTerm={handleCreateTerm}
                 setOpenCreateModal={setOpenCreateModal}
+                handleCancelCreateTerm={handleCancelCreateTerm}
             />);
         },
         renderEditRowDialogContent: ({ table, row, internalEditComponents }) => {
@@ -373,6 +380,7 @@ const VocabularyMainTable = ({
                 internalEditComponents={internalEditComponents}
                 handleCreateTerm={handleSaveTerm}
                 setOpenCreateModal={setOpenCreateModal}
+                handleCancelCreateTerm={handleCancelCreateTerm}
             />);
         },
         renderTopToolbarCustomActions: ({ table, row }) => (
