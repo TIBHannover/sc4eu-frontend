@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { Box, IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle, ListItem, ListItemText, MenuItem, Tab, Tabs } from '@mui/material';
+import { Box, IconButton, Button, Divider, List, TextField, Dialog, DialogActions, DialogContent, DialogTitle, ListItem, ListItemText, MenuItem, Tab, Tabs } from '@mui/material';
 import PropTypes from 'prop-types';
 import { MIN_WIDTH_FOR_MONITOR } from '../../../styledComponents/styledComponents';
-import TextField from '@material-ui/core/TextField';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import { MRT_EditActionButtons } from 'material-react-table';
+//import Divider from '@mui/material/Divider';
 import { getAutoCompleteResult, getJumpToResult } from '../VocabularySearch/api/search';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 
-const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm }) => {
+const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm, setOpenCreateModal, handleCancelCreateTerm }) => {
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [jumpToResult, setJumpToResult] = useState([]);
@@ -100,15 +97,13 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
     };
 
     const handleCancel = () => {
-        setNewTermOpen(false);
+        handleCancelCreateTerm(table);
     };
 
     return (
         <Dialog
             open={openNewTerm}
-            onClose={() => {
-                setNewTermOpen(false);
-            }}
+            onClose={handleCancel}
             maxWidth="xl"
             sx={{
                 '& .MuiDialog-paper': {
@@ -210,7 +205,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
 
             <DialogActions>
                 <Button onClick={handleSave} variant="contained" color="primary">
-                    Save
+                    Create
                 </Button>
                 <Button onClick={handleCancel} variant="contained" color="primary">
                     Cancel
@@ -226,7 +221,9 @@ CreateNewTerm.propTypes = {
     row: PropTypes.object.isRequired,
     internalEditComponents: PropTypes.array.isRequired,
     handleCreateTerm: PropTypes.func.isRequired,
-    displayType: PropTypes.string.isRequired
+    displayType: PropTypes.string.isRequired,
+    setOpenCreateModal: PropTypes.func.isRequired,
+    handleCancelCreateTerm: PropTypes.func.isRequired
 };
 
 export default CreateNewTerm;

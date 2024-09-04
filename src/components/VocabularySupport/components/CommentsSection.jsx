@@ -59,7 +59,7 @@ function getTimeDifferenceString(isoDateString) {
     }
 }
 
-const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion }) => {
+const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion, setHasUncommittedChanges }) => {
 
     const userDisplayName = user?.['displayName'];
     const [newCommentText, setNewCommentText] = useState('');
@@ -78,6 +78,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         await handleSaveDiscussion({"resourceId" : resourceId, "comments": updatedComments });
         setComments(updatedComments);
         setNewCommentText(''); // Clear the text field after adding comment
+        setHasUncommittedChanges(true);
     };
 
     return (
@@ -148,7 +149,8 @@ CommentsSection.propTypes = {
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     resourceId: PropTypes.string.isRequired,
     comments: PropTypes.array.isRequired,
-    handleSaveDiscussion: PropTypes.func.isRequired
+    handleSaveDiscussion: PropTypes.func.isRequired,
+    setHasUncommittedChanges: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps)(CommentsSection);
