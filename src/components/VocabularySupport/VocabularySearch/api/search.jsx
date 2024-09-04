@@ -50,7 +50,6 @@ export async function getJumpToResult(inputData, count = 10) {
         // url = inputData['types'] ? url + `&type=${inputData['types']}` : url;
         // url = inputData['obsoletes'] ? url + '&obsoletes=true' : url;
         // url = inputData['collectionIds'] ? url + `&schema=collection&classification=${inputData['collectionIds']}` : url;
-        console.log(url);
         let result = await fetch(url, getCallSetting);
         result = await result.json();
         result = result['response']['docs'];

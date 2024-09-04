@@ -349,12 +349,13 @@ const VocabularyMainTable = ({
         onCreatingRowSave: handleCreateTerm,
         onEditingRowSave: handleSaveTerm,
         renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
-            return (<CreateNewTerm
+            return (openCreateModal && <CreateNewTerm
                 displayType={'create'}
                 table={table}
                 row={row}
                 internalEditComponents={internalEditComponents}
                 handleCreateTerm={handleCreateTerm}
+                setOpenCreateModal={setOpenCreateModal}
             />);
         },
         renderEditRowDialogContent: ({ table, row, internalEditComponents }) => {
@@ -371,6 +372,7 @@ const VocabularyMainTable = ({
                 row={row}
                 internalEditComponents={internalEditComponents}
                 handleCreateTerm={handleSaveTerm}
+                setOpenCreateModal={setOpenCreateModal}
             />);
         },
         renderTopToolbarCustomActions: ({ table, row }) => (
@@ -384,14 +386,15 @@ const VocabularyMainTable = ({
                 >
                     Create New Term
                 </Button>
-                {hasUncommittedChanges && <span style={{ fontSize: '0.8em', color: 'red' }}> You have made changes, Don't forget to commit your changes</span>}
+                {hasUncommittedChanges && <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Don't forget to save your changes</span>}
             </>
         ),
         renderBottomToolbarCustomActions: () => (
             <>
                 <Button variant="contained" onClick={() => setOpenCommit(true)}
-                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
-                    Commit Changes
+                        style={{ backgroundColor: colorStyled.SECONDARY.dark, border: hasUncommittedChanges? '2px' +
+                                ' solid red': ''}}>
+                    Save Changes
                 </Button>
                 {openCommit &&
                     <CommitChanges refetch={refetch} openCommit={openCommit} setOpenCommit={setOpenCommit} setHasUncommittedChanges={setHasUncommittedChanges} />}

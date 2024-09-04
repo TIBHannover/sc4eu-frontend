@@ -162,12 +162,12 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                             onChange={value => handleInputChange({ target: { name: 'status', value } })} />
                         </Box>
                         <Box sx={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between' }}>
-                            <Button onClick={handleSave}>Save Changes</Button>
+                            <Button onClick={handleSave}>Save Updates</Button>
                             <Button onClick={() => setEditMode(false)}>Cancel</Button>
                         </Box>
                     </Box>
                     <Box sx={{ width: '50%', height: '100%' }}>
-                        <CommentsSection resourceId={term.id} comments={updatedTerm.comments || []} handleSaveDiscussion={handleSaveDiscussion} />
+                        <CommentsSection resourceId={term.id} comments={updatedTerm.comments || []} handleSaveDiscussion={handleSaveDiscussion} setHasUncommittedChanges={setHasUncommittedChanges} />
                     </Box>
                 </Box>
             )}
