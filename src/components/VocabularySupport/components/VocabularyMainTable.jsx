@@ -318,11 +318,22 @@ const VocabularyMainTable = ({
     const table = useMaterialReactTable({
         columns,
         data: terms,
+        initialState: {
+            sorting: [
+                {
+                    id: 'label', // Sort by 'label' column
+                    desc: false, // Ascending order
+                },
+            ],
+            columnVisibility: { id: false },
+            density: 'compact'
+        },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
         enableEditing: true,
         getRowId: row => row.id,
         positionActionsColumn: 'last',
+        enableSorting: true,
         muiTableBodyRowProps: ({ row }) => ({
             onClick: (event) => handleRowClick(row, event, discussions),
             sx: {
@@ -331,10 +342,6 @@ const VocabularyMainTable = ({
         }),
         //enableRowExpansion: true,
         // renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} updateTerm={updateTerm} />,
-        initialState: {
-            columnVisibility: { id: false },
-            density: 'compact'
-        },
         // muiToolbarAlertBannerProps: isLoadingTermsError
         //     ? {
         //           color: 'error',
@@ -394,7 +401,7 @@ const VocabularyMainTable = ({
                 >
                     Create New Term
                 </Button>
-                {hasUncommittedChanges && <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Don't forget to save your changes</span>}
+                {hasUncommittedChanges && <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>}
             </>
         ),
         renderBottomToolbarCustomActions: () => (
