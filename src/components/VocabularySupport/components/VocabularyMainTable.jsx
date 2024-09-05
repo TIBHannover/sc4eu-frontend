@@ -326,7 +326,8 @@ const VocabularyMainTable = ({
                 },
             ],
             columnVisibility: { id: false },
-            density: 'compact'
+            density: 'compact',
+            pagination: { pageSize: 20 }
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
