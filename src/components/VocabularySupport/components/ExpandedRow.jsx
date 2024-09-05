@@ -10,21 +10,20 @@ import StatusDropdown from './StatusDropdown';
 
 const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges }) => {
     const [editMode, setEditMode] = useState(false);
-    const [updatedTerm, setUpdatedTerm] = useState({...term, altLabel: term.altLabel || ''});
+    const [updatedTerm, setUpdatedTerm] = useState({ ...term, altLabel: term.altLabel || '' });
 
     const splitAltLabels = (altLabel) => {
         return altLabel ? altLabel.split(',') : [''];
     };
     const handleInputChange = e => {
         let { name, value } = e.target;
-        if (name.startsWith('altLabel')){
+        if (name.startsWith('altLabel')) {
             const index = parseInt(name.split('-')[1], 10);
             const altLabels = splitAltLabels(updatedTerm.altLabel);
             altLabels[index] = value;
             value = altLabels.join(',');
             setUpdatedTerm({ ...updatedTerm, altLabel: value });
-        }
-        else{
+        } else {
             setUpdatedTerm({ ...updatedTerm, [name]: value });
         }
     };
@@ -32,7 +31,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
     const handleAddAlternativeLabel = () => {
         // Ensure altLabel is an array and push a new empty string for the new label
         console.log('Adding alternative label: ', updatedTerm.altLabel);
-        if(!updatedTerm.altLabel){
+        if (!updatedTerm.altLabel) {
             setUpdatedTerm({ ...updatedTerm, altLabel: '' });
             return;
         }
@@ -75,40 +74,25 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                     <Box sx={{ width: '50%', height: '100%' }}>
                         <Typography>
                             <Tooltip title="Unique identifier for the term">
-                                <IconButton style={{ marginBottom: '4px'}} size="small">
+                                <IconButton style={{ marginBottom: '4px' }} size="small">
                                     <HelpOutlineIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                             <strong>ID:</strong> {updatedTerm.id}
                         </Typography>
                         <Typography>
-                            <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
-                                <IconButton style={{ marginBottom: '4px'}} size="small">
+                            <Tooltip
+                                title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
+                                <IconButton style={{ marginBottom: '4px' }} size="small">
                                     <HelpOutlineIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                             <strong>Label:</strong> {updatedTerm.label}
                         </Typography>
-                        <Typography>
-                            <Tooltip title="Provides a human-readable description of a Term">
-                                <IconButton style={{ marginBottom: '4px'}} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                            <strong>Description:</strong> {updatedTerm.description}
-                        </Typography>
-                        <Typography>
-                            <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
-                                <IconButton style={{ marginBottom: '4px'}} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                            <strong>See Also:</strong> {renderSeeAlso()}
-                        </Typography>
                         {updatedTerm.altLabel && splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                            <Typography key={"altLabel" + index}>
+                            <Typography key={'altLabel' + index}>
                                 <Tooltip title="Provides an alternative Label">
-                                    <IconButton style={{ marginBottom: '4px'}} size="small">
+                                    <IconButton style={{ marginBottom: '4px' }} size="small">
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
@@ -116,19 +100,46 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                             </Typography>
                         ))}
                         <Typography>
+                            <Tooltip title="Provides a human-readable description of a Term">
+                                <IconButton style={{ marginBottom: '4px' }} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                            <strong>Description:</strong> {updatedTerm.description}
+                        </Typography>
+                        <Typography>
+                            <Tooltip
+                                title="Indicates a resource that might provide additional information about the subject resource">
+                                <IconButton style={{ marginBottom: '4px' }} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                            <strong>See Also:</strong> {renderSeeAlso()}
+                        </Typography>
+                        <Typography>
                             <Tooltip title="Three possible options for status. Draft, Ready, Accpeted.
                              Draft is still under discussion, Ready when the consensus is reached,
                              Accpeted when it is final and becomes part of the vocabulary">
-                                <IconButton style={{ marginBottom: '4px'}} size="small">
+                                <IconButton style={{ marginBottom: '4px' }} size="small">
                                     <HelpOutlineIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
                             <strong>Status:</strong> {updatedTerm.status}
                         </Typography>
-                        <Button onClick={() => setEditMode(true)}>Edit Term</Button>
+                        <Button onClick={() => setEditMode(true)}
+                                variant="contained"
+                                sx={{
+                                    padding: '10px 20px',
+                                    marginRight: '10px',
+                                    marginTop: '10px',
+                                    backgroundColor: colorStyled.SECONDARY.dark,
+                                    '&:hover': { backgroundColor: 'darkblue' }
+                                }}>Edit Term</Button>
                     </Box>
                     <Box sx={{ width: '50%', height: '100%' }}>
-                        <CommentsSection resourceId={term.id} comments={termComments || []} handleSaveDiscussion={handleSaveDiscussion} setHasUncommittedChanges={setHasUncommittedChanges} />
+                        <CommentsSection resourceId={term.id} comments={termComments || []}
+                                         handleSaveDiscussion={handleSaveDiscussion}
+                                         setHasUncommittedChanges={setHasUncommittedChanges} />
                     </Box>
                 </Box>
             ) : (
@@ -141,20 +152,12 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                             <TextField name="label" value={updatedTerm.label} onChange={handleInputChange} fullWidth
                                        InputProps={{ sx: { height: '30px' } }} />
                         </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                            <Typography sx={{ marginBottom: '5px' }}><strong>Description:</strong></Typography>
-                            <TextField name="description" value={updatedTerm.description} onChange={handleInputChange} fullWidth
-                                       InputProps={{ sx: { height: '30px' } }} />
-                        </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                            <Typography sx={{ marginBottom: '5px' }}><strong>See Also:</strong></Typography>
-                            <TextField name="seeAlso" value={updatedTerm.seeAlso} onChange={handleInputChange} fullWidth
-                                       InputProps={{ sx: { height: '30px' } }} />
-                        </Box>
                         {splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                            <Box key={"altLabel_" + index} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                            <Typography sx={{ marginBottom: '5px' }}><strong>Alternative Label {index + 1}:</strong></Typography>
-                                <TextField name={`altLabel-${index}`} value={label} onChange={handleInputChange} fullWidth
+                            <Box key={'altLabel_' + index}
+                                 sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                                <Typography sx={{ marginBottom: '5px' }}><strong>Alternative Label {index + 1}:</strong></Typography>
+                                <TextField name={`altLabel-${index}`} value={label} onChange={handleInputChange}
+                                           fullWidth
                                            InputProps={{ sx: { height: '30px' } }} />
                             </Box>
                         ))}
@@ -164,19 +167,56 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                             </Button>
                         )}
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                            <Typography sx={{ marginBottom: '5px' }}><strong>Description:</strong></Typography>
+                            <TextField name="description" value={updatedTerm.description} onChange={handleInputChange}
+                                       fullWidth
+                                       InputProps={{ sx: { height: '30px' } }} />
+                        </Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
+                            <Typography sx={{ marginBottom: '5px' }}><strong>See Also:</strong></Typography>
+                            <TextField name="seeAlso" value={updatedTerm.seeAlso} onChange={handleInputChange} fullWidth
+                                       InputProps={{ sx: { height: '30px' } }} />
+                        </Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}>
                                 <strong>Status:</strong>
                             </Typography>
-                            <StatusDropdown label="Status" name="status" sx={{ marginTop: '10px' }} status={updatedTerm.status}
-                                            onChange={value => handleInputChange({ target: { name: 'status', value } })} />
+                            <StatusDropdown label="Status" name="status" sx={{ marginTop: '10px' }}
+                                            status={updatedTerm.status}
+                                            onChange={value => handleInputChange({
+                                                target: {
+                                                    name: 'status',
+                                                    value
+                                                }
+                                            })} />
                         </Box>
                         <Box sx={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between' }}>
-                            <Button onClick={handleSave}>Save Updates</Button>
-                            <Button onClick={() => setEditMode(false)}>Cancel</Button>
+                            <Button
+                                onClick={handleSave}
+                                variant="contained"
+                                sx={{
+                                    padding: '10px 20px',
+                                    marginRight: '10px',
+                                    marginTop: '10px',
+                                    backgroundColor: colorStyled.SECONDARY.dark,
+                                    '&:hover': { backgroundColor: 'darkblue' }
+                                }}>Save Updates</Button>
+                            <Button
+                                onClick={() => setEditMode(false)}
+                                variant="contained"
+                                sx={{
+                                    padding: '10px 20px',
+                                    marginRight: '10px',
+                                    marginTop: '10px',
+                                    backgroundColor: colorStyled.SECONDARY.dark,
+                                    '&:hover': { backgroundColor: 'darkblue' }
+                                }}>Cancel</Button>
                         </Box>
                     </Box>
                     <Box sx={{ width: '50%', height: '100%' }}>
-                        <CommentsSection resourceId={term.id} comments={updatedTerm.comments || []} handleSaveDiscussion={handleSaveDiscussion} setHasUncommittedChanges={setHasUncommittedChanges} />
+                        <CommentsSection resourceId={term.id} comments={updatedTerm.comments || []}
+                                         handleSaveDiscussion={handleSaveDiscussion}
+                                         setHasUncommittedChanges={setHasUncommittedChanges} />
                     </Box>
                 </Box>
             )}
