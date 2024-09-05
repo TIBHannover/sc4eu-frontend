@@ -19,14 +19,14 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
     };
     return (
         <Dialog open={openCommit} onClose={() => setOpenCommit(false)} maxWidth="xl">
-            <DialogTitle>Commit Changes</DialogTitle>
+            <DialogTitle>Save Changes</DialogTitle>
             <DialogContent>
-                <DialogContentText>Please enter your commit message.</DialogContentText>
+                <DialogContentText>Please enter a short description of your changes</DialogContentText>
                 <TextField
                     autoFocus
                     margin="dense"
                     id="commitMessage"
-                    label="Commit Message"
+                    label="Enter your description"
                     type="text"
                     fullWidth
                     multiline
@@ -45,7 +45,7 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
                     Cancel
                 </Button>
                 <Button onClick={handleCommit} disabled={commitMessage.length === 0}>
-                    Commit
+                    Save
                 </Button>
             </DialogActions>
         </Dialog>
