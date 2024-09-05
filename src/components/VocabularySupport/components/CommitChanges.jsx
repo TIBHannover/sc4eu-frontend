@@ -26,7 +26,7 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
                     autoFocus
                     margin="dense"
                     id="commitMessage"
-                    label="Enter your Message"
+                    label="Enter your description"
                     type="text"
                     fullWidth
                     multiline
