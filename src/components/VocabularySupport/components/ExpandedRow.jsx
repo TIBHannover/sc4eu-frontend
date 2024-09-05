@@ -9,17 +9,17 @@ import { TextField } from '@material-ui/core';
 import StatusDropdown from './StatusDropdown';
 
 const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges }) => {
-    const splitAltLabels = (altLabel) => {
-        return altLabel ? altLabel.split(',') : [];
-    };
     const [editMode, setEditMode] = useState(false);
-    const [updatedTerm, setUpdatedTerm] = useState(term);
+    const [updatedTerm, setUpdatedTerm] = useState({...term, altLabel: term.altLabel || ''});
 
+    const splitAltLabels = (altLabel) => {
+        return altLabel ? altLabel.split(',') : [''];
+    };
     const handleInputChange = e => {
         let { name, value } = e.target;
         if (name.startsWith('altLabel')){
             const index = parseInt(name.split('-')[1], 10);
-            const altLabels = updatedTerm.altLabel.split(',');
+            const altLabels = splitAltLabels(updatedTerm.altLabel);
             altLabels[index] = value;
             value = altLabels.join(',');
             setUpdatedTerm({ ...updatedTerm, altLabel: value });
@@ -27,6 +27,19 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
         else{
             setUpdatedTerm({ ...updatedTerm, [name]: value });
         }
+    };
+
+    const handleAddAlternativeLabel = () => {
+        // Ensure altLabel is an array and push a new empty string for the new label
+        console.log('Adding alternative label: ', updatedTerm.altLabel);
+        if(!updatedTerm.altLabel){
+            setUpdatedTerm({ ...updatedTerm, altLabel: '' });
+            return;
+        }
+
+        const altLabels = splitAltLabels(updatedTerm.altLabel);
+        altLabels.push('');
+        setUpdatedTerm({ ...updatedTerm, altLabel: altLabels.join(',') });
     };
 
     const handleSave = () => {
@@ -138,19 +151,15 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                             <TextField name="seeAlso" value={updatedTerm.seeAlso} onChange={handleInputChange} fullWidth
                                        InputProps={{ sx: { height: '30px' } }} />
                         </Box>
-                        {updatedTerm.altLabel && splitAltLabels(updatedTerm.altLabel).map((label, index) => (
+                        {splitAltLabels(updatedTerm.altLabel).map((label, index) => (
                             <Box key={"altLabel_" + index} sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography sx={{ marginBottom: '5px' }}><strong>Alternative Label {index + 1}:</strong></Typography>
                                 <TextField name={`altLabel-${index}`} value={label} onChange={handleInputChange} fullWidth
                                            InputProps={{ sx: { height: '30px' } }} />
                             </Box>
                         ))}
-                        {splitAltLabels(updatedTerm.altLabel).length < 5 && (
-                            <Button onClick={() => {
-                                const altLabels = splitAltLabels(updatedTerm.altLabel);
-                                altLabels.push('');
-                                setUpdatedTerm({ ...updatedTerm, altLabel: altLabels.join(',') });
-                            }}>
+                        {(!updatedTerm.altLabel || splitAltLabels(updatedTerm.altLabel).length < 5) && (
+                            <Button onClick={handleAddAlternativeLabel}>
                                 + Add Alternative Label
                             </Button>
                         )}
