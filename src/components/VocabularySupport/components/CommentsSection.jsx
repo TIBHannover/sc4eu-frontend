@@ -29,11 +29,20 @@ function stringToColor(string) {
 }
 
 function stringAvatar(name) {
+    const nameParts = name.split(' ');
+    let initials;
+
+    if (nameParts.length === 1) {
+        initials = `${nameParts[0][0]}${nameParts[0][1] || ''}`;
+    } else {
+        initials = `${nameParts[0][0]}${nameParts[1][0]}`;
+    }
+
     return {
         sx: {
             backgroundColor: stringToColor(name)
         },
-        children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`
+        children: initials
     };
 }
 
