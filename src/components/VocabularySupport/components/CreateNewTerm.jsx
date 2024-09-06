@@ -22,7 +22,6 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
         }
     };
 
-    console.log("");
     const handleRemoveAltLabel = index => {
         setAltLabelsList(altLabelsList.filter((_, i) => i !== index));
     };
