@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ROUTES from 'constants/routes';
+import ROUTES from '../constants/routes';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -11,7 +11,7 @@ import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth, toggleAuthDialog
 import greetingTime from 'greeting-time';
 import { Button } from 'reactstrap';
 import SignInModal from '../components/Signin/SignInModal';
-import { StyledAuthTooltip, StyledGravatar } from 'styledComponents/styledComponents';
+import { StyledAuthTooltip, StyledGravatar } from '../styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import background from '../assets/images/Curve_Line.svg';
