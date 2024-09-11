@@ -453,13 +453,18 @@ const VocabularyMainTable = ({
             <MaterialReactTable table={table} />
             <Modal open={openPopup} onClose={handleClosePopup}>
                 <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     padding: 2,
                     backgroundColor: 'white',
                     margin: 'auto',
-                    marginTop: '10%',
-                    width: '80%',
-                    maxHeight: '80%',
-                    overflowY: 'auto'
+                    width: '70%',
+                    overflowY: 'auto',
+                    position: 'fixed',
+                    top: 0,
+                    left: '15%',
+                    outline: 'none'
                 }}>
                     {selectedTerm &&
                         <ExpandedRow term={selectedTerm} updateTerm={updateTerm} termComments={termComments || []}
