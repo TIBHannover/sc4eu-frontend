@@ -65,6 +65,10 @@ const VocabularyMainTable = ({
         };
     }, [hasUncommittedChanges, history]);
 
+    useEffect(() => {
+        refetch();
+    }, [refetch]);
+
     const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
             return;
@@ -146,6 +150,7 @@ const VocabularyMainTable = ({
                     </>
                 ),
                 size: 150,
+                Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
                 muiEditTextFieldProps: {
                     required: true,
                     error: !!validationErrors?.label,
@@ -266,10 +271,12 @@ const VocabularyMainTable = ({
         setHasUncommittedChanges(true);
     };
 
-    const handleCancelCreateTerm = (table) => {
-        table.setCreatingRow(null);
-        setOpenCreateModal(false); // Close the create modal
-    }
+    const handleCancelCreateTerm = () => {
+        if (table.getState().creatingRow) {
+            table.setCreatingRow(null);
+        }
+        setOpenCreateModal(false);
+    };
 
     const handleSaveTerm = async ({ values, table }) => {
         const newValidationErrors = validateTerm(values);
@@ -327,7 +334,7 @@ const VocabularyMainTable = ({
             ],
             columnVisibility: { id: false },
             density: 'compact',
-            pagination: { pageSize: 20 }
+            pagination: { pageSize: 15 }
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
@@ -446,13 +453,18 @@ const VocabularyMainTable = ({
             <MaterialReactTable table={table} />
             <Modal open={openPopup} onClose={handleClosePopup}>
                 <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     padding: 2,
                     backgroundColor: 'white',
                     margin: 'auto',
-                    marginTop: '10%',
-                    width: '80%',
-                    maxHeight: '80%',
-                    overflowY: 'auto'
+                    width: '70%',
+                    overflowY: 'auto',
+                    position: 'fixed',
+                    top: 0,
+                    left: '15%',
+                    outline: 'none'
                 }}>
                     {selectedTerm &&
                         <ExpandedRow term={selectedTerm} updateTerm={updateTerm} termComments={termComments || []}
