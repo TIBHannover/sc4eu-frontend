@@ -94,7 +94,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         <Paper elevation={0} style={{ paddingLeft: '1px', background: 'inherit' }}>
             <Box style={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="h7" component="div" style={{ marginRight: '10px' }}>
-                    Comments
+                    <b>Comments</b>
                 </Typography>
                 <hr style={dividerStyle} />
             </Box>
