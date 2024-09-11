@@ -146,6 +146,7 @@ const VocabularyMainTable = ({
                     </>
                 ),
                 size: 150,
+                Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
                 muiEditTextFieldProps: {
                     required: true,
                     error: !!validationErrors?.label,
@@ -327,7 +328,7 @@ const VocabularyMainTable = ({
             ],
             columnVisibility: { id: false },
             density: 'compact',
-            pagination: { pageSize: 20 }
+            pagination: { pageSize: 15 }
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
