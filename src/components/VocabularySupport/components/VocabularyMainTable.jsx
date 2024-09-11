@@ -65,6 +65,10 @@ const VocabularyMainTable = ({
         };
     }, [hasUncommittedChanges, history]);
 
+    useEffect(() => {
+        refetch();
+    }, [refetch]);
+
     const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
             return;
@@ -267,10 +271,12 @@ const VocabularyMainTable = ({
         setHasUncommittedChanges(true);
     };
 
-    const handleCancelCreateTerm = (table) => {
-        table.setCreatingRow(null);
-        setOpenCreateModal(false); // Close the create modal
-    }
+    const handleCancelCreateTerm = () => {
+        if (table.getState().creatingRow) {
+            table.setCreatingRow(null);
+        }
+        setOpenCreateModal(false);
+    };
 
     const handleSaveTerm = async ({ values, table }) => {
         const newValidationErrors = validateTerm(values);
