@@ -22,7 +22,8 @@ const VocabularyMainTable = ({
                                  isLoadingTermsError,
                                  isFetchingTerms,
                                  discussions,
-                                 handleSaveDiscussion
+                                 handleSaveDiscussion,
+                                 handleDeleteDiscussion
                              }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
@@ -318,6 +319,7 @@ const VocabularyMainTable = ({
     const openDeleteConfirmModal = async row => {
         if (window.confirm('Are you sure you want to delete this term?')) {
             await deleteTerm(row.id);
+            await handleDeleteDiscussion(row.id);
             table.setEditingRow(null);
             setHasUncommittedChanges(true);
         }
@@ -502,7 +504,8 @@ VocabularyMainTable.propTypes = {
     isLoadingTermsError: PropTypes.bool.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,
     discussions: PropTypes.array.isRequired,
-    handleSaveDiscussion: PropTypes.func.isRequired
+    handleSaveDiscussion: PropTypes.func.isRequired,
+    handleDeleteDiscussion: PropTypes.func.isRequired
 };
 
 export default VocabularyMainTable;
