@@ -1,11 +1,9 @@
-import { Box, Button, Tooltip, IconButton, Link } from '@mui/material';
-import Typography from '@mui/material/Typography';
+import { Box, Typography, TextField, Button, Tooltip, IconButton, Link } from '@mui/material';
 import { useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
-import { TextField } from '@material-ui/core';
 import StatusDropdown from './StatusDropdown';
 
 const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
@@ -161,12 +159,14 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                 value={updatedTerm.label}
                                 onChange={handleInputChange}
                                 fullWidth
-                                sx={{ height: '48px', marginBottom: '15px' }}
+                                InputProps={{ sx: { height: '40px' } }}
+                                InputLabelProps={{ sx: { lineHeight: '40px' } }}
+                                sx={{ marginBottom: '15px' }}
                             />
                         </Box>
                         {splitAltLabels(updatedTerm.altLabel).map((label, index) => (
                             <Box key={'altLabel_' + index} sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
+                                <Typography variant="subtitle2" sx={{ marginTop: '10px' }}>
                                     <strong>Alternative Label {index + 1}:</strong>
                                 </Typography>
                                 <TextField
@@ -174,7 +174,9 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                     value={label}
                                     onChange={handleInputChange}
                                     fullWidth
-                                    sx={{ height: '48px', marginBottom: '15px' }}
+                                    InputProps={{ sx: { height: '40px' } }}
+                                    InputLabelProps={{ sx: { lineHeight: '40px' } }}
+                                    sx={{ marginBottom: '15px' }}
                                     placeholder={`Alternative Label ${index +1}`}
                                 />
                             </Box>
@@ -192,7 +194,9 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                 value={updatedTerm.description}
                                 onChange={handleInputChange}
                                 fullWidth
-                                sx={{ height: '48px', marginBottom: '15px' }}
+                                InputProps={{ sx: { height: '40px' } }}
+                                InputLabelProps={{ sx: { lineHeight: '40px' } }}
+                                sx={{ marginBottom: '15px' }}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
@@ -204,7 +208,9 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                 value={updatedTerm.seeAlso}
                                 onChange={handleInputChange}
                                 fullWidth
-                                sx={{ height: '48px', marginBottom: '15px' }}
+                                InputProps={{ sx: { height: '40px' } }}
+                                InputLabelProps={{ sx: { lineHeight: '40px' } }}
+                                sx={{ marginBottom: '15px'}}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
@@ -214,7 +220,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                             <StatusDropdown
                                 label="Status"
                                 name="status"
-                                sx={{ marginTop: '10px' }}
+                                sx={{ height: '40px', marginTop: '10px', marginLeft: '25px' }}
                                 status={updatedTerm.status}
                                 onChange={value =>
                                     handleInputChange({
