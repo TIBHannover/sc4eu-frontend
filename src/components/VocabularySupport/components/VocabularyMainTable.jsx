@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Modal, Box, Button, IconButton, Tooltip } from '@mui/material';
+import { Box, Button, IconButton, Modal, Tooltip } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -22,7 +22,8 @@ const VocabularyMainTable = ({
                                  isLoadingTermsError,
                                  isFetchingTerms,
                                  discussions,
-                                 handleSaveDiscussion
+                                 handleSaveDiscussion,
+                                 handleDeleteDiscussion
                              }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
@@ -86,18 +87,39 @@ const VocabularyMainTable = ({
         setSelectedTerm(null);
     };
 
+    function isValidUrl(string) {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
     const TerminologyCellComponent = ({ row }) => {
         const seeAlso = row.original.seeAlso;
         const Label = row.original.label;
         //It may as well be possible that we are adding brand-new term and description is not available
+
+        const handleClick = (event) => {
+            event.stopPropagation();
+        };
+
         if (seeAlso?.startsWith('url:')) {
             const url = seeAlso.slice(4); // remove "url:" prefix
             return (
-                <a href={url} target="_blank" rel="noopener noreferrer">
+                <a href={url} target="_blank" rel="noopener noreferrer" onClick={handleClick}>
                     {Label}
                 </a>
             );
         } else {
+            if(isValidUrl(seeAlso)){
+                return (
+                    <a href={seeAlso} target="_blank" rel="noopener noreferrer" onClick={handleClick}>
+                        {Label}
+                    </a>
+                );
+            }
             return <span>{seeAlso ? seeAlso : ''}</span>;
         }
     };
@@ -228,7 +250,7 @@ const VocabularyMainTable = ({
                     </>
                 ),
                 size: 200,
-                enableEditing: false,
+                enableEditing: true,
                 Cell: TerminologyCellComponent
             },
             {
@@ -297,6 +319,7 @@ const VocabularyMainTable = ({
     const openDeleteConfirmModal = async row => {
         if (window.confirm('Are you sure you want to delete this term?')) {
             await deleteTerm(row.id);
+            await handleDeleteDiscussion(row.id);
             table.setEditingRow(null);
             setHasUncommittedChanges(true);
         }
@@ -334,7 +357,7 @@ const VocabularyMainTable = ({
             ],
             columnVisibility: { id: false },
             density: 'compact',
-            pagination: { pageSize: 15 }
+            pagination: { pageSize: 15, pageIndex: 0 }
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
@@ -482,7 +505,8 @@ VocabularyMainTable.propTypes = {
     isLoadingTermsError: PropTypes.bool.isRequired,
     isFetchingTerms: PropTypes.bool.isRequired,
     discussions: PropTypes.array.isRequired,
-    handleSaveDiscussion: PropTypes.func.isRequired
+    handleSaveDiscussion: PropTypes.func.isRequired,
+    handleDeleteDiscussion: PropTypes.func.isRequired
 };
 
 export default VocabularyMainTable;
