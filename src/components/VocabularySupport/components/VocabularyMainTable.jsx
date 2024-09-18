@@ -491,7 +491,7 @@ const VocabularyMainTable = ({
                 }}>
                     {selectedTerm &&
                         <ExpandedRow term={selectedTerm} updateTerm={updateTerm} termComments={termComments || []}
-                                     handleSaveDiscussion={handleSaveDiscussion} setHasUncommittedChanges={setHasUncommittedChanges} />}
+                                     handleSaveDiscussion={handleSaveDiscussion} setHasUncommittedChanges={setHasUncommittedChanges} handleClosePopup={handleClosePopup} />}
                 </Box>
             </Modal>
         </ScrollableDiv>

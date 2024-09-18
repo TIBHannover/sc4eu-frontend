@@ -3,7 +3,12 @@ import { MenuItem, Select } from '@mui/material';
 
 const StatusDropdown = ({ status, onChange }) => {
     return (
-        <Select value={status} onChange={e => onChange(e.target.value)}>
+        <Select
+            value={status}
+            onChange={e => onChange(e.target.value)}
+            variant="outlined"
+            sx={{ height: '40px', width: '30%' }}
+        >
             <MenuItem value="draft">Draft</MenuItem>
             <MenuItem value="ready">Ready</MenuItem>
             <MenuItem value="accepted">Accepted</MenuItem>
