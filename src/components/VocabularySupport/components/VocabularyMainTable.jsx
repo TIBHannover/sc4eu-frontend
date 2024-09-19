@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, IconButton, Modal, Tooltip } from '@mui/material';
+import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -38,6 +38,11 @@ const VocabularyMainTable = ({
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [hasUncommittedChanges, setHasUncommittedChanges] = useState(false);
     const history = useHistory();
+    const theme = useTheme();
+    const baseBackgroundColor =
+        theme.palette.mode === 'light'
+            ? 'rgba(245, 245, 245, 1)' // white
+            : 'rgba(84, 90, 95, 1)'; // light gray
 
     useEffect(() => {
         const handleBeforeUnload = (event) => {
@@ -370,6 +375,31 @@ const VocabularyMainTable = ({
             sx: {
                 cursor: 'pointer' //you might want to change the cursor too when adding an onClick
             }
+        }),
+        muiTableBodyProps: {
+
+            sx: (theme) => ({
+                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td':
+                    {
+                        backgroundColor: darken(baseBackgroundColor, 0.1),
+                    },
+                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td':
+                    {
+                        backgroundColor: darken(baseBackgroundColor, 0.2),
+                    },
+                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td':
+                    {
+                        backgroundColor: lighten(baseBackgroundColor, 0.1),
+                    },
+                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td':
+                    {
+                        backgroundColor: darken(baseBackgroundColor, 0.2),
+                    },
+            }),
+        },
+        mrtTheme: (theme) => ({
+            baseBackgroundColor: baseBackgroundColor,
+            draggingBorderColor: theme.palette.secondary.main,
         }),
         //enableRowExpansion: true,
         // renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} updateTerm={updateTerm} />,
