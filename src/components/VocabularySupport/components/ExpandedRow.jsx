@@ -8,7 +8,14 @@ import StatusDropdown from './StatusDropdown';
 
 const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const [editMode, setEditMode] = useState(false);
-    const [updatedTerm, setUpdatedTerm] = useState({ ...term, altLabel: term.altLabel || '' });
+    const [updatedTerm, setUpdatedTerm] = useState({
+        ...term,
+        altLabel: term.altLabel || '',
+        description: term.description || '',
+        seeAlso: term.seeAlso || '',
+        status: term.status || '',
+        created: term.created || ''
+    });
 
     const splitAltLabels = (altLabel) => {
         return altLabel ? altLabel.split(',') : [''];
@@ -48,6 +55,9 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
     };
 
     const renderSeeAlso = () => {
+        if (!updatedTerm.seeAlso) {
+            return '';
+        }
         if (updatedTerm.seeAlso.startsWith('url:')) {
             const url = updatedTerm.seeAlso.substring(4);
             return (
@@ -77,7 +87,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                     <HelpOutlineIcon fontSize="small" />
                                 </IconButton>
                             </Tooltip>
-                            <strong>ID:</strong> {updatedTerm.id}
+                            <strong>Identifier:</strong> {updatedTerm.identifier}
                         </Typography>
                         <Typography>
                             <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative labels exist">
@@ -116,6 +126,14 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                             </Tooltip>
                             <strong>See Also:</strong> {renderSeeAlso()}
                         </Typography>
+                        <Typography>
+                            <Tooltip title="Provides the creation date of the term">
+                                <IconButton style={{ marginBottom: '4px' }} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                            <strong>Created at:</strong> {updatedTerm.created}
+                        </Typography>
                         {/* Status */}
                         <Typography>
                             <Tooltip title="Status: Draft, Ready, Accepted">
@@ -140,7 +158,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                     {/* Comments section */}
                     <Box sx={{ width: '50%', padding: '10px', backgroundColor: '#f4f4f4', borderRadius: '8px', overflowY: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
                         <CommentsSection
-                            resourceId={term.id}
+                            resourceId={term.identifier}
                             comments={termComments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
                             setHasUncommittedChanges={setHasUncommittedChanges}
@@ -242,7 +260,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                     {/* Comments section */}
                     <Box sx={{ width: '50%', padding: '10px', backgroundColor: '#f4f4f4', borderRadius: '8px', overflowY: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
                         <CommentsSection
-                            resourceId={term.id}
+                            resourceId={term.identifier}
                             comments={updatedTerm.comments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
                             setHasUncommittedChanges={setHasUncommittedChanges}

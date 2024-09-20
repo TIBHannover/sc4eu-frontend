@@ -71,6 +71,7 @@ const CreateNewTerm = ({
             description: value.description ? value.description[0] : "Not Available",
             seeAlso: `url:${url}`,
             status: "draft",
+            created: new Date().toLocaleDateString('en-CA'),
         };
         await handleCreateTerm({ values: termFromTerminology, table: table });
         console.log("Adding term from terminology: ", termFromTerminology);

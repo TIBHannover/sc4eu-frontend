@@ -79,7 +79,7 @@ const VocabularyMainTable = ({
         if (event.target.closest('.action-button')) {
             return;
         }
-        const resourceId = row.original.id;
+        const resourceId = row.original.identifier;
         const currentResourceDiscussion = discussions.find((d) => d.resourceId === resourceId);
         setTermComments(currentResourceDiscussion?.comments || []);
         // console.log('rowComments: ', rowComments);
@@ -139,10 +139,10 @@ const VocabularyMainTable = ({
     const columns = useMemo(
         () => [
             {
-                accessorKey: 'id',
+                accessorKey: 'identifier',
                 header: (
                     <>
-                        <span>ID</span>
+                        <span>Identifier</span>
                         <Tooltip title="Unique identifier for the term">
                             <IconButton style={{ marginBottom: '3px' }} size="small">
                                 <HelpOutlineIcon fontSize="small" />
@@ -152,16 +152,6 @@ const VocabularyMainTable = ({
                 ),
                 size: 150,
                 enableEditing: false
-                // muiEditTextFieldProps: {
-                //     required: true,
-                //     error: !!validationErrors?.id,
-                //     helperText: validationErrors?.id,
-                //     onFocus: () =>
-                //         setValidationErrors({
-                //             ...validationErrors,
-                //             id: 'undefined'
-                //         })
-                // }
             },
             {
                 accessorKey: 'label',
@@ -259,6 +249,21 @@ const VocabularyMainTable = ({
                 Cell: TerminologyCellComponent
             },
             {
+                accessorKey: 'created',
+                header: (
+                    <>
+                        <span>Created</span>
+                        <Tooltip title="The Creation Date of the term">
+                            <IconButton style={{ marginBottom: '3px' }} size="small">
+                                <HelpOutlineIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>
+                    </>
+                ),
+                size: 150,
+                enableEditing: false
+            },
+            {
                 accessorKey: 'status',
                 header: (
                     <>
@@ -287,7 +292,7 @@ const VocabularyMainTable = ({
             return;
         }
         setValidationErrors({});
-        values.id = uuid;
+        values.identifier = uuid;
         await createTerm(values);
         //We have to create a new discussion for this term
         const newDiscussion = { resourceId: uuid, comments: [] };
@@ -306,6 +311,7 @@ const VocabularyMainTable = ({
     };
 
     const handleSaveTerm = async ({ values, table }) => {
+        console.log('values: ', values);
         const newValidationErrors = validateTerm(values);
         if (Object.values(newValidationErrors).some(error => error)) {
             setValidationErrors(newValidationErrors);
@@ -332,19 +338,21 @@ const VocabularyMainTable = ({
 
     // Define the default values for a new row
     const defaultValues = {
-        id: crypto.randomUUID(),   // Override 'id' with a new UUID
+        identifier: crypto.randomUUID(),   // Override 'id' with a new UUID
         label: '',           // Default value for label
         altLabel: [],        // Default value for altLabel
         description: '',     // Default value for description
-        seeAlso: 'N/A',          // Default value for seeAlso
-        status: 'draft'            // Override 'status' with 'draft'
+        seeAlso: '',          // Default value for seeAlso
+        status: 'draft',            // Override 'status' with 'draft'
+        created: new Date().toLocaleDateString('en-CA') // Default value for created
     };
     // Function to handle setting a creating row
     const handleCreateRow = (row = {}) => {
+        console.log('row: ', row);
         table.setCreatingRow(createRow(table, {
             ...defaultValues,           // Apply defaults
             ...row,                     // Spread any existing row values (will override defaults if present)
-            id: row.id || crypto.randomUUID(),    // Override 'id' with a new UUID if not present
+            identifier: row.identifier || crypto.randomUUID(),    // Override 'id' with a new UUID if not present
             status: row.status || 'draft'         // Set 'status' to 'draft' if not present
         }));
         setOpenCreateModal(true); // Open the create modal
@@ -360,14 +368,14 @@ const VocabularyMainTable = ({
                     desc: false, // Ascending order
                 },
             ],
-            columnVisibility: { id: false },
+            columnVisibility: { identifier: false },
             density: 'compact',
             pagination: { pageSize: 15, pageIndex: 0 }
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
         enableEditing: true,
-        getRowId: row => row.id,
+        getRowId: row => row.identifier,
         positionActionsColumn: 'last',
         enableSorting: true,
         muiTableBodyRowProps: ({ row }) => ({
