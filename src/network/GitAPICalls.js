@@ -49,8 +49,8 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
     const repo = getRepoFromUrl(GitHubAPIUrl); // the name of the repository
     const path = getFilePath(GitHubAPIUrl); // the path of the file to fetch
     const user_info = {
-        name: `Fawad Khan`,
-        email: 'tgfawad@gmail.com'
+        name: `tib-ts`,
+        email: 'terminology-service@tib.eu'
     };
 
     const newContent = Buffer.from(newData).toString('base64');
