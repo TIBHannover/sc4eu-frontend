@@ -145,7 +145,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                         </Typography>
 
                         {/* Action buttons */}
-                        <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-end', gap: '15px' }}>
+                        <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
                             <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle}>
                                 Edit Term
                             </Button>
@@ -247,7 +247,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                 }
                             />
                         </Box>
-                        <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-end', gap: '15px' }}>
+                        <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
                             <Button onClick={handleSave} variant="contained" sx={buttonStyle}>
                                 Save Updates
                             </Button>

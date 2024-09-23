@@ -475,8 +475,8 @@ const VocabularyMainTable = ({
         ),
         renderBottomToolbarCustomActions: () => (
             <>
-                <Button variant="contained" onClick={() => setOpenCommit(true)}
-                        style={{ backgroundColor: colorStyled.SECONDARY.dark, border: hasUncommittedChanges? '2px' +
+                <Button variant="contained" disabled={!hasUncommittedChanges} onClick={() => setOpenCommit(true)}
+                        style={{ backgroundColor: hasUncommittedChanges? colorStyled.SECONDARY.dark: 'gray', border: hasUncommittedChanges? '2px' +
                                 ' solid red': ''}}>
                     Save Changes
                 </Button>
