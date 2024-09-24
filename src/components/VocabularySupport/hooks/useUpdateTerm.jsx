@@ -6,7 +6,7 @@ export function useUpdateTerm() {
             return Promise.resolve();
         },
         onMutate: newTerm => {
-            queryClient.setQueryData(['terms'], prevTerms => prevTerms?.map(prevTerm => (prevTerm.id === newTerm.id ? newTerm : prevTerm)));
+            queryClient.setQueryData(['terms'], prevTerms => prevTerms?.map(prevTerm => (prevTerm.identifier === newTerm.identifier ? newTerm : prevTerm)));
         },
         onSettled: () => {
             console.log('useUpdateTerm: onSettled');
