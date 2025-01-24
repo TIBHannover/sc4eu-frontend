@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -6,9 +6,13 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import { Box, ListItem, ListItemAvatar, Paper } from '@mui/material';
+import { getAllUsers } from '../../../network/UserProfileCalls';
 import List from '@mui/material/List';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Popper from '@mui/material/Popper';
+import MenuList from '@mui/material/MenuList';
+import MenuItem from '@mui/material/MenuItem';
 
 function stringToColor(string) {
     let hash = 0;
@@ -69,25 +73,76 @@ function getTimeDifferenceString(isoDateString) {
 }
 
 const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion, setHasUncommittedChanges }) => {
-
     const userDisplayName = user?.['displayName'];
     const [newCommentText, setNewCommentText] = useState('');
     const [comments, setComments] = useState(termComments);
 
+    const [users, setUsers] = useState([]);
+
+    const [mentionAnchorEl, setMentionAnchorEl] = useState(null);
+    const [mentionSearch, setMentionSearch] = useState('');
+    const [cursorPosition, setCursorPosition] = useState(null);
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const textFieldRef = React.useRef(null);
+
+    useEffect(() => {
+        getAllUsers().then(users => {
+            console.log('Users:', users);
+            setUsers(users);
+        });
+    }, []); // Empty dependency array means this runs once on mount
+
     const addComment = async (author, content) => {
         const newComment = {
-            "id": Math.random().toString(36).substring(2, 11),
+            id: Math.random()
+                .toString(36)
+                .substring(2, 11),
             author,
             content,
-            timestamp: (new Date()).toISOString()
+            timestamp: new Date().toISOString()
         };
 
         const updatedComments = [...comments, newComment];
 
-        await handleSaveDiscussion({"resourceId" : resourceId, "comments": updatedComments });
+        await handleSaveDiscussion({ resourceId: resourceId, comments: updatedComments });
         setComments(updatedComments);
         setNewCommentText(''); // Clear the text field after adding comment
         setHasUncommittedChanges(true);
+    };
+
+    const handleTextChange = e => {
+        const newValue = e.target.value;
+        setNewCommentText(newValue);
+
+        const cursorPos = e.target.selectionStart;
+        const textBeforeCursor = newValue.slice(0, cursorPos);
+        const matchMention = /@(\w*)$/.exec(textBeforeCursor);
+
+        if (matchMention) {
+            const searchTerm = matchMention[1].toLowerCase();
+            setMentionSearch(searchTerm);
+            const filtered = users.filter(user => user.display_name.toLowerCase().includes(searchTerm)).slice(0, 5);
+            setFilteredUsers(filtered);
+            setMentionAnchorEl(textFieldRef.current);
+            setCursorPosition(cursorPos);
+        } else {
+            setMentionAnchorEl(null);
+        }
+    };
+
+    const handleMentionSelect = selectedUser => {
+        const textBeforeMention = newCommentText.slice(0, cursorPosition - mentionSearch.length - 1);
+        const textAfterMention = newCommentText.slice(cursorPosition);
+        const newText = `${textBeforeMention}@${selectedUser.display_name}${textAfterMention}`;
+        setNewCommentText(newText);
+        setMentionAnchorEl(null);
+    };
+
+    const handleKeyDown = e => {
+        if (mentionAnchorEl && e.key === 'Enter' && filteredUsers.length > 0) {
+            e.preventDefault();
+            handleMentionSelect(filteredUsers[0]);
+        }
     };
 
     return (
@@ -123,6 +178,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
 
             <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: 'auto' }}>
                 <TextField
+                    ref={textFieldRef}
                     multiline
                     rows={4} // Adjust the rows as needed to ensure there's enough space for the button
                     variant="outlined"
@@ -130,15 +186,28 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                     fullWidth
                     style={{ paddingRight: '1px' }}
                     value={newCommentText}
-                    onChange={e => setNewCommentText(e.target.value)}
+                    onChange={handleTextChange}
+                    onKeyDown={handleKeyDown}
                 />
+                <Popper open={Boolean(mentionAnchorEl)} anchorEl={mentionAnchorEl} placement="top-start" style={{ zIndex: 1300 }}>
+                    <Paper>
+                        <MenuList>
+                            {filteredUsers.map(user => (
+                                <MenuItem key={user.uuid} onClick={() => handleMentionSelect(user)}>
+                                    <Avatar {...stringAvatar(user.display_name)} style={{ width: 24, height: 24, marginRight: 8 }} />
+                                    {user.display_name}
+                                </MenuItem>
+                            ))}
+                        </MenuList>
+                    </Paper>
+                </Popper>
                 <Box style={{ position: 'absolute', right: 5, bottom: 5 }}>
                     <Button
                         variant="contained"
                         style={{
                             ...buttonStyle,
                             backgroundColor: newCommentText.trim() ? colorStyled.SECONDARY.dark : 'gray'
-                    }} // Adjust styling as needed
+                        }} // Adjust styling as needed
                         onClick={() => addComment(userDisplayName, newCommentText)}
                         disabled={!newCommentText.trim()}
                     >
