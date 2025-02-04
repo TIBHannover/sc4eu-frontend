@@ -121,7 +121,13 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         if (matchMention) {
             const searchTerm = matchMention[1].toLowerCase();
             setMentionSearch(searchTerm);
-            const filtered = users.filter(user => user.display_name.toLowerCase().includes(searchTerm)).slice(0, 5);
+
+            // Filter out invalid users and handle null display_name
+            const filtered = users
+                .filter(user => user && user.display_name) // Filter out null/undefined
+                .filter(user => user.display_name.toLowerCase().includes(searchTerm))
+                .slice(0, 5);
+
             setFilteredUsers(filtered);
             setMentionAnchorEl(textFieldRef.current);
             setCursorPosition(cursorPos);
@@ -131,6 +137,11 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     };
 
     const handleMentionSelect = selectedUser => {
+        if (!selectedUser || !selectedUser.display_name) {
+            console.error('Invalid user selected:', selectedUser);
+            return;
+        }
+
         const textBeforeMention = newCommentText.slice(0, cursorPosition - mentionSearch.length - 1);
         const textAfterMention = newCommentText.slice(cursorPosition);
         const newText = `${textBeforeMention}@${selectedUser.display_name}${textAfterMention}`;
