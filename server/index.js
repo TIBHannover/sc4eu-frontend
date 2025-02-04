@@ -149,17 +149,51 @@ router.get(
 router.get('/auth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
 router.get(
     '/auth/gitlab/callback',
-    passport.authenticate('gitlab', { failureRedirect: `${process.env.CALLBACK_URL}/sc3/LoginFailedRedirect` }),
+    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
-        res.redirect(
-            url.format({
-                pathname: `${process.env.CALLBACK_URL}/ocp/loggedIn`,
-                query: {
-                    success: true,
-                    token: req.user.jwt
-                }
-            })
-        );
+        const redirectURL = url.format({
+            pathname: `${process.env.REDIRECT_URL}/ocp/loggedIn`,
+            query: {
+                success: true,
+                token: req.user.jwt
+            }
+        });
+
+        res.redirect(redirectURL);
+    }
+);
+
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get(
+    '/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    (req, res) => {
+        const redirectURL = url.format({
+            pathname: `${process.env.REDIRECT_URL}/ocp/loggedIn`,
+            query: {
+                success: true,
+                token: req.user.jwt
+            }
+        });
+
+        res.redirect(redirectURL);
+    }
+);
+
+router.get('/auth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
+router.get(
+    '/auth/sap/callback',
+    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    (req, res) => {
+        const redirectURL = url.format({
+            pathname: `${process.env.REDIRECT_URL}/ocp/loggedIn`,
+            query: {
+                success: true,
+                token: req.user.jwt
+            }
+        });
+
+        res.redirect(redirectURL);
     }
 );
 

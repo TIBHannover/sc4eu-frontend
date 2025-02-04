@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const GitHubStrategy = require('passport-github2').Strategy;
 const GitLabStrategy = require('passport-gitlab2').Strategy;
+const OAuth2Strategy = require('passport-oauth2').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 require('dotenv').config();
 const request = require('request');
 const sendEmail = require('./sendEmail');
@@ -13,6 +15,137 @@ const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
 const url = require('url');
 const verifyToken = require('./veryfyToken');
+const oauthConfig = require('./config/oauth.config');
+const { access } = require('fs');
+
+/**
+ * Find or create a user in the backend.
+ * @param {Object} userData - User details (e.g., email, display_name, auth_type).
+ * @returns {Promise<Object>} - User data from the backend.
+ */
+function findOrCreateUser(userData) {
+    return new Promise((resolve, reject) => {
+        const options = {
+            uri: `${process.env.BACKEND_SERVER_URL}/users/login/`,
+            body: JSON.stringify(userData),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        request(options, (error, response, body) => {
+            if (error) {
+                console.error('Error finding or creating user:', error);
+                reject({ error: 'Network error while contacting the backend' });
+                return;
+            }
+
+            if (response.statusCode !== 200) {
+                console.error('Backend returned an error:', body);
+                reject({ error: 'Backend error', details: body });
+                return;
+            }
+
+            try {
+                const result = JSON.parse(body);
+                resolve(result); // Resolve with user data
+            } catch (e) {
+                console.error('Error parsing backend response:', e);
+                reject({ error: 'Invalid backend response' });
+            }
+        });
+    });
+}
+
+async function fetchOAuth2UserInfo(accessToken, userInfoUrl) {
+    const options = {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        url: userInfoUrl,
+        method: 'POST',
+        body: JSON.stringify({
+            auth_type: 'AUTH_SAP',
+            token: accessToken
+        })
+    };
+
+    return new Promise((resolve, reject) => {
+        request(options, (error, response, body) => {
+            if (error || response.statusCode !== 200) {
+                reject(error || body);
+                return;
+            }
+            resolve(body);
+        });
+    });
+}
+
+async function fetchGitLabEmails(accessToken) {
+    const options = {
+        headers: {
+            Authorization: 'Bearer ' + accessToken
+        },
+        json: true,
+        url: 'https://gitlab.com/api/v4/user/emails'
+    };
+
+    return new Promise((resolve, reject) => {
+        request(options, (error, response, body) => {
+            if (error || response.statusCode !== 200) {
+                reject(error || body);
+                return;
+            }
+            resolve(body[0]);
+        });
+    });
+}
+
+async function fetchGitHubEmails(accessToken) {
+    const options = {
+        headers: {
+            'User-Agent': 'JavaScript',
+            Authorization: 'token ' + accessToken
+        },
+        json: true,
+        url: 'https://api.github.com/user/emails'
+    };
+
+    return new Promise((resolve, reject) => {
+        request(options, (error, response, body) => {
+            if (error || response.statusCode !== 200) {
+                reject(error || body);
+                return;
+            }
+            resolve(body.filter(email => email.verified));
+        });
+    });
+}
+
+const handleAuthError = (error, provider) => {
+    console.error(`Authentication error with ${provider}:`, {
+        message: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
+    });
+    return error;
+};
+
+const generateJWT = user => {
+    return jwt.sign(
+        {
+            userId: user.user_id,
+            bToken: user.bToken
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: '1h',
+            algorithm: 'HS256'
+        }
+    );
+};
 
 module.exports = {
     initializeAuth: function(app, passport) {
@@ -37,169 +170,174 @@ module.exports = {
         app.use(passport.initialize());
         app.use(passport.session());
 
+        // try {
+        //     passport.use(
+        //         'oauth2',
+        //         new OAuth2Strategy(oauthConfig.oauth2, async function(accessToken, refreshToken, profile, cb) {
+        //             try {
+        //                 // Fetch user info from the provider
+        //                 const userInfoUrl = process.env.OAUTH2_USER_INFO_URL;
+        //                 const userInfo = await fetchOAuth2UserInfo(accessToken, userInfoUrl);
+
+        //                 // Find or create user in the backend
+        //                 const user = await findOrCreateUser({
+        //                     displayName: 'userInfo.name || userInfo.login',
+        //                     email: userInfo.email,
+        //                     auth_type: 'AUTH_OAUTH2',
+        //                     token: 'undefined'
+        //                 });
+
+        //                 // Generate JWT token
+        //                 const local_accessToken = generateJWT(user);
+
+        //                 // Return user data
+        //                 cb(null, { jwt: local_accessToken });
+        //             } catch (error) {
+        //                 cb(handleAuthError(error, 'OAuth2'), null);
+        //             }
+        //         })
+        //     );
+        // } catch (e) {
+        //     handleAuthError(e, 'OAuth2 Strategy Setup');
+        // }
+
         try {
             passport.use(
-                new GitLabStrategy(
-                    {
-                        clientID: process.env.GITLAB_CLIENT_ID,
-                        clientSecret: process.env.GITLAB_CLIENT_SECRET,
-                        callbackURL: `${process.env.CALLBACK_URL}/sc3/auth/gitlab/callback`
-                    },
-                    async function(accessToken, __refreshToken, profile, cb) {
-                        const options = {
-                            headers: {
-                                'User-Agent': 'JavaScript',
-                                Authorization: 'Bearer ' + accessToken
-                            },
-                            json: true,
-                            url: 'https://gitlab.com/api/v4/user/emails'
-                        };
+                'gitlab',
+                new GitLabStrategy(oauthConfig.gitlab, async function(accessToken, __refreshToken, profile, cb) {
+                    try {
+                        // Fetch user emails from GitHub
+                        const emails = await fetchGitLabEmails(accessToken);
+                        const userMail = emails.email;
 
-                        // this is where we need to fetch the email address and the display name
-                        // get emails using oauth token
-                        await request(options, function(error, response, body) {
-                            if (error || response.statusCode !== 200) {
-                                console.log(error);
-                                console.log(body);
-                                return null;
-                            }
-                            let email = '';
-                            Object.keys(body).forEach(function(key) {
-                                email = body[key].email;
-                            });
-                            if (!email.length) {
-                                return { error: 'Could not access your email  address ' };
-                                // >> CRITICAL ERROR
-                            }
-
-                            const loginRequestOptions = {
-                                uri: `${process.env.BACKEND_SERVER_URL}/users/login/`,
-                                body: JSON.stringify({
-                                    displayName: profile.displayName,
-                                    email: email,
-                                    auth_type: 'AUTH_GITLAB',
-                                    token: 'undefined'
-                                }),
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            };
-                            request(loginRequestOptions, function(error, response) {
-                                if (response && response.body) {
-                                    try {
-                                        const result = JSON.parse(response.body);
-                                        const local_accessToken = jwt.sign(
-                                            {
-                                                userId: result.user_id,
-                                                bToken: result.bToken
-                                            },
-                                            process.env.JWT_SECRET,
-                                            {
-                                                expiresIn: '8h'
-                                            }
-                                        );
-                                        cb(null, { jwt: local_accessToken }); // sends the local access token to the call back routine;
-                                    } catch (e) {
-                                        console.log(e);
-                                    }
-                                } else {
-                                    cb(null, { error: 'Could not login via GitLab' }); // sends the local access token to the call back routine;
-                                }
-                            });
+                        // Find or create user in the backend
+                        const user = await findOrCreateUser({
+                            displayName: profile.displayName,
+                            email: userMail,
+                            auth_type: 'AUTH_GITLAB',
+                            token: 'undefined'
                         });
+
+                        // Generate JWT token
+                        const local_accessToken = generateJWT(user);
+
+                        // Return user data
+                        cb(null, { jwt: local_accessToken });
+                    } catch (error) {
+                        cb(handleAuthError(error, 'GitLab'), null);
                     }
-                )
+                })
             );
         } catch (e) {
-            console.log(e);
+            handleAuthError(e, 'GitLab Strategy Setup');
         }
 
         try {
             passport.use(
+                'github',
                 new GitHubStrategy(
-                    {
-                        clientID: process.env.GITHUB_CLIENT_ID_FOR_LOGIN,
-                        clientSecret: process.env.GITHUB_CLIENT_SECRET_FOR_LOGIN,
-                        callbackURL: `${process.env.CALLBACK_URL}/sc3/auth/github/callback`
-                    },
+                    oauthConfig.github,
+
                     async function(accessToken, __refreshToken, profile, cb) {
-                        const displayName = profile.displayName;
-                        // this is where we try to get the email for the user
-                        console.log('USER NAME:', displayName);
-
-                        const options = {
-                            headers: {
-                                'User-Agent': 'JavaScript',
-                                Authorization: 'token ' + accessToken
-                            },
-                            json: true,
-                            url: 'https://api.github.com/user/emails'
-                        };
-
-                        // this is where we need to fetch the email address and the display name
-                        // get emails using oauth token
-                        await request(options, function(error, response, body) {
-                            if (error || response.statusCode !== 200) {
-                                console.log(error);
-                                console.log(body);
-                                return null;
-                            }
-                            const emails = body.filter(function(email) {
-                                return email.verified;
-                            });
-                            if (!emails.length) {
-                                return { error: 'Could not access your email  address ' };
-                                // >> CRITICAL ERROR
-                            }
+                        try {
+                            // Fetch user emails from GitHub
+                            const emails = await fetchGitHubEmails(accessToken);
                             const userMail = emails[0].email;
-                            console.log('UserMail ', userMail);
 
-                            // now this is goint to call find or create user
-
-                            const loginRequestOptions = {
-                                uri: `${process.env.BACKEND_SERVER_URL}/users/login/`,
-                                body: JSON.stringify({
-                                    displayName: displayName,
-                                    email: userMail,
-                                    auth_type: 'AUTH_GITHUB',
-                                    token: 'undefined'
-                                }),
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            };
-                            request(loginRequestOptions, function(error, response) {
-                                if (response && response.body) {
-                                    try {
-                                        const result = JSON.parse(response.body);
-                                        const local_accessToken = jwt.sign(
-                                            {
-                                                userId: result.user_id,
-                                                bToken: result.bToken
-                                            },
-                                            process.env.JWT_SECRET,
-                                            {
-                                                expiresIn: '8h'
-                                            }
-                                        );
-                                        cb(null, { jwt: local_accessToken }); // sends the local access token to the call back routine;
-                                    } catch (e) {
-                                        console.log(e);
-                                    }
-                                } else {
-                                    cb(null, { error: 'Could not login via GitHub' }); // sends the local access token to the call back routine;
-                                }
+                            // Find or create user in the backend
+                            const user = await findOrCreateUser({
+                                displayName: profile.displayName,
+                                email: userMail,
+                                auth_type: 'AUTH_GITHUB',
+                                token: 'undefined'
                             });
-                        });
+
+                            // Generate JWT token
+                            const local_accessToken = generateJWT(user);
+
+                            // Return user data
+                            cb(null, { jwt: local_accessToken });
+                        } catch (error) {
+                            cb(handleAuthError(error, 'GitHub'), null);
+                        }
                     }
                 )
             );
         } catch (e) {
-            console.log(e);
+            handleAuthError(e, 'GitHub Strategy Setup');
+        }
+
+        try {
+            passport.use(
+                'google',
+                new GoogleStrategy(
+                    oauthConfig.google,
+
+                    async function(accessToken, __refreshToken, profile, cb) {
+                        try {
+                            // Extract user information from the profile
+                            const userMail = profile.emails[0].value;
+
+                            // Find or create user in the backend
+                            const user = await findOrCreateUser({
+                                displayName: profile.displayName,
+                                email: userMail,
+                                auth_type: 'AUTH_GOOGLE',
+                                token: 'undefined'
+                            });
+
+                            // Generate JWT token
+                            const local_accessToken = generateJWT(user);
+
+                            // Return user data
+                            cb(null, { jwt: local_accessToken });
+                        } catch (error) {
+                            cb(handleAuthError(error, 'Google'), null);
+                        }
+                    }
+                )
+            );
+        } catch (e) {
+            handleAuthError(e, 'Google Strategy Setup');
+        }
+
+        try {
+            passport.use(
+                'sap',
+                new OAuth2Strategy(oauthConfig.sap, async function(accessToken, refreshToken, profile, cb) {
+                    try {
+                        // Fetch user info from SAP IDP
+                        const userInfoUrl = process.env.SAP_USER_INFO_URL;
+                        const userInfo = await fetchOAuth2UserInfo(accessToken, userInfoUrl);
+
+                        const userInfoObj = JSON.parse(userInfo);
+
+                        const fullName = `${userInfoObj.first_name} ${userInfoObj.last_name}`;
+                        const email = userInfoObj.email;
+
+                        // Find or create user in the backend
+                        const user = await findOrCreateUser({
+                            displayName: fullName,
+                            email: email,
+                            auth_type: 'AUTH_SAP',
+                            token: 'undefined'
+                        });
+
+                        // Generate JWT token
+                        const local_accessToken = generateJWT(user);
+
+                        // Return user data
+                        cb(null, { jwt: local_accessToken });
+                    } catch (error) {
+                        cb(handleAuthError(error, 'SAP IDP'), null);
+                    }
+                })
+            );
+        } catch (e) {
+            handleAuthError(e, 'SAP IDP Strategy Setup');
         }
     },
+
     registerUser: function(app) {
         /** USER REGISTRATION VIA EMAIL and PWD**/
         app.post('/users/register', (req, res) => {
@@ -230,14 +368,14 @@ module.exports = {
                             bToken: result.bToken
                         },
                         process.env.JWT_SECRET,
-                        { expiresIn: '8h' }
+                        { expiresIn: '1h' }
                     );
                     const token = jwt.sign(
                         {
                             data: 'TokenData'
                         },
                         process.env.JWT_SECRET,
-                        { expiresIn: '10h' }
+                        { expiresIn: '1h' }
                     );
                     const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
                     const EmailFields = {
@@ -400,7 +538,7 @@ module.exports = {
                                 bToken: result.bToken
                             },
                             process.env.JWT_SECRET,
-                            { expiresIn: '8h' }
+                            { expiresIn: '1h' }
                         );
                         res.json({ jwt: local_accessToken });
                     } else {
@@ -585,7 +723,7 @@ module.exports = {
                                 data: 'TokenData'
                             },
                             process.env.JWT_SECRET,
-                            { expiresIn: '10h' }
+                            { expiresIn: '1h' }
                         );
                         const callbackURL = `${process.env.CALLBACK_URL}/sc3/verifResetPassword/${result.user_id}/${token}`;
                         const EmailFields = {

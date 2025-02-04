@@ -12,7 +12,9 @@ import error from '../../assets/images/error.png';
 import PopUp from '../PopUp';
 import github from '../../assets/images/github.svg';
 import gitlab from '../../assets/images/gitlab.svg';
-import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB } from '../../constants/services';
+import google from '../../assets/images/google.png';
+import sapLogo from '../../assets/images/sap-logo.png';
+import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB, URL_LOGIN_VIA_GOOGLE, URL_LOGIN_VIA_SAP } from '../../constants/services';
 import { fontStyled } from '../../styledComponents/styledFont';
 import { colorStyled } from '../../styledComponents/styledColor';
 
@@ -171,7 +173,7 @@ class LoginViaEmail extends Component {
                                                 display: 'flex',
                                                 flexDirection: 'column',
                                                 justifyContent: 'space-between',
-                                                height: '100px',
+                                                height: '130px',
                                                 alignItems: 'center',
                                                 marginTop: '20px'
                                             }}
@@ -197,6 +199,28 @@ class LoginViaEmail extends Component {
                                                 <img src={gitlab} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
                                                 <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
                                                 Sign in with GitLab
+                                            </a>
+                                            {/* <a
+                                                href={URL_LOGIN_VIA_GOOGLE}
+                                                target="_self"
+                                                className="btn btn-primary"
+                                                style={{ width: '90%', backgroundColor: '#4285F4', border: 'none' }}
+                                                rel="noreferrer"
+                                            >
+                                                <img src={google} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
+                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
+                                                Sign in with Google
+                                            </a> */}
+                                            <a
+                                                href={URL_LOGIN_VIA_SAP}
+                                                target="_self"
+                                                className="btn btn-primary"
+                                                style={{ width: '90%', backgroundColor: '#0f6d9c', border: 'none' }}
+                                                rel="noreferrer"
+                                            >
+                                                <img src={sapLogo} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
+                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
+                                                Sign in with SAP
                                             </a>
                                         </div>
                                         <div style={{ textAlign: 'center', marginTop: '20px' }}>
