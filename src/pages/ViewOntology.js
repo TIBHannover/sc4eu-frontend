@@ -39,17 +39,30 @@ class ViewOntology extends Component {
         const urlParams = new URLSearchParams(this.props.location.search);
         const response = Object.fromEntries(urlParams);
 
-        // Update the state with the ontologyID value from the query params
-        this.setState({ ontologyID: response.ontologyId }, () => {
-            // Fetch the ontology from the backend if it hasn't been loaded yet
-            const loadedOntology = this.props.redux_getAlreadyLoadedOntology?.id;
-            if (loadedOntology !== this.state.ontologyID) {
-                this.props.redux_alreadyLoadedOntology({ id: this.state.ontologyID });
-                this.getOntologyFromBackend();
-            } else {
-                this.setState({ isLoading: false, ontologyFileContent: 'not exported' });
+        // Update state and ensure ontologyID is set before fetching
+        this.setState(
+            {
+                ontologyID: response.ontologyId
+            },
+            async () => {
+                const loadedOntology = this.props.redux_getAlreadyLoadedOntology?.id;
+
+                // Check if we need to fetch new data
+                if (loadedOntology !== this.state.ontologyID) {
+                    try {
+                        await this.props.redux_alreadyLoadedOntology({ id: this.state.ontologyID });
+                        await this.getOntologyFromBackend();
+                    } catch (error) {
+                        console.error('Error during ontology initialization:', error);
+                    }
+                } else {
+                    this.setState({
+                        isLoading: false,
+                        ontologyFileContent: 'not exported'
+                    });
+                }
             }
-        });
+        );
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -69,18 +82,56 @@ class ViewOntology extends Component {
         this.rightSideExpanded = val;
     };
 
-    getOntologyFromBackend = () => {
-        // TODO: refactor>? getOntologyByID -> getJSONMOdel For ontology ID
-        getOntologyBy(this.state.ontologyID).then(res => {
-            if (res.ontology_data) {
-                // create json obj from the string
-                const parsedModel = res.ontology_data;
-                this.props.initializeResourceRelationModel(parsedModel);
-                this.setState({ isLoading: false, ontologyFileContent: 'not exported' });
-            } else {
-                this.setState({ isLoading: false, error: true, errorMsg: 'Could not find this ontology' });
+    getOntologyFromBackend = async () => {
+        try {
+            // Set loading state at the start
+            this.setState({
+                isLoading: true,
+                error: false,
+                errorMsg: ''
+            });
+
+            // Validate ontologyID
+            if (!this.state.ontologyID) {
+                throw new Error('No ontology ID provided');
             }
-        });
+
+            // Fetch ontology data
+            const response = await getOntologyBy(this.state.ontologyID);
+
+            // Validate response
+            if (!response) {
+                throw new Error('No response received from server');
+            }
+
+            if (!response.ontology_data) {
+                throw new Error('Ontology data is missing in the response');
+            }
+
+            // Process the data
+            const parsedModel = response.ontology_data;
+
+            // Update Redux store
+            await this.props.initializeResourceRelationModel(parsedModel);
+
+            // Update component state
+            this.setState({
+                isLoading: false,
+                ontologyFileContent: 'not exported',
+                error: false,
+                errorMsg: ''
+            });
+        } catch (error) {
+            console.error('Failed to fetch ontology:', error);
+
+            // Set error state
+            this.setState({
+                isLoading: false,
+                error: true,
+                errorMsg: error.message || 'Could not find this ontology',
+                ontologyFileContent: undefined
+            });
+        }
     };
 
     render() {
@@ -111,7 +162,9 @@ class ViewOntology extends Component {
                                 toggleRightSideExpanded={this.setRightSideExpanded}
                             />
                         )}
-                        {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'text' && <OntologyViewAsTTL />}
+                        {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'text' && (
+                            <OntologyViewAsTTL />
+                        )}
                         {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'graph' && (
                             <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperations === 'graph'} />
                         )}

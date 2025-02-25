@@ -14,32 +14,71 @@ const getRepoFromUrl = githubapiurl => {
     const repoName = url.pathname.split('/')[2];
     return repoName;
 };
+// export const getBranchFromUrl = githubapiurl => {
+//     const url = new URL(githubapiurl);
+//     let branchName;
+
+//     if (githubapiurl.includes('raw.githubusercontent')) {
+//         branchName = url.pathname.split('/')[3];
+//     } else {
+//         branchName = url.pathname.split('/')[4];
+//     }
+
+//     // Remove 'refs/heads/' if present in branch name
+//     if (branchName.startsWith('refs/heads/')) {
+//         branchName = branchName.replace('refs/heads/', '');
+//     }
+
+//     return branchName;
+// };
+
 export const getBranchFromUrl = githubapiurl => {
     const url = new URL(githubapiurl);
     let branchName;
+
     if (githubapiurl.includes('raw.githubusercontent')) {
-        branchName = url.pathname.split('/')[3];
+        branchName = url.pathname.split('/')[3]; // Extract branch name
     } else {
         branchName = url.pathname.split('/')[4];
     }
+
+    // Fix: Handle 'refs/heads/' properly
+    if (branchName.startsWith('refs/heads/')) {
+        branchName = branchName
+            .split('/')
+            .slice(2)
+            .join('/'); // Extract actual branch name
+    } else if (branchName === 'refs') {
+        branchName = url.pathname.split('/')[5]; // Fix incorrect extraction
+    }
+
     return branchName;
 };
-const getFilePath = githubapiurl => {
+
+// const getFilePath = githubapiurl => {
+//     const url = new URL(githubapiurl);
+//     let repoPath;
+//     if (githubapiurl.includes('raw.githubusercontent')) {
+//         repoPath = url.pathname
+//             .split('/')
+//             .splice(4)
+//             .join('/');
+//     } else {
+//         repoPath = url.pathname
+//             .split('/')
+//             .splice(5)
+//             .join('/');
+//     }
+//     return repoPath;
+// };
+
+export const getFilePath = githubapiurl => {
     const url = new URL(githubapiurl);
-    let repoPath;
-    if (githubapiurl.includes('raw.githubusercontent')) {
-        repoPath = url.pathname
-            .split('/')
-            .splice(4)
-            .join('/');
-    } else {
-        repoPath = url.pathname
-            .split('/')
-            .splice(5)
-            .join('/');
-    }
-    return repoPath;
+    const pathParts = url.pathname.split('/').slice(5); // Skip user, repo, and branch parts
+
+    return pathParts.join('/'); // Return the correct file path
 };
+
 export const getRawUrlforCommit = (githubapiurl, commit_sha) => {
     const url = new URL(githubapiurl);
     const temp_url = url.href.split('/');
@@ -111,31 +150,65 @@ export const getLicense = async githubapiurl => {
     return license;
 };
 
+export const parseGitHubRawUrl = githubRawUrl => {
+    try {
+        const url = new URL(githubRawUrl);
+        const pathParts = url.pathname.split('/').slice(1); // Remove first empty item due to leading '/'
+
+        if (pathParts.length < 4) {
+            throw new Error('Invalid GitHub raw URL format.');
+        }
+
+        const owner = pathParts[0];
+        const repo = pathParts[1];
+
+        let branch, filePath;
+
+        if (pathParts[2] === 'refs' && pathParts[3] === 'heads') {
+            // URL has 'refs/heads/{branch}'
+            branch = pathParts[4];
+            filePath = pathParts.slice(5).join('/');
+        } else {
+            // Standard URL format '{owner}/{repo}/{branch}/{file_path}'
+            branch = pathParts[2];
+            filePath = pathParts.slice(3).join('/');
+        }
+
+        return { owner, repo, branch, filePath };
+    } catch (error) {
+        console.error('Error parsing GitHub raw URL:', error);
+        return null;
+    }
+};
+
 export const getGitHubFileContent = async githubapiurl => {
-    const user = getUserFromUrl(githubapiurl);
-    const repoName = getRepoFromUrl(githubapiurl);
-    const filePath = getFilePath(githubapiurl);
-    const branchName = getBranchFromUrl(githubapiurl);
+    try {
+        console.log('Fetching file content from GitHub:', githubapiurl);
+        const { owner, repo, branch, filePath } = parseGitHubRawUrl(githubapiurl);
+        const branchName = branch || 'main';
 
-    const ontologyData = await octokit.rest.repos.getContent({
-        owner: user,
-        repo: repoName,
-        path: filePath,
-        ref: branchName
-    });
-    const sha = ontologyData['data']['sha'];
+        // Fetch file content
+        const { data } = await octokit.rest.repos.getContent({
+            owner: owner,
+            repo: repo,
+            path: filePath,
+            ref: branchName
+        });
 
-    const contents = await octokit.request('GET /repos/{owner}/{repo}/git/blobs/{file_sha}', {
-        owner: user,
-        repo: repoName,
-        file_sha: sha
-    });
-    const base64Contents = contents['data']['content'];
-    const bufferObj = Buffer.from(base64Contents, 'base64');
+        const sha = data.sha;
 
-    // Encode the Buffer as a utf8 string
-    const decodedString = bufferObj.toString('utf8');
-    return decodedString;
+        // Fetch file blob using the SHA
+        const { data: blobData } = await octokit.rest.git.getBlob({
+            owner: owner,
+            repo: repo,
+            file_sha: sha
+        });
+        // Decode base64 content
+        return Buffer.from(blobData.content, 'base64').toString('utf8');
+    } catch (error) {
+        console.error('Error fetching file content from GitHub:', error);
+        return null;
+    }
 };
 
 export const listReleases = async githubapiurl => {

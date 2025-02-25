@@ -725,7 +725,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '1h' }
                         );
-                        const callbackURL = `${process.env.CALLBACK_URL}/sc3/verifResetPassword/${result.user_id}/${token}`;
+                        const callbackURL = `${process.env.CALLBACK_URL}/ocp/verifResetPassword/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.email_address,
                             subject: 'SC3 Password Reset',
@@ -755,7 +755,7 @@ module.exports = {
     },
 
     verifResetPassword: function(app) {
-        const pathname = `${process.env.CALLBACK_URL}/sc3/ResetPassword`;
+        const pathname = `${process.env.CALLBACK_URL}/ocp/ResetPassword`;
         app.get(`/verifResetPassword/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             const { user_id } = req.params;

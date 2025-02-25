@@ -47,7 +47,7 @@ class ResourceRenderer extends Component {
             const items = this.props.resources.filter(item => item.resourceURI !== 'http://www.w3.org/2000/01/rdf-schema#Literal');
             this.cropped = items.slice(0, 100);
 
-            const mappedResources = this.cropped.map(item => {
+            const mappedResources = this.cropped.map((item, index) => {
                 this.lookupList.push(
                     item.identifier
                         .split('/')
@@ -55,7 +55,7 @@ class ResourceRenderer extends Component {
                         .split('#')
                         .pop()
                 );
-                return this.renderSingleResource(item);
+                return this.renderSingleResource(item, index);
             });
             return mappedResources;
         } else {
@@ -87,11 +87,11 @@ class ResourceRenderer extends Component {
         }
     };
 
-    renderSingleResource = obj => {
+    renderSingleResource = (obj, index) => {
         return (
             <SingleResource
                 arrayOfRef={this.arrayOfRef}
-                key={'resourceIndexKey_' + obj.identifier}
+                key={'resourceIndexKey_' + obj.identifier + index}
                 registerToParent={this.registerToParent}
                 unRegisterFromParent={this.unRegisterFromParent}
                 removeFromLookupList={this.removeFromLookupList}
