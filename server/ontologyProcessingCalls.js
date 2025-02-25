@@ -8,6 +8,7 @@ const multer = require('multer');
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const { time } = require('console');
 
 module.exports = {
     preInitialization: function(app) {
@@ -96,45 +97,102 @@ module.exports = {
 
         app.get('/getJsonModelForId', (req, res) => {
             const query = req.query;
+
+            if (!query.ontology_id) {
+                return res.status(400).json({
+                    error: 'Missing ontology_id parameter'
+                });
+            }
+
             const ontology_indexOptions = {
-                uri: `${process.env.BACKEND_SERVER_URL}/ontologyIndex/?ontology_id=${query['ontology_id']}`,
+                uri: `${process.env.BACKEND_SERVER_URL}/ontologyIndex/?ontology_id=${query.ontology_id}`,
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                },
+                // Add timeout to prevent hanging requests
+                timeout: 5000
             };
+
             // two nested requests, one fetches the data from backend, the other fetches the json model from processing
             console.log('REQUESTING DATA FROM BACKEND:', ontology_indexOptions.uri);
 
             request(ontology_indexOptions, function(error, response) {
-                if (response && response.body) {
-                    try {
-                        const result = JSON.parse(response.body);
-                        console.log('GOT SOME DATA FOR ID:', query['ontology_id']);
-                        const ontologyProcessing_options = {
-                            uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModelVOWL`,
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ ontologyData: result.ontology_data })
-                        };
-                        console.log('Requesting some data from processing service', ontologyProcessing_options.uri);
+                // Handle request error
+                if (error) {
+                    console.error('Backend request failed:', error);
+                    return res.status(500).json({
+                        error: 'Failed to fetch from backend',
+                        details: error.message
+                    });
+                }
 
-                        request(ontologyProcessing_options, function(error, response) {
-                            try {
-                                const jsonModel = JSON.parse(response.body);
-                                const resultingData = { ontology_data: jsonModel };
-                                res.json(resultingData);
-                            } catch (e) {
-                                res.json({ error: 'Something went wrong in request' + response.body });
-                            }
-                        });
-                    } catch (e) {
-                        res.json({ error: 'Something went wrong in try' });
+                // Check response status
+                if (!response || response.statusCode !== 200) {
+                    console.error('Backend error:', {
+                        statusCode: response?.statusCode,
+                        body: response?.body
+                    });
+                    return res.status(response?.statusCode || 500).json({
+                        error: 'Backend server error',
+                        details: response?.body
+                    });
+                }
+
+                try {
+                    // Validate response body
+                    if (!response.body) {
+                        throw new Error('Empty response from backend');
                     }
-                } else {
-                    res.json({ error: 'Something went wrong in response' });
+
+                    const result = JSON.parse(response.body);
+
+                    if (!result.ontology_data) {
+                        throw new Error('No ontology data in response');
+                    }
+
+                    console.log('Got ontology data for ID:', query.ontology_id);
+
+                    const ontologyProcessing_options = {
+                        uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModelVOWL`,
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json'
+                        },
+                        body: JSON.stringify({ ontologyData: result.ontology_data }),
+                        timeout: 10000
+                    };
+
+                    console.log('Requesting some data from processing service', ontologyProcessing_options.uri);
+
+                    request(ontologyProcessing_options, function(procError, procResponse) {
+                        if (procError) {
+                            console.error('Processing service error:', procError);
+                            return res.status(500).json({
+                                error: 'Processing service failed',
+                                details: procError.message
+                            });
+                        }
+
+                        try {
+                            const jsonModel = JSON.parse(procResponse.body);
+                            return res.json({ ontology_data: jsonModel });
+                        } catch (parseError) {
+                            console.error('Failed to parse processing response:', parseError);
+                            return res.status(500).json({
+                                error: 'Invalid response from processing service',
+                                details: procResponse.body
+                            });
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error processing backend response:', e);
+                    return res.status(500).json({
+                        error: 'Failed to process backend response',
+                        details: e.message
+                    });
                 }
             });
         });

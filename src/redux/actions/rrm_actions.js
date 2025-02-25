@@ -86,7 +86,7 @@ export const redux_removeProject = () => {
     };
 };
 
-export const redux_addOntology = payload => dispatch => {
+export const redux_addOntology = payload => async dispatch => {
     dispatch({
         type: type.ADD_ONTOLOGY,
         payload: payload
@@ -94,7 +94,7 @@ export const redux_addOntology = payload => dispatch => {
 };
 
 export const redux_removeOntology = () => {
-    return dispatch => {
+    return async dispatch => {
         dispatch({
             type: type.DELETE_ONTOLOGY
         });

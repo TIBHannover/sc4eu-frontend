@@ -53,9 +53,7 @@ class ProjectView extends Component {
         this.setViewMode = this.setViewMode.bind(this);
     }
 
-    componentDidMount() {
-        //Get the current User from Redux State
-        //TODO Retrive all the project for the current User
+    async componentDidMount() {
         if (
             this.props.user &&
             (this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase() ||
@@ -63,15 +61,15 @@ class ProjectView extends Component {
         ) {
             this.setState({ canNotAddProject: false });
         }
-        this.getProjectsFromBackend();
+        await this.getProjectsFromBackend();
     }
 
-    componentDidUpdate = prevProps => {
+    componentDidUpdate = async prevProps => {
         if (prevProps.updateFlipFlop !== this.props.updateFlipFlop) {
-            this.getProjectsFromBackend();
+            await this.getProjectsFromBackend();
         }
         if (prevProps.user !== this.props.user && this.props.user) {
-            this.getProjectsFromBackend();
+            await this.getProjectsFromBackend();
             if (
                 this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase() ||
                 this.props.user.role.toLowerCase() === 'System Admin'.toLowerCase()
@@ -85,34 +83,76 @@ class ProjectView extends Component {
         this.setState({ viewMode: mode });
     }
 
-    getProjectsFromBackend = () => {
+    getProjectsFromBackend = async () => {
         try {
-            getAllProjects().then(allProjects => {
-                allProjects.reverse().forEach(singleProject => {
-                    if (singleProject.access_type === 'Public' || singleProject.access_type === 'public') {
-                        singleProject.unlock = true;
-                    }
-                    if (this.props.user) {
-                        if (this.props.user.role === 'System Admin' || this.props.user.role === 'system admin') {
-                            singleProject.unlock = true;
-                        }
-                        getUserProjects(this.props.user.userId).then(userProjectsUUID => {
-                            userProjectsUUID.forEach(userProjectID => {
-                                if (singleProject.uuid === userProjectID) {
-                                    singleProject.unlock = true;
-                                }
-                            });
-                            this.setState({ flipflop: !this.state.flipflop });
+            // Set loading state
+            this.setState({ isLoading: true, error: null });
+
+            // Get all projects
+            const response = await getAllProjects();
+
+            // Validate response
+            if (!response || !Array.isArray(response)) {
+                throw new Error('Invalid response from server: Expected an array of projects');
+            }
+
+            // Create a new array and reverse it
+            const allProjects = [...response];
+
+            // Process projects in parallel
+            const processedProjects = allProjects.map(project => ({
+                ...project,
+                unlock: this.determineProjectAccess(project)
+            }));
+
+            // If user is logged in, get and process user projects
+            if (this.props.user) {
+                try {
+                    const userProjectsUUID = await getUserProjects(this.props.user.userId);
+                    if (Array.isArray(userProjectsUUID)) {
+                        processedProjects.forEach(project => {
+                            if (userProjectsUUID.includes(project.uuid)) {
+                                project.unlock = true;
+                            }
                         });
                     }
-                });
+                    this.setState({ flipflop: !this.state.flipflop });
+                } catch (userError) {
+                    console.error('Error fetching user projects:', userError);
+                }
+            }
 
-                const sortProjects = [...allProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
-                this.setState({ results: sortProjects });
+            // Sort projects by name case-insensitive
+            const sortedProjects = processedProjects.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+
+            this.setState({
+                results: sortedProjects,
+                isLoading: false,
+                error: null
             });
-        } catch (e) {
-            console.log('Error in getting projects from backend, docker might be down', e);
+        } catch (error) {
+            console.error('Failed to fetch projects:', error);
+            this.setState({
+                error: 'Failed to load projects. Please try again later.',
+                results: [],
+                isLoading: false
+            });
         }
+    };
+
+    // Helper method to determine project access
+    determineProjectAccess = project => {
+        // Project is public
+        if (project.access_type.toLowerCase() === 'public') {
+            return true;
+        }
+
+        // User is system admin
+        if (this.props.user?.role?.toLowerCase() === 'system admin') {
+            return true;
+        }
+
+        return false;
     };
 
     projectCreated = param => {

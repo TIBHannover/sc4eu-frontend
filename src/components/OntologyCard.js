@@ -57,9 +57,10 @@ class OntologyCard extends Component {
         this.setState({ isPopUpOpen: !this.state.isPopUpOpen, popUpMessage: 'Are you sure you want to Delete this ontology ?', isAuthorized: true });
     };
 
-    onclick = () => {
-        this.props.redux_removeOntology();
-        this.props.redux_addOntology(this.props.inputData);
+    onclick = async () => {
+        console.log('Ontology data:', this.props.inputData);
+        await this.props.redux_removeOntology();
+        await this.props.redux_addOntology(this.props.inputData);
         Cookies.set(MODE_OF_OPERATIONS, 'hybrid');
     };
 
