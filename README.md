@@ -16,10 +16,10 @@ run `sh install_dependencies.sh`
 This runs the `npm install` command in the current and the server folders.
 
 <b>Create an .env file.</b> 
-You can find an example for the content in the file `env.example`
+You can find an example for the content in the file `.env.example`
 
 <b>The server has also its own .env file.</b> 
-You can find an example for the content in the file `/server/env.example`
+You can find an example for the content in the file `/server/.env.example`
  
 
 # Starting the server 
