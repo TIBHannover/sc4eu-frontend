@@ -2,6 +2,7 @@ node_modules
 npm-debug.log
 src/npm-debug.log
 .env
+!.env.example
 
 build/
 !build/favicon.ico

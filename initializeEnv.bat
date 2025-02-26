@@ -9,5 +9,5 @@ IF EXIST %FILE% (
     ECHO %FILE% exists
 ) ELSE (
     ECHO not found
-	copy env.example .env
+	copy .env.example .env
 )
