@@ -6,7 +6,7 @@ import App from './App';
 import { unregister } from './registerServiceWorker';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import configureStore, { history } from './store';
+import { store, persistor, history } from './store';
 import rootReducer from './redux/rootReducer';
 import { CookiesProvider } from 'react-cookie';
 import { DndProvider } from 'react-dnd';
@@ -24,15 +24,14 @@ const piwik = new ReactPiwik({
     siteId: 40
 });
 
-let category = 'Default Category';  // Provide a default value
-let action = 'Default Action';      // Provide a default value
+let category = 'Default Category'; // Provide a default value
+let action = 'Default Action'; // Provide a default value
 
 ReactPiwik.push(['trackPageView']);
 ReactPiwik.push(['trackEvent', category, action]);
 
 const piwikHistory = piwik.connectToHistory(history);
 
-const { store, persistor } = configureStore();
 const queryClient = new QueryClient();
 
 const render = () => {

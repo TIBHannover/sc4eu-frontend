@@ -1,14 +1,16 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 
-import auth from './reducers/auth';
+import authReducer from './reducers/auth';
 import ResourceRelationModelReducer from './reducers/resourceRelationModel';
 import globalUIReducer from './reducers/globaUI';
 
-export default history =>
+const createRootReducer = history =>
     combineReducers({
-        router: history ? connectRouter(history) : null,
-        auth,
+        router: history ? connectRouter(history) : undefined,
+        auth: authReducer,
         ResourceRelationModelReducer,
         globalUIReducer
     });
+
+export default createRootReducer;
