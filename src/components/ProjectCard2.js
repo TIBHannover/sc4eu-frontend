@@ -58,7 +58,20 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
     };
 
     return (
-        <StyledTooltip title={project.description} placement="top" arrow enterDelay={50} leaveDelay={200}>
+        <StyledTooltip
+            title={
+                <React.Fragment>
+                    <Typography component="div" style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+                        {project.name}
+                    </Typography>
+                    <Typography component="div">{project.description}</Typography>
+                </React.Fragment>
+            }
+            placement="top"
+            arrow
+            enterDelay={50}
+            leaveDelay={200}
+        >
             <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
                 <CardActionArea onClick={handleCardClick} style={{ height: '100%', position: 'relative' }}>
                     <CardMedia
