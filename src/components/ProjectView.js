@@ -1,32 +1,25 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, CardFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import CreateProjectModal from './CreateProjectModal';
 import { getAllProjects } from '../network/projectIndexing';
 import ProjectCard from './ProjectCard';
+import ProjectCard2 from './ProjectCard2';
 import { getUserProjects } from '../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faCaretLeft, faCaretRight, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import ProjectPermissionModal from './Modals/ProjectPermissionModal';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import { Breadcrumbs, CardActionArea, CardMedia } from '@mui/material';
-import microchip from '../assets/images/cpu.png';
-import sc4euLogo from '../assets/images/logo.png';
-import sandboxIcon from '../assets/images/sandbox.png';
-import public_collection from '../assets/images/public_collection.png';
-import private_collection from '../assets/images/private_collection.png';
-import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import theme from '../theme';
-import BreadcrumbBar from './ReusableComponents/BreadcrumbBar';
+import { deleteProject } from '../network/projectIndexing';
+import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import EditProjectModal from './EditProjectModal';
+import CheckboxDropdown from '../utils/CheckboxDropdown';
+
 class ProjectView extends Component {
     constructor(props) {
         super(props);
@@ -37,7 +30,8 @@ class ProjectView extends Component {
             collapse: true,
             collapseMetaInfo: true,
             showCreateProjectModal: false,
-            results: '',
+            allProjects: '',
+            unlockedProjects: '',
             isLoading: true,
             flipflop: false,
             isEditing: { description: false, title: false, version: false, iri: false },
@@ -47,13 +41,14 @@ class ProjectView extends Component {
             collapseSC3Project: false,
             collapseSandBoxProject: false,
             showEmailModal: false,
-            selectedCollection: null,
-            viewMode: 'collections'
+            selectedProject: null,
+            showEditProjectModal: false,
+            selectedCollections: []
         };
-        this.setViewMode = this.setViewMode.bind(this);
     }
 
     async componentDidMount() {
+        console.log('ProjectView componentDidMount');
         if (
             this.props.user &&
             (this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase() ||
@@ -79,17 +74,15 @@ class ProjectView extends Component {
         }
     };
 
-    setViewMode(mode) {
-        this.setState({ viewMode: mode });
-    }
-
     getProjectsFromBackend = async () => {
         try {
+            console.log('Fetching projects from backend');
             // Set loading state
             this.setState({ isLoading: true, error: null });
 
             // Get all projects
             const response = await getAllProjects();
+            console.log('response:', response);
 
             // Validate response
             if (!response || !Array.isArray(response)) {
@@ -100,10 +93,17 @@ class ProjectView extends Component {
             const allProjects = [...response];
 
             // Process projects in parallel
-            const processedProjects = allProjects.map(project => ({
-                ...project,
-                unlock: this.determineProjectAccess(project)
-            }));
+            const processedProjects = await Promise.all(
+                allProjects.map(async project => {
+                    const unlock = this.determineProjectAccess(project);
+                    const allows = await userIsAllowdToUploadOntology();
+                    return {
+                        ...project,
+                        unlock,
+                        canDelete: allows.result && unlock
+                    };
+                })
+            );
 
             // If user is logged in, get and process user projects
             if (this.props.user) {
@@ -124,9 +124,11 @@ class ProjectView extends Component {
 
             // Sort projects by name case-insensitive
             const sortedProjects = processedProjects.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            const unlockedProjects = sortedProjects.filter(item => item.unlock);
 
             this.setState({
-                results: sortedProjects,
+                allProjects: sortedProjects,
+                unlockedProjects: unlockedProjects,
                 isLoading: false,
                 error: null
             });
@@ -134,7 +136,8 @@ class ProjectView extends Component {
             console.error('Failed to fetch projects:', error);
             this.setState({
                 error: 'Failed to load projects. Please try again later.',
-                results: [],
+                allProjects: [],
+                unlockedProjects: [],
                 isLoading: false
             });
         }
@@ -166,113 +169,135 @@ class ProjectView extends Component {
         this.setState({ showEmailModal: false });
     };
 
-    ProjectSection = ({ project }) => {
-        const selectedCollection = this.state.selectedCollection;
-        const user = this.props.user;
-        const filteredProject = project.filter(item => {
-            const isSC3 =
-                item.name.toLowerCase().includes('sc3') ||
-                item.name.toLowerCase().includes('sc3') ||
-                item.name.toLowerCase().includes('semantically connected semiconductor supply chains');
-            const isSandbox = item.name.toLowerCase().includes('sandbox');
-            const isPublicOrPrivate = item.unlock && item.access_type === selectedCollection.collectionId;
+    handleEdit = project => {
+        console.log('Edit project:', project);
+        // Implement the logic to edit the project here
+        // For example, you can open a modal to edit the project details
+        this.setState({ showEditProjectModal: true, selectedProject: project });
+    };
 
-            if (selectedCollection.collectionId === 'sc4eu') {
-                return isSC3;
-            }
-            if (selectedCollection.collectionId === 'Sandbox') {
-                return isSandbox;
-            }
-            return isPublicOrPrivate && !isSC3 && !isSandbox;
-        });
+    closeEditProjectModal = () => {
+        this.setState({ showEditProjectModal: false, selectedProject: null });
+    };
 
-        return (
-            <>
-                {filteredProject.length > 0 ? (
-                    filteredProject.map(item => (
-                        <ProjectCard key={'ProjectCard_' + item.uuid} inputData={item} currentUser={user} callback={this.props.reloadAfterUpdate} />
-                    ))
-                ) : (
-                    <div style={{ paddingLeft: '3.5%' }}>
-                        <StyledInfoSpan>{user ? 'You do not have project' : 'Please log in to see your own projects'}</StyledInfoSpan>
-                    </div>
-                )}
-            </>
+    updateProject = updatedProject => {
+        this.setState(
+            prevState => {
+                const allProjects = prevState.allProjects.map(project => (project.uuid === updatedProject.uuid ? updatedProject : project));
+                const unlockedProjects = allProjects.filter(project => project.unlock);
+                return {
+                    allProjects,
+                    unlockedProjects,
+                    selectedProject: null // Close modal after update
+                };
+            },
+            () => {
+                this.projectEdited({ result: true });
+            }
         );
     };
 
-    handleCardClick = collection => {
-        this.setState({ selectedCollection: collection, collapsePublicProject: false, viewMode: 'projects' });
+    projectEdited = param => {
+        if (param.result === true) {
+            this.setState({ showEditProjectModal: false, editingProject: null });
+            this.getProjectsFromBackend(); // Call getProjectsFromBackend directly
+        }
+    };
+
+    handleDelete = project => {
+        console.log('Delete project:', project.uuid);
+        if (window.confirm('Are you sure you want to delete this project?')) {
+            this.deleteProject(project.uuid);
+        }
+    };
+
+    deleteProject = async projectId => {
+        try {
+            // Set loading state
+            this.setState({ isLoading: true, error: null });
+
+            // Call the delete project API
+            await deleteProject(projectId);
+
+            // Remove the deleted project from the state
+            const updatedProjects = this.state.allProjects.filter(project => project.uuid !== projectId);
+            const updatedUnlockedProjects = updatedProjects.filter(project => project.unlock);
+
+            this.setState({
+                allProjects: updatedProjects,
+                unlockedProjects: updatedUnlockedProjects,
+                isLoading: false
+            });
+        } catch (error) {
+            console.error('Failed to delete project:', error);
+            this.setState({
+                error: 'Failed to delete project. Please try again later.',
+                isLoading: false
+            });
+        }
+    };
+
+    handleCollectionSelectionChange = selectedItems => {
+        this.setState({ selectedCollections: selectedItems });
+        console.log('Selected items:', selectedItems);
+        // Do something with the selected items
+    };
+
+    projectsInSelectedCollections = () => {
+        const { selectedCollections, unlockedProjects } = this.state;
+
+        // If no collections are selected, return all unlocked projects
+        if (selectedCollections.length === 0) {
+            return unlockedProjects;
+        }
+
+        console.log('Selected collections:', selectedCollections);
+        console.log('Unlocked projects:', unlockedProjects);
+
+        // Filter projects based on selected collections and specific rules
+        return unlockedProjects.filter(project => {
+            // Check if the project matches any of the selected collections
+            return selectedCollections.some(collectionId => {
+                const isSC3 =
+                    project.name.toLowerCase().includes('sc3') ||
+                    project.name.toLowerCase().includes('sc4eu') ||
+                    project.name.toLowerCase().includes('semantically connected semiconductor supply chains');
+                const isSandbox = project.name.toLowerCase().includes('sandbox');
+
+                const isPublic = project.access_type === 'Public';
+
+                // Apply specific filtering rules based on collection ID
+                if (collectionId === 'SC4EU Collection' && isSC3) {
+                    return true;
+                }
+                if (collectionId === 'Sandbox Collection' && isSandbox) {
+                    return true;
+                }
+                if (collectionId === 'Public Collection' && isPublic) {
+                    return true;
+                }
+                if (collectionId === 'My Collection') {
+                    return !isSC3 && !isSandbox && !isPublic;
+                }
+
+                return false;
+            });
+        });
     };
 
     render() {
-        const collections = [
-            {
-                id: 1,
-                title: 'Semantically Connected Semiconductor Supply Chains',
-                collectionId: 'sc4eu',
-                description: 'This is collection of all project related to Semantically Connected Semiconductor' + ' Supply Chains',
-                image: sc4euLogo
-            },
-            {
-                id: 2,
-                title: 'Sandbox Collection',
-                collectionId: 'Sandbox',
-                description: 'Sandbox Collection is a collection of projects that are available to all registered' + ' users',
-                image: sandboxIcon
-            },
-            {
-                id: 3,
-                title: 'My Collection',
-                collectionId: 'Private',
-                description: 'My Collection is a collection of projects that are available to you',
-                image: private_collection
-            },
-            {
-                id: 4,
-                title: 'Public Collection',
-                collectionId: 'Public',
-                description: 'Public Collection is a collection of projects that are available to all users',
-                image: public_collection
-            }
-        ];
-        // const BreadcrumbBar = collection => {
-        //     const classes = useStyles();
-        //     return (
-        //         <div className={classes.breadcrumbContainer}>
-        //             <Breadcrumbs aria-label="breadcrumb" separator=">">
-        //                 <Link
-        //                     className={classes.link}
-        //                     onClick={event => {
-        //                         event.preventDefault();
-        //                         this.setState({ viewMode: 'collections' });
-        //                     }}
-        //                 >
-        //                     Collections
-        //                 </Link>
-        //                 <Link
-        //                     className={classes.current}
-        //                     color="textPrimary"
-        //                     onClick={event => {
-        //                         event.preventDefault();
-        //                         this.setState({ viewMode: 'projects' });
-        //                     }}
-        //                 >
-        //                     Projects
-        //                 </Link>
-        //             </Breadcrumbs>
-        //         </div>
-        //     );
-        // };
+        const collectionOptions = ['SC4EU Collection', 'Sandbox Collection', 'Public Collection', 'My Collection'];
+        const defaultOptions = collectionOptions.slice(0, 2);
+
         return (
             <StyledRootDiv>
-                {/*<StyledHeadingDiv>*/}
-                {/*    <h4 style={{ width: '100%', margin: '0 auto' }}>{this.state.title}</h4>*/}
-                {/*</StyledHeadingDiv>*/}
-                {this.state.viewMode === 'projects' && (
-                    <BreadcrumbBar setViewMode={this.setViewMode} isOntologyView={false} currentViewMode={this.state.viewMode} />
-                )}
                 <StyledSubHeadingDiv>
+                    <CheckboxDropdown
+                        defaultOptions={defaultOptions}
+                        options={collectionOptions}
+                        title="Collections"
+                        onChange={this.handleCollectionSelectionChange}
+                    />
                     <StyledInfoSpan style={{ margin: '15px 15px 15px 15px', float: 'left' }}>
                         Click on one of the projects below to view its ontologies
                     </StyledInfoSpan>
@@ -294,6 +319,9 @@ class ProjectView extends Component {
                             this.projectCreated(param);
                         }}
                     />
+                    {this.state.selectedProject && (
+                        <EditProjectModal project={this.state.selectedProject} onUpdate={this.updateProject} onClose={this.closeEditProjectModal} />
+                    )}
                     <ProjectPermissionModal
                         toggle={() => {
                             this.setState({ showEmailModal: !this.state.showEmailModal });
@@ -332,34 +360,29 @@ class ProjectView extends Component {
                 </StyledSubHeadingDiv>
                 <StyledScrollbarDiv>
                     <Scrollbars>
-                        {this.state.viewMode === 'collections' && (
-                            <StyledCollectionGrid>
-                                {collections.map(collection => (
-                                    <StyledCard key={`collection_${collection.id}`}>
-                                        <CardActionArea onClick={() => this.handleCardClick(collection)} style={{ height: '100%' }}>
-                                            <CardMedia
-                                                component="img"
-                                                height="100"
-                                                image={collection.image}
-                                                style={{ objectFit: 'contain' }}
-                                                alt="semiconductor image"
-                                            />
-                                            <CardContent>
-                                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
-                                                    {collection.title}
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    {collection.description}
-                                                </Typography>
-                                            </CardContent>
-                                        </CardActionArea>
-                                    </StyledCard>
-                                ))}
-                            </StyledCollectionGrid>
-                        )}
-                        {this.state.viewMode === 'projects' && this.state.selectedCollection && (
-                            <>{this.state.results ? <this.ProjectSection project={this.state.results} /> : 'Still Loading'}</>
-                        )}
+                        <StyledProjectsGrid>
+                            {this.state.allProjects ? (
+                                this.state.unlockedProjects.length > 0 ? (
+                                    this.projectsInSelectedCollections().map((project, index) => (
+                                        // <ProjectCard
+                                        //     key={index}
+                                        //     inputData={project}
+                                        //     currentUser={this.props.user}
+                                        //     callback={this.props.reloadAfterUpdate}
+                                        // />
+                                        <ProjectCard2 key={index} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
+                                    ))
+                                ) : (
+                                    <div style={{ paddingLeft: '3.5%' }}>
+                                        <StyledInfoSpan>
+                                            {this.props.user ? 'You do not have project' : 'Please log in to see your own projects'}
+                                        </StyledInfoSpan>
+                                    </div>
+                                )
+                            ) : (
+                                'Still Loading'
+                            )}
+                        </StyledProjectsGrid>
                     </Scrollbars>
                 </StyledScrollbarDiv>
             </StyledRootDiv>
@@ -382,52 +405,12 @@ ProjectView.propTypes = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
 
-// const useStyles = makeStyles(theme => ({
-//     breadcrumbContainer: {
-//         backgroundColor: colorStyled.CONTAINER_BACKGROUND_COLOR,
-//         borderRadius: '12px',
-//         padding: '8px 16px',
-//         display: 'inline-block',
-//         width: '100%'
-//     },
-//     link: {
-//         color: '#4285f4',
-//         textDecoration: 'none',
-//         '&:hover': {
-//             textDecoration: 'underline'
-//         }
-//     },
-//     current: {
-//         color: '#000000',
-//         textDecoration: 'none',
-//         cursor: 'default'
-//     },
-//     separator: {
-//         color: '#000000',
-//         fontWeight: 'bold'
-//     }
-// }));
-
-const StyledCollectionGrid = styled.div`
+const StyledProjectsGrid = styled.div`
     display: flex;
     justify-content: space-evenly;
     margin: 2px;
     flex-wrap: wrap;
     gap: 20px;
-`;
-
-const StyledCard = styled(Card)`
-    && {
-        background-color: ${colorStyled.PRIMARY.light};
-        padding: 3px;
-        border-radius: 20px;
-        transition: transform 0.2s;
-        width: 300px; // Set the width
-        height: 300px; // Set the height
-        &:hover {
-            transform: scale(1.05);
-        }
-    }
 `;
 
 const StyledRootDiv = styled.div`
@@ -438,28 +421,6 @@ const StyledRootDiv = styled.div`
     height: 95%;
     margin-right: 2%;
     font-family: ${fontStyled.fontFamily};
-`;
-
-const StyledHeadingDiv = styled.div`
-    border-radius: 10px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background-color: ${colorStyled.PRIMARY.dark};
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-`;
-
-const StyledButton = styled.button`
-    width: 100%;
-    border: none;
-    background: none;
-    display: flex;
-    padding-top: 10px;
-    transition: 0.9s;
 `;
 
 const StyledSubHeadingDiv = styled.div`
@@ -496,29 +457,4 @@ const StyledIcon = styled(FontAwesomeIcon)`
 const StyledScrollbarDiv = styled.div`
     height: calc(100% - 160px);
     border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
-`;
-
-const StyledH4 = styled.h4`
-    width: 98%;
-    text-align: left;
-    color: ${colorStyled.PRIMARY.dark};
-    border-bottom: 2px solid ${colorStyled.BORDER_COLOR};
-    line-height: 0.1em;
-    margin: 10px 0px 20px 0px;
-    font-size: ${fontStyled.fontSize.subHeading};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.Heading};
-    }
-`;
-
-const StyledCollapseDiv = styled.div`
-    overflow: hidden;
-    transition: max-height 0.9s ease-out;
-    max-height: ${props => (props.collapse ? 'auto' : '0')};
-
-    & > * {
-        transition: opacity 0.9s;
-        opacity: ${props => (props.collapse ? '1' : '0')};
-    }
 `;

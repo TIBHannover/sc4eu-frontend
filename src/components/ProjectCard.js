@@ -19,7 +19,7 @@ import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
 
-class ProjectIndexCards extends Component {
+class ProjectCards extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -199,7 +199,7 @@ class ProjectIndexCards extends Component {
     }
 }
 
-ProjectIndexCards.propTypes = {
+ProjectCards.propTypes = {
     inputData: PropTypes.object.isRequired,
     currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
     callback: PropTypes.func.isRequired,
@@ -219,7 +219,7 @@ const mapDispatchToProps = dispatch => ({
     redux_addProject: data => dispatch(redux_addProject(data))
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProjectIndexCards));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProjectCards));
 
 const StyledButton = styled(Button)`
     :hover {
