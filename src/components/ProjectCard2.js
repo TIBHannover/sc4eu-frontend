@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
 import IconButton from '@mui/material/IconButton';
@@ -12,6 +12,22 @@ import ROUTES from '../constants/routes';
 import private_collection from '../assets/images/private_collection.png';
 import theme from '../theme';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
+
+const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
+    & .MuiTooltip-tooltip {
+        background-color: ${colorStyled.SECONDARY.dark};
+        color: white;
+        font-size: 14px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        max-width: 300px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        margin: 8px;
+    }
+    & .MuiTooltip-arrow {
+        color: ${colorStyled.SECONDARY.dark};
+    }
+`;
 
 function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology }) {
     const history = useHistory();
@@ -42,27 +58,47 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
     };
 
     return (
-        <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
-            <CardActionArea onClick={handleCardClick} style={{ height: '100%' }}>
-                <CardMedia component="img" height="100" image={private_collection} style={{ objectFit: 'contain' }} alt="semiconductor image" />
-                <CardContent>
-                    <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
-                        {project.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        {project.description}
-                    </Typography>
-                </CardContent>
-                <CardActions disableSpacing>
-                    <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete}>
-                        <Edit />
-                    </IconButton>
-                    <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete}>
-                        <Delete />
-                    </IconButton>
-                </CardActions>
-            </CardActionArea>
-        </StyledCard>
+        <StyledTooltip title={project.description} placement="top" arrow enterDelay={50} leaveDelay={200}>
+            <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
+                <CardActionArea onClick={handleCardClick} style={{ height: '100%', position: 'relative' }}>
+                    <CardMedia
+                        component="img"
+                        height="50"
+                        image={private_collection}
+                        style={{
+                            objectFit: 'contain',
+                            position: 'absolute',
+                            top: '12px',
+                            left: '12px',
+                            width: '50px',
+                            zIndex: 1
+                        }}
+                        alt="semiconductor image"
+                    />
+                    <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '60px' }}>
+                        <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                            {project.name}
+                        </Typography>
+                    </CardContent>
+                    <CardActions
+                        disableSpacing
+                        style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            right: 0,
+                            padding: '8px'
+                        }}
+                    >
+                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete}>
+                            <Edit />
+                        </IconButton>
+                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete}>
+                            <Delete />
+                        </IconButton>
+                    </CardActions>
+                </CardActionArea>
+            </StyledCard>
+        </StyledTooltip>
     );
 }
 

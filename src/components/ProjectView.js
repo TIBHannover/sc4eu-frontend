@@ -436,7 +436,7 @@ const StyledInfoSpan = styled.span`
 `;
 
 const StyledButtonToAddProject = styled(Button)`
-    margin: 15px 15px 15px 0px;
+    margin: 10px 15px 15px 0px;
     background-color: ${colorStyled.SECONDARY.dark};
     float: right;
     font-size: ${fontStyled.fontSize.NormalText};
