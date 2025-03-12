@@ -10,161 +10,93 @@ export default class EditProjectModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            projectItems: {
-                uuid: '',
-                projectName: '',
-                projectDescription: '',
-                accessType: '',
-                isDropdownDisabled: false
-            },
-            allowedToEditProjects: false
+            projectName: props.project.name,
+            projectDescription: props.project.description,
+            accessType: this.isSC3Project(props.project.name) ? 'Public' : props.project.access_type,
+            isDropdownDisabled: this.isSC3Project(props.project.name)
         };
     }
 
-    componentDidMount() {
-        const projectData = this.props.projectData;
-        this.setState(
-            {
-                projectItems: {
-                    uuid: projectData.uuid,
-                    projectName: projectData.name,
-                    projectDescription: projectData.description,
-                    accessType: projectData.access_type
-                }
-            },
-            // Check if the entered value contains 'sc3' or 'sc 3' (case-insensitive).
-            () => {
-                if (
-                    this.state.projectItems.projectName.toLowerCase().includes('sc3') ||
-                    this.state.projectItems.projectName.toLowerCase().includes('sc 3')
-                ) {
-                    // If it does, set the accessType to 'Public' and disable the dropdown because SC3 project will be always public projects.
-                    this.setState({ accessType: 'Public', isDropdownDisabled: true });
-                }
-            }
-        );
-    }
+    isSC3Project = name => name.toLowerCase().includes('sc3') || name.toLowerCase().includes('sc 3');
 
-    componentDidUpdate = async prevProps => {
-        if (prevProps.showDialog === false && this.props.showDialog === true) {
-            const allows = await userIsAllowdToUploadOntology();
-            this.setState({ allowedToEditProjects: allows.result });
-        }
+    handleSubmit = () => {
+        const updatedProject = {
+            uuid: this.props.project.uuid,
+            name: this.state.projectName,
+            description: this.state.projectDescription,
+            access_type: this.state.accessType
+        };
+        console.log(updatedProject);
+        const projectItems = {
+            uuid: updatedProject.uuid,
+            projectName: updatedProject.name,
+            projectDescription: updatedProject.description,
+            accessType: updatedProject.access_type,
+            isDropdownDisabled: this.state.isDropdownDisabled
+        };
+        editProject(projectItems)
+            .then(() => {
+                this.props.onUpdate(updatedProject);
+                this.props.onClose();
+            })
+            .catch(error => {
+                console.error('Error updating project:', error);
+            });
     };
 
-    handelOnChange = event => {
-        const newProjectItems = { ...this.state.projectItems };
-        newProjectItems[event.target.name] = event.target.value;
-        this.setState(
-            {
-                projectItems: newProjectItems
-            },
-            () => {
-                // Check if the entered value contains 'sc3' or 'sc 3' (case-insensitive).
-                if (
-                    this.state.projectItems.projectName.toLowerCase().includes('sc3') ||
-                    this.state.projectItems.projectName.toLowerCase().includes('sc 3')
-                ) {
-                    // If it does, set the accessType to 'Public' and disable the dropdown because SC3 project will be always public projects.
-                    this.setState({ accessType: 'Public', isDropdownDisabled: true });
-                } else {
-                    // If it doesn't, clear the accessType and enable the dropdown.
-                    this.setState({ accessType: '', isDropdownDisabled: false });
-                }
-            }
-        );
-    };
-
-    editProject = () => {
-        if (!this.state.allowedToEditProjects && !this.props.projectData.unlock) {
-            this.props.toggle();
-            return;
-        }
-
-        editProject(this.state.projectItems).then(res => {
-            this.props.callback(res);
-        });
+    handleCancel = () => {
+        this.props.onClose();
     };
 
     render() {
+        const { onClose, project } = this.props;
         return (
-            <Modal
-                style={{ width: '80%', maxWidth: '50%', fontFamily: fontStyled.fontFamily }}
-                isOpen={this.props.showDialog}
-                toggle={this.props.toggle}
-                autoFocus={false}
-            >
-                <ModalHeader toggle={this.props.toggle} autoFocus={false}>
-                    Edit Project
-                </ModalHeader>
-                <ModalBody id="createProjectBody">
-                    {this.state.allowedToEditProjects && this.props.projectData.unlock ? (
-                        <div>
-                            <FormGroup>
-                                <Label for="projectName">Name</Label>
-                                <Input
-                                    type="text"
-                                    name="projectName"
-                                    id="projectName"
-                                    defaultValue={this.state.projectItems.projectName}
-                                    onChange={this.handelOnChange}
-                                />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="projectDescription">Description</Label>
-                                <Input
-                                    type="textarea"
-                                    name="projectDescription"
-                                    id="projectDescription"
-                                    defaultValue={this.state.projectItems.projectDescription}
-                                    onChange={this.handelOnChange}
-                                />
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="accessType">Access Type</Label>
-                                <Input
-                                    type="select"
-                                    name="accessType"
-                                    id="accessType"
-                                    defaultValue={this.state.projectItems.accessType || 'Select Access Type...'}
-                                    onChange={this.handelOnChange}
-                                    disabled={this.state.isDropdownDisabled}
-                                >
-                                    <option defaultValue={this.state.projectItems.accessType || 'Select Access Type...'} disabled>
-                                        {this.state.projectItems.accessType || 'Select Access Type...'}
-                                    </option>
-                                    <option>Public</option>
-                                    <option>Private</option>
-                                </Input>
-                                {this.state.isDropdownDisabled && (
-                                    <p className="text-info mt-2">
-                                        You have the word "SC3" in the Name field. So it's by default access type is Public{' '}
-                                    </p>
-                                )}
-                            </FormGroup>
-                        </div>
-                    ) : (
-                        <p>
-                            Sorry, you are not allowed to Edit projects
-                            <br /> Only System Admin, Project Admin and Member are allowed to Edit projects
-                        </p>
-                    )}
+            <Modal style={{ width: '80%', fontFamily: fontStyled.fontFamily }} isOpen={!!project} toggle={onClose}>
+                <ModalHeader>Edit Project</ModalHeader>
+                <ModalBody>
+                    <FormGroup>
+                        <Label for="projectName">Name</Label>
+                        <Input
+                            type="text"
+                            name="projectName"
+                            value={this.state.projectName}
+                            onChange={e => this.setState({ projectName: e.target.value })}
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="projectDescription">Description</Label>
+                        <Input
+                            type="textarea"
+                            name="projectDescription"
+                            value={this.state.projectDescription}
+                            onChange={e => this.setState({ projectDescription: e.target.value })}
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="accessType">Access Type</Label>
+                        <Input
+                            type="select"
+                            name="accessType"
+                            value={this.state.accessType}
+                            onChange={e => this.setState({ accessType: e.target.value })}
+                            disabled={this.state.isDropdownDisabled}
+                        >
+                            <option value="">Select Access Type...</option>
+                            <option value="Public">Public</option>
+                            <option value="Private">Private</option>
+                        </Input>
+                        {this.state.isDropdownDisabled && (
+                            <p className="text-info mt-2">You have the word "SC3" in the Name field. So it's by default access type is Public </p>
+                        )}
+                    </FormGroup>
                 </ModalBody>
                 <ModalFooter>
-                    {this.state.allowedToEditProjects && this.props.projectData.unlock ? (
-                        <Button
-                            id="finishButton"
-                            onClick={() => {
-                                this.editProject();
-                            }}
-                            autoFocus={true}
-                            style={{ background: colorStyled.SECONDARY.dark }}
-                        >
-                            Submit
-                        </Button>
-                    ) : (
-                        <p />
-                    )}
+                    <Button onClick={this.handleSubmit} style={{ background: colorStyled.SECONDARY.dark }}>
+                        Submit
+                    </Button>
+                    <Button onClick={this.handleCancel} style={{ background: colorStyled.SECONDARY.dark }}>
+                        Cancel
+                    </Button>
                 </ModalFooter>
             </Modal>
         );
@@ -172,8 +104,7 @@ export default class EditProjectModal extends Component {
 }
 
 EditProjectModal.propTypes = {
-    showDialog: PropTypes.bool.isRequired,
-    toggle: PropTypes.func.isRequired,
-    callback: PropTypes.func.isRequired,
-    projectData: PropTypes.object.isRequired
+    project: PropTypes.object.isRequired,
+    onUpdate: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired
 };

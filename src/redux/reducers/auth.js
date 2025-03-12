@@ -8,20 +8,23 @@ const initialState = {
     redirectRoute: null
 };
 
-export default (state = initialState, action) => {
+// Selector function to check if user is authenticated
+export const selectIsAuthenticated = state => Boolean(state.auth.user && state.auth.user !== 0);
+
+export default function authReducer(state = initialState, action) {
     switch (action.type) {
         case type.UPDATE_USER_SETTINGS:
-            const currentState = { ...state };
-            // we try to merge the payload into the new state
-            const payload = action.payload.user; // this unrolls the user obj
-            currentState.user = { ...currentState.user, ...payload };
-            return currentState;
+            return {
+                ...state,
+                user: state.user ? { ...state.user, ...action.payload.user } : action.payload.user
+            };
 
         case type.UPDATE_AUTH:
             return {
                 ...state,
                 ...action.payload
             };
+
         case type.RESET_AUTH:
             return {
                 ...state,
@@ -29,13 +32,10 @@ export default (state = initialState, action) => {
             };
 
         case type.OPEN_AUTHENTICATION_DIALOG: {
-            const { payload } = action;
             return {
                 ...state,
                 dialogIsOpen: true,
-                action: payload.action,
-                signInRequired: payload.signInRequired,
-                redirectRoute: payload.redirectRoute
+                ...action.payload
             };
         }
 
@@ -58,4 +58,4 @@ export default (state = initialState, action) => {
             return state;
         }
     }
-};
+}
