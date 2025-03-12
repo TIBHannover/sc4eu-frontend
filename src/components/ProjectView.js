@@ -2,23 +2,23 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
-import CreateProjectModal from './CreateProjectModal';
-import { getAllProjects } from '../network/projectIndexing';
-import ProjectCard from './ProjectCard';
-import ProjectCard2 from './ProjectCard2';
-import { getUserProjects } from '../network/UserProfileCalls';
-import { Scrollbars } from 'react-custom-scrollbars-2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
-import ProjectPermissionModal from './Modals/ProjectPermissionModal';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
-import { deleteProject } from '../network/projectIndexing';
-import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import ProjectCard2 from './ProjectCard2';
+import CreateProjectModal from './CreateProjectModal';
 import EditProjectModal from './EditProjectModal';
+import ProjectPermissionModal from './Modals/ProjectPermissionModal';
 import CheckboxDropdown from '../utils/CheckboxDropdown';
+import DeleteConfirmationDialog from '../utils/DeleteConfirmationDialog';
+import { getAllProjects, deleteProject } from '../network/projectIndexing';
+import { getUserProjects } from '../network/UserProfileCalls';
+import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
 
 class ProjectView extends Component {
     constructor(props) {
@@ -43,7 +43,9 @@ class ProjectView extends Component {
             showEmailModal: false,
             selectedProject: null,
             showEditProjectModal: false,
-            selectedCollections: []
+            selectedCollections: [],
+            deleteDialogOpen: false,
+            projectToDelete: null
         };
     }
 
@@ -205,10 +207,28 @@ class ProjectView extends Component {
     };
 
     handleDelete = project => {
-        console.log('Delete project:', project.uuid);
-        if (window.confirm('Are you sure you want to delete this project?')) {
-            this.deleteProject(project.uuid);
+        this.setState({
+            deleteDialogOpen: true,
+            projectToDelete: project
+        });
+    };
+
+    handleDeleteConfirm = () => {
+        const { projectToDelete } = this.state;
+        if (projectToDelete) {
+            this.deleteProject(projectToDelete.uuid);
         }
+        this.setState({
+            deleteDialogOpen: false,
+            projectToDelete: null
+        });
+    };
+
+    handleDeleteCancel = () => {
+        this.setState({
+            deleteDialogOpen: false,
+            projectToDelete: null
+        });
     };
 
     deleteProject = async projectId => {
@@ -385,6 +405,13 @@ class ProjectView extends Component {
                         </StyledProjectsGrid>
                     </Scrollbars>
                 </StyledScrollbarDiv>
+                <DeleteConfirmationDialog
+                    open={this.state.deleteDialogOpen}
+                    onClose={this.handleDeleteCancel}
+                    onConfirm={this.handleDeleteConfirm}
+                    title="Delete Project"
+                    contentText={`Are you sure you want to delete project "${this.state.projectToDelete?.name}"? This action cannot be undone.`}
+                />
             </StyledRootDiv>
         );
     }
@@ -394,13 +421,22 @@ const mapStateToProps = state => ({
     user: state.auth.user
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+    redux_addProject: data => dispatch(redux_addProject(data)),
+    redux_removeProject: () => dispatch(redux_removeProject()),
+    redux_removeOntology: () => dispatch(redux_removeOntology()),
+    redux_removeAlreadyLoadedOntology: () => dispatch(redux_removeAlreadyLoadedOntology())
+});
 
 ProjectView.propTypes = {
     title: PropTypes.string,
     reloadAfterUpdate: PropTypes.func.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
-    updateFlipFlop: PropTypes.bool.isRequired
+    updateFlipFlop: PropTypes.bool.isRequired,
+    redux_addProject: PropTypes.func.isRequired,
+    redux_removeProject: PropTypes.func.isRequired,
+    redux_removeOntology: PropTypes.func.isRequired,
+    redux_removeAlreadyLoadedOntology: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
