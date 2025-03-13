@@ -10,6 +10,9 @@ import { connect } from 'react-redux';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import private_collection from '../assets/images/private_collection.png';
+import sandbox_collection from '../assets/images/sandbox.png';
+import public_collection from '../assets/images/public_collection.png';
+import sc4eu_collection from '../assets/images/logo.png';
 import theme from '../theme';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
 
@@ -31,6 +34,26 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
 
 function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology }) {
     const history = useHistory();
+
+    const getCollectionImage = (projectName, accessType) => {
+        const isSC3 =
+            projectName.toLowerCase().includes('sc3') ||
+            projectName.toLowerCase().includes('sc4eu') ||
+            projectName.toLowerCase().includes('semantically connected semiconductor supply chains');
+        const isSandbox = projectName.toLowerCase().includes('sandbox');
+        const isPublic = accessType === 'Public';
+
+        if (isSC3) {
+            return sc4eu_collection;
+        }
+        if (isSandbox) {
+            return sandbox_collection;
+        }
+        if (isPublic) {
+            return public_collection;
+        }
+        return private_collection;
+    };
 
     const showOntologies = () => {
         redux_removeProject();
@@ -77,7 +100,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                     <CardMedia
                         component="img"
                         height="50"
-                        image={private_collection}
+                        image={getCollectionImage(project.name, project.access_type)}
                         style={{
                             objectFit: 'contain',
                             position: 'absolute',
@@ -86,7 +109,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             width: '50px',
                             zIndex: 1
                         }}
-                        alt="semiconductor image"
+                        alt="collection type icon"
                     />
                     <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '60px' }}>
                         <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
@@ -128,7 +151,7 @@ const StyledCard = styled(Card)`
     && {
         background-color: ${colorStyled.PRIMARY.light};
         padding: 3px;
-        border-radius: 20px;
+        borderradius: 20px;
         transition: transform 0.2s;
         width: 300px; // Set the width
         height: 300px; // Set the height
