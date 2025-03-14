@@ -146,8 +146,9 @@ const StyledContainer = styled(Container)`
     height: 95%;
     width: 100%;
     background-color: ${colorStyled.PRIMARY.lighter};
-    padding-top: 0.5%;
-    margin-left: 10%;
+    padding: 0.5% 2%;
+    max-width: 1800px;
+    margin: 0 auto;
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         width: 100%;
