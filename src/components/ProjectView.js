@@ -384,12 +384,6 @@ class ProjectView extends Component {
                             {this.state.allProjects ? (
                                 this.state.unlockedProjects.length > 0 ? (
                                     this.projectsInSelectedCollections().map((project, index) => (
-                                        // <ProjectCard
-                                        //     key={index}
-                                        //     inputData={project}
-                                        //     currentUser={this.props.user}
-                                        //     callback={this.props.reloadAfterUpdate}
-                                        // />
                                         <ProjectCard2 key={index} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
                                     ))
                                 ) : (

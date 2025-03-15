@@ -142,7 +142,7 @@ const StyledSubHeadingDiv = styled.div`
 `;
 
 const StyledContentDiv = styled.div`
-    height: calc(100% - 130px); /* Percentage height for different screen sizes */
+    height: calc(100% - 10px); /* Percentage height for different screen sizes */
 `;
 
 const StyledButtonToUploadOntology = styled(Button)`
