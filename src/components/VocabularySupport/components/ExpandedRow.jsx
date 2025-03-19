@@ -136,7 +136,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                         </Typography>
                         {/* Status */}
                         <Typography>
-                            <Tooltip title="Status: Draft, Ready, Accepted">
+                            <Tooltip title="Status: Draft, Rejected, Accepted">
                                 <IconButton style={{ marginBottom: '4px' }} size="small">
                                     <HelpOutlineIcon fontSize="small" />
                                 </IconButton>

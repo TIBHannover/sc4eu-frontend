@@ -10,7 +10,7 @@ const StatusDropdown = ({ status, onChange }) => {
             sx={{ height: '40px', width: '30%' }}
         >
             <MenuItem value="draft">Draft</MenuItem>
-            <MenuItem value="ready">Ready</MenuItem>
+            <MenuItem value="rejeccted">Rejected</MenuItem>
             <MenuItem value="accepted">Accepted</MenuItem>
         </Select>
     );

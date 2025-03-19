@@ -268,9 +268,9 @@ const VocabularyMainTable = ({
                 header: (
                     <>
                         <span>Status</span>
-                        <Tooltip title="Three possible options for status. Draft, Ready, Accpeted.
-                             Draft is still under discussion, Ready when the consensus is reached,
-                             Accpeted when it is final and becomes part of the vocabulary">
+                        <Tooltip title="Three possible options for status. Draft, Rejected, Accpeted.
+                             Draft is still under discussion, Rejected when the term is rejected,
+                             Accpeted when it consensus is reached and it becomes part of the vocabulary">
                             <IconButton style={{ marginBottom: '3px' }} size="small">
                                 <HelpOutlineIcon fontSize="small" />
                             </IconButton>
