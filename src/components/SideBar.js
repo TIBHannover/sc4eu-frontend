@@ -99,7 +99,6 @@ const SideBar = props => {
     const [popUpMessage, setPopUpMessage] = useState('');
     const [isOntoComparisonModalOpen, setIsOntoComparisonModalOpen] = useState(false);
 
-
     const selectModeOfOperation = val => {
         Cookies.set(MODE_OF_OPERATIONS, val);
         setIsActiveTab(val);
@@ -235,18 +234,6 @@ const SideBar = props => {
                                             <FormatAlignJustifyOutlined color="action" />
                                             <StyledText>Text</StyledText>
                                         </StyledLink>
-                                        <StyledButton title="metaData" onClick={() => setMetaDataModalOpen(true)}>
-                                            <DiscountOutlined color="action" />
-                                            <StyledText>Meta Data</StyledText>
-                                        </StyledButton>
-                                        {isMetaDataModalOpen && (
-                                            <MetaDataModal
-                                                toggle={() => {
-                                                    setMetaDataModalOpen(false);
-                                                }}
-                                                isModalOpen={isMetaDataModalOpen}
-                                            />
-                                        )}
                                     </div>
                                     <Divider />
                                     <div
@@ -269,6 +256,18 @@ const SideBar = props => {
                                         >
                                             Tools
                                         </p>
+                                        <StyledButton title="metaData" onClick={() => setMetaDataModalOpen(true)}>
+                                            <DiscountOutlined color="action" />
+                                            <StyledText>Meta Data</StyledText>
+                                        </StyledButton>
+                                        {isMetaDataModalOpen && (
+                                            <MetaDataModal
+                                                toggle={() => {
+                                                    setMetaDataModalOpen(false);
+                                                }}
+                                                isModalOpen={isMetaDataModalOpen}
+                                            />
+                                        )}
                                         <StyledButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
                                             <ArticleOutlined color="action" />
                                             <StyledText>Onto Document</StyledText>
@@ -314,6 +313,10 @@ const SideBar = props => {
                         <BorderColorOutlined color="action" />
                         <StyledText>WebProtege</StyledText>
                     </StyledLink>
+                    <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
+                        <NoteAddOutlined color="action" />
+                        <StyledText>Vocabulary Dev</StyledText>
+                    </StyledLink>
                     <Divider />
                     <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>
                         <LibraryBooksOutlined color="action" />
@@ -335,10 +338,6 @@ const SideBar = props => {
                     <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint}>
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
-                    </StyledLink>
-                    <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
-                        <NoteAddOutlined color="action" />
-                        <StyledText>Vocabulary Dev</StyledText>
                     </StyledLink>
                 </div>
             </ListItem>
