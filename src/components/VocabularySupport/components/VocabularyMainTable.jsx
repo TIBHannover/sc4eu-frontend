@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
+import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme, Autocomplete, TextField } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -16,15 +16,15 @@ import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useHistory } from 'react-router-dom';
 
 const VocabularyMainTable = ({
-                                 terms,
-                                 refetch,
-                                 isLoadingTerms,
-                                 isLoadingTermsError,
-                                 isFetchingTerms,
-                                 discussions,
-                                 handleSaveDiscussion,
-                                 handleDeleteDiscussion
-                             }) => {
+    terms,
+    refetch,
+    isLoadingTerms,
+    isLoadingTermsError,
+    isFetchingTerms,
+    discussions,
+    handleSaveDiscussion,
+    handleDeleteDiscussion
+}) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
@@ -45,7 +45,7 @@ const VocabularyMainTable = ({
             : 'rgba(84, 90, 95, 1)'; // light gray
 
     useEffect(() => {
-        const handleBeforeUnload = (event) => {
+        const handleBeforeUnload = event => {
             if (hasUncommittedChanges) {
                 event.preventDefault();
                 event.returnValue = 'You have uncommitted changes. Do you really want to leave?';
@@ -80,7 +80,7 @@ const VocabularyMainTable = ({
             return;
         }
         const resourceId = row.original.identifier;
-        const currentResourceDiscussion = discussions.find((d) => d.resourceId === resourceId);
+        const currentResourceDiscussion = discussions.find(d => d.resourceId === resourceId);
         setTermComments(currentResourceDiscussion?.comments || []);
         // console.log('rowComments: ', rowComments);
         setSelectedTerm(row.original);
@@ -106,7 +106,7 @@ const VocabularyMainTable = ({
         const Label = row.original.label;
         //It may as well be possible that we are adding brand-new term and description is not available
 
-        const handleClick = (event) => {
+        const handleClick = event => {
             event.stopPropagation();
         };
 
@@ -118,7 +118,7 @@ const VocabularyMainTable = ({
                 </a>
             );
         } else {
-            if(isValidUrl(seeAlso)){
+            if (isValidUrl(seeAlso)) {
                 return (
                     <a href={seeAlso} target="_blank" rel="noopener noreferrer" onClick={handleClick}>
                         {Label}
@@ -136,6 +136,7 @@ const VocabularyMainTable = ({
             }).isRequired
         }).isRequired
     };
+
     const columns = useMemo(
         () => [
             {
@@ -158,8 +159,7 @@ const VocabularyMainTable = ({
                 header: (
                     <>
                         <span>Label</span>
-                        <Tooltip
-                            title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
+                        <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
                             <IconButton style={{ marginBottom: '3px' }} size="small">
                                 <HelpOutlineIcon fontSize="small" />
                             </IconButton>
@@ -184,8 +184,7 @@ const VocabularyMainTable = ({
                 header: (
                     <>
                         <span>Alternative Labels</span>
-                        <Tooltip
-                            title="Provides alternative Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
+                        <Tooltip title="Provides alternative Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
                             <IconButton style={{ marginBottom: '3px' }} size="small">
                                 <HelpOutlineIcon fontSize="small" />
                             </IconButton>
@@ -195,16 +194,6 @@ const VocabularyMainTable = ({
                 size: 150,
                 internalEditComponent: 'MRT_EditArray',
                 Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() })
-                // muiEditTextFieldProps: {
-                //     required: true,
-                //     error: !!validationErrors?.altLabel,
-                //     helperText: validationErrors?.altLabel,
-                //     onFocus: () =>
-                //         setValidationErrors({
-                //             ...validationErrors,
-                //             altLabel: undefined
-                //         })
-                // }
             },
             {
                 accessorKey: 'description',
@@ -236,8 +225,7 @@ const VocabularyMainTable = ({
                 header: (
                     <>
                         <span>See Also</span>
-                        <Tooltip
-                            title="Indicates a resource that might provide additional information about the subject resource">
+                        <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
                             <IconButton style={{ marginBottom: '3px' }} size="small">
                                 <HelpOutlineIcon fontSize="small" />
                             </IconButton>
@@ -261,16 +249,45 @@ const VocabularyMainTable = ({
                     </>
                 ),
                 size: 150,
-                enableEditing: false
+                enableEditing: false,
+                filterVariant: 'select',
+                filterFn: (row, columnId, filterValue) => {
+                    const createdDate = new Date(row.getValue(columnId));
+                    const now = new Date();
+                    switch (filterValue) {
+                        case 'last1day':
+                            return createdDate >= new Date(now.setDate(now.getDate() - 1));
+                        case 'last1week':
+                            return createdDate >= new Date(now.setDate(now.getDate() - 7));
+                        case 'last1month':
+                            return createdDate >= new Date(now.setMonth(now.getMonth() - 1));
+                        case 'last3months':
+                            return createdDate >= new Date(now.setMonth(now.getMonth() - 3));
+                        case 'all':
+                            return true;
+                        default:
+                            return true;
+                    }
+                },
+                filterSelectOptionsLabel: 'Select Created Since',
+                filterSelectOptions: [
+                    { value: 'last1day', text: 'Last 1 Day' },
+                    { value: 'last1week', text: 'Last 1 Week' },
+                    { value: 'last1month', text: 'Last 1 Month' },
+                    { value: 'last3months', text: 'Last 3 Months' },
+                    { value: 'all', text: 'All' }
+                ]
             },
             {
                 accessorKey: 'status',
                 header: (
                     <>
                         <span>Status</span>
-                        <Tooltip title="Three possible options for status. Draft, Rejected, Accpeted.
+                        <Tooltip
+                            title="Three possible options for status. Draft, Rejected, Accpeted.
                              Draft is still under discussion, Rejected when the term is rejected,
-                             Accpeted when it consensus is reached and it becomes part of the vocabulary">
+                             Accpeted when it consensus is reached and it becomes part of the vocabulary"
+                        >
                             <IconButton style={{ marginBottom: '3px' }} size="small">
                                 <HelpOutlineIcon fontSize="small" />
                             </IconButton>
@@ -278,7 +295,15 @@ const VocabularyMainTable = ({
                     </>
                 ),
                 size: 150,
-                enableEditing: false
+                enableEditing: false,
+                filterVariant: 'select',
+                filterFn: 'includesString',
+                filterSelectOptionsLabel: 'Select Status',
+                filterSelectOptions: [
+                    { value: 'draft', text: 'Draft' },
+                    { value: 'rejected', text: 'Rejected' },
+                    { value: 'accepted', text: 'Accepted' }
+                ]
             }
         ],
         [validationErrors]
@@ -338,23 +363,25 @@ const VocabularyMainTable = ({
 
     // Define the default values for a new row
     const defaultValues = {
-        identifier: crypto.randomUUID(),   // Override 'id' with a new UUID
-        label: '',           // Default value for label
-        altLabel: [],        // Default value for altLabel
-        description: '',     // Default value for description
-        seeAlso: '',          // Default value for seeAlso
-        status: 'draft',            // Override 'status' with 'draft'
+        identifier: crypto.randomUUID(), // Override 'id' with a new UUID
+        label: '', // Default value for label
+        altLabel: [], // Default value for altLabel
+        description: '', // Default value for description
+        seeAlso: '', // Default value for seeAlso
+        status: 'draft', // Override 'status' with 'draft'
         created: new Date().toLocaleDateString('en-CA') // Default value for created
     };
     // Function to handle setting a creating row
     const handleCreateRow = (row = {}) => {
         console.log('row: ', row);
-        table.setCreatingRow(createRow(table, {
-            ...defaultValues,           // Apply defaults
-            ...row,                     // Spread any existing row values (will override defaults if present)
-            identifier: row.identifier || crypto.randomUUID(),    // Override 'id' with a new UUID if not present
-            status: row.status || 'draft'         // Set 'status' to 'draft' if not present
-        }));
+        table.setCreatingRow(
+            createRow(table, {
+                ...defaultValues, // Apply defaults
+                ...row, // Spread any existing row values (will override defaults if present)
+                identifier: row.identifier || crypto.randomUUID(), // Override 'id' with a new UUID if not present
+                status: row.status || 'draft' // Set 'status' to 'draft' if not present
+            })
+        );
         setOpenCreateModal(true); // Open the create modal
     };
 
@@ -365,8 +392,8 @@ const VocabularyMainTable = ({
             sorting: [
                 {
                     id: 'label', // Sort by 'label' column
-                    desc: false, // Ascending order
-                },
+                    desc: false // Ascending order
+                }
             ],
             columnVisibility: { identifier: false },
             density: 'compact',
@@ -379,67 +406,47 @@ const VocabularyMainTable = ({
         positionActionsColumn: 'last',
         enableSorting: true,
         muiTableBodyRowProps: ({ row }) => ({
-            onClick: (event) => handleRowClick(row, event, discussions),
+            onClick: event => handleRowClick(row, event, discussions),
             sx: {
                 cursor: 'pointer' //you might want to change the cursor too when adding an onClick
             }
         }),
         muiTableBodyProps: {
-
-            sx: (theme) => ({
-                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td':
-                    {
-                        backgroundColor: darken(baseBackgroundColor, 0.1),
-                    },
-                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td':
-                    {
-                        backgroundColor: darken(baseBackgroundColor, 0.2),
-                    },
-                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td':
-                    {
-                        backgroundColor: lighten(baseBackgroundColor, 0.1),
-                    },
-                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td':
-                    {
-                        backgroundColor: darken(baseBackgroundColor, 0.2),
-                    },
-            }),
+            sx: theme => ({
+                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                    backgroundColor: darken(baseBackgroundColor, 0.1)
+                },
+                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                    backgroundColor: darken(baseBackgroundColor, 0.2)
+                },
+                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                    backgroundColor: lighten(baseBackgroundColor, 0.1)
+                },
+                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                    backgroundColor: darken(baseBackgroundColor, 0.2)
+                }
+            })
         },
-        mrtTheme: (theme) => ({
+        mrtTheme: theme => ({
             baseBackgroundColor: baseBackgroundColor,
-            draggingBorderColor: theme.palette.secondary.main,
+            draggingBorderColor: theme.palette.secondary.main
         }),
-        //enableRowExpansion: true,
-        // renderDetailPanel: ({ row }) => <ExpandedRow term={row.original} updateTerm={updateTerm} />,
-        // muiToolbarAlertBannerProps: isLoadingTermsError
-        //     ? {
-        //           color: 'error',
-        //           children: `Error Loading Data: ${error.message}`
-        //       }
-        //     : isLoadingTerms
-        //     ? {
-        //           color: 'info',
-        //           children: 'Loading Data from GitHub'
-        //       }
-        //     : undefined,
-
-        // muiTableContainerProps: {
-        //     sx: {
-        //         minHeight: '500px'
-        //     }
-        // },
         onCreatingRowSave: handleCreateTerm,
         onEditingRowSave: handleSaveTerm,
         renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
-            return (openCreateModal && <CreateNewTerm
-                displayType={'create'}
-                table={table}
-                row={row}
-                internalEditComponents={internalEditComponents}
-                handleCreateTerm={handleCreateTerm}
-                setOpenCreateModal={setOpenCreateModal}
-                handleCancelCreateTerm={handleCancelCreateTerm}
-            />);
+            return (
+                openCreateModal && (
+                    <CreateNewTerm
+                        displayType={'create'}
+                        table={table}
+                        row={row}
+                        internalEditComponents={internalEditComponents}
+                        handleCreateTerm={handleCreateTerm}
+                        setOpenCreateModal={setOpenCreateModal}
+                        handleCancelCreateTerm={handleCancelCreateTerm}
+                    />
+                )
+            );
         },
         renderEditRowDialogContent: ({ table, row, internalEditComponents }) => {
             // Convert altLabel to an array
@@ -449,15 +456,17 @@ const VocabularyMainTable = ({
                 row.original.altLabel = [];
             }
 
-            return (<CreateNewTerm
-                displayType={'edit'}
-                table={table}
-                row={row}
-                internalEditComponents={internalEditComponents}
-                handleCreateTerm={handleSaveTerm}
-                setOpenCreateModal={setOpenCreateModal}
-                handleCancelCreateTerm={handleCancelCreateTerm}
-            />);
+            return (
+                <CreateNewTerm
+                    displayType={'edit'}
+                    table={table}
+                    row={row}
+                    internalEditComponents={internalEditComponents}
+                    handleCreateTerm={handleSaveTerm}
+                    setOpenCreateModal={setOpenCreateModal}
+                    handleCancelCreateTerm={handleCancelCreateTerm}
+                />
+            );
         },
         renderTopToolbarCustomActions: ({ table, row }) => (
             <>
@@ -470,18 +479,32 @@ const VocabularyMainTable = ({
                 >
                     Create New Term
                 </Button>
-                {hasUncommittedChanges && <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>}
+                {hasUncommittedChanges && (
+                    <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>
+                )}
             </>
         ),
         renderBottomToolbarCustomActions: () => (
             <>
-                <Button variant="contained" disabled={!hasUncommittedChanges} onClick={() => setOpenCommit(true)}
-                        style={{ backgroundColor: hasUncommittedChanges? colorStyled.SECONDARY.dark: 'gray', border: hasUncommittedChanges? '2px' +
-                                ' solid red': ''}}>
+                <Button
+                    variant="contained"
+                    disabled={!hasUncommittedChanges}
+                    onClick={() => setOpenCommit(true)}
+                    style={{
+                        backgroundColor: hasUncommittedChanges ? colorStyled.SECONDARY.dark : 'gray',
+                        border: hasUncommittedChanges ? '2px' + ' solid red' : ''
+                    }}
+                >
                     Save Changes
                 </Button>
-                {openCommit &&
-                    <CommitChanges refetch={refetch} openCommit={openCommit} setOpenCommit={setOpenCommit} setHasUncommittedChanges={setHasUncommittedChanges} />}
+                {openCommit && (
+                    <CommitChanges
+                        refetch={refetch}
+                        openCommit={openCommit}
+                        setOpenCommit={setOpenCommit}
+                        setHasUncommittedChanges={setHasUncommittedChanges}
+                    />
+                )}
             </>
         ),
         state: {
@@ -500,8 +523,7 @@ const VocabularyMainTable = ({
                 {/*</Tooltip>*/}
 
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: colorStyled.SECONDARY.dark }}
-                                onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" style={{ color: colorStyled.SECONDARY.dark }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -513,23 +535,32 @@ const VocabularyMainTable = ({
         <ScrollableDiv>
             <MaterialReactTable table={table} />
             <Modal open={openPopup} onClose={handleClosePopup}>
-                <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 2,
-                    backgroundColor: 'white',
-                    margin: 'auto',
-                    width: '70%',
-                    overflowY: 'auto',
-                    position: 'fixed',
-                    top: 0,
-                    left: '15%',
-                    outline: 'none'
-                }}>
-                    {selectedTerm &&
-                        <ExpandedRow term={selectedTerm} updateTerm={updateTerm} termComments={termComments || []}
-                                     handleSaveDiscussion={handleSaveDiscussion} setHasUncommittedChanges={setHasUncommittedChanges} handleClosePopup={handleClosePopup} />}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 2,
+                        backgroundColor: 'white',
+                        margin: 'auto',
+                        width: '70%',
+                        overflowY: 'auto',
+                        position: 'fixed',
+                        top: 0,
+                        left: '15%',
+                        outline: 'none'
+                    }}
+                >
+                    {selectedTerm && (
+                        <ExpandedRow
+                            term={selectedTerm}
+                            updateTerm={updateTerm}
+                            termComments={termComments || []}
+                            handleSaveDiscussion={handleSaveDiscussion}
+                            setHasUncommittedChanges={setHasUncommittedChanges}
+                            handleClosePopup={handleClosePopup}
+                        />
+                    )}
                 </Box>
             </Modal>
         </ScrollableDiv>
