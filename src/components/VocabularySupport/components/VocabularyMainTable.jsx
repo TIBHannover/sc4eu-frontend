@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme, Autocomplete, TextField } from '@mui/material';
+import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -11,7 +11,6 @@ import CommitChanges from './CommitChanges';
 import { useCreateTerm } from '../hooks/useCreateTerm';
 import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import { useDeleteTerm } from '../hooks/useDeleteTerm';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useHistory } from 'react-router-dom';
 
@@ -300,7 +299,7 @@ const VocabularyMainTable = ({
                 Header: (
                     { column } // Custom header with tooltip
                 ) => (
-                    <Tooltip title="The status of the term. It can be Draft, Rejected or Accepted">
+                    <Tooltip title="The status of the term. It can be Draft, Reject or Accept">
                         <span>{column.columnDef.header}</span>
                     </Tooltip>
                 ),
@@ -310,8 +309,8 @@ const VocabularyMainTable = ({
                 filterFn: 'equals',
                 filterSelectOptions: [
                     { text: 'Draft', value: 'draft' },
-                    { text: 'Rejected', value: 'rejected' },
-                    { text: 'Accepted', value: 'accepted' }
+                    { text: 'Reject', value: 'reject' },
+                    { text: 'Accept', value: 'accept' }
                 ],
                 muiFilterTextFieldProps: {
                     placeholder: 'Filter Status',
@@ -446,13 +445,11 @@ const VocabularyMainTable = ({
         onEditingRowSave: handleSaveTerm,
         renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
             // Filter out non-editable components
-            const editableComponents = internalEditComponents.filter(
-                component => {
-                    const fieldName = component.key.split('_').pop();
-                    return !['identifier', 'created', 'status'].includes(fieldName);
-                }
-            );
-            
+            const editableComponents = internalEditComponents.filter(component => {
+                const fieldName = component.key.split('_').pop();
+                return !['identifier', 'created', 'status'].includes(fieldName);
+            });
+
             return (
                 openCreateModal && (
                     <CreateNewTerm
@@ -476,12 +473,10 @@ const VocabularyMainTable = ({
             }
 
             // Filter out non-editable components
-            const editableComponents = internalEditComponents.filter(
-                component => {
-                    const fieldName = component.key.split('_').pop();
-                    return !['identifier', 'created', 'status'].includes(fieldName);
-                }
-            );
+            const editableComponents = internalEditComponents.filter(component => {
+                const fieldName = component.key.split('_').pop();
+                return !['identifier', 'created', 'status'].includes(fieldName);
+            });
 
             return (
                 <CreateNewTerm
