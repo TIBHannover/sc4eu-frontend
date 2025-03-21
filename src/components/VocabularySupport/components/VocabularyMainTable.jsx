@@ -152,7 +152,12 @@ const VocabularyMainTable = ({
                     </>
                 ),
                 size: 150,
-                enableEditing: false
+                enableEditing: false,
+                filterVariant: 'text',
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter Identifier',
+                    sx: { minWidth: '120px' }
+                }
             },
             {
                 accessorKey: 'label',
@@ -177,6 +182,11 @@ const VocabularyMainTable = ({
                             ...validationErrors,
                             label: undefined
                         })
+                },
+                filterVariant: 'text',
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter Label',
+                    sx: { minWidth: '120px' }
                 }
             },
             {
@@ -193,7 +203,12 @@ const VocabularyMainTable = ({
                 ),
                 size: 150,
                 internalEditComponent: 'MRT_EditArray',
-                Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() })
+                Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
+                filterVariant: 'text',
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter Alt Labels',
+                    sx: { minWidth: '120px' }
+                }
             },
             {
                 accessorKey: 'description',
@@ -218,6 +233,11 @@ const VocabularyMainTable = ({
                             ...validationErrors,
                             description: undefined
                         })
+                },
+                filterVariant: 'text',
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter Description',
+                    sx: { minWidth: '120px' }
                 }
             },
             {
@@ -234,7 +254,12 @@ const VocabularyMainTable = ({
                 ),
                 size: 200,
                 enableEditing: true,
-                Cell: TerminologyCellComponent
+                Cell: TerminologyCellComponent,
+                filterVariant: 'text',
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter See Also',
+                    sx: { minWidth: '120px' }
+                }
             },
             {
                 accessorKey: 'created',
@@ -269,14 +294,17 @@ const VocabularyMainTable = ({
                             return true;
                     }
                 },
-                filterSelectOptionsLabel: 'Select Created Since',
                 filterSelectOptions: [
-                    { value: 'last1day', text: 'Last 1 Day' },
-                    { value: 'last1week', text: 'Last 1 Week' },
-                    { value: 'last1month', text: 'Last 1 Month' },
-                    { value: 'last3months', text: 'Last 3 Months' },
-                    { value: 'all', text: 'All' }
-                ]
+                    { text: 'Last 1 Day', value: 'last1day' },
+                    { text: 'Last 1 Week', value: 'last1week' },
+                    { text: 'Last 1 Month', value: 'last1month' },
+                    { text: 'Last 3 Months', value: 'last3months' },
+                    { text: 'All', value: 'all' }
+                ],
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter Created',
+                    select: true
+                }
             },
             {
                 accessorKey: 'status',
@@ -297,13 +325,16 @@ const VocabularyMainTable = ({
                 size: 150,
                 enableEditing: false,
                 filterVariant: 'select',
-                filterFn: 'includesString',
-                filterSelectOptionsLabel: 'Select Status',
+                filterFn: 'equals',
                 filterSelectOptions: [
-                    { value: 'draft', text: 'Draft' },
-                    { value: 'rejected', text: 'Rejected' },
-                    { value: 'accepted', text: 'Accepted' }
-                ]
+                    { text: 'Draft', value: 'draft' },
+                    { text: 'Rejected', value: 'rejected' },
+                    { text: 'Accepted', value: 'accepted' }
+                ],
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter Status',
+                    select: true
+                }
             }
         ],
         [validationErrors]
@@ -397,7 +428,9 @@ const VocabularyMainTable = ({
             ],
             columnVisibility: { identifier: false },
             density: 'compact',
-            pagination: { pageSize: 15, pageIndex: 0 }
+            pagination: { pageSize: 15, pageIndex: 0 },
+            showFilters: true,
+            columnFilters: [] // Reset any existing filters
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
@@ -405,6 +438,7 @@ const VocabularyMainTable = ({
         getRowId: row => row.identifier,
         positionActionsColumn: 'last',
         enableSorting: true,
+        enableFiltering: true,
         muiTableBodyRowProps: ({ row }) => ({
             onClick: event => handleRowClick(row, event, discussions),
             sx: {
