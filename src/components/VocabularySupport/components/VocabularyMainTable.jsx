@@ -141,15 +141,13 @@ const VocabularyMainTable = ({
         () => [
             {
                 accessorKey: 'identifier',
-                header: (
-                    <>
-                        <span>Identifier</span>
-                        <Tooltip title="Unique identifier for the term">
-                            <IconButton style={{ marginBottom: '3px' }} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </>
+                header: 'Identifier', // Keep this as a string to retain sorting & actions
+                Header: (
+                    { column } // Custom header with tooltip
+                ) => (
+                    <Tooltip title="Unique identifier for the term">
+                        <span>{column.columnDef.header}</span>
+                    </Tooltip>
                 ),
                 size: 150,
                 enableEditing: false,
@@ -161,15 +159,13 @@ const VocabularyMainTable = ({
             },
             {
                 accessorKey: 'label',
-                header: (
-                    <>
-                        <span>Label</span>
-                        <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
-                            <IconButton style={{ marginBottom: '3px' }} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </>
+                header: 'Label', // Keep this as a string to retain sorting & actions
+                Header: (
+                    { column } // Custom header with tooltip
+                ) => (
+                    <Tooltip title="Provides a human-readable version of a resource's name. In the final agreed term, only one preferred and many alternative labels exist.">
+                        <span>{column.columnDef.header}</span>
+                    </Tooltip>
                 ),
                 size: 150,
                 Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
@@ -191,15 +187,13 @@ const VocabularyMainTable = ({
             },
             {
                 accessorKey: 'altLabel',
-                header: (
-                    <>
-                        <span>Alternative Labels</span>
-                        <Tooltip title="Provides alternative Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative lables exist">
-                            <IconButton style={{ marginBottom: '3px' }} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </>
+                header: 'Alternative Labels', // Keep this as a string to retain sorting & actions
+                Header: (
+                    { column } // Custom header with tooltip
+                ) => (
+                    <Tooltip title="Provides alternative Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative labels exist">
+                        <span>{column.columnDef.header}</span>
+                    </Tooltip>
                 ),
                 size: 150,
                 internalEditComponent: 'MRT_EditArray',
@@ -212,15 +206,13 @@ const VocabularyMainTable = ({
             },
             {
                 accessorKey: 'description',
-                header: (
-                    <>
-                        <span>Description</span>
-                        <Tooltip title="Provides a human-readable description of a Term">
-                            <IconButton style={{ marginBottom: '3px' }} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </>
+                header: 'Description', // Keep this as a string to retain sorting & actions
+                Header: (
+                    { column } // Custom header with tooltip
+                ) => (
+                    <Tooltip title="Provides a human-readable description of a Term">
+                        <span>{column.columnDef.header}</span>
+                    </Tooltip>
                 ),
                 size: 150,
                 Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
@@ -242,15 +234,13 @@ const VocabularyMainTable = ({
             },
             {
                 accessorKey: 'seeAlso',
-                header: (
-                    <>
-                        <span>See Also</span>
-                        <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
-                            <IconButton style={{ marginBottom: '3px' }} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </>
+                header: 'See Also',
+                Header: (
+                    { column } // Custom header with tooltip
+                ) => (
+                    <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
+                        <span>{column.columnDef.header}</span>
+                    </Tooltip>
                 ),
                 size: 200,
                 enableEditing: true,
@@ -263,15 +253,13 @@ const VocabularyMainTable = ({
             },
             {
                 accessorKey: 'created',
-                header: (
-                    <>
-                        <span>Created</span>
-                        <Tooltip title="The Creation Date of the term">
-                            <IconButton style={{ marginBottom: '3px' }} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </>
+                header: 'Created',
+                Header: (
+                    { column } // Custom header with tooltip
+                ) => (
+                    <Tooltip title="The Creation Date of the term">
+                        <span>{column.columnDef.header}</span>
+                    </Tooltip>
                 ),
                 size: 150,
                 enableEditing: false,
@@ -308,19 +296,13 @@ const VocabularyMainTable = ({
             },
             {
                 accessorKey: 'status',
-                header: (
-                    <>
-                        <span>Status</span>
-                        <Tooltip
-                            title="Three possible options for status. Draft, Rejected, Accpeted.
-                             Draft is still under discussion, Rejected when the term is rejected,
-                             Accpeted when it consensus is reached and it becomes part of the vocabulary"
-                        >
-                            <IconButton style={{ marginBottom: '3px' }} size="small">
-                                <HelpOutlineIcon fontSize="small" />
-                            </IconButton>
-                        </Tooltip>
-                    </>
+                header: 'Status',
+                Header: (
+                    { column } // Custom header with tooltip
+                ) => (
+                    <Tooltip title="The status of the term. It can be Draft, Rejected or Accepted">
+                        <span>{column.columnDef.header}</span>
+                    </Tooltip>
                 ),
                 size: 150,
                 enableEditing: false,
@@ -420,17 +402,12 @@ const VocabularyMainTable = ({
         columns,
         data: terms,
         initialState: {
-            sorting: [
-                {
-                    id: 'label', // Sort by 'label' column
-                    desc: false // Ascending order
-                }
-            ],
+            sorting: [{ id: 'label', desc: false }],
             columnVisibility: { identifier: false },
             density: 'compact',
             pagination: { pageSize: 15, pageIndex: 0 },
             showFilters: true,
-            columnFilters: [] // Reset any existing filters
+            columnFilters: []
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
