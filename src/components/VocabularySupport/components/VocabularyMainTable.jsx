@@ -445,13 +445,21 @@ const VocabularyMainTable = ({
         onCreatingRowSave: handleCreateTerm,
         onEditingRowSave: handleSaveTerm,
         renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
+            // Filter out non-editable components
+            const editableComponents = internalEditComponents.filter(
+                component => {
+                    const fieldName = component.key.split('_').pop();
+                    return !['identifier', 'created', 'status'].includes(fieldName);
+                }
+            );
+            
             return (
                 openCreateModal && (
                     <CreateNewTerm
                         displayType={'create'}
                         table={table}
                         row={row}
-                        internalEditComponents={internalEditComponents}
+                        internalEditComponents={editableComponents}
                         handleCreateTerm={handleCreateTerm}
                         setOpenCreateModal={setOpenCreateModal}
                         handleCancelCreateTerm={handleCancelCreateTerm}
@@ -467,12 +475,20 @@ const VocabularyMainTable = ({
                 row.original.altLabel = [];
             }
 
+            // Filter out non-editable components
+            const editableComponents = internalEditComponents.filter(
+                component => {
+                    const fieldName = component.key.split('_').pop();
+                    return !['identifier', 'created', 'status'].includes(fieldName);
+                }
+            );
+
             return (
                 <CreateNewTerm
                     displayType={'edit'}
                     table={table}
                     row={row}
-                    internalEditComponents={internalEditComponents}
+                    internalEditComponents={editableComponents}
                     handleCreateTerm={handleSaveTerm}
                     setOpenCreateModal={setOpenCreateModal}
                     handleCancelCreateTerm={handleCancelCreateTerm}
