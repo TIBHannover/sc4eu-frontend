@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
     Box,
     TextField,
@@ -14,44 +14,32 @@ import {
     IconButton,
     ListItemButton,
     Tabs,
-    Tab,
-} from "@mui/material";
-import PropTypes from "prop-types";
-import { Autocomplete } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import {
-    getAutoCompleteResult,
-    getJumpToResult,
-} from "../VocabularySearch/api/search";
+    Tab
+} from '@mui/material';
+import PropTypes from 'prop-types';
+import { Autocomplete } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import { getAutoCompleteResult, getJumpToResult } from '../VocabularySearch/api/search';
 import { colorStyled } from '../../../styledComponents/styledColor';
 
-const CreateNewTerm = ({
-                           displayType,
-                           table,
-                           row,
-                           internalEditComponents,
-                           handleCreateTerm,
-                           handleCancelCreateTerm,
-                       }) => {
-    const [searchQuery, setSearchQuery] = useState("");
+const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm, handleCancelCreateTerm }) => {
+    const [searchQuery, setSearchQuery] = useState('');
     const [autoCompleteResults, setAutoCompleteResults] = useState([]);
     const [jumpToResults, setJumpToResults] = useState([]);
-    const [altLabelsList, setAltLabelsList] = useState(
-        Array.isArray(row?.original?.altLabel) ? row.original.altLabel : [""]
-    );
+    const [altLabelsList, setAltLabelsList] = useState(Array.isArray(row?.original?.altLabel) ? row.original.altLabel : ['']);
     const [selectedTerm, setSelectedTerm] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
-    const [errors, setErrors] = useState({ label: "", description: "" });
+    const [errors, setErrors] = useState({ label: '', description: '' });
 
-    const handleSearch = async (value) => {
+    const handleSearch = async value => {
         setSearchQuery(value);
         if (value.length > 2) {
             const [autoCompleteResult, jumpToResult] = await Promise.all([
                 getAutoCompleteResult({ searchQuery: value }, 5),
-                getJumpToResult({ searchQuery: value }, 10),
+                getJumpToResult({ searchQuery: value }, 10)
             ]);
             setAutoCompleteResults(autoCompleteResult);
             setJumpToResults(jumpToResult);
@@ -61,37 +49,35 @@ const CreateNewTerm = ({
         }
     };
 
-    const handleAddTermFromTerminology = async (value) => {
-        const url = `${process.env.REACT_APP_TS_ONTOLOGIES_URL}${encodeURIComponent(
-            value.ontology_name
-        )}/terms?iri=${encodeURIComponent(value.iri)}`;
+    const handleAddTermFromTerminology = async value => {
+        const url = `${process.env.REACT_APP_TS_ONTOLOGIES_URL}${encodeURIComponent(value.ontology_name)}/terms?iri=${encodeURIComponent(value.iri)}`;
         const termFromTerminology = {
             label: value.label,
             id: value.id,
-            description: value.description ? value.description[0] : "Not Available",
+            description: value.description ? value.description[0] : 'Not Available',
             seeAlso: `url:${url}`,
-            status: "draft",
-            created: new Date().toLocaleDateString('en-CA'),
+            status: 'draft',
+            created: new Date().toLocaleDateString('en-CA')
         };
         await handleCreateTerm({ values: termFromTerminology, table: table });
-        console.log("Adding term from terminology: ", termFromTerminology);
+        console.log('Adding term from terminology: ', termFromTerminology);
     };
 
-    const handleSelectTerm = (term) => {
+    const handleSelectTerm = term => {
         setSelectedTerm(term);
     };
 
     const validateForm = () => {
         const newErrors = {
-            label: "",
-            description: "",
+            label: '',
+            description: ''
         };
 
-        if (!row.getValue("label")) {
-            newErrors.label = "Label is required";
+        if (!row.getValue('label')) {
+            newErrors.label = 'Label is required';
         }
-        if (!row.getValue("description")) {
-            newErrors.description = "Description is required";
+        if (!row.getValue('description')) {
+            newErrors.description = 'Description is required';
         }
 
         setErrors(newErrors);
@@ -107,11 +93,7 @@ const CreateNewTerm = ({
             // Creating/editing a new term
             if (validateForm()) {
                 const allCells = row.getAllCells();
-                const tableCells = allCells.filter(
-                    (cell) =>
-                        cell.column.id !== "mrt-row-expand" &&
-                        cell.column.id !== "mrt-row-actions"
-                );
+                const tableCells = allCells.filter(cell => cell.column.id !== 'mrt-row-expand' && cell.column.id !== 'mrt-row-actions');
 
                 const newTerm = tableCells.reduce((acc, cell) => {
                     acc[cell.column.id] = cell.getValue();
@@ -120,15 +102,15 @@ const CreateNewTerm = ({
 
                 const newTermWithAltLabel = {
                     ...newTerm,
-                    altLabel: altLabelsList.join(", "),
+                    altLabel: altLabelsList.join(', ')
                 };
 
-                if (displayType === "create") {
+                if (displayType === 'create') {
                     await handleCreateTerm({ values: newTermWithAltLabel, table });
-                } else if (displayType === "edit") {
+                } else if (displayType === 'edit') {
                     await handleCreateTerm({
                         values: { ...row.original, ...newTermWithAltLabel },
-                        table,
+                        table
                     });
                 }
                 handleCancelCreateTerm(table); // Close the dialog after saving
@@ -140,21 +122,21 @@ const CreateNewTerm = ({
         handleCancelCreateTerm();
     };
 
-    const handleRemoveAltLabel = (index) => {
-        setAltLabelsList((prevList) => prevList.filter((_, i) => i !== index));
+    const handleRemoveAltLabel = index => {
+        setAltLabelsList(prevList => prevList.filter((_, i) => i !== index));
     };
 
     const handleAddAltLabel = () => {
-        setAltLabelsList((prevList) => {
+        setAltLabelsList(prevList => {
             if (prevList.length < 5) {
-                return [...prevList, ""];
+                return [...prevList, ''];
             }
             return prevList;
         });
     };
 
     const handleAltLabelChange = (index, value) => {
-        setAltLabelsList((prevList) => {
+        setAltLabelsList(prevList => {
             const newList = [...prevList];
             newList[index] = value;
             return newList;
@@ -175,19 +157,13 @@ const CreateNewTerm = ({
                 style: {
                     position: 'fixed',
                     top: 0,
-                    margin: 0,
-                },
+                    margin: 0
+                }
             }}
         >
             <DialogTitle>
-                <Typography variant="h5">
-                    {displayType === "create" ? "Create New Term" : "Edit Term"}
-                </Typography>
-                <IconButton
-                    aria-label="close"
-                    onClick={handleCancelCreateTerm}
-                    sx={{ position: "absolute", right: 8, top: 8 }}
-                >
+                <Typography variant="h5">{displayType === 'create' ? 'Create New Term' : 'Edit Term'}</Typography>
+                <IconButton aria-label="close" onClick={handleCancelCreateTerm} sx={{ position: 'absolute', right: 8, top: 8 }}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
@@ -201,8 +177,8 @@ const CreateNewTerm = ({
                     <Box>
                         <Autocomplete
                             freeSolo
-                            options={autoCompleteResults.map((result) => result.autosuggest)}
-                            renderInput={(params) => (
+                            options={autoCompleteResults.map(result => result.autosuggest)}
+                            renderInput={params => (
                                 <TextField
                                     {...params}
                                     label="Search Term"
@@ -215,7 +191,7 @@ const CreateNewTerm = ({
                                                     <SearchIcon />
                                                 </IconButton>
                                             </React.Fragment>
-                                        ),
+                                        )
                                     }}
                                 />
                             )}
@@ -242,10 +218,7 @@ const CreateNewTerm = ({
                                                         <Typography variant="body2" color="text.secondary">
                                                             {result.description}
                                                         </Typography>
-                                                        <Typography
-                                                            variant="caption"
-                                                            color="text.secondary"
-                                                        >
+                                                        <Typography variant="caption" color="text.secondary">
                                                             {result.ontology_name} - {result.id}
                                                         </Typography>
                                                     </React.Fragment>
@@ -265,7 +238,7 @@ const CreateNewTerm = ({
                             Term Details
                         </Typography>
                         {internalEditComponents.map((component, index) => {
-                            if (component.key.split("_").pop() === "altLabel") {
+                            if (component.key.split('_').pop() === 'altLabel') {
                                 return (
                                     <Box key={`altLabel-${index}`} sx={{ mt: 2 }}>
                                         <Typography variant="subtitle2" gutterBottom>
@@ -276,7 +249,7 @@ const CreateNewTerm = ({
                                                 <TextField
                                                     label={`Alternative Label ${idx + 1}`}
                                                     value={altLabel}
-                                                    onChange={(e) => handleAltLabelChange(idx, e.target.value)}
+                                                    onChange={e => handleAltLabelChange(idx, e.target.value)}
                                                     fullWidth
                                                     margin="dense"
                                                 />
@@ -301,11 +274,11 @@ const CreateNewTerm = ({
                                     </Box>
                                 );
                             } else {
-                                const fieldName = component.key.split("_").pop();
+                                const fieldName = component.key.split('_').pop();
                                 return React.cloneElement(component, {
                                     key: component.key || index,
                                     error: !!errors[fieldName],
-                                    helperText: errors[fieldName],
+                                    helperText: errors[fieldName]
                                 });
                             }
                         })}
@@ -315,11 +288,11 @@ const CreateNewTerm = ({
             <DialogActions>
                 <Button
                     onClick={handleCancel}
-                        sx={{
-                            backgroundColor: colorStyled.SECONDARY.dark,
-                            color: 'white',
-                            '&:hover': { backgroundColor: 'darkgray' }
-                        }}
+                    sx={{
+                        backgroundColor: colorStyled.SECONDARY.dark,
+                        color: 'white',
+                        '&:hover': { backgroundColor: 'darkgray' }
+                    }}
                 >
                     Cancel
                 </Button>
@@ -332,11 +305,7 @@ const CreateNewTerm = ({
                         '&:hover': { backgroundColor: 'darkgray' }
                     }}
                 >
-                    {activeTab === 0 && selectedTerm
-                        ? "Add Selected Term"
-                        : displayType === "create"
-                            ? "Create"
-                            : "Save"}
+                    {activeTab === 0 && selectedTerm ? 'Add Selected Term' : displayType === 'create' ? 'Create' : 'Save'}
                 </Button>
             </DialogActions>
         </Dialog>
@@ -350,18 +319,16 @@ CreateNewTerm.propTypes = {
     handleCreateTerm: PropTypes.func.isRequired,
     displayType: PropTypes.string.isRequired,
     setOpenCreateModal: PropTypes.func.isRequired,
-    handleCancelCreateTerm: PropTypes.func.isRequired,
+    handleCancelCreateTerm: PropTypes.func.isRequired
 };
 
 export default CreateNewTerm;
 
-const validateRequired = (value) => !!value.length;
+const validateRequired = value => !!value.length;
 function validateTerm(term) {
-    console.log("validating term", term);
+    console.log('validating term', term);
     return {
-        label: !validateRequired(term.label) ? "Label is Required" : "",
-        description: !validateRequired(term.description)
-            ? "Description is Required"
-            : "",
+        label: !validateRequired(term.label) ? 'Label is Required' : '',
+        description: !validateRequired(term.description) ? 'Description is Required' : ''
     };
 }
