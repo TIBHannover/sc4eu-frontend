@@ -26,7 +26,7 @@ export const generateLink = (iri, ontologyId) =>
  * @returns {Object} - Object containing before, term, and after context
  */
 export const getContext = (text, start, end) => {
-    const words = text.split(/\\s+/);
+    const words = text.split(/\s+/); // Split by spaces
     let charCount = 0;
     let wordIndexStart = 0;
     let wordIndexEnd = 0;
