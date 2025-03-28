@@ -31,7 +31,7 @@ import {
     DiscountOutlined,
     ArticleOutlined,
     DifferenceOutlined,
-    NoteAddOutlined
+    NoteAddOutlined, AnalyticsOutlined, BarChartOutlined, TimelineOutlined
 } from '@mui/icons-material';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -313,6 +313,57 @@ const SideBar = props => {
                         <BorderColorOutlined color="action" />
                         <StyledText>WebProtege</StyledText>
                     </StyledLink>
+                    <StyledLink title="Open Eurostat Visualisation" activeStyle={ActiveStyle} to={ROUTES.EUROSTAT}
+                                onClick={() => selectModeOfOperation('eurostat')}>
+                        <AnalyticsOutlined color="action" />
+                        <StyledText>Eurostar</StyledText>
+                    </StyledLink>
+                    {(isActiveTab === "eurostat" || isActiveTab === "bullwhip") && (
+                        <div
+                            style={{
+                                marginLeft: props.isOpen ? '15px' : '0px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                transition: '0.6s',
+                            }}
+                        >
+                            <p
+                                style={{
+                                    display: props.isOpen ? 'block' : 'none',
+                                    marginLeft: props.isOpen ? '-25px' : '0px',
+                                    paddingTop: '5px',
+                                    marginBottom: '1px',
+                                    fontSize: '13px',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                Eurostat Views
+                            </p>
+                            <StyledLink
+                                title="Open EU trade view"
+                                to={{
+                                    pathname: reverse(ROUTES.EUROSTAT),
+                                }}
+                                onClick={() => selectModeOfOperation('eurostat')}
+                                activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}
+                            >
+                                <TimelineOutlined color="action" />
+                                <StyledText>EU trade since 1988</StyledText>
+                            </StyledLink>
+                            <StyledLink
+                                title="Open Bullwhip View"
+                                to={{
+                                    pathname: reverse(ROUTES.EUROSTAT_BULLWHIP),
+                                }}
+                                onClick={() => selectModeOfOperation('bullwhip')}
+                                activeStyle={isActiveTab === 'bullwhip' ? ActiveStyle : {}}
+                            >
+                                <BarChartOutlined color="action" />
+                                <StyledText>Bullwhip Effect</StyledText>
+                            </StyledLink>
+                        </div>
+                    )}
+
                     <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
                         <NoteAddOutlined color="action" />
                         <StyledText>Vocabulary Dev</StyledText>
