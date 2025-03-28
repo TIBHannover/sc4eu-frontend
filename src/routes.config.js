@@ -22,6 +22,7 @@ import ProjectList from './pages/ProjectList';
 import EmailVerify from './pages/EmailVerify';
 import loginFailedRedirect from './pages/loginFailedRedirect';
 import resetPassword from './pages/resetPassword';
+import AnnotatorPage from './pages/AnnotatorPage';
 
 const routes = [
     {
@@ -113,6 +114,11 @@ const routes = [
         path: ROUTES.VOCABULARY_SUPPORT,
         exact: true,
         component: vocabulary_support
+    },
+    {
+        path: ROUTES.ANNOTATOR,
+        exact: true,
+        component: AnnotatorPage
     },
     {
         path: ROUTES.FAQ,
