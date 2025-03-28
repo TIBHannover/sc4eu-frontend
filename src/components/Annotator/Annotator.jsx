@@ -1,103 +1,20 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Button, Grid, TextField, Typography, CircularProgress, IconButton, Link, Backdrop } from '@mui/material';
+import { Button, Grid, TextField, Typography, CircularProgress, IconButton, Backdrop } from '@mui/material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import styled from 'styled-components';
 import { annotateText } from '../../network/annotatorService';
-
-const generateLightColor = () => {
-    const r = Math.floor(Math.random() * 156 + 150);
-    const g = Math.floor(Math.random() * 156 + 150);
-    const b = Math.floor(Math.random() * 156 + 150);
-    return `rgb(${r}, ${g}, ${b})`;
-};
-
-const generateLink = (iri, ontologyId) =>
-    `${process.env.REACT_APP_TS_ONTOLOGIES_URL}${ontologyId}/terms?iri=${encodeURIComponent(iri)}&obsoletes=false`;
-
-const getContext = (text, start, end) => {
-    const words = text.split(/\s+/); // Split by spaces
-    let charCount = 0;
-    let wordIndexStart = 0;
-    let wordIndexEnd = 0;
-
-    // Find the word index for the start and end positions
-    for (let i = 0; i < words.length; i++) {
-        const wordLength = words[i].length;
-        if (charCount + wordLength >= start && wordIndexStart === 0) {
-            wordIndexStart = i;
-        }
-        if (charCount + wordLength >= end) {
-            wordIndexEnd = i;
-            break;
-        }
-        charCount += wordLength + 1; // +1 for the space
-    }
-
-    // Get two words before and after the matched term
-    const beforeWords = words.slice(Math.max(0, wordIndexStart - 2), wordIndexStart).join(' ');
-    const afterWords = words.slice(wordIndexEnd + 1, wordIndexEnd + 3).join(' ');
-
-    // Add ellipsis if necessary
-    const beforeEllipsis = wordIndexStart > 2 ? '...' : '';
-    const afterEllipsis = wordIndexEnd + 3 < words.length ? '...' : '';
-
-    const term = text.slice(start, end);
-
-    // Make sure the matched term is excluded from the before and after context
-    return {
-        before: beforeWords ? `${beforeEllipsis} ${beforeWords}`.trim() : '',
-        term,
-        after: afterWords ? `${afterWords} ${afterEllipsis}`.trim() : ''
-    };
-};
-
-const createColumns = inputText => [
-    {
-        header: 'Term',
-        accessorKey: 'matched_term',
-        Cell: ({ row }) => (
-            <Link href={generateLink(row?.original?.iri, row?.original?.ontologyId)} target="_blank" rel="noopener noreferrer">
-                {row?.original?.matched_term}
-            </Link>
-        )
-    },
-    {
-        header: 'Context',
-        accessorKey: 'context',
-        Cell: ({ row }) => {
-            const { before, term, after } = getContext(inputText, row?.original?.start, row?.original?.end);
-            return (
-                <span>
-                    <span style={{ color: 'grey' }}>{before} </span>
-                    <strong>{term}</strong>
-                    <span style={{ color: 'grey' }}> {after}</span>
-                </span>
-            );
-        }
-    },
-    {
-        header: 'IRI',
-        accessorKey: 'iri',
-        Cell: ({ row }) => (
-            <Link href={row?.original?.iri} target="_blank" rel="noopener noreferrer">
-                {row?.original?.iri}
-            </Link>
-        )
-    },
-    {
-        header: 'Synonyms',
-        accessorKey: 'synonyms',
-        size: 120,
-        Cell: ({ row }) => (
-            <div>
-                {row?.original?.synonyms.map((synonym, index) => (
-                    <div key={index}>{synonym}</div>
-                ))}
-            </div>
-        )
-    }
-];
+import { generateLightColor } from './utils';
+import { createColumns } from './tableConfig';
+import {
+    HighlightedLabel,
+    InputContainer,
+    HelperTextContainer,
+    HelperText,
+    AnnotatedText,
+    ScrollableText,
+    ButtonContainer,
+    ErrorText
+} from './styles';
 
 export const Annotator = () => {
     const [inputText, setInputText] = useState('');
@@ -129,7 +46,7 @@ export const Annotator = () => {
         } catch (error) {
             console.error('Error:', error);
             setError(
-                error.message.includes('HTTP error')
+                error.name === 'APIError'
                     ? 'The annotation service is currently unavailable. Please try again later.'
                     : 'An unexpected error occurred. Please try again.'
             );
@@ -173,9 +90,6 @@ export const Annotator = () => {
         return parts;
     }, [annotatedText, matches, termColors]);
 
-    const isAnnotateDisabled = !inputText.trim();
-    const isResetDisabled = inputText.trim().length === 0;
-
     const getUniqueMatches = useCallback(() => {
         const seen = new Set();
         return matches.filter(match => {
@@ -188,6 +102,8 @@ export const Annotator = () => {
     }, [matches]);
 
     const columns = useMemo(() => createColumns(inputText), [inputText]);
+    const isAnnotateDisabled = !inputText.trim();
+    const isResetDisabled = !inputText.trim();
 
     const table = useMaterialReactTable({
         columns,
@@ -274,58 +190,8 @@ export const Annotator = () => {
                     <CircularProgress color="inherit" />
                 </Backdrop>
 
-                {!isLoading && <MaterialReactTable table={table} />}
+                {!isLoading && matches.length > 0 && <MaterialReactTable table={table} />}
             </Grid>
         </Grid>
     );
 };
-
-const HighlightedLabel = styled.span`
-    background-color: ${({ isHovered, color }) => (isHovered ? '#ffeb3b' : color)};
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-
-    &:hover {
-        background-color: #ffeb3b;
-    }
-`;
-
-const InputContainer = styled.div`
-    margin-bottom: 20px;
-`;
-
-const HelperTextContainer = styled.div`
-    display: flex;
-    align-items: center;
-`;
-
-const HelperText = styled.div`
-    margin-right: 8px;
-`;
-
-const AnnotatedText = styled.div`
-    margin-bottom: 20px;
-`;
-
-const ScrollableText = styled.div`
-    height: 180px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #f9f9f9;
-`;
-
-const ButtonContainer = styled.div`
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-`;
-
-const ErrorText = styled.div`
-    color: ${({ theme }) => theme.palette?.error?.main || '#f44336'};
-    margin-right: 8px;
-`;
