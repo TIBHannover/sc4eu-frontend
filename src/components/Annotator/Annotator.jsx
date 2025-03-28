@@ -3,6 +3,7 @@ import { Button, Grid, TextField, Typography, CircularProgress, IconButton, Link
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import styled from 'styled-components';
+import { annotateText } from '../../network/annotatorService';
 
 const generateLightColor = () => {
     const r = Math.floor(Math.random() * 156 + 150);
@@ -112,15 +113,7 @@ export const Annotator = () => {
 
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.REACT_APP_NFDI4ENERGY_ANNOTATOR_URL}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: inputText, ontology_ids: ['dr'] })
-            });
-
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-            const data = await response.json();
+            const data = await annotateText(inputText);
             setMatches(data.matches);
             setAnnotatedText(inputText);
 
