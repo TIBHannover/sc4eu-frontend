@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Grid, TextField, Typography, CircularProgress, IconButton, Link } from '@mui/material';
+import React, { useState, useCallback, useMemo } from 'react';
+import { Button, Grid, TextField, Typography, CircularProgress, IconButton, Link, Backdrop } from '@mui/material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import styled from 'styled-components';
@@ -105,13 +105,15 @@ export const Annotator = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [annotatedText, setAnnotatedText] = useState('');
     const [termColors, setTermColors] = useState({});
+    const [error, setError] = useState(null);
 
-    const handleInputChange = e => setInputText(e.target.value);
+    const handleInputChange = useCallback(e => setInputText(e.target.value), []);
 
-    const handleAnnotate = async () => {
+    const handleAnnotate = useCallback(async () => {
         if (!inputText.trim()) return;
 
         setIsLoading(true);
+        setError(null);
         try {
             const data = await annotateText(inputText);
             setMatches(data.matches);
@@ -126,19 +128,24 @@ export const Annotator = () => {
             setTermColors(colorMap);
         } catch (error) {
             console.error('Error:', error);
-            alert('An error occurred while annotating the text. Please try again.');
+            setError(
+                error.message.includes('HTTP error')
+                    ? 'The annotation service is currently unavailable. Please try again later.'
+                    : 'An unexpected error occurred. Please try again.'
+            );
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [inputText]);
 
-    const handleReset = () => {
+    const handleReset = useCallback(() => {
         setInputText('');
         setMatches([]);
         setAnnotatedText('');
-    };
+        setError(null);
+    }, []);
 
-    const highlightText = () => {
+    const highlightText = useCallback(() => {
         if (!annotatedText || matches.length === 0) return annotatedText;
 
         let parts = [];
@@ -149,7 +156,12 @@ export const Annotator = () => {
             if (match.start >= lastIndex) {
                 parts.push(annotatedText.slice(lastIndex, match.start));
                 parts.push(
-                    <HighlightedLabel key={`label_${index}`} color={termColors[match.matched_term]}>
+                    <HighlightedLabel
+                        key={`label_${index}`}
+                        color={termColors[match.matched_term]}
+                        role="mark"
+                        aria-label={`Highlighted term: ${match.matched_term}`}
+                    >
                         {annotatedText.slice(match.start, match.end)}
                     </HighlightedLabel>
                 );
@@ -159,12 +171,12 @@ export const Annotator = () => {
 
         parts.push(annotatedText.slice(lastIndex));
         return parts;
-    };
+    }, [annotatedText, matches, termColors]);
 
     const isAnnotateDisabled = !inputText.trim();
     const isResetDisabled = inputText.trim().length === 0;
 
-    const getUniqueMatches = () => {
+    const getUniqueMatches = useCallback(() => {
         const seen = new Set();
         return matches.filter(match => {
             if (seen.has(match.matched_term)) {
@@ -173,19 +185,27 @@ export const Annotator = () => {
             seen.add(match.matched_term);
             return true;
         });
-    };
+    }, [matches]);
+
+    const columns = useMemo(() => createColumns(inputText), [inputText]);
 
     const table = useMaterialReactTable({
-        columns: createColumns(inputText),
+        columns,
         data: getUniqueMatches(),
         initialState: { pagination: { pageSize: 10 }, density: 'compact' },
         renderTopToolbarCustomActions: () => <Typography variant="h6">Matched Terms</Typography>
     });
 
+    const handleCopyExample = useCallback(() => {
+        setInputText(
+            'The Delivery Commitment directly corresponds to the release plans and cycle time commitments introduced in the corresponding entities'
+        );
+    }, []);
+
     return (
         <Grid container justifyContent="center">
             <Grid item md={9}>
-                <div>
+                <div role="main" aria-label="Text Annotator">
                     <Typography variant="h5" gutterBottom textAlign="center">
                         Annotator
                     </Typography>
@@ -208,24 +228,26 @@ export const Annotator = () => {
                             fullWidth
                             value={inputText}
                             onChange={handleInputChange}
+                            aria-label="Text input for annotation"
+                            error={!!error}
                             helperText={
                                 <HelperTextContainer>
-                                    <HelperText>
-                                        <b>Example Text:</b>{' '}
-                                        <i>
-                                            The Delivery Commitment directly corresponds to the release plans and cycle time commitments introduced in
-                                            the corresponding entities
-                                        </i>
-                                    </HelperText>
-                                    <IconButton
-                                        onClick={() =>
-                                            setInputText(
-                                                'The Delivery Commitment directly corresponds to the release plans and cycle time commitments introduced in the corresponding entities'
-                                            )
-                                        }
-                                    >
-                                        <FileCopyOutlinedIcon />
-                                    </IconButton>
+                                    {error ? (
+                                        <ErrorText>{error}</ErrorText>
+                                    ) : (
+                                        <>
+                                            <HelperText>
+                                                <b>Example Text:</b>{' '}
+                                                <i>
+                                                    The Delivery Commitment directly corresponds to the release plans and cycle time commitments
+                                                    introduced in the corresponding entities
+                                                </i>
+                                            </HelperText>
+                                            <IconButton onClick={handleCopyExample} aria-label="Copy example text">
+                                                <FileCopyOutlinedIcon />
+                                            </IconButton>
+                                        </>
+                                    )}
                                 </HelperTextContainer>
                             }
                         />
@@ -233,19 +255,26 @@ export const Annotator = () => {
                 ) : (
                     <AnnotatedText>
                         <Typography variant="h6">Annotated Text</Typography>
-                        <ScrollableText>{highlightText()}</ScrollableText>
+                        <ScrollableText role="region" aria-label="Annotated text with highlighted terms">
+                            {highlightText()}
+                        </ScrollableText>
                     </AnnotatedText>
                 )}
 
                 <ButtonContainer>
-                    <Button variant="contained" color="primary" onClick={handleAnnotate} disabled={isAnnotateDisabled}>
+                    <Button variant="contained" color="primary" onClick={handleAnnotate} disabled={isAnnotateDisabled} aria-label="Annotate text">
                         Annotate
                     </Button>
-                    <Button variant="contained" color="secondary" onClick={handleReset} disabled={isResetDisabled}>
+                    <Button variant="contained" color="secondary" onClick={handleReset} disabled={isResetDisabled} aria-label="Reset form">
                         Reset
                     </Button>
                 </ButtonContainer>
-                {isLoading ? <CircularProgress /> : <MaterialReactTable table={table} />}
+
+                <Backdrop open={isLoading} sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+
+                {!isLoading && <MaterialReactTable table={table} />}
             </Grid>
         </Grid>
     );
@@ -279,6 +308,7 @@ const HelperText = styled.div`
 const AnnotatedText = styled.div`
     margin-bottom: 20px;
 `;
+
 const ScrollableText = styled.div`
     height: 180px;
     overflow-y: auto;
@@ -293,4 +323,9 @@ const ButtonContainer = styled.div`
     gap: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
+`;
+
+const ErrorText = styled.div`
+    color: ${({ theme }) => theme.palette?.error?.main || '#f44336'};
+    margin-right: 8px;
 `;
