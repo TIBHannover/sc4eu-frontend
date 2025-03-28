@@ -22,6 +22,8 @@ import ProjectList from './pages/ProjectList';
 import EmailVerify from './pages/EmailVerify';
 import loginFailedRedirect from './pages/loginFailedRedirect';
 import resetPassword from './pages/resetPassword';
+import { EurostatPortal } from './components/eurostat/EutostatPortal';
+import { BullWhipEffect } from './components/eurostat/BullWhipEffect';
 import AnnotatorPage from './pages/AnnotatorPage';
 
 const routes = [
@@ -46,6 +48,18 @@ const routes = [
         path: ROUTES.WEBPROTEGE,
         exact: true,
         component: WebProtege
+    },
+
+    {
+        path: ROUTES.EUROSTAT,
+        exact: true,
+        component: EurostatPortal
+    },
+
+    {
+        path : ROUTES.EUROSTAT_BULLWHIP,
+        exact: true,
+        component: BullWhipEffect
     },
 
     {

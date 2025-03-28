@@ -18,6 +18,8 @@ const routes = {
     FAQ: '/FAQ',
     TRAINING: '/Training',
     WEBPROTEGE: '/WEBPROTEGE',
+    EUROSTAT: '/eurostat',
+    EUROSTAT_BULLWHIP: '/eurostat/bullwhip',
     EMAIL_VERIFY: '/EmailVerify',
     LOGIN_FAILED: '/loginFailedRedirect',
     RESET_PASSWORD: '/resetPassword',
