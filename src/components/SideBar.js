@@ -7,7 +7,7 @@ import { reverse } from 'named-urls';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import Cookies from 'js-cookie';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import List from '@mui/material/List';
@@ -316,6 +316,10 @@ const SideBar = props => {
                     <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
                         <NoteAddOutlined color="action" />
                         <StyledText>Vocabulary Dev</StyledText>
+                    </StyledLink>
+                    <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR}>
+                        <NoteAddOutlined color="action" />
+                        <StyledText>Annotator</StyledText>
                     </StyledLink>
                     <Divider />
                     <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>

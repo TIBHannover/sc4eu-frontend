@@ -1,6 +1,5 @@
-export default {
+const routes = {
     HOME: '/',
-    // dummy use cases
     PAGEA: '/pageA',
     PAGEB: '/pageB',
     ONTOLOGY: '/ontology',
@@ -11,7 +10,6 @@ export default {
     USER_SETTINGS: '/user/settings/',
     SERVICE_STATUS: '/servicesStatus',
     ADMIN_DASHBOARD: '/admin_Dashboard',
-
     LOGGED_IN: '/loggedIn',
     Documentations: '/Documentations',
     Dataprotections: '/Dataprotections',
@@ -22,5 +20,8 @@ export default {
     WEBPROTEGE: '/WEBPROTEGE',
     EMAIL_VERIFY: '/EmailVerify',
     LOGIN_FAILED: '/loginFailedRedirect',
-    RESET_PASSWORD: '/resetPassword'
+    RESET_PASSWORD: '/resetPassword',
+    ANNOTATOR: '/AnnotatorPage'
 };
+
+export default routes;
