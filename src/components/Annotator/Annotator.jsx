@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Button, Grid, TextField, Typography, CircularProgress, IconButton, Backdrop } from '@mui/material';
+import { Button, TextField, Typography, CircularProgress, IconButton, Backdrop } from '@mui/material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { annotateText } from '../../network/annotatorService';
@@ -15,6 +15,26 @@ import {
     ButtonContainer,
     ErrorText
 } from './styles';
+import styled from 'styled-components';
+
+const ContentContainer = styled.div`
+    width: 75%;
+    margin: 0 auto;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: visible;
+    min-height: 0;
+
+    & .MuiPaper-root {
+        overflow: visible;
+    }
+
+    & .MuiTableContainer-root {
+        overflow-x: auto;
+    }
+`;
 
 export const Annotator = () => {
     const [inputText, setInputText] = useState('');
@@ -24,45 +44,18 @@ export const Annotator = () => {
     const [termColors, setTermColors] = useState({});
     const [error, setError] = useState(null);
 
-    const handleInputChange = useCallback(e => setInputText(e.target.value), []);
+    const uniqueMatches = useMemo(() => {
+        const seen = new Set();
+        return matches.filter(match => {
+            if (seen.has(match.matched_term)) {
+                return false;
+            }
+            seen.add(match.matched_term);
+            return true;
+        });
+    }, [matches]);
 
-    const handleAnnotate = useCallback(async () => {
-        if (!inputText.trim()) return;
-
-        setIsLoading(true);
-        setError(null);
-        try {
-            const data = await annotateText(inputText);
-            setMatches(data.matches);
-            setAnnotatedText(inputText);
-
-            const colorMap = {};
-            data.matches.forEach(match => {
-                if (!colorMap[match.matched_term]) {
-                    colorMap[match.matched_term] = generateLightColor();
-                }
-            });
-            setTermColors(colorMap);
-        } catch (error) {
-            console.error('Error:', error);
-            setError(
-                error.name === 'APIError'
-                    ? 'The annotation service is currently unavailable. Please try again later.'
-                    : 'An unexpected error occurred. Please try again.'
-            );
-        } finally {
-            setIsLoading(false);
-        }
-    }, [inputText]);
-
-    const handleReset = useCallback(() => {
-        setInputText('');
-        setMatches([]);
-        setAnnotatedText('');
-        setError(null);
-    }, []);
-
-    const highlightText = useCallback(() => {
+    const highlightedText = useMemo(() => {
         if (!annotatedText || matches.length === 0) return annotatedText;
 
         let parts = [];
@@ -90,25 +83,15 @@ export const Annotator = () => {
         return parts;
     }, [annotatedText, matches, termColors]);
 
-    const getUniqueMatches = useCallback(() => {
-        const seen = new Set();
-        return matches.filter(match => {
-            if (seen.has(match.matched_term)) {
-                return false;
-            }
-            seen.add(match.matched_term);
-            return true;
-        });
-    }, [matches]);
-
     const columns = useMemo(() => createColumns(inputText), [inputText]);
     const isAnnotateDisabled = !inputText.trim();
     const isResetDisabled = !inputText.trim();
 
     const table = useMaterialReactTable({
         columns,
-        data: getUniqueMatches(),
-        initialState: { pagination: { pageSize: 10 }, density: 'compact' },
+        data: uniqueMatches,
+        initialState: { pagination: { pageSize: 10, pageIndex: 0 }, density: 'compact' },
+        enablePagination: true,
         renderTopToolbarCustomActions: () => <Typography variant="h6">Matched Terms</Typography>
     });
 
@@ -118,22 +101,56 @@ export const Annotator = () => {
         );
     }, []);
 
+    const handleInputChange = event => {
+        setInputText(event.target.value);
+        setError(null);
+    };
+
+    const handleAnnotate = async () => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            const response = await annotateText(inputText);
+
+            const newTermColors = {};
+            response.matches.forEach(match => {
+                if (!newTermColors[match.matched_term]) {
+                    newTermColors[match.matched_term] = generateLightColor();
+                }
+            });
+
+            setMatches(response.matches);
+            setTermColors(newTermColors);
+            setAnnotatedText(inputText);
+        } catch (err) {
+            setError(err.message || 'An error occurred while annotating the text');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleReset = () => {
+        setInputText('');
+        setMatches([]);
+        setAnnotatedText('');
+        setTermColors({});
+        setError(null);
+    };
+
     return (
-        <Grid container justifyContent="center">
-            <Grid item md={9}>
-                <div role="main" aria-label="Text Annotator">
-                    <Typography variant="h5" gutterBottom textAlign="center">
-                        Annotator
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                        This annotator utilizes terms from Digital Reference Ontology to match input text. We generate n-grams (unigrams, bigrams,
-                        trigrams, Quadgrams, Pentagrams) from the text and perform matching with a confidence score greater than 90%.
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                        <b>Future Work:</b> Our future plans include enhancing this service with semantic annotation capabilities using Sentence-BERT
-                        (SBERT), as well as integrating additional descriptive metadata.
-                    </Typography>
-                </div>
+        <ContentContainer>
+            <div role="main" aria-label="Text Annotator">
+                <Typography variant="h5" gutterBottom textAlign="center">
+                    Annotator
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                    This annotator utilizes terms from Digital Reference Ontology to match input text. We generate n-grams (unigrams, bigrams,
+                    trigrams, Quadgrams, Pentagrams) from the text and perform matching with a confidence score greater than 90%.
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                    <b>Future Work:</b> Our future plans include enhancing this service with semantic annotation capabilities using Sentence-BERT
+                    (SBERT), as well as integrating additional descriptive metadata.
+                </Typography>
                 {!annotatedText ? (
                     <InputContainer>
                         <Typography variant="h6">Text To Annotate</Typography>
@@ -172,7 +189,7 @@ export const Annotator = () => {
                     <AnnotatedText>
                         <Typography variant="h6">Annotated Text</Typography>
                         <ScrollableText role="region" aria-label="Annotated text with highlighted terms">
-                            {highlightText()}
+                            {highlightedText}
                         </ScrollableText>
                     </AnnotatedText>
                 )}
@@ -191,7 +208,7 @@ export const Annotator = () => {
                 </Backdrop>
 
                 {!isLoading && matches.length > 0 && <MaterialReactTable table={table} />}
-            </Grid>
-        </Grid>
+            </div>
+        </ContentContainer>
     );
 };
