@@ -34,7 +34,8 @@ import {
     NoteAddOutlined,
     AnalyticsOutlined,
     BarChartOutlined,
-    TimelineOutlined
+    TimelineOutlined,
+    BorderAllOutlined
 } from '@mui/icons-material';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -319,7 +320,7 @@ const SideBar = props => {
                                             <StyledText>Vocabulary Dev</StyledText>
                                         </StyledLink>
                                         <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR}>
-                                            <NoteAddOutlined color="action" />
+                                            <BorderAllOutlined color="action" />
                                             <StyledText>Annotator</StyledText>
                                         </StyledLink>
                                         <StyledLink
@@ -334,7 +335,7 @@ const SideBar = props => {
                                         {(isActiveTab === 'eurostat' || isActiveTab === 'bullwhip') && (
                                             <div
                                                 style={{
-                                                    marginLeft: props.isOpen ? '15px' : '0px',
+                                                    marginLeft: props.isOpen ? '10px' : '0px',
                                                     display: 'flex',
                                                     flexDirection: 'column',
                                                     transition: '0.6s'
@@ -343,14 +344,14 @@ const SideBar = props => {
                                                 <p
                                                     style={{
                                                         display: props.isOpen ? 'block' : 'none',
-                                                        marginLeft: props.isOpen ? '-25px' : '0px',
+                                                        marginLeft: props.isOpen ? '-5px' : '0px',
                                                         paddingTop: '5px',
                                                         marginBottom: '1px',
                                                         fontSize: '13px',
                                                         textAlign: 'center'
                                                     }}
                                                 >
-                                                    Eurostat Views
+                                                    Knowledge Graphs
                                                 </p>
                                                 <StyledLink
                                                     title="Open EU trade view"
@@ -361,7 +362,7 @@ const SideBar = props => {
                                                     activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}
                                                 >
                                                     <TimelineOutlined color="action" />
-                                                    <StyledText>EU trade since 1988</StyledText>
+                                                    <StyledText>EU trade</StyledText>
                                                 </StyledLink>
                                                 <StyledLink
                                                     title="Open Bullwhip View"

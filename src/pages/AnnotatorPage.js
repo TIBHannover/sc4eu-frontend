@@ -5,10 +5,10 @@ import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import { Annotator } from '../components/Annotator/Annotator';
 
 const StyledDiv = styled.div`
-    padding-top: 10px;
-    padding-left: 5%;
-    padding-right: 5%;
-    padding-bottom: 2%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 5% 2%;
     font-family: ${fontStyled.fontFamily};
     overflow-y: auto;
 
