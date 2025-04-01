@@ -5,6 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { MyApexChart } from './ApexChart';
 import { Tab, Tabs, Box } from '@mui/material/';
 import { ApexBarChart } from './ApexBarChart';
+import { colorStyled } from '../../styledComponents/styledColor';
 
 export const EurostatPortal = () => {
     const [reporters, setReporters] = useState([]);
@@ -352,7 +353,7 @@ export const EurostatPortal = () => {
                         ></Autocomplete>
                     </Grid>
                     <Grid item xs={3} md={2}>
-                        <Button variant="contained" color="primary" onClick={handleSubmit}>
+                        <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={handleSubmit}>
                             Submit
                         </Button>
                     </Grid>

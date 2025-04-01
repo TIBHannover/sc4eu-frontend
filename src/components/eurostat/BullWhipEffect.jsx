@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Autocomplete, Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { MyApexChart } from './ApexChart';
 import { EurostatGeoEntities } from './static/EurostatGeoEntities';
+import { colorStyled } from '../../styledComponents/styledColor';
 
 const indicators = [
     {
@@ -155,7 +156,7 @@ export const BullWhipEffect = () => {
     };
 
     return (
-        <div style={{ height: 'calc(100vh - 100px)', overflowY: 'auto'}}>
+        <div style={{ height: 'calc(100vh - 100px)', overflowY: 'auto' }}>
             <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={11}>
                     <Typography variant="h5" gutterBottom textAlign="center">
@@ -169,9 +170,9 @@ export const BullWhipEffect = () => {
                                 Annual enterprise statistics for special aggregates of NACE Rev.2 activities (2005-2020).
                                 <br />
                                 <i>
-                                    Covers all activities of the business economy with the exception of agricultural activities and personal services and
-                                    the data are provided by all EU Member States, Iceland, Norway and Switzerland, some candidate and potential candidate
-                                    countries.
+                                    Covers all activities of the business economy with the exception of agricultural activities and personal services
+                                    and the data are provided by all EU Member States, Iceland, Norway and Switzerland, some candidate and potential
+                                    candidate countries.
                                     <br />
                                     The data are collected by domain of activity (Services, Industry, Trade and Constructions).
                                 </i>
@@ -182,9 +183,9 @@ export const BullWhipEffect = () => {
                                 Sold production, exports and imports.
                                 <br />
                                 <i>
-                                    Contains statistics on production of manufactured goods together with related external trade data. The purpose of the
-                                    statistics is to report, for each product, how much has been produced in the reporting country during the reference
-                                    period.
+                                    Contains statistics on production of manufactured goods together with related external trade data. The purpose of
+                                    the statistics is to report, for each product, how much has been produced in the reporting country during the
+                                    reference period.
                                 </i>
                                 Link to the dataset:{' '}
                                 <Link href="https://ec.europa.eu/eurostat/databrowser/view/ds-056120/default/table?lang=en">ds-056120</Link>
@@ -193,8 +194,9 @@ export const BullWhipEffect = () => {
                                 Real GDP growth rate - volume.
                                 <br />
                                 <i>
-                                    National accounts are a coherent and consistent set of macroeconomic indicators, which provide an overall picture of
-                                    the economic situation and are widely used for economic analysis and forecasting, policy design and policy making.
+                                    National accounts are a coherent and consistent set of macroeconomic indicators, which provide an overall picture
+                                    of the economic situation and are widely used for economic analysis and forecasting, policy design and policy
+                                    making.
                                 </i>
                                 Link to the dataset:{' '}
                                 <Link href="https://ec.europa.eu/eurostat/databrowser/view/tec00115/default/table?lang=en">tec00115</Link>
@@ -285,7 +287,7 @@ export const BullWhipEffect = () => {
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
-                        <Button variant="contained" color="primary" onClick={handleSubmit}>
+                        <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={handleSubmit}>
                             Submit
                         </Button>
                     </Grid>
@@ -310,6 +312,5 @@ export const BullWhipEffect = () => {
                 </Grid>
             </Grid>
         </div>
-
     );
 };
