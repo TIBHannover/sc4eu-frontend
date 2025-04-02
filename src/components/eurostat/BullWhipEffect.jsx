@@ -48,6 +48,18 @@ const soldUnits = [
     }
 ];
 
+const wordLinks = {
+    application: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr%23Application&obsoletes=false&lang=en',
+    supply: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-OM%23Supply&obsoletes=false&lang=en',
+    service: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fpurl.org%2Fdc%2Fdcmitype%2FService&obsoletes=false&lang=en',
+    activity: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-GDM%23Activity&obsoletes=false&lang=en',
+    industry: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-OOSMP%23Industry&obsoletes=false&lang=en',
+    products: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%253A%252F%252Fwww.w3id.org%252Fecsel-dr-OOSMP%2523Product&obsoletes=false',
+    situation: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-PWR%23Situation&obsoletes=false&lang=en',
+    supplyChain:
+        'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-DF%23Supply_Chain&obsoletes=false&lang=en'
+};
+
 export const BullWhipEffect = () => {
     //related to Annual enterprise
     const [annualGeos, setAnnualGeos] = useState([]);
@@ -163,43 +175,86 @@ export const BullWhipEffect = () => {
                         Bullwhip Effect
                     </Typography>
                     <Typography>
-                        This application is intended to study and find possible bullwhip effect in supply chain networks. For this purpose several
-                        datasets from Eurostat were used:
+                        This{' '}
+                        <Link href={wordLinks.application} style={{ color: '#607D8B' }}>
+                            application
+                        </Link>{' '}
+                        is intended to study and find possible bullwhip effect in{' '}
+                        <Link href={wordLinks.supplyChain} style={{ color: '#607D8B' }}>
+                            supply chain
+                        </Link>{' '}
+                        networks. For this purpose several datasets from Eurostat were used:
                         <ol>
                             <li>
                                 Annual enterprise statistics for special aggregates of NACE Rev.2 activities (2005-2020).
                                 <br />
                                 <i>
-                                    Covers all activities of the business economy with the exception of agricultural activities and personal services
+                                    Covers all activities of the business economy with the exception of agricultural activities and personal{' '}
+                                    <Link href={wordLinks.service} style={{ color: '#607D8B' }}>
+                                        services
+                                    </Link>{' '}
                                     and the data are provided by all EU Member States, Iceland, Norway and Switzerland, some candidate and potential
                                     candidate countries.
                                     <br />
-                                    The data are collected by domain of activity (Services, Industry, Trade and Constructions).
+                                    The data are collected by domain of{' '}
+                                    <Link href={wordLinks.activity} style={{ color: '#607D8B' }}>
+                                        activity
+                                    </Link>{' '}
+                                    (
+                                    <Link href={wordLinks.service} style={{ color: '#607D8B' }}>
+                                        Services
+                                    </Link>{' '}
+                                    ,{' '}
+                                    <Link href={wordLinks.industry} style={{ color: '#607D8B' }}>
+                                        Industry
+                                    </Link>{' '}
+                                    , Trade and Constructions).
                                 </i>
                                 Link to the dataset:{' '}
-                                <Link href="https://ec.europa.eu/eurostat/databrowser/view/sbs_na_sca_r2/default/table?lang=en">sbs_na_sca_r2</Link>
+                                <Link
+                                    style={{ color: '#607D8B' }}
+                                    href="https://ec.europa.eu/eurostat/databrowser/view/sbs_na_sca_r2/default/table?lang=en"
+                                >
+                                    sbs_na_sca_r2
+                                </Link>
                             </li>
                             <li>
                                 Sold production, exports and imports.
                                 <br />
                                 <i>
                                     Contains statistics on production of manufactured goods together with related external trade data. The purpose of
-                                    the statistics is to report, for each product, how much has been produced in the reporting country during the
-                                    reference period.
+                                    the statistics is to report, for each{' '}
+                                    <Link href={wordLinks.products} style={{ color: '#607D8B' }}>
+                                        product
+                                    </Link>{' '}
+                                    , how much has been produced in the reporting country during the reference period.
                                 </i>
                                 Link to the dataset:{' '}
-                                <Link href="https://ec.europa.eu/eurostat/databrowser/view/ds-056120/default/table?lang=en">ds-056120</Link>
+                                <Link
+                                    style={{ color: '#607D8B' }}
+                                    href="https://ec.europa.eu/eurostat/databrowser/view/ds-056120/default/table?lang=en"
+                                >
+                                    ds-056120
+                                </Link>
                             </li>
                             <li>
                                 Real GDP growth rate - volume.
                                 <br />
                                 <i>
                                     National accounts are a coherent and consistent set of macroeconomic indicators, which provide an overall picture
-                                    of the economic situation and are widely used for economic analysis and forecasting, policy design and policy
-                                    making.
+                                    of the economic{' '}
+                                    <Link href={wordLinks.situation} style={{ color: '#607D8B' }}>
+                                        situation
+                                    </Link>{' '}
+                                    and are widely used for economic analysis and forecasting, policy design and policy making.
                                 </i>
                                 Link to the dataset:{' '}
-                                <Link href="https://ec.europa.eu/eurostat/databrowser/view/tec00115/default/table?lang=en">tec00115</Link>
+                                <Link
+                                    style={{ color: '#607D8B' }}
+                                    href="https://ec.europa.eu/eurostat/databrowser/view/tec00115/default/table?lang=en"
+                                >
+                                    tec00115
+                                </Link>
                             </li>
                         </ol>
                     </Typography>
