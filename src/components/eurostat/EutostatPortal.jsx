@@ -5,6 +5,21 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { MyApexChart } from './ApexChart';
 import { Tab, Tabs, Box } from '@mui/material/';
 import { ApexBarChart } from './ApexBarChart';
+import { colorStyled } from '../../styledComponents/styledColor';
+
+const wordLinks = {
+    application: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr%23Application&obsoletes=false&lang=en',
+    measure: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-RAMI40%23Measure&obsoletes=false&lang=en',
+    property: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3.org%2Fns%2Fssn%2FProperty&obsoletes=false&lang=en',
+    electricity:
+        'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%253A%252F%252Fwww.w3id.org%252Fecsel-dr-CO2Savings%2523Electricity&obsoletes=false&lang=en',
+    source: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-PWR%23Source&obsoletes=false&lang=en',
+    semiconductors:
+        'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-PWR%23Semiconductors&obsoletes=false&lang=en',
+    products: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%253A%252F%252Fwww.w3id.org%252Fecsel-dr-OOSMP%2523Product&obsoletes=false',
+    System: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3.org%2Fns%2Fssn%2FSystem&obsoletes=false&lang=en',
+    ontology: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-AT%23Ontology&obsoletes=false&lang=en'
+};
 
 export const EurostatPortal = () => {
     const [reporters, setReporters] = useState([]);
@@ -245,31 +260,69 @@ export const EurostatPortal = () => {
                         EU trade data since 1988
                     </Typography>
                     <Typography>
-                        This application is a standardised way of querying and visualising data from the EUROSTAT database{' '}
-                        <Link href="https://ec.europa.eu/eurostat/databrowser/view/ds-045409$defaultview/default/table?lang=en">ds-045409</Link>.
-                        EUROSTAT describes the content of the database as:{' '}
+                        This{' '}
+                        <Link href={wordLinks.application} style={{ color: '#607D8B' }}>
+                            application
+                        </Link>{' '}
+                        is a standardised way of querying and visualising data from the EUROSTAT database{' '}
+                        <Link
+                            href="https://ec.europa.eu/eurostat/databrowser/view/ds-045409$defaultview/default/table?lang=en"
+                            style={{ color: '#607D8B' }}
+                        >
+                            ds-045409
+                        </Link>
+                        . EUROSTAT describes the content of the database as:{' '}
                         <i>
-                            „International trade in goods statistics (ITGS) published by Eurostat measure the value and quantity of goods traded
-                            between the EU Member States (intra-EU trade) and goods traded by the EU Member States with non-EU countries (extra-EU
-                            trade). ‘Goods’ means all movable property including electricity. ‘European’ means that the statistics are compiled on the
-                            basis of the concepts and definitions set out in EU legislation. ‘National’ statistics, i.e. statistics published at
-                            national level by the Member States, are compiled on the basis of national rules which may differ from EU rules. European
-                            ITGS are the official harmonised source of information about exports, imports and the trade balances of the EU, its Member
-                            States and the euro area.“
+                            „International trade in goods statistics (ITGS) published by Eurostat{' '}
+                            <Link href={wordLinks.measure} style={{ color: '#607D8B' }}>
+                                measure
+                            </Link>{' '}
+                            the value and quantity of goods traded between the EU Member States (intra-EU trade) and goods traded by the EU Member
+                            States with non-EU countries (extra-EU trade). ‘Goods’ means all movable{' '}
+                            <Link href={wordLinks.property} style={{ color: '#607D8B' }}>
+                                property
+                            </Link>{' '}
+                            including{' '}
+                            <Link href={wordLinks.electricity} style={{ color: '#607D8B' }}>
+                                electricity
+                            </Link>
+                            . ‘European’ means that the statistics are compiled on the basis of the concepts and definitions set out in EU
+                            legislation. ‘National’ statistics, i.e. statistics published at national level by the Member States, are compiled on the
+                            basis of national rules which may differ from EU rules. European ITGS are the official harmonised{' '}
+                            <Link href={wordLinks.source} style={{ color: '#607D8B' }}>
+                                source
+                            </Link>{' '}
+                            of information about exports, imports and the trade balances of the EU, its Member States and the euro area.“
                         </i>
                     </Typography>
                     <br />
                     <Typography>
-                        We have reduced the data to those relating to the trade in semiconductors. The products are described via the Harmonized{' '}
-                        <Link href="https://www.trade.gov/harmonized-system-hs-codes">System (HS) Code</Link>. This data was first mapped in the{' '}
-                        <Link href="https://gitlab.com/coypu-project/coy-ontology">COY ontology</Link> and converted into a knowledge graph. The
-                        knowledge graph forms the basis for all queries that can be visualised interactively. This enables us to quickly combine,
-                        query and visualise the available data for interactive exploration.
+                        We have reduced the data to those relating to the trade in{' '}
+                        <Link href={wordLinks.semiconductors} style={{ color: '#607D8B' }}>
+                            semiconductors
+                        </Link>
+                        . The{' '}
+                        <Link href={wordLinks.products} style={{ color: '#607D8B' }}>
+                            products
+                        </Link>{' '}
+                        are described via the Harmonized{' '}
+                        <Link href="https://www.trade.gov/harmonized-system-hs-codes" style={{ color: '#607D8B' }}>
+                            System (HS) Code
+                        </Link>
+                        . This data was first mapped in the{' '}
+                        <Link href="https://gitlab.com/coypu-project/coy-ontology" style={{ color: '#607D8B' }}>
+                            COY ontology
+                        </Link>{' '}
+                        and converted into a knowledge graph. The knowledge graph forms the basis for all queries that can be visualised
+                        interactively. This enables us to quickly combine, query and visualise the available data for interactive exploration.
                     </Typography>
                     <br />
                     <Typography>
                         In next steps we will enrich these data by further databases as like the{' '}
-                        <Link href="https://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html">BACI</Link>.
+                        <Link href="https://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html" style={{ color: '#607D8B' }}>
+                            BACI
+                        </Link>
+                        .
                     </Typography>
                 </Grid>
                 <Grid container item xs={10} spacing={2}>
@@ -352,7 +405,7 @@ export const EurostatPortal = () => {
                         ></Autocomplete>
                     </Grid>
                     <Grid item xs={3} md={2}>
-                        <Button variant="contained" color="primary" onClick={handleSubmit}>
+                        <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={handleSubmit}>
                             Submit
                         </Button>
                     </Grid>

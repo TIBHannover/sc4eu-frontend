@@ -16,6 +16,7 @@ import {
     ErrorText
 } from './styles';
 import styled from 'styled-components';
+import { colorStyled } from '../../styledComponents/styledColor';
 
 const ContentContainer = styled.div`
     width: 75%;
@@ -195,10 +196,22 @@ export const Annotator = () => {
                 )}
 
                 <ButtonContainer>
-                    <Button variant="contained" color="primary" onClick={handleAnnotate} disabled={isAnnotateDisabled} aria-label="Annotate text">
+                    <Button
+                        variant="contained"
+                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                        onClick={handleAnnotate}
+                        disabled={isAnnotateDisabled}
+                        aria-label="Annotate text"
+                    >
                         Annotate
                     </Button>
-                    <Button variant="contained" color="secondary" onClick={handleReset} disabled={isResetDisabled} aria-label="Reset form">
+                    <Button
+                        variant="contained"
+                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                        onClick={handleReset}
+                        disabled={isResetDisabled}
+                        aria-label="Reset form"
+                    >
                         Reset
                     </Button>
                 </ButtonContainer>
