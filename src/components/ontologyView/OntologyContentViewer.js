@@ -57,7 +57,11 @@ class OntologyContentViewer extends Component {
                         <></>
                     )}
                     <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
-                        {this.props.selectedOntology ? this.props.selectedOntology.name : 'N/A'}
+                        {this.props.selectedOntology
+                            ? this.props.selectedOntology.name.length > 42
+                                ? `${this.props.selectedOntology.name.substring(0, 40)}...`
+                                : this.props.selectedOntology.name
+                            : 'N/A'}
                     </div>
                     <div>
                         <ControlButton onClick={this.copyUrlToClipboard}>Copy URL</ControlButton>
