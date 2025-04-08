@@ -6,8 +6,6 @@ import { colorStyled } from '../styledComponents/styledColor';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { Delete, Download } from '@mui/icons-material';
-import GitLabIcon from '@mui/icons-material/Description';
-import FileIcon from '@mui/icons-material/InsertDriveFile';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { reverse } from 'named-urls';
@@ -49,7 +47,6 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
     const [error, setError] = useState(null);
 
     const getSourceIcon = ontology => {
-        console.log('ontology:', ontology);
         if (ontology && ontology.lookup_type === 'online') {
             return githubIcon;
         } else if (ontology && ontology.lookup_type === 'online-gitlab') {

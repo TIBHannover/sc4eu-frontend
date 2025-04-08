@@ -50,7 +50,6 @@ class ProjectView extends Component {
     }
 
     async componentDidMount() {
-        console.log('ProjectView componentDidMount');
         if (
             this.props.user &&
             (this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase() ||
@@ -78,13 +77,11 @@ class ProjectView extends Component {
 
     getProjectsFromBackend = async () => {
         try {
-            console.log('Fetching projects from backend');
             // Set loading state
             this.setState({ isLoading: true, error: null });
 
             // Get all projects
             const response = await getAllProjects();
-            console.log('response:', response);
 
             // Validate response
             if (!response || !Array.isArray(response)) {
@@ -259,7 +256,6 @@ class ProjectView extends Component {
 
     handleCollectionSelectionChange = selectedItems => {
         this.setState({ selectedCollections: selectedItems });
-        console.log('Selected items:', selectedItems);
         // Do something with the selected items
     };
 
@@ -270,9 +266,6 @@ class ProjectView extends Component {
         if (selectedCollections.length === 0) {
             return unlockedProjects;
         }
-
-        console.log('Selected collections:', selectedCollections);
-        console.log('Unlocked projects:', unlockedProjects);
 
         // Filter projects based on selected collections and specific rules
         return unlockedProjects.filter(project => {

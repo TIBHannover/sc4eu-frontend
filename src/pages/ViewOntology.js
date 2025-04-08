@@ -98,6 +98,7 @@ class ViewOntology extends Component {
 
             // Fetch ontology data
             const response = await getOntologyBy(this.state.ontologyID);
+            console.log('Ontology response:', response);
 
             // Validate response
             if (!response) {
