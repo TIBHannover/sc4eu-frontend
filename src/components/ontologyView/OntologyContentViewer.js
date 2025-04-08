@@ -41,7 +41,7 @@ class OntologyContentViewer extends Component {
     render() {
         return (
             <div style={{ height: '100%' }}>
-                <div style={{ paddingBottom: '3.1em', height: '55px' }}>
+                <div style={{ paddingBottom: '1.0em', height: '55px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     {this.props.selectedProject ? (
                         <ControlLink
                             to={{
@@ -56,22 +56,23 @@ class OntologyContentViewer extends Component {
                     ) : (
                         <></>
                     )}
-                    <ControlButton
-                        onClick={this.copyUrlToClipboard}
-                    >
-                        Copy URL
-                    </ControlButton>
-                    <ControlButton
-                        onClick={() => {
-                            // emit this as signal;
-                            this.props.expandAllBodies({
-                                ui_all_resource_bodies_expanded: !this.props.globalUIReducer.ui_all_resource_bodies_expanded,
-                                ui_all_relation_bodies_expanded: !this.props.globalUIReducer.ui_all_relation_bodies_expanded
-                            });
-                        }}
-                    >
-                        {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all resources/relations
-                    </ControlButton>
+                    <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
+                        {this.props.selectedOntology ? this.props.selectedOntology.name : 'N/A'}
+                    </div>
+                    <div>
+                        <ControlButton onClick={this.copyUrlToClipboard}>Copy URL</ControlButton>
+                        <ControlButton
+                            onClick={() => {
+                                // emit this as signal;
+                                this.props.expandAllBodies({
+                                    ui_all_resource_bodies_expanded: !this.props.globalUIReducer.ui_all_resource_bodies_expanded,
+                                    ui_all_relation_bodies_expanded: !this.props.globalUIReducer.ui_all_relation_bodies_expanded
+                                });
+                            }}
+                        >
+                            {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all resources/relations
+                        </ControlButton>
+                    </div>
                 </div>
                 <StyledDiv>
                     <div style={{ width: '50%' }}>
@@ -81,9 +82,7 @@ class OntologyContentViewer extends Component {
                         <RelationRenderer experimentalLayout={this.props.experimentalLayout} />
                     </div>
                 </StyledDiv>
-                {this.state.showCopyNotification && (
-                    <FadingNotification message="URL copied to clipboard" timeout={2000} />
-                )}
+                {this.state.showCopyNotification && <FadingNotification message="URL copied to clipboard" timeout={2000} />}
             </div>
         );
     }
@@ -93,7 +92,8 @@ const mapStateToProps = state => {
     return {
         user: state.auth.user,
         globalUIReducer: state.globalUIReducer,
-        selectedProject: state.ResourceRelationModelReducer.project
+        selectedProject: state.ResourceRelationModelReducer.project,
+        selectedOntology: state.ResourceRelationModelReducer.ontology
     };
 };
 
@@ -101,7 +101,8 @@ OntologyContentViewer.propTypes = {
     experimentalLayout: PropTypes.bool.isRequired,
     globalUIReducer: PropTypes.object.isRequired,
     expandAllBodies: PropTypes.func.isRequired,
-    selectedProject: PropTypes.object.isRequired
+    selectedProject: PropTypes.object.isRequired,
+    selectedOntology: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
