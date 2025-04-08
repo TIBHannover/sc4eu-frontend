@@ -1,183 +1,229 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import ROUTES from '../constants/routes';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { reverse } from 'named-urls';
-import { Button } from 'reactstrap';
-import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
-import ClampLines from 'react-clamp-lines';
-import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
-import { faFile } from '@fortawesome/free-regular-svg-icons/faFile';
-import Cookies from 'js-cookie';
-import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
-import AlertPopUp from './ReusableComponents/AlertPopUp';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import { Delete, Download } from '@mui/icons-material';
+import GitLabIcon from '@mui/icons-material/Description';
+import FileIcon from '@mui/icons-material/InsertDriveFile';
+import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { reverse } from 'named-urls';
+import ROUTES from '../constants/routes';
+import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
+import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import theme from '../theme';
+import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
+import DeleteConfirmationDialog from '../utils/DeleteConfirmationDialog';
+import Cookies from 'js-cookie';
+import CircularProgress from '@mui/material/CircularProgress';
+import githubIcon from '../assets/images/github.svg';
+import gitlabIcon from '../assets/images/gitlab.svg';
+import file_solid from '../assets/images/file-solid.svg';
 
-class OntologyCard extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isPopUpOpen: false,
-            popUpMessage: '',
-            isAuthorized: false
-        };
+const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
+    & .MuiTooltip-tooltip {
+        background-color: ${colorStyled.PRIMARY.dark};
+        color: white;
+        font-size: 14px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        max-width: 300px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        margin: 8px;
     }
-    componentDidMount() {}
+    & .MuiTooltip-arrow {
+        color: ${colorStyled.PRIMARY.dark};
+    }
+`;
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_addOntology, redux_removeOntology }) {
+    const history = useHistory();
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [loading, setLoading] = useState({
+        download: false,
+        delete: false
+    });
+    const [error, setError] = useState(null);
 
-    getOntologiesForDownloads = () => {
-        getOntologyById(this.props.inputData.uuid).then(res => {
-            try {
-                const blob = new Blob([res.ontology_data]);
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                // this.props.inputData.name  is name of the file and .ttl is the formate of the file
-                link.download = this.props.inputData.name + '.ttl';
-                link.href = url;
-                link.click();
-            } catch (error) {
-                console.log('something went wrong');
-            }
-        });
+    const getSourceIcon = ontology => {
+        console.log('ontology:', ontology);
+        if (ontology && ontology.lookup_type === 'online') {
+            return githubIcon;
+        } else if (ontology && ontology.lookup_type === 'online-gitlab') {
+            return gitlabIcon;
+        }
+        return file_solid;
     };
 
-    // Function to open the alert popup box asking the user if they want to delete the project
-    deleteOntology = async event => {
-        //delete Ontology...
-        event.preventDefault();
-        this.setState({ isPopUpOpen: !this.state.isPopUpOpen, popUpMessage: 'Are you sure you want to Delete this ontology ?', isAuthorized: true });
-    };
-
-    onclick = async () => {
-        console.log('Ontology data:', this.props.inputData);
-        await this.props.redux_removeOntology();
-        await this.props.redux_addOntology(this.props.inputData);
-        Cookies.set(MODE_OF_OPERATIONS, 'hybrid');
-    };
-
-    // Callback function for the alert popup box to handle the user's confirmation
-    PopUpCallbackToDeleteOntology = async confirmed => {
-        if (confirmed && this.state.isAuthorized) {
-            try {
-                const allows = await userIsAllowdToUploadOntology();
-                if (allows.result === true) {
-                    deleteOntology(this.props.inputData.uuid).then(res => {
-                        if (res.success === true) {
-                            this.props.callback(res.result);
-                        }
-                    });
-                } else {
-                    this.setState({
-                        isPopUpOpen: !this.state.isPopUpOpen,
-                        popUpMessage: 'You are not authorized to delete this ontology',
-                        isAuthorized: false
-                    });
-                }
-            } catch (rejectedValue) {
-                console.log(rejectedValue);
-            }
+    const handleDownload = async e => {
+        e.stopPropagation();
+        setLoading(prev => ({ ...prev, download: true }));
+        setError(null);
+        try {
+            const res = await getOntologyById(ontology.uuid);
+            const blob = new Blob([res.ontology_data]);
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = `${ontology.name}.ttl`;
+            link.href = url;
+            link.click();
+        } catch (error) {
+            console.error('Error downloading ontology:', error);
+            setError('Failed to download ontology. Please try again.');
+        } finally {
+            setLoading(prev => ({ ...prev, download: false }));
         }
     };
 
-    render() {
-        const { isPopUpOpen, popUpMessage } = this.state;
-        return (
-            <div>
-                <StyledCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>
-                    <AlertPopUp
-                        bodyText={popUpMessage}
-                        isOpen={isPopUpOpen}
-                        onClose={() => this.setState({ isPopUpOpen: false })}
-                        isConfirm={confirmed => this.PopUpCallbackToDeleteOntology(confirmed)}
-                    />
-                    <StyledCardHeader>
-                        {this.props.currentUser !== 0 && this.props.currentUser !== null && (
-                            <StyledButton
-                                color="white"
-                                title="Delete Ontology"
-                                onClick={this.deleteOntology}
-                                style={{ float: 'right', padding: '0px', marginLeft: 'auto', marginRight: '10px' }}
-                            >
-                                <StyledIcon icon={faTrash} />
-                            </StyledButton>
-                        )}
-                        <StyledButton
-                            color="white"
-                            title="download ontology"
-                            onClick={this.getOntologiesForDownloads}
-                            style={{
-                                float: 'right',
-                                padding: '0px',
-                                marginLeft: 'auto',
-                                marginRight: '10px'
-                            }}
-                        >
-                            <StyledIcon icon={faDownload} />
-                        </StyledButton>
-                        <StyledLink
-                            to={{
-                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                search: `?view=hybrid&ontologyId=${this.props.inputData.uuid}`,
-                                ontologyVersion: this.props.ontologyVersion
-                            }}
-                            onMouseDown={this.onclick}
-                            className="p-0 noSelect"
-                            onDragStart={this.preventDraggingOfItem}
-                        >
-                            {this.props.inputData.lookup_type === 'online' ? (
-                                <StyledIcon style={{ float: 'left', marginRight: '8px', marginTop: '4px' }} icon={faGithub} />
-                            ) : this.props.inputData.lookup_type === 'online-gitlab' ? (
-                                <StyledIcon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faGitlab} />
-                            ) : (
-                                <StyledIcon style={{ float: 'left', marginRight: '10px', marginTop: '4px' }} icon={faFile} />
-                            )}
-                            <div style={{ fontWeight: '500', textDecoration: 'underline' }}>
-                                <span>{this.props.inputData.name}</span>
-                            </div>
-                        </StyledLink>
-                    </StyledCardHeader>
+    const handleDelete = async e => {
+        e.stopPropagation();
+        try {
+            const allows = await userIsAllowdToUploadOntology();
+            if (allows.result === true) {
+                setDeleteDialogOpen(true);
+            } else {
+                setError('You are not authorized to delete this ontology');
+            }
+        } catch (error) {
+            console.error('Error checking authorization:', error);
+            setError('Failed to verify authorization. Please try again.');
+        }
+    };
 
-                    <StyledCardBody>
-                        {this.props.inputData.lookup_type === 'online' || this.props.inputData.lookup_type === 'online-gitlab' ? (
-                            <div style={{ marginBottom: '0.5%' }}>
-                                <span style={{ fontWeight: '500' }}>Git Branch:</span>
-                                <span style={{ marginLeft: '5px' }}>{this.props.inputData.gitBranch}</span>
-                                <span style={{ fontWeight: '500', marginLeft: '8px' }}>Version: </span>
-                                <span> {this.props.inputData.commitStatus}</span>
-                            </div>
-                        ) : (
-                            <></>
+    const handleDeleteConfirm = async () => {
+        setLoading(prev => ({ ...prev, delete: true }));
+        setError(null);
+        try {
+            const res = await deleteOntology(ontology.uuid);
+            if (res.success === true) {
+                callback(res.result);
+            } else {
+                setError('Failed to delete ontology. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error deleting ontology:', error);
+            setError('Failed to delete ontology. Please try again.');
+        } finally {
+            setLoading(prev => ({ ...prev, delete: false }));
+            setDeleteDialogOpen(false);
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteDialogOpen(false);
+    };
+
+    const handleCardClick = async () => {
+        await redux_removeOntology();
+        await redux_addOntology(ontology);
+        Cookies.set(MODE_OF_OPERATIONS, 'hybrid');
+        history.push({
+            pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+            search: `?view=hybrid&ontologyId=${ontology.uuid}`,
+            ontologyVersion: ontologyVersion
+        });
+    };
+
+    return (
+        <>
+            <StyledTooltip
+                title={
+                    <React.Fragment>
+                        <Typography component="div" style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+                            {ontology.name}
+                        </Typography>
+                        <Typography component="div">{ontology.description || 'No description available'}</Typography>
+                        {(ontology.lookup_type === 'online' || ontology.lookup_type === 'online-gitlab') && (
+                            <Typography component="div" style={{ marginTop: '8px' }}>
+                                <strong>Git Branch:</strong> {ontology.gitBranch}
+                                <br />
+                                <strong>Version:</strong> {ontology.commitStatus}
+                            </Typography>
                         )}
-                        <span style={{ fontWeight: '500', display: 'block', float: 'left', marginRight: '5px' }}>Description:</span>
-                        <span style={{ display: 'block' }}>
-                            <ClampLines
-                                text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                                id="custom"
-                                lines={2}
-                                moreText="Read More"
-                                lessText="Show less"
-                                className="custom-class"
-                            />
-                        </span>
-                    </StyledCardBody>
+                        {error && (
+                            <Typography
+                                component="div"
+                                style={{
+                                    marginTop: '8px',
+                                    color: theme.palette.error.main,
+                                    fontWeight: 'bold'
+                                }}
+                            >
+                                {error}
+                            </Typography>
+                        )}
+                    </React.Fragment>
+                }
+                placement="top"
+                arrow
+                enterDelay={50}
+                leaveDelay={200}
+            >
+                <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
+                    <CardActionArea
+                        onClick={handleCardClick}
+                        style={{ height: '100%', position: 'relative' }}
+                        disabled={loading.download || loading.delete}
+                    >
+                        <CardMedia
+                            component="img"
+                            height="50"
+                            image={getSourceIcon(ontology)}
+                            style={{
+                                objectFit: 'contain',
+                                position: 'absolute',
+                                top: '12px',
+                                left: '12px',
+                                width: '50px',
+                                zIndex: 1
+                            }}
+                            alt="collection type icon"
+                        />
+                        <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '60px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                                    {ontology.name}
+                                </Typography>
+                            </div>
+                        </CardContent>
+                        <CardActions
+                            disableSpacing
+                            style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                right: 0,
+                                padding: '8px'
+                            }}
+                        >
+                            <IconButton aria-label="download" onClick={handleDownload} disabled={loading.download || loading.delete}>
+                                {loading.download ? <CircularProgress size={24} /> : <Download />}
+                            </IconButton>
+                            {currentUser !== 0 && currentUser !== null && (
+                                <IconButton aria-label="delete" onClick={handleDelete} disabled={loading.download || loading.delete}>
+                                    {loading.delete ? <CircularProgress size={24} /> : <Delete />}
+                                </IconButton>
+                            )}
+                        </CardActions>
+                    </CardActionArea>
                 </StyledCard>
-            </div>
-        );
-    }
+            </StyledTooltip>
+            <DeleteConfirmationDialog
+                open={deleteDialogOpen}
+                onClose={handleDeleteCancel}
+                onConfirm={handleDeleteConfirm}
+                title="Delete Ontology"
+                contentText={`Are you sure you want to delete ontology "${ontology.name}"? This action cannot be undone.`}
+            />
+        </>
+    );
 }
 
 OntologyCard.propTypes = {
+    ontology: PropTypes.object.isRequired,
     currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
-    inputData: PropTypes.object.isRequired,
     callback: PropTypes.func.isRequired,
     ontologyVersion: PropTypes.string.isRequired,
     redux_addOntology: PropTypes.func.isRequired,
@@ -189,83 +235,30 @@ const mapDispatchToProps = dispatch => ({
     redux_addOntology: data => dispatch(redux_addOntology(data))
 });
 
-export default withRouter(connect(null, mapDispatchToProps)(OntologyCard));
+export default connect(null, mapDispatchToProps)(OntologyCard);
 
-const StyledCard = styled.div`
-    margin: 5px;
-    padding: 0 !important;
+const StyledCard = styled(Card)`
+    && {
+        background-color: ${colorStyled.SECONDARY.dark};
+        padding: 3px;
+        border-radius: 20px;
+        transition: transform 0.2s;
+        width: 300px;
+        height: 300px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        &:hover {
+            transform: scale(1.05);
+        }
 
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
+        .MuiTypography-root {
+            color: white;
+        }
 
-const StyledLink = styled(Link)`
-    padding: 10px;
-    color: black;
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    :hover {
-        color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    }
-`;
-
-const StyledCardHeader = styled.div`
-    border-radius: 10px 10px 0 0;
-    border: 1px solid ${colorStyled.PRIMARY.dark};
-    padding: 5px;
-    color: black;
-    background: ${colorStyled.PRIMARY.light};
-    font-size: ${fontStyled.fontSize.NormalText};
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-    :hover {
-        background: ${colorStyled.SECONDARY.dark};
-    }
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledCardBody = styled.div`
-    padding: 5px;
-    border: 1px solid ${colorStyled.PRIMARY.dark};
-    border-top: none;
-    font-size: ${fontStyled.fontSize.NormalText};
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledButton = styled(Button)`
-    :hover {
-        color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    }
-`;
-
-const StyledIcon = styled(Icon)`
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+        .MuiIconButton-root {
+            color: white;
+            &:disabled {
+                color: rgba(255, 255, 255, 0.3);
+            }
+        }
     }
 `;

@@ -9,7 +9,7 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
-import ProjectCard2 from './ProjectCard2';
+import ProjectCard from './ProjectCard';
 import CreateProjectModal from './CreateProjectModal';
 import EditProjectModal from './EditProjectModal';
 import ProjectPermissionModal from './Modals/ProjectPermissionModal';
@@ -384,7 +384,7 @@ class ProjectView extends Component {
                             {this.state.allProjects ? (
                                 this.state.unlockedProjects.length > 0 ? (
                                     this.projectsInSelectedCollections().map((project, index) => (
-                                        <ProjectCard2 key={index} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
+                                        <ProjectCard key={index} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
                                     ))
                                 ) : (
                                     <div style={{ paddingLeft: '3.5%' }}>
