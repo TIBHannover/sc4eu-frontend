@@ -94,6 +94,13 @@ class OntologyViewAsTTL extends Component {
     render() {
         return (
             <Container>
+                <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
+                    {this.props.selectedOntology
+                        ? this.props.selectedOntology.name.length > 42
+                            ? `${this.props.selectedOntology.name.substring(0, 40)}...`
+                            : this.props.selectedOntology.name
+                        : 'N/A'}
+                </div>
                 <Input
                     style={{ height: 'calc(100vh - 120px)', resize: 'none', paddingTop: '20px' }}
                     type="textarea"
@@ -109,14 +116,16 @@ const mapStateToProps = state => {
     return {
         resources: state.ResourceRelationModelReducer.resources,
         relations: state.ResourceRelationModelReducer.relations,
-        metaInformation: state.ResourceRelationModelReducer.metaInformation
+        metaInformation: state.ResourceRelationModelReducer.metaInformation,
+        selectedOntology: state.ResourceRelationModelReducer.ontology
     };
 };
 
 OntologyViewAsTTL.propTypes = {
     resources: PropTypes.array.isRequired,
     relations: PropTypes.array.isRequired,
-    metaInformation: PropTypes.object.isRequired
+    metaInformation: PropTypes.object.isRequired,
+    selectedOntology: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});

@@ -11,8 +11,6 @@ import OntologyViewAsTTL from '../components/ontologyView/OntologyViewAsTTL';
 import GraphVisUi from '../components/GraphVis/GraphVisUi';
 import DonatelloGraph from '../GraphVisLib/implementation/Renderes/gizmoRenderer/DonatelloGraph';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import Cookies from 'js-cookie';
 import { redux_alreadyLoadedOntology } from '../redux/actions/rrm_actions';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
@@ -98,6 +96,7 @@ class ViewOntology extends Component {
 
             // Fetch ontology data
             const response = await getOntologyBy(this.state.ontologyID);
+            console.log('Ontology response:', response);
 
             // Validate response
             if (!response) {

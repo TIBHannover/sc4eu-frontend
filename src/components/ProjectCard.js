@@ -1,302 +1,162 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
-import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import { deleteProject } from '../network/projectIndexing';
+import { colorStyled } from '../styledComponents/styledColor';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import { Edit, Delete } from '@mui/icons-material';
+import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
-import EditProjectModal from './EditProjectModal';
-import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
-import { withRouter } from 'react-router';
-import ClampLines from 'react-clamp-lines';
-import { redux_addProject, redux_removeAlreadyLoadedOntology, redux_removeOntology, redux_removeProject } from '../redux/actions/rrm_actions';
-import { connect } from 'react-redux';
-import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
-import AlertPopUp from './ReusableComponents/AlertPopUp';
+import private_collection from '../assets/images/private_collection.png';
+import sandbox_collection from '../assets/images/sandbox.png';
+import public_collection from '../assets/images/public_collection.png';
+import sc4eu_collection from '../assets/images/logo.png';
+import theme from '../theme';
+import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
 
-class ProjectCards extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showEditProjectModal: false,
-            isPopUpOpen: false,
-            popUpMessage: '',
-            isAuthorized: false
-        };
+const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
+    & .MuiTooltip-tooltip {
+        background-color: ${colorStyled.SECONDARY.dark};
+        color: white;
+        font-size: 14px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        max-width: 300px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        margin: 8px;
     }
+    & .MuiTooltip-arrow {
+        color: ${colorStyled.SECONDARY.dark};
+    }
+`;
 
-    // Function to open the alert popup box asking the user if they want to delete the project
-    deleteProject = async event => {
-        event.preventDefault();
-        event.stopPropagation();
-        this.setState({
-            isPopUpOpen: !this.state.isPopUpOpen,
-            popUpMessage: 'Are you sure you want to delete this project?',
-            isAuthorized: true
-        });
+function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology }) {
+    const history = useHistory();
+
+    const getCollectionImage = (projectName, accessType) => {
+        const isSC3 =
+            projectName.toLowerCase().includes('sc3') ||
+            projectName.toLowerCase().includes('sc4eu') ||
+            projectName.toLowerCase().includes('semantically connected semiconductor supply chains');
+        const isSandbox = projectName.toLowerCase().includes('sandbox');
+        const isPublic = accessType === 'Public';
+
+        if (isSC3) {
+            return sc4eu_collection;
+        }
+        if (isSandbox) {
+            return sandbox_collection;
+        }
+        if (isPublic) {
+            return public_collection;
+        }
+        return private_collection;
     };
 
-    // Callback function for the alert popup box to handle the user's confirmation
-    PopUpCallbackToDeleteProject = async confirmed => {
-        if (confirmed && this.state.isAuthorized) {
-            this.setState({
-                isPopUpOpen: false,
-                popUpMessage: ''
-            });
-            try {
-                const allows = await userIsAllowdToUploadOntology();
-                if (allows.result === true) {
-                    if (this.props.inputData.unlock === true) {
-                        // Calls the deleteProject function to delete the project
-                        deleteProject(this.props.inputData.uuid).then(res => {
-                            if (res.success === true) {
-                                // Calls the callback function with the result if deletion is successful
-                                this.props.callback(res.result);
-                            }
-                        });
-                    } else {
-                        this.setState({
-                            isPopUpOpen: !this.state.isPopUpOpen,
-                            popUpMessage: 'You are not authorized to delete this project',
-                            isAuthorized: false
-                        });
-                    }
-                } else {
-                    this.setState({
-                        isPopUpOpen: !this.state.isPopUpOpen,
-                        popUpMessage: 'You are not authorized to delete this project',
-                        isAuthorized: false
-                    });
-                }
-            } catch (rejectedValue) {
-                console.log(rejectedValue);
+    const showOntologies = () => {
+        redux_removeProject();
+        redux_removeOntology();
+        redux_removeAlreadyLoadedOntology();
+
+        redux_addProject(project);
+        history.push(reverse(ROUTES.ONTOLOGY));
+    };
+
+    const handleCardClick = () => {
+        // Navigate to the ontology view
+        showOntologies();
+    };
+
+    const handleEdit = e => {
+        // Prevent onSelect from also firing if you click the edit button
+        e.stopPropagation();
+        onEdit(project);
+    };
+
+    const handleDelete = e => {
+        e.stopPropagation();
+        onDelete(project);
+    };
+
+    return (
+        <StyledTooltip
+            title={
+                <React.Fragment>
+                    <Typography component="div" style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+                        {project.name}
+                    </Typography>
+                    <Typography component="div">{project.description}</Typography>
+                </React.Fragment>
             }
-        }
-    };
-
-    projectEdited = param => {
-        if (param.result === true) {
-            this.setState({ showEditProjectModal: false });
-            this.props.callback();
-        }
-    };
-    isUserAuthorized = () => {
-        if (this.props.inputData.unlock !== true) {
-            this.setState({
-                isPopUpOpen: !this.state.isPopUpOpen,
-                popUpMessage: 'This is Private Project You can not open it'
-            });
-            return false;
-        }
-        return true;
-    };
-
-    showOntologies = () => {
-        this.props.redux_removeProject();
-        this.props.redux_removeOntology();
-        this.props.redux_removeAlreadyLoadedOntology();
-
-        if (this.isUserAuthorized()) {
-            this.props.redux_addProject(this.props.inputData);
-            this.props.history.push(reverse(ROUTES.ONTOLOGY));
-        }
-    };
-
-    render() {
-        return (
-            <div>
-                <StyledCard onDragStart={this.preventDraggingOfItem}>
-                    <AlertPopUp
-                        bodyText={this.state.popUpMessage}
-                        isOpen={this.state.isPopUpOpen}
-                        onClose={() => {
-                            this.setState({ isPopUpOpen: !this.state.isPopUpOpen });
+            placement="top"
+            arrow
+            enterDelay={50}
+            leaveDelay={200}
+        >
+            <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
+                <CardActionArea onClick={handleCardClick} style={{ height: '100%', position: 'relative' }}>
+                    <CardMedia
+                        component="img"
+                        height="50"
+                        image={getCollectionImage(project.name, project.access_type)}
+                        style={{
+                            objectFit: 'contain',
+                            position: 'absolute',
+                            top: '12px',
+                            left: '12px',
+                            width: '50px',
+                            zIndex: 1
                         }}
-                        isConfirm={this.PopUpCallbackToDeleteProject}
+                        alt="collection type icon"
                     />
-                    <StyledCardHeader>
-                        {this.props.currentUser !== 0 && this.props.currentUser !== null && (
-                            <>
-                                {this.props.inputData.name.toLowerCase() !== 'sandbox' && (
-                                    <>
-                                        <StyledButton
-                                            color="none"
-                                            size="sm"
-                                            title="Delete Project"
-                                            onClick={this.deleteProject}
-                                            style={{ float: 'right', padding: '0px', paddingLeft: '5px', marginLeft: 'auto' }}
-                                        >
-                                            <StyledIcon icon={faTrash} />
-                                        </StyledButton>
-                                        <StyledButton
-                                            color="white"
-                                            size="sm"
-                                            title="Edit Project"
-                                            onClick={() => {
-                                                this.setState({ showEditProjectModal: true });
-                                            }}
-                                            style={{
-                                                float: 'right',
-                                                padding: '0px',
-                                                paddingLeft: '5px',
-                                                marginLeft: 'auto',
-                                                marginRight: '5px'
-                                            }}
-                                        >
-                                            <StyledIcon icon={faPen} />
-                                        </StyledButton>
-                                    </>
-                                )}
-                            </>
-                        )}
-                        <EditProjectModal
-                            showDialog={this.state.showEditProjectModal}
-                            projectData={this.props.inputData}
-                            callback={param => {
-                                this.projectEdited(param);
-                            }}
-                            toggle={() => {
-                                this.setState({ showEditProjectModal: !this.state.showEditProjectModal });
-                            }}
-                        />
-                        <StyledLink onClick={this.showOntologies} to="#" className="p-0 noSelect" onDragStart={this.preventDraggingOfItem}>
-                            <div style={{ display: 'flex', paddingRight: '5px' }}>
-                                <div
-                                    style={{
-                                        overflowWrap: 'break-word',
-                                        fontWeight: '500',
-                                        width: '97%',
-                                        whiteSpace: 'normal',
-                                        wordBreak: 'break-all',
-                                        textDecoration: 'underline'
-                                    }}
-                                >
-                                    {this.props.inputData.name}
-                                </div>
-                            </div>
-                        </StyledLink>
-                    </StyledCardHeader>
-                    <StyledCardBody>
-                        <span style={{ fontWeight: '500', display: 'block', float: 'left', marginRight: '5px' }}>Description:</span>
-                        <span style={{ display: 'block' }}>
-                            <ClampLines
-                                text={this.props.inputData.description ? this.props.inputData.description : 'No description available'}
-                                id="custom"
-                                lines={2}
-                                ellipsis=""
-                                className="custom-class"
-                            />
-                        </span>
-                    </StyledCardBody>
-                </StyledCard>
-            </div>
-        );
-    }
+                    <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '60px' }}>
+                        <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                            {project.name}
+                        </Typography>
+                    </CardContent>
+                    <CardActions
+                        disableSpacing
+                        style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            right: 0,
+                            padding: '8px'
+                        }}
+                    >
+                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete}>
+                            <Edit />
+                        </IconButton>
+                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete}>
+                            <Delete />
+                        </IconButton>
+                    </CardActions>
+                </CardActionArea>
+            </StyledCard>
+        </StyledTooltip>
+    );
 }
 
-ProjectCards.propTypes = {
-    inputData: PropTypes.object.isRequired,
-    currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
-    callback: PropTypes.func.isRequired,
-    history: PropTypes.object.isRequired,
-    redux_addProject: PropTypes.func.isRequired,
-    redux_removeProject: PropTypes.func.isRequired,
-    redux_removeOntology: PropTypes.func.isRequired,
-    redux_removeAlreadyLoadedOntology: PropTypes.func.isRequired
-};
-
-const mapStateToProps = state => ({});
-
 const mapDispatchToProps = dispatch => ({
-    redux_removeOntology: () => dispatch(redux_removeOntology()),
+    redux_addProject: data => dispatch(redux_addProject(data)),
     redux_removeProject: () => dispatch(redux_removeProject()),
-    redux_removeAlreadyLoadedOntology: () => dispatch(redux_removeAlreadyLoadedOntology()),
-    redux_addProject: data => dispatch(redux_addProject(data))
+    redux_removeOntology: () => dispatch(redux_removeOntology()),
+    redux_removeAlreadyLoadedOntology: () => dispatch(redux_removeAlreadyLoadedOntology())
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProjectCards));
+export default connect(null, mapDispatchToProps)(ProjectCard);
 
-const StyledButton = styled(Button)`
-    :hover {
-        color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    }
-`;
-
-const StyledCard = styled.div`
-    margin: 5px;
-    padding: 0 2.7% 0 2.7%;
-
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
-
-const StyledLink = styled(Link)`
-    padding: 10px;
-    font-size: ${fontStyled.fontSize.NormalText};
-    color: black;
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    :hover {
-        color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    }
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledCardHeader = styled.div`
-    border-radius: 10px 10px 0 0;
-    border: 1px solid ${colorStyled.PRIMARY.dark};
-    padding: 5px;
-    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background: ${colorStyled.PRIMARY.light};
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    :hover {
-        background: ${colorStyled.SECONDARY.dark}; //00b4cc
-    }
-`;
-
-const StyledCardBody = styled.div`
-    padding: 5px;
-    font-size: ${fontStyled.fontSize.NormalText};
-    border: 1px solid ${colorStyled.PRIMARY.dark};
-    border-top: none;
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledIcon = styled(Icon)`
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+const StyledCard = styled(Card)`
+    && {
+        background-color: ${colorStyled.PRIMARY.light};
+        padding: 3px;
+        borderradius: 20px;
+        transition: transform 0.2s;
+        width: 300px; // Set the width
+        height: 300px; // Set the height
+        &:hover {
+            transform: scale(1.05);
+        }
     }
 `;

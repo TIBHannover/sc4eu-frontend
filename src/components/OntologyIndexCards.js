@@ -1,18 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import OntologyCard from './OntologyCard';
-import OntologyCard2 from './OntologyCard2';
 import { withCookies } from 'react-cookie';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
-import { fontStyled } from '../styledComponents/styledFont';
 
 class OntologyIndexCards extends Component {
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     renderOntologyCards() {
         const { ontologies, currentUser, reloadAfterUpdate } = this.props;
 
@@ -22,28 +16,16 @@ class OntologyIndexCards extends Component {
             );
         }
 
-        //return ontologies.map((ontology, index) => (
-        // <OntologyCard
-        //     key={'OntologyCard_' + index}
-        //     currentUser={this.props.currentUser}
-        //     inputData={item}
-        //     callback={param => {
-        //         this.props.reloadAfterUpdate(param);
-        //     }}
-        //     /*
-        //      * this is hardcoded for now, it needs to be changed.we need to add an entry to ontology Index about version
-        //      * */
-        //     ontologyVersion="Main"
-        // />
-        //));
-
         return ontologies.map((ontology, index) => (
-            <OntologyCard2
+            <OntologyCard
                 key={`OntologyCard_${index}`}
                 ontology={ontology}
                 currentUser={currentUser}
                 inputData={ontology}
                 callback={reloadAfterUpdate}
+                //     /*
+                //      * this is hardcoded for now, it needs to be changed.we need to add an entry to ontology Index about version
+                //      * */
                 ontologyVersion="Main"
             />
         ));

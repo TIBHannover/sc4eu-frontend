@@ -9,7 +9,7 @@ import { Scrollbars } from 'react-custom-scrollbars-2';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
-import ProjectCard2 from './ProjectCard2';
+import ProjectCard from './ProjectCard';
 import CreateProjectModal from './CreateProjectModal';
 import EditProjectModal from './EditProjectModal';
 import ProjectPermissionModal from './Modals/ProjectPermissionModal';
@@ -50,7 +50,6 @@ class ProjectView extends Component {
     }
 
     async componentDidMount() {
-        console.log('ProjectView componentDidMount');
         if (
             this.props.user &&
             (this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase() ||
@@ -78,13 +77,11 @@ class ProjectView extends Component {
 
     getProjectsFromBackend = async () => {
         try {
-            console.log('Fetching projects from backend');
             // Set loading state
             this.setState({ isLoading: true, error: null });
 
             // Get all projects
             const response = await getAllProjects();
-            console.log('response:', response);
 
             // Validate response
             if (!response || !Array.isArray(response)) {
@@ -259,7 +256,6 @@ class ProjectView extends Component {
 
     handleCollectionSelectionChange = selectedItems => {
         this.setState({ selectedCollections: selectedItems });
-        console.log('Selected items:', selectedItems);
         // Do something with the selected items
     };
 
@@ -270,9 +266,6 @@ class ProjectView extends Component {
         if (selectedCollections.length === 0) {
             return unlockedProjects;
         }
-
-        console.log('Selected collections:', selectedCollections);
-        console.log('Unlocked projects:', unlockedProjects);
 
         // Filter projects based on selected collections and specific rules
         return unlockedProjects.filter(project => {
@@ -384,7 +377,7 @@ class ProjectView extends Component {
                             {this.state.allProjects ? (
                                 this.state.unlockedProjects.length > 0 ? (
                                     this.projectsInSelectedCollections().map((project, index) => (
-                                        <ProjectCard2 key={index} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
+                                        <ProjectCard key={index} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
                                     ))
                                 ) : (
                                     <div style={{ paddingLeft: '3.5%' }}>
