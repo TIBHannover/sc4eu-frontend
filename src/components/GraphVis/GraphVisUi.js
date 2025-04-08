@@ -290,8 +290,7 @@ class GraphVisUi extends Component {
             <div>
                 <div>
                     <div style={{ display: 'flex' }}>
-                        <div>Color:</div>
-                        {' '}
+                        <div>Color:</div>{' '}
                         <Input
                             type="color"
                             onChange={e => {
@@ -389,6 +388,13 @@ class GraphVisUi extends Component {
         }
         return (
             <div>
+                <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
+                    {this.props.selectedOntology
+                        ? this.props.selectedOntology.name.length > 42
+                            ? `${this.props.selectedOntology.name.substring(0, 40)}...`
+                            : this.props.selectedOntology.name
+                        : 'N/A'}
+                </div>
                 <div
                     style={{
                         display: 'flex',
@@ -414,8 +420,7 @@ class GraphVisUi extends Component {
                             this.setState({ layoutPlay: !this.state.layoutPlay });
                         }}
                     >
-                        <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }}
-                              icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
+                        <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
                     {/*TODO: Enable UML Notation view once the error has been resolved*/}
                     {/*/ As of Now we disabled the VOWl TO UML view in Graph Visualization because when we are switching from VOWL to
@@ -489,8 +494,7 @@ class GraphVisUi extends Component {
                         {this.state.leftSideBarExpanded && (
                             <div>
                                 <h3>Customization Options</h3>
-                                <div>Selected
-                                    Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
+                                <div>Selected Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}</div>
                                 {this.state.selectedItem && this.renderCustomizationOptions()}
                             </div>
                         )}
@@ -511,11 +515,15 @@ class GraphVisUi extends Component {
                                 {this.state.rightSideBarExpanded ? '>' : '<'}
                             </Button>
                         </div>
-                        <div style={{
-                            position: 'relative',
-                            top: '-40px',
-                            padding: '5px'
-                        }}>{this.renderGlobalCustomizationOptions()}</div>
+                        <div
+                            style={{
+                                position: 'relative',
+                                top: '-40px',
+                                padding: '5px'
+                            }}
+                        >
+                            {this.renderGlobalCustomizationOptions()}
+                        </div>
                     </SelectionRightSidebar>
 
                     <Container
@@ -541,11 +549,8 @@ class GraphVisUi extends Component {
                         screenCapture={this.state.screenCapture}
                     />
                 )}
-                {this.state.startCapture &&
-                    <ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
-                {this.state.showCopyNotification && (
-                    <FadingNotification message="URL copied to clipboard" timeout={2000} />
-                )}
+                {this.state.startCapture && <ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
+                {this.state.showCopyNotification && <FadingNotification message="URL copied to clipboard" timeout={2000} />}
             </div>
         );
     }
@@ -556,7 +561,8 @@ const mapStateToProps = state => {
         resources: state.ResourceRelationModelReducer.resources,
         relations: state.ResourceRelationModelReducer.relations,
         prefixList: state.ResourceRelationModelReducer.metaInformation.prefixList,
-        visualNotation: state.globalUIReducer.ui_visual_notation_selector
+        visualNotation: state.globalUIReducer.ui_visual_notation_selector,
+        selectedOntology: state.ResourceRelationModelReducer.ontology
     };
 };
 
@@ -567,7 +573,8 @@ GraphVisUi.propTypes = {
     prefixList: PropTypes.object.isRequired,
     DonatelloGraph: PropTypes.object.isRequired,
     visualNotation: PropTypes.string.isRequired,
-    selectVisualNotation: PropTypes.func.isRequired
+    selectVisualNotation: PropTypes.func.isRequired,
+    selectedOntology: PropTypes.object.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
