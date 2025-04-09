@@ -264,11 +264,11 @@ class ProjectView extends Component {
 
         // If no collections are selected, return all unlocked projects
         if (selectedCollections.length === 0) {
-            return unlockedProjects;
+            return [...unlockedProjects].reverse();
         }
 
         // Filter projects based on selected collections and specific rules
-        return unlockedProjects.filter(project => {
+        const filteredProjects = unlockedProjects.filter(project => {
             // Check if the project matches any of the selected collections
             return selectedCollections.some(collectionId => {
                 const isSC3 =
@@ -296,6 +296,7 @@ class ProjectView extends Component {
                 return false;
             });
         });
+        return [...filteredProjects].reverse();
     };
 
     render() {
@@ -437,11 +438,11 @@ const StyledProjectsGrid = styled.div`
 `;
 
 const StyledRootDiv = styled.div`
-    width: 65%;
+    width: 100%;
     margin-left: auto;
     background-color: ${colorStyled.PRIMARY.lighter};
     margin-top: 0.5%;
-    height: 95%;
+    height: 100%;
     margin-right: 2%;
     font-family: ${fontStyled.fontFamily};
 `;
@@ -478,6 +479,6 @@ const StyledIcon = styled(FontAwesomeIcon)`
 `;
 
 const StyledScrollbarDiv = styled.div`
-    height: calc(100% - 160px);
+    height: calc(100% - 1px);
     border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
 `;
