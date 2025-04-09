@@ -9,26 +9,40 @@ const EditForm = ({ term, setEditMode, handleSave, handleInputChange }) => {
             <Box sx={{ height: '100%', width: '50%', display: 'flex', flexDirection: 'column' }}>
                 {/*<Typography variant="h6">Edit Term</Typography>*/}
                 <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '15px' }}>
-                    <Typography sx={{ marginBottom: '5px' }}><strong>Label:</strong></Typography>
-                    <TextField name="label" value={term.label} onChange={handleInputChange} fullWidth
-                               InputProps={{ sx: { height: '30px' } }} />
+                    <Typography sx={{ marginBottom: '5px' }}>
+                        <strong>Label:</strong>
+                    </Typography>
+                    <TextField name="label" value={term.label} onChange={handleInputChange} fullWidth InputProps={{ sx: { height: '30px' } }} />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                    <Typography sx={{ marginBottom: '5px' }}><strong>Description:</strong></Typography>
-                    <TextField name="description" value={term.description} onChange={handleInputChange} fullWidth
-                               InputProps={{ sx: { height: '30px' } }} />
+                    <Typography sx={{ marginBottom: '5px' }}>
+                        <strong>Description:</strong>
+                    </Typography>
+                    <TextField
+                        name="description"
+                        value={term.description}
+                        onChange={handleInputChange}
+                        fullWidth
+                        InputProps={{ sx: { height: '30px' } }}
+                    />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                    <Typography sx={{ marginBottom: '5px' }}><strong>See Also:</strong></Typography>
-                    <TextField name="seeAlso" value={term.seeAlso} onChange={handleInputChange} fullWidth
-                               InputProps={{ sx: { height: '30px' } }} />
+                    <Typography sx={{ marginBottom: '5px' }}>
+                        <strong>See Also:</strong>
+                    </Typography>
+                    <TextField name="seeAlso" value={term.seeAlso} onChange={handleInputChange} fullWidth InputProps={{ sx: { height: '30px' } }} />
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                     <Typography sx={{ marginBottom: '5px' }}>
                         <strong>Status:</strong>
                     </Typography>
-                    <StatusDropdown label="Status" name="status" sx={{ marginTop: '10px' }} status={term.status}
-                                    onChange={value => handleInputChange({ target: { name: 'status', value } })} />
+                    <StatusDropdown
+                        label="Status"
+                        name="status"
+                        sx={{ marginTop: '10px' }}
+                        status={term.status}
+                        onChange={value => handleInputChange({ target: { name: 'status', value } })}
+                    />
                 </Box>
                 <Box sx={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between' }}>
                     <Button onClick={handleSave}>Save Changes</Button>

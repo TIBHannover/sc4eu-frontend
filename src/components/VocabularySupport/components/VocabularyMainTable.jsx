@@ -402,7 +402,7 @@ const VocabularyMainTable = ({
         data: terms,
         initialState: {
             sorting: [{ id: 'label', desc: false }],
-            columnVisibility: { identifier: false },
+            columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
             density: 'compact',
             pagination: { pageSize: 15, pageIndex: 0 },
             showFilters: true,
