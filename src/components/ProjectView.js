@@ -264,11 +264,11 @@ class ProjectView extends Component {
 
         // If no collections are selected, return all unlocked projects
         if (selectedCollections.length === 0) {
-            return unlockedProjects;
+            return [...unlockedProjects].reverse();
         }
 
         // Filter projects based on selected collections and specific rules
-        return unlockedProjects.filter(project => {
+        const filteredProjects = unlockedProjects.filter(project => {
             // Check if the project matches any of the selected collections
             return selectedCollections.some(collectionId => {
                 const isSC3 =
@@ -296,6 +296,7 @@ class ProjectView extends Component {
                 return false;
             });
         });
+        return [...filteredProjects].reverse();
     };
 
     render() {
