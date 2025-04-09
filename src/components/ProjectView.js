@@ -438,11 +438,11 @@ const StyledProjectsGrid = styled.div`
 `;
 
 const StyledRootDiv = styled.div`
-    width: 65%;
+    width: 100%;
     margin-left: auto;
     background-color: ${colorStyled.PRIMARY.lighter};
     margin-top: 0.5%;
-    height: 95%;
+    height: 100%;
     margin-right: 2%;
     font-family: ${fontStyled.fontFamily};
 `;

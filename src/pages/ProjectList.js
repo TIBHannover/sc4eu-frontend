@@ -33,11 +33,11 @@ export default class ProjectList extends Component {
                         reloadAfterUpdate={() => this.reloadAfterUpdate()}
                         updateFlipFlop={this.state.updateFlipFlop}
                     />
-                    <RightSideProjectBar
-                        title="Available Projects"
-                        reloadAfterUpdate={() => this.reloadAfterUpdate()}
-                        updateFlipFlop={this.state.updateFlipFlop}
-                    />
+                    {/*<RightSideProjectBar*/}
+                    {/*    title="Available Projects"*/}
+                    {/*    reloadAfterUpdate={() => this.reloadAfterUpdate()}*/}
+                    {/*    updateFlipFlop={this.state.updateFlipFlop}*/}
+                    {/*/>*/}
                 </StyledDiv>
             </>
         );
