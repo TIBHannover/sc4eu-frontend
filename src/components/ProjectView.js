@@ -479,6 +479,6 @@ const StyledIcon = styled(FontAwesomeIcon)`
 `;
 
 const StyledScrollbarDiv = styled.div`
-    height: calc(100% - 160px);
+    height: calc(100% - 1px);
     border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
 `;
