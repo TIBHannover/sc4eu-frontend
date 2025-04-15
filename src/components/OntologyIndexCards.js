@@ -57,6 +57,7 @@ const StyledProjectsGrid = styled.div`
     gap: 20px;
     padding: 20px;
     width: 100%;
+    min-height: 100%;
 
     /* For screens that can fit 3 cards (min-width: 300px * 3 + gap * 2 + padding * 2) */
     @media (min-width: 980px) {
@@ -75,7 +76,9 @@ const StyledProjectsGrid = styled.div`
 `;
 
 const StyledScrollbarDiv = styled.div`
-    height: calc(100%);
+    height: calc(100vh - 200px); /* Adjust 200px based on your header + footer height */
     width: 100%;
     border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
+    border-bottom: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
+    overflow: hidden; /* Hide outer scrollbar */
 `;
