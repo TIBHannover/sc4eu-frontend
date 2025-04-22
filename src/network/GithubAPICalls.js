@@ -207,7 +207,11 @@ export const getGitHubFileContent = async githubapiurl => {
         return Buffer.from(blobData.content, 'base64').toString('utf8');
     } catch (error) {
         console.error('Error fetching file content from GitHub:', error);
-        return null;
+        return {
+            success: false,
+            message: 'Failed to fetch file content from GitHub. Github API limit exceeded. please try again later',
+            error: error.message
+        };
     }
 };
 
@@ -238,12 +242,57 @@ export const getLatestCommit = async githubApiUrl => {
     const repo = getRepoFromUrl(githubApiUrl);
     const branch = getBranchFromUrl(githubApiUrl) || 'main';
 
-    const response = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
-        owner: owner,
-        repo: repo,
-        ref: branch
-    });
-    return response.data.sha;
+    try {
+        const response = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
+            owner: owner,
+            repo: repo,
+            ref: branch
+        });
+        return response.data.sha;
+    } catch (error) {
+        console.error('Error fetching latest commit:', error);
+        return null;
+    }
+};
+
+function parseGithubUrl(url) {
+    const regex = /^https:\/\/github\.com\/([^\/]+)\/([^\/]+)\/blob\/([^\/]+)\/(.+)$/;
+    const match = url.match(regex);
+
+    if (!match) {
+        throw new Error('Invalid GitHub file URL format');
+    }
+
+    const [, owner, repo, branch, filePath] = match;
+
+    return { owner, repo, branch, filePath };
+}
+
+export const getLatestContent = async githubApiUrl => {
+    const { owner, repo, branch, filePath } = parseGitHubRawUrl(githubApiUrl);
+
+    try {
+        const { data } = await octokit.rest.repos.getContent({
+            owner: owner,
+            repo: repo,
+            path: filePath,
+            ref: branch
+        });
+
+        const sha = data.sha;
+
+        // Fetch file blob using the SHA
+        const { data: blobData } = await octokit.rest.git.getBlob({
+            owner: owner,
+            repo: repo,
+            file_sha: sha
+        });
+        // Decode base64 content
+        return Buffer.from(blobData.content, 'base64').toString('utf8');
+    } catch (error) {
+        console.error('Error fetching file content from GitHub:', error);
+        return null;
+    }
 };
 
 export const checkFileUpdated = async (githubApiUrl, lastCommit) => {
@@ -253,22 +302,22 @@ export const checkFileUpdated = async (githubApiUrl, lastCommit) => {
 
     try {
         // Get the latest commit SHA for the repository
-        const response = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
-            owner: owner,
-            repo: repo,
+        const { data: commitData } = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
+            owner,
+            repo,
             ref: branch
         });
 
-        const latestCommitSha = response.data.sha;
-        const lastFetchedFileSha = lastCommit;
-        if (latestCommitSha !== lastFetchedFileSha) {
+        const latestCommitSha = commitData.sha;
+
+        if (latestCommitSha !== lastCommit) {
             const {
                 data: { behind_by: commitsBehind }
             } = await octokit.rest.repos.compareCommits({
                 owner,
                 repo,
                 base: latestCommitSha,
-                head: lastFetchedFileSha
+                head: lastCommit
             });
             return {
                 status: 'behind',

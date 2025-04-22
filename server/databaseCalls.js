@@ -301,6 +301,42 @@ module.exports = {
         });
     },
 
+    updateOntology: function(app) {
+        app.post('/updateOntology', verifyToken, (req, res) => {
+            console.log('Processing ontology update request');
+            if (req.token === null) {
+                res.json({ result: false });
+            } else {
+                const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                if (token) {
+                    const userId = token.userId;
+                    const data = JSON.stringify(req.body);
+                    const update_options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/update_ontology/?userId=${userId}&token=${token.bToken}`,
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: data
+                    };
+
+                    request(update_options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Something went wrong' });
+                            }
+                        } else {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    });
+                }
+            }
+        });
+    },
+
     viewUserSettings: function(app) {
         app.get('/user/viewProfile/', verifyToken, (req, res) => {
             if (req.token === null) {

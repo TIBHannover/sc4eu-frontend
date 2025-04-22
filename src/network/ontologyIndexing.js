@@ -1,5 +1,12 @@
 import { plainGetRequest, submitGetRequest, submitPostRequest } from './networkRequests';
-import { URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY, URL_DELETEONTOLOGY, URL_INITIALIZE, URL_ONTOLOGYINDEXING, URL_PRE_INIT } from 'constants/services';
+import {
+    URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY,
+    URL_UPDATEONTOLOGY,
+    URL_DELETEONTOLOGY,
+    URL_INITIALIZE,
+    URL_ONTOLOGYINDEXING,
+    URL_PRE_INIT
+} from 'constants/services';
 import { Cookies } from 'react-cookie';
 import { URL_GET_ONTOLOGY_GIT_DATA, URL_ONTOLOGYBYID } from '../constants/services';
 
@@ -36,6 +43,11 @@ export const deleteOntology = ontology_id => {
 export const uploadOntology = data => {
     const postHeader = { 'Content-Type': 'application/json' };
     return submitPostRequest(URL_INITIALIZE, postHeader, data);
+};
+
+export const updateOntology = data => {
+    const postHeader = { 'Content-Type': 'application/json' };
+    return submitPostRequest(URL_UPDATEONTOLOGY, postHeader, data);
 };
 
 export const preInitializeOntologyUpload = data => {

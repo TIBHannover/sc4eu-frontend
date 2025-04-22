@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { Delete, Download } from '@mui/icons-material';
+import { Delete, Download, Refresh } from '@mui/icons-material';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { reverse } from 'named-urls';
@@ -15,11 +15,13 @@ import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '.
 import theme from '../theme';
 import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
 import DeleteConfirmationDialog from '../utils/DeleteConfirmationDialog';
+import UpdateConfirmationDialog from '../utils/UpdateConfirmationDialog';
 import Cookies from 'js-cookie';
 import CircularProgress from '@mui/material/CircularProgress';
 import githubIcon from '../assets/images/github.svg';
 import gitlabIcon from '../assets/images/gitlab.svg';
 import file_solid from '../assets/images/file-solid.svg';
+import { updateOntologyData } from '../network/UpdateOntologyData';
 
 const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
     & .MuiTooltip-tooltip {
@@ -40,9 +42,11 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
 function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_addOntology, redux_removeOntology }) {
     const history = useHistory();
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
     const [loading, setLoading] = useState({
         download: false,
-        delete: false
+        delete: false,
+        refresh: false
     });
     const [error, setError] = useState(null);
 
@@ -112,6 +116,53 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
     const handleDeleteCancel = () => {
         setDeleteDialogOpen(false);
     };
+    const handleUpdateCancel = () => {
+        setUpdateDialogOpen(false);
+    };
+
+    const handleUpdateConfirm = async () => {
+        setLoading(prev => ({ ...prev, update: true, refresh: true }));
+        setError(null);
+        try {
+            const latestData = await updateOntologyData(ontology);
+            if (latestData.success) {
+                // Update the ontology object to reflect that it's up to date
+                if (ontology.commitsBehind) {
+                    ontology.commitsBehind = 0;
+                }
+                // Reset loading states after successful update
+                setLoading(prev => ({ ...prev, update: false, refresh: false }));
+                // Call the callback to update the parent component's state
+                if (callback) {
+                    callback(latestData.result);
+                }
+            } else {
+                setError('Failed to refresh ontology data. Please try again.');
+                setLoading(prev => ({ ...prev, update: false, refresh: false }));
+            }
+        } catch (error) {
+            console.error('Error checking authorization:', error);
+            setError('Failed to verify authorization. Please try again.');
+            setLoading(prev => ({ ...prev, update: false, refresh: false }));
+        } finally {
+            setUpdateDialogOpen(false);
+        }
+    };
+
+    const handleRefresh = async e => {
+        e.stopPropagation();
+        try {
+            const allows = await userIsAllowdToUploadOntology();
+            if (allows.result === true) {
+                setUpdateDialogOpen(true);
+            } else {
+                setError('You are not authorized to update this ontology');
+            }
+        } catch (error) {
+            console.error('Error checking authorization:', error);
+            setError('Failed to verify authorization. Please try again.');
+        }
+    };
 
     const handleCardClick = async () => {
         await redux_removeOntology();
@@ -138,6 +189,14 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
                                 <strong>Git Branch:</strong> {ontology.gitBranch}
                                 <br />
                                 <strong>Version:</strong> {ontology.commitStatus}
+                                {ontology.commitsBehind > 0 && (
+                                    <>
+                                        <br />
+                                        <strong style={{ color: theme.palette.warning.main }}>
+                                            {ontology.commitsBehind} {ontology.commitsBehind === 1 ? 'commit' : 'commits'} behind
+                                        </strong>
+                                    </>
+                                )}
                             </Typography>
                         )}
                         {error && (
@@ -163,7 +222,7 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
                     <CardActionArea
                         onClick={handleCardClick}
                         style={{ height: '100%', position: 'relative' }}
-                        disabled={loading.download || loading.delete}
+                        disabled={loading.download || loading.delete || loading.refresh}
                     >
                         <CardMedia
                             component="img"
@@ -195,14 +254,33 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
                                 padding: '8px'
                             }}
                         >
-                            <IconButton aria-label="download" onClick={handleDownload} disabled={loading.download || loading.delete}>
+                            <IconButton
+                                aria-label="download"
+                                onClick={handleDownload}
+                                disabled={loading.download || loading.delete || loading.refresh}
+                            >
                                 {loading.download ? <CircularProgress size={24} /> : <Download />}
                             </IconButton>
                             {currentUser !== 0 && currentUser !== null && (
-                                <IconButton aria-label="delete" onClick={handleDelete} disabled={loading.download || loading.delete}>
+                                <IconButton
+                                    aria-label="delete"
+                                    onClick={handleDelete}
+                                    disabled={loading.download || loading.delete || loading.refresh}
+                                >
                                     {loading.delete ? <CircularProgress size={24} /> : <Delete />}
                                 </IconButton>
                             )}
+                            {currentUser !== 0 &&
+                                currentUser !== null &&
+                                (ontology.lookup_type === 'online' || ontology.lookup_type === 'online-gitlab') && (
+                                    <IconButton
+                                        aria-label="refresh"
+                                        onClick={handleRefresh}
+                                        disabled={loading.refresh || !(ontology.commitsBehind > 0)}
+                                    >
+                                        {loading.refresh ? <CircularProgress size={24} /> : <Refresh />}
+                                    </IconButton>
+                                )}
                         </CardActions>
                     </CardActionArea>
                 </StyledCard>
@@ -213,6 +291,13 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
                 onConfirm={handleDeleteConfirm}
                 title="Delete Ontology"
                 contentText={`Are you sure you want to delete ontology "${ontology.name}"? This action cannot be undone.`}
+            />
+            <UpdateConfirmationDialog
+                open={updateDialogOpen}
+                onClose={handleUpdateCancel}
+                onConfirm={handleUpdateConfirm}
+                title="Update Ontology"
+                contentText={`Are you sure you want to update ontology "${ontology.name}"?`}
             />
         </>
     );

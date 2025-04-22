@@ -435,6 +435,7 @@ const StyledProjectsGrid = styled.div`
     margin: 2px;
     flex-wrap: wrap;
     gap: 20px;
+    padding-bottom: 20px; /* Add padding at the bottom to prevent cut-off */
 `;
 
 const StyledRootDiv = styled.div`
@@ -442,7 +443,7 @@ const StyledRootDiv = styled.div`
     margin-left: auto;
     background-color: ${colorStyled.PRIMARY.lighter};
     margin-top: 0.5%;
-    height: 100%;
+    height: calc(100vh - 100px); /* Adjust for the header height */
     margin-right: 2%;
     font-family: ${fontStyled.fontFamily};
 `;
@@ -479,6 +480,6 @@ const StyledIcon = styled(FontAwesomeIcon)`
 `;
 
 const StyledScrollbarDiv = styled.div`
-    height: calc(100% - 1px);
+    height: calc(100% - 100px); /* Subtract StyledSubHeadingDiv height */
     border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
 `;
