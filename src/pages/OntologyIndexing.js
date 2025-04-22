@@ -42,11 +42,9 @@ class OntologyIndexing extends Component {
         getAllOntologies(this.state.selectedProject.uuid).then(res => {
             //There is a chance that the project do not have any ontologies.
             if (res.ontologyIndex === 'Undefined') {
-                console.log('test');
                 this.setState({ isLoading: false, ontologyList: false });
                 return;
             } else {
-                this.setState({ isLoading: false, ontologyList: res });
                 this.setState({ isLoading: false, ontologyList: res }, async () => {
                     await this.getCommitHistory();
                 });
@@ -63,7 +61,7 @@ class OntologyIndexing extends Component {
                     let commitStatus;
                     switch (singleOntology.lookup_type) {
                         case 'online':
-                            lastCommit = await getOntologyGitData(singleOntology.uuid);
+                            lastCommit = await getOntologyGitData(singleOntology.uuid);                            
                             commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
                             break;
                         case 'online-gitlab':
@@ -73,6 +71,8 @@ class OntologyIndexing extends Component {
                         default:
                             break;
                     }
+                    // Initialize commitsBehind
+                    singleOntology.commitsBehind = commitStatus?.commitsBehind || 0;
                     if (commitStatus?.status === 'latest') {
                         singleOntology.commitStatus = 'latest';
                         singleOntology.gitBranch = commitStatus.branch;

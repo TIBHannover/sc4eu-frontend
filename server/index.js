@@ -107,6 +107,7 @@ auth.projectAccessEmail(router);
 auth.getAllSystemAdmin(router);
 
 database.uploadOntology(router);
+database.updateOntology(router);
 database.deleteOntology(router);
 database.viewUserSettings(router);
 database.getOntologyIndex(router);
