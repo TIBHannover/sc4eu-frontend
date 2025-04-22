@@ -66,8 +66,15 @@ export const updateOntologyData = async ontology => {
             throw new Error('Invalid ontology: missing lookup path');
         }
 
-        // Fetch latest content and commit SHA in parallel
-        const [latestContent, gitCommitSha] = await Promise.all([getLatestContent(ontology.lookup_path), getLatestCommit(ontology.lookup_path)]);
+        let latestContent = null;
+        let gitCommitSha = null;
+
+        if (ontology.lookup_type === 'online-gitlab') {
+            //TODO: implement gitlab API calls
+        } else {
+            // Fetch latest content and commit SHA in parallel
+            [latestContent, gitCommitSha] = await Promise.all([getLatestContent(ontology.lookup_path), getLatestCommit(ontology.lookup_path)]);
+        }
 
         if (latestContent?.success === false) {
             alert(latestContent.message || 'Failed to fetch latest content from GitHub. Github API limit exceeded. please try again later');

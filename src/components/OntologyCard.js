@@ -162,29 +162,6 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
             console.error('Error checking authorization:', error);
             setError('Failed to verify authorization. Please try again.');
         }
-        // e.stopPropagation();
-        // alert('Refreshing ontology data...');
-
-        // setLoading(prev => ({ ...prev, refresh: true }));
-        // setError(null);
-
-        // try {
-        //     const allows = await userIsAllowdToUploadOntology();
-        //     if (allows.result === true) {
-        //         setUpdateDialogOpen(true);
-        //         const latestData = await updateOntologyData(ontology);
-        //         if (latestData.success) {
-        //             setLoading(prev => ({ ...prev, refresh: false }));
-        //         } else {
-        //             setError('Failed to refresh ontology data. Please try again.');
-        //         }
-        //     } else {
-        //         setError('You are not authorized to update this ontology');
-        //     }
-        // } catch (error) {
-        //     console.error('Error checking authorization:', error);
-        //     setError('Failed to verify authorization. Please try again.');
-        // }
     };
 
     const handleCardClick = async () => {
