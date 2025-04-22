@@ -1,5 +1,6 @@
 import { getLatestCommit, getLatestContent } from './GithubAPICalls';
 import { updateOntology } from './ontologyIndexing';
+import { getGitlabLatestCommit, getGitlabLatestContent } from './GitlabAPICalls';
 
 /**
  * @typedef {Object} OntologyUpdateResponse
@@ -65,14 +66,17 @@ export const updateOntologyData = async ontology => {
         if (!ontology?.lookup_path) {
             throw new Error('Invalid ontology: missing lookup path');
         }
-
         let latestContent = null;
         let gitCommitSha = null;
 
         if (ontology.lookup_type === 'online-gitlab') {
-            //TODO: implement gitlab API calls
+            // Fetch latest content and commit SHA in parallel for GitLab
+            [latestContent, gitCommitSha] = await Promise.all([
+                getGitlabLatestContent(ontology.lookup_path),
+                getGitlabLatestCommit(ontology.lookup_path)
+            ]);
         } else {
-            // Fetch latest content and commit SHA in parallel
+            // Fetch latest content and commit SHA in parallel for GitHub
             [latestContent, gitCommitSha] = await Promise.all([getLatestContent(ontology.lookup_path), getLatestCommit(ontology.lookup_path)]);
         }
 

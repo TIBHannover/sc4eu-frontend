@@ -1,3 +1,5 @@
+const Buffer = require('buffer/').Buffer;
+
 export const getUser = async gitlabapiurl => {
     console.log('getUser');
 };
@@ -110,6 +112,31 @@ export const checkGitlabFileUpdated = async (githubApiUrl, lastFetchedFileSha) =
         return {
             status: 'error',
             commitsBehind: -1
+        };
+    }
+};
+
+export const getGitlabLatestContent = async gitlabApiUrl => {
+    try {
+        const branch = getGitlabBranchFromUrl(gitlabApiUrl) || 'main';
+        const filePath = getFilePath(gitlabApiUrl);
+        const userRepo = await getUserRepoByName(gitlabApiUrl);
+
+        const response = await fetch(`https://gitlab.com/api/v4/projects/${userRepo['id']}/repository/files/${filePath}?ref=${branch}`, { headers });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch file content from GitLab');
+        }
+
+        const data = await response.json();
+        const bufferObj = Buffer.from(data.content, 'base64');
+        return bufferObj.toString('utf8');
+    } catch (error) {
+        console.error('Error fetching file content from GitLab:', error);
+        return {
+            success: false,
+            message: 'Failed to fetch file content from GitLab. API limit may have been exceeded. Please try again later.',
+            error: error.message
         };
     }
 };
