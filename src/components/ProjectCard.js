@@ -96,26 +96,28 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
             leaveDelay={200}
         >
             <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
-                <CardActionArea onClick={handleCardClick} style={{ height: '100%', position: 'relative' }}>
-                    <CardMedia
-                        component="img"
-                        height="50"
-                        image={getCollectionImage(project.name, project.access_type)}
-                        style={{
-                            objectFit: 'contain',
-                            position: 'absolute',
-                            top: '12px',
-                            left: '12px',
-                            width: '50px',
-                            zIndex: 1
-                        }}
-                        alt="collection type icon"
-                    />
-                    <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '60px' }}>
-                        <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
-                            {project.name}
-                        </Typography>
-                    </CardContent>
+                <div style={{ position: 'relative', height: '100%' }}>
+                    <CardActionArea onClick={handleCardClick} style={{ height: 'calc(100% - 48px)' }}>
+                        <CardMedia
+                            component="img"
+                            height="50"
+                            image={getCollectionImage(project.name, project.access_type)}
+                            style={{
+                                objectFit: 'contain',
+                                position: 'absolute',
+                                top: '12px',
+                                left: '12px',
+                                width: '50px',
+                                zIndex: 1
+                            }}
+                            alt="collection type icon"
+                        />
+                        <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '16px' }}>
+                            <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                                {project.name}
+                            </Typography>
+                        </CardContent>
+                    </CardActionArea>
                     <CardActions
                         disableSpacing
                         style={{
@@ -132,7 +134,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             <Delete />
                         </IconButton>
                     </CardActions>
-                </CardActionArea>
+                </div>
             </StyledCard>
         </StyledTooltip>
     );
