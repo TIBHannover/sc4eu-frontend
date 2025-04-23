@@ -287,101 +287,97 @@ const SideBar = props => {
                                         )}
                                     </div>
                                     <Divider />
-                                    <div
-                                        style={{
-                                            marginLeft: props.isOpen ? '25px' : '0px',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            transition: '0.6s'
-                                        }}
-                                    >
-                                        <p
-                                            style={{
-                                                display: props.isOpen ? 'block' : 'none',
-                                                marginLeft: props.isOpen ? '-25px' : '0px',
-                                                paddingTop: '5px',
-                                                marginBottom: '1px',
-                                                fontSize: '13px',
-                                                textAlign: 'center'
-                                            }}
-                                        >
-                                            Tools
-                                        </p>
-                                        <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE}>
-                                            <BorderColorOutlined color="action" />
-                                            <StyledText>WebProtege</StyledText>
-                                        </StyledLink>
-                                        <StyledLink
-                                            title="Open Vocabulary Development Support"
-                                            activeStyle={ActiveStyle}
-                                            to={ROUTES.VOCABULARY_SUPPORT}
-                                        >
-                                            <NoteAddOutlined color="action" />
-                                            <StyledText>Vocabulary Dev</StyledText>
-                                        </StyledLink>
-                                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR}>
-                                            <BorderAllOutlined color="action" />
-                                            <StyledText>Annotator</StyledText>
-                                        </StyledLink>
-                                        <StyledLink
-                                            title="Open Eurostat Visualisation"
-                                            activeStyle={ActiveStyle}
-                                            to={ROUTES.EUROSTAT}
-                                            onClick={() => selectModeOfOperation('eurostat')}
-                                        >
-                                            <AnalyticsOutlined color="action" />
-                                            <StyledText>Eurostat</StyledText>
-                                        </StyledLink>
-                                        {(isActiveTab === 'eurostat' || isActiveTab === 'bullwhip') && (
-                                            <div
-                                                style={{
-                                                    marginLeft: props.isOpen ? '10px' : '0px',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    transition: '0.6s'
-                                                }}
-                                            >
-                                                <p
-                                                    style={{
-                                                        display: props.isOpen ? 'block' : 'none',
-                                                        marginLeft: props.isOpen ? '-5px' : '0px',
-                                                        paddingTop: '5px',
-                                                        marginBottom: '1px',
-                                                        fontSize: '13px',
-                                                        textAlign: 'center'
-                                                    }}
-                                                >
-                                                    Knowledge Graphs
-                                                </p>
-                                                <StyledLink
-                                                    title="Open EU trade view"
-                                                    to={{
-                                                        pathname: reverse(ROUTES.EUROSTAT)
-                                                    }}
-                                                    onClick={() => selectModeOfOperation('eurostat')}
-                                                    activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}
-                                                >
-                                                    <TimelineOutlined color="action" />
-                                                    <StyledText>EU trade</StyledText>
-                                                </StyledLink>
-                                                <StyledLink
-                                                    title="Open Bullwhip View"
-                                                    to={{
-                                                        pathname: reverse(ROUTES.EUROSTAT_BULLWHIP)
-                                                    }}
-                                                    onClick={() => selectModeOfOperation('bullwhip')}
-                                                    activeStyle={isActiveTab === 'bullwhip' ? ActiveStyle : {}}
-                                                >
-                                                    <BarChartOutlined color="action" />
-                                                    <StyledText>Bullwhip Effect</StyledText>
-                                                </StyledLink>
-                                            </div>
-                                        )}
-                                    </div>
                                 </>
                             ) : null}
                         </div>
                     ) : null}
+                    <div
+                        style={{
+                            marginLeft: props.isOpen ? '0px' : '0px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            transition: '0.6s'
+                        }}
+                    >
+                        <p
+                            style={{
+                                display: props.isOpen ? 'block' : 'none',
+                                marginLeft: props.isOpen ? '-25px' : '0px',
+                                paddingTop: '5px',
+                                marginBottom: '1px',
+                                fontSize: '13px',
+                                textAlign: 'center'
+                            }}
+                        >
+                            Tools
+                        </p>
+                        <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE}>
+                            <BorderColorOutlined color="action" />
+                            <StyledText>WebProtege</StyledText>
+                        </StyledLink>
+                        <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
+                            <NoteAddOutlined color="action" />
+                            <StyledText>Vocabulary Dev</StyledText>
+                        </StyledLink>
+                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR}>
+                            <BorderAllOutlined color="action" />
+                            <StyledText>Annotator</StyledText>
+                        </StyledLink>
+                        <StyledLink
+                            title="Open Eurostat Visualisation"
+                            activeStyle={ActiveStyle}
+                            to={ROUTES.EUROSTAT}
+                            onClick={() => selectModeOfOperation('eurostat')}
+                        >
+                            <AnalyticsOutlined color="action" />
+                            <StyledText>Eurostat</StyledText>
+                        </StyledLink>
+                        {(isActiveTab === 'eurostat' || isActiveTab === 'bullwhip') && (
+                            <div
+                                style={{
+                                    marginLeft: props.isOpen ? '10px' : '0px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    transition: '0.6s'
+                                }}
+                            >
+                                <p
+                                    style={{
+                                        display: props.isOpen ? 'block' : 'none',
+                                        marginLeft: props.isOpen ? '-5px' : '0px',
+                                        paddingTop: '5px',
+                                        marginBottom: '1px',
+                                        fontSize: '13px',
+                                        textAlign: 'center'
+                                    }}
+                                >
+                                    Knowledge Graphs
+                                </p>
+                                <StyledLink
+                                    title="Open EU trade view"
+                                    to={{
+                                        pathname: reverse(ROUTES.EUROSTAT)
+                                    }}
+                                    onClick={() => selectModeOfOperation('eurostat')}
+                                    activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}
+                                >
+                                    <TimelineOutlined color="action" />
+                                    <StyledText>EU trade</StyledText>
+                                </StyledLink>
+                                <StyledLink
+                                    title="Open Bullwhip View"
+                                    to={{
+                                        pathname: reverse(ROUTES.EUROSTAT_BULLWHIP)
+                                    }}
+                                    onClick={() => selectModeOfOperation('bullwhip')}
+                                    activeStyle={isActiveTab === 'bullwhip' ? ActiveStyle : {}}
+                                >
+                                    <BarChartOutlined color="action" />
+                                    <StyledText>Bullwhip Effect</StyledText>
+                                </StyledLink>
+                            </div>
+                        )}
+                    </div>
                     <Divider />
                     <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>
                         <LibraryBooksOutlined color="action" />
