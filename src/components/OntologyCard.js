@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
 import styled from 'styled-components';
@@ -219,32 +219,34 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
                 leaveDelay={200}
             >
                 <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
-                    <CardActionArea
-                        onClick={handleCardClick}
-                        style={{ height: '100%', position: 'relative' }}
-                        disabled={loading.download || loading.delete || loading.refresh}
-                    >
-                        <CardMedia
-                            component="img"
-                            height="50"
-                            image={getSourceIcon(ontology)}
-                            style={{
-                                objectFit: 'contain',
-                                position: 'absolute',
-                                top: '12px',
-                                left: '12px',
-                                width: '50px',
-                                zIndex: 1
-                            }}
-                            alt="collection type icon"
-                        />
-                        <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '60px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
-                                    {ontology.name}
-                                </Typography>
-                            </div>
-                        </CardContent>
+                    <div style={{ position: 'relative', height: '100%' }}>
+                        <CardActionArea
+                            onClick={handleCardClick}
+                            style={{ height: 'calc(100% - 48px)' }}
+                            disabled={loading.download || loading.delete || loading.refresh}
+                        >
+                            <CardMedia
+                                component="img"
+                                height="50"
+                                image={getSourceIcon(ontology)}
+                                style={{
+                                    objectFit: 'contain',
+                                    position: 'absolute',
+                                    top: '12px',
+                                    left: '12px',
+                                    width: '50px',
+                                    zIndex: 1
+                                }}
+                                alt="collection type icon"
+                            />
+                            <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                                        {ontology.name}
+                                    </Typography>
+                                </div>
+                            </CardContent>
+                        </CardActionArea>
                         <CardActions
                             disableSpacing
                             style={{
@@ -282,7 +284,7 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
                                     </IconButton>
                                 )}
                         </CardActions>
-                    </CardActionArea>
+                    </div>
                 </StyledCard>
             </StyledTooltip>
             <DeleteConfirmationDialog
