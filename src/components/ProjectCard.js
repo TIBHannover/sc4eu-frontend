@@ -98,21 +98,48 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
             <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
                 <div style={{ position: 'relative', height: '100%' }}>
                     <CardActionArea onClick={handleCardClick} style={{ height: 'calc(100% - 48px)' }}>
-                        <CardMedia
-                            component="img"
-                            height="50"
-                            image={getCollectionImage(project.name, project.access_type)}
+                        <div
                             style={{
-                                objectFit: 'contain',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                                 position: 'absolute',
-                                top: '12px',
-                                left: '12px',
-                                width: '50px',
-                                zIndex: 1
+                                top: 12,
+                                left: 0,
+                                width: '100%',
+                                zIndex: 2,
+                                pointerEvents: 'none'
                             }}
-                            alt="collection type icon"
-                        />
-                        <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '16px' }}>
+                        >
+                            <CardMedia
+                                component="img"
+                                height="50"
+                                image={getCollectionImage(project.name, project.access_type)}
+                                style={{
+                                    objectFit: 'contain',
+                                    position: 'absolute',
+                                    top: '0px',
+                                    left: '12px',
+                                    width: '50px',
+                                    zIndex: 1
+                                }}
+                                alt="collection type icon"
+                            />
+                            <Typography
+                                variant="subtitle2"
+                                color="textSecondary"
+                                fontWeight={'bold'}
+                                style={{
+                                    marginLeft: '8px',
+                                    fontWeight: 'bold',
+                                    fontSize: '1rem',
+                                    pointerEvents: 'auto'
+                                }}
+                            >
+                                Project
+                            </Typography>
+                        </div>
+                        <CardContent style={{ paddingTop: '20px', paddingLeft: '45px', paddingBottom: '16px' }}>
                             <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
                                 {project.name}
                             </Typography>
