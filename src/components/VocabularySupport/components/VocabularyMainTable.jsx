@@ -1,7 +1,18 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
+import {
+    Box,
+    Button,
+    darken,
+    IconButton,
+    lighten,
+    ListItem,
+    ListItemText,
+    Modal,
+    Tooltip,
+    useTheme
+} from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -13,6 +24,9 @@ import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import { useDeleteTerm } from '../hooks/useDeleteTerm';
 import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useHistory } from 'react-router-dom';
+import ChangesTimeline from '../../ondet/ChangesTimeline';
+import MaterialUIPopUp, {MaterialUIPopUpTypes} from "../../ReusableComponents/MaterialUIPopUp";
+import List from "@mui/material/List";
 
 const VocabularyMainTable = ({
     terms,
@@ -36,6 +50,7 @@ const VocabularyMainTable = ({
     const [termComments, setTermComments] = useState([]);
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [hasUncommittedChanges, setHasUncommittedChanges] = useState(false);
+    const [activeMUIPopUp, setActiveMUIPopUp] = useState(null);
     const history = useHistory();
     const theme = useTheme();
     const baseBackgroundColor =
@@ -491,7 +506,7 @@ const VocabularyMainTable = ({
             );
         },
         renderTopToolbarCustomActions: ({ table, row }) => (
-            <>
+            <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-start' }}>
                 <Button
                     variant="contained"
                     onClick={() => {
@@ -500,6 +515,15 @@ const VocabularyMainTable = ({
                     style={{ backgroundColor: colorStyled.SECONDARY.dark }}
                 >
                     Create New Term
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
+                    }}
+                    style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                >
+                    Timeline
                 </Button>
                 {hasUncommittedChanges && (
                     <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>
@@ -585,6 +609,14 @@ const VocabularyMainTable = ({
                     )}
                 </Box>
             </Modal>
+            <MaterialUIPopUp
+                open={activeMUIPopUp === MaterialUIPopUpTypes.HISTORY}
+                onClose={() => {
+                    setActiveMUIPopUp(null);
+                }}
+                title='Timeline'
+                message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development/refs/heads/main/sc4eu_vo.ttl" />}
+            />
         </ScrollableDiv>
     );
 };
