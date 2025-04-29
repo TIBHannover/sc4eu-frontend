@@ -225,26 +225,52 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
                             style={{ height: 'calc(100% - 48px)' }}
                             disabled={loading.download || loading.delete || loading.refresh}
                         >
-                            <CardMedia
-                                component="img"
-                                height="50"
-                                image={getSourceIcon(ontology)}
+                            <div
                                 style={{
-                                    objectFit: 'contain',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                     position: 'absolute',
-                                    top: '12px',
-                                    left: '12px',
-                                    width: '50px',
-                                    zIndex: 1
+                                    top: 12,
+                                    left: 0,
+                                    width: '100%',
+                                    zIndex: 2,
+                                    pointerEvents: 'none'
                                 }}
-                                alt="collection type icon"
-                            />
+                            >
+                                <CardMedia
+                                    component="img"
+                                    height="50"
+                                    image={getSourceIcon(ontology)}
+                                    style={{
+                                        objectFit: 'contain',
+                                        position: 'absolute',
+                                        top: '0px',
+                                        left: '12px',
+                                        width: '50px',
+                                        zIndex: 1
+                                    }}
+                                    alt="collection type icon"
+                                />
+                                <Typography
+                                    variant="subtitle2"
+                                    color="textSecondary"
+                                    fontWeight={'bold'}
+                                    style={{
+                                        marginLeft: '8px',
+                                        color: 'white',
+                                        fontWeight: 'bold',
+                                        fontSize: '1rem',
+                                        pointerEvents: 'auto'
+                                    }}
+                                >
+                                    Ontology
+                                </Typography>
+                            </div>
                             <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
-                                        {ontology.name}
-                                    </Typography>
-                                </div>
+                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                                    {ontology.name}
+                                </Typography>
                             </CardContent>
                         </CardActionArea>
                         <CardActions
