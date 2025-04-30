@@ -528,7 +528,7 @@ const VocabularyMainTable = ({
                 {hasUncommittedChanges && (
                     <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>
                 )}
-            </>
+            </div>
         ),
         renderBottomToolbarCustomActions: () => (
             <>
