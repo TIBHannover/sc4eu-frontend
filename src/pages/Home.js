@@ -122,7 +122,7 @@ const StyledHeading = styled.div`
 `;
 
 const StyledLogo = styled.img`
-    height: 80px;
+    height: 70px;
     width: 70px;
     margin-right: 10px;
     float: left;
