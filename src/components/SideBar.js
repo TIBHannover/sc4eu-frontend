@@ -44,6 +44,8 @@ import { getWidocoDocumentation } from '../network/GetOntologyData';
 import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
 import OntoComparisonModal from './Modals/OntoComparisonModal';
+import MaterialUIPopUp from "./ReusableComponents/MaterialUIPopUp";
+import ChangesTimeline from "./ondet/ChangesTimeline";
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -274,11 +276,13 @@ const SideBar = props => {
                                                     <StyledText>Version Compare</StyledText>
                                                 </StyledButton>
                                                 {isOntoComparisonModalOpen && (
-                                                    <OntoComparisonModal
-                                                        toggle={() => {
+                                                    <MaterialUIPopUp
+                                                        open={isOntoComparisonModalOpen}
+                                                        onClose={() => {
                                                             setIsOntoComparisonModalOpen(false);
                                                         }}
-                                                        isModalOpen={isOntoComparisonModalOpen}
+                                                        title='Timeline'
+                                                        message={<ChangesTimeline id={selectedOntology.lookup_path} />}
                                                     />
                                                 )}
                                             </>

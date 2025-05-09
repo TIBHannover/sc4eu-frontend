@@ -98,17 +98,23 @@ const ChangesTimeline = ({ id }) => {
     const [commitsFetched, setCommitsFetched] = useState(false);
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         async function fetchOntology() {
-            setCommitsFetched(true);
-            const response = await fetch(
-                `${process.env.REACT_APP_DIFF_BACKEND_URL}/api/ondet/sdiffs/commits?uri=${id}`,
-            );
-            if (response.ok) {
-                const data = await response.json();
-                setOntology(data);
-                setCommitsFetched(false);
+            try {
+                const fileUrl = new URL(id);
+                setCommitsFetched(true);
+                const response = await fetch(
+                    `${process.env.REACT_APP_DIFF_BACKEND_URL}/api/ondet/sdiffs/commits?uri=${fileUrl}`,
+                );
+                if (response.ok) {
+                    const data = await response.json();
+                    setOntology(data);
+                    setCommitsFetched(false);
+                }
+            } catch (error) {
+                setError(error);
             }
         }
 
@@ -206,10 +212,15 @@ const ChangesTimeline = ({ id }) => {
 
     return (
         <Grid container>
+            {error && (
+                <div>
+                    <Typography variant="h5">Some error happened while searching for an ontology in Ontology Development Tracker</Typography>
+                </div>
+            )}
             {commitsFetched && (
                 <CircularProgress sx={{ margin: "0 auto" }} size={100} />
             )}
-            {!commitsFetched && (
+            {!commitsFetched && !error && (
                 <>
                     <Grid item xs={12} md={4} className={classes.grid}>
                         <Timeline className={classes.timeline}>
