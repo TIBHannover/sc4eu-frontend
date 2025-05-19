@@ -269,15 +269,14 @@ class ProjectView extends Component {
 
         // Filter projects based on selected collections and specific rules
         const filteredProjects = unlockedProjects.filter(project => {
-            // Check if the project matches any of the selected collections
             return selectedCollections.some(collectionId => {
                 const isSC3 =
                     project.name.toLowerCase().includes('sc3') ||
                     project.name.toLowerCase().includes('sc4eu') ||
                     project.name.toLowerCase().includes('semantically connected semiconductor supply chains');
                 const isSandbox = project.name.toLowerCase().includes('sandbox');
-
                 const isPublic = project.access_type === 'Public';
+                const isDigital = project.name.toLowerCase() === 'digital reference';
 
                 // Apply specific filtering rules based on collection ID
                 if (collectionId === 'SC4EU Collection' && isSC3) {
@@ -289,8 +288,11 @@ class ProjectView extends Component {
                 if (collectionId === 'Public Collection' && isPublic) {
                     return true;
                 }
+                if (collectionId === 'Digital Reference Collection' && isDigital) {
+                    return true;
+                }
                 if (collectionId === 'My Collection') {
-                    return !isSC3 && !isSandbox && !isPublic;
+                    return !isSC3 && !isSandbox && !isPublic && !isDigital;
                 }
 
                 return false;
@@ -300,8 +302,8 @@ class ProjectView extends Component {
     };
 
     render() {
-        const collectionOptions = ['SC4EU Collection', 'Sandbox Collection', 'Public Collection', 'My Collection'];
-        const defaultOptions = collectionOptions.slice(0, 2);
+        const collectionOptions = ['Digital Reference Collection', 'Sandbox Collection', 'SC4EU Collection', 'Public Collection', 'My Collection'];
+        const defaultOptions = ['Digital Reference Collection', 'Sandbox Collection'];
 
         return (
             <StyledRootDiv>
