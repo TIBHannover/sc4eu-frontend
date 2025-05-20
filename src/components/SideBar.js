@@ -35,7 +35,8 @@ import {
     AnalyticsOutlined,
     BarChartOutlined,
     TimelineOutlined,
-    BorderAllOutlined
+    BorderAllOutlined,
+    HandshakeOutlined
 } from '@mui/icons-material';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
@@ -44,8 +45,8 @@ import { getWidocoDocumentation } from '../network/GetOntologyData';
 import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
 import OntoComparisonModal from './Modals/OntoComparisonModal';
-import MaterialUIPopUp from "./ReusableComponents/MaterialUIPopUp";
-import ChangesTimeline from "./ondet/ChangesTimeline";
+import MaterialUIPopUp from './ReusableComponents/MaterialUIPopUp';
+import ChangesTimeline from './ondet/ChangesTimeline';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -281,7 +282,7 @@ const SideBar = props => {
                                                         onClose={() => {
                                                             setIsOntoComparisonModalOpen(false);
                                                         }}
-                                                        title='Timeline'
+                                                        title="Timeline"
                                                         message={<ChangesTimeline id={selectedOntology.lookup_path} />}
                                                     />
                                                 )}
@@ -403,6 +404,10 @@ const SideBar = props => {
                     <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint}>
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
+                    </StyledLink>
+                    <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS}>
+                        <HandshakeOutlined color="action" />
+                        <StyledText>Partners</StyledText>
                     </StyledLink>
                 </div>
             </ListItem>

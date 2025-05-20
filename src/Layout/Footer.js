@@ -34,10 +34,10 @@ class Footer extends Component {
                     </StyledNoteText>
                 </StyledLeftDiv>
                 <div>
-                    <a href={'https://www.tib.eu/de/'} target="_blank" rel="noopener noreferrer">
+                    {/* <a href={'https://www.tib.eu/de/'} target="_blank" rel="noopener noreferrer">
                         <Image src={tib_logo} alt="TIB Logo" />
                     </a>
-                    <Image src={infinion_logo} alt="Infinion Logo" />
+                    <Image src={infinion_logo} alt="Infinion Logo" /> */}
                     {/*<Image src={ftk_logo} alt="FTK Logo" />*/}
                     {/*<Image src={ASML_logo} alt="ASML Logo" />*/}
                     {/*<Image src={mines_logo} alt="Mines Logo" />*/}

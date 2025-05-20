@@ -14,6 +14,7 @@ import ViewOntology from './pages/ViewOntology';
 import Documentations from './pages/Documentations';
 import Dataprotections from './pages/Dataprotections';
 import Imprint from './pages/Imprint';
+import Partners from './pages/Partners';
 import vocabulary_support from './pages/vocabulary_support';
 import FAQ from './pages/FAQ';
 import Training from './pages/Training';
@@ -57,7 +58,7 @@ const routes = [
     },
 
     {
-        path : ROUTES.EUROSTAT_BULLWHIP,
+        path: ROUTES.EUROSTAT_BULLWHIP,
         exact: true,
         component: BullWhipEffect
     },
@@ -123,6 +124,11 @@ const routes = [
         path: ROUTES.Imprint,
         exact: true,
         component: Imprint
+    },
+    {
+        path: ROUTES.PARTNERS,
+        exact: true,
+        component: Partners
     },
     {
         path: ROUTES.VOCABULARY_SUPPORT,
