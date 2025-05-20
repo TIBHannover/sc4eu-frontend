@@ -23,7 +23,8 @@ const routes = {
     EMAIL_VERIFY: '/EmailVerify',
     LOGIN_FAILED: '/loginFailedRedirect',
     RESET_PASSWORD: '/resetPassword',
-    ANNOTATOR: '/AnnotatorPage'
+    ANNOTATOR: '/AnnotatorPage',
+    PARTNERS: '/partners'
 };
 
 export default routes;
