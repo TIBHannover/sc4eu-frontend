@@ -182,6 +182,8 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
         });
     };
 
+    // CardActionArea should be disabled (not clickable) during loading.refresh or loading.update
+    const cardActionDisabled = loading.download || loading.delete || loading.refresh || loading.update;
     return (
         <>
             <StyledTooltip
@@ -225,12 +227,12 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                 enterDelay={50}
                 leaveDelay={200}
             >
-                <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
+                <StyledCard sx={{ maxWidth: 345, cursor: cardActionDisabled ? 'not-allowed' : 'pointer' }}>
                     <div style={{ position: 'relative', height: '100%' }}>
                         <CardActionArea
-                            onClick={handleCardClick}
+                            onClick={cardActionDisabled ? undefined : handleCardClick}
                             style={{ height: 'calc(100% - 48px)' }}
-                            disabled={loading.download || loading.delete || loading.refresh}
+                            disabled={cardActionDisabled}
                         >
                             <div
                                 style={{
