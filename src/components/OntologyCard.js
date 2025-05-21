@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
 import styled from 'styled-components';
@@ -39,7 +39,7 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
     }
 `;
 
-function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_addOntology, redux_removeOntology }) {
+function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVersion, redux_addOntology, redux_removeOntology }) {
     const history = useHistory();
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
@@ -49,6 +49,13 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
         refresh: false
     });
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (autoRefresh) {
+            console.log('Auto-refresh is enabled. Updating ontology data...');
+            handleUpdateConfirm();
+        }
+    }, [autoRefresh]);
 
     const getSourceIcon = ontology => {
         if (ontology && ontology.lookup_type === 'online') {
@@ -175,6 +182,8 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
         });
     };
 
+    // CardActionArea should be disabled (not clickable) during loading.refresh or loading.update
+    const cardActionDisabled = loading.download || loading.delete || loading.refresh || loading.update;
     return (
         <>
             <StyledTooltip
@@ -218,12 +227,12 @@ function OntologyCard({ ontology, currentUser, callback, ontologyVersion, redux_
                 enterDelay={50}
                 leaveDelay={200}
             >
-                <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
+                <StyledCard sx={{ maxWidth: 345, cursor: cardActionDisabled ? 'not-allowed' : 'pointer' }}>
                     <div style={{ position: 'relative', height: '100%' }}>
                         <CardActionArea
-                            onClick={handleCardClick}
+                            onClick={cardActionDisabled ? undefined : handleCardClick}
                             style={{ height: 'calc(100% - 48px)' }}
-                            disabled={loading.download || loading.delete || loading.refresh}
+                            disabled={cardActionDisabled}
                         >
                             <div
                                 style={{
@@ -335,6 +344,7 @@ OntologyCard.propTypes = {
     ontology: PropTypes.object.isRequired,
     currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
     callback: PropTypes.func.isRequired,
+    autoRefresh: PropTypes.bool.isRequired,
     ontologyVersion: PropTypes.string.isRequired,
     redux_addOntology: PropTypes.func.isRequired,
     redux_removeOntology: PropTypes.func.isRequired

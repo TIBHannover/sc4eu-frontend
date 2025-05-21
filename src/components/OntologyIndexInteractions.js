@@ -95,6 +95,7 @@ class OntologyIndexInteractions extends Component {
                         <OntologyIndexCards
                             ontologies={this.props.listOfOntology}
                             currentUser={this.props.user}
+                            project_name={this.props.project_name}
                             reloadAfterUpdate={() => {
                                 this.props.reloadAfterUpdate();
                             }}
