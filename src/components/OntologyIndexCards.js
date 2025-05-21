@@ -23,6 +23,7 @@ class OntologyIndexCards extends Component {
                 currentUser={currentUser}
                 inputData={ontology}
                 callback={reloadAfterUpdate}
+                autoRefresh={this.props.project_name === 'Digital Reference'}
                 //     /*
                 //      * this is hardcoded for now, it needs to be changed.we need to add an entry to ontology Index about version
                 //      * */
@@ -45,6 +46,7 @@ class OntologyIndexCards extends Component {
 OntologyIndexCards.propTypes = {
     ontologies: PropTypes.array.isRequired,
     currentUser: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
+    project_name: PropTypes.string.isRequired,
     reloadAfterUpdate: PropTypes.func.isRequired
 };
 
