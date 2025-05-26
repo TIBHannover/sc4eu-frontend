@@ -160,6 +160,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                         <CommentsSection
                             resourceId={term.identifier}
                             comments={termComments || []}
+                            mentionedUsers={[]}
                             handleSaveDiscussion={handleSaveDiscussion}
                             setHasUncommittedChanges={setHasUncommittedChanges}
                         />
@@ -262,6 +263,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                         <CommentsSection
                             resourceId={term.identifier}
                             comments={updatedTerm.comments || []}
+                            mentionedUsers={[]}
                             handleSaveDiscussion={handleSaveDiscussion}
                             setHasUncommittedChanges={setHasUncommittedChanges}
                         />

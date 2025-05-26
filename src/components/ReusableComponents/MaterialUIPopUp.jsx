@@ -8,10 +8,10 @@ const MaterialUIPopUp = ({ open, onClose, title, message }) => {
             onClose={onClose}
             PaperProps={{
                 style: {
-                    minHeight: '95%',
-                    maxHeight: '95%',
-                    minWidth: '90%',
-                    maxWidth: '90%',
+                    minHeight: '70%',
+                    maxHeight: '70%',
+                    minWidth: '80%',
+                    maxWidth: '80%',
                 }
             }}
         >
