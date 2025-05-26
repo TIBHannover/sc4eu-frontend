@@ -32,7 +32,7 @@ function stringToColor(string) {
     return color;
 }
 
-function stringAvatar(name) {
+export function stringAvatar(name) {
     const nameParts = name.split(' ');
     let initials;
 
@@ -84,6 +84,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const [cursorPosition, setCursorPosition] = useState(null);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const textFieldRef = React.useRef(null);
+    const [mentionedUsers, setMentionedUsers] = useState([]);
 
     useEffect(() => {
         getAllUsers().then(users => {
@@ -92,14 +93,15 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         });
     }, []); // Empty dependency array means this runs once on mount
 
-    const addComment = async (author, content) => {
+    const addComment = async (author, content, mentionedUsers) => {
         const newComment = {
             id: Math.random()
                 .toString(36)
                 .substring(2, 11),
             author,
             content,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            mentionedUsers: (mentionedUsers.length > 0 ? mentionedUsers : undefined)
         };
 
         const updatedComments = [...comments, newComment];
@@ -145,6 +147,12 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         const textBeforeMention = newCommentText.slice(0, cursorPosition - mentionSearch.length - 1);
         const textAfterMention = newCommentText.slice(cursorPosition);
         const newText = `${textBeforeMention}@${selectedUser.display_name}${textAfterMention}`;
+        if (!mentionedUsers.includes(selectedUser.display_name)) {
+            setMentionedUsers([
+                ...mentionedUsers,
+                selectedUser.display_name
+            ]);
+        }
         setNewCommentText(newText);
         setMentionAnchorEl(null);
     };
@@ -219,7 +227,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                             ...buttonStyle,
                             backgroundColor: newCommentText.trim() ? colorStyled.SECONDARY.dark : 'gray'
                         }} // Adjust styling as needed
-                        onClick={() => addComment(userDisplayName, newCommentText)}
+                        onClick={() => addComment(userDisplayName, newCommentText, mentionedUsers)}
                         disabled={!newCommentText.trim()}
                     >
                         Add
