@@ -26,7 +26,8 @@ import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useHistory } from 'react-router-dom';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, {MaterialUIPopUpTypes} from "../../ReusableComponents/MaterialUIPopUp";
-import List from "@mui/material/List";
+import Cookies from "js-cookie";
+import {getMentionedDiscussions, RenderGroupedMentions} from "../utils/Discussions";
 
 const VocabularyMainTable = ({
     terms,
@@ -36,7 +37,8 @@ const VocabularyMainTable = ({
     isFetchingTerms,
     discussions,
     handleSaveDiscussion,
-    handleDeleteDiscussion
+    handleDeleteDiscussion,
+    userName
 }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
@@ -57,6 +59,11 @@ const VocabularyMainTable = ({
         theme.palette.mode === 'light'
             ? 'rgba(245, 245, 245, 1)' // white
             : 'rgba(84, 90, 95, 1)'; // light gray
+
+    const mentionedDiscussionsCookie = Cookies.get('mentionedDiscussionsSeen');
+
+    const mentionedDiscussions = getMentionedDiscussions(terms, discussions, userName);
+    var inTenSeconds = new Date(new Date().getTime() + 10 * 1000);
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -98,6 +105,14 @@ const VocabularyMainTable = ({
         setTermComments(currentResourceDiscussion?.comments || []);
         // console.log('rowComments: ', rowComments);
         setSelectedTerm(row.original);
+        setOpenPopup(true);
+    };
+
+    const handleNavigateToMentionedTerm = resourceId => {
+        const term = terms.find(t => t.identifier === resourceId);
+        const discussion = discussions.find(d => d.resourceId === resourceId);
+        setSelectedTerm(term);
+        setTermComments(discussion?.comments || []);
         setOpenPopup(true);
     };
 
@@ -525,6 +540,24 @@ const VocabularyMainTable = ({
                 >
                     Timeline
                 </Button>
+                {Object.keys(mentionedDiscussions).length !== 0 && (
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
+                            Cookies.set('mentionedDiscussionsSeen', 'true', {
+                                expires: inTenSeconds
+                            });
+                        }}
+                        style={
+                            mentionedDiscussionsCookie === undefined ?
+                                { backgroundColor: colorStyled.SECONDARY.dark } :
+                                { backgroundColor: '#ee7356' }
+                        }
+                    >
+                        Mentions
+                    </Button>
+                )}
                 {hasUncommittedChanges && (
                     <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>
                 )}
@@ -617,6 +650,12 @@ const VocabularyMainTable = ({
                 title='Timeline'
                 message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development/refs/heads/main/sc4eu_vo.ttl" />}
             />
+            <MaterialUIPopUp
+                open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
+                onClose={() => setActiveMUIPopUp(null)}
+                title="Mentioned discussions"
+                message={<RenderGroupedMentions groupedMentioned={mentionedDiscussions} onNavigateToTerm={handleNavigateToMentionedTerm} />}
+            />
         </ScrollableDiv>
     );
 };
@@ -629,7 +668,8 @@ VocabularyMainTable.propTypes = {
     isFetchingTerms: PropTypes.bool.isRequired,
     discussions: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,
-    handleDeleteDiscussion: PropTypes.func.isRequired
+    handleDeleteDiscussion: PropTypes.func.isRequired,
+    userName: PropTypes.string
 };
 
 export default VocabularyMainTable;
