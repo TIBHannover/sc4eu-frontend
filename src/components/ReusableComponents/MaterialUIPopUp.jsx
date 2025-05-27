@@ -1,5 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
+import { colorStyled } from '../../styledComponents/styledColor';
 
 const MaterialUIPopUp = ({ open, onClose, title, message }) => {
     return (
@@ -11,7 +12,7 @@ const MaterialUIPopUp = ({ open, onClose, title, message }) => {
                     minHeight: '70%',
                     maxHeight: '70%',
                     minWidth: '80%',
-                    maxWidth: '80%',
+                    maxWidth: '80%'
                 }
             }}
         >
@@ -19,8 +20,10 @@ const MaterialUIPopUp = ({ open, onClose, title, message }) => {
             <DialogContent>
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>Close</Button>
+            <DialogActions style={{ display: 'flex', justifyContent: 'flex-start'}}>
+                <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                    Close
+                </Button>
             </DialogActions>
         </Dialog>
     );
