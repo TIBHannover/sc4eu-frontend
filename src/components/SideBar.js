@@ -5,13 +5,13 @@ import ROUTES from 'constants/routes';
 import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, StyledBadge } from '../styledComponents/styledComponents';
 import Cookies from 'js-cookie';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import List from '@mui/material/List';
-import { ListItem } from '@mui/material';
+import { ListItem, Tooltip } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import PropTypes from 'prop-types';
 import MetaDataModal from './Modals/metaData';
@@ -44,9 +44,11 @@ import { getOntologyById } from '../network/ontologyIndexing';
 import { getWidocoDocumentation } from '../network/GetOntologyData';
 import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
-import OntoComparisonModal from './Modals/OntoComparisonModal';
 import MaterialUIPopUp from './ReusableComponents/MaterialUIPopUp';
 import ChangesTimeline from './ondet/ChangesTimeline';
+import { useGetDiscussion } from './VocabularySupport/hooks/useGetDiscussion';
+import { getMentionedCommentsLength } from './VocabularySupport/utils/Discussions';
+import { compose } from 'redux';
 
 const StyledText = styled.span`
     margin-left: 20px;
@@ -68,6 +70,7 @@ const StyledLink = styled(NavLink)`
     text-decoration: none;
     text-decoration: none !important;
     font-size: 14px;
+
     :hover {
         background-color: ${colorStyled.PRIMARY.light};
         color: black;
@@ -75,8 +78,8 @@ const StyledLink = styled(NavLink)`
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 30px;
-         padding: 3px 10px 10px 5px;
-        font-size: font-size:  ${colorStyled.PRIMARY.light};
+        padding: 3px 10px 10px 5px;
+        font-size: font-size: ${colorStyled.PRIMARY.light};
     }
 `;
 
@@ -90,6 +93,7 @@ const StyledButton = styled.button`
     border-radius: 4px;
     border: none;
     font-size: 14px;
+
     :hover {
         background-color: ${colorStyled.PRIMARY.light};
     }
@@ -97,6 +101,11 @@ const StyledButton = styled.button`
 
 const SideBar = props => {
     const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
+    const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
+    const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: props.user !== 0 });
+    let allTermsDiscussion = fetchedDiscussion || [];
+    const mentionedCommentsLength = getMentionedCommentsLength(allTermsDiscussion, props.user.displayName);
+
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
     const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
     const [isActiveTab, setIsActiveTab] = useState(modeOfOperations ? modeOfOperations : 'hybrid');
@@ -320,10 +329,19 @@ const SideBar = props => {
                             <BorderColorOutlined color="action" />
                             <StyledText>WebProtege</StyledText>
                         </StyledLink>
+
                         <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
                             <NoteAddOutlined color="action" />
                             <StyledText>Vocabulary Dev</StyledText>
+                            <Tooltip title={`You have ${mentionedCommentsLength - cookieMentionedCommentsCount} new mentions`}>
+                                <StyledBadge
+                                    style={{ marginLeft: 10, marginBottom: 20 }}
+                                    badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount}
+                                    invisible={props.user.displayName === undefined || mentionedCommentsLength - cookieMentionedCommentsCount < 0}
+                                />
+                            </Tooltip>
                         </StyledLink>
+
                         <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR}>
                             <BorderAllOutlined color="action" />
                             <StyledText>Annotator</StyledText>
@@ -419,4 +437,8 @@ SideBar.propTypes = {
     isOpen: PropTypes.bool.isRequired
 };
 
-export default SideBar;
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+export default compose(connect(mapStateToProps))(SideBar);

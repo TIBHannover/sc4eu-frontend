@@ -24,7 +24,7 @@ import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import {colorStyled} from "../../../styledComponents/styledColor";
+import { colorStyled } from '../../../styledComponents/styledColor';
 
 const menuFilterTypes = {
     comment: 'Filter by comment text...',
@@ -32,16 +32,10 @@ const menuFilterTypes = {
     author: 'Filter by author...'
 };
 
-export const getMentionedDiscussions = (terms, discussions, mentionedUser) => {
+export const getGroupedMentionsByCommentInstant = (terms, discussions, mentionedUser) => {
     let merged = [];
 
-    const mentioned = discussions
-        .filter(discussion => discussion.comments.some(comment => comment.mentionedUsers?.includes(mentionedUser)))
-        .map(discussion => ({
-            ...discussion,
-            comments: discussion.comments.filter(comment => comment.mentionedUsers?.includes(mentionedUser))
-        }));
-
+    const mentioned = reduceCommentsMentioned(discussions, mentionedUser);
     const termMap = new Map(terms.map(term => [term.identifier, term]));
 
     mentioned.forEach(mention => {
@@ -56,6 +50,15 @@ export const getMentionedDiscussions = (terms, discussions, mentionedUser) => {
     });
 
     return groupMentionedByCommentInstant(merged);
+};
+
+const reduceCommentsMentioned = (discussions, mentionedUser) => {
+    return discussions
+        .filter(discussion => discussion.comments.some(comment => comment.mentionedUsers?.includes(mentionedUser)))
+        .map(discussion => ({
+            ...discussion,
+            comments: discussion.comments.filter(comment => comment.mentionedUsers?.includes(mentionedUser))
+        }));
 };
 
 const groupMentionedByCommentInstant = mentioned => {
@@ -85,6 +88,11 @@ const groupMentionedByCommentInstant = mentioned => {
     });
 
     return grouped;
+};
+
+export const getMentionedCommentsLength = (discussions, mentionedUser) => {
+    const mentionedDiscussions = reduceCommentsMentioned(discussions, mentionedUser);
+    return mentionedDiscussions.reduce((sum, item) => sum + item.comments.length, 0);
 };
 
 export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) => {
@@ -227,9 +235,8 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                                                 <Tooltip title="Navigate to term" placement="top">
                                                     <Typography
                                                         variant="body2"
-                                                        fontWeight="bold"
                                                         sx={{
-                                                            color: colorStyled.PRIMARY.dark,
+                                                            color: colorStyled.SECONDARY.link,
                                                             cursor: 'pointer',
                                                             display: 'inline-block'
                                                         }}
