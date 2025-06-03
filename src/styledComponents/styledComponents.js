@@ -2,10 +2,12 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import Gravatar from 'react-gravatar';
 import { Tooltip } from 'reactstrap';
+import {Badge} from "@mui/material";
+import {colorStyled} from "./styledColor";
 
 export const StyledTopBar = styled.div`
     margin-bottom: 0;
-    width:100%
+    width:100%;
     height:40px;
     color:red;
     position:fixed;
@@ -67,6 +69,13 @@ export const StyledAuthTooltip = styled(Tooltip)`
         }
     }
 `;
+
+export const StyledBadge = styled(Badge)(() => ({
+    '& .MuiBadge-badge': {
+        backgroundColor: colorStyled.ORANGE_COLOR,
+        color: colorStyled.CONTAINER_BACKGROUND_COLOR,
+    }
+}));
 
 export const MAX_WIDTH = '769px';
 

@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 export default function AddVocabulary({ userName }) {
     // Destructuring the object returned by useGetTerms to extract data and states.
     const { data: fetchedTerms = [], refetch, isError: isLoadingTermsError, isFetching: isFetchingTerms, isLoading: isLoadingTerms } = useGetTerms();
-    const { data: fetchedDiscussion = [] } = useGetDiscussion();
+    const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: true });
     const { mutateAsync: updateDiscussion } = useUpdateDiscussion();
     const { mutateAsync: deleteDiscussion } = useDeleteDiscussion();
     let allTermsDiscussion = fetchedDiscussion || [];
