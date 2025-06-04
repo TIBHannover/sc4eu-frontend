@@ -48,7 +48,7 @@ export default class Home extends Component {
                     </StyledDivPopUp>
                     <StyledHeadingDiv>
                         <StyledLogo src={Logo} alt="SC3 Logo" />
-                        <StyledHeading>True Demand-Driven Semiconductor Supply Chains for Europe</StyledHeading>
+                        <StyledHeading>Vocabulary platform</StyledHeading>
                     </StyledHeadingDiv>
                     <StyledBody>
                         <StyledBodyDiv>

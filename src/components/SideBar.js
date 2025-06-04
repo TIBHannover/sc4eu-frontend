@@ -174,137 +174,137 @@ const SideBar = props => {
                         <HomeOutlined color="action" />
                         <StyledText>Home</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>
-                        <CollectionsOutlined color="action" />
-                        <StyledText>Projects</StyledText>
-                    </StyledLink>
-                    {selectedProject ? (
-                        <div>
-                            <StyledLink
-                                to={{
-                                    pathname: reverse(ROUTES.ONTOLOGY),
-                                    project: selectedProject
-                                }}
-                                activeStyle={ActiveStyle}
-                                title="Open Ontology List"
-                            >
-                                <HubOutlined color="action" />
-                                <StyledText>Ontologies</StyledText>
-                            </StyledLink>
-                            <Divider />
-                            {selectedOntology ? (
-                                <>
-                                    <div
-                                        style={{
-                                            marginLeft: props.isOpen ? '25px' : '0px',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            transition: '0.6s'
-                                        }}
-                                    >
-                                        <p
-                                            style={{
-                                                display: props.isOpen ? 'block' : 'none',
-                                                marginLeft: props.isOpen ? '-25px' : '0px',
-                                                paddingTop: '5px',
-                                                marginBottom: '1px',
-                                                fontSize: '13px',
-                                                textAlign: 'center'
-                                            }}
-                                        >
-                                            Visualizations
-                                        </p>
-                                        <StyledLink
-                                            title="Open Hybrid View"
-                                            to={{
-                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?view=hybrid&ontologyId=${selectedOntology.uuid}`
-                                            }}
-                                            onClick={() => selectModeOfOperation('hybrid')}
-                                            activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
-                                        >
-                                            <LegendToggleOutlined color="action" />
-                                            <StyledText>Hybrid</StyledText>
-                                        </StyledLink>
-                                        <StyledLink
-                                            title="Open Graph View"
-                                            to={{
-                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?view=graph&ontologyId=${selectedOntology.uuid}`
-                                            }}
-                                            onClick={() => selectModeOfOperation('graph')}
-                                            activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
-                                        >
-                                            <AccountTreeOutlined color="action" />
-                                            <StyledText>Graph</StyledText>
-                                        </StyledLink>
-                                        <StyledLink
-                                            title="Open Text View"
-                                            to={{
-                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?view=text&ontologyId=${selectedOntology.uuid}`
-                                            }}
-                                            onClick={() => selectModeOfOperation('text')}
-                                            activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
-                                        >
-                                            <FormatAlignJustifyOutlined color="action" />
-                                            <StyledText>Text</StyledText>
-                                        </StyledLink>
-                                        <StyledButton title="metaData" onClick={() => setMetaDataModalOpen(true)}>
-                                            <DiscountOutlined color="action" />
-                                            <StyledText>Meta Data</StyledText>
-                                        </StyledButton>
-                                        {isMetaDataModalOpen && (
-                                            <MetaDataModal
-                                                toggle={() => {
-                                                    setMetaDataModalOpen(false);
-                                                }}
-                                                isModalOpen={isMetaDataModalOpen}
-                                            />
-                                        )}
-                                        <StyledButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
-                                            <ArticleOutlined color="action" />
-                                            <StyledText>Onto Document</StyledText>
-                                        </StyledButton>
-                                        {isLoadingForWidoco && (
-                                            <div className="text-center text-primary" style={{ marginTop: '10px' }}>
-                                                <h6 className="h6">
-                                                    <span>
-                                                        <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                                                    </span>
-                                                    Loading Document
-                                                </h6>
-                                            </div>
-                                        )}
-                                        {selectedOntology.lookup_type === 'online' || selectedOntology.lookup_type === 'online-gitlab' ? (
-                                            <>
-                                                <StyledButton
-                                                    title="Ontology Git commit Comparison"
-                                                    onClick={() => setIsOntoComparisonModalOpen(true)}
-                                                >
-                                                    <DifferenceOutlined color="action" />
-                                                    <StyledText>Version Compare</StyledText>
-                                                </StyledButton>
-                                                {isOntoComparisonModalOpen && (
-                                                    <MaterialUIPopUp
-                                                        open={isOntoComparisonModalOpen}
-                                                        onClose={() => {
-                                                            setIsOntoComparisonModalOpen(false);
-                                                        }}
-                                                        title="Timeline"
-                                                        message={<ChangesTimeline id={selectedOntology.lookup_path} />}
-                                                    />
-                                                )}
-                                            </>
-                                        ) : (
-                                            <></>
-                                        )}
-                                    </div>
-                                    <Divider />
-                                </>
-                            ) : null}
-                        </div>
-                    ) : null}
+                    {/*<StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>*/}
+                    {/*    <CollectionsOutlined color="action" />*/}
+                    {/*    <StyledText>Projects</StyledText>*/}
+                    {/*</StyledLink>*/}
+                    {/*{selectedProject ? (*/}
+                    {/*    <div>*/}
+                    {/*        <StyledLink*/}
+                    {/*            to={{*/}
+                    {/*                pathname: reverse(ROUTES.ONTOLOGY),*/}
+                    {/*                project: selectedProject*/}
+                    {/*            }}*/}
+                    {/*            activeStyle={ActiveStyle}*/}
+                    {/*            title="Open Ontology List"*/}
+                    {/*        >*/}
+                    {/*            <HubOutlined color="action" />*/}
+                    {/*            <StyledText>Ontologies</StyledText>*/}
+                    {/*        </StyledLink>*/}
+                    {/*        <Divider />*/}
+                    {/*        {selectedOntology ? (*/}
+                    {/*            <>*/}
+                    {/*                <div*/}
+                    {/*                    style={{*/}
+                    {/*                        marginLeft: props.isOpen ? '25px' : '0px',*/}
+                    {/*                        display: 'flex',*/}
+                    {/*                        flexDirection: 'column',*/}
+                    {/*                        transition: '0.6s'*/}
+                    {/*                    }}*/}
+                    {/*                >*/}
+                    {/*                    <p*/}
+                    {/*                        style={{*/}
+                    {/*                            display: props.isOpen ? 'block' : 'none',*/}
+                    {/*                            marginLeft: props.isOpen ? '-25px' : '0px',*/}
+                    {/*                            paddingTop: '5px',*/}
+                    {/*                            marginBottom: '1px',*/}
+                    {/*                            fontSize: '13px',*/}
+                    {/*                            textAlign: 'center'*/}
+                    {/*                        }}*/}
+                    {/*                    >*/}
+                    {/*                        Visualizations*/}
+                    {/*                    </p>*/}
+                    {/*                    <StyledLink*/}
+                    {/*                        title="Open Hybrid View"*/}
+                    {/*                        to={{*/}
+                    {/*                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),*/}
+                    {/*                            search: `?view=hybrid&ontologyId=${selectedOntology.uuid}`*/}
+                    {/*                        }}*/}
+                    {/*                        onClick={() => selectModeOfOperation('hybrid')}*/}
+                    {/*                        activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}*/}
+                    {/*                    >*/}
+                    {/*                        <LegendToggleOutlined color="action" />*/}
+                    {/*                        <StyledText>Hybrid</StyledText>*/}
+                    {/*                    </StyledLink>*/}
+                    {/*                    <StyledLink*/}
+                    {/*                        title="Open Graph View"*/}
+                    {/*                        to={{*/}
+                    {/*                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),*/}
+                    {/*                            search: `?view=graph&ontologyId=${selectedOntology.uuid}`*/}
+                    {/*                        }}*/}
+                    {/*                        onClick={() => selectModeOfOperation('graph')}*/}
+                    {/*                        activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}*/}
+                    {/*                    >*/}
+                    {/*                        <AccountTreeOutlined color="action" />*/}
+                    {/*                        <StyledText>Graph</StyledText>*/}
+                    {/*                    </StyledLink>*/}
+                    {/*                    <StyledLink*/}
+                    {/*                        title="Open Text View"*/}
+                    {/*                        to={{*/}
+                    {/*                            pathname: reverse(ROUTES.VIEW_ONTOLOGY),*/}
+                    {/*                            search: `?view=text&ontologyId=${selectedOntology.uuid}`*/}
+                    {/*                        }}*/}
+                    {/*                        onClick={() => selectModeOfOperation('text')}*/}
+                    {/*                        activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}*/}
+                    {/*                    >*/}
+                    {/*                        <FormatAlignJustifyOutlined color="action" />*/}
+                    {/*                        <StyledText>Text</StyledText>*/}
+                    {/*                    </StyledLink>*/}
+                    {/*                    <StyledButton title="metaData" onClick={() => setMetaDataModalOpen(true)}>*/}
+                    {/*                        <DiscountOutlined color="action" />*/}
+                    {/*                        <StyledText>Meta Data</StyledText>*/}
+                    {/*                    </StyledButton>*/}
+                    {/*                    {isMetaDataModalOpen && (*/}
+                    {/*                        <MetaDataModal*/}
+                    {/*                            toggle={() => {*/}
+                    {/*                                setMetaDataModalOpen(false);*/}
+                    {/*                            }}*/}
+                    {/*                            isModalOpen={isMetaDataModalOpen}*/}
+                    {/*                        />*/}
+                    {/*                    )}*/}
+                    {/*                    <StyledButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>*/}
+                    {/*                        <ArticleOutlined color="action" />*/}
+                    {/*                        <StyledText>Onto Document</StyledText>*/}
+                    {/*                    </StyledButton>*/}
+                    {/*                    {isLoadingForWidoco && (*/}
+                    {/*                        <div className="text-center text-primary" style={{ marginTop: '10px' }}>*/}
+                    {/*                            <h6 className="h6">*/}
+                    {/*                                <span>*/}
+                    {/*                                    <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />*/}
+                    {/*                                </span>*/}
+                    {/*                                Loading Document*/}
+                    {/*                            </h6>*/}
+                    {/*                        </div>*/}
+                    {/*                    )}*/}
+                    {/*                    {selectedOntology.lookup_type === 'online' || selectedOntology.lookup_type === 'online-gitlab' ? (*/}
+                    {/*                        <>*/}
+                    {/*                            <StyledButton*/}
+                    {/*                                title="Ontology Git commit Comparison"*/}
+                    {/*                                onClick={() => setIsOntoComparisonModalOpen(true)}*/}
+                    {/*                            >*/}
+                    {/*                                <DifferenceOutlined color="action" />*/}
+                    {/*                                <StyledText>Version Compare</StyledText>*/}
+                    {/*                            </StyledButton>*/}
+                    {/*                            {isOntoComparisonModalOpen && (*/}
+                    {/*                                <MaterialUIPopUp*/}
+                    {/*                                    open={isOntoComparisonModalOpen}*/}
+                    {/*                                    onClose={() => {*/}
+                    {/*                                        setIsOntoComparisonModalOpen(false);*/}
+                    {/*                                    }}*/}
+                    {/*                                    title="Timeline"*/}
+                    {/*                                    message={<ChangesTimeline id={selectedOntology.lookup_path} />}*/}
+                    {/*                                />*/}
+                    {/*                            )}*/}
+                    {/*                        </>*/}
+                    {/*                    ) : (*/}
+                    {/*                        <></>*/}
+                    {/*                    )}*/}
+                    {/*                </div>*/}
+                    {/*                <Divider />*/}
+                    {/*            </>*/}
+                    {/*        ) : null}*/}
+                    {/*    </div>*/}
+                    {/*) : null}*/}
                     <div
                         style={{
                             marginLeft: props.isOpen ? '0px' : '0px',
@@ -313,22 +313,22 @@ const SideBar = props => {
                             transition: '0.6s'
                         }}
                     >
-                        <p
-                            style={{
-                                display: props.isOpen ? 'block' : 'none',
-                                marginLeft: props.isOpen ? '-25px' : '0px',
-                                paddingTop: '5px',
-                                marginBottom: '1px',
-                                fontSize: '13px',
-                                textAlign: 'center'
-                            }}
-                        >
-                            Tools
-                        </p>
-                        <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE}>
-                            <BorderColorOutlined color="action" />
-                            <StyledText>WebProtege</StyledText>
-                        </StyledLink>
+                        {/*<p*/}
+                        {/*    style={{*/}
+                        {/*        display: props.isOpen ? 'block' : 'none',*/}
+                        {/*        marginLeft: props.isOpen ? '-25px' : '0px',*/}
+                        {/*        paddingTop: '5px',*/}
+                        {/*        marginBottom: '1px',*/}
+                        {/*        fontSize: '13px',*/}
+                        {/*        textAlign: 'center'*/}
+                        {/*    }}*/}
+                        {/*>*/}
+                        {/*    Tools*/}
+                        {/*</p>*/}
+                        {/*<StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE}>*/}
+                        {/*    <BorderColorOutlined color="action" />*/}
+                        {/*    <StyledText>WebProtege</StyledText>*/}
+                        {/*</StyledLink>*/}
 
                         <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
                             <NoteAddOutlined color="action" />
@@ -342,64 +342,64 @@ const SideBar = props => {
                             </Tooltip>
                         </StyledLink>
 
-                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR}>
-                            <BorderAllOutlined color="action" />
-                            <StyledText>Annotator</StyledText>
-                        </StyledLink>
-                        <StyledLink
-                            title="Open Eurostat Visualisation"
-                            activeStyle={ActiveStyle}
-                            to={ROUTES.EUROSTAT}
-                            onClick={() => selectModeOfOperation('eurostat')}
-                        >
-                            <AnalyticsOutlined color="action" />
-                            <StyledText>Eurostat</StyledText>
-                        </StyledLink>
-                        {(isActiveTab === 'eurostat' || isActiveTab === 'bullwhip') && (
-                            <div
-                                style={{
-                                    marginLeft: props.isOpen ? '10px' : '0px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    transition: '0.6s'
-                                }}
-                            >
-                                <p
-                                    style={{
-                                        display: props.isOpen ? 'block' : 'none',
-                                        marginLeft: props.isOpen ? '-5px' : '0px',
-                                        paddingTop: '5px',
-                                        marginBottom: '1px',
-                                        fontSize: '13px',
-                                        textAlign: 'center'
-                                    }}
-                                >
-                                    Knowledge Graphs
-                                </p>
-                                <StyledLink
-                                    title="Open EU trade view"
-                                    to={{
-                                        pathname: reverse(ROUTES.EUROSTAT)
-                                    }}
-                                    onClick={() => selectModeOfOperation('eurostat')}
-                                    activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}
-                                >
-                                    <TimelineOutlined color="action" />
-                                    <StyledText>EU trade</StyledText>
-                                </StyledLink>
-                                <StyledLink
-                                    title="Open Bullwhip View"
-                                    to={{
-                                        pathname: reverse(ROUTES.EUROSTAT_BULLWHIP)
-                                    }}
-                                    onClick={() => selectModeOfOperation('bullwhip')}
-                                    activeStyle={isActiveTab === 'bullwhip' ? ActiveStyle : {}}
-                                >
-                                    <BarChartOutlined color="action" />
-                                    <StyledText>Bullwhip Effect</StyledText>
-                                </StyledLink>
-                            </div>
-                        )}
+                        {/*<StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR}>*/}
+                        {/*    <BorderAllOutlined color="action" />*/}
+                        {/*    <StyledText>Annotator</StyledText>*/}
+                        {/*</StyledLink>*/}
+                        {/*<StyledLink*/}
+                        {/*    title="Open Eurostat Visualisation"*/}
+                        {/*    activeStyle={ActiveStyle}*/}
+                        {/*    to={ROUTES.EUROSTAT}*/}
+                        {/*    onClick={() => selectModeOfOperation('eurostat')}*/}
+                        {/*>*/}
+                        {/*    <AnalyticsOutlined color="action" />*/}
+                        {/*    <StyledText>Eurostat</StyledText>*/}
+                        {/*</StyledLink>*/}
+                        {/*{(isActiveTab === 'eurostat' || isActiveTab === 'bullwhip') && (*/}
+                        {/*    <div*/}
+                        {/*        style={{*/}
+                        {/*            marginLeft: props.isOpen ? '10px' : '0px',*/}
+                        {/*            display: 'flex',*/}
+                        {/*            flexDirection: 'column',*/}
+                        {/*            transition: '0.6s'*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        <p*/}
+                        {/*            style={{*/}
+                        {/*                display: props.isOpen ? 'block' : 'none',*/}
+                        {/*                marginLeft: props.isOpen ? '-5px' : '0px',*/}
+                        {/*                paddingTop: '5px',*/}
+                        {/*                marginBottom: '1px',*/}
+                        {/*                fontSize: '13px',*/}
+                        {/*                textAlign: 'center'*/}
+                        {/*            }}*/}
+                        {/*        >*/}
+                        {/*            Knowledge Graphs*/}
+                        {/*        </p>*/}
+                        {/*        <StyledLink*/}
+                        {/*            title="Open EU trade view"*/}
+                        {/*            to={{*/}
+                        {/*                pathname: reverse(ROUTES.EUROSTAT)*/}
+                        {/*            }}*/}
+                        {/*            onClick={() => selectModeOfOperation('eurostat')}*/}
+                        {/*            activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}*/}
+                        {/*        >*/}
+                        {/*            <TimelineOutlined color="action" />*/}
+                        {/*            <StyledText>EU trade</StyledText>*/}
+                        {/*        </StyledLink>*/}
+                        {/*        <StyledLink*/}
+                        {/*            title="Open Bullwhip View"*/}
+                        {/*            to={{*/}
+                        {/*                pathname: reverse(ROUTES.EUROSTAT_BULLWHIP)*/}
+                        {/*            }}*/}
+                        {/*            onClick={() => selectModeOfOperation('bullwhip')}*/}
+                        {/*            activeStyle={isActiveTab === 'bullwhip' ? ActiveStyle : {}}*/}
+                        {/*        >*/}
+                        {/*            <BarChartOutlined color="action" />*/}
+                        {/*            <StyledText>Bullwhip Effect</StyledText>*/}
+                        {/*        </StyledLink>*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
                     </div>
                     <Divider />
                     <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>
@@ -410,10 +410,10 @@ const SideBar = props => {
                         <LiveHelpOutlined color="action" />
                         <StyledText>FAQ</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Training" activeStyle={ActiveStyle} to={ROUTES.TRAINING}>
-                        <MenuBookOutlined color="action" />
-                        <StyledText>Training</StyledText>
-                    </StyledLink>
+                    {/*<StyledLink title="Open Training" activeStyle={ActiveStyle} to={ROUTES.TRAINING}>*/}
+                    {/*    <MenuBookOutlined color="action" />*/}
+                    {/*    <StyledText>Training</StyledText>*/}
+                    {/*</StyledLink>*/}
                     <Divider />
                     <StyledLink title="Open Data Policy" activeStyle={ActiveStyle} to={ROUTES.Dataprotections}>
                         <PrivacyTipOutlined color="action" />
