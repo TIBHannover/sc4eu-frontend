@@ -1,11 +1,16 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Button, TextField, Typography, CircularProgress, IconButton, Backdrop } from '@mui/material';
+import { Button, TextField, Typography, CircularProgress, IconButton, Backdrop, Grid, Tooltip, Box, Switch, ButtonGroup } from '@mui/material';
+import Select from 'react-select';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { CSVLink } from 'react-csv';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import { MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import { annotateText } from '../../network/annotatorService';
 import { generateLightColor } from './utils';
 import { createColumns } from './tableConfig';
 import {
+    ContentContainer,
     HighlightedLabel,
     InputContainer,
     HelperTextContainer,
@@ -13,29 +18,11 @@ import {
     AnnotatedText,
     ScrollableText,
     ButtonContainer,
-    ErrorText
+    ErrorText,
+    lightSelectStyles
 } from './styles';
-import styled from 'styled-components';
 import { colorStyled } from '../../styledComponents/styledColor';
-
-const ContentContainer = styled.div`
-    width: 75%;
-    margin: 0 auto;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    overflow-y: visible;
-    min-height: 0;
-
-    & .MuiPaper-root {
-        overflow: visible;
-    }
-
-    & .MuiTableContainer-root {
-        overflow-x: auto;
-    }
-`;
+import { PRIMARY } from '../RRView/StyledComponents';
 
 export const Annotator = () => {
     const [inputText, setInputText] = useState('');
@@ -43,18 +30,10 @@ export const Annotator = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [annotatedText, setAnnotatedText] = useState('');
     const [termColors, setTermColors] = useState({});
+    const [maxDepth, setMaxDepth] = useState(1);
+    const [selectedDepthOption, setSelectedDepthOption] = useState({ value: 1, label: '1' });
+    const [groupByAncestor, setGroupByAncestor] = useState(false);
     const [error, setError] = useState(null);
-
-    const uniqueMatches = useMemo(() => {
-        const seen = new Set();
-        return matches.filter(match => {
-            if (seen.has(match.matched_term)) {
-                return false;
-            }
-            seen.add(match.matched_term);
-            return true;
-        });
-    }, [matches]);
 
     const highlightedText = useMemo(() => {
         if (!annotatedText || matches.length === 0) return annotatedText;
@@ -84,17 +63,198 @@ export const Annotator = () => {
         return parts;
     }, [annotatedText, matches, termColors]);
 
-    const columns = useMemo(() => createColumns(inputText), [inputText]);
     const isAnnotateDisabled = !inputText.trim();
     const isResetDisabled = !inputText.trim();
 
+    const tableData = useMemo(() => {
+        if (groupByAncestor) {
+            const grouped = {};
+    
+            matches.forEach(match => {
+                if (maxDepth > 0 && match.ancestors?.length >= maxDepth) {
+                    const ancestor = match.ancestors[maxDepth - 1];
+                    const key = ancestor.iri;
+    
+                    if (!grouped[key]) {
+                        grouped[key] = {
+                            ancestor_term: ancestor.label,
+                            ancestor_iri: ancestor.iri,
+                            ancestor_synonyms: ancestor.synonyms || [],
+                            ontologyId: ancestor.ontologyId,
+                            matched_terms: new Set(),
+                        };
+                    }
+    
+                    grouped[key].matched_terms.add(match.matched_term);
+                }
+            });
+    
+            return Object.values(grouped).map(entry => ({
+                ...entry,
+                matched_terms: Array.from(entry.matched_terms),
+            }));
+        } else {
+            const uniqueTerms = new Map();
+    
+            matches.forEach(match => {
+                const key = match.matched_term;
+    
+                // Add only if not already included
+                if (!uniqueTerms.has(key)) {
+                    uniqueTerms.set(key, {
+                        matched_term: match.matched_term,
+                        ancestor_term: match.ancestors?.[maxDepth - 1]?.label || '',
+                        iri: match.iri,
+                        ontologyId: match.ontologyId,
+                        synonyms: match.synonyms,
+                    });
+                }
+            });
+    
+            return Array.from(uniqueTerms.values());
+        }
+    }, [matches, maxDepth, groupByAncestor]);
+
     const table = useMaterialReactTable({
-        columns,
-        data: uniqueMatches,
-        initialState: { pagination: { pageSize: 10, pageIndex: 0 }, density: 'compact' },
+        columns: createColumns(groupByAncestor),
+        data: tableData,
+        initialState: { pagination: { pageSize: 10, pageIndex: 0 }, density: 'compact',
+        enableColumnOrdering: true,
+        columnOrder: groupByAncestor
+        ? ['ancestor_term', 'ontologyId', 'matched_terms',  'ancestor_iri', 'ancestor_synonyms']
+        : ['matched_term', 'ontologyId', 'ancestor_term',  'iri', 'synonyms']},
         enablePagination: true,
-        renderTopToolbarCustomActions: () => <Typography variant="h6">Matched Terms</Typography>
-    });
+        renderTopToolbarCustomActions: () => (
+            <Grid container alignItems="center">
+              <Grid item>
+                <Typography variant="h6" sx={{ mr: 2 }}>
+                  Matched Terms
+                </Typography>
+              </Grid>
+          
+              <Grid item>
+              <Tooltip
+                title="Set how deep to consider ancestor terms and whether to group matched terms by their common ancestors."
+                arrow
+                placement="top"
+                >
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  border="1px solid"
+                  borderColor={colorStyled.SECONDARY.dark}
+                  borderRadius={2}
+                  px={1}
+                  py={1}
+                  gap={1}
+                  backgroundColor={PRIMARY.light}
+                >
+                  <Box display="flex" alignItems="center" gap={1} >
+                    <Typography variant="body2" sx={{ whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
+                      Ancestor Depth:
+                    </Typography>
+                    <Box minWidth={60}>
+                      <Select
+                        options={[
+                          { value: 1, label: '1' },
+                          { value: 2, label: '2' },
+                          { value: 3, label: '3' },
+                          { value: 4, label: '4' },
+                        ]}
+                        value={selectedDepthOption}
+                        onChange={(selectedOption) => {
+                          setSelectedDepthOption(selectedOption);
+                          setMaxDepth(selectedOption.value);
+                        }}
+                        menuPortalTarget={document.body}
+                        isSearchable={false}
+                        menuPosition="absolute"
+                        styles={lightSelectStyles}
+                      />
+                    </Box>
+                  </Box>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Typography variant="body2" sx={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                      Group by Ancestor Term
+                    </Typography>
+                    <Switch
+                      checked={groupByAncestor}
+                      onChange={() => setGroupByAncestor(!groupByAncestor)}
+                      name="groupByAncestor"
+                      size="small"
+                      style={{ backgroundColor: colorStyled.SECONDARY.dark}}
+                      disabled={!annotatedText}
+                    />
+                  </Box>
+                </Box>
+                </Tooltip>
+              </Grid>
+            </Grid>
+          ),
+          renderBottomToolbarCustomActions: () => (
+            <ButtonGroup variant="contained" size="small" aria-label="Basic button group">
+              {csvData.length === 0 ? (
+                <Button variant="contained" disabled style={{ backgroundColor: colorStyled.SECONDARY.dark, opacity: 0.5, color: "rgba(255, 255, 255, 0.7)" }}>
+                  Download CSV
+                </Button>
+              ) : (
+                <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                  <CSVLink
+                    data={csvData}
+                    headers={csvHeaders}
+                    filename="annotations.csv"
+                    style={{ color: "white", textDecoration: "none", display: "block", width: "100%" }}
+                  >
+                    Download CSV
+                  </CSVLink>
+                </Button>
+              )}
+          
+              <Button
+                variant="contained"
+                onClick={exportToExcel}
+                disabled={csvData.length === 0}
+                style={{
+                  backgroundColor: colorStyled.SECONDARY.dark,
+                  opacity: csvData.length === 0 ? 0.5 : 1,
+                  color: csvData.length === 0 ? "rgba(255, 255, 255, 0.7)" : "white"
+                }}
+              >
+                Download Excel
+              </Button>
+            </ButtonGroup>
+          )
+          
+        });
+
+    const csvHeaders = groupByAncestor
+    ? [
+        { label: 'Ancestor Term', key: 'ancestor_term' },
+        { label: 'Matched Terms', key: 'matched_terms' },
+        { label: 'Ontology ID', key: 'ontologyId' },
+        { label: 'Ancestor IRI', key: 'ancestor_iri' },
+        { label: 'Ancestor Synonyms', key: 'ancestor_synonyms' },
+    ]
+    : [
+        { label: 'Matched Term', key: 'matched_term' },
+        { label: 'Ancestor Term', key: 'ancestor_term' },
+        { label: 'Ontology ID', key: 'ontologyId' },
+        { label: 'Matched Term IRI', key: 'iri' },
+        { label: 'Matched Term Synonyms', key: 'synonyms' }
+    ];
+
+    const csvData = tableData
+
+    // Export to Excel
+    const exportToExcel = () => {
+        const excelData = csvData;
+        const ws = XLSX.utils.json_to_sheet(excelData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Annotations');
+        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(blob, 'annotations.xlsx');
+    };
 
     const handleCopyExample = useCallback(() => {
         setInputText(

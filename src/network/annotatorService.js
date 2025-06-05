@@ -11,7 +11,7 @@ export const annotateText = async text => {
     const response = await fetch(`${process.env.REACT_APP_NFDI4ENERGY_ANNOTATOR_URL}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, ontology_ids: ['dr'] })
+        body: JSON.stringify({ text, ontology_ids: ['dr'], max_depth: 4 })
     });
 
     if (!response.ok) {
