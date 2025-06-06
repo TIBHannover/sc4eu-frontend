@@ -522,7 +522,7 @@ const VocabularyMainTable = ({
                         Create New Term
                     </Button>
                 </Tooltip>
-                <Tooltip title="Timeline">
+                <Tooltip title="View this vocabulary history of changes">
                     <Button
                         variant="contained"
                         onClick={() => {
@@ -534,7 +534,7 @@ const VocabularyMainTable = ({
                     </Button>
                 </Tooltip>
                 {Object.keys(mentionedDiscussions).length !== 0 && (
-                    <Tooltip title="Mentions">
+                    <Tooltip title="Review mentions and join ongoing discussions">
                         <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount}>
                             <Button
                                 variant="contained"
