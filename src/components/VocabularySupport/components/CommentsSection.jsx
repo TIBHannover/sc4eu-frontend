@@ -198,7 +198,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                     multiline
                     rows={4} // Adjust the rows as needed to ensure there's enough space for the button
                     variant="outlined"
-                    placeholder="Add a comment"
+                    placeholder={"Add a comment\nmention a user by typing '@' and their name"}
                     fullWidth
                     style={{ paddingRight: '1px' }}
                     value={newCommentText}
