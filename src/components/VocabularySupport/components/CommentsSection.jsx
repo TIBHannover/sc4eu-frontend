@@ -101,7 +101,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             author,
             content,
             timestamp: new Date().toISOString(),
-            mentionedUsers: (mentionedUsers.length > 0 ? mentionedUsers : undefined)
+            mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined
         };
 
         const updatedComments = [...comments, newComment];
@@ -148,10 +148,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         const textAfterMention = newCommentText.slice(cursorPosition);
         const newText = `${textBeforeMention}@${selectedUser.display_name}${textAfterMention}`;
         if (!mentionedUsers.includes(selectedUser.display_name)) {
-            setMentionedUsers([
-                ...mentionedUsers,
-                selectedUser.display_name
-            ]);
+            setMentionedUsers([...mentionedUsers, selectedUser.display_name]);
         }
         setNewCommentText(newText);
         setMentionAnchorEl(null);
@@ -168,7 +165,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         <Paper elevation={0} style={{ paddingLeft: '1px', background: 'inherit' }}>
             <Box style={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="h7" component="div" style={{ marginRight: '10px' }}>
-                    <b>Comments</b>
+                    <b>Discussion</b>
                 </Typography>
                 <hr style={dividerStyle} />
             </Box>
