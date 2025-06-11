@@ -424,8 +424,7 @@ const VocabularyMainTable = ({
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
             density: 'compact',
             pagination: { pageSize: 15, pageIndex: 0 },
-            showFilters: true,
-            columnFilters: []
+            showColumnFilters: true // Show filter search box by default
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
