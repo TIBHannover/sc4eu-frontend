@@ -13,6 +13,8 @@ import { connect } from 'react-redux';
 import Popper from '@mui/material/Popper';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
+import { commitDiscussionOnly } from '../utils/CommitChanges';
+import { useQueryClient } from '@tanstack/react-query';
 
 function stringToColor(string) {
     let hash = 0;
@@ -86,6 +88,8 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const textFieldRef = React.useRef(null);
     const [mentionedUsers, setMentionedUsers] = useState([]);
 
+    const queryClient = useQueryClient();
+
     useEffect(() => {
         getAllUsers().then(users => {
             console.log('Users:', users);
@@ -109,7 +113,9 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         await handleSaveDiscussion({ resourceId: resourceId, comments: updatedComments });
         setComments(updatedComments);
         setNewCommentText(''); // Clear the text field after adding comment
-        setHasUncommittedChanges(true);
+        //setHasUncommittedChanges(true);
+        // Discussion here needs to be commited automatically
+        commitDiscussionOnly(queryClient);
     };
 
     const handleTextChange = e => {
