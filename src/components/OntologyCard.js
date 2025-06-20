@@ -298,7 +298,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                             >
                                 {loading.download ? <CircularProgress size={24} /> : <Download />}
                             </IconButton>
-                            {currentUser !== 0 && currentUser !== null && (
+                            {currentUser !== 0 && currentUser !== null && !autoRefresh && (
                                 <IconButton
                                     aria-label="delete"
                                     onClick={handleDelete}
