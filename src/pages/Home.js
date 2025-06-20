@@ -12,6 +12,7 @@ import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import Logo from '../assets/images/logo.png';
 import GoogleSurvey from '../components/GoogleSurvey';
+const digitalReferenceURL = process.env.REACT_APP_DIGITAL_REFERENCE_ONTOLOGY_URL;
 
 const CurationTxt = (
     <>
@@ -30,6 +31,10 @@ const EditingTxt = (
         {'Collaborative editing of ontologies is the next step in the ontology agreement process. The SC4EU Ontology ' +
             'Curation Portal integrates the broadly known WebProtege for collaborative editing.'}
     </>
+);
+
+const DigitalReferenceTxt = (
+    <>{'The Digital Reference Ontology provides a comprehensive framework for understanding and utilizing semiconductor supply chain ontologies.'}</>
 );
 export default class Home extends Component {
     constructor(props) {
@@ -52,7 +57,7 @@ export default class Home extends Component {
                     </StyledHeadingDiv>
                     <StyledBody>
                         <StyledBodyDiv>
-                            <StyledBodyLogo src={collection} alt="collection" />
+                            <StyledBodyLogo src={edite} alt="collection" />
                             <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '-10px' }}>
                                 Collaborative Ontology Curation
                             </StyledBodyLink>
@@ -65,12 +70,19 @@ export default class Home extends Component {
                             </StyledBodyLink>
                             <StyledBodyText>{VisualizationTxt}</StyledBodyText>
                         </StyledBodyDiv>
-                        <StyledBodyDiv>
+                        {/* <StyledBodyDiv>
                             <StyledEditLogo src={edite} alt="edite" />
                             <StyledBodyLink to={ROUTES.WEBPROTEGE} style={{ marginTop: '20px' }}>
                                 Collaborative Ontology Editing
                             </StyledBodyLink>
                             <StyledBodyText>{EditingTxt}</StyledBodyText>
+                        </StyledBodyDiv> */}
+                        <StyledBodyDiv>
+                            <StyledEditLogo src={collection} alt="edite" />
+                            <StyledBodyLink to={digitalReferenceURL} style={{ marginTop: '20px' }}>
+                                Digital Reference Ontology
+                            </StyledBodyLink>
+                            <StyledBodyText>{DigitalReferenceTxt}</StyledBodyText>
                         </StyledBodyDiv>
                     </StyledBody>
                 </StyledRootDiv>
