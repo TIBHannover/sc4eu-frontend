@@ -57,28 +57,21 @@ export default class Home extends Component {
                     </StyledHeadingDiv>
                     <StyledBody>
                         <StyledBodyDiv>
-                            <StyledBodyLogo src={edite} alt="collection" />
-                            <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '-10px' }}>
+                            <StyledBodyLogo src={edite} alt="edite" />
+                            <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
                                 Collaborative Ontology Curation
                             </StyledBodyLink>
                             <StyledBodyText>{CurationTxt}</StyledBodyText>
                         </StyledBodyDiv>
                         <StyledBodyDiv>
-                            <StyledVisLogo src={visualisation} alt="visualisation" />
+                            <StyledBodyLogo src={visualisation} alt="visualisation" />
                             <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
                                 Ontology Visualisation
                             </StyledBodyLink>
                             <StyledBodyText>{VisualizationTxt}</StyledBodyText>
                         </StyledBodyDiv>
-                        {/* <StyledBodyDiv>
-                            <StyledEditLogo src={edite} alt="edite" />
-                            <StyledBodyLink to={ROUTES.WEBPROTEGE} style={{ marginTop: '20px' }}>
-                                Collaborative Ontology Editing
-                            </StyledBodyLink>
-                            <StyledBodyText>{EditingTxt}</StyledBodyText>
-                        </StyledBodyDiv> */}
                         <StyledBodyDiv>
-                            <StyledEditLogo src={collection} alt="edite" />
+                            <StyledBodyLogo src={collection} alt="collection" />
                             <StyledBodyLink to={digitalReferenceURL} style={{ marginTop: '20px' }}>
                                 Digital Reference Ontology
                             </StyledBodyLink>
