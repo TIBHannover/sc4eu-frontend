@@ -1,18 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import {
-    Box,
-    Button,
-    darken,
-    IconButton,
-    lighten,
-    ListItem,
-    ListItemText,
-    Modal,
-    Tooltip,
-    useTheme
-} from '@mui/material';
+import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -25,9 +14,10 @@ import { useDeleteTerm } from '../hooks/useDeleteTerm';
 import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useHistory } from 'react-router-dom';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
-import MaterialUIPopUp, {MaterialUIPopUpTypes} from "../../ReusableComponents/MaterialUIPopUp";
-import Cookies from "js-cookie";
-import {getMentionedDiscussions, RenderGroupedMentions} from "../utils/Discussions";
+import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
+import Cookies from 'js-cookie';
+import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
+import { StyledBadge } from '../../../styledComponents/styledComponents';
 
 const VocabularyMainTable = ({
     terms,
@@ -60,10 +50,9 @@ const VocabularyMainTable = ({
             ? 'rgba(245, 245, 245, 1)' // white
             : 'rgba(84, 90, 95, 1)'; // light gray
 
-    const mentionedDiscussionsCookie = Cookies.get('mentionedDiscussionsSeen');
-
-    const mentionedDiscussions = getMentionedDiscussions(terms, discussions, userName);
-    var inTenSeconds = new Date(new Date().getTime() + 10 * 1000);
+    const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
+    const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, userName);
+    const mentionedCommentsLength = getMentionedCommentsLength(discussions, userName);
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -435,8 +424,7 @@ const VocabularyMainTable = ({
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
             density: 'compact',
             pagination: { pageSize: 15, pageIndex: 0 },
-            showFilters: true,
-            columnFilters: []
+            showColumnFilters: true // Show filter search box by default
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
@@ -522,41 +510,43 @@ const VocabularyMainTable = ({
         },
         renderTopToolbarCustomActions: ({ table, row }) => (
             <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-start' }}>
-                <Button
-                    variant="contained"
-                    onClick={() => {
-                        handleCreateRow(row);
-                    }}
-                    style={{ backgroundColor: colorStyled.SECONDARY.dark }}
-                >
-                    Create New Term
-                </Button>
-                <Button
-                    variant="contained"
-                    onClick={() => {
-                        setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
-                    }}
-                    style={{ backgroundColor: colorStyled.SECONDARY.dark }}
-                >
-                    Timeline
-                </Button>
-                {Object.keys(mentionedDiscussions).length !== 0 && (
+                <Tooltip title="Add new term">
                     <Button
                         variant="contained"
                         onClick={() => {
-                            setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
-                            Cookies.set('mentionedDiscussionsSeen', 'true', {
-                                expires: inTenSeconds
-                            });
+                            handleCreateRow(row);
                         }}
-                        style={
-                            mentionedDiscussionsCookie === undefined ?
-                                { backgroundColor: colorStyled.SECONDARY.dark } :
-                                { backgroundColor: '#ee7356' }
-                        }
+                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}
                     >
-                        Mentions
+                        Create New Term
                     </Button>
+                </Tooltip>
+                <Tooltip title="View this vocabulary history of changes">
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
+                        }}
+                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                    >
+                        Timeline
+                    </Button>
+                </Tooltip>
+                {Object.keys(mentionedDiscussions).length !== 0 && (
+                    <Tooltip title="Review mentions and join ongoing discussions">
+                        <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount}>
+                            <Button
+                                variant="contained"
+                                onClick={() => {
+                                    setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
+                                    Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
+                                }}
+                                style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                            >
+                                Mentions
+                            </Button>
+                        </StyledBadge>
+                    </Tooltip>
                 )}
                 {hasUncommittedChanges && (
                     <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>
@@ -647,7 +637,7 @@ const VocabularyMainTable = ({
                 onClose={() => {
                     setActiveMUIPopUp(null);
                 }}
-                title='Timeline'
+                title="Timeline"
                 message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development/refs/heads/main/sc4eu_vo.ttl" />}
             />
             <MaterialUIPopUp

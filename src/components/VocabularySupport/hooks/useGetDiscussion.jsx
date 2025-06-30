@@ -11,12 +11,13 @@ async function fetchAllTermsFromGitHubJSON() {
         return null;
     }
 }
-export function useGetDiscussion() {
-    return useQuery({
-        queryKey: ['discussions'],
-        queryFn: fetchAllTermsFromGitHubJSON,
-        //refetchOnWindowFocus: true,
-        staleTime: Infinity,
-        refetchOnReconnect: true
-    });
-}
+export function useGetDiscussion({ enabled }) {
+           return useQuery({
+               queryKey: ['discussions'],
+               queryFn: fetchAllTermsFromGitHubJSON,
+               //refetchOnWindowFocus: true,
+               staleTime: Infinity,
+               refetchOnReconnect: true,
+               enabled: enabled
+           });
+       }

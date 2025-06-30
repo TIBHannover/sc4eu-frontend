@@ -5,6 +5,7 @@ const PRIMARY = {
     main: '#B9D7EA',
     dark: '#769FCD'
 };
+
 const SECONDARY = {
     dark: '#536b78',
     darker: '#2f3d45',
@@ -21,6 +22,8 @@ const TEXTCOLOR = '#4d5b7c';
 
 const FOOTERNOTECOLOR = ' #003554';
 
+const ORANGE_COLOR = '#ee7356';
+
 export const colorStyled = {
     PRIMARY: PRIMARY,
     SECONDARY: SECONDARY,
@@ -28,5 +31,6 @@ export const colorStyled = {
     FOOTERNOTECOLOR: FOOTERNOTECOLOR,
     CONTAINER_BACKGROUND_COLOR: CONTAINER_BACKGROUND_COLOR,
     BORDER_COLOR: BORDER_COLOR,
-    SCROLLBAR_BORDER_COLOR: SCROLLBAR_BORDER_COLOR
+    SCROLLBAR_BORDER_COLOR: SCROLLBAR_BORDER_COLOR,
+    ORANGE_COLOR: ORANGE_COLOR,
 };

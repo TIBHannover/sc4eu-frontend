@@ -14,7 +14,8 @@ import {
     IconButton,
     ListItemButton,
     Tabs,
-    Tab
+    Tab,
+    Paper
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { Autocomplete } from '@mui/material';
@@ -175,9 +176,17 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
 
                 {activeTab === 0 && (
                     <Box>
+                        <Typography variant="subtitle2" gutterBottom>
+                            Start typing below to search for Existing Terms in{' '}
+                            <a href="https://terminology.tib.eu/ts/ontologies/" target="_blank" rel="noopener noreferrer">
+                                Terminology Service
+                            </a>
+                        </Typography>
+                        <hr />
                         <Autocomplete
                             freeSolo
                             options={autoCompleteResults.map(result => result.autosuggest)}
+                            PaperComponent={props => <Paper {...props} style={{ backgroundColor: '#f5f5f5' }} />}
                             renderInput={params => (
                                 <TextField
                                     {...params}
@@ -234,9 +243,10 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
 
                 {activeTab === 1 && (
                     <Box>
-                        <Typography variant="subtitle1" gutterBottom>
-                            Term Details
+                        <Typography variant="subtitle2" gutterBottom>
+                            Fill in the details below for the new term
                         </Typography>
+                        <hr />
                         {internalEditComponents.map((component, index) => {
                             if (component.key.split('_').pop() === 'altLabel') {
                                 return (

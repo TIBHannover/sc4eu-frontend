@@ -16,7 +16,9 @@ class OntologyIndexCards extends Component {
             );
         }
 
-        return ontologies.map((ontology, index) => (
+        const sortedOntologies = ontologies.slice().sort((a, b) => a.name.localeCompare(b.name));
+
+        return sortedOntologies.map((ontology, index) => (
             <OntologyCard
                 key={`OntologyCard_${index}`}
                 ontology={ontology}

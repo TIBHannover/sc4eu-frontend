@@ -13,6 +13,8 @@ import { connect } from 'react-redux';
 import Popper from '@mui/material/Popper';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
+import { commitDiscussionOnly } from '../utils/CommitChanges';
+import { useQueryClient } from '@tanstack/react-query';
 
 function stringToColor(string) {
     let hash = 0;
@@ -86,6 +88,8 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const textFieldRef = React.useRef(null);
     const [mentionedUsers, setMentionedUsers] = useState([]);
 
+    const queryClient = useQueryClient();
+
     useEffect(() => {
         getAllUsers().then(users => {
             console.log('Users:', users);
@@ -101,7 +105,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             author,
             content,
             timestamp: new Date().toISOString(),
-            mentionedUsers: (mentionedUsers.length > 0 ? mentionedUsers : undefined)
+            mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined
         };
 
         const updatedComments = [...comments, newComment];
@@ -109,7 +113,9 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         await handleSaveDiscussion({ resourceId: resourceId, comments: updatedComments });
         setComments(updatedComments);
         setNewCommentText(''); // Clear the text field after adding comment
-        setHasUncommittedChanges(true);
+        //setHasUncommittedChanges(true);
+        // Discussion here needs to be commited automatically
+        commitDiscussionOnly(queryClient);
     };
 
     const handleTextChange = e => {
@@ -148,10 +154,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         const textAfterMention = newCommentText.slice(cursorPosition);
         const newText = `${textBeforeMention}@${selectedUser.display_name}${textAfterMention}`;
         if (!mentionedUsers.includes(selectedUser.display_name)) {
-            setMentionedUsers([
-                ...mentionedUsers,
-                selectedUser.display_name
-            ]);
+            setMentionedUsers([...mentionedUsers, selectedUser.display_name]);
         }
         setNewCommentText(newText);
         setMentionAnchorEl(null);
@@ -168,7 +171,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         <Paper elevation={0} style={{ paddingLeft: '1px', background: 'inherit' }}>
             <Box style={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="h7" component="div" style={{ marginRight: '10px' }}>
-                    <b>Comments</b>
+                    <b>Discussion</b>
                 </Typography>
                 <hr style={dividerStyle} />
             </Box>
@@ -201,7 +204,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                     multiline
                     rows={4} // Adjust the rows as needed to ensure there's enough space for the button
                     variant="outlined"
-                    placeholder="Add a comment"
+                    placeholder={"Add a comment\nmention a user by typing '@' and their name"}
                     fullWidth
                     style={{ paddingRight: '1px' }}
                     value={newCommentText}
