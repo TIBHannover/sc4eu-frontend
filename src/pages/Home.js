@@ -52,31 +52,48 @@ export default class Home extends Component {
                         <IntroductoryPopUp />
                     </StyledDivPopUp>
                     <StyledHeadingDiv>
-                        <StyledLogo src={Logo} alt="SC3 Logo" />
+                        <StyledLogo src={Logo} alt="SC4EU Logo" />
                         <StyledHeading>True Demand-Driven Semiconductor Supply Chains for Europe</StyledHeading>
                     </StyledHeadingDiv>
                     <StyledBody>
-                        <StyledBodyDiv>
-                            <StyledBodyLogo src={edite} alt="edite" />
-                            <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
-                                Collaborative Ontology Curation
-                            </StyledBodyLink>
-                            <StyledBodyText>{CurationTxt}</StyledBodyText>
-                        </StyledBodyDiv>
-                        <StyledBodyDiv>
-                            <StyledBodyLogo src={visualisation} alt="visualisation" />
-                            <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: '20px' }}>
-                                Ontology Visualisation
-                            </StyledBodyLink>
-                            <StyledBodyText>{VisualizationTxt}</StyledBodyText>
-                        </StyledBodyDiv>
-                        <StyledBodyDiv>
-                            <StyledBodyLogo src={collection} alt="collection" />
-                            <StyledBodyLink to={digitalReferenceURL} style={{ marginTop: '20px' }}>
+                        <StyledBodyDiv style={{ maxWidth: 500, alignSelf: 'center', marginBottom: 20 }}>
+                            <StyledBodyLogo src={collection} alt="Digital Reference Ontology" />
+                            <StyledBodyLink
+                                as="a"
+                                href={digitalReferenceURL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ marginTop: 16, display: 'block' }}
+                            >
                                 Digital Reference Ontology
                             </StyledBodyLink>
                             <StyledBodyText>{DigitalReferenceTxt}</StyledBodyText>
                         </StyledBodyDiv>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                gap: 40,
+                                flexWrap: 'wrap',
+                                width: '100%',
+                                alignSelf: 'center'
+                            }}
+                        >
+                            <StyledBodyDiv style={{ maxWidth: 500 }}>
+                                <StyledBodyLogo src={edite} alt="Collaborative Ontology Curation" />
+                                <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block' }}>
+                                    Collaborative Ontology Curation
+                                </StyledBodyLink>
+                                <StyledBodyText>{CurationTxt}</StyledBodyText>
+                            </StyledBodyDiv>
+                            <StyledBodyDiv style={{ maxWidth: 500 }}>
+                                <StyledBodyLogo src={visualisation} alt="Ontology Visualisation" />
+                                <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block' }}>
+                                    Ontology Visualisation
+                                </StyledBodyLink>
+                                <StyledBodyText>{VisualizationTxt}</StyledBodyText>
+                            </StyledBodyDiv>
+                        </div>
                     </StyledBody>
                 </StyledRootDiv>
                 <StyledSurveyDiv>
@@ -141,17 +158,18 @@ const StyledLogo = styled.img`
 `;
 
 const StyledBody = styled.div`
-    height: 90%;
+    height: auto;
     margin: auto;
     text-align: center;
-    padding-top: 100px;
+    padding-top: 50px;
     margin-left: 10%;
     margin-right: 10%;
     display: flex;
+    flex-direction: column;
     color: black;
 
     @media (max-width: ${MAX_WIDTH}) {
-        height: 90%;
+        height: auto;
         flex-direction: column;
         text-align: center;
         margin-left: 2%;
