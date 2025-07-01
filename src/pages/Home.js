@@ -57,7 +57,7 @@ export default class Home extends Component {
                     </StyledHeadingDiv>
                     <StyledBody>
                         <StyledBodyDiv style={{ maxWidth: 500, alignSelf: 'center', marginBottom: 20 }}>
-                            <StyledBodyLogo src={collection} alt="Digital Reference Ontology" />
+                            <StyledBodyLogo src={visualisation} alt="Digital Reference Ontology" />
                             <StyledBodyLink
                                 as="a"
                                 href={digitalReferenceURL}
@@ -87,7 +87,7 @@ export default class Home extends Component {
                                 <StyledBodyText>{CurationTxt}</StyledBodyText>
                             </StyledBodyDiv>
                             <StyledBodyDiv style={{ maxWidth: 500 }}>
-                                <StyledBodyLogo src={visualisation} alt="Ontology Visualisation" />
+                                <StyledBodyLogo src={collection} alt="Ontology Visualisation" />
                                 <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block' }}>
                                     Ontology Visualisation
                                 </StyledBodyLink>
@@ -239,18 +239,18 @@ const StyledBodyLink = styled(Link)`
 `;
 
 const StyledBodyText = styled.p`
-    font-size: ${fontStyled.fontSize.NormalText};
+    font-size: calc(${fontStyled.fontSize.NormalText} * 1.15);
     font-family: ${fontStyled.fontFamily};
     text-align: justify;
     text-align-last: center;
     color: ${colorStyled.TEXTCOLOR};
 
     @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewNormalText};
+        font-size: calc(${fontStyled.fontSize.MobileViewNormalText} * 1.15);
     }
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.DesktopViewNormalText};
+        font-size: calc(${fontStyled.fontSize.DesktopViewNormalText} * 1.15);
     }
 `;
 
