@@ -58,7 +58,7 @@ export default class Home extends Component {
                     <StyledBody>
                         <StyledBodyDiv style={{ maxWidth: 500, alignSelf: 'center', marginBottom: 20 }}>
                             <StyledBodyLogo src={visualisation} alt="Digital Reference Ontology" />
-                            <StyledBodyLink
+                            <StyledBodyLinkBiger
                                 as="a"
                                 href={digitalReferenceURL}
                                 target="_blank"
@@ -66,8 +66,8 @@ export default class Home extends Component {
                                 style={{ marginTop: 16, display: 'block' }}
                             >
                                 Digital Reference Ontology
-                            </StyledBodyLink>
-                            <StyledBodyText>{DigitalReferenceTxt}</StyledBodyText>
+                            </StyledBodyLinkBiger>
+                            <StyledBodyTextBigger>{DigitalReferenceTxt}</StyledBodyTextBigger>
                         </StyledBodyDiv>
                         <div
                             style={{
@@ -79,16 +79,16 @@ export default class Home extends Component {
                                 alignSelf: 'center'
                             }}
                         >
-                            <StyledBodyDiv style={{ maxWidth: 500 }}>
-                                <StyledBodyLogo src={edite} alt="Collaborative Ontology Curation" />
-                                <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block' }}>
+                            <StyledBodyDiv style={{ maxWidth: 500, position: 'relative', minHeight: 170 }}>
+                                <SmallLogoLeft src={collection} alt="Collaborative Ontology Curation" />
+                                <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block', position: 'relative', zIndex: 1 }}>
                                     Collaborative Ontology Curation
                                 </StyledBodyLink>
                                 <StyledBodyText>{CurationTxt}</StyledBodyText>
                             </StyledBodyDiv>
-                            <StyledBodyDiv style={{ maxWidth: 500 }}>
-                                <StyledBodyLogo src={collection} alt="Ontology Visualisation" />
-                                <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block' }}>
+                            <StyledBodyDiv style={{ maxWidth: 500, position: 'relative', minHeight: 170 }}>
+                                <SmallLogoRight src={edite} alt="Ontology Visualisation" />
+                                <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block', position: 'relative', zIndex: 1 }}>
                                     Ontology Visualisation
                                 </StyledBodyLink>
                                 <StyledBodyText>{VisualizationTxt}</StyledBodyText>
@@ -222,6 +222,22 @@ const StyledBodyLogo = styled.img`
     }
 `;
 
+const StyledBodyLinkBiger = styled(Link)`
+    font-size: ${fontStyled.fontSize.mainHeading};
+    font-weight: 600;
+    color: black;
+    padding-bottom: 3%;
+    font-family: ${fontStyled.fontFamily};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        font-size: ${fontStyled.fontSize.MobileViewHeading};
+    }
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: ${fontStyled.fontSize.DesktopViewSubHeading};
+    }
+`;
+
 const StyledBodyLink = styled(Link)`
     font-size: ${fontStyled.fontSize.subHeading};
     font-weight: 600;
@@ -235,6 +251,22 @@ const StyledBodyLink = styled(Link)`
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.DesktopViewSubHeading};
+    }
+`;
+
+const StyledBodyTextBigger = styled.p`
+    font-size: calc(${fontStyled.fontSize.NormalText} * 1.3);
+    font-family: ${fontStyled.fontFamily};
+    text-align: justify;
+    text-align-last: center;
+    color: ${colorStyled.TEXTCOLOR};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        font-size: calc(${fontStyled.fontSize.MobileViewNormalText} * 1.3);
+    }
+
+    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+        font-size: calc(${fontStyled.fontSize.DesktopViewNormalText} * 1.3);
     }
 `;
 
@@ -309,4 +341,24 @@ const StyledDivPopUp = styled.div`
     @media (max-width: ${MAX_WIDTH}) {
         display: none;
     }
+`;
+
+const SmallLogoLeft = styled.img`
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-30%, -60%);
+    z-index: 2;
+`;
+
+const SmallLogoRight = styled.img`
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(27%, -50%);
+    z-index: 2;
 `;
