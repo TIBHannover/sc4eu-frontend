@@ -344,12 +344,12 @@ const StyledDivPopUp = styled.div`
 `;
 
 const SmallLogoLeft = styled.img`
-    width: 80px;
-    height: 80px;
+    width: 105px;
+    height: 105px;
     position: absolute;
     top: 0;
     left: 0;
-    transform: translate(-30%, -60%);
+    transform: translate(-60%, -40%);
     z-index: 2;
 `;
 
@@ -359,6 +359,6 @@ const SmallLogoRight = styled.img`
     position: absolute;
     top: 0;
     right: 0;
-    transform: translate(27%, -50%);
+    transform: translate(15%, -50%);
     z-index: 2;
 `;
