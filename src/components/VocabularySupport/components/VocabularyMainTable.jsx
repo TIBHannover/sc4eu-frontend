@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
+import { Box, Button, Chip, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -313,6 +313,65 @@ const VocabularyMainTable = ({
                 }
             },
             {
+                accessorKey: 'modified',
+                id: 'modified',
+                header: 'Last modified',
+                Header: ({ column }) => (
+                    <Tooltip
+                        title={
+                            <>
+                                <span style={{ fontSize: '1.2em' }}>
+                                    Shows the last date time, when the term was edited: term metadata updated or a new comment in a discussion.
+                                </span>
+                            </>
+                        }
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <span>{column.columnDef.header}</span>
+                            <Chip label="New" size="small" sx={{ ml: 0.5, backgroundColor: colorStyled.PRIMARY.main }} />
+                        </div>
+                    </Tooltip>
+                ),
+                Cell: ({ cell }) => {
+                    if (cell.getValue()) {
+                        return new Date(cell.getValue()).toLocaleDateString() + ', ' + new Date(cell.getValue()).toLocaleTimeString()
+                    }
+                    return " ";
+                },
+                size: 150,
+                enableEditing: false,
+                filterVariant: 'select',
+                filterFn: (row, columnId, filterValue) => {
+                    const modifiedDatetime = new Date(row.getValue(columnId));
+                    const now = new Date();
+                    switch (filterValue) {
+                        case 'last1day':
+                            return modifiedDatetime >= new Date(now.setDate(now.getDate() - 1));
+                        case 'last1week':
+                            return modifiedDatetime >= new Date(now.setDate(now.getDate() - 7));
+                        case 'last1month':
+                            return modifiedDatetime >= new Date(now.setMonth(now.getMonth() - 1));
+                        case 'last3months':
+                            return modifiedDatetime >= new Date(now.setMonth(now.getMonth() - 3));
+                        case 'all':
+                            return true;
+                        default:
+                            return true;
+                    }
+                },
+                filterSelectOptions: [
+                    { text: 'Last 1 Day', value: 'last1day' },
+                    { text: 'Last 1 Week', value: 'last1week' },
+                    { text: 'Last 1 Month', value: 'last1month' },
+                    { text: 'Last 3 Months', value: 'last3months' },
+                    { text: 'All', value: 'all' }
+                ],
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter Modified',
+                    select: true
+                }
+            },
+            {
                 accessorKey: 'status',
                 header: 'Status',
                 Header: (
@@ -400,7 +459,8 @@ const VocabularyMainTable = ({
         description: '', // Default value for description
         seeAlso: '', // Default value for seeAlso
         status: 'draft', // Override 'status' with 'draft'
-        created: new Date().toLocaleDateString('en-CA') // Default value for created
+        created: new Date().toLocaleDateString('en-CA'), // Default value for created
+        modified: new Date().toISOString() // Default value for modified
     };
     // Function to handle setting a creating row
     const handleCreateRow = (row = {}) => {
@@ -465,7 +525,7 @@ const VocabularyMainTable = ({
             // Filter out non-editable components
             const editableComponents = internalEditComponents.filter(component => {
                 const fieldName = component.key.split('_').pop();
-                return !['identifier', 'created', 'status'].includes(fieldName);
+                return !['identifier', 'created', 'modified', 'status'].includes(fieldName);
             });
 
             return (
@@ -493,7 +553,7 @@ const VocabularyMainTable = ({
             // Filter out non-editable components
             const editableComponents = internalEditComponents.filter(component => {
                 const fieldName = component.key.split('_').pop();
-                return !['identifier', 'created', 'status'].includes(fieldName);
+                return !['identifier', 'created', 'modified', 'status'].includes(fieldName);
             });
 
             return (

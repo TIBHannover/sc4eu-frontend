@@ -14,7 +14,8 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
         description: term.description || '',
         seeAlso: term.seeAlso || '',
         status: term.status || '',
-        created: term.created || ''
+        created: term.created || '',
+        modified: term.modified || ''
     });
 
     const splitAltLabels = (altLabel) => {
@@ -27,9 +28,9 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
             const altLabels = splitAltLabels(updatedTerm.altLabel);
             altLabels[index] = value;
             value = altLabels.join(',');
-            setUpdatedTerm({ ...updatedTerm, altLabel: value });
+            setUpdatedTerm({ ...updatedTerm, altLabel: value, modified: new Date().toISOString() });
         } else {
-            setUpdatedTerm({ ...updatedTerm, [name]: value });
+            setUpdatedTerm({ ...updatedTerm, [name]: value, modified: new Date().toISOString() });
         }
     };
 
@@ -41,7 +42,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
 
         const altLabels = splitAltLabels(updatedTerm.altLabel);
         altLabels.push('');
-        setUpdatedTerm({ ...updatedTerm, altLabel: altLabels.join(',') });
+        setUpdatedTerm({ ...updatedTerm, altLabel: altLabels.join(','), modified: new Date().toISOString() });
     };
 
     const handleSave = () => {
@@ -133,6 +134,14 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                 </IconButton>
                             </Tooltip>
                             <strong>Created at:</strong> {updatedTerm.created}
+                        </Typography>
+                        <Typography>
+                            <Tooltip title="Provides the last modified date of the term">
+                                <IconButton style={{ marginBottom: '4px' }} size="small">
+                                    <HelpOutlineIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                            <strong>Last modified:</strong> {new Date(updatedTerm.modified).toLocaleDateString() + ", "  + new Date(updatedTerm.modified).toLocaleTimeString()}
                         </Typography>
                         {/* Status */}
                         <Typography>
