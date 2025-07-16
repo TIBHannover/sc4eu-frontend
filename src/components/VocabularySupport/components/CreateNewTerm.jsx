@@ -58,7 +58,8 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             description: value.description ? value.description[0] : 'Not Available',
             seeAlso: `url:${url}`,
             status: 'draft',
-            created: new Date().toLocaleDateString('en-CA')
+            created: new Date().toLocaleDateString('en-CA'),
+            modified: new Date().toISOString()
         };
         await handleCreateTerm({ values: termFromTerminology, table: table });
         console.log('Adding term from terminology: ', termFromTerminology);
@@ -94,6 +95,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             // Creating/editing a new term
             if (validateForm()) {
                 const allCells = row.getAllCells();
+                console.log('allCells: ', allCells)
                 const tableCells = allCells.filter(cell => cell.column.id !== 'mrt-row-expand' && cell.column.id !== 'mrt-row-actions');
 
                 const newTerm = tableCells.reduce((acc, cell) => {
