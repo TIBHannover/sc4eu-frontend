@@ -12,6 +12,7 @@ import html2canvas from 'html2canvas';
 import ScreenCapture from '../ScreenCapture';
 import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
 import FadingNotification from '../ReusableComponents/FadingNotification';
+import { getJSON_ModelForOntologyWithQuery } from '../../network/GetOntologyData';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -382,6 +383,23 @@ class GraphVisUi extends Component {
         });
     };
 
+    runSparqlQuery = async () => {
+        const query = {
+            sparql_query: `CONSTRUCT {
+  ?subject ?predicate ?object
+}
+WHERE {
+  ?subject ?predicate ?object
+}
+`
+        };
+        if (query) {
+            // Call the function to execute the SPARQL query
+            const result = await getJSON_ModelForOntologyWithQuery(query);
+            console.log('SPARQL Query Result:', result);
+        }
+    };
+
     render() {
         if (this.props.visualizationTabIsActive === false) {
             return <div>This should never be visible</div>;
@@ -477,6 +495,18 @@ class GraphVisUi extends Component {
                         onClick={this.copyUrlToClipboard}
                     >
                         Copy URL
+                    </Button>
+                    <Button
+                        style={{
+                            backgroundColor: SECONDARY.dark,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
+                        onClick={this.runSparqlQuery}
+                    >
+                        Run SPARQL Query
                     </Button>
                 </div>
 

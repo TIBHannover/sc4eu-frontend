@@ -122,6 +122,7 @@ database.addUserToProject(router);
 database.getOntologyGitData(router);
 
 processing.getJSONModelForOntologyID(router);
+processing.getJSONModelForOntologyIDWithQuery(router);
 processing.initializeOntology(router);
 processing.compareTwoOntologies(router);
 processing.getWidocoDocumentation(router);
