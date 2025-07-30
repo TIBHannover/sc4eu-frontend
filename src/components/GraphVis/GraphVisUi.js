@@ -13,6 +13,7 @@ import ScreenCapture from '../ScreenCapture';
 import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
 import FadingNotification from '../ReusableComponents/FadingNotification';
 import { getJSON_ModelForOntologyWithQuery } from '../../network/GetOntologyData';
+import GraphVisUiQueryPopup from './GraphVisUiQueryPopup';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -46,8 +47,11 @@ class GraphVisUi extends Component {
             screenCapture: '',
             open: false,
             startCapture: false,
-            showCopyNotification: false
+            showCopyNotification: false,
+            showQueryPopup: false,
+            queryGraphData: null
         };
+        this.queryGraphRef = React.createRef();
         this.componentRef = React.createRef();
     }
 
@@ -391,13 +395,25 @@ class GraphVisUi extends Component {
 WHERE {
   ?subject ?predicate ?object
 }
+  LIMIT 100
 `
         };
         if (query) {
             // Call the function to execute the SPARQL query
             const result = await getJSON_ModelForOntologyWithQuery(query);
-            console.log('SPARQL Query Result:', result);
+            if (result && result.resources && result.relations) {
+                this.setState({
+                    showQueryPopup: true,
+                    queryGraphData: result
+                });
+            } else {
+                alert('No graph data returned from query.');
+            }
         }
+    };
+
+    closeQueryPopup = () => {
+        this.setState({ showQueryPopup: false, queryGraphData: null });
     };
 
     render() {
@@ -581,6 +597,8 @@ WHERE {
                 )}
                 {this.state.startCapture && <ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
                 {this.state.showCopyNotification && <FadingNotification message="URL copied to clipboard" timeout={2000} />}
+                {/* SPARQL Query Result Popup as separate component */}
+                <GraphVisUiQueryPopup open={this.state.showQueryPopup} onClose={this.closeQueryPopup} queryGraphData={this.state.queryGraphData} />
             </div>
         );
     }
