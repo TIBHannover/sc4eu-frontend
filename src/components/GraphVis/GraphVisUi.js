@@ -14,6 +14,7 @@ import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
 import FadingNotification from '../ReusableComponents/FadingNotification';
 import { getJSON_ModelForOntologyWithQuery } from '../../network/GetOntologyData';
 import GraphVisUiQueryPopup from './GraphVisUiQueryPopup';
+import SparqlQueryInputModal from './SparqlQueryInputModal';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -37,6 +38,7 @@ class GraphVisUi extends Component {
             return modelAsJsonObject;
         };
 
+        this.defaultSparqlQuery = `CONSTRUCT {\n  ?subject ?predicate ?object\n}\nWHERE {\n  ?subject ?predicate ?object\n}\nLIMIT 100`;
         this.state = {
             notationSelectionOpen: false,
             layoutPlay: true,
@@ -49,7 +51,9 @@ class GraphVisUi extends Component {
             startCapture: false,
             showCopyNotification: false,
             showQueryPopup: false,
-            queryGraphData: null
+            queryGraphData: null,
+            showQueryInputModal: false,
+            currentSparqlQuery: this.defaultSparqlQuery
         };
         this.queryGraphRef = React.createRef();
         this.componentRef = React.createRef();
@@ -387,24 +391,24 @@ class GraphVisUi extends Component {
         });
     };
 
-    runSparqlQuery = async () => {
-        const query = {
-            sparql_query: `CONSTRUCT {
-  ?subject ?predicate ?object
-}
-WHERE {
-  ?subject ?predicate ?object
-}
-  LIMIT 100
-`
-        };
+    openSparqlQueryInput = () => {
+        this.setState({ showQueryInputModal: true });
+    };
+
+    closeSparqlQueryInput = () => {
+        this.setState({ showQueryInputModal: false });
+    };
+
+    runSparqlQuery = async sparqlQuery => {
+        this.setState({ showQueryInputModal: false });
+        const query = { sparql_query: sparqlQuery };
         if (query) {
-            // Call the function to execute the SPARQL query
             const result = await getJSON_ModelForOntologyWithQuery(query);
             if (result && result.resources && result.relations) {
                 this.setState({
                     showQueryPopup: true,
-                    queryGraphData: result
+                    queryGraphData: result,
+                    currentSparqlQuery: sparqlQuery
                 });
             } else {
                 alert('No graph data returned from query.');
@@ -520,7 +524,7 @@ WHERE {
                             marginTop: '2px',
                             height: '35px'
                         }}
-                        onClick={this.runSparqlQuery}
+                        onClick={this.openSparqlQueryInput}
                     >
                         Run SPARQL Query
                     </Button>
@@ -597,6 +601,13 @@ WHERE {
                 )}
                 {this.state.startCapture && <ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
                 {this.state.showCopyNotification && <FadingNotification message="URL copied to clipboard" timeout={2000} />}
+                {/* SPARQL Query Input Modal */}
+                <SparqlQueryInputModal
+                    open={this.state.showQueryInputModal}
+                    onClose={this.closeSparqlQueryInput}
+                    onRun={this.runSparqlQuery}
+                    defaultQuery={this.state.currentSparqlQuery}
+                />
                 {/* SPARQL Query Result Popup as separate component */}
                 <GraphVisUiQueryPopup open={this.state.showQueryPopup} onClose={this.closeQueryPopup} queryGraphData={this.state.queryGraphData} />
             </div>
