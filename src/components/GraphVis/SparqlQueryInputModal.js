@@ -1,30 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery }) => {
-    const [query, setQuery] = useState(defaultQuery);
+import SparqlQueryForm from './SparqlQueryForm';
 
-    // Reset query when modal is reopened
+const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery, defaultMode = 'freeform', defaultVisualQuery = '' }) => {
+    const [query, setQuery] = useState(defaultQuery);
+    const [mode, setMode] = useState(defaultMode); // 'freeform' or 'visual'
+    const [visualQuery, setVisualQuery] = useState(defaultVisualQuery);
+
+    // Reset queries and mode when modal is reopened
     React.useEffect(() => {
-        if (open) setQuery(defaultQuery);
-    }, [open, defaultQuery]);
+        if (open) {
+            setQuery(defaultQuery);
+            setVisualQuery(defaultVisualQuery);
+            setMode(defaultMode);
+        }
+    }, [open, defaultQuery, defaultVisualQuery, defaultMode]);
+
+    // When switching tabs, just set the mode. Do not sync queries between tabs.
+    const handleTabSwitch = newMode => {
+        setMode(newMode);
+    };
 
     if (!open) return null;
     return (
         <ModalOverlay>
             <ModalContent>
                 <Header>
-                    <Title>Enter SPARQL Query</Title>
+                    <Title>SPARQL Query</Title>
+                    <ModeSwitch>
+                        <SwitchButton active={mode === 'freeform'} onClick={() => handleTabSwitch('freeform')}>
+                            Freeform
+                        </SwitchButton>
+                        <SwitchButton active={mode === 'visual'} onClick={() => handleTabSwitch('visual')}>
+                            Visual Builder
+                        </SwitchButton>
+                    </ModeSwitch>
                 </Header>
                 <ContentArea>
-                    <Textarea value={query} onChange={e => setQuery(e.target.value)} spellCheck={false} />
+                    {mode === 'freeform' ? (
+                        <Textarea value={query} onChange={e => setQuery(e.target.value)} spellCheck={false} />
+                    ) : (
+                        <SparqlQueryForm open={true} onClose={onClose} onRun={q => setVisualQuery(q)} />
+                    )}
                 </ContentArea>
                 <Footer>
                     <Button onClick={onClose} style={{ marginRight: 10 }}>
                         Cancel
                     </Button>
-                    <Button primary onClick={() => onRun(query)}>
+                    <Button
+                        primary
+                        onClick={() => onRun(mode === 'freeform' ? query : visualQuery, mode)}
+                        disabled={mode === 'visual' && !visualQuery}
+                    >
                         Run
                     </Button>
                 </Footer>
@@ -32,12 +61,34 @@ const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery }) => {
         </ModalOverlay>
     );
 };
+const ModeSwitch = styled.div`
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+`;
+
+const SwitchButton = styled.button`
+    font-size: 1rem;
+    padding: 5px 16px;
+    background: ${props => (props.active ? '#2a7ae2' : '#eee')};
+    color: ${props => (props.active ? '#fff' : '#222')};
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 0;
+    transition: background 0.2s;
+    &:hover {
+        background: ${props => (props.active ? '#1a5ab8' : '#ddd')};
+    }
+`;
 
 SparqlQueryInputModal.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onRun: PropTypes.func.isRequired,
-    defaultQuery: PropTypes.string.isRequired
+    defaultQuery: PropTypes.string.isRequired,
+    defaultMode: PropTypes.string,
+    defaultVisualQuery: PropTypes.string
 };
 
 export default SparqlQueryInputModal;

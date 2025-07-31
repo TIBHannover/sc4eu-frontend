@@ -53,7 +53,9 @@ class GraphVisUi extends Component {
             showQueryPopup: false,
             queryGraphData: null,
             showQueryInputModal: false,
-            currentSparqlQuery: this.defaultSparqlQuery
+            queryInputMode: 'freeform',
+            freeformQuery: this.defaultSparqlQuery,
+            visualBuilderQuery: ''
         };
         this.queryGraphRef = React.createRef();
         this.componentRef = React.createRef();
@@ -391,24 +393,28 @@ class GraphVisUi extends Component {
         });
     };
 
-    openSparqlQueryInput = () => {
-        this.setState({ showQueryInputModal: true });
+    openSparqlQueryInput = (mode = 'freeform') => {
+        this.setState({ showQueryInputModal: true, queryInputMode: mode });
     };
 
     closeSparqlQueryInput = () => {
         this.setState({ showQueryInputModal: false });
     };
 
-    runSparqlQuery = async sparqlQuery => {
+    runSparqlQuery = async (sparqlQuery, mode) => {
         this.setState({ showQueryInputModal: false });
+        if (mode === 'freeform') {
+            this.setState({ freeformQuery: sparqlQuery });
+        } else {
+            this.setState({ visualBuilderQuery: sparqlQuery });
+        }
         const query = { sparql_query: sparqlQuery };
         if (query) {
             const result = await getJSON_ModelForOntologyWithQuery(query);
             if (result && result.resources && result.relations) {
                 this.setState({
                     showQueryPopup: true,
-                    queryGraphData: result,
-                    currentSparqlQuery: sparqlQuery
+                    queryGraphData: result
                 });
             } else {
                 alert('No graph data returned from query.');
@@ -606,7 +612,9 @@ class GraphVisUi extends Component {
                     open={this.state.showQueryInputModal}
                     onClose={this.closeSparqlQueryInput}
                     onRun={this.runSparqlQuery}
-                    defaultQuery={this.state.currentSparqlQuery}
+                    defaultQuery={this.state.freeformQuery}
+                    defaultMode={this.state.queryInputMode}
+                    defaultVisualQuery={this.state.visualBuilderQuery}
                 />
                 {/* SPARQL Query Result Popup as separate component */}
                 <GraphVisUiQueryPopup open={this.state.showQueryPopup} onClose={this.closeQueryPopup} queryGraphData={this.state.queryGraphData} />
