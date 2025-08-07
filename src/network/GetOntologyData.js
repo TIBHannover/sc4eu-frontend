@@ -1,4 +1,4 @@
-import { URL_GET_JSON_MODEL, URL_VIEWONTOLOGY } from 'constants/services';
+import { URL_GET_JSON_MODEL, URL_VIEWONTOLOGY, URL_GET_JSON_MODEL_WITH_QUERY } from 'constants/services';
 import { plainGetRequest } from './networkRequests';
 import { URL_COMPARE_ONTOLOGY, URL_GET_WIDOCO_DOCUMENTATION } from '../constants/services';
 
@@ -78,6 +78,32 @@ export const getJSON_ModelForOntology = ontologyData => {
 
     return new Promise((resolve, reject) => {
         fetch(URL_GET_JSON_MODEL, { method: 'POST', headers: postHeader, body: JSON.stringify(ontologyData) })
+            .then(response => {
+                console.log('response', response);
+                if (!response.ok) {
+                    console.log('ERROR WHILE CREATEING RESOURCE-RELATION MODEL, ', !response.ok);
+                } else {
+                    const json = response.json();
+                    if (json.then) {
+                        json.then(resolve).catch(reject);
+                    } else {
+                        return resolve(json);
+                    }
+                }
+            })
+            .catch(reject);
+    });
+};
+
+export const getJSON_ModelForOntologyWithQuery = sparqlQuery => {
+    // we use parameters from env.
+
+    const postHeader = { 'Content-Type': 'application/json' };
+
+    console.log('this is the data', sparqlQuery);
+
+    return new Promise((resolve, reject) => {
+        fetch(URL_GET_JSON_MODEL_WITH_QUERY, { method: 'POST', headers: postHeader, body: JSON.stringify(sparqlQuery) })
             .then(response => {
                 console.log('response', response);
                 if (!response.ok) {
