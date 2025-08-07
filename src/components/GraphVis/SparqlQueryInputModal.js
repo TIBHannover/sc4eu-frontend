@@ -1,22 +1,33 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import SparqlQueryForm from './SparqlQueryForm';
 
-const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery, defaultMode = 'freeform', defaultVisualQuery = '' }) => {
-    const [query, setQuery] = useState(defaultQuery);
-    const [mode, setMode] = useState(defaultMode); // 'freeform' or 'visual'
-    const [visualQuery, setVisualQuery] = useState(defaultVisualQuery);
+// Styled component for preview area (must be defined before use)
+const PreviewArea = styled.div`
+    width: 100%;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    padding: 8px 0 0 0;
+`;
+
+const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery = '', defaultMode, defaultVisualQuery = '' }) => {
+    // Always default to 'freeform' if defaultMode is not provided or is empty
+    const initialMode = defaultMode && typeof defaultMode === 'string' && defaultMode.trim() ? defaultMode : 'freeform';
+    const [query, setQuery] = useState(defaultQuery || '');
+    const [mode, setMode] = useState(initialMode); // 'freeform', 'llm', or 'visual'
+    const [visualQuery, setVisualQuery] = useState(defaultVisualQuery || '');
 
     // Reset queries and mode when modal is reopened
     React.useEffect(() => {
         if (open) {
-            setQuery(defaultQuery);
-            setVisualQuery(defaultVisualQuery);
-            setMode(defaultMode);
+            setQuery(defaultQuery || '');
+            setVisualQuery(defaultVisualQuery || '');
+            setMode(initialMode);
         }
-    }, [open, defaultQuery, defaultVisualQuery, defaultMode]);
+    }, [open, defaultQuery, defaultVisualQuery, initialMode]);
 
     // When switching tabs, just set the mode. Do not sync queries between tabs.
     const handleTabSwitch = newMode => {
@@ -33,17 +44,44 @@ const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery, defaultMode
                         <SwitchButton active={mode === 'freeform'} onClick={() => handleTabSwitch('freeform')}>
                             Freeform
                         </SwitchButton>
-                        <SwitchButton active={mode === 'visual'} onClick={() => handleTabSwitch('visual')}>
+                        {/* <SwitchButton active={mode === 'visual'} onClick={() => handleTabSwitch('visual')}>
                             Visual Builder
+                        </SwitchButton> */}
+                        <SwitchButton active={mode === 'llm'} onClick={() => handleTabSwitch('llm')}>
+                            LLM
                         </SwitchButton>
                     </ModeSwitch>
                 </Header>
                 <ContentArea>
-                    {mode === 'freeform' ? (
-                        <Textarea value={query} onChange={e => setQuery(e.target.value)} spellCheck={false} />
-                    ) : (
-                        <SparqlQueryForm open={true} onClose={onClose} onRun={q => setVisualQuery(q)} />
+                    {mode === 'freeform' && <Textarea value={query} onChange={e => setQuery(e.target.value)} spellCheck={false} />}
+                    {mode === 'llm' && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+                            <Textarea
+                                value={'Under construction'}
+                                onChange={e => setQuery(e.target.value)}
+                                spellCheck={false}
+                                placeholder="Enter your LLM prompt or query here..."
+                            />
+                            <PreviewArea>
+                                <div style={{ fontWeight: 600, marginBottom: 4 }}>Preview</div>
+                                <div
+                                    style={{
+                                        background: '#fff',
+                                        border: '1px solid #bbb',
+                                        borderRadius: 6,
+                                        minHeight: 80,
+                                        padding: 10,
+                                        fontFamily: 'Fira Mono, Consolas, Menlo, monospace',
+                                        whiteSpace: 'pre-wrap',
+                                        color: '#222'
+                                    }}
+                                >
+                                    {query}
+                                </div>
+                            </PreviewArea>
+                        </div>
                     )}
+                    {mode === 'visual' && <SparqlQueryForm open={true} onClose={onClose} onRun={q => setVisualQuery(q)} />}
                 </ContentArea>
                 <Footer>
                     <Button onClick={onClose} style={{ marginRight: 10 }}>
@@ -51,7 +89,13 @@ const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery, defaultMode
                     </Button>
                     <Button
                         primary
-                        onClick={() => onRun(mode === 'freeform' ? query : visualQuery, mode)}
+                        onClick={() => {
+                            if (mode === 'freeform' || mode === 'llm') {
+                                onRun(query, mode);
+                            } else {
+                                onRun(visualQuery, mode);
+                            }
+                        }}
                         disabled={mode === 'visual' && !visualQuery}
                     >
                         Run
@@ -86,9 +130,15 @@ SparqlQueryInputModal.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onRun: PropTypes.func.isRequired,
-    defaultQuery: PropTypes.string.isRequired,
+    defaultQuery: PropTypes.string,
     defaultMode: PropTypes.string,
     defaultVisualQuery: PropTypes.string
+};
+
+SparqlQueryInputModal.defaultProps = {
+    defaultQuery: '',
+    defaultMode: 'freeform',
+    defaultVisualQuery: ''
 };
 
 export default SparqlQueryInputModal;
