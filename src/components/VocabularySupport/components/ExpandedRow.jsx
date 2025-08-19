@@ -404,22 +404,6 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
                                 sx={{ marginBottom: '15px' }}
                             />
                         </Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                            <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
-                                <strong>Status:</strong>
-                            </Typography>
-                            <StatusDropdown
-                                label="Status"
-                                name="status"
-                                sx={{ height: '40px', marginTop: '10px', marginLeft: '25px' }}
-                                status={updatedTerm.status}
-                                onChange={value =>
-                                    handleInputChange({
-                                        target: { name: 'status', value }
-                                    })
-                                }
-                            />
-                        </Box>
                         <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
                             <Button onClick={handleSave} variant="contained" sx={buttonStyle}>
                                 Save Updates
