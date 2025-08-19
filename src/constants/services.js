@@ -52,6 +52,12 @@ export const URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY = `${process.env.REACT_APP_EXP
 export const URL_GET_ALL_USERS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}users/all`;
 export const URL_GET_ALL_SYSTEM_ADMIN = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/getAllSystemAdmin`;
 
+// term vote URLs group
+export const URL_CREATE_NEW_TERM_VOTE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}newVote`;
+export const URL_UPDATE_EXPERT_VOTE_DECISION = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}updateVoteDecision`;
+export const URL_POST_NEW_COMMENT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}postComment`;
+export const URL_GET_TERM_VOTE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVote`;
+export const URL_GET_TERM_VOTES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVotes`
 // playground
 
 export const URL_PLAYGROUND_JSON_TRANSFORM = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}playground/transformVOWL_JSON`;
