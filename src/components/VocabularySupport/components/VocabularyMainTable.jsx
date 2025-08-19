@@ -593,22 +593,22 @@ const VocabularyMainTable = ({
                         Timeline
                     </Button>
                 </Tooltip>
-                {Object.keys(mentionedDiscussions).length !== 0 && (
-                    <Tooltip title="Review mentions and join ongoing discussions">
-                        <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount} customVariant="orange">
-                            <Button
-                                variant="contained"
-                                onClick={() => {
-                                    setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
-                                    Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
-                                }}
-                                style={{ backgroundColor: colorStyled.SECONDARY.dark }}
-                            >
-                                Information Hub
-                            </Button>
-                        </StyledBadge>
-                    </Tooltip>
-                )}
+
+                <Tooltip title="Review active discussions and view ongoing agreements">
+                    <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount} customVariant="orange">
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
+                                Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
+                            }}
+                            style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                        >
+                            Information Hub
+                        </Button>
+                    </StyledBadge>
+                </Tooltip>
+
                 {hasUncommittedChanges && (
                     <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>
                 )}
