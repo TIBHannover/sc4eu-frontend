@@ -1,13 +1,36 @@
-import { Box, Typography, TextField, Button, Tooltip, IconButton, Link } from '@mui/material';
-import { useState } from 'react';
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Tooltip,
+    IconButton,
+    Link,
+    FormControlLabel,
+    RadioGroup,
+    Radio,
+    Paper
+} from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import StatusDropdown from './StatusDropdown';
+import {getTermVote, initiateNewVote} from '../../../network/TermVoteCalls';
+import VoteView from './VoteView';
+import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
+import FadingNotification from '../../ReusableComponents/FadingNotification';
 
-const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
+const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const [editMode, setEditMode] = useState(false);
+    const [viewAgreementMode, setViewAgreementMode] = useState(false);
+    const [isActiveAgreement, setIsActiveAgreement] = useState(false);
+    const [activeAgreement, setActiveAgreement] = useState(false);
+    const [notification, setNotification] = useState(false);
+    const [initiateTermAgreement, setInitiateTermAgreement] = useState(false);
+    const [agreementType, setAgreementType] = useState(null);
+
     const [updatedTerm, setUpdatedTerm] = useState({
         ...term,
         altLabel: term.altLabel || '',
@@ -18,9 +41,20 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
         modified: term.modified || ''
     });
 
-    const splitAltLabels = (altLabel) => {
+    useEffect(() => {
+        const getVote = async () => {
+            const data = await getTermVote(term.identifier);
+            if (data.length !== 0) {
+                setActiveAgreement(data[0]);
+            }
+        };
+        getVote();
+    }, [isActiveAgreement, term.identifier]);
+
+    const splitAltLabels = altLabel => {
         return altLabel ? altLabel.split(',') : [''];
     };
+
     const handleInputChange = e => {
         let { name, value } = e.target;
         if (name.startsWith('altLabel')) {
@@ -70,114 +104,243 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
         return updatedTerm.seeAlso;
     };
 
+    const handleAgreementSubmit = async () => {
+        await initiateNewVote(term.identifier, userName, agreementType);
+        setInitiateTermAgreement(false);
+        setAgreementType(null);
+        setNotification(true);
+        setIsActiveAgreement(true);
+    };
+
     return (
         <Box sx={{ paddingLeft: 2, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ color: colorStyled.SECONDARY.dark, padding: 1, marginBottom: 2 }}>
-                <Typography variant="h6" sx={{ textAlign: 'center' }}>
-                    Term's Detail
+            {activeAgreement && !viewAgreementMode && (
+                <Typography sx={{ color: 'error.dark', fontSize: '1.5rem' }}>
+                    There is an ongoing agreement, all term fields are read-only. New agreement could not be started.
                 </Typography>
-                <hr />
-            </Box>
-
-            {!editMode ? (
-                <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, gap: '20px', padding: '5px' }}>
-                    <Box sx={{ width: '50%', maxHeight: 'calc(90vh - 100px)', flex: '1', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-                        <Typography>
-                            <Tooltip title="Unique identifier for the term">
-                                <IconButton style={{ marginBottom: '4px' }} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
+            )}
+            {notification && <FadingNotification message="Vote successfully submitted" timeout={3000} />}
+            {initiateTermAgreement && (
+                <MaterialUIPopUp
+                    open={initiateTermAgreement}
+                    onClose={() => {
+                        setInitiateTermAgreement(false);
+                        setAgreementType(null);
+                    }}
+                    title="Start Term Agreement"
+                    message={
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                            <Paper sx={{ p: 2 }}>
+                                <Typography variant="body1" paragraph>
+                                    This will invite all system users to vote on this term's status.
+                                </Typography>
+                            </Paper>
+                            <Paper sx={{ p: 2 }}>
+                                <Typography variant="subtitle2" gutterBottom>
+                                    Select agreement type:
+                                </Typography>
+                                <RadioGroup value={agreementType} onChange={e => setAgreementType(e.target.value)}>
+                                    <Box sx={{ mb: 2 }}>
+                                        <FormControlLabel
+                                            value="ACCEPT"
+                                            control={<Radio />}
+                                            label={
+                                                <Box>
+                                                    <Typography>Accept</Typography>
+                                                    <Typography variant="body2" color="text.secondary" sx={{ ml: 0 }}>
+                                                        Term's status will be changed to the accepted if agreement succeeds.
+                                                    </Typography>
+                                                </Box>
+                                            }
+                                            sx={{ alignItems: 'flex-start' }}
+                                        />
+                                    </Box>
+                                    <Box>
+                                        <FormControlLabel
+                                            value="REJECT"
+                                            control={<Radio />}
+                                            label={
+                                                <Box>
+                                                    <Typography>Reject</Typography>
+                                                    <Typography variant="body2" color="text.secondary" sx={{ ml: 0 }}>
+                                                        Term's status will be changed to the rejected if agreement succeeds.
+                                                    </Typography>
+                                                </Box>
+                                            }
+                                            sx={{ alignItems: 'flex-start' }}
+                                        />
+                                    </Box>
+                                </RadioGroup>
+                            </Paper>
+                            <Tooltip title="Select at least one vote type">
+                                <Box sx={{ width: 'fit-content' }}>
+                                    <Button onClick={() => handleAgreementSubmit()} variant="contained" sx={buttonStyle} disabled={!agreementType}>
+                                        Initiate Vote
+                                    </Button>
+                                </Box>
                             </Tooltip>
-                            <strong>Identifier:</strong> {updatedTerm.identifier}
+                        </Box>
+                    }
+                    paperSizeStyles={{
+                        minHeight: '50%',
+                        maxHeight: '50%',
+                        minWidth: '50%',
+                        maxWidth: '50%'
+                    }}
+                />
+            )}
+            {viewAgreementMode && (
+                <VoteView
+                    term={term}
+                    vote={activeAgreement}
+                    username={userName}
+                    setVoteViewMode={setViewAgreementMode}
+                />
+            )}
+            {!editMode && !viewAgreementMode && (
+                <Box>
+                    <Box sx={{ color: colorStyled.SECONDARY.dark, padding: 1, marginBottom: 2 }}>
+                        <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                            Term's Detail
                         </Typography>
-                        <Typography>
-                            <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative labels exist">
-                                <IconButton style={{ marginBottom: '4px' }} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                            <strong>Label:</strong> {updatedTerm.label}
-                        </Typography>
-                        {/* Alternative labels */}
-                        {updatedTerm.altLabel && splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                            <Typography key={'altLabel' + index}>
-                                <Tooltip title="Provides an alternative Label">
+                        <hr />
+                    </Box>
+                    <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, gap: '20px', padding: '5px' }}>
+                        <Box
+                            sx={{
+                                width: '50%',
+                                maxHeight: 'calc(90vh - 100px)',
+                                flex: '1',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                overflowY: 'auto'
+                            }}
+                        >
+                            <Typography>
+                                <Tooltip title="Unique identifier for the term">
                                     <IconButton style={{ marginBottom: '4px' }} size="small">
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
-                                <strong>Alternative Label {index + 1}:</strong> {label}
+                                <strong>Identifier:</strong> {updatedTerm.identifier}
                             </Typography>
-                        ))}
-                        {/* Description */}
-                        <Typography>
-                            <Tooltip title="Provides a human-readable description of a Term">
-                                <IconButton style={{ marginBottom: '4px' }} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                            <strong>Description:</strong> {updatedTerm.description}
-                        </Typography>
-                        {/* See also */}
-                        <Typography>
-                            <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
-                                <IconButton style={{ marginBottom: '4px' }} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                            <strong>See Also:</strong> {renderSeeAlso()}
-                        </Typography>
-                        <Typography>
-                            <Tooltip title="Provides the creation date of the term">
-                                <IconButton style={{ marginBottom: '4px' }} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                            <strong>Created at:</strong> {updatedTerm.created}
-                        </Typography>
-                        <Typography>
-                            <Tooltip title="Provides the last modified date of the term">
-                                <IconButton style={{ marginBottom: '4px' }} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                            <strong>Last modified:</strong> {new Date(updatedTerm.modified).toLocaleDateString() + ", "  + new Date(updatedTerm.modified).toLocaleTimeString()}
-                        </Typography>
-                        {/* Status */}
-                        <Typography>
-                            <Tooltip title="Status: Draft, Reject, Accept">
-                                <IconButton style={{ marginBottom: '4px' }} size="small">
-                                    <HelpOutlineIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                            <strong>Status:</strong> {updatedTerm.status}
-                        </Typography>
+                            <Typography>
+                                <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative labels exist">
+                                    <IconButton style={{ marginBottom: '4px' }} size="small">
+                                        <HelpOutlineIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                                <strong>Label:</strong> {updatedTerm.label}
+                            </Typography>
+                            {/* Alternative labels */}
+                            {updatedTerm.altLabel &&
+                                splitAltLabels(updatedTerm.altLabel).map((label, index) => (
+                                    <Typography key={'altLabel' + index}>
+                                        <Tooltip title="Provides an alternative Label">
+                                            <IconButton style={{ marginBottom: '4px' }} size="small">
+                                                <HelpOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <strong>Alternative Label {index + 1}:</strong> {label}
+                                    </Typography>
+                                ))}
+                            {/* Description */}
+                            <Typography>
+                                <Tooltip title="Provides a human-readable description of a Term">
+                                    <IconButton style={{ marginBottom: '4px' }} size="small">
+                                        <HelpOutlineIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                                <strong>Description:</strong> {updatedTerm.description}
+                            </Typography>
+                            {/* See also */}
+                            <Typography>
+                                <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
+                                    <IconButton style={{ marginBottom: '4px' }} size="small">
+                                        <HelpOutlineIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                                <strong>See Also:</strong> {renderSeeAlso()}
+                            </Typography>
+                            <Typography>
+                                <Tooltip title="Provides the creation date of the term">
+                                    <IconButton style={{ marginBottom: '4px' }} size="small">
+                                        <HelpOutlineIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                                <strong>Created at:</strong> {updatedTerm.created}
+                            </Typography>
+                            <Typography>
+                                <Tooltip title="Provides the last modified date of the term">
+                                    <IconButton style={{ marginBottom: '4px' }} size="small">
+                                        <HelpOutlineIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                                <strong>Last modified:</strong> 2025-06-10, 10:13:20
+                            </Typography>
+                            {/* Status */}
+                            <Typography>
+                                <Tooltip title="Status: Draft, Reject, Accept">
+                                    <IconButton style={{ marginBottom: '4px' }} size="small">
+                                        <HelpOutlineIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                                <strong>Status:</strong> {updatedTerm.status}
+                            </Typography>
 
-                        {/* Action buttons */}
-                        <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
-                            <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle}>
-                                Edit Term
-                            </Button>
-                            <Button onClick={handleClose} variant="contained" sx={buttonStyle}>
-                                Close
-                            </Button>
+                            {/* Action buttons */}
+                            <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
+                                <Button disabled={activeAgreement} onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle}>
+                                    Edit Term
+                                </Button>
+                                <Button onClick={handleClose} variant="contained" sx={buttonStyle}>
+                                    Close
+                                </Button>
+                                {!activeAgreement && (
+                                    <Button disabled={activeAgreement} onClick={() => setInitiateTermAgreement(true)} variant="contained" sx={buttonStyle}>
+                                        Start agreement
+                                    </Button>
+                                )}
+                                {activeAgreement && (
+                                    <Button onClick={() => setViewAgreementMode(true)} variant="contained" sx={buttonStyle}>
+                                        View ongoing agreement
+                                    </Button>
+                                )}
+                            </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: '50%',
+                                padding: '10px',
+                                backgroundColor: '#f4f4f4',
+                                borderRadius: '8px',
+                                overflowY: 'auto',
+                                maxHeight: 'calc(100vh - 100px)'
+                            }}
+                        >
+                            <CommentsSection
+                                resourceId={term.identifier}
+                                comments={termComments || []}
+                                mentionedUsers={[]}
+                                handleSaveDiscussion={handleSaveDiscussion}
+                                setHasUncommittedChanges={setHasUncommittedChanges}
+                            />
                         </Box>
                     </Box>
-
-                    {/* Comments section */}
-                    <Box sx={{ width: '50%', padding: '10px', backgroundColor: '#f4f4f4', borderRadius: '8px', overflowY: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
-                        <CommentsSection
-                            resourceId={term.identifier}
-                            comments={termComments || []}
-                            mentionedUsers={[]}
-                            handleSaveDiscussion={handleSaveDiscussion}
-                            setHasUncommittedChanges={setHasUncommittedChanges}
-                        />
-                    </Box>
                 </Box>
-            ) : (
+            )}
+            {editMode && !viewAgreementMode && (
                 <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, gap: '20px', padding: '5px' }}>
-                    <Box sx={{ width: '50%', maxHeight: 'calc(90vh - 100px)', overflowY: 'auto', flex: '1', display: 'flex', flexDirection: 'column' }}>
+                    <Box
+                        sx={{
+                            width: '50%',
+                            maxHeight: 'calc(90vh - 100px)',
+                            overflowY: 'auto',
+                            flex: '1',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}
+                    >
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                             <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
                                 <strong>Label:</strong>
@@ -205,7 +368,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                     InputProps={{ sx: { height: '40px' } }}
                                     InputLabelProps={{ sx: { lineHeight: '40px' } }}
                                     sx={{ marginBottom: '15px' }}
-                                    placeholder={`Alternative Label ${index +1}`}
+                                    placeholder={`Alternative Label ${index + 1}`}
                                 />
                             </Box>
                         ))}
@@ -238,7 +401,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                 fullWidth
                                 InputProps={{ sx: { height: '40px' } }}
                                 InputLabelProps={{ sx: { lineHeight: '40px' } }}
-                                sx={{ marginBottom: '15px'}}
+                                sx={{ marginBottom: '15px' }}
                             />
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
@@ -252,7 +415,7 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                                 status={updatedTerm.status}
                                 onChange={value =>
                                     handleInputChange({
-                                        target: { name: 'status', value },
+                                        target: { name: 'status', value }
                                     })
                                 }
                             />
@@ -267,8 +430,16 @@ const ExpandedRow = ({ term, updateTerm, termComments, handleSaveDiscussion, set
                         </Box>
                     </Box>
 
-                    {/* Comments section */}
-                    <Box sx={{ width: '50%', padding: '10px', backgroundColor: '#f4f4f4', borderRadius: '8px', overflowY: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
+                    <Box
+                        sx={{
+                            width: '50%',
+                            padding: '10px',
+                            backgroundColor: '#f4f4f4',
+                            borderRadius: '8px',
+                            overflowY: 'auto',
+                            maxHeight: 'calc(100vh - 100px)'
+                        }}
+                    >
                         <CommentsSection
                             resourceId={term.identifier}
                             comments={updatedTerm.comments || []}

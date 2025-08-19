@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, Chip, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
+import { Box, Button, Chip, darken, Grid, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/
 import Cookies from 'js-cookie';
 import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
 import { StyledBadge } from '../../../styledComponents/styledComponents';
+import InformationHub from './InformationHub';
 
 const VocabularyMainTable = ({
     terms,
@@ -334,9 +335,9 @@ const VocabularyMainTable = ({
                 ),
                 Cell: ({ cell }) => {
                     if (cell.getValue()) {
-                        return new Date(cell.getValue()).toLocaleDateString() + ', ' + new Date(cell.getValue()).toLocaleTimeString()
+                        return new Date(cell.getValue()).toLocaleDateString() + ', ' + new Date(cell.getValue()).toLocaleTimeString();
                     }
-                    return " ";
+                    return ' ';
                 },
                 size: 150,
                 enableEditing: false,
@@ -594,7 +595,7 @@ const VocabularyMainTable = ({
                 </Tooltip>
                 {Object.keys(mentionedDiscussions).length !== 0 && (
                     <Tooltip title="Review mentions and join ongoing discussions">
-                        <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount}>
+                        <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount} customVariant="orange">
                             <Button
                                 variant="contained"
                                 onClick={() => {
@@ -603,7 +604,7 @@ const VocabularyMainTable = ({
                                 }}
                                 style={{ backgroundColor: colorStyled.SECONDARY.dark }}
                             >
-                                Mentions
+                                Information Hub
                             </Button>
                         </StyledBadge>
                     </Tooltip>
@@ -683,6 +684,7 @@ const VocabularyMainTable = ({
                     {selectedTerm && (
                         <ExpandedRow
                             term={selectedTerm}
+                            userName={userName}
                             updateTerm={updateTerm}
                             termComments={termComments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
@@ -703,8 +705,17 @@ const VocabularyMainTable = ({
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
                 onClose={() => setActiveMUIPopUp(null)}
-                title="Mentioned discussions"
-                message={<RenderGroupedMentions groupedMentioned={mentionedDiscussions} onNavigateToTerm={handleNavigateToMentionedTerm} />}
+                title="Information Hub"
+                message={
+                    <Grid container spacing={2}>
+                        <InformationHub
+                            terms={terms}
+                            discussions={discussions}
+                            mentionedUser={userName}
+                            onTermSelect={handleNavigateToMentionedTerm}
+                        />
+                    </Grid>
+                }
             />
         </ScrollableDiv>
     );
