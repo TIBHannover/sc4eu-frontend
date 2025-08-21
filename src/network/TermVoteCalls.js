@@ -14,7 +14,7 @@ export const getTermVotes = () => {
     return submitGetRequest(`${URL_GET_TERM_VOTES}/?status=under_agreement`, {}, false);
 };
 
-export const initiateNewVote = (term_uuid, user, type) => {
+export const initiateNewVote = (term_uuid, user, type, reason) => {
     const headers = {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
@@ -22,7 +22,8 @@ export const initiateNewVote = (term_uuid, user, type) => {
     const data = {
         term_uuid: term_uuid,
         assignee: user,
-        type: type
+        type: type,
+        reason: reason
     };
     return submitPostRequest(URL_CREATE_NEW_TERM_VOTE, headers, data);
 };

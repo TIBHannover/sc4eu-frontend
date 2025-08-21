@@ -1,28 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Grid,
-    Typography,
-    Avatar,
-    TextField,
-    Button,
-    Box,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
-} from '@mui/material';
+import { Grid, Typography, Avatar, TextField, Button, Box, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import {
     CheckCircle as ApprovedIcon,
     Cancel as RejectedIcon,
     ThumbUpAltOutlined,
     ThumbUpAlt,
     ThumbDownAltOutlined,
-    ThumbDownAlt,
+    ThumbDownAlt
 } from '@mui/icons-material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import PropTypes from 'prop-types';
 import { getTermVote, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
-import {stringAvatar} from "./CommentsSection";
+import { stringAvatar } from './CommentsSection';
 
 const styles = {
     button: {
@@ -152,13 +142,14 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
 
                     <Box sx={styles.voteProgress}>
                         <Typography variant="body1" paragraph>
-                            <strong>Vote progress:</strong> {totalVotes} people voted
+                            <strong>Consensus progress:</strong> {totalVotes} people voted
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             {approvedCount} approved • {rejectedCount} rejected
                         </Typography>
                         <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                            Note: The vote can be closed after 3 approved or 3 rejected decisions, but the voting may continue until manual closure.
+                            Note: The consensus can be closed after 3 approved or 3 rejected decisions, but the voting may continue until manual
+                            closure.
                         </Typography>
                     </Box>
                 </Grid>
@@ -219,10 +210,41 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                 <Grid item xs={12} md={4}>
                     <Box sx={styles.stickySidebar}>
                         <Box sx={styles.voteCard}>
-                            <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center'
+                                }}
+                            >
                                 <Avatar {...stringAvatar(vote.assignee)} sx={{ mr: 2, width: 32, height: 32 }} />
-                                Created by {vote.assignee}
-                            </Typography>
+                                <Typography variant="subtitle1" gutterBottom>
+                                    Created by {vote.assignee}
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
+                                    {new Date(vote.created_at).toLocaleDateString() + ', ' + new Date(vote.created_at).toLocaleTimeString()}
+                                </Typography>
+                            </Box>
+                            {vote.reason && (
+                                <Box
+                                    sx={{
+                                        mt: 1,
+                                        overflow: 'auto',
+                                        maxHeight: 223
+                                    }}
+                                >
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            fontStyle: 'italic',
+                                            color: colorStyled.TEXTCOLOR,
+                                            mt: 1
+                                        }}
+                                    >
+                                        {vote.reason}
+                                    </Typography>
+                                </Box>
+                            )}
                         </Box>
 
                         <Box sx={styles.voteCard}>

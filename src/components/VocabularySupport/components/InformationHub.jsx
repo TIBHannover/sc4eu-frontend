@@ -180,7 +180,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                     {term.label}
                                 </Typography>
                                 {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
-                                {term.hasVote && <StyledChip label="Vote" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
+                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
                                 {lastComment && (
                                     <Typography
                                         variant="caption"
