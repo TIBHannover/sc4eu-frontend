@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Gravatar from 'react-gravatar';
 import { Badge, Chip } from '@mui/material';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { Tooltip as ReactstrapTooltip } from "reactstrap";
 import { colorStyled } from './styledColor';
 import PropTypes from 'prop-types';
 
@@ -35,7 +36,7 @@ export const StyledGravatar = styled(Gravatar)`
     cursor: pointer;
 `;
 
-export const StyledAuthTooltip = styled(Tooltip)`
+export const StyledAuthTooltip = styled(ReactstrapTooltip)`
     & .tooltip {
         opacity: 1 !important;
         margin-top: 65px;
