@@ -200,14 +200,9 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
             {viewAgreementMode && <VoteView term={term} vote={activeAgreement} username={userName} setVoteViewMode={setViewAgreementMode} />}
             {!editMode && !viewAgreementMode && (
                 <Box>
-                    <Box sx={{ color: colorStyled.SECONDARY.dark, padding: 1, marginBottom: 2 }}>
-                        <Typography variant="h6" sx={{ textAlign: 'center' }}>
-                            Term's Detail
-                        </Typography>
-                        <hr />
-                    </Box>
                     <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, gap: '20px', padding: '5px' }}>
-                        <Box
+                        <Paper
+                            elevation={2}
                             sx={{
                                 width: '50%',
                                 maxHeight: 'calc(90vh - 100px)',
@@ -217,6 +212,14 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
                                 overflowY: 'auto'
                             }}
                         >
+                            <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                                Term's Detail
+                                {isActiveAgreement && (
+                                    <StyledTooltip title="There is an ongoing consensus, all term fields are read-only. New consensus could not be started.">
+                                        <InfoIcon />
+                                    </StyledTooltip>
+                                )}
+                            </Typography>
                             <Typography>
                                 <Tooltip title="Unique identifier for the term">
                                     <IconButton style={{ marginBottom: '4px' }} size="small">
@@ -315,7 +318,7 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
                                     </Button>
                                 )}
                             </Box>
-                        </Box>
+                        </Paper>
                         <Box
                             sx={{
                                 width: '50%',
@@ -326,6 +329,9 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
                                 maxHeight: 'calc(100vh - 100px)'
                             }}
                         >
+                            <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                                Discussion
+                            </Typography>
                             <CommentsSection
                                 resourceId={term.identifier}
                                 comments={termComments || []}
