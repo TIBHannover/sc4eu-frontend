@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import Gravatar from 'react-gravatar';
-import { Tooltip } from 'reactstrap';
 import { Badge, Chip } from '@mui/material';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { colorStyled } from './styledColor';
 import PropTypes from 'prop-types';
 
@@ -108,6 +108,16 @@ export const StyledChip = styled(Chip)(({ customVariant }) => ({
 StyledChip.propTypes = {
     customVariant: PropTypes.oneOf(['mention', 'agreement'])
 };
+
+export const StyledTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: 'transparent',
+        color: 'red',
+        fontSize: '1rem'
+    },
+}));
 
 export const MAX_WIDTH = '769px';
 

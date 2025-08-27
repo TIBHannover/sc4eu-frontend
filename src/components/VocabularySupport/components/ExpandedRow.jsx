@@ -8,6 +8,8 @@ import { getTermVote, initiateNewVote } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
+import InfoIcon from '@mui/icons-material/Info';
+import {StyledTooltip} from "../../../styledComponents/styledComponents";
 
 const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const [editMode, setEditMode] = useState(false);
@@ -34,6 +36,7 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
             const data = await getTermVote(term.identifier);
             if (data.length !== 0) {
                 setActiveAgreement(data[0]);
+                setIsActiveAgreement(true);
             }
         };
         getVote();
@@ -103,11 +106,6 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
 
     return (
         <Box sx={{ paddingLeft: 2, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-            {activeAgreement && !viewAgreementMode && (
-                <Typography sx={{ color: 'error.dark', fontSize: '1.5rem' }}>
-                    There is an ongoing consensus, all term fields are read-only. New consensus could not be started.
-                </Typography>
-            )}
             {notification && <FadingNotification message="Vote successfully submitted" timeout={3000} />}
             {initiateTermAgreement && (
                 <MaterialUIPopUp
@@ -313,7 +311,14 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
                                     </Tooltip>
                                 )}
                                 {activeAgreement && (
-                                    <Button onClick={() => setViewAgreementMode(true)} variant="contained" sx={buttonStyle}>
+                                    <Button
+                                        onClick={() => setViewAgreementMode(true)}
+                                        variant="contained"
+                                        sx={{
+                                            backgroundColor: colorStyled.ORANGE_COLOR,
+                                            '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }
+                                        }}
+                                    >
                                         View ongoing consensus
                                     </Button>
                                 )}

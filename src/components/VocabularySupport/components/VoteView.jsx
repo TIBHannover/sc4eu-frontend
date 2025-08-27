@@ -148,8 +148,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                             {approvedCount} approved • {rejectedCount} rejected
                         </Typography>
                         <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                            Note: The consensus can be closed after 3 approved or 3 rejected decisions, but the voting may continue until manual
-                            closure.
+                            Note: At least three votes are required to reach a consensus. Furthermore, a two-thirds majority is required for the proposed change of status.
                         </Typography>
                     </Box>
                 </Grid>

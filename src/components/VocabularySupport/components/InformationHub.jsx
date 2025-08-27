@@ -300,7 +300,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                 <Tab
                     label={
                         <StyledBadge badgeContent={getTabBadgeContent(1)} customVariant="blue">
-                            <span>Terms with active review</span>
+                            <span>Terms with active consensus</span>
                         </StyledBadge>
                     }
                 />

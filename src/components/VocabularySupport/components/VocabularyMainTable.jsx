@@ -17,7 +17,7 @@ import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import Cookies from 'js-cookie';
 import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
-import { StyledBadge } from '../../../styledComponents/styledComponents';
+import {StyledBadge, StyledTooltip} from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
 
 const VocabularyMainTable = ({
@@ -609,24 +609,26 @@ const VocabularyMainTable = ({
                     </StyledBadge>
                 </Tooltip>
 
-                {hasUncommittedChanges && (
-                    <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>
-                )}
+                {/*{hasUncommittedChanges && (*/}
+                {/*    <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>*/}
+                {/*)}*/}
             </div>
         ),
         renderBottomToolbarCustomActions: () => (
             <>
-                <Button
-                    variant="contained"
-                    disabled={!hasUncommittedChanges}
-                    onClick={() => setOpenCommit(true)}
-                    style={{
-                        backgroundColor: hasUncommittedChanges ? colorStyled.SECONDARY.dark : 'gray',
-                        border: hasUncommittedChanges ? '2px' + ' solid red' : ''
-                    }}
-                >
-                    Save Changes
-                </Button>
+                <StyledTooltip title="You have made changes, Please don't forget to save your changes" disableHoverListener={!hasUncommittedChanges}>
+                    <Button
+                        variant="contained"
+                        disabled={!hasUncommittedChanges}
+                        onClick={() => setOpenCommit(true)}
+                        style={{
+                            backgroundColor: hasUncommittedChanges ? colorStyled.SECONDARY.dark : 'gray',
+                            border: hasUncommittedChanges ? '2px' + ' solid red' : ''
+                        }}
+                    >
+                        Save Changes
+                    </Button>
+                </StyledTooltip>
                 {openCommit && (
                     <CommitChanges
                         refetch={refetch}
