@@ -14,7 +14,8 @@ import {
     IconButton,
     ListItemButton,
     Tabs,
-    Tab
+    Tab,
+    Paper
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { Autocomplete } from '@mui/material';
@@ -57,7 +58,8 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             description: value.description ? value.description[0] : 'Not Available',
             seeAlso: `url:${url}`,
             status: 'draft',
-            created: new Date().toLocaleDateString('en-CA')
+            created: new Date().toLocaleDateString('en-CA'),
+            modified: new Date().toISOString()
         };
         await handleCreateTerm({ values: termFromTerminology, table: table });
         console.log('Adding term from terminology: ', termFromTerminology);
@@ -93,6 +95,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             // Creating/editing a new term
             if (validateForm()) {
                 const allCells = row.getAllCells();
+                console.log('allCells: ', allCells)
                 const tableCells = allCells.filter(cell => cell.column.id !== 'mrt-row-expand' && cell.column.id !== 'mrt-row-actions');
 
                 const newTerm = tableCells.reduce((acc, cell) => {
@@ -175,9 +178,17 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
 
                 {activeTab === 0 && (
                     <Box>
+                        <Typography variant="subtitle2" gutterBottom>
+                            Start typing below to search for Existing Terms in{' '}
+                            <a href="https://terminology.tib.eu/ts/ontologies/" target="_blank" rel="noopener noreferrer">
+                                Terminology Service
+                            </a>
+                        </Typography>
+                        <hr />
                         <Autocomplete
                             freeSolo
                             options={autoCompleteResults.map(result => result.autosuggest)}
+                            PaperComponent={props => <Paper {...props} style={{ backgroundColor: '#f5f5f5' }} />}
                             renderInput={params => (
                                 <TextField
                                     {...params}
@@ -234,9 +245,10 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
 
                 {activeTab === 1 && (
                     <Box>
-                        <Typography variant="subtitle1" gutterBottom>
-                            Term Details
+                        <Typography variant="subtitle2" gutterBottom>
+                            Fill in the details below for the new term
                         </Typography>
+                        <hr />
                         {internalEditComponents.map((component, index) => {
                             if (component.key.split('_').pop() === 'altLabel') {
                                 return (

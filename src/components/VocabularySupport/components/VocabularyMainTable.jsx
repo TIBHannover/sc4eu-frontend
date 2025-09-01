@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
+import { Box, Button, Chip, darken, Grid, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -17,7 +17,8 @@ import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import Cookies from 'js-cookie';
 import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
-import { StyledBadge } from '../../../styledComponents/styledComponents';
+import {StyledBadge, StyledTooltip} from '../../../styledComponents/styledComponents';
+import InformationHub from './InformationHub';
 
 const VocabularyMainTable = ({
     terms,
@@ -313,6 +314,65 @@ const VocabularyMainTable = ({
                 }
             },
             {
+                accessorKey: 'modified',
+                id: 'modified',
+                header: 'Last modified',
+                Header: ({ column }) => (
+                    <Tooltip
+                        title={
+                            <>
+                                <span style={{ fontSize: '1.2em' }}>
+                                    Shows the last date time, when the term was edited: term metadata updated or a new comment in a discussion.
+                                </span>
+                            </>
+                        }
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <span>{column.columnDef.header}</span>
+                            <Chip label="New" size="small" sx={{ ml: 0.5, backgroundColor: colorStyled.PRIMARY.main }} />
+                        </div>
+                    </Tooltip>
+                ),
+                Cell: ({ cell }) => {
+                    if (cell.getValue()) {
+                        return new Date(cell.getValue()).toLocaleDateString() + ', ' + new Date(cell.getValue()).toLocaleTimeString();
+                    }
+                    return ' ';
+                },
+                size: 150,
+                enableEditing: false,
+                filterVariant: 'select',
+                filterFn: (row, columnId, filterValue) => {
+                    const modifiedDatetime = new Date(row.getValue(columnId));
+                    const now = new Date();
+                    switch (filterValue) {
+                        case 'last1day':
+                            return modifiedDatetime >= new Date(now.setDate(now.getDate() - 1));
+                        case 'last1week':
+                            return modifiedDatetime >= new Date(now.setDate(now.getDate() - 7));
+                        case 'last1month':
+                            return modifiedDatetime >= new Date(now.setMonth(now.getMonth() - 1));
+                        case 'last3months':
+                            return modifiedDatetime >= new Date(now.setMonth(now.getMonth() - 3));
+                        case 'all':
+                            return true;
+                        default:
+                            return true;
+                    }
+                },
+                filterSelectOptions: [
+                    { text: 'Last 1 Day', value: 'last1day' },
+                    { text: 'Last 1 Week', value: 'last1week' },
+                    { text: 'Last 1 Month', value: 'last1month' },
+                    { text: 'Last 3 Months', value: 'last3months' },
+                    { text: 'All', value: 'all' }
+                ],
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter Modified',
+                    select: true
+                }
+            },
+            {
                 accessorKey: 'status',
                 header: 'Status',
                 Header: (
@@ -400,7 +460,8 @@ const VocabularyMainTable = ({
         description: '', // Default value for description
         seeAlso: '', // Default value for seeAlso
         status: 'draft', // Override 'status' with 'draft'
-        created: new Date().toLocaleDateString('en-CA') // Default value for created
+        created: new Date().toLocaleDateString('en-CA'), // Default value for created
+        modified: new Date().toISOString() // Default value for modified
     };
     // Function to handle setting a creating row
     const handleCreateRow = (row = {}) => {
@@ -424,8 +485,7 @@ const VocabularyMainTable = ({
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
             density: 'compact',
             pagination: { pageSize: 15, pageIndex: 0 },
-            showFilters: true,
-            columnFilters: []
+            showColumnFilters: true // Show filter search box by default
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
@@ -466,7 +526,7 @@ const VocabularyMainTable = ({
             // Filter out non-editable components
             const editableComponents = internalEditComponents.filter(component => {
                 const fieldName = component.key.split('_').pop();
-                return !['identifier', 'created', 'status'].includes(fieldName);
+                return !['identifier', 'created', 'modified', 'status'].includes(fieldName);
             });
 
             return (
@@ -494,7 +554,7 @@ const VocabularyMainTable = ({
             // Filter out non-editable components
             const editableComponents = internalEditComponents.filter(component => {
                 const fieldName = component.key.split('_').pop();
-                return !['identifier', 'created', 'status'].includes(fieldName);
+                return !['identifier', 'created', 'modified', 'status'].includes(fieldName);
             });
 
             return (
@@ -522,7 +582,7 @@ const VocabularyMainTable = ({
                         Create New Term
                     </Button>
                 </Tooltip>
-                <Tooltip title="Timeline">
+                <Tooltip title="View this vocabulary history of changes">
                     <Button
                         variant="contained"
                         onClick={() => {
@@ -533,40 +593,42 @@ const VocabularyMainTable = ({
                         Timeline
                     </Button>
                 </Tooltip>
-                {Object.keys(mentionedDiscussions).length !== 0 && (
-                    <Tooltip title="Mentions">
-                        <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount}>
-                            <Button
-                                variant="contained"
-                                onClick={() => {
-                                    setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
-                                    Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
-                                }}
-                                style={{ backgroundColor: colorStyled.SECONDARY.dark }}
-                            >
-                                Mentions
-                            </Button>
-                        </StyledBadge>
-                    </Tooltip>
-                )}
-                {hasUncommittedChanges && (
-                    <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>
-                )}
+
+                <Tooltip title="Review active discussions and view ongoing agreements">
+                    <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount} customVariant="orange">
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
+                                Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
+                            }}
+                            style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                        >
+                            Information Hub
+                        </Button>
+                    </StyledBadge>
+                </Tooltip>
+
+                {/*{hasUncommittedChanges && (*/}
+                {/*    <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>*/}
+                {/*)}*/}
             </div>
         ),
         renderBottomToolbarCustomActions: () => (
             <>
-                <Button
-                    variant="contained"
-                    disabled={!hasUncommittedChanges}
-                    onClick={() => setOpenCommit(true)}
-                    style={{
-                        backgroundColor: hasUncommittedChanges ? colorStyled.SECONDARY.dark : 'gray',
-                        border: hasUncommittedChanges ? '2px' + ' solid red' : ''
-                    }}
-                >
-                    Save Changes
-                </Button>
+                <StyledTooltip title="You have made changes, Please don't forget to save your changes" disableHoverListener={!hasUncommittedChanges}>
+                    <Button
+                        variant="contained"
+                        disabled={!hasUncommittedChanges}
+                        onClick={() => setOpenCommit(true)}
+                        style={{
+                            backgroundColor: hasUncommittedChanges ? colorStyled.SECONDARY.dark : 'gray',
+                            border: hasUncommittedChanges ? '2px' + ' solid red' : ''
+                        }}
+                    >
+                        Save Changes
+                    </Button>
+                </StyledTooltip>
                 {openCommit && (
                     <CommitChanges
                         refetch={refetch}
@@ -624,6 +686,7 @@ const VocabularyMainTable = ({
                     {selectedTerm && (
                         <ExpandedRow
                             term={selectedTerm}
+                            userName={userName}
                             updateTerm={updateTerm}
                             termComments={termComments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
@@ -644,8 +707,17 @@ const VocabularyMainTable = ({
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
                 onClose={() => setActiveMUIPopUp(null)}
-                title="Mentioned discussions"
-                message={<RenderGroupedMentions groupedMentioned={mentionedDiscussions} onNavigateToTerm={handleNavigateToMentionedTerm} />}
+                title="Information Hub"
+                message={
+                    <Grid container spacing={2}>
+                        <InformationHub
+                            terms={terms}
+                            discussions={discussions}
+                            mentionedUser={userName}
+                            onTermSelect={handleNavigateToMentionedTerm}
+                        />
+                    </Grid>
+                }
             />
         </ScrollableDiv>
     );

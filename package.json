@@ -36,6 +36,7 @@
     "diff2html": "^3.4.51",
     "dot-prop-immutable": "^2.1.1",
     "fast-text-encoding": "^1.0.6",
+    "file-saver": "^2.0.5",
     "history": "^4.10.1",
     "html-react-parser": "^0.14.2",
     "html2canvas": "^1.4.1",
@@ -53,6 +54,7 @@
     "react-apexcharts": "^1.7.0",
     "react-clamp-lines": "^3.0.3",
     "react-cookie": "^4.1.1",
+    "react-csv": "^2.2.2",
     "react-custom-scrollbars-2": "^4.5.0",
     "react-datepicker": "^4.24.0",
     "react-dnd": "^10.0.2",
@@ -78,7 +80,8 @@
     "styled-components": "^5.3.11",
     "typed.js": "^2.1.0",
     "util": "^0.12.5",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@beam-australia/react-env": "^2.1.2",

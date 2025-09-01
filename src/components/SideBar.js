@@ -338,6 +338,7 @@ const SideBar = props => {
                                     style={{ marginLeft: 10, marginBottom: 20 }}
                                     badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount}
                                     invisible={props.user.displayName === undefined || mentionedCommentsLength - cookieMentionedCommentsCount < 0}
+                                    customVariant="orange"
                                 />
                             </Tooltip>
                         </StyledLink>

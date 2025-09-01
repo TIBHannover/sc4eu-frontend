@@ -100,6 +100,10 @@ const addQuadsForItem = (writer, item) => {
     }
 
     addQuad(writer, subject, 'dcterms:created', item.created, true, N3.DataFactory.namedNode('http://www.w3.org/2001/XMLSchema#date'));
+
+    if (item.modified) {
+        addQuad(writer, subject, 'dcterms:modified', item.modified, true, N3.DataFactory.namedNode('http://www.w3.org/2001/XMLSchema#dateTime'));
+    }
     // date
 };
 

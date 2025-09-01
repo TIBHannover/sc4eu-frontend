@@ -51,7 +51,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (autoRefresh) {
+        if (autoRefresh && ontology.lookup_type !== 'local' && ontology.commitsBehind > 0) {
             console.log('Auto-refresh is enabled. Updating ontology data...');
             handleUpdateConfirm();
         }
@@ -298,7 +298,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                             >
                                 {loading.download ? <CircularProgress size={24} /> : <Download />}
                             </IconButton>
-                            {currentUser !== 0 && currentUser !== null && (
+                            {currentUser !== 0 && currentUser !== null && !autoRefresh && (
                                 <IconButton
                                     aria-label="delete"
                                     onClick={handleDelete}

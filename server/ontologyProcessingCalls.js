@@ -198,6 +198,48 @@ module.exports = {
         });
     },
 
+    getJSONModelForOntologyIDWithQuery: function(app) {
+        app.post('/getJsonModelVOWLWithQuery', (req, res) => {
+            console.log('Received request to get JSON model for ontology with query');
+            const { sparql_query } = req.body;
+
+            if (!sparql_query) {
+                return res.status(400).json({ error: 'Missing sparql_query in request body' });
+            }
+
+            const processingOptions = {
+                uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModelVOWLWithQuery`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json'
+                },
+                body: JSON.stringify({ sparql_query }),
+                timeout: 15000
+            };
+
+            request(processingOptions, function(error, response) {
+                if (error) {
+                    console.error('Processing service error:', error);
+                    return res.status(500).json({
+                        error: 'Processing service failed',
+                        details: error.message
+                    });
+                }
+                try {
+                    // The response is already JSON (RRM), so just send it back
+                    return res.send(response.body);
+                } catch (parseError) {
+                    console.error('Failed to parse processing response:', parseError);
+                    return res.status(500).json({
+                        error: 'Invalid response from processing service',
+                        details: response.body
+                    });
+                }
+            });
+        });
+    },
+
     getWidocoDocumentation: function(app) {
         const storage = multer.memoryStorage();
         const upload = multer({ storage: storage });

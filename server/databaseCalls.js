@@ -462,5 +462,206 @@ module.exports = {
                 console.log(e);
             }
         });
-    }
+    },
+
+    createTermVote: function(app) {
+        app.post('/newVote', verifyToken, (req, res) => {
+            if (req.token === null) {
+                res.json({ result: false });
+            } else {
+                const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                console.log(token);
+                if (token) {
+                    const userId = token.userId;
+                    console.log(userId)
+                    const data = JSON.stringify(req.body);
+                    console.log(data);
+                    const project_options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes`,
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: data
+                    };
+
+                    request(project_options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Something went wrong' });
+                            }
+                        } else {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+    getTermVote: function(app) {
+        app.get('/getTermVote', (req, res) => {
+            const query = req.query;
+            let uri = `${process.env.BACKEND_SERVER_URL}/terms/${query['term_uuid']}/votes`;
+            if (query['status']) {
+                uri = uri + `?status=${query['status']}`
+            }
+            const vote_Options = {
+                uri: uri,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(vote_Options, function(error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        console.log(result)
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    },
+
+    getTermVotes: function(app) {
+        app.get('/getTermVotes', (req, res) => {
+            const query = req.query;
+            let uri = `${process.env.BACKEND_SERVER_URL}/terms?status=${query['status']}`;
+            const vote_Options = {
+                uri: uri,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(vote_Options, function(error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        console.log(result)
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    },
+
+    updateVoteDecision: function(app) {
+        app.post('/updateVoteDecision', verifyToken, (req, res) => {
+            if (req.token === null) {
+                res.json({ result: false });
+            } else {
+                const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                console.log(token);
+                if (token) {
+                    const userId = token.userId;
+                    console.log(userId)
+                    const data = JSON.stringify(req.body);
+                    console.log(data);
+                    const project_options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes/${req.body.vote_uuid}`,
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: data
+                    };
+
+                    request(project_options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Something went wrong' });
+                            }
+                        } else {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+    postComment: function(app) {
+        app.post('/postComment', verifyToken, (req, res) => {
+            if (req.token === null) {
+                res.json({ result: false });
+            } else {
+                const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                console.log(token);
+                if (token) {
+                    const userId = token.userId;
+                    console.log(userId)
+                    const data = JSON.stringify(req.body);
+                    console.log(data);
+                    const project_options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes/${req.body.vote_uuid}/comments`,
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: data
+                    };
+
+                    request(project_options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Something went wrong' });
+                            }
+                        } else {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+    getComments: function(app) {
+        app.get('/getComments', (req, res) => {
+            const query = req.query;
+            let uri = `${process.env.BACKEND_SERVER_URL}/terms/${query['term_uuid']}/votes/${query['vote_uuid']}/comments`;
+            const vote_Options = {
+                uri: uri,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(vote_Options, function(error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        console.log(result)
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    },
 };

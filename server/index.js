@@ -120,8 +120,15 @@ database.getAllUsers(router);
 database.unregisterUserFromProject(router);
 database.addUserToProject(router);
 database.getOntologyGitData(router);
+database.createTermVote(router);
+database.getTermVote(router);
+database.getTermVotes(router);
+database.updateVoteDecision(router);
+database.postComment(router);
+database.getComments(router);
 
 processing.getJSONModelForOntologyID(router);
+processing.getJSONModelForOntologyIDWithQuery(router);
 processing.initializeOntology(router);
 processing.compareTwoOntologies(router);
 processing.getWidocoDocumentation(router);

@@ -9,6 +9,7 @@ export const URL_ONTOLOGYINDEXING = `${process.env.REACT_APP_EXPRESS_BACKEND_URL
 export const URL_GET_ONTOLOGY_GIT_DATA = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getOntologyGitdata/`;
 export const URL_ONTOLOGYBYID = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getOntologyById/`;
 export const URL_VIEWONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelForId/`;
+export const URL_VIEWONTOLOGY_WITH_QUERY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getResourceRelationModelForQuery/`;
 export const URL_COMPARE_ONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getComparisonResult`;
 export const URL_GET_WIDOCO_DOCUMENTATION = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getWidoco`;
 export const URL_GET_HTML_FILE_WIDOCO = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getHtmlForWidoco/index-en.html`;
@@ -17,6 +18,7 @@ export const URL_UPDATEONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}u
 export const URL_DELETEONTOLOGY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}deleteOntology`;
 export const URL_PRE_INIT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}initializeOntology/`;
 export const URL_GET_JSON_MODEL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelVOWL`;
+export const URL_GET_JSON_MODEL_WITH_QUERY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelVOWLWithQuery`;
 
 export const URL_LOGIN_VIA_GITHUB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/github`;
 export const URL_LOGIN_VIA_GITLAB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/gitlab`;
@@ -50,6 +52,12 @@ export const URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY = `${process.env.REACT_APP_EXP
 export const URL_GET_ALL_USERS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}users/all`;
 export const URL_GET_ALL_SYSTEM_ADMIN = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}user/getAllSystemAdmin`;
 
+// term vote URLs group
+export const URL_CREATE_NEW_TERM_VOTE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}newVote`;
+export const URL_UPDATE_EXPERT_VOTE_DECISION = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}updateVoteDecision`;
+export const URL_POST_NEW_COMMENT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}postComment`;
+export const URL_GET_TERM_VOTE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVote`;
+export const URL_GET_TERM_VOTES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVotes`
 // playground
 
 export const URL_PLAYGROUND_JSON_TRANSFORM = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}playground/transformVOWL_JSON`;
