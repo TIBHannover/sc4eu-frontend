@@ -11,7 +11,7 @@ const Vocabulary_support = props => {
     return (
         <StyledDiv>
             {props.user ? (
-                <AddVocabulary userName={props.user.displayName}/>
+                <AddVocabulary currentUser={props.user}/>
             ) : (
                 <h3 style={{ textAlign: 'center', marginTop: '30px' }}> Please Login to use the Vocabulary Development Support Service </h3>
             )}

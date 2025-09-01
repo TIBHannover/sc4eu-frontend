@@ -58,6 +58,7 @@ export const URL_UPDATE_EXPERT_VOTE_DECISION = `${process.env.REACT_APP_EXPRESS_
 export const URL_POST_NEW_COMMENT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}postComment`;
 export const URL_GET_TERM_VOTE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVote`;
 export const URL_GET_TERM_VOTES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVotes`
+export const URL_MANUAL_CLOSE_CONSENSUS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}closeConsensus`;
 // playground
 
 export const URL_PLAYGROUND_JSON_TRANSFORM = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}playground/transformVOWL_JSON`;

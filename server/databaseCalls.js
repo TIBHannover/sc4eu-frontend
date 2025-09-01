@@ -599,6 +599,42 @@ module.exports = {
         });
     },
 
+    closeConsensus: function(app) {
+        app.post('/closeConsensus', verifyToken, (req, res) => {
+            if (req.token === null) {
+                res.json({ result: false });
+            } else {
+                const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                console.log(token);
+                if (token) {
+                    const userId = token.userId;
+                    const data = JSON.stringify(req.body);
+                    const project_options = {
+                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes/${req.body.vote_uuid}/close`,
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: data
+                    };
+
+                    request(project_options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Something went wrong' });
+                            }
+                        } else {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    });
+                }
+            }
+        });
+    },
+
     postComment: function(app) {
         app.post('/postComment', verifyToken, (req, res) => {
             if (req.token === null) {
