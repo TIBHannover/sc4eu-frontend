@@ -29,7 +29,7 @@ const VocabularyMainTable = ({
     discussions,
     handleSaveDiscussion,
     handleDeleteDiscussion,
-    userName
+    currentUser
 }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
@@ -52,8 +52,8 @@ const VocabularyMainTable = ({
             : 'rgba(84, 90, 95, 1)'; // light gray
 
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
-    const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, userName);
-    const mentionedCommentsLength = getMentionedCommentsLength(discussions, userName);
+    const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
+    const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -686,7 +686,7 @@ const VocabularyMainTable = ({
                     {selectedTerm && (
                         <ExpandedRow
                             term={selectedTerm}
-                            userName={userName}
+                            currentUser={currentUser}
                             updateTerm={updateTerm}
                             termComments={termComments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
@@ -713,7 +713,7 @@ const VocabularyMainTable = ({
                         <InformationHub
                             terms={terms}
                             discussions={discussions}
-                            mentionedUser={userName}
+                            mentionedUser={currentUser.displayName}
                             onTermSelect={handleNavigateToMentionedTerm}
                         />
                     </Grid>
@@ -732,7 +732,7 @@ VocabularyMainTable.propTypes = {
     discussions: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,
     handleDeleteDiscussion: PropTypes.func.isRequired,
-    userName: PropTypes.string
+    currentUser: PropTypes.string.isRequired
 };
 
 export default VocabularyMainTable;

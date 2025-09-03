@@ -1,7 +1,7 @@
 import {submitGetRequest, submitPostRequest} from "./networkRequests";
 import {
     URL_CREATE_NEW_TERM_VOTE,
-    URL_GET_TERM_VOTE, URL_GET_TERM_VOTES,
+    URL_GET_TERM_VOTE, URL_GET_TERM_VOTES, URL_MANUAL_CLOSE_CONSENSUS,
     URL_POST_NEW_COMMENT,
     URL_UPDATE_EXPERT_VOTE_DECISION
 } from "../constants/services";
@@ -41,6 +41,18 @@ export const updateExpertDecision = (term_uuid, vote_uuid, user, choice, comment
         comment: comment
     };
     return submitPostRequest(URL_UPDATE_EXPERT_VOTE_DECISION, headers, data);
+};
+
+export const manualCloseConsensus = (term_uuid, vote_uuid) => {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    };
+    const data = {
+        term_uuid: term_uuid,
+        vote_uuid: vote_uuid
+    };
+    return submitPostRequest(URL_MANUAL_CLOSE_CONSENSUS, headers, data);
 };
 
 export const postNewComment = (term_uuid, vote_uuid, username, text) => {

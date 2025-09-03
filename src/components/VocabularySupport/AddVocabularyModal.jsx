@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
  *
  * @returns {JSX.Element} The `VocabularyMainTable` component populated with the fetched terms and states.
  */
-export default function AddVocabulary({ userName }) {
+export default function AddVocabulary({ currentUser }) {
     // Destructuring the object returned by useGetTerms to extract data and states.
     const { data: fetchedTerms = [], refetch, isError: isLoadingTermsError, isFetching: isFetchingTerms, isLoading: isLoadingTerms } = useGetTerms();
     const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: true });
@@ -39,11 +39,11 @@ export default function AddVocabulary({ userName }) {
             discussions={allTermsDiscussion}
             handleSaveDiscussion={handleSaveDiscussion}
             handleDeleteDiscussion={handleDeleteDiscussion}
-            userName={userName}
+            currentUser={currentUser}
         />
     );
 }
 
 AddVocabulary.propTypes = {
-    userName: PropTypes.string
+    currentUser: PropTypes.object.isRequired
 };
