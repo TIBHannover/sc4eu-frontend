@@ -48,9 +48,9 @@ export const Annotator = () => {
                 parts.push(
                     <HighlightedLabel
                         key={`label_${index}`}
-                        color={termColors[match.matched_term]}
+                        color={termColors[match.label]}
                         role="mark"
-                        aria-label={`Highlighted term: ${match.matched_term}`}
+                        aria-label={`Highlighted term: ${match.label}`}
                     >
                         {annotatedText.slice(match.start, match.end)}
                     </HighlightedLabel>
@@ -81,28 +81,28 @@ export const Annotator = () => {
                             ancestor_iri: ancestor.iri,
                             ancestor_synonyms: ancestor.synonyms || [],
                             ontologyId: ancestor.ontologyId,
-                            matched_terms: new Set(),
+                            labels: new Set(),
                         };
                     }
     
-                    grouped[key].matched_terms.add(match.matched_term);
+                    grouped[key].labels.add(match.label);
                 }
             });
     
             return Object.values(grouped).map(entry => ({
                 ...entry,
-                matched_terms: Array.from(entry.matched_terms),
+                labels: Array.from(entry.labels),
             }));
         } else {
             const uniqueTerms = new Map();
     
             matches.forEach(match => {
-                const key = match.matched_term;
+                const key = match.label;
     
                 // Add only if not already included
                 if (!uniqueTerms.has(key)) {
                     uniqueTerms.set(key, {
-                        matched_term: match.matched_term,
+                        label: match.label,
                         ancestor_term: match.ancestors?.[maxDepth - 1]?.label || '',
                         iri: match.iri,
                         ontologyId: match.ontologyId,
@@ -121,8 +121,8 @@ export const Annotator = () => {
         initialState: { pagination: { pageSize: 10, pageIndex: 0 }, density: 'compact',
         enableColumnOrdering: true,
         columnOrder: groupByAncestor
-        ? ['ancestor_term', 'ontologyId', 'matched_terms',  'ancestor_iri', 'ancestor_synonyms']
-        : ['matched_term', 'ontologyId', 'ancestor_term',  'iri', 'synonyms']},
+        ? ['ancestor_term', 'ontologyId', 'labels',  'ancestor_iri', 'ancestor_synonyms']
+        : ['label', 'ontologyId', 'ancestor_term',  'iri', 'synonyms']},
         enablePagination: true,
         renderTopToolbarCustomActions: () => (
             <Grid container alignItems="center">
@@ -230,13 +230,13 @@ export const Annotator = () => {
     const csvHeaders = groupByAncestor
     ? [
         { label: 'Ancestor Term', key: 'ancestor_term' },
-        { label: 'Matched Terms', key: 'matched_terms' },
+        { label: 'Matched Terms', key: 'labels' },
         { label: 'Ontology ID', key: 'ontologyId' },
         { label: 'Ancestor IRI', key: 'ancestor_iri' },
         { label: 'Ancestor Synonyms', key: 'ancestor_synonyms' },
     ]
     : [
-        { label: 'Matched Term', key: 'matched_term' },
+        { label: 'Matched Term', key: 'label' },
         { label: 'Ancestor Term', key: 'ancestor_term' },
         { label: 'Ontology ID', key: 'ontologyId' },
         { label: 'Matched Term IRI', key: 'iri' },
@@ -275,8 +275,8 @@ export const Annotator = () => {
 
             const newTermColors = {};
             response.matches.forEach(match => {
-                if (!newTermColors[match.matched_term]) {
-                    newTermColors[match.matched_term] = generateLightColor();
+                if (!newTermColors[match.label]) {
+                    newTermColors[match.label] = generateLightColor();
                 }
             });
 
