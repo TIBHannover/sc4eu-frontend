@@ -138,13 +138,13 @@ processing.getHtmlForWidoco(router);
 router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
 router.get(
     '/auth/github/callback',
-    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/vocab/LoginFailedRedirect` }),
     (req, res) => {
         // Successful authentication, redirect home.
         // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
         res.redirect(
             url.format({
-                pathname: `${process.env.CALLBACK_URL}/ocp/loggedIn`,
+                pathname: `${process.env.CALLBACK_URL}/vocab/loggedIn`,
                 query: {
                     success: true,
                     token: req.user.jwt
@@ -157,10 +157,10 @@ router.get(
 router.get('/auth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
 router.get(
     '/auth/gitlab/callback',
-    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/ocp/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt
@@ -174,10 +174,10 @@ router.get(
 router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
     '/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/ocp/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt
@@ -191,10 +191,10 @@ router.get(
 router.get('/auth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
 router.get(
     '/auth/sap/callback',
-    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/ocp/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt
@@ -206,7 +206,7 @@ router.get(
 );
 
 router.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, '..', 'build/ocp', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'build/vocab', 'index.html'));
 });
 
-app.use('/ocp', router);
+app.use('/vocab', router);
