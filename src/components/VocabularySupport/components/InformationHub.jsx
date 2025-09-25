@@ -297,13 +297,13 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                         </StyledBadge>
                     }
                 />
-                {/*<Tab*/}
-                {/*    label={*/}
-                {/*        <StyledBadge badgeContent={getTabBadgeContent(1)} customVariant="blue">*/}
-                {/*            <span>Terms with active consensus</span>*/}
-                {/*        </StyledBadge>*/}
-                {/*    }*/}
-                {/*/>*/}
+                <Tab
+                    label={
+                        <StyledBadge badgeContent={getTabBadgeContent(1)} customVariant="blue">
+                            <span>Terms with active consensus</span>
+                        </StyledBadge>
+                    }
+                />
             </Tabs>
 
             <Grid item xs={12}>

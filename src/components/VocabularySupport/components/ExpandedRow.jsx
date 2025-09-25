@@ -214,11 +214,11 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         >
                             <Typography variant="h6" sx={{ textAlign: 'center' }}>
                                 Term's Detail
-                                {/*{isActiveAgreement && (*/}
-                                {/*    <StyledTooltip title="There is an ongoing consensus, all term fields are read-only. New consensus could not be started.">*/}
-                                {/*        <InfoIcon />*/}
-                                {/*    </StyledTooltip>*/}
-                                {/*)}*/}
+                                {isActiveAgreement && (
+                                    <StyledTooltip title="There is an ongoing consensus, all term fields are read-only. New consensus could not be started.">
+                                        <InfoIcon />
+                                    </StyledTooltip>
+                                )}
                             </Typography>
                             <Typography>
                                 <Tooltip title="Unique identifier for the term">
@@ -294,36 +294,36 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
 
                             {/* Action buttons */}
                             <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
-                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle}>
+                                <Button disabled={activeAgreement} onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle}>
                                     Edit Term
                                 </Button>
                                 <Button onClick={handleClose} variant="contained" sx={buttonStyle}>
                                     Close
                                 </Button>
-                                {/*{!activeAgreement && (*/}
-                                {/*    <Tooltip title="Decide if the term's status is ready to be changed">*/}
-                                {/*        <Button*/}
-                                {/*            disabled={activeAgreement}*/}
-                                {/*            onClick={() => setInitiateTermAgreement(true)}*/}
-                                {/*            variant="contained"*/}
-                                {/*            sx={buttonStyle}*/}
-                                {/*        >*/}
-                                {/*            Start consensus*/}
-                                {/*        </Button>*/}
-                                {/*    </Tooltip>*/}
-                                {/*)}*/}
+                                {!activeAgreement && (
+                                    <Tooltip title="Decide if the term's status is ready to be changed">
+                                        <Button
+                                            disabled={activeAgreement}
+                                            onClick={() => setInitiateTermAgreement(true)}
+                                            variant="contained"
+                                            sx={buttonStyle}
+                                        >
+                                            Start consensus
+                                        </Button>
+                                    </Tooltip>
+                                )}
                                 {activeAgreement && (
                                     <>
-                                        {/*<Button*/}
-                                        {/*    onClick={() => setViewAgreementMode(true)}*/}
-                                        {/*    variant="contained"*/}
-                                        {/*    sx={{*/}
-                                        {/*        backgroundColor: colorStyled.ORANGE_COLOR,*/}
-                                        {/*        '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }*/}
-                                        {/*    }}*/}
-                                        {/*>*/}
-                                        {/*    View ongoing consensus*/}
-                                        {/*</Button>*/}
+                                        <Button
+                                            onClick={() => setViewAgreementMode(true)}
+                                            variant="contained"
+                                            sx={{
+                                                backgroundColor: colorStyled.ORANGE_COLOR,
+                                                '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }
+                                            }}
+                                        >
+                                            View ongoing consensus
+                                        </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
                                             <Button onClick={() => manualCloseConsensus(term.identifier, activeAgreement.uuid)} variant="contained" sx={buttonStyle}>
                                                 Close consensus
