@@ -149,9 +149,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             control={<Radio />}
                                             label={
                                                 <Box>
-                                                    <Typography>Reject</Typography>
+                                                    <Typography>Not Accept</Typography>
                                                     <Typography variant="body2" color="text.secondary" sx={{ ml: 0 }}>
-                                                        Term's status will be changed to the rejected if consensus succeeds.
+                                                        Term's status will be changed to not accepted if consensus succeeds.
                                                     </Typography>
                                                 </Box>
                                             }
