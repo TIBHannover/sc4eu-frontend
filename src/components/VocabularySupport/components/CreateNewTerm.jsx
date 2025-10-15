@@ -51,11 +51,15 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
     };
 
     const handleAddTermFromTerminology = async value => {
-        const url = `${process.env.REACT_APP_TS_ONTOLOGIES_URL}${encodeURIComponent(value.ontology_name)}/terms?iri=${encodeURIComponent(value.iri)}`;
+        const url = `${process.env.REACT_APP_TS_ONTOLOGIES_URL}${encodeURIComponent(value.ontologyId)}/terms?iri=${encodeURIComponent(value.iri)}`;
         const termFromTerminology = {
-            label: value.label,
-            id: value.id,
-            description: value.description ? value.description[0] : 'Not Available',
+            label: value.label[0],
+            id: value.iri,
+            description: value.definition?.[0]
+                ? (typeof value.definition[0] === "object"
+                    ? value.definition[0].value
+                    : value.definition[0])
+                : 'Not Available',
             seeAlso: `url:${url}`,
             status: 'draft',
             created: new Date().toLocaleDateString('en-CA'),
@@ -219,18 +223,18 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                                     {jumpToResults.map((result, index) => (
                                         <ListItemButton
                                             key={index}
-                                            selected={selectedTerm && selectedTerm.id === result.id}
+                                            selected={selectedTerm && selectedTerm.iri === result.iri}
                                             onClick={() => handleSelectTerm(result)}
                                         >
                                             <ListItemText
-                                                primary={result.label}
+                                                primary={result.label[0]}
                                                 secondary={
                                                     <React.Fragment>
                                                         <Typography variant="body2" color="text.secondary">
-                                                            {result.description}
+                                                            {result.definition?.[0]?.value || result.definition?.[0]}
                                                         </Typography>
                                                         <Typography variant="caption" color="text.secondary">
-                                                            {result.ontology_name} - {result.id}
+                                                            {result.ontologyId} - {result.iri}
                                                         </Typography>
                                                     </React.Fragment>
                                                 }
