@@ -41,24 +41,18 @@ export async function olsSearch({
 
 export async function getJumpToResult(inputData, count = 10) {
     try {
-        let autocompleteApiBaseUrl = process.env.REACT_APP_SEARCH_URL;
-        autocompleteApiBaseUrl = autocompleteApiBaseUrl.split('search')[0] + 'search';
-        let url = `${autocompleteApiBaseUrl}?q=${inputData['searchQuery']}&rows=${count}`;
-        url = url + `&type=class&type=property`; //For now we are only searching for classes and properties, this
-        // can change later
-        // url = inputData['ontologyIds'] ? url + `&ontology=${inputData['ontologyIds']}` : url;
-        // url = inputData['types'] ? url + `&type=${inputData['types']}` : url;
-        // url = inputData['obsoletes'] ? url + '&obsoletes=true' : url;
-        // url = inputData['collectionIds'] ? url + `&schema=collection&classification=${inputData['collectionIds']}` : url;
+        let autocompleteApiBaseUrl = process.env.REACT_APP_SEARCH_URL2;
+        let url = `${autocompleteApiBaseUrl}?search=${inputData['searchQuery']}&size=${count}&page=0exactMatch=false&includeObsoleteEntities=false&exclusive=false&option=LINEAR`;
         let result = await fetch(url, getCallSetting);
         result = await result.json();
-        result = result['response']['docs'];
+        result = result['elements'];
         return result;
     } catch (e) {
         // throw e
         return [];
     }
 }
+
 
 export async function getAutoCompleteResult(inputData, count = 5) {
     try {
