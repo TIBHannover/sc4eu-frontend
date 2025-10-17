@@ -160,7 +160,7 @@ module.exports = (emailContent, SenderName) => {
                 <tr>
                     <td align="center" bgcolor="#e9ecef"
                         style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                        <p style="margin: 0;">You received this email because you are System Admin  of the SC3 Portal.
+                        <p style="margin: 0;">You received this email because you are System Admin  of the VDST Portal.
                             If you are not aware of it you can safely delete this email.</p>
                     </td>
                 </tr>

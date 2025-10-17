@@ -517,7 +517,7 @@ module.exports = {
                         const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.username,
-                            subject: 'SC3 Email Verification',
+                            subject: 'VDST Email Verification',
                             body: emailVerificationHtml(callbackURL, result.displayName).body
                         };
                         sendEmail(EmailFields).then(response => {
@@ -728,7 +728,7 @@ module.exports = {
                         const callbackURL = `${process.env.CALLBACK_URL}/vocab/verifResetPassword/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.email_address,
-                            subject: 'SC3 Password Reset',
+                            subject: 'VDST Password Reset',
                             body: passwordResetEmailHtml(callbackURL, result.display_name).body
                         };
                         sendEmail(EmailFields).then(response => {
