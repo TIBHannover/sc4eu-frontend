@@ -1,3 +1,26 @@
+Differences in separate ocp version:
+
+in package.json:  
+
+    "homepage": "/vocab",
+    "build": "BUILD_PATH='./build' react-scripts build",
+
+in server/index.js:  
+ 
+    router.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
+    });
+
+    app.use('/', router);
+
+in server/.env:
+  
+    APPLICATION_PORT should match assigned at external
+
+in all-services/docker-compose.yml:
+
+    frontend: ports should match assigned at external (could be same as APPLICATION_PORT above)
+
 # Frontend
 
 Frontend holding an express server as middle ware for social logins and the the frontend using React
