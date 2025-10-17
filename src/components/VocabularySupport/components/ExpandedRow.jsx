@@ -4,14 +4,14 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
-import { getTermVote, initiateNewVote } from '../../../network/TermVoteCalls';
+import { getTermVote, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
 import InfoIcon from '@mui/icons-material/Info';
-import {StyledTooltip} from "../../../styledComponents/styledComponents";
+import { StyledTooltip } from '../../../styledComponents/styledComponents';
 
-const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
+const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
     const [isActiveAgreement, setIsActiveAgreement] = useState(false);
@@ -96,7 +96,7 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
     };
 
     const handleAgreementSubmit = async () => {
-        await initiateNewVote(term.identifier, userName, agreementType, reason);
+        await initiateNewVote(term.identifier, currentUser.displayName, agreementType, reason);
         setInitiateTermAgreement(false);
         setAgreementType(null);
         setReason(null);
@@ -149,9 +149,9 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
                                             control={<Radio />}
                                             label={
                                                 <Box>
-                                                    <Typography>Reject</Typography>
+                                                    <Typography>Not Accept</Typography>
                                                     <Typography variant="body2" color="text.secondary" sx={{ ml: 0 }}>
-                                                        Term's status will be changed to the rejected if consensus succeeds.
+                                                        Term's status will be changed to not accepted if consensus succeeds.
                                                     </Typography>
                                                 </Box>
                                             }
@@ -195,7 +195,9 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
                     }}
                 />
             )}
-            {viewAgreementMode && <VoteView term={term} vote={activeAgreement} username={userName} setVoteViewMode={setViewAgreementMode} />}
+            {viewAgreementMode && (
+                <VoteView term={term} vote={activeAgreement} username={currentUser.displayName} setVoteViewMode={setViewAgreementMode} />
+            )}
             {!editMode && !viewAgreementMode && (
                 <Box>
                     <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, gap: '20px', padding: '5px' }}>
@@ -311,16 +313,23 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
                                     </Tooltip>
                                 )}
                                 {activeAgreement && (
-                                    <Button
-                                        onClick={() => setViewAgreementMode(true)}
-                                        variant="contained"
-                                        sx={{
-                                            backgroundColor: colorStyled.ORANGE_COLOR,
-                                            '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }
-                                        }}
-                                    >
-                                        View ongoing consensus
-                                    </Button>
+                                    <>
+                                        <Button
+                                            onClick={() => setViewAgreementMode(true)}
+                                            variant="contained"
+                                            sx={{
+                                                backgroundColor: colorStyled.ORANGE_COLOR,
+                                                '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }
+                                            }}
+                                        >
+                                            View ongoing consensus
+                                        </Button>
+                                        {currentUser.role.toString().toLowerCase() === 'system admin' && (
+                                            <Button onClick={() => manualCloseConsensus(term.identifier, activeAgreement.uuid)} variant="contained" sx={buttonStyle}>
+                                                Close consensus
+                                            </Button>
+                                        )}
+                                    </>
                                 )}
                             </Box>
                         </Paper>
@@ -463,6 +472,7 @@ const ExpandedRow = ({ term, userName, updateTerm, termComments, handleSaveDiscu
 
 ExpandedRow.propTypes = {
     term: PropTypes.object.isRequired,
+    currentUser: PropTypes.object.isRequired,
     updateTerm: PropTypes.func.isRequired,
     termComments: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,

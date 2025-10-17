@@ -21,12 +21,12 @@ export const createColumns = groupByAncestor => {
                 Cell: ({ row }) => linkCell(row?.original?.ancestor_term, row?.original?.ancestor_iri, row?.original?.ontologyId),
             },
             {
-                id: 'matched_terms',
+                id: 'labels',
                 header: 'Matched Terms',
-                accessorKey: 'matched_terms',
+                accessorKey: 'labels',
                 Cell: ({ row }) => (
                     <div>
-                        {row?.original?.matched_terms.map((term, idx) => (
+                        {row?.original?.labels.map((term, idx) => (
                             <div key={idx}>{term}</div>
                         ))}
                     </div>
@@ -63,11 +63,11 @@ export const createColumns = groupByAncestor => {
 
     return [
         {
-            id: 'matched_term',
+            id: 'label',
             header: 'Matched Term',
-            accessorKey: 'matched_term',
+            accessorKey: 'label',
             Cell: ({ row }) => linkCell(
-                row?.original?.matched_term,
+                row?.original?.label,
                 row?.original?.iri,
                 row?.original?.ontologyId
             ),

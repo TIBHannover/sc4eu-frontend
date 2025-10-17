@@ -34,8 +34,25 @@ const EditingTxt = (
 );
 
 const DigitalReferenceTxt = (
-    <>{'The Digital Reference Ontology provides a comprehensive framework for understanding and utilizing semiconductor supply chain ontologies.'}</>
+    <>
+        <p>
+            The digital reference ontology, developed as part of the SC4EU project,
+            provides a framework for creating, integrating and applying ontologies
+            to the semiconductor supply chain.
+        </p>
+        <p>
+            The Ontology Curation Portal supports the creation, collection and visualisation
+            of these ontologies. Core features:
+        </p>
+        <ul>
+            <li>Consolidated access to distributed ontologies via projects.</li>
+            <li>Visualising ontologies.</li>
+            <li>Creating new vocabularies to extend or create ontologies.</li>
+        </ul>
+    </>
 );
+
+
 export default class Home extends Component {
     constructor(props) {
         super(props);
@@ -56,7 +73,7 @@ export default class Home extends Component {
                         <StyledHeading>Vocabulary platform</StyledHeading>
                     </StyledHeadingDiv>
                     <StyledBody>
-                        <StyledBodyDiv style={{ maxWidth: 500, alignSelf: 'center', marginBottom: 20 }}>
+                        <StyledBodyDiv style={{ maxWidth: 700, alignSelf: 'center', marginBottom: 20 }}>
                             <StyledBodyLogo src={visualisation} alt="Digital Reference Ontology" />
                             <StyledBodyLinkBiger
                                 as="a"
@@ -79,20 +96,20 @@ export default class Home extends Component {
                                 alignSelf: 'center'
                             }}
                         >
-                            <StyledBodyDiv style={{ maxWidth: 500, position: 'relative', minHeight: 170 }}>
-                                <SmallLogoLeft src={collection} alt="Collaborative Ontology Curation" />
-                                <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block', position: 'relative', zIndex: 1 }}>
-                                    Collaborative Ontology Curation
-                                </StyledBodyLink>
-                                <StyledBodyText>{CurationTxt}</StyledBodyText>
-                            </StyledBodyDiv>
-                            <StyledBodyDiv style={{ maxWidth: 500, position: 'relative', minHeight: 170 }}>
-                                <SmallLogoRight src={edite} alt="Ontology Visualisation" />
-                                <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block', position: 'relative', zIndex: 1 }}>
-                                    Ontology Visualisation
-                                </StyledBodyLink>
-                                <StyledBodyText>{VisualizationTxt}</StyledBodyText>
-                            </StyledBodyDiv>
+                            {/*<StyledBodyDiv style={{ maxWidth: 500, position: 'relative', minHeight: 170 }}>*/}
+                            {/*    <SmallLogoLeft src={collection} alt="Collaborative Ontology Curation" />*/}
+                            {/*    <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block', position: 'relative', zIndex: 1 }}>*/}
+                            {/*        Collaborative Ontology Curation*/}
+                            {/*    </StyledBodyLink>*/}
+                            {/*    <StyledBodyText>{CurationTxt}</StyledBodyText>*/}
+                            {/*</StyledBodyDiv>*/}
+                            {/*<StyledBodyDiv style={{ maxWidth: 500, position: 'relative', minHeight: 170 }}>*/}
+                            {/*    <SmallLogoRight src={edite} alt="Ontology Visualisation" />*/}
+                            {/*    <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block', position: 'relative', zIndex: 1 }}>*/}
+                            {/*        Ontology Visualisation*/}
+                            {/*    </StyledBodyLink>*/}
+                            {/*    <StyledBodyText>{VisualizationTxt}</StyledBodyText>*/}
+                            {/*</StyledBodyDiv>*/}
                         </div>
                     </StyledBody>
                 </StyledRootDiv>
@@ -254,12 +271,27 @@ const StyledBodyLink = styled(Link)`
     }
 `;
 
-const StyledBodyTextBigger = styled.p`
+const StyledBodyTextBigger = styled.div`
     font-size: calc(${fontStyled.fontSize.NormalText} * 1.3);
     font-family: ${fontStyled.fontFamily};
-    text-align: justify;
-    text-align-last: center;
+    line-height: 1.6;
     color: ${colorStyled.TEXTCOLOR};
+    text-align: left;
+    margin-top: 1rem;
+
+    p {
+        margin-bottom: 1rem;
+        text-align: justify;
+    }
+
+    ul {
+        margin-top: 0.5rem;
+        list-style-type: disc;
+    }
+
+    li {
+        margin-bottom: 0.5rem;
+    }
 
     @media (max-width: ${MAX_WIDTH}) {
         font-size: calc(${fontStyled.fontSize.MobileViewNormalText} * 1.3);
@@ -269,6 +301,7 @@ const StyledBodyTextBigger = styled.p`
         font-size: calc(${fontStyled.fontSize.DesktopViewNormalText} * 1.3);
     }
 `;
+
 
 const StyledBodyText = styled.p`
     font-size: calc(${fontStyled.fontSize.NormalText} * 1.15);

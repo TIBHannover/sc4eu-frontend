@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Typography, Avatar, TextField, Button, Box, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Grid, Typography, Avatar, TextField, Button, Box, RadioGroup, FormControlLabel, Radio, Tooltip } from '@mui/material';
 import {
     CheckCircle as ApprovedIcon,
     Cancel as RejectedIcon,
@@ -132,11 +132,11 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                                 letterSpacing: 0.5
                             }}
                         >
-                            {vote.type === 'accept' ? '→ Accept Proposal' : '→ Reject Proposal'}
+                            {vote.type === 'accept' ? '→ Accept Proposal' : '→ Not Accept Proposal'}
                         </Typography>
 
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                            {vote.type === 'accept' ? 'Change term status to accept' : 'Change term status to reject'}
+                            {vote.type === 'accept' ? 'Change term status to accept' : 'Change term status to not accepted'}
                         </Typography>
                     </Box>
 
@@ -145,10 +145,11 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                             <strong>Consensus progress:</strong> {totalVotes} people voted
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            {approvedCount} approved • {rejectedCount} rejected
+                            {approvedCount} agree • {rejectedCount} not agree
                         </Typography>
                         <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                            Note: At least three votes are required to reach a consensus. Furthermore, a two-thirds majority is required for the proposed change of status.
+                            Note: At least three votes are required to reach a consensus. Furthermore, a two-thirds majority is required for the
+                            proposed change of status.
                         </Typography>
                     </Box>
                 </Grid>
@@ -177,16 +178,32 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                             </Typography>
 
                             <RadioGroup value={decision} onChange={e => setDecision(e.target.value)} sx={{ gap: 2, mb: 2 }} row>
-                                <FormControlLabel
-                                    value="approved"
-                                    control={<Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color="success" />} />}
-                                    label="Approve"
-                                />
-                                <FormControlLabel
-                                    value="rejected"
-                                    control={<Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color="error" />} />}
-                                    label="Reject"
-                                />
+                                <Tooltip
+                                    title={
+                                        vote.type === 'accept'
+                                            ? 'You agree to all term details. With a majority of this vote the general term status will change to Accepted'
+                                            : 'You agree that term should be removed. With a majority of this vote the general term status will change to Not Accepted (Term should be removed from vocabulary)'
+                                    }
+                                >
+                                    <FormControlLabel
+                                        value="approved"
+                                        control={<Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color="success" />} />}
+                                        label="Agree"
+                                    />
+                                </Tooltip>
+                                <Tooltip
+                                    title={
+                                        vote.type === 'accept'
+                                            ? 'You are not satisfied with the current term details. With a majority of this vote the general term status will stay the same as Draft'
+                                            : 'You want to keep this Term for now. With a majority of this vote the general term status will stay the same as Draft'
+                                    }
+                                >
+                                    <FormControlLabel
+                                        value="rejected"
+                                        control={<Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color="error" />} />}
+                                        label="Not Agree"
+                                    />
+                                </Tooltip>
                             </RadioGroup>
 
                             <TextField
@@ -266,12 +283,12 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                                                     {user.choice === 'approved' ? (
                                                         <>
                                                             <ApprovedIcon color="success" fontSize="small" />
-                                                            <Typography variant="body2">approved</Typography>
+                                                            <Typography variant="body2">agree</Typography>
                                                         </>
                                                     ) : (
                                                         <>
                                                             <RejectedIcon color="error" fontSize="small" />
-                                                            <Typography variant="body2">rejected</Typography>
+                                                            <Typography variant="body2">not agree</Typography>
                                                         </>
                                                     )}
                                                     <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>

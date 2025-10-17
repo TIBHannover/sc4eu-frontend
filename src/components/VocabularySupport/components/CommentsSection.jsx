@@ -92,7 +92,6 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
 
     useEffect(() => {
         getAllUsers().then(users => {
-            console.log('Users:', users);
             setUsers(users);
         });
     }, []); // Empty dependency array means this runs once on mount

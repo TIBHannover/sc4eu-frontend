@@ -1,4 +1,4 @@
-import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_EMAIL, URL_REGISTER_VIA_EMAIL, URL_ADMIN_DASHBOARD, URL_SET_NEW_PASSWORD } from 'constants/services';
+import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_EMAIL, URL_REGISTER_VIA_EMAIL, URL_ADMIN_DASHBOARD, URL_SET_NEW_PASSWORD } from '../constants/services';
 
 import { plainGetRequest, submitGetRequest, submitPostRequest } from './networkRequests';
 import { URL_FORGOT_PASSWORD } from '../constants/services';
