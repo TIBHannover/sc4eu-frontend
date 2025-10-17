@@ -207,7 +207,7 @@ router.get(
 );
 
 router.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, '..', 'build/vocab', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
 });
 
-app.use('/vocab', router);
+app.use('/', router);
