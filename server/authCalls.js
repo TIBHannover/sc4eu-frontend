@@ -377,10 +377,10 @@ module.exports = {
                         process.env.JWT_SECRET,
                         { expiresIn: '1h' }
                     );
-                    const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
+                    const callbackURL = `${process.env.CALLBACK_URL}/vocab/EmailVerify/${result.user_id}/${token}`;
                     const EmailFields = {
                         email: req.body.username,
-                        subject: 'SC3 Email Verification',
+                        subject: 'VDST Email Verification',
                         body: emailVerificationHtml(callbackURL, req.body.displayName).body
                     };
                     sendEmail(EmailFields).then(response => {

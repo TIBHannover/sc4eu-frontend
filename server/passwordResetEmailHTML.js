@@ -128,7 +128,7 @@ module.exports = (callbackURL, displayName) => {
                         style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                         <h3 style="margin: 0;">Hello ${displayName}, </h3>
                         <p>You recently requested to reset your password for your account. Use the button below to reset it. If you didn't create an account with <a
-                            href="https://service.tib.eu/sc3/">SC3</a>, you can safely delete this email.</p>
+                            href="https://service.tib.eu/vocab/">VDST</a>, you can safely delete this email.</p>
                     </td>
                 </tr>
                 <tr>

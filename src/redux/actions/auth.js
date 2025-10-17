@@ -61,8 +61,8 @@ export const redux_updateUserSettings = payload => dispatch => {
 };
 
 export const resetAuth = () => dispatch => {
-    cookies.remove('token', { path: '/sc3/' });
-    cookies.remove('token_expires_in', { path: '/sc3/' });
+    cookies.remove('token', { path: '/vocab/' });
+    cookies.remove('token_expires_in', { path: '/vocab/' });
     dispatch({
         type: type.RESET_AUTH
     });
