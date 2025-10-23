@@ -1,57 +1,22 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import collection from '../assets/images/collection.png';
-import edite from '../assets/images/Edit.png';
-import visualisation from '../assets/images/visulization.png';
 import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import IntroductoryPopUp from '../components/IntroductoryPopUp';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import ROUTES from 'constants/routes';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
-import Logo from '../assets/images/logo.png';
+import Logo from '../assets/images/sandbox_orange_logo.svg';
 import GoogleSurvey from '../components/GoogleSurvey';
-const digitalReferenceURL = process.env.REACT_APP_DIGITAL_REFERENCE_ONTOLOGY_URL;
+import Typography from "@mui/material/Typography";
 
-const CurationTxt = (
-    <>
-        {'The SC4EU Ontology Curation Portal enables you to collect all ontologies relevant for your research project.' +
-            ' You can create new collections and add as much ontologies as you like.'}
-    </>
-);
-const VisualizationTxt = (
-    <>
-        {'Creation of ontologies requires expertise from various stakeholders with different ontology proficiency levels.' +
-            ' The portal allows easy translation of visualizations for various expert groups.'}
-    </>
-);
-const EditingTxt = (
-    <>
-        {'Collaborative editing of ontologies is the next step in the ontology agreement process. The SC4EU Ontology ' +
-            'Curation Portal integrates the broadly known WebProtege for collaborative editing.'}
-    </>
-);
-
-const DigitalReferenceTxt = (
+const VocabularyReferenceTxt = (
     <>
         <p>
-            The digital reference ontology, developed as part of the SC4EU project,
-            provides a framework for creating, integrating and applying ontologies
-            to the semiconductor supply chain.
+            You could find more information about the tool in about Portal and FAQ sections in a menu on the left side.
         </p>
-        <p>
-            The Ontology Curation Portal supports the creation, collection and visualisation
-            of these ontologies. Core features:
-        </p>
-        <ul>
-            <li>Consolidated access to distributed ontologies via projects.</li>
-            <li>Visualising ontologies.</li>
-            <li>Creating new vocabularies to extend or create ontologies.</li>
-        </ul>
     </>
 );
-
 
 export default class Home extends Component {
     constructor(props) {
@@ -68,49 +33,14 @@ export default class Home extends Component {
                     <StyledDivPopUp>
                         <IntroductoryPopUp />
                     </StyledDivPopUp>
-                    <StyledHeadingDiv>
-                        <StyledLogo src={Logo} alt="SC3 Logo" />
-                        <StyledHeading>Vocabulary platform</StyledHeading>
-                    </StyledHeadingDiv>
                     <StyledBody>
                         <StyledBodyDiv style={{ maxWidth: 700, alignSelf: 'center', marginBottom: 20 }}>
-                            <StyledBodyLogo src={visualisation} alt="Digital Reference Ontology" />
-                            <StyledBodyLinkBiger
-                                as="a"
-                                href={digitalReferenceURL}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ marginTop: 16, display: 'block' }}
-                            >
-                                Digital Reference Ontology
-                            </StyledBodyLinkBiger>
-                            <StyledBodyTextBigger>{DigitalReferenceTxt}</StyledBodyTextBigger>
+                            <StyledBodyLogo src={Logo} alt="Welcome to the testing Vocabulary platform" />
+                            <Typography variant="h4">
+                                Welcome to the demo Vocabulary Development Support Tool (VDST) server
+                            </Typography>
+                            <StyledBodyTextBigger>{VocabularyReferenceTxt}</StyledBodyTextBigger>
                         </StyledBodyDiv>
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                gap: 40,
-                                flexWrap: 'wrap',
-                                width: '100%',
-                                alignSelf: 'center'
-                            }}
-                        >
-                            {/*<StyledBodyDiv style={{ maxWidth: 500, position: 'relative', minHeight: 170 }}>*/}
-                            {/*    <SmallLogoLeft src={collection} alt="Collaborative Ontology Curation" />*/}
-                            {/*    <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block', position: 'relative', zIndex: 1 }}>*/}
-                            {/*        Collaborative Ontology Curation*/}
-                            {/*    </StyledBodyLink>*/}
-                            {/*    <StyledBodyText>{CurationTxt}</StyledBodyText>*/}
-                            {/*</StyledBodyDiv>*/}
-                            {/*<StyledBodyDiv style={{ maxWidth: 500, position: 'relative', minHeight: 170 }}>*/}
-                            {/*    <SmallLogoRight src={edite} alt="Ontology Visualisation" />*/}
-                            {/*    <StyledBodyLink to={ROUTES.PROJECT} style={{ marginTop: 16, display: 'block', position: 'relative', zIndex: 1 }}>*/}
-                            {/*        Ontology Visualisation*/}
-                            {/*    </StyledBodyLink>*/}
-                            {/*    <StyledBodyText>{VisualizationTxt}</StyledBodyText>*/}
-                            {/*</StyledBodyDiv>*/}
-                        </div>
                     </StyledBody>
                 </StyledRootDiv>
                 <StyledSurveyDiv>

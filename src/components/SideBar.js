@@ -424,10 +424,10 @@ const SideBar = props => {
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS}>
-                        <HandshakeOutlined color="action" />
-                        <StyledText>Partners</StyledText>
-                    </StyledLink>
+                    {/*<StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS}>*/}
+                    {/*    <HandshakeOutlined color="action" />*/}
+                    {/*    <StyledText>Partners</StyledText>*/}
+                    {/*</StyledLink>*/}
                 </div>
             </ListItem>
         </List>
