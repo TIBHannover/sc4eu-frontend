@@ -211,17 +211,17 @@ class LoginViaEmail extends Component {
                                                 <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
                                                 Sign in with Google
                                             </a> */}
-                                            <a
-                                                href={URL_LOGIN_VIA_SAP}
-                                                target="_self"
-                                                className="btn btn-primary"
-                                                style={{ width: '90%', backgroundColor: '#0f6d9c', border: 'none' }}
-                                                rel="noreferrer"
-                                            >
-                                                <img src={sapLogo} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
-                                                Sign in with SAP
-                                            </a>
+                                            {/*<a*/}
+                                            {/*    href={URL_LOGIN_VIA_SAP}*/}
+                                            {/*    target="_self"*/}
+                                            {/*    className="btn btn-primary"*/}
+                                            {/*    style={{ width: '90%', backgroundColor: '#0f6d9c', border: 'none' }}*/}
+                                            {/*    rel="noreferrer"*/}
+                                            {/*>*/}
+                                            {/*    <img src={sapLogo} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />*/}
+                                            {/*    <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />*/}
+                                            {/*    Sign in with SAP*/}
+                                            {/*</a>*/}
                                         </div>
                                         <div style={{ textAlign: 'center', marginTop: '20px' }}>
                                             <hr style={{ float: 'left', marginLeft: 'auto', marginRight: 'auto', width: '45%' }} />
