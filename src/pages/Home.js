@@ -37,7 +37,7 @@ export default class Home extends Component {
                         <StyledBodyDiv style={{ maxWidth: 700, alignSelf: 'center', marginBottom: 20 }}>
                             <StyledBodyLogo src={Logo} alt="Welcome to the testing Vocabulary platform" />
                             <Typography variant="h4">
-                                Welcome to the demo Vocabulary Development Support Tool (VDST) server
+                                Welcome to the Sandbox Vocabulary Development Support Tool (VDST) server
                             </Typography>
                             <StyledBodyTextBigger>{VocabularyReferenceTxt}</StyledBodyTextBigger>
                         </StyledBodyDiv>
