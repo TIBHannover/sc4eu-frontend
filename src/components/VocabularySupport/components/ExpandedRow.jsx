@@ -1,28 +1,47 @@
-import { Box, Typography, TextField, Button, Tooltip, IconButton, Link, FormControlLabel, RadioGroup, Radio, Paper, Chip } from '@mui/material';
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Tooltip,
+    IconButton,
+    Link,
+    FormControlLabel,
+    RadioGroup,
+    Radio,
+    Paper,
+    Chip
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PropTypes from 'prop-types';
-import CommentsSection, {stringAvatar} from './CommentsSection';
+import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
-import { getTermVote, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
+import {
+    getTermLastConsensus,
+    getTermVote,
+    initiateNewVote,
+    manualCloseConsensus
+} from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
 import InfoIcon from '@mui/icons-material/Info';
 import { StyledTooltip } from '../../../styledComponents/styledComponents';
-import Divider from "@mui/material/Divider";
-import Avatar from "@mui/material/Avatar";
+import LastConsensusView from './LastConsensusView';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
-    const [isActiveAgreement, setIsActiveAgreement] = useState(false);
     const [activeAgreement, setActiveAgreement] = useState(false);
     const [notification, setNotification] = useState(false);
     const [initiateTermAgreement, setInitiateTermAgreement] = useState(false);
     const [agreementType, setAgreementType] = useState(null);
     const [reason, setReason] = useState(null);
     const [openLastConsensusDialog, setOpenLastConsensusDialog] = useState(false);
+    const [lastConsensus, setLastConsensus] = useState(null);
+    const [isConsensusSubmitted, setIsConsensusSubmitted] = useState(false);
+    const [isConsensusClosed, setIsConsensusClosed] = useState(false);
 
     const [updatedTerm, setUpdatedTerm] = useState({
         ...term,
@@ -37,13 +56,20 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     useEffect(() => {
         const getVote = async () => {
             const data = await getTermVote(term.identifier);
-            if (data.length !== 0) {
+            if (!data.error) {
                 setActiveAgreement(data[0]);
-                setIsActiveAgreement(true);
             }
         };
+        const getLastConsensus = async () => {
+            const data = await getTermLastConsensus(term.identifier);
+            if (!data.error) {
+                setLastConsensus(data);
+            }
+        }
+
         getVote();
-    }, [isActiveAgreement, term.identifier]);
+        getLastConsensus();
+    }, [isConsensusSubmitted, isConsensusClosed, term.identifier]);
 
     const splitAltLabels = altLabel => {
         return altLabel ? altLabel.split(',') : [''];
@@ -104,24 +130,8 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         setAgreementType(null);
         setReason(null);
         setNotification(true);
-        setIsActiveAgreement(true);
+        setIsConsensusSubmitted(true);
     };
-
-    const lastConsensus = {
-        type: "accept", // or "reject"
-        totalVotes: 5,
-        approvedCount: 4,
-        rejectedCount: 1,
-        initiator: "Alice",
-        created_at: "2025-06-10T14:20:00Z",
-        reason: "Term matches ISO standard terminology",
-        votes: [
-            { user_name: "Bob", choice: "approved", comment: "Looks good", updated_at: "2025-06-10T15:00:00Z" },
-            { user_name: "Charlie", choice: "approved", updated_at: "2025-06-10T15:05:00Z" },
-            { user_name: "Dana", choice: "rejected", comment: "Needs refinement", updated_at: "2025-06-10T15:10:00Z" }
-        ]
-    };
-
 
     return (
         <Box sx={{ paddingLeft: 2, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -207,7 +217,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         </Box>
                     }
                     paperSizeStyles={{
-                        minHeight: '60%',
+                        minHeight: '0%',
                         maxHeight: '60%',
                         minWidth: '60%',
                         maxWidth: '60%'
@@ -215,102 +225,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                 />
             )}
             {openLastConsensusDialog && (
-                <MaterialUIPopUp
-                    open={openLastConsensusDialog}
-                    onClose={() => {
-                        setOpenLastConsensusDialog(false);
-                    }}
-                    message={
-                        <Box sx={{ p: 2 }}>
-                            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-                                {lastConsensus.label}
-                            </Typography>
-                            <Divider
-                                sx={{
-                                    bgcolor: lastConsensus.type === 'accept' ? 'success.main' : 'error.main',
-                                    height: 2,
-                                    mb: 1
-                                }}
-                            />
-                            <Typography
-                                variant="body1"
-                                sx={{
-                                    color: lastConsensus.type === 'accept' ? 'success.dark' : 'error.dark',
-                                    fontWeight: 500,
-                                    textTransform: 'uppercase',
-                                    letterSpacing: 0.5,
-                                    mb: 2
-                                }}
-                            >
-                                {lastConsensus.type === 'accept' ? '→ Accept Proposal' : '→ Not Accept Proposal'}
-                            </Typography>
-
-                            {/* Progress */}
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="body1">
-                                    <strong>Consensus progress:</strong> {lastConsensus.totalVotes} people voted
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {lastConsensus.approvedCount} agree • {lastConsensus.rejectedCount} not agree
-                                </Typography>
-                            </Box>
-
-                            {/* Initiator */}
-                            <Box sx={{ mb: 3 }}>
-                                <Typography variant="subtitle1">Initiated By</Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                    <Avatar {...stringAvatar(lastConsensus.initiator)} sx={{ mr: 2, width: 32, height: 32 }} />
-                                    <Typography variant="body2">
-                                        {lastConsensus.initiator}
-                                    </Typography>
-                                    <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
-                                        {new Date(lastConsensus.created_at).toLocaleString()}
-                                    </Typography>
-                                </Box>
-                                {lastConsensus.reason && (
-                                    <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>
-                                        {lastConsensus.reason}
-                                    </Typography>
-                                )}
-                            </Box>
-
-                            {/* Votes */}
-                            <Box>
-                                <Typography variant="subtitle1" gutterBottom>
-                                    Votes
-                                </Typography>
-                                {lastConsensus.votes && lastConsensus.votes.length > 0 ? (
-                                    lastConsensus.votes.map((vote, idx) => (
-                                        <Box key={idx} sx={{ display: 'flex', alignItems: 'flex-start', mb: 1 }}>
-                                            <Avatar {...stringAvatar(vote.user_name)} sx={{ mr: 2, width: 28, height: 28 }} />
-                                            <Box>
-                                                <Typography variant="body2">
-                                                    <strong>{vote.user_name}</strong> – {vote.choice === 'approved' ? 'agree' : 'not agree'}
-                                                </Typography>
-                                                {vote.comment && (
-                                                    <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
-                                                        "{vote.comment}"
-                                                    </Typography>
-                                                )}
-                                                <Typography variant="caption" color="text.secondary">
-                                                    {new Date(vote.updated_at).toLocaleString()}
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    ))
-                                ) : (
-                                    <Typography variant="body2" color="text.disabled">No votes recorded</Typography>
-                                )}
-                            </Box>
-                        </Box>
-                    }
-                    paperSizeStyles={{
-                        minHeight: '60%',
-                        maxHeight: '60%',
-                        minWidth: '60%',
-                        maxWidth: '60%'
-                    }}
-                />
+                <LastConsensusView consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)}/>
             )}
             {viewAgreementMode && (
                 <VoteView term={term} vote={activeAgreement} username={currentUser.displayName} setVoteViewMode={setViewAgreementMode} />
@@ -331,7 +246,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         >
                             <Typography variant="h6" sx={{ textAlign: 'center' }}>
                                 Term's Detail
-                                {isActiveAgreement && (
+                                {activeAgreement && (
                                     <StyledTooltip title="There is an ongoing consensus, all term fields are read-only. New consensus could not be started.">
                                         <InfoIcon />
                                     </StyledTooltip>
@@ -397,7 +312,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
-                                <strong>Last modified:</strong> 2025-06-10, 10:13:20
+                                <strong>Last modified:</strong> {updatedTerm.modified}
                             </Typography>
                             {/* Status */}
                             <Typography>
@@ -407,12 +322,14 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     </IconButton>
                                 </Tooltip>
                                 <strong>Status:</strong> {updatedTerm.status}
-                                <Chip
-                                    label="Check last consensus"
-                                    size="small"
-                                    sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.PRIMARY.main }}
-                                    onClick={() => setOpenLastConsensusDialog(true)}
-                                />
+                                {lastConsensus && (
+                                    <Chip
+                                        label="Check last consensus"
+                                        size="small"
+                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.PRIMARY.main }}
+                                        onClick={() => setOpenLastConsensusDialog(true)}
+                                    />
+                                )}
                             </Typography>
 
                             {/* Action buttons */}
@@ -449,7 +366,10 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
                                             <Button
-                                                onClick={() => manualCloseConsensus(term.identifier, activeAgreement.uuid)}
+                                                onClick={() => {
+                                                    manualCloseConsensus(term.identifier, activeAgreement.uuid);
+                                                    setIsConsensusClosed(true);
+                                                }}
                                                 variant="contained"
                                                 sx={buttonStyle}
                                             >

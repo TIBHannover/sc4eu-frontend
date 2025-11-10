@@ -533,6 +533,34 @@ module.exports = {
         });
     },
 
+    getTermLastConsensus: function(app) {
+        app.get('/getTermLastConsensus', (req, res) => {
+            const query = req.query;
+            let uri = `${process.env.BACKEND_SERVER_URL}/terms/consensus/${query['term_uuid']}`;
+            const vote_Options = {
+                uri: uri,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(vote_Options, function(error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        console.log(result)
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    },
+
     getTermVotes: function(app) {
         app.get('/getTermVotes', (req, res) => {
             const query = req.query;
@@ -607,7 +635,6 @@ module.exports = {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
                 console.log(token);
                 if (token) {
-                    const userId = token.userId;
                     const data = JSON.stringify(req.body);
                     const project_options = {
                         uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes/${req.body.vote_uuid}/close`,
