@@ -57,6 +57,7 @@ export const URL_CREATE_NEW_TERM_VOTE = `${process.env.REACT_APP_EXPRESS_BACKEND
 export const URL_UPDATE_EXPERT_VOTE_DECISION = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}updateVoteDecision`;
 export const URL_POST_NEW_COMMENT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}postComment`;
 export const URL_GET_TERM_VOTE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVote`;
+export const URL_GET_TERM_LAST_CONSENSUS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermLastConsensus`;
 export const URL_GET_TERM_VOTES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVotes`
 export const URL_MANUAL_CLOSE_CONSENSUS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}closeConsensus`;
 // playground

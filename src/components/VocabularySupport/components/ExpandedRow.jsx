@@ -1,25 +1,47 @@
-import { Box, Typography, TextField, Button, Tooltip, IconButton, Link, FormControlLabel, RadioGroup, Radio, Paper } from '@mui/material';
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Tooltip,
+    IconButton,
+    Link,
+    FormControlLabel,
+    RadioGroup,
+    Radio,
+    Paper,
+    Chip
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
-import { getTermVote, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
+import {
+    getTermLastConsensus,
+    getTermVote,
+    initiateNewVote,
+    manualCloseConsensus
+} from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
 import InfoIcon from '@mui/icons-material/Info';
 import { StyledTooltip } from '../../../styledComponents/styledComponents';
+import LastConsensusView from './LastConsensusView';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
-    const [isActiveAgreement, setIsActiveAgreement] = useState(false);
     const [activeAgreement, setActiveAgreement] = useState(false);
     const [notification, setNotification] = useState(false);
     const [initiateTermAgreement, setInitiateTermAgreement] = useState(false);
     const [agreementType, setAgreementType] = useState(null);
     const [reason, setReason] = useState(null);
+    const [openLastConsensusDialog, setOpenLastConsensusDialog] = useState(false);
+    const [lastConsensus, setLastConsensus] = useState(null);
+    const [isConsensusSubmitted, setIsConsensusSubmitted] = useState(false);
+    const [isConsensusClosed, setIsConsensusClosed] = useState(false);
 
     const [updatedTerm, setUpdatedTerm] = useState({
         ...term,
@@ -34,13 +56,20 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     useEffect(() => {
         const getVote = async () => {
             const data = await getTermVote(term.identifier);
-            if (data.length !== 0) {
+            if (!data.error) {
                 setActiveAgreement(data[0]);
-                setIsActiveAgreement(true);
             }
         };
+        const getLastConsensus = async () => {
+            const data = await getTermLastConsensus(term.identifier);
+            if (!data.error) {
+                setLastConsensus(data);
+            }
+        }
+
         getVote();
-    }, [isActiveAgreement, term.identifier]);
+        getLastConsensus();
+    }, [isConsensusSubmitted, isConsensusClosed, term.identifier]);
 
     const splitAltLabels = altLabel => {
         return altLabel ? altLabel.split(',') : [''];
@@ -101,7 +130,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         setAgreementType(null);
         setReason(null);
         setNotification(true);
-        setIsActiveAgreement(true);
+        setIsConsensusSubmitted(true);
     };
 
     return (
@@ -188,12 +217,15 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         </Box>
                     }
                     paperSizeStyles={{
-                        minHeight: '60%',
+                        minHeight: '0%',
                         maxHeight: '60%',
                         minWidth: '60%',
                         maxWidth: '60%'
                     }}
                 />
+            )}
+            {openLastConsensusDialog && (
+                <LastConsensusView consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)}/>
             )}
             {viewAgreementMode && (
                 <VoteView term={term} vote={activeAgreement} username={currentUser.displayName} setVoteViewMode={setViewAgreementMode} />
@@ -214,7 +246,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         >
                             <Typography variant="h6" sx={{ textAlign: 'center' }}>
                                 Term's Detail
-                                {isActiveAgreement && (
+                                {activeAgreement && (
                                     <StyledTooltip title="There is an ongoing consensus, all term fields are read-only. New consensus could not be started.">
                                         <InfoIcon />
                                     </StyledTooltip>
@@ -280,7 +312,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
-                                <strong>Last modified:</strong> 2025-06-10, 10:13:20
+                                <strong>Last modified:</strong> {updatedTerm.modified}
                             </Typography>
                             {/* Status */}
                             <Typography>
@@ -290,6 +322,14 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     </IconButton>
                                 </Tooltip>
                                 <strong>Status:</strong> {updatedTerm.status}
+                                {lastConsensus && (
+                                    <Chip
+                                        label="Check last consensus"
+                                        size="small"
+                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.PRIMARY.main }}
+                                        onClick={() => setOpenLastConsensusDialog(true)}
+                                    />
+                                )}
                             </Typography>
 
                             {/* Action buttons */}
@@ -325,7 +365,14 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             View ongoing consensus
                                         </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
-                                            <Button onClick={() => manualCloseConsensus(term.identifier, activeAgreement.uuid)} variant="contained" sx={buttonStyle}>
+                                            <Button
+                                                onClick={() => {
+                                                    manualCloseConsensus(term.identifier, activeAgreement.uuid);
+                                                    setIsConsensusClosed(true);
+                                                }}
+                                                variant="contained"
+                                                sx={buttonStyle}
+                                            >
                                                 Close consensus
                                             </Button>
                                         )}

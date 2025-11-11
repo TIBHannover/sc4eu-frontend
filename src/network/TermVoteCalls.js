@@ -1,13 +1,17 @@
 import {submitGetRequest, submitPostRequest} from "./networkRequests";
 import {
-    URL_CREATE_NEW_TERM_VOTE,
+    URL_CREATE_NEW_TERM_VOTE, URL_GET_TERM_LAST_CONSENSUS,
     URL_GET_TERM_VOTE, URL_GET_TERM_VOTES, URL_MANUAL_CLOSE_CONSENSUS,
     URL_POST_NEW_COMMENT,
     URL_UPDATE_EXPERT_VOTE_DECISION
-} from "../constants/services";
+} from '../constants/services';
 
 export const getTermVote = term_uuid => {
     return submitGetRequest(`${URL_GET_TERM_VOTE}/?term_uuid=${term_uuid}&status=under_agreement`, {}, false);
+};
+
+export const getTermLastConsensus = term_uuid => {
+    return submitGetRequest(`${URL_GET_TERM_LAST_CONSENSUS}/?term_uuid=${term_uuid}`, {}, false);
 };
 
 export const getTermVotes = () => {
