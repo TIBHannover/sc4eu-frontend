@@ -149,7 +149,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                             <Paper sx={{ p: 2 }}>
                                 <Typography variant="body1" paragraph>
-                                    This will invite all system users to vote on this term's status.
+                                    This action invites all users registered in a vocabulary platform to participate in deciding the term’s status.
+                                    Once enough people have voted, the decision is made by a two-thirds majority,
+                                    ensuring that changes reflect broad agreement in a community.
                                 </Typography>
                             </Paper>
                             <Paper sx={{ p: 2 }}>
