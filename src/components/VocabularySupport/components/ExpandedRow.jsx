@@ -29,6 +29,8 @@ import FadingNotification from '../../ReusableComponents/FadingNotification';
 import InfoIcon from '@mui/icons-material/Info';
 import { StyledTooltip } from '../../../styledComponents/styledComponents';
 import LastConsensusView from './LastConsensusView';
+import { commitChanges } from '../utils/CommitChanges';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const [editMode, setEditMode] = useState(false);
@@ -42,6 +44,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     const [lastConsensus, setLastConsensus] = useState(null);
     const [isConsensusSubmitted, setIsConsensusSubmitted] = useState(false);
     const [isConsensusClosed, setIsConsensusClosed] = useState(false);
+    const queryClient = useQueryClient();
 
     const [updatedTerm, setUpdatedTerm] = useState({
         ...term,
@@ -368,8 +371,17 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
                                             <Button
-                                                onClick={() => {
-                                                    manualCloseConsensus(term.identifier, activeAgreement.uuid);
+                                                onClick={async () => {
+                                                    const data = await manualCloseConsensus(term.identifier, activeAgreement.uuid);
+                                                    if (data.status === "accept" || data.status === "not accept") {
+                                                        const newTerm = {
+                                                            ...term,
+                                                            status: data.status,
+                                                            modified: new Date().toISOString(),
+                                                        };
+                                                        await updateTerm(newTerm);
+                                                        await commitChanges(queryClient, `Update ${term.label} status after consensus` );
+                                                    }
                                                     setIsConsensusClosed(true);
                                                 }}
                                                 variant="contained"

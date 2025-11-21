@@ -12,7 +12,7 @@ import { colorStyled } from '../../../styledComponents/styledColor';
 const LastConsensusView = ({ consensus, open, onClose }) => {
 
     const approvalPercentage = (consensus.approved_decisions / consensus.rejected_decisions) * 100;
-    const consensusPassed = consensus.status === "accepted";
+    const consensusPassed = consensus.status === "accept";
 
     return (
         <MaterialUIPopUp

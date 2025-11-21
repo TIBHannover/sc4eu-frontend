@@ -50,10 +50,6 @@ export async function commitChanges(queryClient, commitMessage) {
     const saveResponse = await saveAllTerms(dataToCommit, commitMessage);
     const currentSha = saveResponse.content.sha;
 
-    const jsonDataToCommit = queryClient.getQueryData(['discussions']);
-    const saveDiscussionResponse = await saveAllDiscussion(jsonDataToCommit, commitMessage);
-    console.log('Discussion response: ' + saveDiscussionResponse);
-
     let attempts = 0;
     const maxAttempts = 10;
     const pollInterval = 60000; // Poll every minute
