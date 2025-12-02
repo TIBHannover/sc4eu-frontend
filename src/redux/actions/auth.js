@@ -3,9 +3,9 @@ import { getUserInformation } from '../../services/Users';
 import { Cookies } from 'react-cookie';
 // import env from '@beam-australia/react-env';
 const cookies = new Cookies();
-export const updateCookies = payload => dispatch => {
-    const PUBLIC_URL = `${process.env.REACT_APP_PUBLIC_URL}`;
+const PUBLIC_URL = `${process.env.REACT_APP_PUBLIC_URL}`;
 
+export const updateCookies = payload => dispatch => {
     const expiresIn = 8 * 60 * 60;
     cookies.set('token', payload.token, { path: PUBLIC_URL, maxAge: expiresIn });
     const token_expires_in = new Date(Date.now() + expiresIn * 1000);
@@ -61,8 +61,8 @@ export const redux_updateUserSettings = payload => dispatch => {
 };
 
 export const resetAuth = () => dispatch => {
-    cookies.remove('token', { path: '/sc3/' });
-    cookies.remove('token_expires_in', { path: '/sc3/' });
+    cookies.remove('token', { path: PUBLIC_URL });
+    cookies.remove('token_expires_in', { path: PUBLIC_URL });
     dispatch({
         type: type.RESET_AUTH
     });
