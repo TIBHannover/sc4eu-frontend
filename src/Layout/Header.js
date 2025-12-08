@@ -110,6 +110,7 @@ class Header extends Component {
         this.setState({
             redirectOnAuthAction: true
         });
+        window.location.reload();
     };
 
     loginCallback = () => {

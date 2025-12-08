@@ -122,6 +122,7 @@ database.addUserToProject(router);
 database.getOntologyGitData(router);
 database.createTermVote(router);
 database.getTermVote(router);
+database.getTermLastConsensus(router);
 database.getTermVotes(router);
 database.updateVoteDecision(router);
 database.postComment(router);

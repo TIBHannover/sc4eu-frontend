@@ -17,7 +17,7 @@ import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import Cookies from 'js-cookie';
 import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
-import {StyledBadge, StyledTooltip} from '../../../styledComponents/styledComponents';
+import { StyledBadge, StyledTooltip } from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
 
 const VocabularyMainTable = ({
@@ -280,7 +280,7 @@ const VocabularyMainTable = ({
                         <span>{column.columnDef.header}</span>
                     </Tooltip>
                 ),
-                size: 150,
+                size: 90,
                 enableEditing: false,
                 filterVariant: 'select',
                 filterFn: (row, columnId, filterValue) => {
@@ -309,8 +309,26 @@ const VocabularyMainTable = ({
                     { text: 'All', value: 'all' }
                 ],
                 muiFilterTextFieldProps: {
-                    placeholder: 'Filter Created',
-                    select: true
+                    placeholder: 'Filter',
+                    select: true,
+                    sx: {
+                        width: '100%',
+                    }
+                },
+                muiTableHeadCellProps: {
+                    sx: {
+                        width: '90px',
+                        minWidth: '90px',
+                        maxWidth: '90px',
+                    }
+                },
+                muiTableBodyCellProps: {
+                    sx: {
+                        width: '90px',
+                        minWidth: '90px',
+                        maxWidth: '90px',
+
+                    },
                 }
             },
             {
@@ -369,7 +387,24 @@ const VocabularyMainTable = ({
                 ],
                 muiFilterTextFieldProps: {
                     placeholder: 'Filter Modified',
-                    select: true
+                    select: true,
+                    sx: {
+                        width: '100%',
+                    }
+                },
+                muiTableHeadCellProps: {
+                    sx: {
+                        width: '150px',
+                        minWidth: '150px',
+                        maxWidth: '150px',
+                    }
+                },
+                muiTableBodyCellProps: {
+                    sx: {
+                        width: '150px',
+                        minWidth: '150px',
+                        maxWidth: '150px',
+                    },
                 }
             },
             {

@@ -151,7 +151,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
 
         const textBeforeMention = newCommentText.slice(0, cursorPosition - mentionSearch.length - 1);
         const textAfterMention = newCommentText.slice(cursorPosition);
-        const newText = `${textBeforeMention}@${selectedUser.display_name}${textAfterMention}`;
+        const newText = `${textBeforeMention}@${selectedUser.display_name}${textAfterMention} `;
         if (!mentionedUsers.includes(selectedUser.display_name)) {
             setMentionedUsers([...mentionedUsers, selectedUser.display_name]);
         }
