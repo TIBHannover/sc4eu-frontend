@@ -252,7 +252,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             <Typography variant="h6" sx={{ textAlign: 'center' }}>
                                 Term's Detail
                                 {activeAgreement && (
-                                    <StyledTooltip title="There is an ongoing consensus, all term fields are read-only. New consensus could not be started.">
+                                    <StyledTooltip title="There is an ongoing consensus - new consensus could not be started.">
                                         <InfoIcon />
                                     </StyledTooltip>
                                 )}
@@ -339,7 +339,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
 
                             {/* Action buttons */}
                             <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
-                                <Button disabled={activeAgreement} onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle}>
+                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle}>
                                     Edit Term
                                 </Button>
                                 <Button onClick={handleClose} variant="contained" sx={buttonStyle}>
