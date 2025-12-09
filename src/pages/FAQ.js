@@ -125,36 +125,6 @@ export default class Faq extends Component {
                             </a>
                         </StyledText>
                     </Collapse>
-                    <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
-                        className="btn"
-                        onClick={this.toggleWebProtege}
-                    >
-                        <Icon icon={!this.state.collapseWebProtege ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
-                        WebProtege
-                    </Button>
-                    <Collapse isOpen={this.state.collapseWebProtege}>
-                        <StyledText>
-                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology Curation
-                            Curation Portal ( &nbsp;
-                            <a style={{ color: colorStyled.SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
-                                SC4EU Ontology Curation Portal
-                            </a>
-                            &nbsp;) and WebProtege (&nbsp;
-                            <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                href="https://service.tib.eu/sc3/webprotege"
-                                rel="noreferrer"
-                            >
-                                WebProtege
-                            </a>
-                            &nbsp;) are only loosely coupled. Both have their own authentication solutions and data management systems. It is
-                            therefore not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first work
-                            collaboratively Web-protege. Then download the ontology from WebProtege and from there into the visualization tool. A more
-                            integrated solution is coming.
-                        </StyledText>
-                    </Collapse>
                 </Container>
             </div>
         );
