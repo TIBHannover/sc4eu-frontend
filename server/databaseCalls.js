@@ -477,7 +477,7 @@ module.exports = {
                     const data = JSON.stringify(req.body);
                     console.log(data);
                     const project_options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes`,
+                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes`,
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -505,7 +505,7 @@ module.exports = {
     getTermVote: function(app) {
         app.get('/getTermVote', (req, res) => {
             const query = req.query;
-            let uri = `${process.env.BACKEND_SERVER_URL}/terms/${query['term_uuid']}/votes`;
+            let uri = `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(query['term_uuid'])}/votes`;
             if (query['status']) {
                 uri = uri + `?status=${query['status']}`
             }
@@ -536,7 +536,7 @@ module.exports = {
     getTermLastConsensus: function(app) {
         app.get('/getTermLastConsensus', (req, res) => {
             const query = req.query;
-            let uri = `${process.env.BACKEND_SERVER_URL}/terms/consensus/${query['term_uuid']}`;
+            let uri = `${process.env.BACKEND_SERVER_URL}/terms/consensus/${encodeURIComponent(query['term_uuid'])}`;
             const vote_Options = {
                 uri: uri,
                 method: 'GET',
@@ -602,7 +602,7 @@ module.exports = {
                     const data = JSON.stringify(req.body);
                     console.log(data);
                     const project_options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes/${req.body.vote_uuid}`,
+                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(req.body.vote_uuid)}`,
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -637,7 +637,7 @@ module.exports = {
                 if (token) {
                     const data = JSON.stringify(req.body);
                     const project_options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes/${req.body.vote_uuid}/close`,
+                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(req.body.vote_uuid)}/close`,
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -675,7 +675,7 @@ module.exports = {
                     const data = JSON.stringify(req.body);
                     console.log(data);
                     const project_options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${req.body.term_uuid}/votes/${req.body.vote_uuid}/comments`,
+                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(req.body.vote_uuid)}/comments`,
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -703,7 +703,7 @@ module.exports = {
     getComments: function(app) {
         app.get('/getComments', (req, res) => {
             const query = req.query;
-            let uri = `${process.env.BACKEND_SERVER_URL}/terms/${query['term_uuid']}/votes/${query['vote_uuid']}/comments`;
+            let uri = `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(query['term_uuid'])}/votes/${encodeURIComponent(query['vote_uuid'])}/comments`;
             const vote_Options = {
                 uri: uri,
                 method: 'GET',

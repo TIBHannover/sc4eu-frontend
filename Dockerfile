@@ -3,7 +3,7 @@ LABEL maintainer="Vitalis Wiens <vitalis.wiens@tib.eu>"
 
 
 WORKDIR app
-ADD . /app
+COPY . /app
 
 
 RUN sh install_dependencies.sh
