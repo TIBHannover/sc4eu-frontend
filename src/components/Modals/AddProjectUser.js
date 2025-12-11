@@ -78,7 +78,6 @@ export default class AddProjectUserModal extends Component {
                                             this.props.callback(this.state.email, res.user_id);
                                         } else {
                                             this.setState({ emailWarning: 'User with this email does not exists', showWarning: 'true' });
-                                            return;
                                         }
                                     });
                                 } else {

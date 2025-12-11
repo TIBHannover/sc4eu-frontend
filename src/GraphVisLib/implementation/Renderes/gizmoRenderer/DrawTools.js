@@ -132,7 +132,7 @@ export default class DrawTools {
     }
 
     __drawArrowPrimitive(parent, container, identifier, cfg, makerType) {
-        const scale = parseFloat(cfg.scaleFactor);
+        const scale = Number.parseFloat(cfg.scaleFactor);
         const v1 = scale * -14;
         const v2 = scale * -10;
         const v3 = scale * 28;
@@ -358,7 +358,7 @@ export default class DrawTools {
             const nestedLinks = node.semanticReference().__aggregatedLink;
 
             const width = 220;
-            const height = parseFloat(shape['height']) + nestedLinks.length * 35;
+            const height = Number.parseFloat(shape['height']) + nestedLinks.length * 35;
 
             shape['x'] = -0.5 * width;
             shape['y'] = -0.5 * height;
@@ -369,9 +369,9 @@ export default class DrawTools {
 
         // TODO, THIS HAS TO APPLY FOR THE TEXT RENDERING ELEMENT;
         // if (options.cropLongText) {
-        //   if (this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize) > parseFloat(shape.attr('width'))) {
+        //   if (this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize) > Number.parseFloat(shape.attr('width'))) {
         //     // crop that thing;
-        //     const croppedText = this.cropText(label.text(), config.fontStyle, parseFloat(shape.attr('width')));
+        //     const croppedText = this.cropText(label.text(), config.fontStyle, Number.parseFloat(shape.attr('width')));
         //     label.text(croppedText);
         //   }
         // }
@@ -390,8 +390,8 @@ export default class DrawTools {
             if (config.style.renderingType === 'circle') {
                 // get min value for circle radius;
 
-                const requestedWidth = labelBBWidth + parseInt(options.overwriteOffset);
-                const shapeWidth = parseInt(shape.attr('width'));
+                const requestedWidth = labelBBWidth + Number.parseInt(options.overwriteOffset);
+                const shapeWidth = Number.parseInt(shape.attr('width'));
                 let newWidth = shapeWidth;
                 if (newWidth < requestedWidth) {
                     newWidth = requestedWidth;
@@ -412,9 +412,9 @@ export default class DrawTools {
         }
 
         if (options.cropLongText) {
-            if (this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize) > parseFloat(shape.attr('width'))) {
+            if (this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize) > Number.parseFloat(shape.attr('width'))) {
                 // crop that thing;
-                const croppedText = this.cropText(label.text(), config.fontStyle, parseFloat(shape.attr('width')));
+                const croppedText = this.cropText(label.text(), config.fontStyle, Number.parseFloat(shape.attr('width')));
                 label.text(croppedText);
             }
         }
@@ -429,7 +429,7 @@ export default class DrawTools {
             const nestedLinks = node.semanticReference().__aggregatedLink;
 
             const width = 220;
-            const height = parseFloat(shape.attr('height')) + nestedLinks.length * 35;
+            const height = Number.parseFloat(shape.attr('height')) + nestedLinks.length * 35;
 
             shape.attr('x', -0.5 * width);
             shape.attr('y', -0.5 * height);
@@ -451,9 +451,9 @@ export default class DrawTools {
             const w = shape.attr('width');
 
             const fontSizeProperty = window.getComputedStyle(label.node()).getPropertyValue('font-size');
-            const fontSize = parseFloat(fontSizeProperty);
-            const linePosY = parseFloat(y) + 8 + fontSize;
-            const linePosX = parseFloat(x) + parseFloat(w);
+            const fontSize = Number.parseFloat(fontSizeProperty);
+            const linePosY = Number.parseFloat(y) + 8 + fontSize;
+            const linePosX = Number.parseFloat(x) + Number.parseFloat(w);
             line.attr('x1', x)
                 .attr('y1', linePosY)
                 .attr('x2', linePosX)
@@ -574,9 +574,9 @@ export default class DrawTools {
     };
 
     baseShapeMorphParameters = renderingConfig => {
-        const radius = parseInt(renderingConfig.radius);
-        const width = parseInt(renderingConfig.width);
-        const height = parseInt(renderingConfig.height);
+        const radius = Number.parseInt(renderingConfig.radius);
+        const width = Number.parseInt(renderingConfig.width);
+        const height = Number.parseInt(renderingConfig.height);
         const baseShapeParameters = {};
         if (renderingConfig.renderingType === 'circle') {
             baseShapeParameters['x'] = -radius;
@@ -594,8 +594,8 @@ export default class DrawTools {
             baseShapeParameters['height'] = height;
             if (renderingConfig.roundedCorner) {
                 const tok = renderingConfig.roundedCorner.split(',');
-                baseShapeParameters['rx'] = parseFloat(tok[0]);
-                baseShapeParameters['ry'] = parseFloat(tok[1]);
+                baseShapeParameters['rx'] = Number.parseFloat(tok[0]);
+                baseShapeParameters['ry'] = Number.parseFloat(tok[1]);
             }
         }
 
@@ -613,9 +613,9 @@ export default class DrawTools {
     };
 
     renderBaseShape = (targetPrimitive, renderingConfig) => {
-        const radius = parseInt(renderingConfig.radius);
-        const width = parseInt(renderingConfig.width);
-        const height = parseInt(renderingConfig.height);
+        const radius = Number.parseInt(renderingConfig.radius);
+        const width = Number.parseInt(renderingConfig.width);
+        const height = Number.parseInt(renderingConfig.height);
 
         // check if is uml style << TODO;
         /**  render a pure circle **/
@@ -636,8 +636,8 @@ export default class DrawTools {
             targetPrimitive.attr('height', height);
             if (renderingConfig.roundedCorner) {
                 const tok = renderingConfig.roundedCorner.split(',');
-                targetPrimitive.attr('rx', parseFloat(tok[0]));
-                targetPrimitive.attr('ry', parseFloat(tok[1]));
+                targetPrimitive.attr('rx', Number.parseFloat(tok[0]));
+                targetPrimitive.attr('ry', Number.parseFloat(tok[1]));
             }
         }
 

@@ -111,8 +111,8 @@ export default class NodeInteractions {
             d.hideNodeGroup.remove();
         }
         // create the hover thing;
-        const shapeWidth = parseInt(d.renderingShape.attr('width'));
-        const shapeHeight = parseInt(d.renderingShape.attr('height'));
+        const shapeWidth = Number.parseInt(d.renderingShape.attr('width'));
+        const shapeHeight = Number.parseInt(d.renderingShape.attr('height'));
         let shapeOffset = 0;
         if (d.renderingConfig().style.renderingType === 'circle') {
             shapeOffset = 0;
@@ -173,8 +173,8 @@ export default class NodeInteractions {
             d.collapseExapandGroup.remove();
         }
         // create the hover thing;
-        const shapeWidth = parseInt(d.renderingShape.attr('width'));
-        const shapeHeight = parseInt(d.renderingShape.attr('height'));
+        const shapeWidth = Number.parseInt(d.renderingShape.attr('width'));
+        const shapeHeight = Number.parseInt(d.renderingShape.attr('height'));
         let shapeOffset = 0;
         if (d.renderingConfig().style.renderingType === 'circle') {
             shapeOffset = 0;
@@ -267,8 +267,8 @@ export default class NodeInteractions {
     nodeClick(d) {
         // add handers; >> this is where we want to overwrite something;
         this.graphObject.selectItem(d);
-        const shapeWidth = parseInt(d.renderingShape.attr('width'));
-        const shapeHeight = parseInt(d.renderingShape.attr('height'));
+        const shapeWidth = Number.parseInt(d.renderingShape.attr('width'));
+        const shapeHeight = Number.parseInt(d.renderingShape.attr('height'));
 
         const shapeOffset = 0;
         d3.selectAll('.itemSelectionGroup').remove();
