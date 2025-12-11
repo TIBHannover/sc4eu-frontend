@@ -505,24 +505,25 @@ module.exports = {
     getTermVote: function(app) {
         app.get('/getTermVote', (req, res) => {
             const query = req.query;
-            const backendUrl = process.env.BACKEND_SERVER_URL;
-            const url = new URL(`/terms/${query.term_uuid}/votes`, backendUrl);
+            const url = `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(query['term_uuid'])}/votes`;
             if (query.status) url.searchParams.set("status", query.status);
             const vote_Options = {
-                uri: url.toString(),
+                uri: url,
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             };
 
             request(vote_Options, function(error, response) {
                 if (response && response.body) {
+                    let result;
                     try {
-                        const result = JSON.parse(response.body);
-                        console.log(result)
-                        res.json(result);
+                        result = JSON.parse(response.body);
                     } catch (e) {
                         res.json({ error: 'Something went wrong' });
                     }
+                    res.json(result);
                 } else {
                     res.json({ error: 'Something went wrong' });
                 }
