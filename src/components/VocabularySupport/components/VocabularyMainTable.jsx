@@ -156,6 +156,7 @@ const VocabularyMainTable = ({
         }).isRequired
     };
 
+    /* eslint-disable react/prop-types */
     const columns = useMemo(
         () => [
             {
@@ -434,6 +435,7 @@ const VocabularyMainTable = ({
         ],
         [validationErrors]
     );
+    /* eslint-enable react/prop-types */
 
     const handleCreateTerm = async ({ values, table }) => {
         const uuid = crypto.randomUUID();
