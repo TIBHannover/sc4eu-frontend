@@ -43,7 +43,7 @@ class CardGraphVis extends Component {
         }
 
         if (!this.state.createdGraph && this.props.isExpanded) {
-            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
         }
 
         // add graph updates;
@@ -279,7 +279,7 @@ class CardGraphVis extends Component {
                         <div style={{ width: '100%', margin: 'auto', textAlign: 'center' }}>
                             <span>
                                 <Icon icon={faSpinner} spin />
-                            </span>
+                            </span>{' '}
                             Loading
                         </div>
                     )}

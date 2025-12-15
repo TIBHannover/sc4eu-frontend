@@ -92,11 +92,11 @@ class OntoComparisonModal extends React.Component {
     showComparison = async () => {
         this.setState({ isLoading: true });
         if (this.state.firstSelectedCommit === '' || this.state.secondSelectedCommit === '') {
-            this.setState({
-                isPopUpOpen: !this.state.isPopUpOpen,
+            this.setState(prevState => ({
+                isPopUpOpen: !prevState.isPopUpOpen,
                 popUpMessage: 'Please selected the two commits to compare',
                 isLoading: false
-            });
+            }));
             return;
         }
         const index_first = this.state.allCommits.findIndex(item => item.value === this.state.firstSelectedCommit);
@@ -154,7 +154,7 @@ class OntoComparisonModal extends React.Component {
                                     <h2 className="h5">
                                         <span>
                                             <Icon icon={faSpinner} spin />
-                                        </span>
+                                        </span>{' '}
                                         Loading Comparison
                                     </h2>
                                 </div>

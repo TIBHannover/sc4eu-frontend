@@ -79,7 +79,7 @@ class IntroductoryPopUp extends Component {
                                 <p>Thank you for visiting our portal</p>
                             </h4>
                             <Button
-                                onClick={() => this.setState({ firstModal: !this.state.firstModal })}
+                                onClick={() => this.setState(prevState => ({ firstModal: !prevState.firstModal }))}
                                 style={{
                                     background: 'none',
                                     border: 'none',

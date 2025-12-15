@@ -48,7 +48,7 @@ class ProjectIndexCards extends Component {
                         />
                         <ProjectPermissionModal
                             toggle={() => {
-                                this.setState({ showEmailModal: !this.state.showEmailModal });
+                                this.setState(prevState => ({ showEmailModal: !prevState.showEmailModal }));
                             }}
                             showDialog={this.state.showEmailModal}
                             projectDetails={this.props.inputData}

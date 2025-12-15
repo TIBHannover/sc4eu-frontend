@@ -83,7 +83,7 @@ class OntologyIndexInteractions extends Component {
                         access_type={this.props.access_type}
                         showDialog={this.state.showUploadModal}
                         toggle={() => {
-                            this.setState({ showUploadModal: !this.state.showUploadModal });
+                            this.setState(prevState => ({ showUploadModal: !prevState.showUploadModal }));
                         }}
                         callback={param => {
                             this.ontologyUploadComplete(param);

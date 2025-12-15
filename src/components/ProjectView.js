@@ -115,7 +115,7 @@ class ProjectView extends Component {
                             }
                         });
                     }
-                    this.setState({ flipflop: !this.state.flipflop });
+                    this.setState(prevState => ({ flipflop: !prevState.flipflop }));
                 } catch (userError) {
                     console.error('Error fetching user projects:', userError);
                 }
@@ -329,7 +329,7 @@ class ProjectView extends Component {
                     <CreateProjectModal
                         showDialog={this.state.showCreateProjectModal}
                         toggle={() => {
-                            this.setState({ showCreateProjectModal: !this.state.showCreateProjectModal });
+                            this.setState(prevState => ({ showCreateProjectModal: !prevState.showCreateProjectModal }));
                         }}
                         callback={param => {
                             this.projectCreated(param);
@@ -340,7 +340,7 @@ class ProjectView extends Component {
                     )}
                     <ProjectPermissionModal
                         toggle={() => {
-                            this.setState({ showEmailModal: !this.state.showEmailModal });
+                            this.setState(prevState => ({ showEmailModal: !prevState.showEmailModal }));
                         }}
                         showDialog={this.state.showEmailModal}
                         callback={() => {
