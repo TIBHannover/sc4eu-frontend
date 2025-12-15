@@ -79,7 +79,7 @@ class RightSideProjectBar extends Component {
                                     singleProject.unlock = true;
                                 }
                             });
-                            this.setState({ flipflop: !this.state.flipflop, isLoading: false });
+                            this.setState(prevState => ({ flipflop: !prevState.flipflop, isLoading: false }));
                         });
                     }
                 });

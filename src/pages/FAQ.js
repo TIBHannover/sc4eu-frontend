@@ -20,15 +20,15 @@ export default class Faq extends Component {
     componentDidMount() {}
 
     toggleUserRole = () => {
-        this.setState({ collapseUserRole: !this.state.collapseUserRole });
+        this.setState(prevState => ({ collapseUserRole: !prevState.collapseUserRole }));
     };
 
     toggleIssueManagement = () => {
-        this.setState({ collapseIssueManagement: !this.state.collapseIssueManagement });
+        this.setState(prevState => ({ collapseIssueManagement: !prevState.collapseIssueManagement }));
     };
 
     toggleWebProtege = () => {
-        this.setState({ collapseWebProtege: !this.state.collapseWebProtege });
+        this.setState(prevState => ({ collapseWebProtege: !prevState.collapseWebProtege }));
     };
 
     render() {

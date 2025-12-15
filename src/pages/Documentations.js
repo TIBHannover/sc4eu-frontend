@@ -16,15 +16,15 @@ class Documentations extends Component {
     }
 
     toggleReadmore = () => {
-        this.setState({ isreadmore: !this.state.isreadmore });
+        this.setState(prevState => ({ isreadmore: !prevState.isreadmore }));
     };
 
     toggleReadmoreFrameworkText = () => {
-        this.setState({ isreadmoreFrameworkText: !this.state.isreadmoreFrameworkText });
+        this.setState(prevState => ({ isreadmoreFrameworkText: !prevState.isreadmoreFrameworkText }));
     };
 
     toggleReadmoreUserGuidance = () => {
-        this.setState({ isreadmoreUserGuidance: !this.state.isreadmoreUserGuidance });
+        this.setState(prevState => ({ isreadmoreUserGuidance: !prevState.isreadmoreUserGuidance }));
     };
 
     render() {
@@ -89,9 +89,9 @@ class Documentations extends Component {
                         ) : (
                             UserGuidance.substring(0, 300)
                         )}
-                        <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
+                        <button style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
                             {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
-                        </span>
+                        </button>
                     </StyledText>
                     <h5>About SC4EU Ontology Curation Portal</h5>
                     <StyledText>
@@ -130,9 +130,9 @@ class Documentations extends Component {
                     <h5>Framework for Collaborative Ontology Development</h5>
                     <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
                         {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
-                        <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
+                        <button style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
                             {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
-                        </span>
+                        </button>
                     </p>
 
                     <h5>Be part of the SC4EU Community and Collaborate with us </h5>
@@ -164,9 +164,9 @@ class Documentations extends Component {
                     <h5>Hybrid Modes of Operation</h5>
                     <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
                         {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
-                        <span style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
+                        <button style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
                             {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
-                        </span>
+                        </button>
                     </p>
                 </StyledDiv>
             </div>

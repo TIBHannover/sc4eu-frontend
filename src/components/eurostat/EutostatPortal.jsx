@@ -50,7 +50,7 @@ export const EurostatPortal = () => {
         const fetchData = async () => {
             const response = await fetch(`${process.env.REACT_APP_TIVA_BACKEND_URL}/api/tiva/eurostat?${fieldVal}=submitted`);
             const data = await response.json();
-            if (data !== {}) {
+            if (data !== null) {
                 switch (fieldVal) {
                     case 'reporter':
                         setReporters(data);

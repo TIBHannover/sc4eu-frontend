@@ -43,11 +43,11 @@ class SingleRelation extends Component {
     }
 
     updateSiblings = () => {
-        this.setState({ updateSiblings: !this.state.updateSiblings });
+        this.setState(prevState => ({ updateSiblings: !prevState.updateSiblings }));
     };
 
     forceRerendering = () => {
-        this.setState({ forcedUpdate: !this.state.forcedUpdate });
+        this.setState(prevState => ({ forcedUpdate: !prevState.forcedUpdate }));
     };
 
     toggleEditButton = val => {
@@ -58,18 +58,18 @@ class SingleRelation extends Component {
         this.setState({ showBody: val, bodyInitialRendering: false });
     };
     showBody = () => {
-        this.setState({ showBody: !this.state.showBody, bodyInitialRendering: false });
+        this.setState(prevState => ({ showBody: !prevState.showBody, bodyInitialRendering: false }));
     };
     showWidgetVis = () => {
-        this.setState({ showingWidgetVis: !this.state.showingWidgetVis, widgetInitialRendering: false });
+        this.setState(prevState => ({ showingWidgetVis: !prevState.showingWidgetVis, widgetInitialRendering: false }));
     };
 
     showWidgetAnnotation = () => {
-        this.setState({ showingWidgetAnnotation: !this.state.showingWidgetAnnotation, widgetInitialRendering: false });
+        this.setState(prevState => ({ showingWidgetAnnotation: !prevState.showingWidgetAnnotation, widgetInitialRendering: false }));
     };
 
     createGraphVisForRelation = () => {
-        this.setState({ showingGraphVis: !this.state.showingGraphVis, graphVisInitialRendering: false });
+        this.setState(prevState => ({ showingGraphVis: !prevState.showingGraphVis, graphVisInitialRendering: false }));
     };
 
     editRelation = inputHeaderString => {
