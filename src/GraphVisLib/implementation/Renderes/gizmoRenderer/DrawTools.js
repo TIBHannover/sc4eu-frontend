@@ -250,7 +250,7 @@ export default class DrawTools {
                         cx: 0.5 * (controlPoints[2][0] + controlPoints[0][0]),
                         cy: 0.5 * (controlPoints[2][1] + controlPoints[0][1])
                     };
-                    if (isNaN(centerPoint.cx)) {
+                    if (Number.isNaN(centerPoint.cx)) {
                         centerPoint.cx = 0;
                         centerPoint.cy = 0;
                     }
