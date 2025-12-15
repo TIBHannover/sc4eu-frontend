@@ -78,7 +78,13 @@ export default class Faq extends Component {
                     }}
                 >
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '60px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
+                        style={{
+                            width: '100% ',
+                            height: '45px',
+                            marginTop: '60px',
+                            textAlign: 'start',
+                            background: colorStyled.SECONDARY.dark
+                        }}
                         className="btn"
                         onClick={this.toggleUserRole}
                     >
@@ -104,7 +110,13 @@ export default class Faq extends Component {
                         </Table>
                     </Collapse>
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
+                        style={{
+                            width: '100% ',
+                            height: '45px',
+                            marginTop: '20px',
+                            textAlign: 'start',
+                            background: colorStyled.SECONDARY.dark
+                        }}
                         className="btn"
                         onClick={this.toggleIssueManagement}
                     >
@@ -113,8 +125,10 @@ export default class Faq extends Component {
                     </Button>
                     <Collapse isOpen={this.state.collapseIssueManagement}>
                         <StyledText>
-                            If you face any problems with our portal, face any issues with our running system or if you have any further questions,
-                            please get in contact with us via our issue management system that you will find here :&nbsp;
+                            <span>
+                                If you face any problems with our portal, face any issues with our running system or if you have any further
+                                questions, please get in contact with us via our issue management system that you will find here :
+                            </span>
                             <a
                                 style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
@@ -126,7 +140,13 @@ export default class Faq extends Component {
                         </StyledText>
                     </Collapse>
                     <Button
-                        style={{ width: '100% ', height: '45px', marginTop: '20px', textAlign: 'start', background: colorStyled.SECONDARY.dark }}
+                        style={{
+                            width: '100% ',
+                            height: '45px',
+                            marginTop: '20px',
+                            textAlign: 'start',
+                            background: colorStyled.SECONDARY.dark
+                        }}
                         className="btn"
                         onClick={this.toggleWebProtege}
                     >
@@ -135,12 +155,14 @@ export default class Faq extends Component {
                     </Button>
                     <Collapse isOpen={this.state.collapseWebProtege}>
                         <StyledText>
-                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology Curation
-                            Curation Portal ( &nbsp;
+                            <span>
+                                WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology
+                                Curation Curation Portal ({' '}
+                            </span>
                             <a style={{ color: colorStyled.SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
                                 SC4EU Ontology Curation Portal
                             </a>
-                            &nbsp;) and WebProtege (&nbsp;
+                            <span>) and WebProtege (</span>
                             <a
                                 style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
@@ -149,10 +171,12 @@ export default class Faq extends Component {
                             >
                                 WebProtege
                             </a>
-                            &nbsp;) are only loosely coupled. Both have their own authentication solutions and data management systems. It is
-                            therefore not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first work
-                            collaboratively Web-protege. Then download the ontology from WebProtege and from there into the visualization tool. A more
-                            integrated solution is coming.
+                            <span>
+                                ) are only loosely coupled. Both have their own authentication solutions and data management systems. It is therefore
+                                not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first work
+                                collaboratively Web-protege. Then download the ontology from WebProtege and from there into the visualization tool. A
+                                more integrated solution is coming.
+                            </span>
                         </StyledText>
                     </Collapse>
                 </Container>

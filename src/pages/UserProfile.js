@@ -59,7 +59,7 @@ class UserProfile extends Component {
                         <h2 className="h5" style={{ textAlign: 'center' }}>
                             <span>
                                 <Icon icon={faSpinner} spin />
-                            </span>
+                            </span>{' '}
                             Loading
                         </h2>
                     </div>

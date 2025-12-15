@@ -215,7 +215,7 @@ class LoginViaEmail extends Component {
                                                         height: '100%',
                                                         marginLeft: '10px'
                                                     }}
-                                                />
+                                                />{' '}
                                                 Sign in with GitLab
                                             </a>
                                             {/* <a
@@ -244,7 +244,7 @@ class LoginViaEmail extends Component {
                                                         height: '100%',
                                                         marginLeft: '10px'
                                                     }}
-                                                />
+                                                />{' '}
                                                 Sign in with SAP
                                             </a>
                                         </div>

@@ -108,7 +108,7 @@ class OntologyIndexing extends Component {
                             <h2 className="h5">
                                 <span>
                                     <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                                </span>
+                                </span>{' '}
                                 Loading
                             </h2>
                         </div>

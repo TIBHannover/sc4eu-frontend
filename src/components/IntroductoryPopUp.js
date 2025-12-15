@@ -65,7 +65,7 @@ class IntroductoryPopUp extends Component {
                 this.setState({ buttonText: 'Next' });
             }
         } else {
-            this.setState({ firstModal: !this.state.firstModal });
+            this.setState(prevState => ({ firstModal: !prevState.firstModal }));
         }
     };
 

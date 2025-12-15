@@ -42,9 +42,10 @@ class AnnotationsDropDown extends Component {
                 <div
                     key={'itemId_' + item.prefix + item.type}
                     style={{ display: 'block', overflow: 'hidden' }}
-                    onClick={event => {
+                    onClick={() => {
                         console.log('Improvement: Maybe change background color to show it as selected');
                     }}
+                    onKeyDown={() => {}}
                 >
                     <StyledSpan>{item.prefix}</StyledSpan>
                     <div style={{ marginLeft: '1rem' }}>

@@ -99,7 +99,7 @@ class Documentations extends Component {
                         machines, as well as all other partners.The key objective of this platform is to implement data documentation of an actionable
                         ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by
                         new ones for other subdomains to ensure interoperability of data. "Further information about the project you can find on our
-                        &nbsp;
+                        <span />
                         <a
                             style={{ color: colorStyled.SECONDARY.link }}
                             target="_blank"
@@ -108,7 +108,7 @@ class Documentations extends Component {
                         >
                             SC4EU webpage
                         </a>
-                        , on our&nbsp;
+                        <span>, on our </span>
                         <a
                             style={{ color: colorStyled.SECONDARY.link }}
                             target="_blank"
@@ -117,7 +117,7 @@ class Documentations extends Component {
                         >
                             YouTube chanel
                         </a>
-                        , or&nbsp;
+                        <span>, or </span>
                         <a
                             style={{ color: colorStyled.SECONDARY.link }}
                             target="_blank"
@@ -128,7 +128,14 @@ class Documentations extends Component {
                         </a>
                     </StyledText>
                     <h5>Framework for Collaborative Ontology Development</h5>
-                    <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
+                    <p
+                        style={{
+                            whiteSpace: 'pre-wrap',
+                            cursor: 'text',
+                            textAlign: 'justify',
+                            color: colorStyled.TEXTCOLOR
+                        }}
+                    >
                         {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
                         <button style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
                             {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
@@ -162,7 +169,14 @@ class Documentations extends Component {
                         You will find all our code under MIT licence, instructions. Check it out!
                     </StyledText>
                     <h5>Hybrid Modes of Operation</h5>
-                    <p style={{ whiteSpace: 'pre-wrap', cursor: 'text', textAlign: 'justify', color: colorStyled.TEXTCOLOR }}>
+                    <p
+                        style={{
+                            whiteSpace: 'pre-wrap',
+                            cursor: 'text',
+                            textAlign: 'justify',
+                            color: colorStyled.TEXTCOLOR
+                        }}
+                    >
                         {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
                         <button style={{ color: colorStyled.SECONDARY.link, cursor: 'pointer' }} onClick={this.toggleReadmore}>
                             {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
