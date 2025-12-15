@@ -13,7 +13,7 @@ const PopUp = props => {
 
     return (
         <StyledDiv>
-            <div
+            <button
                 style={{ height: '20%' }}
                 onClick={e => {
                     e.stopPropagation();
@@ -22,7 +22,7 @@ const PopUp = props => {
             >
                 <StyledImage src={SC3} alt="/" height="50px" width="50px" />
                 <hr />
-            </div>
+            </button>
             <div style={{ height: '80%', backgroundColor: colorStyled.PRIMARY.lighter }}>
                 <div style={{ height: '80%' }}>
                     <div style={{ padding: '30px', float: 'left' }}>
