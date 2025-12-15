@@ -350,6 +350,6 @@ InformationHub.propTypes = {
         comments: PropTypes.arrayOf(PropTypes.string).isRequired,
         resourceId: PropTypes.string.isRequired,
     })).isRequired,
-    mentionedUsers: PropTypes.array.isRequired,
+    mentionedUser: PropTypes.string.isRequired,
     onTermSelect: PropTypes.func.isRequired
 };

@@ -237,13 +237,15 @@ class ProjectView extends Component {
             await deleteProject(projectId);
 
             // Remove the deleted project from the state
-            const updatedProjects = this.state.allProjects.filter(project => project.uuid !== projectId);
-            const updatedUnlockedProjects = updatedProjects.filter(project => project.unlock);
+            this.setState(prevState => {
+                const updatedProjects = prevState.allProjects.filter(project => project.uuid !== projectId);
+                const updatedUnlockedProjects = updatedProjects.filter(project => project.unlock);
 
-            this.setState({
-                allProjects: updatedProjects,
-                unlockedProjects: updatedUnlockedProjects,
-                isLoading: false
+                return {
+                    allProjects: updatedProjects,
+                    unlockedProjects: updatedUnlockedProjects,
+                    isLoading: false
+                };
             });
         } catch (error) {
             console.error('Failed to delete project:', error);

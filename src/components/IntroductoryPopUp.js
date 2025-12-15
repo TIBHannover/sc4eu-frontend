@@ -55,18 +55,20 @@ class IntroductoryPopUp extends Component {
     }
 
     goToNextSlide = () => {
-        const isLastSlide = this.state.sliderIndex === SliderText.length - 1;
-        if (!isLastSlide) {
-            const newIndex = isLastSlide ? 0 : this.state.sliderIndex + 1;
-            this.setState({ sliderIndex: newIndex });
-            if (newIndex === 2) {
-                this.setState({ buttonText: 'I Understand' });
+        this.setState(prevState => {
+            const isLastSlide = prevState.sliderIndex === SliderText.length - 1;
+            if (!isLastSlide) {
+                const newIndex = prevState.sliderIndex + 1;
+                return {
+                    sliderIndex: newIndex,
+                    buttonText: newIndex === 2 ? 'I understand' : 'Next'
+                };
             } else {
-                this.setState({ buttonText: 'Next' });
+                return {
+                    firstModal: !prevState.firstModal
+                };
             }
-        } else {
-            this.setState(prevState => ({ firstModal: !prevState.firstModal }));
-        }
+        });
     };
 
     render() {
@@ -95,13 +97,28 @@ class IntroductoryPopUp extends Component {
                             </Button>
                         </div>
                         <br />
-                        <span style={{ fontSize: '18px', color: colorStyled.TEXTCOLOR }}>{SliderText[this.state.sliderIndex].value}</span>
+                        <span
+                            style={{
+                                fontSize: '18px',
+                                color: colorStyled.TEXTCOLOR
+                            }}
+                        >
+                            {SliderText[this.state.sliderIndex].value}
+                        </span>
                         <div style={{ marginTop: '15px', marginBottom: '15px' }}>
                             <Button onClick={this.goToNextSlide} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
                                 {this.state.buttonText}
                             </Button>
                         </div>
-                        <div style={{ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)', display: 'flex' }}>
+                        <div
+                            style={{
+                                position: 'absolute',
+                                bottom: '10px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                display: 'flex'
+                            }}
+                        >
                             {Array.from({ length: 3 }).map((item, index) => (
                                 <div
                                     key={index}
@@ -133,6 +150,7 @@ class IntroductoryPopUp extends Component {
         );
     }
 }
+
 export default IntroductoryPopUp;
 
 const StyledRootDiv = styled.div`

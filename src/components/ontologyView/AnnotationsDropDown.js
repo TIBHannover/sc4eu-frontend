@@ -39,19 +39,17 @@ class AnnotationsDropDown extends Component {
         }
         const mappedAnnotations = allAnnotations.map(item => {
             return (
+                /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
                 <div
                     key={'itemId_' + item.prefix + item.type}
                     style={{ display: 'block', overflow: 'hidden' }}
-                    onClick={() => {
-                        console.log('Improvement: Maybe change background color to show it as selected');
-                    }}
-                    onKeyDown={() => {}}
                 >
                     <StyledSpan>{item.prefix}</StyledSpan>
                     <div style={{ marginLeft: '1rem' }}>
                         <StyledSpan>{item.type}</StyledSpan>
                     </div>
                 </div>
+                /* eslint-enable jsx-a11y/no-noninteractive-element-interactions */
             );
         });
 

@@ -270,7 +270,7 @@ const SideBar = props => {
                                                 <h6 className="h6">
                                                     <span>
                                                         <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                                                    </span>
+                                                    </span>{' '}
                                                     Loading Document
                                                 </h6>
                                             </div>
