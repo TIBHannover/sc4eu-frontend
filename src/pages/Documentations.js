@@ -95,11 +95,13 @@ class Documentations extends Component {
                     </StyledText>
                     <h5>About SC4EU Ontology Curation Portal</h5>
                     <StyledText>
-                        SC4EU Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and machines, as
-                        machines, as well as all other partners.The key objective of this platform is to implement data documentation of an actionable
-                        ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies, and complemented by
-                        new ones for other subdomains to ensure interoperability of data. "Further information about the project you can find on our
-                        <span />
+                        <span>
+                            SC4EU Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and
+                            machines, as machines, as well as all other partners.The key objective of this platform is to implement data documentation
+                            of an actionable ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies,
+                            and complemented by new ones for other subdomains to ensure interoperability of data. "Further information about the
+                            project you can find on our
+                        </span>
                         <a
                             style={{ color: colorStyled.SECONDARY.link }}
                             target="_blank"

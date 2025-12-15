@@ -1,4 +1,5 @@
 import ReactApexChart from "react-apexcharts";
+import PropTypes from 'prop-types';
 
 export const ApexBarChart = ({ data, categories }) => {
     const series = [{
@@ -33,3 +34,8 @@ export const ApexBarChart = ({ data, categories }) => {
         <ReactApexChart options={options} series={series} type="bar" height={350} />
     );
 };
+
+ApexBarChart.propTypes = {
+    data: PropTypes.array.isRequired,
+    categories: PropTypes.array.isRequired,
+}

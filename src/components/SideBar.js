@@ -442,3 +442,9 @@ const mapStateToProps = state => ({
 });
 
 export default compose(connect(mapStateToProps))(SideBar);
+
+SideBar.propTypes = {
+    user: PropTypes.shape({
+        displayName: PropTypes.string,
+    }),
+}

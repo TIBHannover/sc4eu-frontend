@@ -25,6 +25,7 @@ import Divider from '@mui/material/Divider';
 import { Tabs } from '@mui/material/';
 import { getTermVotes } from '../../../network/TermVoteCalls';
 import { StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
+import PropTypes from 'prop-types';
 
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const [searchText, setSearchText] = useState('');
@@ -336,3 +337,19 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 };
 
 export default InformationHub;
+
+InformationHub.propTypes = {
+    terms: PropTypes.arrayOf(
+        PropTypes.shape({
+            comments: PropTypes.arrayOf(PropTypes.string).isRequired,
+            hasVote: PropTypes.bool.isRequired,
+            hasMention: PropTypes.bool.isRequired
+        })
+    ).isRequired,
+    discussions: PropTypes.arrayOf(PropTypes.shape({
+        comments: PropTypes.arrayOf(PropTypes.string).isRequired,
+        resourceId: PropTypes.string.isRequired,
+    })).isRequired,
+    mentionedUsers: PropTypes.array.isRequired,
+    onTermSelect: PropTypes.func.isRequired
+};

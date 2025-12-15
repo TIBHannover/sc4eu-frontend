@@ -15,6 +15,7 @@ import public_collection from '../assets/images/public_collection.png';
 import sc4eu_collection from '../assets/images/logo.png';
 import theme from '../theme';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
+import PropTypes from 'prop-types';
 
 const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
     & .MuiTooltip-tooltip {
@@ -189,3 +190,18 @@ const StyledCard = styled(Card)`
         }
     }
 `;
+
+ProjectCard.propTypes = {
+    project: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+        access_type: PropTypes.string.isRequired,
+        canDelete: PropTypes.bool.isRequired,
+    }),
+    onEdit: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
+    redux_addProject: PropTypes.func,
+    redux_removeProject: PropTypes.func,
+    redux_removeOntology: PropTypes.func,
+    redux_removeAlreadyLoadedOntology: PropTypes.func
+};
