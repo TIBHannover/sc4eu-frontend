@@ -505,8 +505,10 @@ module.exports = {
     getTermVote: function(app) {
         app.get('/getTermVote', (req, res) => {
             const query = req.query;
-            const url = `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(query['term_uuid'])}/votes`;
-            if (query.status) url.searchParams.set("status", query.status);
+            const url = new URL(`${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(query.term_uuid)}/votes`);
+            if (query.status) {
+                url.searchParams.set('status', query.status);
+            }
             const vote_Options = {
                 uri: url,
                 method: 'GET',
