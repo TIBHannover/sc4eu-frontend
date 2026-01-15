@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     Box,
     Typography,
@@ -19,6 +19,8 @@ import {
     AvatarGroup,
     Badge,
     Popover,
+    Select,
+    MenuItem,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -33,6 +35,16 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { colorStyled } from '../../../styledComponents/styledColor';
 
+const SORT_BY_OPTIONS = Object.freeze({
+    RECENT_UPDATE: 'recent_update',
+    LATEST_UPDATE: 'latest_update',
+    ALPHABETICAL: 'alphabetical',
+    ALPHABETICAL_REVERSE: 'alphabetical_reverse',
+    MOST_VOTES: 'most_votes',
+    MOST_COMMENTS: 'most_comments',
+});
+
+
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const [searchText, setSearchText] = useState('');
     const [showOnlyMentions, setShowOnlyMentions] = useState(false);
@@ -44,6 +56,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
+    const [sortBy, setSortBy] = useState(SORT_BY_OPTIONS.RECENT_UPDATE);
 
     useEffect(() => {
         const getVotes = async () => {
@@ -156,14 +170,23 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         result = filterByDate(result);
         result = filterBySearch(result);
 
-        return result.sort((a, b) => {
-            const aComment = getLastComment(a);
-            const bComment = getLastComment(b);
-            const timeA = aComment ? new Date(aComment.timestamp) : 0;
-            const timeB = bComment ? new Date(bComment.timestamp) : 0;
-            return timeB - timeA;
-        });
-    }, [enhancedTerms, activeTab, showOnlyMentions, dateFrom, dateTo, searchText]);
+        switch (sortBy) {
+            case SORT_BY_OPTIONS.RECENT_UPDATE:
+                return result.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+            case SORT_BY_OPTIONS.LATEST_UPDATE:
+                return result.sort((a, b) => new Date(a.modified) - new Date(b.modified));
+            case SORT_BY_OPTIONS.ALPHABETICAL:
+                return result.sort((a, b) => a.label.localeCompare(b.label));
+            case SORT_BY_OPTIONS.ALPHABETICAL_REVERSE:
+                return result.sort((a, b) => b.label.localeCompare(a.label));
+            case SORT_BY_OPTIONS.MOST_VOTES:
+                return result.sort((a, b) => b.decisions.length - a.decisions.length);
+            case SORT_BY_OPTIONS.MOST_COMMENTS:
+                return result.sort((a, b) => b.comments.length - a.comments.length);
+            default:
+                return result.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+        }
+    }, [enhancedTerms, activeTab, showOnlyMentions, dateFrom, dateTo, searchText, sortBy]);
 
     const renderTermItem = term => {
         const lastComment = getLastComment(term);
@@ -222,19 +245,17 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 </Typography>
                                 {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
                                 {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
-                                {lastComment && (
-                                    <Typography
-                                        variant="caption"
-                                        color="text.secondary"
-                                        sx={{
-                                            fontSize: '0.75rem'
-                                        }}
-                                    >
-                                        {new Date(lastComment.timestamp).toLocaleDateString() +
-                                            ' ' +
-                                            new Date(lastComment.timestamp).toLocaleTimeString()}
-                                    </Typography>
-                                )}
+
+                                <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    sx={{
+                                        fontSize: '0.75rem'
+                                    }}
+                                >
+                                    {new Date(term.modified).toLocaleDateString() + ' ' + new Date(term.modified).toLocaleTimeString()}
+                                </Typography>
+
                                 {term.hasVote && (
                                     <>
                                         <AvatarGroup
@@ -408,6 +429,22 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     }
                 />
             </Tabs>
+
+            {filteredTerms.length > 0 && (
+                <Box sx={{ ml: 5 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
+                        Sort by:
+                    </Typography>
+                    <Select size="small" value={sortBy} onChange={e => setSortBy(e.target.value)} variant="outlined" sx={{ minWidth: 200 }}>
+                        <MenuItem value={SORT_BY_OPTIONS.RECENT_UPDATE}>Recently updated</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.LATEST_UPDATE}>Latest updated</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL}>Alphabetical</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL_REVERSE}>Alphabetical (Z to A)</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.MOST_VOTES}>Most votes</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.MOST_COMMENTS}>Most Comments</MenuItem>
+                    </Select>
+                </Box>
+            )}
 
             <Grid item xs={12}>
                 <Paper elevation={0}>
