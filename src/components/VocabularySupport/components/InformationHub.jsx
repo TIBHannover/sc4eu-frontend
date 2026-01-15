@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     Box,
     Typography,
@@ -15,7 +15,10 @@ import {
     Grid,
     ListItemAvatar,
     Tab,
-    CircularProgress
+    CircularProgress,
+    AvatarGroup,
+    Badge,
+    Popover,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -26,6 +29,9 @@ import { Tabs } from '@mui/material/';
 import { getTermVotes } from '../../../network/TermVoteCalls';
 import { StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import PropTypes from 'prop-types';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import { colorStyled } from '../../../styledComponents/styledColor';
 
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const [searchText, setSearchText] = useState('');
@@ -33,19 +39,44 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
-    const [votesMap, setVotesMap] = useState({});
+    const [votesMap, setVotesMap] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
 
     useEffect(() => {
         const getVotes = async () => {
             setLoading(true);
 
             const data = await getTermVotes();
-            setVotesMap(data || {});
+            setVotesMap(data || []);
             setLoading(false);
         };
         getVotes();
     }, []);
+
+    const DecisionBadgeAvatar = ({ decision }) => {
+        return (
+            <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
+                sx={{
+                    '& .MuiBadge-badge': {
+                        backgroundColor: decision.choice === 'approved' ? colorStyled.GREEN_COLOR : colorStyled.ORANGE_COLOR,
+                        color: 'white',
+                        width: 16,
+                        height: 16,
+                        fontSize: 12,
+                        border: '2px solid white'
+                    }
+                }}
+            >
+                <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
+            </Badge>
+        );
+    };
 
     const discussionsMap = useMemo(() => {
         return discussions.reduce((map, discussion) => {
@@ -58,13 +89,18 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         return terms.map(term => {
             const comments = discussionsMap[term.identifier] || [];
             const hasMention = comments.some(c => c.mentionedUsers?.includes(mentionedUser));
-            const hasVote = !!votesMap[term.identifier];
+            const decisions = votesMap.filter(votes => votes.term_uuid === term.identifier).flatMap(votes => votes.decisions);
+            const votesIds = votesMap.map(votes => {
+                return votes.term_uuid;
+            });
+            const hasVote = votesIds.includes(term.identifier);
 
             return {
                 ...term,
                 comments,
                 hasMention,
-                hasVote
+                hasVote,
+                decisions
             };
         });
     }, [terms, discussionsMap, mentionedUser, votesMap]);
@@ -136,9 +172,13 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         return (
             <ListItem
                 key={term.identifier}
-                onClick={() => onTermSelect(term.identifier)}
+                onClick={event => {
+                    const rowClickedClosests = event.target.closest('.MuiListItem-root');
+                    if (rowClickedClosests === event.currentTarget) {
+                        onTermSelect(term.identifier);
+                    }
+                }}
                 sx={{
-                    cursor: 'pointer',
                     '&:hover': { backgroundColor: 'action.hover' },
                     p: 2,
                     borderRadius: 1,
@@ -195,6 +235,68 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                             new Date(lastComment.timestamp).toLocaleTimeString()}
                                     </Typography>
                                 )}
+                                {term.hasVote && (
+                                    <>
+                                        <AvatarGroup
+                                            max={4}
+                                            onClick={event => {
+                                                event.stopPropagation();
+                                                setAnchorEl(event.currentTarget);
+                                            }}
+                                            sx={{
+                                                gap: 0.5,
+                                                marginLeft: 2,
+                                                '& .MuiAvatar-root': {
+                                                    width: 24,
+                                                    height: 24,
+                                                    fontSize: 12
+                                                },
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {term.decisions.map(decision => (
+                                                <Tooltip title={decision.user_name}>
+                                                    <DecisionBadgeAvatar decision={decision} />
+                                                </Tooltip>
+                                            ))}
+                                        </AvatarGroup>
+                                        <Popover
+                                            open={open}
+                                            anchorEl={anchorEl}
+                                            onClose={() => {
+                                                setAnchorEl(null);
+                                            }}
+                                            anchorOrigin={{
+                                                vertical: 'center',
+                                                horizontal: 'right'
+                                            }}
+                                            slotProps={{
+                                                paper: {
+                                                    sx: {
+                                                        maxHeight: 200
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+                                                Click outside to close
+                                            </Typography>
+                                            {term.decisions.slice(4).map(decision => (
+                                                <List>
+                                                    <ListItem key={decision.user_name}>
+                                                        <ListItemAvatar>
+                                                            <DecisionBadgeAvatar decision={decision} />
+                                                        </ListItemAvatar>
+                                                        <ListItemText>
+                                                            <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
+                                                        </ListItemText>
+                                                        <Box sx={{ ml: 3 }}></Box>
+                                                    </ListItem>
+                                                </List>
+                                            ))}
+                                        </Popover>
+                                    </>
+                                )}
                             </Box>
                         }
                         secondary={
@@ -232,7 +334,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             case 0:
                 return enhancedTerms.filter(t => t.comments.length > 0).length;
             case 1:
-                return Object.keys(votesMap).length;
+                return votesMap.length;
             default:
                 return '...';
         }
@@ -346,10 +448,12 @@ InformationHub.propTypes = {
             hasMention: PropTypes.bool.isRequired
         })
     ).isRequired,
-    discussions: PropTypes.arrayOf(PropTypes.shape({
-        comments: PropTypes.arrayOf(PropTypes.string).isRequired,
-        resourceId: PropTypes.string.isRequired,
-    })).isRequired,
+    discussions: PropTypes.arrayOf(
+        PropTypes.shape({
+            comments: PropTypes.arrayOf(PropTypes.string).isRequired,
+            resourceId: PropTypes.string.isRequired
+        })
+    ).isRequired,
     mentionedUser: PropTypes.string.isRequired,
     onTermSelect: PropTypes.func.isRequired
 };
