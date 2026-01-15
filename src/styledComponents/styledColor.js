@@ -24,6 +24,8 @@ const FOOTERNOTECOLOR = ' #003554';
 
 const ORANGE_COLOR = '#ee7356';
 
+const GREEN_COLOR = '#068a18';
+
 export const colorStyled = {
     PRIMARY: PRIMARY,
     SECONDARY: SECONDARY,
@@ -33,4 +35,5 @@ export const colorStyled = {
     BORDER_COLOR: BORDER_COLOR,
     SCROLLBAR_BORDER_COLOR: SCROLLBAR_BORDER_COLOR,
     ORANGE_COLOR: ORANGE_COLOR,
+    GREEN_COLOR: GREEN_COLOR,
 };
