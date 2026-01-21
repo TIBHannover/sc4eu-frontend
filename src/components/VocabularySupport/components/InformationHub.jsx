@@ -299,9 +299,9 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                                 }
                                             }}
                                         >
-                                            <Typography variant="caption">
-                                                Click outside to close
-                                            </Typography>
+                                            {/*<Typography variant="caption">*/}
+                                            {/*    Click outside to close*/}
+                                            {/*</Typography>*/}
                                             {term.decisions.slice(4).map(decision => (
                                                 <List>
                                                     <ListItem key={decision.user_name}>
