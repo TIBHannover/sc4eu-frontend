@@ -244,10 +244,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 <Typography variant="subtitle1" fontWeight="bold" sx={{ mr: 1 }}>
                                     {term.label}
                                 </Typography>
-                                {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention"
-                                                                sx={{ mr: '1em' }} />}
-                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement"
-                                                             sx={{ mr: '1em' }} />}
+                                {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
+                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
 
                                 <Typography
                                     variant="caption"
@@ -279,47 +277,45 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                             }}
                                         >
                                             {term.decisions.map(decision => (
-                                                <Tooltip title={decision.user_name}>
+                                                <Tooltip key={decision.user_name} title={decision.user_name}>
                                                     <DecisionBadgeAvatar decision={decision} />
                                                 </Tooltip>
                                             ))}
                                         </AvatarGroup>
-                                        <Popover
-                                            open={open}
-                                            anchorEl={anchorEl}
-                                            onClose={() => {
-                                                setAnchorEl(null);
-                                            }}
-                                            anchorOrigin={{
-                                                vertical: 'center',
-                                                horizontal: 'right'
-                                            }}
-                                            slotProps={{
-                                                paper: {
-                                                    sx: {
-                                                        maxHeight: 200
-                                                    }
-                                                }
-                                            }}
-                                            transitionDuration={0}
-                                        >
-                                            <List>
-                                                {term.decisions.slice(3).map(decision => (
-                                                    <ListItem key={decision.user_name}>
-                                                        <ListItemAvatar>
-                                                            <DecisionBadgeAvatar decision={decision} />
-                                                        </ListItemAvatar>
-                                                        <ListItemText>
-                                                            <Typography
-                                                                sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
-                                                        </ListItemText>
-                                                        <Box sx={{ ml: 3 }}></Box>
-                                                    </ListItem>
-                                                ))}
-                                            </List>
-                                        </Popover>
                                     </>
                                 )}
+                                <Popover
+                                    open={open}
+                                    anchorEl={anchorEl}
+                                    onClose={() => {
+                                        setAnchorEl(null);
+                                    }}
+                                    anchorOrigin={{
+                                        vertical: 'center',
+                                        horizontal: 'right'
+                                    }}
+                                    slotProps={{
+                                        paper: {
+                                            sx: {
+                                                maxHeight: 200
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <List>
+                                        {term.decisions?.slice(3).map(decision => (
+                                            <ListItem key={decision.user_name}>
+                                                <ListItemAvatar>
+                                                    <DecisionBadgeAvatar decision={decision} />
+                                                </ListItemAvatar>
+                                                <ListItemText>
+                                                    <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
+                                                </ListItemText>
+                                                <Box sx={{ ml: 3 }}></Box>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </Popover>
                             </Box>
                         }
                         secondary={
