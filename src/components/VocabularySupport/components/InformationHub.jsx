@@ -299,7 +299,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                                 }
                                             }}
                                         >
-                                            <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+                                            <Typography variant="caption">
                                                 Click outside to close
                                             </Typography>
                                             {term.decisions.slice(4).map(decision => (
