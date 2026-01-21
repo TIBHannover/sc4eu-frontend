@@ -303,9 +303,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                             }}
                                             transitionDuration={0}
                                         >
-                                            <Typography variant="caption" color={'text.disabled'}>
-                                                Click outside to close
-                                            </Typography>
                                             <List>
                                                 {term.decisions.slice(3).map(decision => (
                                                     <ListItem key={decision.user_name}>
