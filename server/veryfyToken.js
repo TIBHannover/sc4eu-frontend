@@ -1,11 +1,23 @@
+const { Cookies } = require('react-cookie');
+
 module.exports = function(req, res, next) {
-    const token = req.cookies.token;
-    if (!token) {
-        console.log('WE DONT HAVE A TOKEN HERE oO ');
-        res.send(JSON.stringify({ error: 'No Token Provided' }));
+    const bearerHeader = req.headers['authorization'];
+    if (bearerHeader) {
+        console.log('>>> WE HAVE A TOKEN  ');
+        const bearer = bearerHeader.split(' ');
+        req.token = bearer[1];
+        return next();
     }
 
-    req.token = token;
-    next();
+    const cookies = new Cookies();
+    const token = cookies.get('token');
+    if (token) {
+        req.token = token;
+        return next();
+    }
 
+    if (!token) {
+        console.log('WE DONT HAVE A TOKEN HERE oO ');
+        return res.send(JSON.stringify({ error: 'No Token Provided' }));
+    }
 };
