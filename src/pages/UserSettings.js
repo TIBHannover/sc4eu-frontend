@@ -3,7 +3,7 @@ import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { connect } from 'react-redux';
-import UserViewDetails from 'components/UserViewDetails';
+import UserViewDetails from '../components/UserViewDetails';
 import { getUserSettings } from '../network/UserProfileCalls';
 import AlertPopUp from '../components/ReusableComponents/AlertPopUp';
 import PropTypes from 'prop-types';
