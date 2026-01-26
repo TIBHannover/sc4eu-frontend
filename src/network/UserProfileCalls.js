@@ -25,7 +25,7 @@ export const getUserProfile = payload => {
 };
 
 export const getUserSettings = () => {
-    return submitGetRequest(`${URL_GET_USER_SETTINGS}`, {}, true);
+    return submitGetRequest(`${URL_GET_USER_SETTINGS}/?t=${Date.now()}`, {}, true);
 };
 
 export const deleteUser = userId => {
