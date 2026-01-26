@@ -198,7 +198,7 @@ export default class UploadOntology extends Component {
             const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: gitHubFileContent });
             const pre_result = JSON.parse(pre_result_asString);
 
-            this.setState({
+            this.setState(prevState => ({
                 ontologyFileContent: gitHubFileContent,
                 hasContent: true,
                 ontologyName: pre_result.title,
@@ -206,9 +206,9 @@ export default class UploadOntology extends Component {
                 preInitResult: pre_result,
                 waitingForResult: false,
                 lookup_type: 'online',
-                lookup_path: this.state.githubURL,
+                lookup_path: prevState.githubURL,
                 ontology_git_data: git_commit_sha
-            });
+            }));
         } catch (e) {
             this.setState({
                 hasContent: false,
@@ -231,7 +231,7 @@ export default class UploadOntology extends Component {
             const pre_result_asString = await preInitializeOntologyUpload({ ontologyData: gitlabFileContent });
             const pre_result = JSON.parse(pre_result_asString);
 
-            this.setState({
+            this.setState(prevState => ({
                 ontologyFileContent: gitlabFileContent,
                 hasContent: true,
                 ontologyName: pre_result.title,
@@ -239,9 +239,9 @@ export default class UploadOntology extends Component {
                 preInitResult: pre_result,
                 waitingForResult: false,
                 lookup_type: 'online-gitlab',
-                lookup_path: this.state.gitlabURL,
+                lookup_path: prevState.gitlabURL,
                 ontology_git_data: gitlab_commit_sha
-            });
+            }));
         } catch (e) {
             this.setState({
                 hasContent: false,

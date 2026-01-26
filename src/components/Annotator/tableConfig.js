@@ -1,6 +1,7 @@
 import { Link } from '@mui/material';
 import { generateLink } from './utils';
 
+/* eslint-disable react/prop-types */
 export const createColumns = groupByAncestor => {
     const linkCell = (text, iri, ontologyId) => (
         <Link

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
+import PropTypes from 'prop-types';
 
 const CheckboxDropdown = ({ options, defaultOptions = [], title, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -138,3 +139,10 @@ const Label = styled.label`
     flex-grow: 1;
     margin: 0;
 `;
+
+CheckboxDropdown.propTypes = {
+    options: PropTypes.arrayOf(PropTypes.string).isRequired,
+    defaultOptions: PropTypes.arrayOf(PropTypes.string),
+    title: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+}

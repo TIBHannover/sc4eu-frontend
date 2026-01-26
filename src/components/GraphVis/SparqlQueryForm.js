@@ -41,28 +41,30 @@ const SparqlQueryForm = forwardRef(({ open, onClose, onRun }, ref) => {
     return (
         <ContentArea>
             <FormRow>
-                <label>Subject:</label>
-                <input type="text" value={subject} onChange={e => setSubject(e.target.value)} placeholder="?subject or <URI>" />
+                <label htmlFor="subject">Subject:</label>
+                <input id="subject" type="text" value={subject} onChange={e => setSubject(e.target.value)} placeholder="?subject or <URI>" />
             </FormRow>
             <FormRow>
-                <label>Predicate:</label>
-                <input type="text" value={predicate} onChange={e => setPredicate(e.target.value)} placeholder="?predicate or <URI>" />
+                <label htmlFor="predicate">Predicate:</label>
+                <input id="predicate" type="text" value={predicate} onChange={e => setPredicate(e.target.value)} placeholder="?predicate or <URI>" />
             </FormRow>
             <FormRow>
-                <label>Object:</label>
-                <input type="text" value={object} onChange={e => setObject(e.target.value)} placeholder="?object, <URI>, or literal" />
+                <label htmlFor="objec">Object:</label>
+                <input id="object" type="text" value={object} onChange={e => setObject(e.target.value)} placeholder="?object, <URI>, or literal" />
             </FormRow>
             <FormRow>
-                <label>FILTER:</label>
-                <input type="text" value={filter} onChange={e => setFilter(e.target.value)} placeholder="e.g. str(?predicate)=..." />
+                <label htmlFor="filter">FILTER:</label>
+                <input id="filter" type="text" value={filter} onChange={e => setFilter(e.target.value)} placeholder="e.g. str(?predicate)=..." />
             </FormRow>
             <FormRow>
-                <label>LIMIT:</label>
-                <input type="number" min="1" value={limit} onChange={e => setLimit(Number(e.target.value))} placeholder="100" />
+                <label htmlFor="limit">LIMIT:</label>
+                <input id="limit" type="number" min="1" value={limit} onChange={e => setLimit(Number(e.target.value))} placeholder="100" />
             </FormRow>
             <FormRow>
-                <label>SPARQL Preview:</label>
-                <PreviewBox>{buildQuery()}</PreviewBox>
+                <label>
+                    SPARQL Preview:
+                    <PreviewBox>{buildQuery()}</PreviewBox>
+                </label>
             </FormRow>
         </ContentArea>
     );
@@ -88,11 +90,13 @@ const FormRow = styled.div`
     display: flex;
     align-items: center;
     margin-bottom: 16px;
+
     & > label {
         width: 90px;
         font-weight: 500;
         margin-right: 10px;
     }
+
     & > select,
     & > input {
         flex: 1;

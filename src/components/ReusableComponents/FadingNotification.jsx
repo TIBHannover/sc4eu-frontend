@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import PropTypes from 'prop-types';
 
 const fadeIn = keyframes`
     from {
@@ -45,3 +46,8 @@ const FadingNotification = ({ message, timeout }) => {
 };
 
 export default FadingNotification;
+
+FadingNotification.propTypes = {
+    message: PropTypes.string.isRequired,
+    timeout: PropTypes.number.isRequired,
+}

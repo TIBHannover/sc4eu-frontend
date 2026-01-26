@@ -20,6 +20,7 @@ import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderG
 import { StyledBadge, StyledTooltip } from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
 
+/* eslint-disable react/prop-types */
 const VocabularyMainTable = ({
     terms,
     refetch,

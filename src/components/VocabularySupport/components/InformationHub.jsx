@@ -15,7 +15,12 @@ import {
     Grid,
     ListItemAvatar,
     Tab,
-    CircularProgress
+    CircularProgress,
+    AvatarGroup,
+    Badge,
+    Popover,
+    Select,
+    MenuItem
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -25,6 +30,20 @@ import Divider from '@mui/material/Divider';
 import { Tabs } from '@mui/material/';
 import { getTermVotes } from '../../../network/TermVoteCalls';
 import { StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
+import PropTypes from 'prop-types';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import { colorStyled } from '../../../styledComponents/styledColor';
+
+const SORT_BY_OPTIONS = Object.freeze({
+    RECENT_UPDATE: 'recent_update',
+    LATEST_UPDATE: 'latest_update',
+    ALPHABETICAL: 'alphabetical',
+    ALPHABETICAL_REVERSE: 'alphabetical_reverse',
+    MOST_VOTES: 'most_votes',
+    MOST_COMMENTS: 'most_comments'
+});
+
 
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const [searchText, setSearchText] = useState('');
@@ -32,19 +51,47 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
-    const [votesMap, setVotesMap] = useState({});
+    const [votesMap, setVotesMap] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const [sortBy, setSortBy] = useState(SORT_BY_OPTIONS.RECENT_UPDATE);
 
     useEffect(() => {
         const getVotes = async () => {
             setLoading(true);
 
             const data = await getTermVotes();
-            setVotesMap(data || {});
+            setVotesMap(data || []);
             setLoading(false);
         };
         getVotes();
     }, []);
+
+    const DecisionBadgeAvatar = ({ decision }) => {
+        return (
+            <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> :
+                    <CloseIcon fontSize="inherit" />}
+                sx={{
+                    '& .MuiBadge-badge': {
+                        backgroundColor: decision.choice === 'approved' ? colorStyled.GREEN_COLOR : colorStyled.ORANGE_COLOR,
+                        color: 'white',
+                        width: 16,
+                        height: 16,
+                        fontSize: 12,
+                        border: '2px solid white'
+                    }
+                }}
+            >
+                <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
+            </Badge>
+        );
+    };
 
     const discussionsMap = useMemo(() => {
         return discussions.reduce((map, discussion) => {
@@ -57,13 +104,18 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         return terms.map(term => {
             const comments = discussionsMap[term.identifier] || [];
             const hasMention = comments.some(c => c.mentionedUsers?.includes(mentionedUser));
-            const hasVote = !!votesMap[term.identifier];
+            const decisions = votesMap.filter(votes => votes.term_uuid === term.identifier).flatMap(votes => votes.decisions);
+            const votesIds = votesMap.map(votes => {
+                return votes.term_uuid;
+            });
+            const hasVote = votesIds.includes(term.identifier);
 
             return {
                 ...term,
                 comments,
                 hasMention,
-                hasVote
+                hasVote,
+                decisions
             };
         });
     }, [terms, discussionsMap, mentionedUser, votesMap]);
@@ -119,14 +171,23 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         result = filterByDate(result);
         result = filterBySearch(result);
 
-        return result.sort((a, b) => {
-            const aComment = getLastComment(a);
-            const bComment = getLastComment(b);
-            const timeA = aComment ? new Date(aComment.timestamp) : 0;
-            const timeB = bComment ? new Date(bComment.timestamp) : 0;
-            return timeB - timeA;
-        });
-    }, [enhancedTerms, activeTab, showOnlyMentions, dateFrom, dateTo, searchText]);
+        switch (sortBy) {
+            case SORT_BY_OPTIONS.RECENT_UPDATE:
+                return result.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+            case SORT_BY_OPTIONS.LATEST_UPDATE:
+                return result.sort((a, b) => new Date(a.modified) - new Date(b.modified));
+            case SORT_BY_OPTIONS.ALPHABETICAL:
+                return result.sort((a, b) => a.label.localeCompare(b.label));
+            case SORT_BY_OPTIONS.ALPHABETICAL_REVERSE:
+                return result.sort((a, b) => b.label.localeCompare(a.label));
+            case SORT_BY_OPTIONS.MOST_VOTES:
+                return result.sort((a, b) => b.decisions.length - a.decisions.length);
+            case SORT_BY_OPTIONS.MOST_COMMENTS:
+                return result.sort((a, b) => b.comments.length - a.comments.length);
+            default:
+                return result.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+        }
+    }, [enhancedTerms, activeTab, showOnlyMentions, dateFrom, dateTo, searchText, sortBy]);
 
     const renderTermItem = term => {
         const lastComment = getLastComment(term);
@@ -135,9 +196,13 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         return (
             <ListItem
                 key={term.identifier}
-                onClick={() => onTermSelect(term.identifier)}
+                onClick={event => {
+                    const rowClickedClosests = event.target.closest('.MuiListItem-root');
+                    if (rowClickedClosests === event.currentTarget) {
+                        onTermSelect(term.identifier);
+                    }
+                }}
                 sx={{
-                    cursor: 'pointer',
                     '&:hover': { backgroundColor: 'action.hover' },
                     p: 2,
                     borderRadius: 1,
@@ -181,19 +246,76 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 </Typography>
                                 {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
                                 {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
-                                {lastComment && (
-                                    <Typography
-                                        variant="caption"
-                                        color="text.secondary"
-                                        sx={{
-                                            fontSize: '0.75rem'
-                                        }}
-                                    >
-                                        {new Date(lastComment.timestamp).toLocaleDateString() +
-                                            ' ' +
-                                            new Date(lastComment.timestamp).toLocaleTimeString()}
-                                    </Typography>
+
+                                <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    sx={{
+                                        fontSize: '0.75rem'
+                                    }}
+                                >
+                                    {new Date(term.modified).toLocaleDateString() + ' ' + new Date(term.modified).toLocaleTimeString()}
+                                </Typography>
+
+                                {term.hasVote && (
+                                    <>
+                                        <AvatarGroup
+                                            max={4}
+                                            onClick={event => {
+                                                event.stopPropagation();
+                                                setAnchorEl(event.currentTarget);
+                                            }}
+                                            sx={{
+                                                gap: 0.5,
+                                                marginLeft: 2,
+                                                '& .MuiAvatar-root': {
+                                                    width: 24,
+                                                    height: 24,
+                                                    fontSize: 12
+                                                },
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {term.decisions.map(decision => (
+                                                <Tooltip key={decision.user_name} title={decision.user_name}>
+                                                    <DecisionBadgeAvatar decision={decision} />
+                                                </Tooltip>
+                                            ))}
+                                        </AvatarGroup>
+                                    </>
                                 )}
+                                <Popover
+                                    open={open}
+                                    anchorEl={anchorEl}
+                                    onClose={() => {
+                                        setAnchorEl(null);
+                                    }}
+                                    anchorOrigin={{
+                                        vertical: 'center',
+                                        horizontal: 'right'
+                                    }}
+                                    slotProps={{
+                                        paper: {
+                                            sx: {
+                                                maxHeight: 200
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <List>
+                                        {term.decisions?.slice(3).map(decision => (
+                                            <ListItem key={decision.user_name}>
+                                                <ListItemAvatar>
+                                                    <DecisionBadgeAvatar decision={decision} />
+                                                </ListItemAvatar>
+                                                <ListItemText>
+                                                    <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
+                                                </ListItemText>
+                                                <Box sx={{ ml: 3 }}></Box>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </Popover>
                             </Box>
                         }
                         secondary={
@@ -231,7 +353,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             case 0:
                 return enhancedTerms.filter(t => t.comments.length > 0).length;
             case 1:
-                return Object.keys(votesMap).length;
+                return votesMap.length;
             default:
                 return '...';
         }
@@ -267,7 +389,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                         }}
                     >
                         <FormControlLabel
-                            control={<Checkbox size="small" checked={showOnlyMentions} onChange={e => setShowOnlyMentions(e.target.checked)} />}
+                            control={<Checkbox size="small" checked={showOnlyMentions}
+                                               onChange={e => setShowOnlyMentions(e.target.checked)} />}
                             label={<Typography variant="body2">Only my mentions</Typography>}
                             sx={{ mr: 2 }}
                         />
@@ -306,6 +429,23 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                 />
             </Tabs>
 
+            {filteredTerms.length > 0 && (
+                <Box sx={{ ml: 5 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
+                        Sort by:
+                    </Typography>
+                    <Select size="small" value={sortBy} onChange={e => setSortBy(e.target.value)} variant="outlined"
+                            sx={{ minWidth: 200 }}>
+                        <MenuItem value={SORT_BY_OPTIONS.RECENT_UPDATE}>Recently updated</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.LATEST_UPDATE}>Latest updated</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL}>Alphabetical</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL_REVERSE}>Alphabetical (Z to A)</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.MOST_VOTES}>Most votes</MenuItem>
+                        <MenuItem value={SORT_BY_OPTIONS.MOST_COMMENTS}>Most Comments</MenuItem>
+                    </Select>
+                </Box>
+            )}
+
             <Grid item xs={12}>
                 <Paper elevation={0}>
                     <List disablePadding>
@@ -336,3 +476,21 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 };
 
 export default InformationHub;
+
+InformationHub.propTypes = {
+    terms: PropTypes.arrayOf(
+        PropTypes.shape({
+            comments: PropTypes.arrayOf(PropTypes.string).isRequired,
+            hasVote: PropTypes.bool.isRequired,
+            hasMention: PropTypes.bool.isRequired
+        })
+    ).isRequired,
+    discussions: PropTypes.arrayOf(
+        PropTypes.shape({
+            comments: PropTypes.arrayOf(PropTypes.string).isRequired,
+            resourceId: PropTypes.string.isRequired
+        })
+    ).isRequired,
+    mentionedUser: PropTypes.string.isRequired,
+    onTermSelect: PropTypes.func.isRequired
+};

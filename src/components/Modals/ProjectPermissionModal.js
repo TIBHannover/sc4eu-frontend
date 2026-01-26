@@ -126,7 +126,7 @@ export default class ProjectPermissionModal extends Component {
                             </div>
                         </ModalBody>
                         <ModalFooter style={{ backgroundColor: 'lightgray' }}>
-                            <label style={{ color: 'red', alignContent: 'right', display: this.state.showWarning ? 'block' : 'none' }}>
+                            <label htmlFor="finishButton" style={{ color: 'red', alignContent: 'right', display: this.state.showWarning ? 'block' : 'none' }}>
                                 Subject and Message can not be empty
                             </label>
                             <Button id="finishButton" style={{ background: colorStyled.SECONDARY.dark }} onClick={this.handelClick} autoFocus={true}>

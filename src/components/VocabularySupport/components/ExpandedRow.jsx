@@ -81,7 +81,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     const handleInputChange = e => {
         let { name, value } = e.target;
         if (name.startsWith('altLabel')) {
-            const index = parseInt(name.split('-')[1], 10);
+            const index = Number.parseInt(name.split('-')[1], 10);
             const altLabels = splitAltLabels(updatedTerm.altLabel);
             altLabels[index] = value;
             value = altLabels.join(',');

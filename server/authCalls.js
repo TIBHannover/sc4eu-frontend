@@ -37,13 +37,13 @@ function findOrCreateUser(userData) {
         request(options, (error, response, body) => {
             if (error) {
                 console.error('Error finding or creating user:', error);
-                reject({ error: 'Network error while contacting the backend' });
+                reject(new Error('Network error while contacting the backend'));
                 return;
             }
 
             if (response.statusCode !== 200) {
                 console.error('Backend returned an error:', body);
-                reject({ error: 'Backend error', details: body });
+                reject(new Error('Backend error'));
                 return;
             }
 
@@ -52,7 +52,7 @@ function findOrCreateUser(userData) {
                 resolve(result); // Resolve with user data
             } catch (e) {
                 console.error('Error parsing backend response:', e);
-                reject({ error: 'Invalid backend response' });
+                reject(new Error('Invalid backend response'));
             }
         });
     });
@@ -795,7 +795,10 @@ module.exports = {
                 if (result) {
                     return res.json(result);
                 } else {
-                    return res.json({ success: false, message: 'something went wrong please try again after some time' });
+                    return res.json({
+                        success: false,
+                        message: 'something went wrong please try again after some time'
+                    });
                 }
             });
         });

@@ -43,7 +43,7 @@ const StyledRootDiv = styled.div`
 `;
 
 const CenterDisplayDiv = styled.div`
-    width: ${({ isSidebarOpen }) => (isSidebarOpen ? '95%' : '95%')};
+    width: 95%;
     transition: width 0.5s ease-out;
     background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
     margin-left: auto;
@@ -56,7 +56,7 @@ const CenterDisplayDiv = styled.div`
     border-bottom-left-radius: 0;
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: ${({ isSidebarOpen }) => (isSidebarOpen ? '90%' : '90%')};
+        width: 90%;
         margin-right: 5%;
     }
 `;

@@ -77,9 +77,9 @@ class Header extends Component {
     };
 
     toggleUserTooltip = () => {
-        this.setState({
-            userTooltipOpen: !this.state.userTooltipOpen
-        });
+        this.setState(prevState => ({
+            userTooltipOpen: !prevState.userTooltipOpen
+        }));
     };
 
     showDashboard = () => {
@@ -247,7 +247,7 @@ export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)
 const StyledRootDiv = styled.div`
     height: 50px;
     overflow: auto;
-    //background: ${colorStyled.PRIMARY.light};
+        //background: ${colorStyled.PRIMARY.light};
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
@@ -261,9 +261,9 @@ const StyledHeaderDiv = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    //background-image: url("${background}");
-    
-     @media (max-width: ${MAX_WIDTH}) {
+        //background-image: url("${background}");
+
+    @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
         overflow: hidden;
         background-image: none;

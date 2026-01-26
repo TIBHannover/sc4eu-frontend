@@ -318,6 +318,20 @@ const documentData = [
     },
     {
         id: '18',
+        heading: 'Vocabulary: How to participate in a consensus (video)',
+        content:
+            'Discover how to review terms, join ongoing consensuses, and vote using our majority-decision system to shape shared expectations.' +
+            '<br><br>' +
+            `<iframe
+                width="100%"
+                title="vocabulary_consensus"
+                height="725"
+                src="https://www.youtube.com/embed/dS8nmqGKgeg"
+                allowFullScreen
+            />`
+    },
+    {
+        id: '19',
         heading: ' Presentation Material',
         content: `<iframe
             src="https://docs.google.com/presentation/d/154vcWKt-ei4W5b6LdTEeRhO26WPGQ0z1A5OO_UBStnw/embed"
@@ -327,7 +341,7 @@ const documentData = [
             />`
     },
     {
-        id: '19',
+        id: '20',
         heading: 'Scientific Publication',
         content: `
             <div>

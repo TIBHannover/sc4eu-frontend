@@ -52,8 +52,8 @@ export const collapseNodeAnimationForDelete = (node, last, callback) => {
             // no propblemo
             // get PropertyNode;
             // first node;
-            const f_x = parseFloat(parentPosition.x);
-            const f_y = parseFloat(parentPosition.y);
+            const f_x = Number.parseFloat(parentPosition.x);
+            const f_y = Number.parseFloat(parentPosition.y);
 
             // we only have one link at the moment;
             if (!node.groupRoot) {
@@ -105,8 +105,8 @@ export const collapseNodeAnimation = (node, last, callback) => {
             // no propblemo
             // get PropertyNode;
             // first node;
-            const f_x = parseFloat(parentPosition.x);
-            const f_y = parseFloat(parentPosition.y);
+            const f_x = Number.parseFloat(parentPosition.x);
+            const f_y = Number.parseFloat(parentPosition.y);
 
             // we only have one link at the moment;
             const propertyNode = node.incomingLinks[0].getPropertNode();
@@ -162,8 +162,8 @@ export const expandNodeAnimation = (node, targetPosition, last, callback) => {
         if (node.incomingLinks.length === 1) {
             // get PropertyNode;
             // first node;
-            const f_x = parseFloat(targetPosition.x);
-            const f_y = parseFloat(targetPosition.y);
+            const f_x = Number.parseFloat(targetPosition.x);
+            const f_y = Number.parseFloat(targetPosition.y);
 
             // set node and propertyNode to parent position;
             node.setPosition(parentPosition.x, parentPosition.y);

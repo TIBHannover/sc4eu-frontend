@@ -61,31 +61,31 @@ class DashboardItem extends Component {
     // Function to open the alert popup box asking the user if they want to delete the user
     deleteUser = () => {
         const user = this.props.userData;
-        this.setState({
-            isPopUpOpen: !this.state.isPopUpOpen,
+        this.setState(prevState => ({
+            isPopUpOpen: !prevState.isPopUpOpen,
             popUpMessage: 'Are you sure you want to Delete ' + user.display_name + ' ?',
             Action: 'UserDelete',
             selectedUserID: user.uuid
-        });
+        }));
     };
 
     toggle = () => {
-        this.setState({ dropdownOpen: !this.state.dropdownOpen });
+        this.setState(prevState => ({ dropdownOpen: !prevState.dropdownOpen }));
     };
 
     userProjectToggle = () => {
-        this.setState({ userProjectDropDown: !this.state.userProjectDropDown });
+        this.setState(prevState => ({ userProjectDropDown: !prevState.userProjectDropDown }));
     };
 
     // Function to open the alert popup box asking the user if they want to delete the userProject
     deleteProjectFromUser = async (project, user) => {
-        this.setState({
-            isPopUpOpen: !this.state.isPopUpOpen,
+        this.setState(prevState => ({
+            isPopUpOpen: !prevState.isPopUpOpen,
             popUpMessage: 'Are you sure you want to Delete ?',
             Action: 'UserProjectDelete',
             selectedProjectID: project.projectUUID,
             selectedUserID: user.uuid
-        });
+        }));
     };
 
     // Function to open the alert popup box asking the user if they want to add the NewProjectFromUser
@@ -129,11 +129,11 @@ class DashboardItem extends Component {
             const user = this.props.userData;
             if (user.role === 'System Admin') {
                 // If the user is a System Admin, not allowed to delete System Admin
-                this.setState({
-                    isPopUpOpen: !this.state.isPopUpOpen,
+                this.setState(prevState => ({
+                    isPopUpOpen: !prevState.isPopUpOpen,
                     popUpMessage: 'Not allowed to delete System Admin',
                     Action: null
-                });
+                }));
             } else {
                 // Delete User
                 deleteUser(this.state.selectedUserID).then(() => {
@@ -363,7 +363,7 @@ class DashboardItem extends Component {
                     bodyText={this.state.popUpMessage}
                     isOpen={this.state.isPopUpOpen}
                     onClose={() => {
-                        this.setState({ isPopUpOpen: !this.state.isPopUpOpen });
+                        this.setState(prevState => ({ isPopUpOpen: !prevState.isPopUpOpen }));
                     }}
                     isConfirm={this.callBackFromAlertBox}
                 />

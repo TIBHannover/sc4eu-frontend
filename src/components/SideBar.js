@@ -67,7 +67,6 @@ const StyledLink = styled(NavLink)`
     border: 1px;
     background: transparent;
     color: black;
-    text-decoration: none;
     text-decoration: none !important;
     font-size: 14px;
 
@@ -79,7 +78,7 @@ const StyledLink = styled(NavLink)`
     @media (max-width: ${MAX_WIDTH}) {
         height: 30px;
         padding: 3px 10px 10px 5px;
-        font-size: font-size: ${colorStyled.PRIMARY.light};
+        font-size: ${colorStyled.PRIMARY.light};
     }
 `;
 
@@ -307,7 +306,7 @@ const SideBar = props => {
                     {/*) : null}*/}
                     <div
                         style={{
-                            marginLeft: props.isOpen ? '0px' : '0px',
+                            marginLeft: '0px',
                             display: 'flex',
                             flexDirection: 'column',
                             transition: '0.6s'
@@ -443,3 +442,9 @@ const mapStateToProps = state => ({
 });
 
 export default compose(connect(mapStateToProps))(SideBar);
+
+SideBar.propTypes = {
+    user: PropTypes.shape({
+        displayName: PropTypes.string,
+    }),
+}

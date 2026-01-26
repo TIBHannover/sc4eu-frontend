@@ -161,7 +161,7 @@ export default class ScreenCapture extends Component {
         const { crossHairsTop, crossHairsLeft, borderWidth, isMouseDown } = this.state;
 
         return (
-            <div onMouseMove={this.handleMouseMove} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
+            <div onMouseMove={this.handleMouseMove} onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp} role="region">
                 <Overlay className={isMouseDown && 'highlighting'} style={{ borderWidth }} />
                 {!this.state.imageURL && <Crosshairs style={{ left: crossHairsLeft + 'px', top: crossHairsTop + 'px' }} />}
             </div>

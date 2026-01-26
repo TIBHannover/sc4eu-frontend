@@ -6,6 +6,7 @@ import { MyApexChart } from './ApexChart';
 import { Tab, Tabs, Box } from '@mui/material/';
 import { ApexBarChart } from './ApexBarChart';
 import { colorStyled } from '../../styledComponents/styledColor';
+import PropTypes from 'prop-types';
 
 const wordLinks = {
     application: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr%23Application&obsoletes=false&lang=en',
@@ -50,7 +51,7 @@ export const EurostatPortal = () => {
         const fetchData = async () => {
             const response = await fetch(`${process.env.REACT_APP_TIVA_BACKEND_URL}/api/tiva/eurostat?${fieldVal}=submitted`);
             const data = await response.json();
-            if (data !== {}) {
+            if (data !== null) {
                 switch (fieldVal) {
                     case 'reporter':
                         setReporters(data);
@@ -251,6 +252,11 @@ export const EurostatPortal = () => {
     };
 
     const CustomInput = ({ value, onClick }) => <TextField value={value} onClick={onClick} label="Select Year*" style={{ width: 500 }} readOnly />;
+
+    CustomInput.propTypes = {
+        value: PropTypes.number,
+        onClick: PropTypes.func,
+    }
 
     return (
         <div style={{ height: 'calc(100vh - 100px)', overflowY: 'auto' }}>

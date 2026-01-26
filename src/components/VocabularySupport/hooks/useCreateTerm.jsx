@@ -6,7 +6,7 @@ export function useCreateTerm() {
     return useMutation({
         mutationFn: async () => {
             try {
-                return Promise.resolve();
+                await Promise.resolve();
             } catch (e) {
                 console.log('Error in mutationFn' + e);
             }

@@ -212,7 +212,7 @@ class GraphVisUi extends Component {
                         onChange={e => {
                             this.graph.updateColorOfNodesWithPrefix(item, e.target.value);
                             this.updateColorValuesNodes[item] = e.target.value;
-                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
                         }}
                         value={this.updateColorValuesNodes[item]}
                     />
@@ -238,7 +238,7 @@ class GraphVisUi extends Component {
                         onChange={e => {
                             this.graph.updateColorOfObjectPropsWithPrefix(item, e.target.value);
                             this.updateColorValuesOProps[item] = e.target.value;
-                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                            this.setState(prevState=> ({ updateFlipFlop: !prevState.updateFlipFlop }));
                         }}
                         value={this.updateColorValuesOProps[item]}
                         onBlur={() => {
@@ -269,9 +269,9 @@ class GraphVisUi extends Component {
                     isOpen={this.state.visSelectionOpen}
                     style={{ paddingTop: '2px' }}
                     toggle={() => {
-                        this.setState({
-                            visSelectionOpen: !this.state.visSelectionOpen
-                        });
+                        this.setState(prevState => ({
+                            visSelectionOpen: !prevState.visSelectionOpen
+                        }));
                     }}
                 >
                     <DropdownToggle caret style={{ backgroundColor: SECONDARY.dark, height: '35px' }}>
@@ -308,7 +308,7 @@ class GraphVisUi extends Component {
                                 cfg.style.bgColor = e.target.value;
                                 this.state.selectedItem.redraw();
                                 this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
-                                this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                                this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
                             }}
                             value={this.state.selectedItem.renderingConfig().style.bgColor}
                         />
@@ -323,7 +323,7 @@ class GraphVisUi extends Component {
                             cfg.fontStyle.fontSize = e.target.value + 'px';
                             this.state.selectedItem.redraw();
                             this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
-                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
                         }}
                     />
                 </div>
@@ -334,10 +334,10 @@ class GraphVisUi extends Component {
                             cfg.options.overwritesShapeSize = e.target.checked;
                             this.state.selectedItem.redraw();
                             this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
-                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
                         }}
                         checked={cfg.options.overwritesShapeSize}
-                    />
+                    />{' '}
                     Overwrite Shapesize
                 </div>
                 <div style={{ display: 'flex', padding: '5px' }}>
@@ -349,7 +349,7 @@ class GraphVisUi extends Component {
                             cfg.options.overwriteOffset = e.target.value;
                             this.state.selectedItem.redraw();
                             this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
-                            this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
                         }}
                     />
                 </div>
@@ -461,7 +461,7 @@ class GraphVisUi extends Component {
                         style={{ borderRadius: '20px', marginTop: '3px', height: '30px', padding: 0 }}
                         onClick={() => {
                             this.graph.setForceLayoutPlayState(this.state.layoutPlay);
-                            this.setState({ layoutPlay: !this.state.layoutPlay });
+                            this.setState(prevState => ({ layoutPlay: !prevState.layoutPlay }));
                         }}
                     >
                         <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
@@ -541,7 +541,7 @@ class GraphVisUi extends Component {
                         <StyledButton
                             expanded={this.state.leftSideBarExpanded}
                             onClick={() => {
-                                this.setState({ leftSideBarExpanded: !this.state.leftSideBarExpanded });
+                                this.setState(prevState => ({ leftSideBarExpanded: !prevState.leftSideBarExpanded }));
                             }}
                             style={{ backgroundColor: SECONDARY.dark }}
                         >
@@ -564,7 +564,7 @@ class GraphVisUi extends Component {
                         <div style={{ position: 'relative', right: '35px' }}>
                             <Button
                                 onClick={() => {
-                                    this.setState({ rightSideBarExpanded: !this.state.rightSideBarExpanded });
+                                    this.setState(prevState => ({ rightSideBarExpanded: !prevState.rightSideBarExpanded }));
                                 }}
                                 style={{ backgroundColor: SECONDARY.dark }}
                             >
@@ -599,7 +599,7 @@ class GraphVisUi extends Component {
                 {this.state.open && (
                     <ScreenCaptureModal
                         toggle={() => {
-                            this.setState({ open: !this.state.open, screenCapture: '', startCapture: false });
+                            this.setState(prevState => ({ open: !prevState.open, screenCapture: '', startCapture: false }));
                         }}
                         modelOpen={this.state.open}
                         screenCapture={this.state.screenCapture}

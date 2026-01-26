@@ -10,13 +10,15 @@ export default function DefaultLayout(props) {
     return (
         <StyledBody>
             <Header />
-            <SideBarLayout children={props.children} />
+            <SideBarLayout>
+                {props.children}
+            </SideBarLayout>
         </StyledBody>
     );
 }
 
 DefaultLayout.propTypes = {
-    children: PropTypes.array.isRequired
+    children: PropTypes.node.isRequired
 };
 
 /** --- local scoped stuff --- **/
@@ -24,6 +26,10 @@ DefaultLayout.propTypes = {
 const StyledBody = styled.div`
     min-height: calc(100vh - 0px);
     height: 100%;
-    background-color: ${colorStyled.PRIMARY.lighter};
-    font-family: ${fontStyled.fontFamily};
+    background-color: ${
+            colorStyled.PRIMARY.lighter
+    };
+    font-family: ${
+            fontStyled.fontFamily
+    };
 `;

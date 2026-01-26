@@ -20,7 +20,7 @@ export default class ProjectList extends Component {
     reloadAfterUpdate = () => {
         console.log('reloadAfterUpdate');
         //this.forceUpdate();
-        this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+        this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
     };
 
     render() {

@@ -74,7 +74,7 @@ const partners = [
     {
         name: 'Mines',
         logo: Mines_logo,
-        url: 'http://www.imt.fr/'
+        url: 'https://www.imt.fr/'
     }
 ];
 

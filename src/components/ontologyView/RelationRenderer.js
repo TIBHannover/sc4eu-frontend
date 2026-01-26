@@ -158,11 +158,13 @@ class RelationRenderer extends Component {
             for (const language of Object.keys(itemValue)) {
                 const itemValuePerLanguage = itemValue[language];
                 for (const it in itemValuePerLanguage) {
-                    return itemValuePerLanguage[it].toLowerCase().includes(value.toLowerCase());
+                    if (itemValuePerLanguage[it].toLowerCase().includes(value.toLowerCase())) {
+                        return true;
+                    }
                 }
             }
-            return false;
         }
+        return false;
     };
 
     handleFilter = filterValue => {

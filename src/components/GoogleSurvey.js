@@ -66,9 +66,9 @@ const GoogleSurvey = () => {
             >
                 <Box sx={style}>
                     <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Survey</h2>
-                    <span style={closeBtnStyle} onClick={handleModalToggle}>
+                    <button style={closeBtnStyle} onClick={handleModalToggle} onKeyDown={() => {}}>
                         X
-                    </span>
+                    </button>
                     {isLoading ? (
                         <Box
                             sx={{

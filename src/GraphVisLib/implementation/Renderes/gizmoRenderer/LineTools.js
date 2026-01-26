@@ -12,8 +12,8 @@ export default class LineTools {
     }
 
     computeShapeBasedCenterPoint(domain, range, offset) {
-        const domainOffset = 0.5 * parseInt(domain.renderingShape.attr('width'));
-        const rangeOffset = 0.5 * parseInt(range.renderingShape.attr('width'));
+        const domainOffset = 0.5 * Number.parseInt(domain.renderingShape.attr('width'));
+        const rangeOffset = 0.5 * Number.parseInt(range.renderingShape.attr('width'));
 
         const cx = domain.x + domainOffset + 0.5 * (range.x - rangeOffset - domain.x + domainOffset);
 
@@ -139,8 +139,8 @@ export default class LineTools {
 
             const height = this.shapeTools.getShapeHeight(node.renderingShape) + distOffset;
 
-            const distanceToBorderX = 0.5 * parseFloat(width);
-            const distanceToBorderY = 0.5 * parseFloat(height);
+            const distanceToBorderX = 0.5 * Number.parseFloat(width);
+            const distanceToBorderY = 0.5 * Number.parseFloat(height);
             let scale;
             if (Math.abs(offsetDirection.x) >= Math.abs(offsetDirection.y)) {
                 scale = 1.0 / Math.abs(offsetDirection.x);

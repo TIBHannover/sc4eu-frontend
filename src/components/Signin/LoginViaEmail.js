@@ -102,13 +102,17 @@ class LoginViaEmail extends Component {
         return true;
     };
     toggleSignupModel = () => {
-        this.setState({ signupModal: !this.state.signupModal });
-        this.setState({ signInModal: false });
+        this.setState(prevState => ({
+            signupModal: !prevState.signupModal,
+            signInModal: false
+        }));
     };
 
     toggleResetPasswordModel = () => {
-        this.setState({ resetPasswordModel: !this.state.resetPasswordModel });
-        this.setState({ signInModal: false });
+        this.setState(prevState => ({
+            resetPasswordModel: !prevState.resetPasswordModel,
+            signInModal: false
+        }));
     };
 
     isfieldValid = () => {
@@ -186,7 +190,14 @@ class LoginViaEmail extends Component {
                                                 rel="noreferrer"
                                             >
                                                 <img src={github} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
+                                                <span
+                                                    style={{
+                                                        border: '1px solid white',
+                                                        float: 'left',
+                                                        height: '100%',
+                                                        marginLeft: '10px'
+                                                    }}
+                                                />{' '}
                                                 Sign in with GitHub
                                             </a>
                                             <a
@@ -197,7 +208,14 @@ class LoginViaEmail extends Component {
                                                 rel="noreferrer"
                                             >
                                                 <img src={gitlab} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
+                                                <span
+                                                    style={{
+                                                        border: '1px solid white',
+                                                        float: 'left',
+                                                        height: '100%',
+                                                        marginLeft: '10px'
+                                                    }}
+                                                />{' '}
                                                 Sign in with GitLab
                                             </a>
                                             {/* <a
@@ -224,11 +242,32 @@ class LoginViaEmail extends Component {
                                             {/*</a>*/}
                                         </div>
                                         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                                            <hr style={{ float: 'left', marginLeft: 'auto', marginRight: 'auto', width: '45%' }} />
+                                            <hr
+                                                style={{
+                                                    float: 'left',
+                                                    marginLeft: 'auto',
+                                                    marginRight: 'auto',
+                                                    width: '45%'
+                                                }}
+                                            />
                                             OR
-                                            <hr style={{ float: 'right', marginLeft: 'auto', marginRight: 'auto', width: '45%' }} />
+                                            <hr
+                                                style={{
+                                                    float: 'right',
+                                                    marginLeft: 'auto',
+                                                    marginRight: 'auto',
+                                                    width: '45%'
+                                                }}
+                                            />
                                         </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px' }}>
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                marginTop: '10px'
+                                            }}
+                                        >
                                             <Label style={{ width: '90%', textAlign: 'start' }}>Email</Label>
                                             <Input
                                                 style={{ width: '90%' }}
@@ -239,7 +278,14 @@ class LoginViaEmail extends Component {
                                                 onChange={event => this.setState({ email: event.target.value })}
                                             />
                                         </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '10px' }}>
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                marginTop: '10px'
+                                            }}
+                                        >
                                             <Label style={{ width: '90%', textAlign: 'start' }}>Password</Label>
                                             <Input
                                                 style={{ width: '90%' }}
@@ -253,7 +299,11 @@ class LoginViaEmail extends Component {
                                         <div style={{ textAlign: 'center', marginBottom: '10px' }}>
                                             <Button
                                                 id="loginWithMail"
-                                                style={{ width: '90%', marginTop: '15px', backgroundColor: colorStyled.SECONDARY.dark }}
+                                                style={{
+                                                    width: '90%',
+                                                    marginTop: '15px',
+                                                    backgroundColor: colorStyled.SECONDARY.dark
+                                                }}
                                                 onClick={this.handleLogin}
                                             >
                                                 Login

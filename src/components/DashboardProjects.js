@@ -56,13 +56,13 @@ export default class DashboardProjects extends Component {
 
     // Function to open the alert popup box asking the user if they want to delete the UserFromProject
     deleteUserFromProject = async (projectUUID, userUUID, userName) => {
-        this.setState({
-            isPopUpOpen: !this.state.isPopUpOpen,
+        this.setState(prevState => ({
+            isPopUpOpen: !prevState.isPopUpOpen,
             popUpMessage: `Are you sure you want to Delete ${userName} User?`,
             isAuthorized: true,
             selectedProjectID: projectUUID,
             selectedUserID: userUUID
-        });
+        }));
     };
 
     // Callback function for the alert popup box to handle the user's confirmation
@@ -72,14 +72,14 @@ export default class DashboardProjects extends Component {
             unregisterUserFromProject(selectedProjectID, selectedUserID).then(res => {
                 if (res) {
                     this.getProjectsFromBackend().then(() => {
-                        this.setState({
-                            updateFlipFlop: !this.state.updateFlipFlop,
+                        this.setState(prevState => ({
+                            updateFlipFlop: !prevState.updateFlipFlop,
                             isPopUpOpen: false,
                             popUpMessage: '',
                             isAuthorized: false,
                             selectedProjectID: null,
                             selectedUserID: null
-                        });
+                        }));
                     });
                 }
             });
@@ -90,7 +90,7 @@ export default class DashboardProjects extends Component {
         addUserToProject(projectUUID, userUUID).then(res => {
             if (res) {
                 this.getProjectsFromBackend().then(() => {
-                    this.setState({ updateFlipFlop: !this.state.updateFlipFlop });
+                    this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
                 });
             }
         });
@@ -130,7 +130,7 @@ export default class DashboardProjects extends Component {
                     bodyText={this.state.popUpMessage}
                     isOpen={this.state.isPopUpOpen}
                     onClose={() => {
-                        this.setState({ isPopUpOpen: !this.state.isPopUpOpen });
+                        this.setState(prevState=> ({ isPopUpOpen: !prevState.isPopUpOpen }));
                     }}
                     isConfirm={this.callBackFromAlertBox}
                 />
@@ -154,7 +154,7 @@ export default class DashboardProjects extends Component {
                         <h2 className="h5" style={{ textAlign: 'center' }}>
                             <span>
                                 <Icon icon={faSpinner} spin />
-                            </span>
+                            </span>{' '}
                             Loading
                         </h2>
                     </div>

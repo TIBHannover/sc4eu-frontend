@@ -113,8 +113,10 @@ export default class Faq extends Component {
                     </Button>
                     <Collapse isOpen={this.state.collapseIssueManagement}>
                         <StyledText>
-                            If you face any problems with our portal, face any issues with our running system or if you have any further questions,
-                            please get in contact with us via our issue management system that you will find here :&nbsp;
+                            <span>
+                                If you face any problems with our portal, face any issues with our running system or if you have any further
+                                questions, please get in contact with us via our issue management system that you will find here :
+                            </span>
                             <a
                                 style={{ color: colorStyled.SECONDARY.link }}
                                 target="_blank"
