@@ -9,15 +9,14 @@ module.exports = function(req, res, next) {
         return next();
     }
 
-    const cookies = new Cookies();
+    const cookies = new Cookies(req.headers.cookie);
     const token = cookies.get('token');
     if (token) {
         req.token = token;
         return next();
     }
 
-    if (!token) {
-        console.log('WE DONT HAVE A TOKEN HERE oO ');
-        return res.send(JSON.stringify({ error: 'No Token Provided' }));
-    }
+
+    console.log('WE DONT HAVE A TOKEN HERE oO ');
+    return res.send(JSON.stringify({ error: 'No Token Provided' }));
 };
