@@ -405,7 +405,7 @@ module.exports = {
     },
 
     verifyEmail: function(app) {
-        const pathname = `${process.env.CALLBACK_URL}/sc3/EmailVerify`;
+        const pathname = `${process.env.CALLBACK_URL}/vocab/EmailVerify`;
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
@@ -514,7 +514,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '10h' }
                         );
-                        const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
+                        const callbackURL = `${process.env.CALLBACK_URL}/vocab/EmailVerify/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.username,
                             subject: 'VDST Email Verification',
