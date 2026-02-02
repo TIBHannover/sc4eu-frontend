@@ -331,28 +331,28 @@ const ChangesTimeline = ({ id }) => {
                                             style={{ lineHeight: "1.5" }}
                                         />
                                     </div>
-                                    <div
-                                        id="renderedHtml"
-                                        style={{ flex: 1, overflow: "auto", position: "relative" }}
-                                    >
-                                        <Typography
-                                            variant="h6"
-                                            style={{
-                                                position: "sticky",
-                                                top: 0,
-                                                backgroundColor: "white",
-                                                zIndex: 1,
-                                                textAlign: "center",
-                                                paddingBottom: "20px",
-                                            }}
-                                        >
-                                            COnto Diff
-                                        </Typography>
-                                        <div
-                                            dangerouslySetInnerHTML={{ __html: html }}
-                                            style={{ lineHeight: "2.0" }}
-                                        />
-                                    </div>
+                                    {/*<div*/}
+                                    {/*    id="renderedHtml"*/}
+                                    {/*    style={{ flex: 1, overflow: "auto", position: "relative" }}*/}
+                                    {/*>*/}
+                                    {/*    <Typography*/}
+                                    {/*        variant="h6"*/}
+                                    {/*        style={{*/}
+                                    {/*            position: "sticky",*/}
+                                    {/*            top: 0,*/}
+                                    {/*            backgroundColor: "white",*/}
+                                    {/*            zIndex: 1,*/}
+                                    {/*            textAlign: "center",*/}
+                                    {/*            paddingBottom: "20px",*/}
+                                    {/*        }}*/}
+                                    {/*    >*/}
+                                    {/*        COnto Diff*/}
+                                    {/*    </Typography>*/}
+                                    {/*    <div*/}
+                                    {/*        dangerouslySetInnerHTML={{ __html: html }}*/}
+                                    {/*        style={{ lineHeight: "2.0" }}*/}
+                                    {/*    />*/}
+                                    {/*</div>*/}
                                 </div>
                             </>
                         )}
