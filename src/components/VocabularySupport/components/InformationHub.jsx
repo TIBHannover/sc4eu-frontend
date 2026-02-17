@@ -20,7 +20,7 @@ import {
     Badge,
     Popover,
     Select,
-    MenuItem
+    MenuItem, Button
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -28,12 +28,13 @@ import DatePicker from 'react-datepicker';
 import { stringAvatar } from './CommentsSection';
 import Divider from '@mui/material/Divider';
 import { Tabs } from '@mui/material/';
-import { getTermVotes } from '../../../network/TermVoteCalls';
+import { getTermVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
 import { StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import PropTypes from 'prop-types';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { colorStyled } from '../../../styledComponents/styledColor';
+import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -54,21 +55,67 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const [votesMap, setVotesMap] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const [termOfWeek, setTermOfWeek] = useState(null);
+    const [showWeekTerm, setShowWeekTerm] = useState(false);
+    const [weekTermLoading, setWeekTermLoading] = useState(false);
+
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
     const [sortBy, setSortBy] = useState(SORT_BY_OPTIONS.RECENT_UPDATE);
 
     useEffect(() => {
-        const getVotes = async () => {
+        const fetchAll = async () => {
             setLoading(true);
-
-            const data = await getTermVotes();
-            setVotesMap(data || []);
-            setLoading(false);
+            try {
+                await fetchTermOfWeek();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
         };
-        getVotes();
+
+        fetchAll();
     }, []);
+
+
+    const fetchTermOfWeek = async () => {
+        try {
+            setWeekTermLoading(true);
+            const votesData = await getTermVotes();
+            setVotesMap(votesData);
+
+            const weeklyTerm = await getWeeklyTerm();
+            const termUuid = weeklyTerm?.term_uuid;
+
+            if (!termUuid) {
+                console.log('No term UUID found');
+                return;
+            }
+
+            const termVoteData = votesData.find(vote => vote.term_uuid === termUuid);
+
+            const decisions = termVoteData?.decisions || [];
+
+            const matchingTerm = enhancedTerms.find(term => term.identifier === termUuid);
+
+            if (!matchingTerm) return;
+
+            const finalTerm = {
+                ...matchingTerm,
+                vote_uuid: weeklyTerm.vote_uuid,
+                decisions
+            };
+
+            setTermOfWeek(finalTerm);
+        } catch (error) {
+            console.error('Error fetching term of week:', error);
+        } finally {
+            setWeekTermLoading(false);
+        }
+    };
+
 
     const DecisionBadgeAvatar = ({ decision }) => {
         return (
@@ -244,8 +291,10 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 <Typography variant="subtitle1" fontWeight="bold" sx={{ mr: 1 }}>
                                     {term.label}
                                 </Typography>
-                                {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
-                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
+                                {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention"
+                                                                sx={{ mr: '1em' }} />}
+                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement"
+                                                             sx={{ mr: '1em' }} />}
 
                                 <Typography
                                     variant="caption"
@@ -309,7 +358,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                                     <DecisionBadgeAvatar decision={decision} />
                                                 </ListItemAvatar>
                                                 <ListItemText>
-                                                    <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
+                                                    <Typography
+                                                        sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
                                                 </ListItemText>
                                                 <Box sx={{ ml: 3 }}></Box>
                                             </ListItem>
@@ -361,92 +411,135 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
     return (
         <Grid container xs={12} sx={{ p: 2 }}>
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        fullWidth
-                        size="small"
+            {termOfWeek && showWeekTerm && (
+                <TermOfTheWeekPopup
+                    term={termOfWeek}
+                    open={showWeekTerm}
+                    username={mentionedUser}
+                    onLoading={weekTermLoading}
+                    onClose={() => {
+                        setShowWeekTerm(false);
+                    }}
+                    onVote={fetchTermOfWeek}
+                />
+            )}
+            <Grid
+                item
+                xs={12}
+                sx={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1000,
+                    bgcolor: 'background.paper',
+                    borderBottom: `1px solid ${colorStyled.BORDER_COLOR}`
+                }}
+            >
+                <Grid item xs={12}>
+                    <Button
+                        onClick={() => setShowWeekTerm(true)}
                         variant="outlined"
-                        placeholder="Search discussions (by comment, author, term label)..."
-                        value={searchText}
-                        onChange={e => setSearchText(e.target.value)}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon fontSize="small" />
-                                </InputAdornment>
-                            ),
-                            sx: { backgroundColor: 'background.paper' }
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <Box
+                        size="small"
                         sx={{
-                            display: 'flex',
-                            height: '100%',
-                            alignItems: 'center'
+                            bgcolor: colorStyled.ORANGE_COLOR,
+                            color: colorStyled.PRIMARY.lighter,
+                            '&:hover': {
+                                bgcolor: '#b63011'
+                            }
                         }}
                     >
-                        <FormControlLabel
-                            control={<Checkbox size="small" checked={showOnlyMentions}
-                                               onChange={e => setShowOnlyMentions(e.target.checked)} />}
-                            label={<Typography variant="body2">Only my mentions</Typography>}
-                            sx={{ mr: 2 }}
+                        Show Term of the Week
+                    </Button>
+                    <Tooltip title="Check the term that received the most votes in past week" placement="right"
+                    >
+                        <StyledChip label="New" size="small" customVariant="agreement"
+                                    sx={{ mb: 5, cursor: 'pointer' }} />
+                    </Tooltip>
+                </Grid>
+                <Grid container spacing={2} sx={{ mb: 2 }}>
+                    <Grid item xs={12} md={6}>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            variant="outlined"
+                            placeholder="Search discussions (by comment, author, term label)..."
+                            value={searchText}
+                            onChange={e => setSearchText(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon fontSize="small" />
+                                    </InputAdornment>
+                                ),
+                                sx: { backgroundColor: 'background.paper' }
+                            }}
                         />
-                        <DatePicker
-                            selected={dateFrom}
-                            onChange={setDateFrom}
-                            placeholderText="From"
-                            isClearable
-                            customInput={<TextField size="small" sx={{ width: 120 }} />}
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                height: '100%',
+                                alignItems: 'center'
+                            }}
+                        >
+                            <FormControlLabel
+                                control={<Checkbox size="small" checked={showOnlyMentions}
+                                                   onChange={e => setShowOnlyMentions(e.target.checked)} />}
+                                label={<Typography variant="body2">Only my mentions</Typography>}
+                                sx={{ mr: 2 }}
+                            />
+                            <DatePicker
+                                selected={dateFrom}
+                                onChange={setDateFrom}
+                                placeholderText="From"
+                                isClearable
+                                customInput={<TextField size="small" sx={{ width: 120 }} />}
+                            />
+                            <DatePicker
+                                selected={dateTo}
+                                onChange={setDateTo}
+                                placeholderText="To"
+                                isClearable
+                                customInput={<TextField size="small" sx={{ width: 120, ml: 1 }} />}
+                            />
+                        </Box>
+                    </Grid>
+                    <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 2 }}>
+                        <Tab
+                            label={
+                                <StyledBadge badgeContent={getTabBadgeContent(0)} customVariant="blue">
+                                    <span>Terms with discussions</span>
+                                </StyledBadge>
+                            }
                         />
-                        <DatePicker
-                            selected={dateTo}
-                            onChange={setDateTo}
-                            placeholderText="To"
-                            isClearable
-                            customInput={<TextField size="small" sx={{ width: 120, ml: 1 }} />}
+                        <Tab
+                            label={
+                                <StyledBadge badgeContent={getTabBadgeContent(1)} customVariant="blue">
+                                    <span>Terms with active consensus</span>
+                                </StyledBadge>
+                            }
                         />
-                    </Box>
+                    </Tabs>
+                    {filteredTerms.length > 0 && (
+                        <Box sx={{ ml: 5 }}>
+                            <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
+                                Sort by:
+                            </Typography>
+                            <Select size="small" value={sortBy} onChange={e => setSortBy(e.target.value)}
+                                    variant="outlined" sx={{ minWidth: 200 }}>
+                                <MenuItem value={SORT_BY_OPTIONS.RECENT_UPDATE}>Recently updated</MenuItem>
+                                <MenuItem value={SORT_BY_OPTIONS.LATEST_UPDATE}>Latest updated</MenuItem>
+                                <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL}>Alphabetical</MenuItem>
+                                <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL_REVERSE}>Alphabetical (Z to A)</MenuItem>
+                                <MenuItem value={SORT_BY_OPTIONS.MOST_VOTES}>Most votes</MenuItem>
+                                <MenuItem value={SORT_BY_OPTIONS.MOST_COMMENTS}>Most Comments</MenuItem>
+                            </Select>
+                        </Box>
+                    )}
                 </Grid>
             </Grid>
 
-            <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 2 }}>
-                <Tab
-                    label={
-                        <StyledBadge badgeContent={getTabBadgeContent(0)} customVariant="blue">
-                            <span>Terms with discussions</span>
-                        </StyledBadge>
-                    }
-                />
-                <Tab
-                    label={
-                        <StyledBadge badgeContent={getTabBadgeContent(1)} customVariant="blue">
-                            <span>Terms with active consensus</span>
-                        </StyledBadge>
-                    }
-                />
-            </Tabs>
-
-            {filteredTerms.length > 0 && (
-                <Box sx={{ ml: 5 }}>
-                    <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-                        Sort by:
-                    </Typography>
-                    <Select size="small" value={sortBy} onChange={e => setSortBy(e.target.value)} variant="outlined"
-                            sx={{ minWidth: 200 }}>
-                        <MenuItem value={SORT_BY_OPTIONS.RECENT_UPDATE}>Recently updated</MenuItem>
-                        <MenuItem value={SORT_BY_OPTIONS.LATEST_UPDATE}>Latest updated</MenuItem>
-                        <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL}>Alphabetical</MenuItem>
-                        <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL_REVERSE}>Alphabetical (Z to A)</MenuItem>
-                        <MenuItem value={SORT_BY_OPTIONS.MOST_VOTES}>Most votes</MenuItem>
-                        <MenuItem value={SORT_BY_OPTIONS.MOST_COMMENTS}>Most Comments</MenuItem>
-                    </Select>
-                </Box>
-            )}
-
-            <Grid item xs={12}>
+            <Grid item xs={12} sx={{ overflowY: 'auto', flexGrow: 1 }}>
                 <Paper elevation={0}>
                     <List disablePadding>
                         {loading ? (

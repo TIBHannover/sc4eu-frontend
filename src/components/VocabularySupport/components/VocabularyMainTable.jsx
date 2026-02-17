@@ -17,7 +17,7 @@ import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import Cookies from 'js-cookie';
 import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
-import { StyledBadge, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
 
 /* eslint-disable react/prop-types */
@@ -313,23 +313,22 @@ const VocabularyMainTable = ({
                     placeholder: 'Filter',
                     select: true,
                     sx: {
-                        width: '100%',
+                        width: '100%'
                     }
                 },
                 muiTableHeadCellProps: {
                     sx: {
                         width: '90px',
                         minWidth: '90px',
-                        maxWidth: '90px',
+                        maxWidth: '90px'
                     }
                 },
                 muiTableBodyCellProps: {
                     sx: {
                         width: '90px',
                         minWidth: '90px',
-                        maxWidth: '90px',
-
-                    },
+                        maxWidth: '90px'
+                    }
                 }
             },
             {
@@ -348,7 +347,7 @@ const VocabularyMainTable = ({
                     >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <span>{column.columnDef.header}</span>
-                            <Chip label="New" size="small" sx={{ ml: 0.5, backgroundColor: colorStyled.PRIMARY.main }} />
+                            <StyledChip label="New" size="small" customVariant="agreement" sx={{ ml: '0.5' }} />
                         </div>
                     </Tooltip>
                 ),
@@ -390,22 +389,22 @@ const VocabularyMainTable = ({
                     placeholder: 'Filter Modified',
                     select: true,
                     sx: {
-                        width: '100%',
+                        width: '100%'
                     }
                 },
                 muiTableHeadCellProps: {
                     sx: {
                         width: '150px',
                         minWidth: '150px',
-                        maxWidth: '150px',
+                        maxWidth: '150px'
                     }
                 },
                 muiTableBodyCellProps: {
                     sx: {
                         width: '150px',
                         minWidth: '150px',
-                        maxWidth: '150px',
-                    },
+                        maxWidth: '150px'
+                    }
                 }
             },
             {

@@ -1,6 +1,6 @@
-import {submitGetRequest, submitPostRequest} from "./networkRequests";
+import { submitGetRequest, submitPostRequest } from './networkRequests';
 import {
-    URL_CREATE_NEW_TERM_VOTE, URL_GET_TERM_LAST_CONSENSUS,
+    URL_CREATE_NEW_TERM_VOTE, URL_GET_TERM_LAST_CONSENSUS, URL_GET_TERM_OF_THE_WEEK,
     URL_GET_TERM_VOTE, URL_GET_TERM_VOTES, URL_MANUAL_CLOSE_CONSENSUS,
     URL_POST_NEW_COMMENT,
     URL_UPDATE_EXPERT_VOTE_DECISION
@@ -16,6 +16,10 @@ export const getTermLastConsensus = term_uuid => {
 
 export const getTermVotes = () => {
     return submitGetRequest(`${URL_GET_TERM_VOTES}/?status=under_agreement`, {}, false);
+};
+
+export const getWeeklyTerm = () => {
+    return submitGetRequest(`${URL_GET_TERM_OF_THE_WEEK}`, {}, false);
 };
 
 export const initiateNewVote = (term_uuid, user, type, reason) => {
