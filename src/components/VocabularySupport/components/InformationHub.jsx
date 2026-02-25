@@ -28,7 +28,7 @@ import DatePicker from 'react-datepicker';
 import { stringAvatar } from './CommentsSection';
 import Divider from '@mui/material/Divider';
 import { Tabs } from '@mui/material/';
-import { getTermVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
+import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
 import { StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import PropTypes from 'prop-types';
 import CheckIcon from '@mui/icons-material/Check';
@@ -83,7 +83,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const fetchTermOfWeek = async () => {
         try {
             setWeekTermLoading(true);
-            const votesData = await getTermVotes();
+            const votesData = await getVotes();
             setVotesMap(votesData);
 
             const weeklyTerm = await getWeeklyTerm();

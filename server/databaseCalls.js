@@ -476,7 +476,7 @@ module.exports = {
                     const data = JSON.stringify(req.body);
                     console.log(data);
                     const project_options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes`,
+                        uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes`,
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -501,10 +501,41 @@ module.exports = {
         });
     },
 
-    getTermVote: function(app) {
-        app.get('/getTermVote', (req, res) => {
+    getVotes: function(app) {
+        app.get('/getVotes', (req, res) => {
             const query = req.query;
-            const url = new URL(`${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(query.term_uuid)}/votes`);
+            const url = new URL(`${process.env.BACKEND_FASTAPI_SERVER_URL}/votes`);
+            if (query.status) {
+                url.searchParams.set('status', query.status);
+            }
+            const vote_Options = {
+                uri: url,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(vote_Options, function(error, response) {
+                if (response && response.body) {
+                    let result;
+                    try {
+                        result = JSON.parse(response.body);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                    res.json(result);
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+        });
+    },
+
+    getTermVotes: function(app) {
+        app.get('/getTermVotes', (req, res) => {
+            const query = req.query;
+            const url = new URL(`${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/${encodeURIComponent(query.term_uuid)}/votes`);
             if (query.status) {
                 url.searchParams.set('status', query.status);
             }
@@ -535,34 +566,7 @@ module.exports = {
     getTermLastConsensus: function(app) {
         app.get('/getTermLastConsensus', (req, res) => {
             const query = req.query;
-            let uri = `${process.env.BACKEND_SERVER_URL}/terms/consensus/${encodeURIComponent(query['term_uuid'])}`;
-            const vote_Options = {
-                uri: uri,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-
-            request(vote_Options, function(error, response) {
-                if (response && response.body) {
-                    try {
-                        const result = JSON.parse(response.body);
-                        res.json(result);
-                    } catch (e) {
-                        res.json({ error: 'Something went wrong' });
-                    }
-                } else {
-                    res.json({ error: 'Something went wrong' });
-                }
-            });
-        });
-    },
-
-    getTermVotes: function(app) {
-        app.get('/getTermVotes', (req, res) => {
-            const query = req.query;
-            let uri = `${process.env.BACKEND_SERVER_URL}/terms?status=${query['status']}`;
+            let uri = `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/consensus/${encodeURIComponent(query['term_uuid'])}`;
             const vote_Options = {
                 uri: uri,
                 method: 'GET',
@@ -599,7 +603,7 @@ module.exports = {
                     const data = JSON.stringify(req.body);
                     console.log(data);
                     const project_options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(
+                        uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(
                             req.body.vote_uuid
                         )}`,
                         method: 'PUT',
@@ -608,7 +612,8 @@ module.exports = {
                         },
                         body: data
                     };
-
+                    
+                    console.log("project_options.body: ", project_options.body);
                     request(project_options, function(error, response) {
                         if (response && response.body) {
                             try {
@@ -636,7 +641,7 @@ module.exports = {
                 if (token) {
                     const data = JSON.stringify(req.body);
                     const project_options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(
+                        uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(
                             req.body.vote_uuid
                         )}/close`,
                         method: 'PUT',
@@ -663,80 +668,10 @@ module.exports = {
         });
     },
 
-    postComment: function(app) {
-        app.post('/postComment', verifyToken, (req, res) => {
-            if (req.token === null) {
-                res.json({ result: false });
-            } else {
-                const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                console.log(token);
-                if (token) {
-                    const userId = token.userId;
-                    console.log(userId);
-                    const data = JSON.stringify(req.body);
-                    console.log(data);
-                    const project_options = {
-                        uri: `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(
-                            req.body.vote_uuid
-                        )}/comments`,
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: data
-                    };
-
-                    request(project_options, function(error, response) {
-                        if (response && response.body) {
-                            try {
-                                const result = JSON.parse(response.body);
-                                res.json(result);
-                            } catch (e) {
-                                res.json({ error: 'Something went wrong' });
-                            }
-                        } else {
-                            res.json({ error: 'Something went wrong' });
-                        }
-                    });
-                }
-            }
-        });
-    },
-
-    getComments: function(app) {
-        app.get('/getComments', (req, res) => {
-            const query = req.query;
-            let uri = `${process.env.BACKEND_SERVER_URL}/terms/${encodeURIComponent(query['term_uuid'])}/votes/${encodeURIComponent(
-                query['vote_uuid']
-            )}/comments`;
-            const vote_Options = {
-                uri: uri,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-
-            request(vote_Options, function(error, response) {
-                if (response && response.body) {
-                    try {
-                        const result = JSON.parse(response.body);
-                        console.log(result);
-                        res.json(result);
-                    } catch (e) {
-                        res.json({ error: 'Something went wrong' });
-                    }
-                } else {
-                    res.json({ error: 'Something went wrong' });
-                }
-            });
-        });
-    },
-
     getTermOfTheWeek: function(app) {
         app.get('/getTermOfTheWeek', (req, res) => {
             const query = req.query;
-            let uri = `${process.env.BACKEND_SERVER_URL}/terms/ofTheWeek`;
+            let uri = `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/ofTheWeek`;
             const vote_Options = {
                 uri: uri,
                 method: 'GET',

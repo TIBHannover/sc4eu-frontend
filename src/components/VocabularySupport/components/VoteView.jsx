@@ -10,7 +10,7 @@ import {
 } from '@mui/icons-material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import PropTypes from 'prop-types';
-import { getTermVote, updateExpertDecision } from '../../../network/TermVoteCalls';
+import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
 import { stringAvatar } from './CommentsSection';
 
@@ -90,7 +90,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
 
     useEffect(() => {
         const getVote = async () => {
-            const data = await getTermVote(term.identifier);
+            const data = await getTermVotes(term.identifier);
             if (data.length !== 0) {
                 setDecisions(data[0].decisions);
             }
@@ -99,7 +99,8 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
     }, [decisionMade]);
 
     const handleExpertDecision = async () => {
-        await updateExpertDecision(term.identifier, vote.uuid, username, decision, comment);
+        console.log('expert decision updated: ', vote)
+        await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
         setDecisionMade(true);
         setUserHasVoted(true);
         setComment(null);

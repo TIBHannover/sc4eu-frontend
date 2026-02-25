@@ -18,8 +18,8 @@ import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import {
+    getTermVotes,
     getTermLastConsensus,
-    getTermVote,
     initiateNewVote,
     manualCloseConsensus
 } from '../../../network/TermVoteCalls';
@@ -58,14 +58,14 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
 
     useEffect(() => {
         const getVote = async () => {
-            const data = await getTermVote(term.identifier);
+            const data = await getTermVotes(term.identifier);
             if (!data.error) {
                 setActiveAgreement(data[0]);
             }
         };
         const getLastConsensus = async () => {
             const data = await getTermLastConsensus(term.identifier);
-            if (!data.error) {
+            if (data || !data?.error) {
                 setLastConsensus(data);
             }
         }
