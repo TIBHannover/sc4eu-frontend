@@ -40,7 +40,7 @@ class OntologyContentViewer extends Component {
 
     render() {
         return (
-            <div style={{ minHeight: '100vh', paddingTop: '12px' }}>
+            <div style={{ height: '100%' }}>
                 <HeaderBar>
                     {this.props.selectedProject ? (
                         <ControlLink
