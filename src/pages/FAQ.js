@@ -17,7 +17,8 @@ export default class Faq extends Component {
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+    }
 
     toggleUserRole = () => {
         this.setState(prevState => ({ collapseUserRole: !prevState.collapseUserRole }));
@@ -66,63 +67,25 @@ export default class Faq extends Component {
         ];
         return (
             <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-                <Container
-                    style={{
-                        borderTop: 'none',
-                        overflow: 'auto',
-                        position: 'relative',
-                        backgroundColor: '#ffffff',
-                        borderRadius: '10px 10px 10px 10px ',
-                        height: '100%',
-                        fontFamily: fontStyled.fontFamily
-                    }}
-                >
-                    <Button
-                        style={{
-                            width: '100% ',
-                            height: '45px',
-                            marginTop: '60px',
-                            textAlign: 'start',
-                            background: colorStyled.SECONDARY.dark
-                        }}
-                        className="btn"
-                        onClick={this.toggleUserRole}
-                    >
-                        <Icon icon={!this.state.collapseUserRole ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                <FaqContainer>
+                    <FaqButton className="btn" onClick={this.toggleUserRole}>
+                        <Icon icon={!this.state.collapseUserRole ? faCaretRight : faCaretDown}
+                              style={{ marginRight: '5px' }} />
                         Definition of User Roles
-                    </Button>
+                    </FaqButton>
                     <Collapse isOpen={this.state.collapseUserRole}>
-                        <Table style={{ marginTop: '20px' }} bordered responsive>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Role</th>
-                                </tr>
-                            </thead>
-                            <tbody style={{ whiteSpace: 'pre' }}>
-                                {items?.map((item, id) => (
-                                    <tr key={id}>
-                                        <td style={{ fontWeight: 600, color: colorStyled.TEXTCOLOR }}>{item.name}</td>
-                                        <td style={{ color: colorStyled.TEXTCOLOR }}>{item.role}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                        {items.map((item, id) => (
+                            <RoleCard key={id}>
+                                <RoleName>{item.name}</RoleName>
+                                <RoleText>{item.role}</RoleText>
+                            </RoleCard>
+                        ))}{' '}
                     </Collapse>
-                    <Button
-                        style={{
-                            width: '100% ',
-                            height: '45px',
-                            marginTop: '20px',
-                            textAlign: 'start',
-                            background: colorStyled.SECONDARY.dark
-                        }}
-                        className="btn"
-                        onClick={this.toggleIssueManagement}
-                    >
-                        <Icon icon={!this.state.collapseIssueManagement ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                    <FaqButton className="btn" onClick={this.toggleIssueManagement}>
+                        <Icon icon={!this.state.collapseIssueManagement ? faCaretRight : faCaretDown}
+                              style={{ marginRight: '5px' }} />
                         Issue Management
-                    </Button>
+                    </FaqButton>
                     <Collapse isOpen={this.state.collapseIssueManagement}>
                         <StyledText>
                             <span>
@@ -139,27 +102,19 @@ export default class Faq extends Component {
                             </a>
                         </StyledText>
                     </Collapse>
-                    <Button
-                        style={{
-                            width: '100% ',
-                            height: '45px',
-                            marginTop: '20px',
-                            textAlign: 'start',
-                            background: colorStyled.SECONDARY.dark
-                        }}
-                        className="btn"
-                        onClick={this.toggleWebProtege}
-                    >
-                        <Icon icon={!this.state.collapseWebProtege ? faCaretRight : faCaretDown} style={{ marginRight: '5px' }} />
+                    <FaqButton className="btn" onClick={this.toggleWebProtege}>
+                        <Icon icon={!this.state.collapseWebProtege ? faCaretRight : faCaretDown}
+                              style={{ marginRight: '5px' }} />
                         WebProtege
-                    </Button>
+                    </FaqButton>
                     <Collapse isOpen={this.state.collapseWebProtege}>
                         <StyledText>
                             <span>
                                 WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology
                                 Curation Curation Portal ({' '}
                             </span>
-                            <a style={{ color: colorStyled.SECONDARY.link }} target="_blank" href="https://service.tib.eu/sc3/" rel="noreferrer">
+                            <a style={{ color: colorStyled.SECONDARY.link }} target="_blank"
+                               href="https://service.tib.eu/sc3/" rel="noreferrer">
                                 SC4EU Ontology Curation Portal
                             </a>
                             <span>) and WebProtege (</span>
@@ -179,7 +134,7 @@ export default class Faq extends Component {
                             </span>
                         </StyledText>
                     </Collapse>
-                </Container>
+                </FaqContainer>
             </div>
         );
     }
@@ -194,4 +149,49 @@ const StyledText = styled.p`
     @media (max-width: ${MAX_WIDTH}) {
         font-size: ${fontStyled.fontSize.MobileViewNormalText};
     }
+`;
+
+const FaqButton = styled(Button)`
+    width: 100%;
+    margin-top: 16px;
+    text-align: left;
+    background: ${colorStyled.SECONDARY.dark};
+    padding: 12px 16px;
+    min-height: 48px;
+    font-size: 16px;
+
+    display: flex;
+    align-items: center;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        font-size: 14px;
+        padding: 14px;
+    }
+`;
+
+const FaqContainer = styled(Container)`
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 16px;
+    height: auto;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        padding: 12px;
+    }
+`;
+
+const RoleCard = styled.div`
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+`;
+
+const RoleName = styled.div`
+    font-weight: 600;
+    margin-bottom: 6px;
+`;
+
+const RoleText = styled.div`
+    white-space: pre-line;
 `;

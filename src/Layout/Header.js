@@ -275,7 +275,11 @@ const StyledRightSideDiv = styled.div`
     margin-right: 1%;
 
     @media (max-width: ${MAX_WIDTH}) {
-        display: none;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        margin-right: 0;
+        z-index: 1000;
     }
 `;
 

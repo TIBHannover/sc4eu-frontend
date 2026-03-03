@@ -7,30 +7,6 @@ import { Tooltip as ReactstrapTooltip } from "reactstrap";
 import { colorStyled } from './styledColor';
 import PropTypes from 'prop-types';
 
-export const StyledTopBar = styled.div`
-    margin-bottom: 0;
-    width: 100%;
-    height: 40px;
-    color: red;
-    position: fixed;
-    // padding-top: 5px;
-
-    // For the background
-    background: #5f6474;
-`;
-
-export const StyledLink = styled(Link)`
-    padding: 10px;
-
-    :focus {
-        outline: none;
-    }
-
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
-
 export const StyledGravatar = styled(Gravatar)`
     border: 3px solid black;
     cursor: pointer;
@@ -121,5 +97,7 @@ export const StyledTooltip = styled(({ className, ...props }) => (
 }));
 
 export const MAX_WIDTH = '769px';
+
+export const SMALL_SCREEN_WIDTH = '480px';
 
 export const MIN_WIDTH_FOR_MONITOR = '1750px';

@@ -7,6 +7,7 @@ import EstablishMaintainOnto from '../assets/images/Establish&MaintainOnto.png';
 import SemanticWeb from '../assets/images/SemanticWeb.png';
 import SpoSemantic from '../assets/images/SPOSemanticWeb.png';
 import WEBPROTEGEIMAGE from '../assets/images/WEBPROTEGEImage.png';
+import { MAX_WIDTH } from '../styledComponents/styledComponents';
 
 const items = [
     {
@@ -115,14 +116,14 @@ const documentData = [
             '\n' +
             'Efficient digital reference systems rely on accurate information retrieval. By seamlessly incorporating updates from a generic data model into a domain ontology, we can enhance the precision and relevance of digital references. This fusion of data structure and domain-specific semantics aims to close the gap between raw data and user queries, promising a new era of improved digital reference experiences.' +
             '<br><br>' +
-            `<iframe
-            width="100%"
-                title="gitVersionComparison"
-                height="425"
-                src="https://www.youtube.com/embed/ioDXJezVgq0?autoplay=1&controls=0&loop=1&playlist=ioDXJezVgq0&vq=highest"
-                allowFullScreen
-                allow="autoplay"
-    />`
+            `<VideoWrapper>
+                <iframe
+                    title="gitVersionComparison"
+                    src="https://www.youtube.com/embed/ioDXJezVgq0?controls=0&loop=1&playlist=ioDXJezVgq0&vq=highest"
+                    allowFullScreen
+                    
+                />
+            </VideoWrapper>`
     },
     {
         id: '7',
@@ -154,14 +155,14 @@ const documentData = [
             'Our portal can basically be used with and without registration. Without registration, many functionalities can already be used in the public projects. However, some functionalities are only available for registered users. These include uploading ontologies to the portal, managing collaborators in projects, but also customizing the project description.\n' +
             'During registration, only the user name and email address are requested, and a password must be entered. No other information is requested. Registration can either be done manually or via an existing GitLab or GitHub account. Every registration needs to be validated by confirming the email that you receive from our portal.\n' +
             '<br><br>' +
-            `<iframe
-                width="100%"
-                title="test123"
-                height="425"
-                src="https://www.youtube.com/embed/plWfMm_Pf8g?autoplay=1&mute=1&controls=0&loop=1&playlist=plWfMm_Pf8g&vq=highest"
-                allowFullScreen
-                allow="autoplay"
-            />`
+            `<VideoWrapper>
+                <iframe
+                    title="portalNoAuth"
+                    src="https://www.youtube.com/embed/plWfMm_Pf8g?mute=1&controls=0&loop=1&playlist=plWfMm_Pf8g&vq=highest"
+                    allowFullScreen
+                    
+                />
+            </VideoWrapper>`
     },
     {
         id: '10',
@@ -174,14 +175,14 @@ const documentData = [
             '<li>Private: all private projects </li> <br>' +
             'As such a collection is a bundle of projects. A project itself is a collection of ontologies on a specific topic. This makes it possible to individually compile all relevant ontologies on a topic and to have them available in one place for collaborative work with your team members. There are two types of projects. Public projects are visible and can be viewed by everyone and can be modified by all registered users. Private projects on the other hand can only be viewed and edited by members of that project. Depending on the framework conditions, the administrator of a project can also change this setting afterwards. If you would like to be invited to a private project, you can send the administrator an email directly using the letter symbol. from the project view you can as well delete the ontology from the project or download it as a file to your local computer. \n' +
             '<br><br>' +
-            `<iframe
-                width="100%"
-                title="listofCollection"
-                height="425"
-                src="https://www.youtube.com/embed/8f43SqntMNk?autoplay=1&mute=1&controls=0&loop=1&playlist=8f43SqntMNk&vq=highest"
-                allowFullScreen
-                allow="autoplay"
-            />`
+            `<VideoWrapper>
+                <iframe
+                    title="listofCollection"
+                    src="https://www.youtube.com/embed/8f43SqntMNk?mute=1&controls=0&loop=1&playlist=8f43SqntMNk&vq=highest"
+                    allowFullScreen
+                    
+                />
+            </VideoWrapper>`
     },
     {
         id: '11',
@@ -192,14 +193,14 @@ const documentData = [
             '2. Import from Git<br><br>' +
             'If your ontology is imported from an Git version control system, we provide information about its current version status. Essentially, we provide the information if you are looking at the latest Ontology version or a version behind the latest changes.\n' +
             '<br><br>' +
-            `<iframe
-                width="100%"
-                title="uploadontologyfromGithub"
-                height="425"
-                src="https://www.youtube.com/embed/wcCjj0aYS3U?autoplay=1&mute=1&controls=0&loop=1&playlist=wcCjj0aYS3U&vq=highest"
-                allowFullScreen
-                allow="autoplay"
-            />`
+            `<VideoWrapper>
+                <iframe
+                    title="uploadontologyfromGithub"
+                    src="https://www.youtube.com/embed/wcCjj0aYS3U?mute=1&controls=0&loop=1&playlist=wcCjj0aYS3U&vq=highest"
+                    allowFullScreen
+                    
+                />
+            </VideoWrapper>`
     },
     {
         id: '12',
@@ -210,14 +211,16 @@ const documentData = [
             'Using the flyout menu in the upper right corner, you can color certain parts of the ontology to better highlight them.<br><br>' +
             'If you need a static image for your further work, you can use the screenshot function. This allows you to either capture a single section or the entire screen. \n' +
             '<br><br>' +
-            `<iframe
-                width="100%"
-                title="graphvisulization"
-                height="425"
-                src="https://www.youtube.com/embed/Wj9oJ2ysC4Q?autoplay=1&mute=1&controls=0&loop=1&playlist=Wj9oJ2ysC4Q&vq=highest"
-                allowFullScreen
-                allow="autoplay"
-            />`
+            `<VideoWrapper>
+                <iframe
+                    width="100%"
+                    title="graphvisulization"
+                    height="425"
+                    src="https://www.youtube.com/embed/Wj9oJ2ysC4Q?mute=1&controls=0&loop=1&playlist=Wj9oJ2ysC4Q&vq=highest"
+                    allowFullScreen
+                    
+                />
+            </VideoWrapper>`
     },
     {
         id: '13',
@@ -229,14 +232,14 @@ const documentData = [
             'Furthermore, the Metadata tab provides further information about the ontology itself, like some Gitlab related information, used namespaces and prefixes.<br><br>' +
             'Further information and functionality of theMetadata tab is provided in sections Create Ontology Documentation and Visualise differences between Ontology Versions.' +
             '<br><br>' +
-            `<iframe
-                width="100%"
-                title="graphvisulization"
-                height="425"
-                src="https://www.youtube.com/embed/uY-8Tgnhji0?autoplay=1&mute=1&controls=0&loop=1&playlist=uY-8Tgnhji0&vq=highest"
-                allowFullScreen
-                allow="autoplay"
-            />`
+            `<VideoWrapper>
+                <iframe
+                    title="graphvisulization"
+                    src="https://www.youtube.com/embed/uY-8Tgnhji0?mute=1&controls=0&loop=1&playlist=uY-8Tgnhji0&vq=highest"
+                    allowFullScreen
+                    
+                />
+            </VideoWrapper>`
     },
     {
         id: '14',
@@ -281,14 +284,13 @@ const documentData = [
         content:
             'In some cases it is important to understand what the differences between two ontology versions are. For such use cases the portal provides in the Hybrid view, in the metadata tab the “Ontology Comparison”.  Here for the given ontologie you find two selection boxes. The first box provides you with proposals for the ontology version you want to see changes made the second selection box the ontology version to compare against.' +
             '<br><br>' +
-            `<iframe
-                width="100%"
+            `<VideoWrapper>
+            <iframe
                 title="gitVersionComparison"
-                height="425"
-                src="https://www.youtube.com/embed/mFgI6fufHYc?autoplay=1&mute=1&controls=0&loop=1&playlist=mFgI6fufHYc&vq=highest"
+                src="https://www.youtube.com/embed/mFgI6fufHYc?mute=1&controls=0&loop=1&playlist=mFgI6fufHYc&vq=highest"
                 allowFullScreen
-                allow="autoplay"
-            />`
+            />
+            </VideoWrapper>`
     },
     {
         id: '17',
@@ -322,23 +324,25 @@ const documentData = [
         content:
             'Discover how to review terms, join ongoing consensuses, and vote using our majority-decision system to shape shared expectations.' +
             '<br><br>' +
-            `<iframe
-                width="100%"
-                title="vocabulary_consensus"
-                height="725"
-                src="https://www.youtube.com/embed/dS8nmqGKgeg"
-                allowFullScreen
-            />`
+            `<VideoWrapper>
+                <iframe
+                    title="vocabulary_consensus"
+                    src="https://www.youtube.com/embed/dS8nmqGKgeg"
+                    allowFullScreen
+                />
+            </VideoWrapper>`
     },
     {
         id: '19',
         heading: ' Presentation Material',
-        content: `<iframe
-            src="https://docs.google.com/presentation/d/154vcWKt-ei4W5b6LdTEeRhO26WPGQ0z1A5OO_UBStnw/embed"
-            width="100%"
-            height="500"
-            allowFullScreen
-            />`
+        content: `<VideoWrapper>
+                <iframe
+                src="https://docs.google.com/presentation/d/154vcWKt-ei4W5b6LdTEeRhO26WPGQ0z1A5OO_UBStnw/embed"
+                width="100%"
+                height="500"
+                allowFullScreen
+                />
+            </VideoWrapper>`
     },
     {
         id: '20',
@@ -377,6 +381,12 @@ const RootDiv = styled.div`
     display: flex;
     height: 100%;
     overflow: hidden;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 `;
 
 const LeftSidebar = styled.div`
@@ -390,6 +400,12 @@ const LeftSidebar = styled.div`
         color: #333;
         font-family: 'Roboto', sans-serif;
     }
+    
+    @media (max-width: ${MAX_WIDTH}) {
+        width: 100%;
+        padding: 10px;
+        display: none;
+    }
 `;
 
 const RightSidebar = styled.div`
@@ -399,17 +415,42 @@ const RightSidebar = styled.div`
     width: calc(100% - 25%);
     background-color: #fff;
     overflow-x: hidden;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        padding: 12px;
+        width: 100%;
+    }
+`;
+
+const MobileTOC = styled.select`
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 16px;
+
+    @media (min-width: ${MAX_WIDTH}) {
+        display: none;
+    }
 `;
 
 const Page = styled.div`
-    margin-bottom: 20px;
-    margin-left: 5%;
-    margin-right: 5%;
-    padding: 10px;
-    border-radius: 4px;
-    overflow-x: hidden;
-    font-family: 'Roboto', sans-serif;
+    margin: 0 auto 20px auto;
+    padding: 12px;
+    max-width: 900px;
+    border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    iframe {
+        width: 100%;
+        height: auto;
+        min-height: 220px;
+        aspect-ratio: 16 / 9;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
 `;
 
 const PageTitle = styled.h3`
@@ -439,6 +480,21 @@ const StyledLink = styled(Link)`
     &.active {
         background-color: #e9ecef;
         font-weight: bold;
+    }
+`;
+
+const VideoWrapper = styled.div`
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    margin: 16px 0;
+
+    iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
     }
 `;
 
@@ -498,23 +554,40 @@ class Training extends Component {
         });
     };
 
+    renderMobileTOC = () => (
+        <MobileTOC
+            value={this.state.selectedSection?.id || ''}
+            onChange={e => {
+                const section = documentData.find(d => d.id === e.target.value);
+                this.setState({ selectedSection: section });
+            }}
+        >
+            {documentData.map(item => (
+                <option key={item.id} value={item.id}>
+                    {item.heading}
+                </option>
+            ))}
+        </MobileTOC>
+    );
+
     render() {
         return (
             <RootDiv>
                 <LeftSidebar>
                     <Scrollbars style={{ height: '100%' }}>
                         <h3 style={{ textAlign: 'center' }}>Table of Contents</h3>
-                        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>{this.renderTableOfContents()}</ul>
+                        <ul style={{ listStyle: 'none', padding: 0 }}>{this.renderTableOfContents()}</ul>
                     </Scrollbars>
                 </LeftSidebar>
+
                 <RightSidebar>
-                    <div>
-                        <div style={{ paddingRight: '20px' }}>{this.renderDocument()}</div>
-                    </div>
+                    {this.renderMobileTOC()}
+                    {this.renderDocument()}
                 </RightSidebar>
             </RootDiv>
         );
     }
+
 }
 
 export default Training;
