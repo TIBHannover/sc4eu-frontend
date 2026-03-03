@@ -3,7 +3,6 @@ import 'react-app-polyfill/stable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { unregister } from './registerServiceWorker';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor, history } from './store';
@@ -16,7 +15,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
-
+import { register } from './service-worker';
 // To connect Matomo Use React library react-piwik
 
 const piwik = new ReactPiwik({
@@ -55,7 +54,7 @@ const render = () => {
 };
 
 render();
-unregister();
+register();
 
 // Hot reloading components and reducers
 if (module.hot) {
