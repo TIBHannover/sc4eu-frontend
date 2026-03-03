@@ -15,7 +15,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
-import { register } from './service-worker';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 // To connect Matomo Use React library react-piwik
 
 const piwik = new ReactPiwik({
@@ -54,7 +54,7 @@ const render = () => {
 };
 
 render();
-register();
+serviceWorkerRegistration.register();
 
 // Hot reloading components and reducers
 if (module.hot) {
