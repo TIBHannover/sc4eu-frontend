@@ -100,7 +100,6 @@ class OntologyIndexing extends Component {
     render() {
         return (
             <>
-                <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
                 <StyledContainer>
                     {this.state.isLoading ? (
                         <div className="text-center text-primary mt-4 mb-4">
@@ -153,23 +152,5 @@ const StyledContainer = styled(Container)`
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         width: 100%;
     }
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
-`;
-
-const StyledInfo = styled.h5`
-    display: none;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: block;
-        width: 100%;
-        padding-top: 20px;
-        padding-left: 10%;
-        padding-right: 10%;
-        text-align: justify;
-        text-align-last: center;
-        color: ${colorStyled.TEXTCOLOR};
-    }
+    
 `;

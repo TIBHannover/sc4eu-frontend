@@ -1,80 +1,52 @@
 import React, { Component } from 'react';
 import { Button, Spinner } from 'reactstrap';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
 
 export default class WebProtege extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { isLoading: true };
-    }
-
-    componentDidMount() {}
+    state = { isLoading: true };
 
     hideSpinner = () => {
-        console.log('Fully loaded');
-        this.setState({
-            isLoading: false
-        });
-    };
-
-    getWebProtege = () => {
-        return (
-            <iframe
-                title="WebProtege"
-                style={{ position: 'absolute', height: '85%', width: 'calc(100% - 220px)', border: 'none' }}
-                loading="lazy"
-                src="https://service.tib.eu/wp4tib/"
-                onLoad={this.hideSpinner}
-            />
-        );
+        this.setState({ isLoading: false });
     };
 
     render() {
         return (
-            <>
-                <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
-                <StyledDiv>
-                    {this.state.isLoading ? (
-                        <Button style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                            <Spinner animation="grow" size="sm" role="status" aria-hidden="true" style={{ marginBottom: '5px' }} />
+            <Container>
+                {this.state.isLoading && (
+                    <LoadingOverlay>
+                        <Button disabled>
+                            <Spinner size="sm" style={{ marginBottom: '8px' }} />
                             <span>Loading WebProtege...</span>
                         </Button>
-                    ) : null}
-                    {this.getWebProtege()}
-                </StyledDiv>
-            </>
+                    </LoadingOverlay>
+                )}
+
+                <Iframe title="WebProtege" src="https://service.tib.eu/wp4tib/" loading="lazy" onLoad={this.hideSpinner} />
+            </Container>
         );
     }
 }
 
-const StyledDiv = styled.div`
+const Container = styled.div`
     background-color: ${colorStyled.PRIMARY.lighter};
-    height: 100%;
     width: 100%;
-    overflow-y: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
+    height: 100vh; /* Full viewport height */
+    position: relative;
 `;
 
-const StyledInfo = styled.h5`
-    display: none;
+const Iframe = styled.iframe`
+    width: 100%;
+    height: 100%;
+    border: none;
+`;
 
-    @media (max-width: ${MAX_WIDTH}) {
-        display: block;
-        width: 100%;
-        height: 90%;
-        padding-top: 20px;
-        padding-left: 10%;
-        padding-right: 10%;
-        text-align: justify;
-        text-align-last: center;
-        color: ${colorStyled.TEXTCOLOR};
-    }
+const LoadingOverlay = styled.div`
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
 `;

@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
-import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
+import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import ProjectCard from './ProjectCard';
 import CreateProjectModal from './CreateProjectModal';
 import EditProjectModal from './EditProjectModal';
@@ -435,11 +435,18 @@ export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
 
 const StyledProjectsGrid = styled.div`
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
     margin: 2px;
     flex-wrap: wrap;
     gap: 20px;
-    padding-bottom: 20px; /* Add padding at the bottom to prevent cut-off */
+    padding-bottom: 20px;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        gap: 10px;
+        padding: 10px;
+        justify-content: center;
+        width: 100%;
+    }
 `;
 
 const StyledRootDiv = styled.div`
@@ -450,18 +457,33 @@ const StyledRootDiv = styled.div`
     height: calc(100vh - 100px); /* Adjust for the header height */
     margin-right: 2%;
     font-family: ${fontStyled.fontFamily};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        margin-right: 0;
+        margin-left: 0;
+        min-height: calc(100vh - 80px); 
+    }
 `;
 
 const StyledSubHeadingDiv = styled.div`
     height: 100px;
+    @media (max-width: ${MAX_WIDTH}) {
+        height: auto;
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
 `;
 
 const StyledInfoSpan = styled.span`
     font-size: ${fontStyled.fontSize.NormalText};
 
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
+    @media (max-width: ${MAX_WIDTH}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+        margin: 5px 0;
+        display: block;
     }
+    
 `;
 
 const StyledButtonToAddProject = styled(Button)`
@@ -486,4 +508,10 @@ const StyledIcon = styled(FontAwesomeIcon)`
 const StyledScrollbarDiv = styled.div`
     height: calc(100% - 100px); /* Subtract StyledSubHeadingDiv height */
     border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
+
+    @media (max-width: ${MAX_WIDTH}) {
+        height: calc(100% - 120px); 
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 `;

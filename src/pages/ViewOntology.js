@@ -137,7 +137,6 @@ class ViewOntology extends Component {
         //const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS) || 'hybrid';
         return (
             <>
-                <StyledInfo>This page is not available in mobile version if you want to open this page please use desktop site.</StyledInfo>
                 <StyledRootDiv>
                     <div style={{ height: '100%', backgroundColor: colorStyled.PRIMARY.lighter }}>
                         {this.state.isLoading === true && (
@@ -200,23 +199,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(ViewOntology);
 
 const StyledRootDiv = styled.div`
     height: 100%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
-`;
-
-const StyledInfo = styled.h5`
-    display: none;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: block;
-        width: 100%;
-        padding-top: 20px;
-        padding-left: 10%;
-        padding-right: 10%;
-        text-align: justify;
-        text-align-last: center;
-        color: ${colorStyled.TEXTCOLOR};
-    }
+    
 `;

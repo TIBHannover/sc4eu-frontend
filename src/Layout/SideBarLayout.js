@@ -13,6 +13,7 @@ import { Button } from 'reactstrap';
 import IconButton from '@mui/material/IconButton';
 import { CloseOutlined, KeyboardDoubleArrowLeftOutlined, KeyboardDoubleArrowRightOutlined, Menu } from '@mui/icons-material';
 import { Scrollbars } from 'react-custom-scrollbars-2';
+import { useMediaQuery } from '@mui/material';
 
 const StyledButtonMobileView = styled('div')(() => ({
     display: 'none',
@@ -57,9 +58,6 @@ const Drawer = styled(MuiDrawer)(({ open, activepage }) => ({
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
     ...(open ? openedMixin(activepage) : closedMixin(activepage)),
-    [`@media (max-width: ${MAX_WIDTH})`]: {
-        width: '0px'
-    },
     '& .MuiDrawer-paper': {
         ...(open ? openedMixin(activepage) : closedMixin(activepage))
     }
@@ -77,6 +75,7 @@ const StyledDiv = styled('div')(({ open }) => ({
 export default function SideBarLayout(props) {
     const [open, setOpen] = React.useState(true);
     const location = useLocation();
+    const isMobile = useMediaQuery(`max-width(${MAX_WIDTH})`);
 
     const handleDrawer = () => {
         setOpen(!open);
@@ -85,11 +84,11 @@ export default function SideBarLayout(props) {
     return (
         <Box sx={{ display: 'flex' }}>
             <StyledButtonMobileView position="fixed">
-                <Button color="inherit" onClick={handleDrawer}>
+                <IconButton size="large" onClick={handleDrawer}>
                     {open ? <CloseOutlined /> : <Menu />}
-                </Button>
+                </IconButton>
             </StyledButtonMobileView>
-            <Drawer variant="permanent" open={open} activepage={location.pathname}>
+            <Drawer variant={isMobile ? 'temporary' : 'permanent'} open={open} onClose={() => setOpen(false)} activepage={location.pathname}>
                 <Scrollbars style={{ overflowX: 'hidden' }}>
                     <StyledDiv open={open}>
                         <IconButton onClick={handleDrawer} style={{ padding: '10px 10px 10px 10px' }}>
