@@ -440,8 +440,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             >
                 <Grid item xs={12}>
                     <Button
-                        // onClick={() => setShowWeekTerm(true)}
-                        onClick={() => make_push()}
+                        onClick={() => setShowWeekTerm(true)}
                         variant="outlined"
                         size="small"
                         sx={{
