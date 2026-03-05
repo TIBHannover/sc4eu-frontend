@@ -2,7 +2,7 @@
   "name": "sc3-demo-application",
   "version": "0.0.1",
   "private": true,
-  "homepage": ".",
+  "homepage": "./ocp",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -107,7 +107,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start_client": "react-scripts start",
     "start": "npm run build  && (cd server && npm start)",
-    "build": "BUILD_PATH='./build/ocp' react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js",
