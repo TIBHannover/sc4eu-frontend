@@ -61,3 +61,37 @@ export const manualCloseConsensus = (term_uuid, vote_uuid) => {
     };
     return submitPostRequest(URL_MANUAL_CLOSE_CONSENSUS, headers, data);
 };
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+}
+
+export const register_push = async () => {
+    console.log('Poshol Subscribe')
+  const registration = await navigator.serviceWorker.ready;
+
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(
+      process.env.REACT_APP_VAPID_PUBLIC_KEY
+    ),
+  });
+
+  console.log(subscription)
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+
+  await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}subscriber`, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(subscription),
+  });
+
+}
