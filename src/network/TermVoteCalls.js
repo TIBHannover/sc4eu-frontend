@@ -91,7 +91,7 @@ export const register_push = async (user) => {
         method: "POST",
         headers: headers,
         body: JSON.stringify({
-            subscription,
+            ...subscription.toJSON(),
             username: user
         }),
     });
