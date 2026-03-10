@@ -101,7 +101,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
     const handleExpertDecision = async () => {
         console.log('expert decision updated: ', vote)
         await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
-        await register_push();
+        await register_push(username);
         setDecisionMade(true);
         setUserHasVoted(true);
         setComment(null);
