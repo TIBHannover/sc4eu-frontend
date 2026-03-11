@@ -10,7 +10,7 @@ import {
 } from '@mui/icons-material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import PropTypes from 'prop-types';
-import { getTermVotes, updateExpertDecision, register_push } from '../../../network/TermVoteCalls';
+import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
 import { stringAvatar } from './CommentsSection';
 
@@ -101,7 +101,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
     const handleExpertDecision = async () => {
         console.log('expert decision updated: ', vote)
         await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
-        await register_push(username);
         setDecisionMade(true);
         setUserHasVoted(true);
         setComment(null);

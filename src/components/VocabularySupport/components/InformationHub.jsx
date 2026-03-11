@@ -35,7 +35,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
-import { register_push } from '../../../network/TermVoteCalls';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',

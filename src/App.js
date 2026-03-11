@@ -8,7 +8,6 @@ import { withCookies } from 'react-cookie';
 import { detect } from 'detect-browser';
 import { Alert } from 'reactstrap';
 import DefaultLayout from 'Layout/DefaultLayout';
-// import "./App.css";
 import './assets/scss/CustomBootstrap.scss';
 
 class App extends Component {
@@ -25,7 +24,7 @@ class App extends Component {
             this.state.showBrowserWarning = true;
         }
     }
-
+    
     render() {
         // console.log(this.props.history);
         // return <div> Hello2 </div>;
