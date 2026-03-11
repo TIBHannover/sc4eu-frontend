@@ -80,10 +80,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         fetchAll();
     }, []);
 
-    const make_push = async () => {
-        await register_push();
-    }
-
     const fetchTermOfWeek = async () => {
         try {
             setWeekTermLoading(true);

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: VocabularySupport/components/TermOfTheWeekPopUp.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: VocabularySupport/components/TermOfTheWeekPopUp.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// src/components/TermOfWeekPopup.jsx
+import React, { useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Avatar, Typography, Box, IconButton, Snackbar, Alert } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import Cookies from 'js-cookie'; // npm i js-cookie
+import { stringAvatar } from './CommentsSection';
+import { initiateNewVote } from '../../../network/TermVoteCalls'; // &lt;-- your POST helper
+
+/**
+ * Props
+ * -----
+ * term          : object | null   // the term data returned by /api/v1/term-of-week
+ * open          : boolean        // whether the dialog is visible
+ * onClose       : () => void     // called when the user closes the dialog (or after a successful vote)
+ *
+ * The parent component (InformationHub) decides **when** to render this component
+ * and passes the term object that it already fetched.
+ */
+const TermOfWeekPopup = ({ term, open, onClose }) => {
+    const [voteInProgress, setVoteInProgress] = useState(false);
+    const [snack, setSnack] = useState({ open: false, severity: 'info', message: '' });
+
+    // -----------------------------------------------------------------
+    // 1️⃣  Vote handler – calls the back‑end and then closes the dialog
+    // -----------------------------------------------------------------
+    const handleVote = async choice => {
+        if (!term) return;
+        setVoteInProgress(true);
+        try {
+            // `postVote` should accept termUuid, voteUuid and the choice string
+            await initiateNewVote(term.term_uuid, term.vote_uuid, choice);
+
+            setSnack({
+                open: true,
+                severity: 'success',
+                message: 'Your vote was recorded – thanks!'
+            });
+
+            // Remember that the user has seen the popup for this week.
+            // We store a cookie that expires in 7 days (you can change the ttl).
+            Cookies.set('termOfWeekSeen', 'true', { expires: 7 });
+
+            // Let the parent know the popup can be hidden.
+            onClose();
+        } catch (err) {
+            console.error('Vote error', err);
+            setSnack({
+                open: true,
+                severity: 'error',
+                message: 'Failed to submit vote.'
+            });
+        } finally {
+            setVoteInProgress(false);
+        }
+    };
+
+    // -----------------------------------------------------------------
+    // 2️⃣  Render – nothing is rendered if there is no term data
+    // -----------------------------------------------------------------
+    if (!term) return null;
+
+    return (
+        &lt;>
+            {/* ------------------- Dialog ------------------- */}
+            &lt;Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+                &lt;DialogTitle
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                    }}
+                >
+                    &lt;Box display="flex" alignItems="center">
+                        &lt;Avatar {...stringAvatar(term.label)} sx={{ mr: 1 }} />
+                        &lt;Typography variant="h6">Term of the Week&lt;/Typography>
+                    &lt;/Box>
+                    &lt;IconButton onClick={onClose} size="small">
+                        &lt;CloseIcon />
+                    &lt;/IconButton>
+                &lt;/DialogTitle>
+
+                &lt;DialogContent dividers>
+                    &lt;Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                        {term.label}
+                    &lt;/Typography>
+
+                    {term.description &amp;&amp; (
+                        &lt;Typography variant="body2" color="text.secondary" gutterBottom>
+                            {term.description}
+                        &lt;/Typography>
+                    )}
+
+                    &lt;Box mt={2} display="flex" alignItems="center" gap={2}>
+                        &lt;Typography variant="caption" color="text.secondary">
+                            {term.vote_count ?? term.choice_count ?? 0} vote{term.vote_count === 1 ? '' : 's'}
+                        &lt;/Typography>
+                    &lt;/Box>
+                &lt;/DialogContent>
+
+                &lt;DialogActions sx={{ justifyContent: 'center', pb: 2 }}>
+                    &lt;Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={&lt;ThumbUpIcon />}
+                        disabled={voteInProgress}
+                        onClick={() => handleVote('agree')}
+                    >
+                        Agree
+                    &lt;/Button>
+                    &lt;Button
+                        variant="outlined"
+                        color="secondary"
+                        startIcon={&lt;ThumbDownIcon />}
+                        disabled={voteInProgress}
+                        onClick={() => handleVote('disagree')}
+                    >
+                        Disagree
+                    &lt;/Button>
+                &lt;/DialogActions>
+            &lt;/Dialog>
+
+            {/* ------------------- Snackbar ------------------- */}
+            &lt;Snackbar
+                open={snack.open}
+                autoHideDuration={4000}
+                onClose={() => setSnack({ ...snack, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                &lt;Alert severity={snack.severity} onClose={() => setSnack({ ...snack, open: false })}>
+                    {snack.message}
+                &lt;/Alert>
+            &lt;/Snackbar>
+        &lt;/>
+    );
+};
+
+export default TermOfWeekPopup;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#TermOfWeekPopup">TermOfWeekPopup</a></li><li><a href="global.html#generateLightColor">generateLightColor</a></li><li><a href="global.html#generateLink">generateLink</a></li><li><a href="global.html#getContext">getContext</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Feb 16 2026 16:19:58 GMT+0100 (Central European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
