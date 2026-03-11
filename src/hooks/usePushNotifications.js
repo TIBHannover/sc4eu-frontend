@@ -47,7 +47,11 @@ export function usePushNotifications(user) {
     }, [isSupported]);
 
     const subscribe = useCallback(async () => {
-        console.log('subscribe called, permission:', Notification.permission);
+        if (Notification.permission === 'denied') {
+            alert('Notifications are blocked. Please click the lock icon in your browser address bar and reset notification permission. After try again');
+            return;
+        }
+
         if (permission !== 'granted') {
             console.log('requesting permission...');
             const result = await requestPermission();
