@@ -3,7 +3,7 @@ import { usePushNotifications } from "../../hooks/usePushNotifications"
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
 import ToggleOnOutlinedIcon from '@mui/icons-material/ToggleOnOutlined';
 
-export const NotificationToggle = (user) => {
+export const NotificationToggle = ({ user }) => {
     const { subscribe, unsubscribe, subscription } = usePushNotifications(user);
 
     const handleToggle = async () => {
