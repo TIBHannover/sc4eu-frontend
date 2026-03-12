@@ -5,9 +5,10 @@ import ToggleOnOutlinedIcon from '@mui/icons-material/ToggleOnOutlined';
 
 export const NotificationToggle = ({ user }) => {
     const { subscribe, unsubscribe, subscription } = usePushNotifications(user);
+    const isSubscribed = !!subscription;
 
     const handleToggle = async () => {
-        if (!subscription) {
+        if (!isSubscribed) {
             await subscribe();
         } else {
             await unsubscribe();
@@ -15,9 +16,9 @@ export const NotificationToggle = ({ user }) => {
     }
 
     return (
-        <Tooltip title={!subscription ? 'Enable notifications' : 'Disable notifications'}>
+        <Tooltip title={!isSubscribed ? 'Enable notifications' : 'Disable notifications'}>
             <IconButton onClick={handleToggle}>
-                {!subscription ? <ToggleOffOutlinedIcon sx={{ fontSize: 35 }} /> : <ToggleOnOutlinedIcon sx={{ fontSize: 35 }}/>}
+                {!isSubscribed ? <ToggleOffOutlinedIcon sx={{ fontSize: 35 }} /> : <ToggleOnOutlinedIcon sx={{ fontSize: 35 }}/>}
             </IconButton>
         </Tooltip>
     )
