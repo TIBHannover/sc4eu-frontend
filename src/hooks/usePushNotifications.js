@@ -99,8 +99,6 @@ export function usePushNotifications(user) {
     }, [subscription]);
 
     const notifyAddRemoveTerm = (async () => {
-        if (!subscription) return;
-
         await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyAddRemoveTerm`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
