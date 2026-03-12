@@ -128,6 +128,7 @@ database.updateVoteDecision(router);
 database.getTermOfTheWeek(router);
 database.closeConsensus(router);
 database.subscribePush(router);
+database.unsubscribePush(router);
 processing.getJSONModelForOntologyID(router);
 processing.getJSONModelForOntologyIDWithQuery(router);
 processing.initializeOntology(router);
