@@ -716,6 +716,7 @@ const VocabularyMainTable = ({
                         openCommit={openCommit}
                         setOpenCommit={setOpenCommit}
                         setHasUncommittedChanges={setHasUncommittedChanges}
+                        user={currentUser.displayName}
                     />
                 )}
             </>

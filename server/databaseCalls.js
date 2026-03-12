@@ -752,6 +752,36 @@ module.exports = {
             });
 
         });
-    }
+    },
+
+    notifyAddRemoveTerm: function (app) {
+        app.post('/notifyAddRemoveTerm', (req, res) => {
+            console.log('Proxy received about new/removed term, sending to server')
+            const data = JSON.stringify(req.body);
+            console.log(data);
+            const project_options = {
+                uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/notifyTerms`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            };
+
+            request(project_options, function (error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+
+        });
+    },
 };
 

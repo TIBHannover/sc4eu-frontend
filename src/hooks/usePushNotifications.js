@@ -47,7 +47,7 @@ export function usePushNotifications(user) {
     }, [isSupported]);
 
     const subscribe = useCallback(async () => {
-        if (Notification.permission === 'denied') {
+        if (permission === 'denied') {
             alert('Notifications are blocked. Please click the lock icon in your browser address bar and reset notification permission. After try again');
             return;
         }
@@ -98,6 +98,18 @@ export function usePushNotifications(user) {
         setSubscription(null);
     }, [subscription]);
 
+    const notifyAddRemoveTerm = (async () => {
+        if (!subscription) return;
+
+        await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyAddRemoveTerm`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ update: "Term has been updated or removed. Find out!" }),
+        });
+
+    }, []);
+
+
     return {
         isSupported,
         permission,
@@ -105,5 +117,6 @@ export function usePushNotifications(user) {
         requestPermission,
         subscribe,
         unsubscribe,
+        notifyAddRemoveTerm
     };
 }
