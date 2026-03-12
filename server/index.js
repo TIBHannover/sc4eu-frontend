@@ -130,6 +130,7 @@ database.closeConsensus(router);
 database.subscribePush(router);
 database.unsubscribePush(router);
 database.notifyAddRemoveTerm(router);
+database.notifyNewComment(router);
 processing.getJSONModelForOntologyID(router);
 processing.getJSONModelForOntologyIDWithQuery(router);
 processing.initializeOntology(router);

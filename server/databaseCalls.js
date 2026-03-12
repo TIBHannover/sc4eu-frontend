@@ -783,5 +783,35 @@ module.exports = {
 
         });
     },
+
+    notifyNewComment: function (app) {
+        app.post('/notifyNewComment', (req, res) => {
+            console.log('Proxy received about new discussion, sending to server')
+            const data = JSON.stringify(req.body);
+            console.log(data);
+            const project_options = {
+                uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/notifyComments`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            };
+
+            request(project_options, function (error, response) {
+                if (response && response.body) {
+                    try {
+                        const result = JSON.parse(response.body);
+                        res.json(result);
+                    } catch (e) {
+                        res.json({ error: 'Something went wrong' });
+                    }
+                } else {
+                    res.json({ error: 'Something went wrong' });
+                }
+            });
+
+        });
+    },
 };
 

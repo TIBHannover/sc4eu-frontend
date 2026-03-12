@@ -15,6 +15,7 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import { commitDiscussionOnly } from '../utils/CommitChanges';
 import { useQueryClient } from '@tanstack/react-query';
+import { usePushNotifications } from '../../../hooks/usePushNotifications';
 
 function stringToColor(string) {
     let hash = 0;
@@ -88,6 +89,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const textFieldRef = React.useRef(null);
     const [mentionedUsers, setMentionedUsers] = useState([]);
 
+    const { notifyNewComment } = usePushNotifications(user.displayName);
     const queryClient = useQueryClient();
 
     useEffect(() => {
@@ -115,6 +117,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         //setHasUncommittedChanges(true);
         // Discussion here needs to be commited automatically
         commitDiscussionOnly(queryClient);
+        await notifyNewComment();
     };
 
     const handleTextChange = e => {

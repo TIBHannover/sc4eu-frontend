@@ -98,15 +98,23 @@ export function usePushNotifications(user) {
         setSubscription(null);
     }, [subscription]);
 
-    const notifyAddRemoveTerm = (async () => {
+    const notifyAddRemoveTerm = async () => {
         await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyAddRemoveTerm`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ update: "Term has been updated or removed. Find out!" }),
         });
 
-    }, []);
+    };
 
+    const notifyNewComment = async () => {
+        await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyNewComment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ update: "New comment has been added to a discussion. Check it out!" }),
+        });
+
+    };
 
     return {
         isSupported,
@@ -115,6 +123,7 @@ export function usePushNotifications(user) {
         requestPermission,
         subscribe,
         unsubscribe,
-        notifyAddRemoveTerm
+        notifyAddRemoveTerm,
+        notifyNewComment
     };
 }
