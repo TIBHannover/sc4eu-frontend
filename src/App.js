@@ -8,8 +8,8 @@ import { withCookies } from 'react-cookie';
 import { detect } from 'detect-browser';
 import { Alert } from 'reactstrap';
 import DefaultLayout from 'Layout/DefaultLayout';
-// import "./App.css";
 import './assets/scss/CustomBootstrap.scss';
+import { InstallBanner } from './InstallBanner';
 
 class App extends Component {
     constructor(props) {
@@ -25,7 +25,7 @@ class App extends Component {
             this.state.showBrowserWarning = true;
         }
     }
-
+    
     render() {
         // console.log(this.props.history);
         // return <div> Hello2 </div>;
@@ -41,6 +41,7 @@ class App extends Component {
                         </Alert>
                     )}
                     {/* Suspense is used for when the component is lazy loaded */}
+                    <InstallBanner />
                     <Suspense fallback={<div className="mt-5 mb-2 text-center">Loading...</div>}>
                         <Switch>{renderRoutes(routes)}</Switch>
                     </Suspense>

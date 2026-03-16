@@ -4,16 +4,18 @@ import React, { useState } from 'react';
 import { commitChanges } from '../utils/CommitChanges';
 import PropTypes from 'prop-types';
 import { useQueryClient } from '@tanstack/react-query';
+import { usePushNotifications } from '../../../hooks/usePushNotifications';
 
-const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedChanges }) => {
+const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedChanges, user }) => {
     const [commitMessage, setCommitMessage] = useState('');
     const queryClient = useQueryClient();
-
+    const { notifyAddRemoveTerm } = usePushNotifications(user);
     const handleCommitMessageChange = event => {
         setCommitMessage(event.target.value);
     };
     const handleCommit = async () => {
         await commitChanges(queryClient, commitMessage);
+        await notifyAddRemoveTerm();
         setHasUncommittedChanges(false);
         setOpenCommit(false);
     };

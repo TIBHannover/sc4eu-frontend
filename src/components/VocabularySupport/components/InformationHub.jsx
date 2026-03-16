@@ -79,7 +79,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         fetchAll();
     }, []);
 
-
     const fetchTermOfWeek = async () => {
         try {
             setWeekTermLoading(true);
@@ -292,9 +291,9 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                     {term.label}
                                 </Typography>
                                 {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention"
-                                                                sx={{ mr: '1em' }} />}
+                                    sx={{ mr: '1em' }} />}
                                 {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement"
-                                                             sx={{ mr: '1em' }} />}
+                                    sx={{ mr: '1em' }} />}
 
                                 <Typography
                                     variant="caption"
@@ -452,7 +451,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     <Tooltip title="Check the term that received the most votes in past week" placement="right"
                     >
                         <StyledChip label="New" size="small" customVariant="agreement"
-                                    sx={{ mb: 5, cursor: 'pointer' }} />
+                            sx={{ mb: 5, cursor: 'pointer' }} />
                     </Tooltip>
                 </Grid>
                 <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -484,7 +483,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                         >
                             <FormControlLabel
                                 control={<Checkbox size="small" checked={showOnlyMentions}
-                                                   onChange={e => setShowOnlyMentions(e.target.checked)} />}
+                                    onChange={e => setShowOnlyMentions(e.target.checked)} />}
                                 label={<Typography variant="body2">Only my mentions</Typography>}
                                 sx={{ mr: 2 }}
                             />
@@ -526,7 +525,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 Sort by:
                             </Typography>
                             <Select size="small" value={sortBy} onChange={e => setSortBy(e.target.value)}
-                                    variant="outlined" sx={{ minWidth: 200 }}>
+                                variant="outlined" sx={{ minWidth: 200 }}>
                                 <MenuItem value={SORT_BY_OPTIONS.RECENT_UPDATE}>Recently updated</MenuItem>
                                 <MenuItem value={SORT_BY_OPTIONS.LATEST_UPDATE}>Latest updated</MenuItem>
                                 <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL}>Alphabetical</MenuItem>

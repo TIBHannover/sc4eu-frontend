@@ -18,6 +18,8 @@ import background from '../assets/images/Curve_Line.svg';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
 import { SettingsOutlined, LogoutOutlined, AccountCircleOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
+import { NotificationManager } from '../utils/NotificationManager';
+import { NotificationToggle } from '../components/ReusableComponents/NotificationToggle';
 
 class Header extends Component {
     constructor(props) {
@@ -25,7 +27,8 @@ class Header extends Component {
         this.state = {
             isHomePageStyle: this.props.location.pathname === ROUTES.HOME,
             userTooltipOpen: false,
-            redirectOnAuthAction: false
+            redirectOnAuthAction: false,
+            showNotificationPrompt: false
         };
 
         this.userPopup = React.createRef();
@@ -135,6 +138,8 @@ class Header extends Component {
                     <StyledRightSideDiv>
                         {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
                             <div>
+                                <NotificationManager user={this.props.user.displayName} />
+                                <NotificationToggle user={this.props.user.displayName} />
                                 <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
                                 <StyledAuthTooltip
                                     fade={false}

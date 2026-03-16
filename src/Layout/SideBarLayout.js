@@ -9,7 +9,6 @@ import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import SideBar from '../components/SideBar';
 import { colorStyled } from '../styledComponents/styledColor';
 import { useLocation } from 'react-router-dom';
-import { Button } from 'reactstrap';
 import IconButton from '@mui/material/IconButton';
 import { CloseOutlined, KeyboardDoubleArrowLeftOutlined, KeyboardDoubleArrowRightOutlined, Menu } from '@mui/icons-material';
 import { Scrollbars } from 'react-custom-scrollbars-2';

@@ -61,3 +61,4 @@ export const manualCloseConsensus = (term_uuid, vote_uuid) => {
     };
     return submitPostRequest(URL_MANUAL_CLOSE_CONSENSUS, headers, data);
 };
+
