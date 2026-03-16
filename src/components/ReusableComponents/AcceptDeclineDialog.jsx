@@ -1,19 +1,22 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import PropTypes from 'prop-types';
 import { colorStyled } from '../../styledComponents/styledColor';
-
+import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 const AcceptDeclineDialog = ({ open, onDecline, onAccept, title, message }) => {
 
     return (
         <Dialog
             open={open}
             onClose={onDecline}
-            fullWidth
-            sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
+            PaperProps={{
+                sx: {
+                    padding: 2,
+                    [`@media (max-width:${SMALL_SCREEN_WIDTH})`]: {
+                        width: '90vw',        
+                        maxWidth: '90vw',     
+                        minHeight: 'auto',  
+                    },
+                },
             }}
         >
             <DialogTitle>{title}</DialogTitle>
