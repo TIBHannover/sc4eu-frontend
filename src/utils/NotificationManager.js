@@ -10,7 +10,6 @@ export const NotificationManager = ({ user }) => {
     const [showPrompt, setShowPrompt] = useState(false);
 
     useEffect(() => {
-        console.log(`Inside Accept/Decline Dialog: ${user}\n ${isPushSupported()}\n ${Notification.permission}`)
         if (user && isPushSupported() && Notification.permission === 'default') {
             setTimeout(() => setShowPrompt(true), 3000);
         }

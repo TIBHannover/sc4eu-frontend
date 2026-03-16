@@ -2,38 +2,33 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import PropTypes from 'prop-types';
 import { colorStyled } from '../../styledComponents/styledColor';
 
-const AcceptDeclineDialog = ({ open, onDecline, onAccept, title, message, paperSizeStyles }) => {
-    const defaultPaperSizeStyles = {
-        minHeight: '20%',
-        maxHeight: '20%',
-        minWidth: '20%',
-        maxWidth: '20%'
-    };
+const AcceptDeclineDialog = ({ open, onDecline, onAccept, title, message }) => {
 
     return (
         <Dialog
             open={open}
             onClose={onDecline}
-            PaperProps={{
-                style: {
-                    ...defaultPaperSizeStyles,
-                    ...paperSizeStyles
-                }
+            fullWidth
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
             }}
         >
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
-            <DialogActions style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <Button onClick={onDecline} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+            <DialogActions style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button onClick={onDecline} variant='contained' style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
                     No thanks
                 </Button>
                 <Button onClick={onAccept} variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
                     Yes please
                 </Button>
             </DialogActions>
-        </Dialog>
+        </Dialog >
     );
 };
 
@@ -42,8 +37,7 @@ AcceptDeclineDialog.propTypes = {
     onDecline: PropTypes.func.isRequired,
     onAccept: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
-    message: PropTypes.element.isRequired,
-    paperSizeStyles: PropTypes.object
+    message: PropTypes.element.isRequired
 };
 
 
