@@ -133,7 +133,7 @@ class Header extends Component {
 
         return (
             <StyledRootDiv>
-                {this.props.user && this.props.user.displayName && (<NotificationManager user={this.props.user.displayName} />)}
+                {this.props.user?.displayName && (<NotificationManager user={this.props.user.displayName} />)}
                 <StyledHeaderDiv>
                     <StyledRightSideDiv>
                         {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
