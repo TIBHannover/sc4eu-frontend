@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { Autocomplete, Button, Grid, Link, TextField, Typography, Chip } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -83,17 +83,13 @@ export const EurostatPortal = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `${
-                        process.env.REACT_APP_TIVA_BACKEND_URL
-                    }/api/tiva/eurostat/euroYearRange?reporters=${reporter}&start=${startYear.getFullYear()}-01-01&end=${endYear.getFullYear()}-12-31&partners=${partner}&flow=${
-                        flow.value
+                    `${process.env.REACT_APP_TIVA_BACKEND_URL
+                    }/api/tiva/eurostat/euroYearRange?reporters=${reporter}&start=${startYear.getFullYear()}-01-01&end=${endYear.getFullYear()}-12-31&partners=${partner}&flow=${flow.value
                     }&products=${product.map(i => i.value)}`
                 );
                 const responseProduct = await fetch(
-                    `${
-                        process.env.REACT_APP_TIVA_BACKEND_URL
-                    }/api/tiva/eurostat/euroRepParProd?reporters=${reporter}&start=${startYear.getFullYear()}-01-01&end=${endYear.getFullYear()}-12-31&partners=${partner}&flow=${
-                        flow.value
+                    `${process.env.REACT_APP_TIVA_BACKEND_URL
+                    }/api/tiva/eurostat/euroRepParProd?reporters=${reporter}&start=${startYear.getFullYear()}-01-01&end=${endYear.getFullYear()}-12-31&partners=${partner}&flow=${flow.value
                     }&products=${product.map(i => i.value)}`
                 );
 
@@ -251,7 +247,7 @@ export const EurostatPortal = () => {
         setYear(newStartYear.getFullYear());
     };
 
-    const CustomInput = ({ value, onClick }) => <TextField value={value} onClick={onClick} label="Select Year*" style={{ width: 500 }} readOnly />;
+    const CustomInput = ({ value, onClick }) => <TextField value={value} onClick={onClick} label="Select Year*" readOnly />;
 
     CustomInput.propTypes = {
         value: PropTypes.number,
@@ -259,105 +255,104 @@ export const EurostatPortal = () => {
     }
 
     return (
-        <div style={{ height: 'calc(100vh - 100px)', overflowY: 'auto' }}>
-            <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={11}>
-                    <Typography variant="h5" gutterBottom textAlign="center">
-                        EU trade data since 1988
-                    </Typography>
-                    <Typography>
-                        This{' '}
-                        <Link href={wordLinks.application} style={{ color: '#607D8B' }}>
-                            application
-                        </Link>{' '}
-                        is a standardised way of querying and visualising data from the EUROSTAT database{' '}
-                        <Link
-                            href="https://ec.europa.eu/eurostat/databrowser/view/ds-045409$defaultview/default/table?lang=en"
-                            style={{ color: '#607D8B' }}
-                        >
-                            ds-045409
-                        </Link>
-                        . EUROSTAT describes the content of the database as:{' '}
-                        <i>
-                            „International trade in goods statistics (ITGS) published by Eurostat{' '}
-                            <Link href={wordLinks.measure} style={{ color: '#607D8B' }}>
-                                measure
+        <Grid container justifyContent="center" sx={{ overflow: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
+            <Grid item xs={11} md={11}>
+
+                {/* Text Section */}
+                <Grid container justifyContent="center" sx={{ mb: 2 }}>
+                    <Grid item xs={12}>
+                        <Typography variant="h5" gutterBottom textAlign="center">
+                            EU trade data since 1988
+                        </Typography>
+                        <Typography>
+                            This{' '}
+                            <Link href={wordLinks.application} style={{ color: '#607D8B' }}>
+                                application
                             </Link>{' '}
-                            the value and quantity of goods traded between the EU Member States (intra-EU trade) and goods traded by the EU Member
-                            States with non-EU countries (extra-EU trade). ‘Goods’ means all movable{' '}
-                            <Link href={wordLinks.property} style={{ color: '#607D8B' }}>
-                                property
-                            </Link>{' '}
-                            including{' '}
-                            <Link href={wordLinks.electricity} style={{ color: '#607D8B' }}>
-                                electricity
+                            is a standardised way of querying and visualising data from the EUROSTAT database{' '}
+                            <Link
+                                href="https://ec.europa.eu/eurostat/databrowser/view/ds-045409$defaultview/default/table?lang=en"
+                                style={{ color: '#607D8B' }}
+                            >
+                                ds-045409
                             </Link>
-                            . ‘European’ means that the statistics are compiled on the basis of the concepts and definitions set out in EU
-                            legislation. ‘National’ statistics, i.e. statistics published at national level by the Member States, are compiled on the
-                            basis of national rules which may differ from EU rules. European ITGS are the official harmonised{' '}
-                            <Link href={wordLinks.source} style={{ color: '#607D8B' }}>
-                                source
+                            . EUROSTAT describes the content of the database as:{' '}
+                            <i>
+                                „International trade in goods statistics (ITGS) published by Eurostat{' '}
+                                <Link href={wordLinks.measure} style={{ color: '#607D8B' }}>
+                                    measure
+                                </Link>{' '}
+                                the value and quantity of goods traded between the EU Member States (intra-EU trade) and goods traded by the EU Member
+                                States with non-EU countries (extra-EU trade). ‘Goods’ means all movable{' '}
+                                <Link href={wordLinks.property} style={{ color: '#607D8B' }}>
+                                    property
+                                </Link>{' '}
+                                including{' '}
+                                <Link href={wordLinks.electricity} style={{ color: '#607D8B' }}>
+                                    electricity
+                                </Link>
+                                . ‘European’ means that the statistics are compiled on the basis of the concepts and definitions set out in EU
+                                legislation. ‘National’ statistics, i.e. statistics published at national level by the Member States, are compiled on the
+                                basis of national rules which may differ from EU rules. European ITGS are the official harmonised{' '}
+                                <Link href={wordLinks.source} style={{ color: '#607D8B' }}>
+                                    source
+                                </Link>{' '}
+                                of information about exports, imports and the trade balances of the EU, its Member States and the euro area.“
+                            </i>
+                        </Typography>
+                        <br />
+                        <Typography>
+                            We have reduced the data to those relating to the trade in{' '}
+                            <Link href={wordLinks.semiconductors} style={{ color: '#607D8B' }}>
+                                semiconductors
+                            </Link>
+                            . The{' '}
+                            <Link href={wordLinks.products} style={{ color: '#607D8B' }}>
+                                products
                             </Link>{' '}
-                            of information about exports, imports and the trade balances of the EU, its Member States and the euro area.“
-                        </i>
-                    </Typography>
-                    <br />
-                    <Typography>
-                        We have reduced the data to those relating to the trade in{' '}
-                        <Link href={wordLinks.semiconductors} style={{ color: '#607D8B' }}>
-                            semiconductors
-                        </Link>
-                        . The{' '}
-                        <Link href={wordLinks.products} style={{ color: '#607D8B' }}>
-                            products
-                        </Link>{' '}
-                        are described via the Harmonized{' '}
-                        <Link href="https://www.trade.gov/harmonized-system-hs-codes" style={{ color: '#607D8B' }}>
-                            System (HS) Code
-                        </Link>
-                        . This data was first mapped in the{' '}
-                        <Link href="https://gitlab.com/coypu-project/coy-ontology" style={{ color: '#607D8B' }}>
-                            COY ontology
-                        </Link>{' '}
-                        and converted into a knowledge graph. The knowledge graph forms the basis for all queries that can be visualised
-                        interactively. This enables us to quickly combine, query and visualise the available data for interactive exploration.
-                    </Typography>
-                    <br />
-                    <Typography>
-                        In next steps we will enrich these data by further databases as like the{' '}
-                        <Link href="https://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html" style={{ color: '#607D8B' }}>
-                            BACI
-                        </Link>
-                        .
-                    </Typography>
+                            are described via the Harmonized{' '}
+                            <Link href="https://www.trade.gov/harmonized-system-hs-codes" style={{ color: '#607D8B' }}>
+                                System (HS) Code
+                            </Link>
+                            . This data was first mapped in the{' '}
+                            <Link href="https://gitlab.com/coypu-project/coy-ontology" style={{ color: '#607D8B' }}>
+                                COY ontology
+                            </Link>{' '}
+                            and converted into a knowledge graph. The knowledge graph forms the basis for all queries that can be visualised
+                            interactively. This enables us to quickly combine, query and visualise the available data for interactive exploration.
+                        </Typography>
+                        <br />
+                        <Typography>
+                            In next steps we will enrich these data by further databases as like the{' '}
+                            <Link href="https://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html" style={{ color: '#607D8B' }}>
+                                BACI
+                            </Link>
+                            .
+                        </Typography>
+                    </Grid>
                 </Grid>
-                <Grid container item xs={10} spacing={2}>
-                    <Grid item xs={6}>
+
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={2}>
                         <Autocomplete
                             id="reporter"
                             options={reporters}
                             renderInput={params => (
-                                <TextField
-                                    {...params}
-                                    label="Reporter*"
-                                    style={{ width: 500 }}
-                                    error={!!errors.reporter}
-                                    helperText={errors.reporter}
-                                />
+                                <TextField {...params} label="Reporter*" error={!!errors.reporter} helperText={errors.reporter} />
                             )}
                             onFocus={event => fieldOpened(event)}
                             onChange={(event, value) => {
                                 setReporter(value);
                                 setErrors(prev => ({ ...prev, reporter: null }));
                             }}
-                        ></Autocomplete>
+                        />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6} md={2}>
                         <Autocomplete
                             id="partner"
                             options={partners}
                             renderInput={params => (
-                                <TextField {...params} label="Partner*" style={{ width: 500 }} error={!!errors.partner} helperText={errors.partner} />
+                                <TextField {...params} label="Partner*" error={!!errors.partner} helperText={errors.partner} />
                             )}
                             onFocus={event => fieldOpened(event)}
                             onChange={(event, value) => {
@@ -366,12 +361,15 @@ export const EurostatPortal = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={6}>
+
+                    <Grid item xs={12} />
+
+                    <Grid item xs={12} sm={6} md={2}>
                         <Autocomplete
                             id="flow"
                             options={flows}
                             renderInput={params => (
-                                <TextField {...params} label="Select flow*" style={{ width: 500 }} error={!!errors.flow} helperText={errors.flow} />
+                                <TextField {...params} label="Select flow*" error={!!errors.flow} helperText={errors.flow} />
                             )}
                             onFocus={event => fieldOpened(event)}
                             onChange={(event, value) => {
@@ -380,7 +378,7 @@ export const EurostatPortal = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6} md={2}>
                         <DatePicker
                             selected={startYear}
                             onChange={handleYearSelect}
@@ -394,30 +392,51 @@ export const EurostatPortal = () => {
                         />
                         {errors.date && <div style={{ color: 'red' }}>{errors.date}</div>}
                     </Grid>
-                    <Grid item xs={12}>
+
+                    <Grid item xs={12} />
+
+                    <Grid item xs={12} md={6}>
                         <Autocomplete
                             multiple
                             id="product"
                             options={products}
                             limitTags={1}
+                            renderTags={(value, getTagProps) =>
+                                value.map((option, index) => (
+                                    <Chip
+                                        label={option.label.slice(0, 40)}
+                                        title={option.label}
+                                        {...getTagProps({ index })}
+                                    />
+                                ))
+                            }
                             renderInput={params => (
-                                <TextField {...params} label="Product*" style={{ width: 500 }} error={!!errors.product} helperText={errors.product} />
+                                <TextField {...params} label="Product*" error={!!errors.product} helperText={errors.product}
+                                />
                             )}
                             onFocus={event => fieldOpened(event)}
                             onChange={(event, value) => {
                                 setProduct(value);
                                 setErrors(prev => ({ ...prev, product: null }));
                             }}
-                        ></Autocomplete>
+                        />
                     </Grid>
-                    <Grid item xs={3} md={2}>
-                        <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={handleSubmit}>
+
+                    <Grid item xs={12} />
+
+                    <Grid item xs={12} sm={3} md={2}>
+                        <Button
+                            variant="contained"
+                            style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                            onClick={handleSubmit}
+                        >
                             Submit
                         </Button>
                     </Grid>
                 </Grid>
+
                 {lineData && productData && (
-                    <Grid item xs={11}>
+                    <Grid item xs={12}>
                         <Tabs value={value} onChange={handleTabChange} TabIndicatorProps={{ style: { display: 'none' } }}>
                             <Tab label="Line" />
                             <Tab label="Bar" />
@@ -428,7 +447,8 @@ export const EurostatPortal = () => {
                         </Box>
                     </Grid>
                 )}
+
             </Grid>
-        </div>
+        </Grid>
     );
 };

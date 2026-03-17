@@ -23,7 +23,15 @@ export const ApexBarChart = ({ data, categories }) => {
             enabled: false,
         },
         xaxis: {
-            categories
+            categories,
+            labels: {
+                formatter: (value) => {
+                    if (value >= 1_000_000_000) return (value / 1_000_000_000).toFixed(1) + 'B';
+                    if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + 'M';
+                    if (value >= 1_000) return (value / 1_000).toFixed(1) + 'K';
+                    return value;
+                }
+            }
         },
         noData: {
             text: 'Nothing was found with the chosen parameters, try to increase number of products, change flow type, increase the interval or change reporter and/or partner'
@@ -31,7 +39,7 @@ export const ApexBarChart = ({ data, categories }) => {
     };
 
     return (
-        <ReactApexChart options={options} series={series} type="bar" height={350} />
+        <ReactApexChart options={options} series={series} type="bar" />
     );
 };
 
