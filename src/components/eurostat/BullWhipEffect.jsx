@@ -3,6 +3,8 @@ import { Autocomplete, Button, Grid, Link, TextField, Typography } from '@mui/ma
 import { MyApexChart } from './ApexChart';
 import { EurostatGeoEntities } from './static/EurostatGeoEntities';
 import { colorStyled } from '../../styledComponents/styledColor';
+import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
+import { useMediaQuery } from '@material-ui/core';
 
 const indicators = [
     {
@@ -85,6 +87,7 @@ export const BullWhipEffect = () => {
     const [soldData, setSoldData] = useState(null);
 
     const hasFetched = useRef(false);
+    const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
     useEffect(() => {
         if (!annualGeoFocused) return;
@@ -168,204 +171,202 @@ export const BullWhipEffect = () => {
     };
 
     return (
-        <div style={{ height: 'calc(100vh - 100px)', overflowY: 'auto' }}>
-            <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={11}>
-                    <Typography variant="h5" gutterBottom textAlign="center">
-                        Bullwhip Effect
-                    </Typography>
-                    <Typography>
-                        This{' '}
-                        <Link href={wordLinks.application} style={{ color: '#607D8B' }}>
-                            application
-                        </Link>{' '}
-                        is intended to study and find possible bullwhip effect in{' '}
-                        <Link href={wordLinks.supplyChain} style={{ color: '#607D8B' }}>
-                            supply chain
-                        </Link>{' '}
-                        networks. For this purpose several datasets from Eurostat were used:
-                        <ol>
-                            <li>
-                                Annual enterprise statistics for special aggregates of NACE Rev.2 activities (2005-2020).
-                                <br />
-                                <i>
-                                    Covers all activities of the business economy with the exception of agricultural activities and personal{' '}
-                                    <Link href={wordLinks.service} style={{ color: '#607D8B' }}>
-                                        services
-                                    </Link>{' '}
-                                    and the data are provided by all EU Member States, Iceland, Norway and Switzerland, some candidate and potential
-                                    candidate countries.
+        <Grid container spacing={2} justifyContent="center" sx={{ overflow: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
+            <Grid item xs={11} md={11}>
+                <Grid container justifyContent="center" sx={{ mb: 2 }}>
+                    <Grid item xs={12}>
+                        <Typography variant="h5" gutterBottom textAlign="center">
+                            Bullwhip Effect
+                        </Typography>
+                        <Typography>
+                            This{' '}
+                            <Link href={wordLinks.application} style={{ color: '#607D8B' }}>
+                                application
+                            </Link>{' '}
+                            is intended to study and find possible bullwhip effect in{' '}
+                            <Link href={wordLinks.supplyChain} style={{ color: '#607D8B' }}>
+                                supply chain
+                            </Link>{' '}
+                            networks. For this purpose several datasets from Eurostat were used:
+                            <ol>
+                                <li>
+                                    Annual enterprise statistics for special aggregates of NACE Rev.2 activities (2005-2020).
                                     <br />
-                                    The data are collected by domain of{' '}
-                                    <Link href={wordLinks.activity} style={{ color: '#607D8B' }}>
-                                        activity
-                                    </Link>{' '}
-                                    (
-                                    <Link href={wordLinks.service} style={{ color: '#607D8B' }}>
-                                        Services
-                                    </Link>{' '}
-                                    ,{' '}
-                                    <Link href={wordLinks.industry} style={{ color: '#607D8B' }}>
-                                        Industry
-                                    </Link>{' '}
-                                    , Trade and Constructions).
-                                </i>
-                                Link to the dataset:{' '}
-                                <Link
-                                    style={{ color: '#607D8B' }}
-                                    href="https://ec.europa.eu/eurostat/databrowser/view/sbs_na_sca_r2/default/table?lang=en"
-                                >
-                                    sbs_na_sca_r2
-                                </Link>
-                            </li>
-                            <li>
-                                Sold production, exports and imports.
-                                <br />
-                                <i>
-                                    Contains statistics on production of manufactured goods together with related external trade data. The purpose of
-                                    the statistics is to report, for each{' '}
-                                    <Link href={wordLinks.products} style={{ color: '#607D8B' }}>
-                                        product
-                                    </Link>{' '}
-                                    , how much has been produced in the reporting country during the reference period.
-                                </i>
-                                Link to the dataset:{' '}
-                                <Link
-                                    style={{ color: '#607D8B' }}
-                                    href="https://ec.europa.eu/eurostat/databrowser/view/ds-056120/default/table?lang=en"
-                                >
-                                    ds-056120
-                                </Link>
-                            </li>
-                            <li>
-                                Real GDP growth rate - volume.
-                                <br />
-                                <i>
-                                    National accounts are a coherent and consistent set of macroeconomic indicators, which provide an overall picture
-                                    of the economic{' '}
-                                    <Link href={wordLinks.situation} style={{ color: '#607D8B' }}>
-                                        situation
-                                    </Link>{' '}
-                                    and are widely used for economic analysis and forecasting, policy design and policy making.
-                                </i>
-                                Link to the dataset:{' '}
-                                <Link
-                                    style={{ color: '#607D8B' }}
-                                    href="https://ec.europa.eu/eurostat/databrowser/view/tec00115/default/table?lang=en"
-                                >
-                                    tec00115
-                                </Link>
-                            </li>
-                        </ol>
-                    </Typography>
+                                    <i>
+                                        Covers all activities of the business economy with the exception of agricultural activities and personal{' '}
+                                        <Link href={wordLinks.service} style={{ color: '#607D8B' }}>
+                                            services
+                                        </Link>{' '}
+                                        and the data are provided by all EU Member States, Iceland, Norway and Switzerland, some candidate and potential
+                                        candidate countries.
+                                        <br />
+                                        The data are collected by domain of{' '}
+                                        <Link href={wordLinks.activity} style={{ color: '#607D8B' }}>
+                                            activity
+                                        </Link>{' '}
+                                        (
+                                        <Link href={wordLinks.service} style={{ color: '#607D8B' }}>
+                                            Services
+                                        </Link>{' '}
+                                        ,{' '}
+                                        <Link href={wordLinks.industry} style={{ color: '#607D8B' }}>
+                                            Industry
+                                        </Link>{' '}
+                                        , Trade and Constructions).
+                                    </i>
+                                    Link to the dataset:{' '}
+                                    <Link
+                                        style={{ color: '#607D8B' }}
+                                        href="https://ec.europa.eu/eurostat/databrowser/view/sbs_na_sca_r2/default/table?lang=en"
+                                    >
+                                        sbs_na_sca_r2
+                                    </Link>
+                                </li>
+                                <li>
+                                    Sold production, exports and imports.
+                                    <br />
+                                    <i>
+                                        Contains statistics on production of manufactured goods together with related external trade data. The purpose of
+                                        the statistics is to report, for each{' '}
+                                        <Link href={wordLinks.products} style={{ color: '#607D8B' }}>
+                                            product
+                                        </Link>{' '}
+                                        , how much has been produced in the reporting country during the reference period.
+                                    </i>
+                                    Link to the dataset:{' '}
+                                    <Link
+                                        style={{ color: '#607D8B' }}
+                                        href="https://ec.europa.eu/eurostat/databrowser/view/ds-056120/default/table?lang=en"
+                                    >
+                                        ds-056120
+                                    </Link>
+                                </li>
+                                <li>
+                                    Real GDP growth rate - volume.
+                                    <br />
+                                    <i>
+                                        National accounts are a coherent and consistent set of macroeconomic indicators, which provide an overall picture
+                                        of the economic{' '}
+                                        <Link href={wordLinks.situation} style={{ color: '#607D8B' }}>
+                                            situation
+                                        </Link>{' '}
+                                        and are widely used for economic analysis and forecasting, policy design and policy making.
+                                    </i>
+                                    Link to the dataset:{' '}
+                                    <Link
+                                        style={{ color: '#607D8B' }}
+                                        href="https://ec.europa.eu/eurostat/databrowser/view/tec00115/default/table?lang=en"
+                                    >
+                                        tec00115
+                                    </Link>
+                                </li>
+                            </ol>
+                        </Typography>
+                    </Grid>
                 </Grid>
-                <Grid container item xs={10.7} spacing={2}>
-                    <Grid item xs={11}>
+
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
                         <Typography variant="h6">Annual enterprise parameters</Typography>
                     </Grid>
-                    <Grid container xs={8} columnSpacing={1} sx={{ p: 1.5, border: '1px dashed grey', mb: 1 }}>
-                        <Grid item xs={3}>
-                            <Autocomplete
-                                id="geo"
-                                options={annualGeos}
-                                renderInput={params => <TextField {...params} label="Geopolitical entity*" />}
-                                onFocus={event => setAnnualGeoFocused(true)}
-                                onChange={(event, value) => {
-                                    setAnnualGeo(value);
-                                }}
-                            ></Autocomplete>
-                        </Grid>
-                        <Grid item xs={9}>
-                            <Autocomplete
-                                id="unit"
-                                options={indicators}
-                                renderInput={params => <TextField {...params} label="Unit of measure*" />}
-                                onChange={(event, value) => {
-                                    console.log(value);
-                                    setAnnualIndicator(value);
-                                }}
-                            ></Autocomplete>
-                        </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Autocomplete
+                            id="geo"
+                            options={annualGeos}
+                            renderInput={params => <TextField {...params} label="Geopolitical entity*" />}
+                            onFocus={event => setAnnualGeoFocused(true)}
+                            onChange={(event, value) => {
+                                setAnnualGeo(value);
+                            }}
+                        ></Autocomplete>
                     </Grid>
-                    <Grid item xs={4} />
+                    <Grid item xs={12} sm={6}>
+                        <Autocomplete
+                            id="unit"
+                            options={indicators}
+                            renderInput={params => <TextField {...params} label="Unit of measure*" />}
+                            onChange={(event, value) => {
+                                console.log(value);
+                                setAnnualIndicator(value);
+                            }}
+                        ></Autocomplete>
+                    </Grid>
                     <Grid item xs={12}>
                         <Typography variant="h6">Sold production parameters</Typography>
                     </Grid>
-                    <Grid container xs={8} columnSpacing={1} sx={{ p: 1.5, border: '1px dashed grey', mb: 1 }}>
-                        <Grid item xs={3}>
-                            <Autocomplete
-                                options={reporters}
-                                renderInput={params => <TextField {...params} label="Countries*" />}
-                                onFocus={event => setSoldFocused(true)}
-                                onChange={(event, value) => {
-                                    setReporter(value);
-                                }}
-                            ></Autocomplete>
-                        </Grid>
-                        <Grid item xs={9}>
-                            <Autocomplete
-                                id="unit"
-                                options={soldUnits}
-                                renderInput={params => <TextField {...params} label="Indicator of measure*" />}
-                                onChange={(event, value) => {
-                                    console.log(value);
-                                    setSoldUnit(value);
-                                }}
-                            ></Autocomplete>
-                        </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <Autocomplete
+                            options={reporters}
+                            renderInput={params => <TextField {...params} label="Countries*" />}
+                            onFocus={event => setSoldFocused(true)}
+                            onChange={(event, value) => {
+                                setReporter(value);
+                            }}
+                        ></Autocomplete>
                     </Grid>
-                    <Grid item xs={4} />
+                    <Grid item xs={12} sm={6}>
+                        <Autocomplete
+                            id="unit"
+                            options={soldUnits}
+                            renderInput={params => <TextField {...params} label="Indicator of measure*" />}
+                            onChange={(event, value) => {
+                                console.log(value);
+                                setSoldUnit(value);
+                            }}
+                        ></Autocomplete>
+                    </Grid>
                     <Grid item xs={12}>
                         <Typography variant="h6">Real GDP growth rate parameters</Typography>
                     </Grid>
-                    <Grid container xs={8} columnSpacing={1} sx={{ p: 1.5, border: '1px dashed grey', mb: 1 }}>
-                        <Grid item xs={3}>
-                            <Autocomplete
-                                options={gdpGeos}
-                                renderInput={params => <TextField {...params} label="Geopolitical entities*" />}
-                                onFocus={event => setGdpGeoFocused(true)}
-                                onChange={(event, value) => {
-                                    setGdpGeo(value);
-                                }}
-                            ></Autocomplete>
-                        </Grid>
-                        <Grid item xs={9}>
-                            <Autocomplete
-                                id="unit"
-                                options={gdpUnits}
-                                renderInput={params => <TextField {...params} label="Unit of measure*" />}
-                                onChange={(event, value) => {
-                                    console.log(value);
-                                    setGdpIndicator(value);
-                                }}
-                            ></Autocomplete>
-                        </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <Autocomplete
+                            options={gdpGeos}
+                            renderInput={params => <TextField {...params} label="Geopolitical entities*" />}
+                            onFocus={event => setGdpGeoFocused(true)}
+                            onChange={(event, value) => {
+                                setGdpGeo(value);
+                            }}
+                        ></Autocomplete>
                     </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Autocomplete
+                            id="unit"
+                            options={gdpUnits}
+                            renderInput={params => <TextField {...params} label="Unit of measure*" />}
+                            onChange={(event, value) => {
+                                console.log(value);
+                                setGdpIndicator(value);
+                            }}
+                        ></Autocomplete>
+                    </Grid>
+
                     <Grid item xs={12}>
                         <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={handleSubmit}>
                             Submit
                         </Button>
                     </Grid>
-                </Grid>
-                <Grid item xs={6}>
-                    {annualData && (
-                        <MyApexChart
-                            data={annualData}
-                            title="Annual enterprise statistics for special aggregates of NACE Rev.2 activities (2005-2020)"
-                            yAxisTitle="Millions, Euro"
-                            xAxisTitle="Date"
-                        />
-                    )}
-                </Grid>
-                <Grid item xs={6}>
-                    {gdpData && <MyApexChart data={gdpData} title="Real GDP growth rate" yAxisTitle="Percent" xAxisTitle="Date" />}
-                </Grid>
-                <Grid item xs={12}>
-                    {soldData && (
-                        <MyApexChart data={soldData} title="Sold production, exports and imports" yAxisTitle="Thousdans, Euro" xAxisTitle="Date" />
-                    )}
+                    <Grid item xs={12} xl={6}>
+                        {annualData && (
+                            <MyApexChart
+                                data={annualData}
+                                title={isMobile ? "Annual enterprise statistics" : "Annual enterprise statistics for special aggregates of NACE Rev.2 activities (2005-2020)"}
+                                yAxisTitle="Millions, Euro"
+                                xAxisTitle="Date"
+                            />
+                        )}
+                    </Grid>
+                    <Grid item xs={12} xl={6}>
+                        {gdpData && <MyApexChart data={gdpData} title="Real GDP growth rate" yAxisTitle="Percent" xAxisTitle="Date" />}
+                    </Grid>
+                    <Grid item xs={12} xl={10}>
+                        {soldData && (
+                            <MyApexChart data={soldData} title={isMobile ? "Sold production (exp. & imp.)" : "Sold production, exports and imports"} yAxisTitle="Thousdans, Euro" xAxisTitle="Date" />
+                        )}
+                    </Grid>
                 </Grid>
             </Grid>
-        </div>
+        </Grid>
     );
 };

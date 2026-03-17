@@ -257,8 +257,6 @@ export const EurostatPortal = () => {
     return (
         <Grid container justifyContent="center" sx={{ overflow: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
             <Grid item xs={11} md={11}>
-
-                {/* Text Section */}
                 <Grid container justifyContent="center" sx={{ mb: 2 }}>
                     <Grid item xs={12}>
                         <Typography variant="h5" gutterBottom textAlign="center">
@@ -333,7 +331,7 @@ export const EurostatPortal = () => {
                 </Grid>
 
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={2}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Autocomplete
                             id="reporter"
                             options={reporters}
@@ -347,7 +345,7 @@ export const EurostatPortal = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={2}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Autocomplete
                             id="partner"
                             options={partners}
@@ -364,7 +362,7 @@ export const EurostatPortal = () => {
 
                     <Grid item xs={12} />
 
-                    <Grid item xs={12} sm={6} md={2}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <Autocomplete
                             id="flow"
                             options={flows}
@@ -378,7 +376,7 @@ export const EurostatPortal = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={2}>
+                    <Grid item xs={12} sm={6} md={4}>
                         <DatePicker
                             selected={startYear}
                             onChange={handleYearSelect}
