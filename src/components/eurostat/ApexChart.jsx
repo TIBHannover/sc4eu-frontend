@@ -59,9 +59,12 @@ export const MyApexChart = ({ data, title, yAxisTitle, xAxisTitle }) => {
         },
         yaxis: {
             labels: {
-                formatter: function (val) {
-                    return val;
-                },
+                formatter: (value) => {
+                    if (value >= 1_000_000_000) return (value / 1_000_000_000).toFixed(1) + 'B';
+                    if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + 'M';
+                    if (value >= 1_000) return (value / 1_000).toFixed(1) + 'K';
+                    return value;
+                }
             },
             title: {
                 text: yAxisTitle
@@ -89,7 +92,7 @@ export const MyApexChart = ({ data, title, yAxisTitle, xAxisTitle }) => {
     };
 
     return (
-        <ReactApexChart options={options} series={series} type="area" height={350} />
+            <ReactApexChart options={options} series={series} type="area" />
     );
 };
 

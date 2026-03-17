@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Button, TextField, Typography, CircularProgress, IconButton, Backdrop, Grid, Tooltip, Box, Switch, ButtonGroup } from '@mui/material';
+import { Button, TextField, Typography, CircularProgress, IconButton, Backdrop, Grid, Tooltip, Box, Switch, ButtonGroup, Link } from '@mui/material';
 import Select from 'react-select';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -23,6 +23,8 @@ import {
 } from './styles';
 import { colorStyled } from '../../styledComponents/styledColor';
 import { PRIMARY } from '../RRView/StyledComponents';
+import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
+import { useMediaQuery } from '@material-ui/core';
 
 export const Annotator = () => {
     const [inputText, setInputText] = useState('');
@@ -34,6 +36,7 @@ export const Annotator = () => {
     const [selectedDepthOption, setSelectedDepthOption] = useState({ value: 1, label: '1' });
     const [groupByAncestor, setGroupByAncestor] = useState(false);
     const [error, setError] = useState(null);
+    const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
     const highlightedText = useMemo(() => {
         if (!annotatedText || matches.length === 0) return annotatedText;
@@ -69,12 +72,12 @@ export const Annotator = () => {
     const tableData = useMemo(() => {
         if (groupByAncestor) {
             const grouped = {};
-    
+
             matches.forEach(match => {
                 if (maxDepth > 0 && match.ancestors?.length >= maxDepth) {
                     const ancestor = match.ancestors[maxDepth - 1];
                     const key = ancestor.iri;
-    
+
                     if (!grouped[key]) {
                         grouped[key] = {
                             ancestor_term: ancestor.label,
@@ -84,21 +87,21 @@ export const Annotator = () => {
                             labels: new Set(),
                         };
                     }
-    
+
                     grouped[key].labels.add(match.label);
                 }
             });
-    
+
             return Object.values(grouped).map(entry => ({
                 ...entry,
                 labels: Array.from(entry.labels),
             }));
         } else {
             const uniqueTerms = new Map();
-    
+
             matches.forEach(match => {
                 const key = match.label;
-    
+
                 // Add only if not already included
                 if (!uniqueTerms.has(key)) {
                     uniqueTerms.set(key, {
@@ -110,7 +113,7 @@ export const Annotator = () => {
                     });
                 }
             });
-    
+
             return Array.from(uniqueTerms.values());
         }
     }, [matches, maxDepth, groupByAncestor]);
@@ -118,130 +121,168 @@ export const Annotator = () => {
     const table = useMaterialReactTable({
         columns: createColumns(groupByAncestor),
         data: tableData,
-        initialState: { pagination: { pageSize: 10, pageIndex: 0 }, density: 'compact',
-        enableColumnOrdering: true,
-        columnOrder: groupByAncestor
-        ? ['ancestor_term', 'ontologyId', 'labels',  'ancestor_iri', 'ancestor_synonyms']
-        : ['label', 'ontologyId', 'ancestor_term',  'iri', 'synonyms']},
+        initialState: {
+            pagination: { pageSize: 5, pageIndex: 0 }, density: 'compact',
+            enableColumnOrdering: true,
+            columnOrder: groupByAncestor
+                ? ['mrt-row-expand', 'ancestor_term', 'ontologyId', 'labels', 'ancestor_iri', 'ancestor_synonyms']
+                : ['mrt-row-expand', 'label', 'ontologyId', 'ancestor_term', 'iri', 'synonyms']
+        },
+        state: {
+            columnVisibility: {
+                ancestor_term: groupByAncestor ? true : !isMobile,
+                label: isMobile ? true : true,
+                ontologyId: !isMobile,
+                labels: !isMobile,
+                ancestor_iri: !isMobile,
+                ancestor_synonyms: !isMobile,
+                iri: !isMobile,
+                synonyms: !isMobile
+            },
+        },
         enablePagination: true,
+        enableExpanding: true,
+        renderDetailPanel: ({ row }) => (
+            <Box sx={{ p: 2 }}>
+                {console.log(row.original)}
+                <Typography variant="body2">
+                    Ontology ID: {row.original.ontologyId}
+                </Typography>
+                <Typography variant="body2">
+                    Ancestor Term: {row.original.ancestor_term}
+                </Typography>
+                <Typography variant="body2">
+                    Synonyms: {row.original.synonyms}
+                </Typography>
+                <Typography variant="body2">
+                    IRI: {' '}
+                    <Link
+                        href={row.original.iri}
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        {row.original.iri}
+                    </Link>
+                </Typography>
+            </Box>
+        ),
         renderTopToolbarCustomActions: () => (
             <Grid container alignItems="center">
-              <Grid item>
-                <Typography variant="h6" sx={{ mr: 2 }}>
-                  Matched Terms
-                </Typography>
-              </Grid>
-          
-              <Grid item>
-              <Tooltip
-                title="Set how deep to consider ancestor terms and whether to group matched terms by their common ancestors."
-                arrow
-                placement="top"
-                >
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  border="1px solid"
-                  borderColor={colorStyled.SECONDARY.dark}
-                  borderRadius={2}
-                  px={1}
-                  py={1}
-                  gap={1}
-                  backgroundColor={PRIMARY.light}
-                >
-                  <Box display="flex" alignItems="center" gap={1} >
-                    <Typography variant="body2" sx={{ whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
-                      Ancestor Depth:
+                <Grid item>
+                    <Typography variant="h6" sx={{ mr: 2 }}>
+                        Matched Terms
                     </Typography>
-                    <Box minWidth={60}>
-                      <Select
-                        options={[
-                          { value: 1, label: '1' },
-                          { value: 2, label: '2' },
-                          { value: 3, label: '3' },
-                          { value: 4, label: '4' },
-                        ]}
-                        value={selectedDepthOption}
-                        onChange={(selectedOption) => {
-                          setSelectedDepthOption(selectedOption);
-                          setMaxDepth(selectedOption.value);
-                        }}
-                        menuPortalTarget={document.body}
-                        isSearchable={false}
-                        menuPosition="absolute"
-                        styles={lightSelectStyles}
-                      />
-                    </Box>
-                  </Box>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <Typography variant="body2" sx={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
-                      Group by Ancestor Term
-                    </Typography>
-                    <Switch
-                      checked={groupByAncestor}
-                      onChange={() => setGroupByAncestor(!groupByAncestor)}
-                      name="groupByAncestor"
-                      size="small"
-                      style={{ backgroundColor: colorStyled.SECONDARY.dark}}
-                      disabled={!annotatedText}
-                    />
-                  </Box>
-                </Box>
-                </Tooltip>
-              </Grid>
+                </Grid>
+
+                <Grid item>
+                    <Tooltip
+                        title="Set how deep to consider ancestor terms and whether to group matched terms by their common ancestors."
+                        arrow
+                        placement="top"
+                    >
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            border="1px solid"
+                            borderColor={colorStyled.SECONDARY.dark}
+                            borderRadius={2}
+                            px={1}
+                            py={1}
+                            gap={1}
+                            backgroundColor={PRIMARY.light}
+                        >
+                            <Box display="flex" alignItems="center" gap={1} >
+                                <Typography variant="body2" sx={{ whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
+                                    Ancestor Depth:
+                                </Typography>
+                                <Box minWidth={60}>
+                                    <Select
+                                        options={[
+                                            { value: 1, label: '1' },
+                                            { value: 2, label: '2' },
+                                            { value: 3, label: '3' },
+                                            { value: 4, label: '4' },
+                                        ]}
+                                        value={selectedDepthOption}
+                                        onChange={(selectedOption) => {
+                                            setSelectedDepthOption(selectedOption);
+                                            setMaxDepth(selectedOption.value);
+                                        }}
+                                        menuPortalTarget={document.body}
+                                        isSearchable={false}
+                                        menuPosition="absolute"
+                                        styles={lightSelectStyles}
+                                    />
+                                </Box>
+                            </Box>
+                            <Box display="flex" alignItems="center" gap={1}>
+                                <Typography variant="body2" sx={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                                    Group by Ancestor Term
+                                </Typography>
+                                <Switch
+                                    checked={groupByAncestor}
+                                    onChange={() => setGroupByAncestor(!groupByAncestor)}
+                                    name="groupByAncestor"
+                                    size="small"
+                                    style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                                    disabled={!annotatedText}
+                                />
+                            </Box>
+                        </Box>
+                    </Tooltip>
+                </Grid>
             </Grid>
-          ),
-          renderBottomToolbarCustomActions: () => (
+        ),
+        renderBottomToolbarCustomActions: () => (
             <ButtonGroup variant="contained" size="small" aria-label="Basic button group">
-              {csvData.length === 0 ? (
-                <Button variant="contained" disabled style={{ backgroundColor: colorStyled.SECONDARY.dark, opacity: 0.5, color: "rgba(255, 255, 255, 0.7)" }}>
-                  Download CSV
+                {csvData.length === 0 ? (
+                    <Button variant="contained" disabled style={{ backgroundColor: colorStyled.SECONDARY.dark, opacity: 0.5, color: "rgba(255, 255, 255, 0.7)" }}>
+                        Download CSV
+                    </Button>
+                ) : (
+                    <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                        <CSVLink
+                            data={csvData}
+                            headers={csvHeaders}
+                            filename="annotations.csv"
+                            style={{ color: "white", textDecoration: "none", display: "block", width: "100%" }}
+                        >
+                            Download CSV
+                        </CSVLink>
+                    </Button>
+                )}
+
+                <Button
+                    variant="contained"
+                    onClick={exportToExcel}
+                    disabled={csvData.length === 0}
+                    style={{
+                        backgroundColor: colorStyled.SECONDARY.dark,
+                        opacity: csvData.length === 0 ? 0.5 : 1,
+                        color: csvData.length === 0 ? "rgba(255, 255, 255, 0.7)" : "white"
+                    }}
+                >
+                    Download Excel
                 </Button>
-              ) : (
-                <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
-                  <CSVLink
-                    data={csvData}
-                    headers={csvHeaders}
-                    filename="annotations.csv"
-                    style={{ color: "white", textDecoration: "none", display: "block", width: "100%" }}
-                  >
-                    Download CSV
-                  </CSVLink>
-                </Button>
-              )}
-          
-              <Button
-                variant="contained"
-                onClick={exportToExcel}
-                disabled={csvData.length === 0}
-                style={{
-                  backgroundColor: colorStyled.SECONDARY.dark,
-                  opacity: csvData.length === 0 ? 0.5 : 1,
-                  color: csvData.length === 0 ? "rgba(255, 255, 255, 0.7)" : "white"
-                }}
-              >
-                Download Excel
-              </Button>
             </ButtonGroup>
-          )
-          
-        });
+        )
+
+    });
 
     const csvHeaders = groupByAncestor
-    ? [
-        { label: 'Ancestor Term', key: 'ancestor_term' },
-        { label: 'Matched Terms', key: 'labels' },
-        { label: 'Ontology ID', key: 'ontologyId' },
-        { label: 'Ancestor IRI', key: 'ancestor_iri' },
-        { label: 'Ancestor Synonyms', key: 'ancestor_synonyms' },
-    ]
-    : [
-        { label: 'Matched Term', key: 'label' },
-        { label: 'Ancestor Term', key: 'ancestor_term' },
-        { label: 'Ontology ID', key: 'ontologyId' },
-        { label: 'Matched Term IRI', key: 'iri' },
-        { label: 'Matched Term Synonyms', key: 'synonyms' }
-    ];
+        ? [
+            { label: 'Ancestor Term', key: 'ancestor_term' },
+            { label: 'Matched Terms', key: 'labels' },
+            { label: 'Ontology ID', key: 'ontologyId' },
+            { label: 'Ancestor IRI', key: 'ancestor_iri' },
+            { label: 'Ancestor Synonyms', key: 'ancestor_synonyms' },
+        ]
+        : [
+            { label: 'Matched Term', key: 'label' },
+            { label: 'Ancestor Term', key: 'ancestor_term' },
+            { label: 'Ontology ID', key: 'ontologyId' },
+            { label: 'Matched Term IRI', key: 'iri' },
+            { label: 'Matched Term Synonyms', key: 'synonyms' }
+        ];
 
     const csvData = tableData
 

@@ -78,7 +78,7 @@ class Documentations extends Component {
                             <>
                                 {UserGuidance}
                                 <div style={{ textAlign: 'center' }}>
-                                    <img src={UserRole} alt="UserRole" />
+                                    <img src={UserRole} alt="UserRole" style={{ maxWidth: '100%'}}/>
                                     <StyledText>
                                         We identified that the most crucial requirement for ontology development is to serve users' needs from various
                                         audiences with diverse backgrounds and in different contexts. We have therefore introduced several modes of
