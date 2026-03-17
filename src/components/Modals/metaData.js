@@ -8,7 +8,7 @@ import { Button, Card, CardBody, Collapse, Table } from 'reactstrap';
 import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { fontStyled } from '../../styledComponents/styledFont';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR, SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 import { colorStyled } from '../../styledComponents/styledColor';
 import Tippy from '@tippyjs/react';
 import { getBranchFromUrl, getLicense } from '../../network/GithubAPICalls';
@@ -109,7 +109,7 @@ class MetaDataModal extends React.Component {
                     return (
                         <tr key={'description_title_' + itemKey + keyIndex++}>
                             <th style={{ textAlign: 'left' }}>{itemKey}:</th>
-                            <td style={{ textAlign: 'left' }}>{itemValueInLang}</td>
+                            <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>{itemValueInLang}</td>
                         </tr>
                     );
                 });
@@ -117,7 +117,7 @@ class MetaDataModal extends React.Component {
                 return (
                     <tr key={'iri_version_' + itemKey + keyIndex++}>
                         <th style={{ textAlign: 'left' }}>{itemKey}</th>
-                        <td style={{ textAlign: 'left' }}>{obj[itemKey]}</td>
+                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>{obj[itemKey]}</td>
                     </tr>
                 );
             }
@@ -132,13 +132,14 @@ class MetaDataModal extends React.Component {
                 // const shortToLong = shortKey + ':' + prefixList[shortKey];
                 return (
                     <tr key={'prefix_' + shortKey}>
-                        <td style={{ textAlign: 'left' }}>{shortKey}:</td>
+                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>{shortKey}:</td>
                         <Tippy content={shortToLongValues[shortKey]}>
                             <td
                                 style={{
                                     justifyContent: 'start',
                                     display: 'flex',
-                                    overflow: 'hidden'
+                                    overflow: 'hidden',
+                                    wordBreak: 'break-word'
                                 }}
                             >
                                 {shortToLongValues[shortKey]}
@@ -208,25 +209,7 @@ class MetaDataModal extends React.Component {
         return (
             <div>
                 <Modal open={this.props.isModalOpen} onClose={this.props.toggle} aria-labelledby="modal-title" aria-describedby="modal-description">
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            padding: 0,
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: '70%',
-                            bgcolor: 'background.paper',
-                            boxShadow: 24,
-                            paddingLeft: 4,
-                            paddingRight: 4,
-                            borderRadius: 3,
-                            textAlign: 'center',
-                            maxHeight: '90%', // Add maximum height
-                            display: 'flex',
-                            flexDirection: 'column'
-                        }}
-                    >
+                    <StyledBox>
                         <div
                             style={{
                                 height: '60px',
@@ -264,11 +247,13 @@ class MetaDataModal extends React.Component {
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ textAlign: 'left' }}>URL</th>
-                                                        <td style={{ textAlign: 'left' }}>{this.props.selectedOntology.lookup_path}</td>
+                                                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>
+                                                            {this.props.selectedOntology.lookup_path}
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ textAlign: 'left' }}>License</th>
-                                                        <td style={{ textAlign: 'left' }}>
+                                                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>
                                                             <a
                                                                 href={this.state.licenseURL ? this.state.licenseURL : null}
                                                                 target="_blank"
@@ -280,7 +265,7 @@ class MetaDataModal extends React.Component {
                                                     </tr>
                                                     <tr>
                                                         <th style={{ textAlign: 'left' }}>Branch</th>
-                                                        <td style={{ textAlign: 'left' }}>{this.state.ontologyVersion}</td>
+                                                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>{this.state.ontologyVersion}</td>
                                                     </tr>
                                                 </tbody>
                                             </Table>
@@ -296,7 +281,7 @@ class MetaDataModal extends React.Component {
                                 <CloseButton onClick={this.props.toggle}>Close</CloseButton>
                             </div>
                         </ModalFooter>
-                    </Box>
+                    </StyledBox>
                 </Modal>
             </div>
         );
@@ -345,5 +330,27 @@ const StyledButton = styled(Button)`
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+    }
+`;
+
+const StyledBox = styled(Box)`
+    position: absolute;
+    padding: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    backgroud-color: white;
+    box-shadow: 0px 3px 6px #00000029;
+    padding-left: 16px;
+    padding-right: 16px;
+    border-radius: 12px;
+    text-align: center;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
+
+    @media (min-width: ${SMALL_SCREEN_WIDTH}) {
+        width: 100%;
     }
 `;
