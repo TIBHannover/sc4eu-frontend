@@ -100,4 +100,6 @@ export const MAX_WIDTH = '769px';
 
 export const SMALL_SCREEN_WIDTH = '480px';
 
+export const LARGE_SCREEN_SIZE = '1200px';
+
 export const MIN_WIDTH_FOR_MONITOR = '1750px';
