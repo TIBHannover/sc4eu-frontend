@@ -26,96 +26,107 @@ precacheAndRoute(self.__WB_MANIFEST);
 // https://developers.google.com/web/fundamentals/architecture/app-shell
 const fileExtensionRegexp = new RegExp('/[^/?]+\\.[^/]+$');
 registerRoute(
-  // Return false to exempt requests from being fulfilled by index.html.
-  ({ request, url }) => {
-    // If this isn't a navigation, skip.
-    if (request.mode !== 'navigate') {
-      return false;
-    } // If this is a URL that starts with /_, skip.
+    // Return false to exempt requests from being fulfilled by index.html.
+    ({ request, url }) => {
+        // If this isn't a navigation, skip.
+        if (request.mode !== 'navigate') {
+            return false;
+        } // If this is a URL that starts with /_, skip.
 
-    if (url.pathname.startsWith('/_')) {
-      return false;
-    } // If this looks like a URL for a resource, because it contains // a file extension, skip.
+        if (url.pathname.startsWith('/_')) {
+            return false;
+        } // If this looks like a URL for a resource, because it contains // a file extension, skip.
 
-    if (url.pathname.match(fileExtensionRegexp)) {
-      return false;
-    } // Return true to signal that we want to use the handler.
+        if (url.pathname.match(fileExtensionRegexp)) {
+            return false;
+        } // Return true to signal that we want to use the handler.
 
-    return true;
-  },
-  createHandlerBoundToURL(process.env.REACT_APP_PUBLIC_URL + 'index.html')
+        return true;
+    },
+    createHandlerBoundToURL(process.env.REACT_APP_PUBLIC_URL + 'index.html')
 );
 
 // An example runtime caching route for requests that aren't handled by the
 // precache, in this case same-origin .png requests like those from in public/
 registerRoute(
-  // Add in any other file extensions or routing criteria as needed.
-  ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'), // Customize this strategy as needed, e.g., by changing to CacheFirst.
-  new StaleWhileRevalidate({
-    cacheName: 'images',
-    plugins: [
-      // Ensure that once this runtime cache reaches a maximum size the
-      // least-recently used images are removed.
-      new ExpirationPlugin({ maxEntries: 50 }),
-    ],
-  })
+    // Add in any other file extensions or routing criteria as needed.
+    ({ url }) => url.origin === self.location.origin && url.pathname.endsWith('.png'), // Customize this strategy as needed, e.g., by changing to CacheFirst.
+    new StaleWhileRevalidate({
+        cacheName: 'images',
+        plugins: [
+            // Ensure that once this runtime cache reaches a maximum size the
+            // least-recently used images are removed.
+            new ExpirationPlugin({ maxEntries: 50 })
+        ]
+    })
 );
 
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+self.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
+self.addEventListener('install', () => {
     self.skipWaiting();
-  }
+});
+
+self.addEventListener('activate', async () => {
+    const tabs = await self.cliens.matchAll({ type: 'window' });
+    tabs.forEach(tab => {
+        tab.navigate(tab.url);
+    });
 });
 
 self.addEventListener('push', event => {
-  console.log('Push event received:', event);
-  if (Notification.permission !== 'granted') {
-    console.error('Notification permission not granted');
-    return;
-  }
-  let notificationData = {
-    title: 'New Notification',
-    body: 'You have a new notification',
-    data: {
-      url: '/ocp/'
+    console.log('Push event received:', event);
+    if (Notification.permission !== 'granted') {
+        console.error('Notification permission not granted');
+        return;
     }
-  };
-
-  try {
-    if (event.data) {
-      const payload = event.data.json();
-      console.log('Payload:', payload);
-
-      notificationData = {
-        title: payload.title || notificationData.title,
-        body: payload.body || notificationData.body,
-        icon: payload.icon || notificationData.icon,
-        badge: payload.badge || notificationData.badge,
-        tag: payload.type || 'default',
+    let notificationData = {
+        title: 'New Notification',
+        body: 'You have a new notification',
         data: {
-          url: payload.url || notificationData.data.url,
-          vote_id: payload.vote_id,
-          type: payload.type
-        },
-        requireInteraction: true,
-      };
-    }
-  } catch (error) {
-    console.error('Error parsing push notification data:', error);
-  }
+            url: '/ocp/'
+        }
+    };
 
-  event.waitUntil(
-    self.registration.showNotification(notificationData.title, {
-      body: notificationData.body,
-      icon: notificationData.icon,
-      badge: notificationData.badge,
-      tag: notificationData.tag,
-      data: notificationData.data,
-      requireInteraction: notificationData.requireInteraction,
-    })
-  );
+    try {
+        if (event.data) {
+            const payload = event.data.json();
+            console.log('Payload:', payload);
+
+            notificationData = {
+                title: payload.title || notificationData.title,
+                body: payload.body || notificationData.body,
+                icon: payload.icon || notificationData.icon,
+                badge: payload.badge || notificationData.badge,
+                tag: payload.type || 'default',
+                data: {
+                    url: payload.url || notificationData.data.url,
+                    vote_id: payload.vote_id,
+                    type: payload.type
+                },
+                requireInteraction: true
+            };
+        }
+    } catch (error) {
+        console.error('Error parsing push notification data:', error);
+    }
+
+    event.waitUntil(
+        self.registration.showNotification(notificationData.title, {
+            body: notificationData.body,
+            icon: notificationData.icon,
+            badge: notificationData.badge,
+            tag: notificationData.tag,
+            data: notificationData.data,
+            requireInteraction: notificationData.requireInteraction
+        })
+    );
 });
 
 // Any other custom service worker logic can go here.
