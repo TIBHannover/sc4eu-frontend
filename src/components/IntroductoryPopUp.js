@@ -156,9 +156,6 @@ export default IntroductoryPopUp;
 const StyledRootDiv = styled.div`
     display: block;
 
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
 `;
 
 const StyledModal = styled(Modal)`
@@ -171,7 +168,4 @@ const StyledModal = styled(Modal)`
     overflow: hidden;
     font-family: ${fontStyled.fontFamily};
 
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
 `;
