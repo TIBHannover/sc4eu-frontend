@@ -20,7 +20,8 @@ import {
     Badge,
     Popover,
     Select,
-    MenuItem, Button
+    MenuItem,
+    Button
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -35,6 +36,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
+import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
+import { useMediaQuery } from '@material-ui/core';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -44,7 +47,6 @@ const SORT_BY_OPTIONS = Object.freeze({
     MOST_VOTES: 'most_votes',
     MOST_COMMENTS: 'most_comments'
 });
-
 
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const [searchText, setSearchText] = useState('');
@@ -64,6 +66,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
     const [sortBy, setSortBy] = useState(SORT_BY_OPTIONS.RECENT_UPDATE);
 
+    const isMobile = useMediaQuery(`(max-width: ${SMALL_SCREEN_WIDTH})`);
     useEffect(() => {
         const fetchAll = async () => {
             setLoading(true);
@@ -115,14 +118,12 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         }
     };
 
-
     const DecisionBadgeAvatar = ({ decision }) => {
         return (
             <Badge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> :
-                    <CloseIcon fontSize="inherit" />}
+                badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
                 sx={{
                     '& .MuiBadge-badge': {
                         backgroundColor: decision.choice === 'approved' ? colorStyled.GREEN_COLOR : colorStyled.ORANGE_COLOR,
@@ -290,10 +291,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 <Typography variant="subtitle1" fontWeight="bold" sx={{ mr: 1 }}>
                                     {term.label}
                                 </Typography>
-                                {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention"
-                                    sx={{ mr: '1em' }} />}
-                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement"
-                                    sx={{ mr: '1em' }} />}
+                                {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
+                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
 
                                 <Typography
                                     variant="caption"
@@ -357,8 +356,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                                     <DecisionBadgeAvatar decision={decision} />
                                                 </ListItemAvatar>
                                                 <ListItemText>
-                                                    <Typography
-                                                        sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
+                                                    <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
                                                 </ListItemText>
                                                 <Box sx={{ ml: 3 }}></Box>
                                             </ListItem>
@@ -409,7 +407,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     };
 
     return (
-        <Grid container xs={12} sx={{ p: 2 }}>
+        <Grid container spacing={1}>
             {termOfWeek && showWeekTerm && (
                 <TermOfTheWeekPopup
                     term={termOfWeek}
@@ -429,38 +427,34 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     position: 'sticky',
                     top: 0,
                     zIndex: 1000,
-                    bgcolor: 'background.paper',
-                    borderBottom: `1px solid ${colorStyled.BORDER_COLOR}`
+                    backgroundColor: 'background.paper',
+                    borderBottom: `1px solid ${colorStyled.BORDER_COLOR}`,
+                    pb: 1
                 }}
             >
-                <Grid item xs={12}>
-                    <Button
-                        onClick={() => setShowWeekTerm(true)}
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                            bgcolor: colorStyled.ORANGE_COLOR,
-                            color: colorStyled.PRIMARY.lighter,
-                            '&:hover': {
-                                bgcolor: '#b63011'
-                            }
-                        }}
-                    >
-                        Show Term of the Week
-                    </Button>
-                    <Tooltip title="Check the term that received the most votes in past week" placement="right"
-                    >
-                        <StyledChip label="New" size="small" customVariant="agreement"
-                            sx={{ mb: 5, cursor: 'pointer' }} />
-                    </Tooltip>
-                </Grid>
-                <Grid container spacing={2} sx={{ mb: 2 }}>
-                    <Grid item xs={12} md={6}>
+                <Grid container spacing={1} columnSpacing={2}>
+                    <Grid item xs={12} xl="auto">
+                        <Button
+                            onClick={() => setShowWeekTerm(true)}
+                            variant="outlined"
+                            size="small"
+                            sx={{
+                                bgcolor: colorStyled.ORANGE_COLOR,
+                                color: colorStyled.PRIMARY.lighter,
+                                '&:hover': {
+                                    bgcolor: '#b63011'
+                                }
+                            }}
+                        >
+                            {isMobile ? 'Week Term' : 'Show Term of the Week'}
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12} xl={4}>
                         <TextField
                             fullWidth
                             size="small"
                             variant="outlined"
-                            placeholder="Search discussions (by comment, author, term label)..."
+                            placeholder={isMobile ? 'Search' : 'Search discussions (by comment, author, term label)...'}
                             value={searchText}
                             onChange={e => setSearchText(e.target.value)}
                             InputProps={{
@@ -473,68 +467,72 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                height: '100%',
-                                alignItems: 'center'
-                            }}
-                        >
-                            <FormControlLabel
-                                control={<Checkbox size="small" checked={showOnlyMentions}
-                                    onChange={e => setShowOnlyMentions(e.target.checked)} />}
-                                label={<Typography variant="body2">Only my mentions</Typography>}
-                                sx={{ mr: 2 }}
-                            />
-                            <DatePicker
-                                selected={dateFrom}
-                                onChange={setDateFrom}
-                                placeholderText="From"
-                                isClearable
-                                customInput={<TextField size="small" sx={{ width: 120 }} />}
-                            />
-                            <DatePicker
-                                selected={dateTo}
-                                onChange={setDateTo}
-                                placeholderText="To"
-                                isClearable
-                                customInput={<TextField size="small" sx={{ width: 120, ml: 1 }} />}
-                            />
-                        </Box>
+                    <Grid item xs={12} xl={1}>
+                        <FormControlLabel
+                            control={<Checkbox size="small" checked={showOnlyMentions} onChange={e => setShowOnlyMentions(e.target.checked)} />}
+                            label={<Typography variant="body2">Only my mentions</Typography>}
+                            sx={{ mr: 2 }}
+                        />
                     </Grid>
-                    <Tabs value={activeTab} onChange={handleTabChange} sx={{ mb: 2 }}>
-                        <Tab
-                            label={
-                                <StyledBadge badgeContent={getTabBadgeContent(0)} customVariant="blue">
-                                    <span>Terms with discussions</span>
-                                </StyledBadge>
-                            }
+                    <Grid item xs={12} xl="auto">
+                        <DatePicker
+                            selected={dateFrom}
+                            onChange={setDateFrom}
+                            placeholderText="From"
+                            isClearable
+                            customInput={<TextField size="small" />}
                         />
-                        <Tab
-                            label={
-                                <StyledBadge badgeContent={getTabBadgeContent(1)} customVariant="blue">
-                                    <span>Terms with active consensus</span>
-                                </StyledBadge>
-                            }
+                    </Grid>
+                    <Grid item xs={12} xl="auto">
+                        <DatePicker
+                            selected={dateTo}
+                            onChange={setDateTo}
+                            placeholderText="To"
+                            isClearable
+                            customInput={<TextField size="small" />}
                         />
-                    </Tabs>
-                    {filteredTerms.length > 0 && (
-                        <Box sx={{ ml: 5 }}>
-                            <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-                                Sort by:
-                            </Typography>
-                            <Select size="small" value={sortBy} onChange={e => setSortBy(e.target.value)}
-                                variant="outlined" sx={{ minWidth: 200 }}>
-                                <MenuItem value={SORT_BY_OPTIONS.RECENT_UPDATE}>Recently updated</MenuItem>
-                                <MenuItem value={SORT_BY_OPTIONS.LATEST_UPDATE}>Latest updated</MenuItem>
-                                <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL}>Alphabetical</MenuItem>
-                                <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL_REVERSE}>Alphabetical (Z to A)</MenuItem>
-                                <MenuItem value={SORT_BY_OPTIONS.MOST_VOTES}>Most votes</MenuItem>
-                                <MenuItem value={SORT_BY_OPTIONS.MOST_COMMENTS}>Most Comments</MenuItem>
-                            </Select>
-                        </Box>
-                    )}
+                    </Grid>
+                    <Grid item xs={12} lg='auto'>
+                        <Tabs value={activeTab} onChange={handleTabChange}>
+                            <Tab
+                                label={
+                                    <StyledBadge badgeContent={getTabBadgeContent(0)} customVariant="blue">
+                                        <span>{isMobile ? 'Discussion' : 'Terms with discussions'}</span>
+                                    </StyledBadge>
+                                }
+                            />
+                            <Tab
+                                label={
+                                    <StyledBadge badgeContent={getTabBadgeContent(1)} customVariant="blue">
+                                        <span>{isMobile ? 'Consenus' : 'Terms with active consensus'}</span>
+                                    </StyledBadge>
+                                }
+                            />
+                        </Tabs>
+                    </Grid>
+                    <Grid item xs={12} lg='auto'>
+                        {filteredTerms.length > 0 && (
+                            <Box sx={{ ml: 5 }}>
+                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                    Sort by:
+                                </Typography>
+                                <Select
+                                    size="small"
+                                    value={sortBy}
+                                    onChange={e => setSortBy(e.target.value)}
+                                    variant="outlined"
+                                    sx={{ minWidth: 200 }}
+                                >
+                                    <MenuItem value={SORT_BY_OPTIONS.RECENT_UPDATE}>Recently updated</MenuItem>
+                                    <MenuItem value={SORT_BY_OPTIONS.LATEST_UPDATE}>Latest updated</MenuItem>
+                                    <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL}>Alphabetical</MenuItem>
+                                    <MenuItem value={SORT_BY_OPTIONS.ALPHABETICAL_REVERSE}>Alphabetical (Z to A)</MenuItem>
+                                    <MenuItem value={SORT_BY_OPTIONS.MOST_VOTES}>Most votes</MenuItem>
+                                    <MenuItem value={SORT_BY_OPTIONS.MOST_COMMENTS}>Most Comments</MenuItem>
+                                </Select>
+                            </Box>
+                        )}
+                    </Grid>
                 </Grid>
             </Grid>
 
@@ -556,7 +554,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 </Box>
                             ))
                         ) : (
-                            <Typography variant="body2">
+                            <Typography variant="body2" sx={{ mt: 10 }}>
                                 {activeTab === 0 ? 'No discussions found matching your criteria' : 'No active reviews found'}
                             </Typography>
                         )}

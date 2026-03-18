@@ -17,7 +17,7 @@ import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import Cookies from 'js-cookie';
 import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
-import { LARGE_SCREEN_SIZE , StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
 import { useMediaQuery } from '@mui/material';
 
@@ -781,14 +781,12 @@ const VocabularyMainTable = ({
                 onClose={() => setActiveMUIPopUp(null)}
                 title="Information Hub"
                 message={
-                    <Grid container spacing={2}>
-                        <InformationHub
-                            terms={terms}
-                            discussions={discussions}
-                            mentionedUser={currentUser.displayName}
-                            onTermSelect={handleNavigateToMentionedTerm}
-                        />
-                    </Grid>
+                    <InformationHub
+                        terms={terms}
+                        discussions={discussions}
+                        mentionedUser={currentUser.displayName}
+                        onTermSelect={handleNavigateToMentionedTerm}
+                    />
                 }
             />
         </ScrollableDiv>
