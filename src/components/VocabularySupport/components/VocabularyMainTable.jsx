@@ -16,33 +16,23 @@ import { useHistory } from 'react-router-dom';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import Cookies from 'js-cookie';
-import {
-    getGroupedMentionsByCommentInstant,
-    getMentionedCommentsLength,
-    RenderGroupedMentions
-} from '../utils/Discussions';
-import {
-    MAX_WIDTH,
-    SMALL_SCREEN_WIDTH,
-    StyledBadge,
-    StyledChip,
-    StyledTooltip
-} from '../../../styledComponents/styledComponents';
+import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
+import { LARGE_SCREEN_SIZE , StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
 import { useMediaQuery } from '@mui/material';
 
 /* eslint-disable react/prop-types */
 const VocabularyMainTable = ({
-                                 terms,
-                                 refetch,
-                                 isLoadingTerms,
-                                 isLoadingTermsError,
-                                 isFetchingTerms,
-                                 discussions,
-                                 handleSaveDiscussion,
-                                 handleDeleteDiscussion,
-                                 currentUser
-                             }) => {
+    terms,
+    refetch,
+    isLoadingTerms,
+    isLoadingTermsError,
+    isFetchingTerms,
+    discussions,
+    handleSaveDiscussion,
+    handleDeleteDiscussion,
+    currentUser
+}) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
@@ -66,11 +56,13 @@ const VocabularyMainTable = ({
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
     const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
-    const isMobile = useMediaQuery(`(max-width:${MAX_WIDTH})`);
+    const isLargeScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
+
     const [pagination, setPagination] = useState({
-        pageSize: isMobile ? 5 : 15,
+        pageSize: isLargeScreen ? 10 : 15,
         pageIndex: 0
     });
+    const [density, setDensity] = useState(isLargeScreen ? 'comfortable' : 'compact');
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -106,9 +98,10 @@ const VocabularyMainTable = ({
     useEffect(() => {
         setPagination(prev => ({
             ...prev,
-            pageSize: isMobile ? 5 : 15
+            pageSize: isLargeScreen ? 10 : 15
         }));
-    }, [isMobile]);
+        setDensity(() => (isLargeScreen ? 'comfortable' : 'compact'));
+    }, [isLargeScreen]);
 
     const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
@@ -145,21 +138,21 @@ const VocabularyMainTable = ({
     }
 
     const columnVisibility = useMemo(() => {
-        return isMobile
+        return isLargeScreen
             ? {
-                identifier: false,
-                altLabel: false,
-                seeAlso: false,
-                description: false,
-                created: false,
-                modified: false
-            }
+                  identifier: false,
+                  altLabel: false,
+                  seeAlso: false,
+                  description: false,
+                  created: false,
+                  modified: false
+              }
             : {
-                identifier: false,
-                altLabel: false,
-                seeAlso: false
-            };
-    }, [isMobile]);
+                  identifier: false,
+                  altLabel: false,
+                  seeAlso: false
+              };
+    }, [isLargeScreen]);
 
     const TerminologyCellComponent = ({ row }) => {
         const seeAlso = row.original.seeAlso;
@@ -466,7 +459,7 @@ const VocabularyMainTable = ({
                 },
                 muiTableBodyCellProps: {
                     sx: {
-                        maxWidth: 100,
+                        maxWidth: 100
                     }
                 },
                 muiTableHeadCellProps: {
@@ -562,9 +555,9 @@ const VocabularyMainTable = ({
         initialState: {
             sorting: [{ id: 'label', desc: false }],
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
-            density: 'compact',
+            density: isLargeScreen ? 'comfortable' : 'compact',
             pagination: { pageSize: 15, pageIndex: 0 },
-            showColumnFilters: !isMobile
+            showColumnFilters: !isLargeScreen
         },
         onPaginationChange: setPagination,
         createDisplayMode: 'modal',
@@ -664,7 +657,7 @@ const VocabularyMainTable = ({
                         }}
                         sx={{ backgroundColor: colorStyled.SECONDARY.dark, whiteSpace: 'nowrap', minWidth: 50 }}
                     >
-                        {isMobile ? 'New Term' : 'Create New Term'}
+                        {isLargeScreen ? 'New Term' : 'Create New Term'}
                     </Button>
                 </Tooltip>
                 <Tooltip title="View this vocabulary history of changes">
@@ -689,7 +682,7 @@ const VocabularyMainTable = ({
                             }}
                             sx={{ backgroundColor: colorStyled.SECONDARY.dark, whiteSpace: 'nowrap', minWidth: 50 }}
                         >
-                            {isMobile ? 'Hub' : 'Information Hub'}
+                            {isLargeScreen ? 'Hub' : 'Information Hub'}
                         </Button>
                     </StyledBadge>
                 </Tooltip>
@@ -724,6 +717,7 @@ const VocabularyMainTable = ({
         state: {
             columnVisibility,
             pagination,
+            density,
             isLoading: isLoadingTerms,
             isSaving: isCreatingTerm || isUpdatingTerm || isDeletingTerm,
             showAlertBanner: isLoadingTermsError,
@@ -780,8 +774,7 @@ const VocabularyMainTable = ({
                     setActiveMUIPopUp(null);
                 }}
                 title="Timeline"
-                message={<ChangesTimeline
-                    id="https://raw.githubusercontent.com/tib-ts/vocabulary_development/refs/heads/main/sc4eu_vo.ttl" />}
+                message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development/refs/heads/main/sc4eu_vo.ttl" />}
             />
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
@@ -827,17 +820,13 @@ function validateTerm(term) {
 }
 
 const ScrollableDiv = styled.div`
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding-bottom: 5px;
-    height: calc(100vh - 200px);
+    max-height: 90vh;
 
-    @media (max-width: ${MAX_WIDTH}) {
-        height: calc(100vh - 250px);
-        padding: 10px;
-    }
-
-    @media (max-width: ${SMALL_SCREEN_WIDTH}) {
-        height: calc(100vh - 280px);
+    @media (max-width: ${LARGE_SCREEN_SIZE}) {
         padding: 5px;
     }
 `;
