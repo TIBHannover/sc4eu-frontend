@@ -209,7 +209,29 @@ class MetaDataModal extends React.Component {
         return (
             <div>
                 <Modal open={this.props.isModalOpen} onClose={this.props.toggle} aria-labelledby="modal-title" aria-describedby="modal-description">
-                    <StyledBox>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            padding: 0,
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '90%',
+                            bgcolor: 'background.paper',
+                            boxShadow: 24,
+                            paddingLeft: 4,
+                            paddingRight: 4,
+                            borderRadius: 3,
+                            textAlign: 'center',
+                            maxHeight: '90%', // Add maximum height
+                            display: 'flex',
+                            flexDirection: 'column',
+
+                            '@media (min-width: ${SMALL_SCREEN_WIDTH})': {
+                                width: '100%'
+                            }
+                        }}
+                    >
                         <div
                             style={{
                                 height: '60px',
@@ -281,7 +303,7 @@ class MetaDataModal extends React.Component {
                                 <CloseButton onClick={this.props.toggle}>Close</CloseButton>
                             </div>
                         </ModalFooter>
-                    </StyledBox>
+                    </Box>
                 </Modal>
             </div>
         );
@@ -330,27 +352,5 @@ const StyledButton = styled(Button)`
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledBox = styled(Box)`
-    position: absolute;
-    padding: 0;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    backgroud-color: white;
-    box-shadow: 0px 3px 6px #00000029;
-    padding-left: 16px;
-    padding-right: 16px;
-    border-radius: 12px;
-    text-align: center;
-    max-height: 90%;
-    display: flex;
-    flex-direction: column;
-
-    @media (min-width: ${SMALL_SCREEN_WIDTH}) {
-        width: 100%;
     }
 `;
