@@ -16,6 +16,8 @@ import MenuItem from '@mui/material/MenuItem';
 import { commitDiscussionOnly } from '../utils/CommitChanges';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePushNotifications } from '../../../hooks/usePushNotifications';
+import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
+import { useMediaQuery } from '@material-ui/core';
 
 function stringToColor(string) {
     let hash = 0;
@@ -47,7 +49,12 @@ export function stringAvatar(name) {
 
     return {
         sx: {
-            backgroundColor: stringToColor(name)
+            backgroundColor: stringToColor(name),
+
+            [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
+                height: 24,
+                width: 24
+            }
         },
         children: initials
     };
@@ -91,6 +98,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
 
     const { notifyNewComment } = usePushNotifications(user.displayName);
     const queryClient = useQueryClient();
+    const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
     useEffect(() => {
         getAllUsers().then(users => {
@@ -172,27 +180,27 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     return (
         <Paper elevation={0} style={{ paddingLeft: '1px', background: 'inherit' }}>
             <Box style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="h7" component="div" style={{ marginRight: '10px' }}>
-                    <b>Discussion</b>
-                </Typography>
                 <hr style={dividerStyle} />
             </Box>
-            <List style={{ maxHeight: '220px', overflow: 'auto' }}>
+            <List sx={{ maxHeight: '50vh', overflow: 'auto' }}>
                 {comments.map((comment, index) => (
                     <ListItem key={index} alignItems="flex-start" style={{ paddingBottom: '1px' }}>
-                        <ListItemAvatar>
-                            <Avatar {...stringAvatar(comment.author)} style={avatarStyle} />
-                        </ListItemAvatar>
+                        {!isMobile && (
+                            <ListItemAvatar>
+                                <Avatar {...stringAvatar(comment.author)} style={avatarStyle} />
+                            </ListItemAvatar>
+                        )}
                         <Box style={contentStyle}>
                             <div style={authorDateStyle}>
                                 <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
                                     {comment.author}
                                 </Typography>
+                                {isMobile && <Avatar {...stringAvatar(comment.author)} style={avatarStyle} />}
                                 <Typography variant="body2" color="textSecondary">
                                     {getTimeDifferenceString(comment.timestamp)}
                                 </Typography>
                             </div>
-                            <Typography variant="body1" gutterBottom>
+                            <Typography variant="body1" gutterBottom style={{ wordBreak: 'break-word' }}>
                                 {comment.content}
                             </Typography>
                         </Box>
@@ -264,7 +272,9 @@ const avatarStyle = {
 
 const contentStyle = {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    flex: 1,
+    minWidth: 0
 };
 
 const dividerStyle = {
@@ -276,11 +286,12 @@ const dividerStyle = {
 const authorDateStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px' // Adds a small gap between the author name and the date
+    gap: '10px',
+    flexWrap: 'wrap'
 };
 
 const buttonStyle = {
-    borderRadius: '20px', // Make the button rounder
+    borderRadius: '20px',
     backgroundColor: colorStyled.SECONDARY.dark,
     display: 'flex'
 };
