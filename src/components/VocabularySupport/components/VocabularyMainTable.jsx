@@ -741,18 +741,17 @@ const VocabularyMainTable = ({
             <Modal open={openPopup} onClose={handleClosePopup}>
                 <Box
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 2,
-                        backgroundColor: 'white',
-                        margin: 'auto',
-                        width: '70%',
-                        overflowY: 'auto',
                         position: 'fixed',
-                        top: 0,
-                        left: '15%',
-                        outline: 'none'
+                        top: {xs: '50%', xl: '25%'},
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        backgroundColor: 'white',
+                        width: { xs: '95%', xl: '70vw' },
+                        height: { xs: '95%', xl: '50vh' },
+                        overflowY: 'auto',
+                        padding: 2,
+                        outline: 'none',
+                        borderRadius: 1
                     }}
                 >
                     {selectedTerm && (
