@@ -99,7 +99,7 @@ export default function SideBarLayout(props) {
                 open={open}
                 onOpen={() => setOpen(true)}
                 onClose={() => setOpen(false)}
-                swipeAreaWidth={isMobile ? 200 : 0}
+                swipeAreaWidth={0}
                 activepage={location.pathname}
             >
                 <Scrollbars style={{ overflowX: 'hidden' }}>
