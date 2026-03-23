@@ -98,12 +98,12 @@ const StyledButton = styled.button`
     }
 `;
 
-const SideBar = props => {
+const SideBar = ({ isOpen, onNavigate, user }) => {
     const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
-    const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: props.user !== 0 });
+    const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: user !== 0 });
     let allTermsDiscussion = fetchedDiscussion || [];
-    const mentionedCommentsLength = getMentionedCommentsLength(allTermsDiscussion, props.user.displayName);
+    const mentionedCommentsLength = getMentionedCommentsLength(allTermsDiscussion, user.displayName);
 
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
     const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
@@ -169,11 +169,11 @@ const SideBar = props => {
             />
             <ListItem>
                 <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                    <StyledLink title="Open Home" exact activeStyle={ActiveStyle} to={ROUTES.HOME} size="lg">
+                    <StyledLink title="Open Home" exact activeStyle={ActiveStyle} to={ROUTES.HOME} size="lg" onClick={onNavigate}>
                         <HomeOutlined color="action" />
                         <StyledText>Home</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT}>
+                    <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT} onClick={onNavigate}>
                         <CollectionsOutlined color="action" />
                         <StyledText>Projects</StyledText>
                     </StyledLink>
@@ -186,6 +186,7 @@ const SideBar = props => {
                                 }}
                                 activeStyle={ActiveStyle}
                                 title="Open Ontology List"
+                                onClick={onNavigate}
                             >
                                 <HubOutlined color="action" />
                                 <StyledText>Ontologies</StyledText>
@@ -195,7 +196,7 @@ const SideBar = props => {
                                 <>
                                     <div
                                         style={{
-                                            marginLeft: props.isOpen ? '25px' : '0px',
+                                            marginLeft: isOpen ? '25px' : '0px',
                                             display: 'flex',
                                             flexDirection: 'column',
                                             transition: '0.6s'
@@ -203,8 +204,8 @@ const SideBar = props => {
                                     >
                                         <p
                                             style={{
-                                                display: props.isOpen ? 'block' : 'none',
-                                                marginLeft: props.isOpen ? '-25px' : '0px',
+                                                display: isOpen ? 'block' : 'none',
+                                                marginLeft: isOpen ? '-25px' : '0px',
                                                 paddingTop: '5px',
                                                 marginBottom: '1px',
                                                 fontSize: '13px',
@@ -219,7 +220,10 @@ const SideBar = props => {
                                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY),
                                                 search: `?view=hybrid&ontologyId=${selectedOntology.uuid}`
                                             }}
-                                            onClick={() => selectModeOfOperation('hybrid')}
+                                            onClick={() => {
+                                                selectModeOfOperation('hybrid');
+                                                onNavigate();
+                                            }}
                                             activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
                                         >
                                             <LegendToggleOutlined color="action" />
@@ -231,7 +235,10 @@ const SideBar = props => {
                                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY),
                                                 search: `?view=graph&ontologyId=${selectedOntology.uuid}`
                                             }}
-                                            onClick={() => selectModeOfOperation('graph')}
+                                            onClick={() => {
+                                                selectModeOfOperation('graph');
+                                                onNavigate();
+                                            }}
                                             activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
                                         >
                                             <AccountTreeOutlined color="action" />
@@ -243,13 +250,22 @@ const SideBar = props => {
                                                 pathname: reverse(ROUTES.VIEW_ONTOLOGY),
                                                 search: `?view=text&ontologyId=${selectedOntology.uuid}`
                                             }}
-                                            onClick={() => selectModeOfOperation('text')}
+                                            onClick={() => {
+                                                selectModeOfOperation('text');
+                                                onNavigate();
+                                            }}
                                             activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
                                         >
                                             <FormatAlignJustifyOutlined color="action" />
                                             <StyledText>Text</StyledText>
                                         </StyledLink>
-                                        <StyledButton title="metaData" onClick={() => setMetaDataModalOpen(true)}>
+                                        <StyledButton
+                                            title="metaData"
+                                            onClick={() => {
+                                                setMetaDataModalOpen(true);
+                                                onNavigate();
+                                            }}
+                                        >
                                             <DiscountOutlined color="action" />
                                             <StyledText>Meta Data</StyledText>
                                         </StyledButton>
@@ -314,8 +330,8 @@ const SideBar = props => {
                     >
                         <p
                             style={{
-                                display: props.isOpen ? 'block' : 'none',
-                                marginLeft: props.isOpen ? '-25px' : '0px',
+                                display: isOpen ? 'block' : 'none',
+                                marginLeft: isOpen ? '-25px' : '0px',
                                 paddingTop: '5px',
                                 marginBottom: '1px',
                                 fontSize: '13px',
@@ -324,25 +340,30 @@ const SideBar = props => {
                         >
                             Tools
                         </p>
-                        <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE}>
+                        <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE} onClick={onNavigate}>
                             <BorderColorOutlined color="action" />
                             <StyledText>WebProtege</StyledText>
                         </StyledLink>
 
-                        <StyledLink title="Open Vocabulary Development Support" activeStyle={ActiveStyle} to={ROUTES.VOCABULARY_SUPPORT}>
+                        <StyledLink
+                            title="Open Vocabulary Development Support"
+                            activeStyle={ActiveStyle}
+                            to={ROUTES.VOCABULARY_SUPPORT}
+                            onClick={onNavigate}
+                        >
                             <NoteAddOutlined color="action" />
                             <StyledText>Vocabulary Dev</StyledText>
                             <Tooltip title={`You have ${mentionedCommentsLength - cookieMentionedCommentsCount} new mentions`}>
                                 <StyledBadge
                                     style={{ marginLeft: 10, marginBottom: 20 }}
                                     badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount}
-                                    invisible={props.user.displayName === undefined || mentionedCommentsLength - cookieMentionedCommentsCount < 0}
+                                    invisible={user.displayName === undefined || mentionedCommentsLength - cookieMentionedCommentsCount < 0}
                                     customVariant="orange"
                                 />
                             </Tooltip>
                         </StyledLink>
 
-                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR}>
+                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR} onClick={onNavigate}>
                             <BorderAllOutlined color="action" />
                             <StyledText>Annotator</StyledText>
                         </StyledLink>
@@ -350,7 +371,10 @@ const SideBar = props => {
                             title="Open Eurostat Visualisation"
                             activeStyle={ActiveStyle}
                             to={ROUTES.EUROSTAT}
-                            onClick={() => selectModeOfOperation('eurostat')}
+                            onClick={() => {
+                                selectModeOfOperation('eurostat');
+                                onNavigate();
+                            }}
                         >
                             <AnalyticsOutlined color="action" />
                             <StyledText>Eurostat</StyledText>
@@ -358,7 +382,7 @@ const SideBar = props => {
                         {(isActiveTab === 'eurostat' || isActiveTab === 'bullwhip') && (
                             <div
                                 style={{
-                                    marginLeft: props.isOpen ? '10px' : '0px',
+                                    marginLeft: isOpen ? '10px' : '0px',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     transition: '0.6s'
@@ -366,8 +390,8 @@ const SideBar = props => {
                             >
                                 <p
                                     style={{
-                                        display: props.isOpen ? 'block' : 'none',
-                                        marginLeft: props.isOpen ? '-5px' : '0px',
+                                        display: isOpen ? 'block' : 'none',
+                                        marginLeft: isOpen ? '-5px' : '0px',
                                         paddingTop: '5px',
                                         marginBottom: '1px',
                                         fontSize: '13px',
@@ -381,7 +405,10 @@ const SideBar = props => {
                                     to={{
                                         pathname: reverse(ROUTES.EUROSTAT)
                                     }}
-                                    onClick={() => selectModeOfOperation('eurostat')}
+                                    onClick={() => {
+                                        selectModeOfOperation('eurostat');
+                                        onNavigate();
+                                    }}
                                     activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}
                                 >
                                     <TimelineOutlined color="action" />
@@ -392,7 +419,10 @@ const SideBar = props => {
                                     to={{
                                         pathname: reverse(ROUTES.EUROSTAT_BULLWHIP)
                                     }}
-                                    onClick={() => selectModeOfOperation('bullwhip')}
+                                    onClick={() => {
+                                        selectModeOfOperation('bullwhip');
+                                        onNavigate();
+                                    }}
                                     activeStyle={isActiveTab === 'bullwhip' ? ActiveStyle : {}}
                                 >
                                     <BarChartOutlined color="action" />
@@ -402,28 +432,28 @@ const SideBar = props => {
                         )}
                     </div>
                     <Divider />
-                    <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations}>
+                    <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations} onClick={onNavigate}>
                         <LibraryBooksOutlined color="action" />
                         <StyledText>About Portal</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ}>
+                    <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ} onClick={onNavigate}>
                         <LiveHelpOutlined color="action" />
                         <StyledText>FAQ</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Training" activeStyle={ActiveStyle} to={ROUTES.TRAINING}>
+                    <StyledLink title="Open Training" activeStyle={ActiveStyle} to={ROUTES.TRAINING} onClick={onNavigate}>
                         <MenuBookOutlined color="action" />
                         <StyledText>Training</StyledText>
                     </StyledLink>
                     <Divider />
-                    <StyledLink title="Open Data Policy" activeStyle={ActiveStyle} to={ROUTES.Dataprotections}>
+                    <StyledLink title="Open Data Policy" activeStyle={ActiveStyle} to={ROUTES.Dataprotections} onClick={onNavigate}>
                         <PrivacyTipOutlined color="action" />
                         <StyledText>Data Policy</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint}>
+                    <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint} onClick={onNavigate}>
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS}>
+                    <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS} onClick={onNavigate}>
                         <HandshakeOutlined color="action" />
                         <StyledText>Partners</StyledText>
                     </StyledLink>
@@ -433,10 +463,6 @@ const SideBar = props => {
     );
 };
 
-SideBar.propTypes = {
-    isOpen: PropTypes.bool.isRequired
-};
-
 const mapStateToProps = state => ({
     user: state.auth.user
 });
@@ -444,7 +470,9 @@ const mapStateToProps = state => ({
 export default compose(connect(mapStateToProps))(SideBar);
 
 SideBar.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
     user: PropTypes.shape({
-        displayName: PropTypes.string,
+        displayName: PropTypes.string
     }),
-}
+    onNavigate: PropTypes.func
+};
