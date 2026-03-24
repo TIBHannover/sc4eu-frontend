@@ -467,6 +467,7 @@ const StyledRootDiv = styled.div`
 
 const StyledSubHeadingDiv = styled.div`
     height: 100px;
+    
     @media (max-width: ${MAX_WIDTH}) {
         height: auto;
         padding: 10px;
@@ -489,10 +490,10 @@ const StyledInfoSpan = styled.span`
 const StyledButtonToAddProject = styled(Button)`
     margin: 10px 15px 15px 0px;
     background-color: ${colorStyled.SECONDARY.dark};
-    float: right;
     font-size: ${fontStyled.fontSize.NormalText};
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+        float: right;
     }
 `;
 
