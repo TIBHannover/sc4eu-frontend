@@ -400,7 +400,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                 </Box>
             )}
             {editMode && !viewAgreementMode && (
-                <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, gap: '20px', padding: '5px' }}>
+                <Box sx={{ display: 'flex', width: '100%', gap: '20px', padding: '5px' }}>
                     <Box
                         sx={{
                             width: '50%',
@@ -482,25 +482,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 Cancel
                             </Button>
                         </Box>
-                    </Box>
-
-                    <Box
-                        sx={{
-                            width: { xs: '50%', md: '50%' },
-                            padding: '10px',
-                            backgroundColor: '#f4f4f4',
-                            borderRadius: '8px',
-                            overflowY: 'auto',
-                            maxHeight: { xs: 'calc(100vh - 200px)', md: 'calc(100vh - 100px)' }
-                        }}
-                    >
-                        <CommentsSection
-                            resourceId={term.identifier}
-                            comments={updatedTerm.comments || []}
-                            mentionedUsers={[]}
-                            handleSaveDiscussion={handleSaveDiscussion}
-                            setHasUncommittedChanges={setHasUncommittedChanges}
-                        />
                     </Box>
                 </Box>
             )}
