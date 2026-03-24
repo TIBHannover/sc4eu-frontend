@@ -71,7 +71,7 @@ self.addEventListener('message', event => {
 });
 
 self.addEventListener('activate', async () => {
-    const tabs = await self.cliens.matchAll({ type: 'window' });
+    const tabs = await self.clients.matchAll({ type: 'window' });
     tabs.forEach(tab => {
         tab.navigate(tab.url);
     });
