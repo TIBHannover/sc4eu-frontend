@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
 import { stringAvatar } from './CommentsSection';
+import { ConsensusProgress } from '../utils/Consensus';
 
 const styles = {
     button: {
@@ -141,18 +142,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                         </Typography>
                     </Box>
 
-                    <Box sx={styles.voteProgress}>
-                        <Typography variant="body1" paragraph>
-                            <strong>Consensus progress:</strong> {totalVotes} people voted
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {approvedCount} agree • {rejectedCount} not agree
-                        </Typography>
-                        <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                            Note: At least three votes are required to reach a consensus. Furthermore, a two-thirds majority is required for the
-                            proposed change of status.
-                        </Typography>
-                    </Box>
+                    <ConsensusProgress term={vote} />
                 </Grid>
 
                 <Grid item xs={12} md={8}>
