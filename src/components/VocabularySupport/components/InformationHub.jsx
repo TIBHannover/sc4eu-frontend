@@ -21,7 +21,8 @@ import {
     Popover,
     Select,
     MenuItem,
-    Button
+    Button,
+    LinearProgress
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -38,6 +39,7 @@ import { colorStyled } from '../../../styledComponents/styledColor';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
+import { ConsensusProgress } from '../utils/Consensus';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -67,6 +69,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const [sortBy, setSortBy] = useState(SORT_BY_OPTIONS.RECENT_UPDATE);
 
     const isMobile = useMediaQuery(`(max-width: ${SMALL_SCREEN_WIDTH})`);
+
     useEffect(() => {
         const fetchAll = async () => {
             setLoading(true);
@@ -306,6 +309,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
                                 {term.hasVote && (
                                     <>
+                                        <ConsensusProgress term={term} />
                                         <AvatarGroup
                                             max={4}
                                             onClick={event => {
@@ -331,6 +335,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                         </AvatarGroup>
                                     </>
                                 )}
+
                                 <Popover
                                     open={open}
                                     anchorEl={anchorEl}
@@ -492,7 +497,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                             customInput={<TextField size="small" />}
                         />
                     </Grid>
-                    <Grid item xs={12} lg='auto'>
+                    <Grid item xs={12} lg="auto">
                         <Tabs value={activeTab} onChange={handleTabChange}>
                             <Tab
                                 label={
@@ -510,7 +515,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                             />
                         </Tabs>
                     </Grid>
-                    <Grid item xs={12} lg='auto'>
+                    <Grid item xs={12} lg="auto">
                         {filteredTerms.length > 0 && (
                             <Box sx={{ ml: 5 }}>
                                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
