@@ -747,7 +747,7 @@ const VocabularyMainTable = ({
                         transform: 'translate(-50%, -50%)',
                         backgroundColor: 'white',
                         width: { xs: '95%', xl: '70vw' },
-                        height: { xs: '95%', xl: '50vh' },
+                        height: { xs: '95%', xl: '53%' },
                         overflowY: 'auto',
                         padding: 2,
                         outline: 'none',

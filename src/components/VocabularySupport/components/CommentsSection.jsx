@@ -182,7 +182,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             <Box style={{ display: 'flex', alignItems: 'center' }}>
                 <hr style={dividerStyle} />
             </Box>
-            <List sx={{ maxHeight: '50vh', overflow: 'auto' }}>
+            <List sx={{ maxHeight: '25vh', overflow: 'auto' }}>
                 {comments.map((comment, index) => (
                     <ListItem key={index} alignItems="flex-start" style={{ paddingBottom: '1px' }}>
                         {!isMobile && (
