@@ -772,7 +772,7 @@ const VocabularyMainTable = ({
                 discussionReplies={terms.filter(term =>
                     discussions.some(discussion => discussion.comments.length !== 0 && term.identifier === discussion.resourceId)
                 )}
-                newTerms={terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 7)))}
+                newTerms={terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)))}
                 onUrgentClick={handleWidgetUrgentTermClick}
                 onNewTermsClick={handleWidgetNewTermsClick}
                 onDiscussionClick={handleWidgetDiscussionReplyClick}
