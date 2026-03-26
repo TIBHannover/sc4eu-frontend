@@ -39,7 +39,8 @@ MaterialUIPopUp.propTypes = {
 
 export const MaterialUIPopUpTypes = {
     HISTORY: 'history',
-    DISCUSSIONS: 'discussions'
+    DISCUSSIONS: 'discussions',
+    ACTIVE_CONSENSUS: 'active_consensus'
 };
 
 export default MaterialUIPopUp;

@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, Chip, darken, Grid, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
+import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -20,6 +20,9 @@ import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderG
 import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
 import { useMediaQuery } from '@mui/material';
+import { CardActivityWidget } from './CardActivityWidget';
+import { getTermVotes, getVotes } from '../../../network/TermVoteCalls';
+import VoteView from './VoteView';
 
 /* eslint-disable react/prop-types */
 const VocabularyMainTable = ({
@@ -59,10 +62,19 @@ const VocabularyMainTable = ({
     const isLargeScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
     const [pagination, setPagination] = useState({
-        pageSize: isLargeScreen ? 10 : 15,
+        pageSize: isLargeScreen ? 10 : 10,
         pageIndex: 0
     });
     const [density, setDensity] = useState(isLargeScreen ? 'comfortable' : 'compact');
+
+    const [urgentVoteTerm, setUrgentVoteTerm] = useState(null);
+    const [urgentVoteData, setUrgentVoteData] = useState(null);
+    const [votesMap, setVotesMap] = useState([]);
+
+    useEffect(async () => {
+        const votesData = await getVotes();
+        setVotesMap(votesData);
+    }, []);
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -98,7 +110,7 @@ const VocabularyMainTable = ({
     useEffect(() => {
         setPagination(prev => ({
             ...prev,
-            pageSize: isLargeScreen ? 10 : 15
+            pageSize: isLargeScreen ? 10 : 10
         }));
         setDensity(() => (isLargeScreen ? 'comfortable' : 'compact'));
     }, [isLargeScreen]);
@@ -735,14 +747,42 @@ const VocabularyMainTable = ({
         )
     });
 
+    const handleWidgetNewTermsClick = () => {
+        table.setColumnFilters([{ id: 'created', value: 'last3months' }]);
+    };
+
+    const handleWidgetDiscussionReplyClick = term => {
+        setSelectedTerm(term);
+        const currentResourceDiscussion = discussions.find(d => d.resourceId === term.identifier);
+        setTermComments(currentResourceDiscussion.comments);
+        setOpenPopup(true);
+    };
+
+    const handleWidgetUrgentTermClick = async term => {
+        const data = await getTermVotes(term.identifier);
+        setUrgentVoteTerm(term);
+        setUrgentVoteData(data[0]);
+        setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
+    };
+
     return (
         <ScrollableDiv>
+            <CardActivityWidget
+                urgentTerms={terms.filter(term => votesMap.some(vote => vote.term_uuid === term.identifier))}
+                discussionReplies={terms.filter(term =>
+                    discussions.some(discussion => discussion.comments.length !== 0 && term.identifier === discussion.resourceId)
+                )}
+                newTerms={terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 7)))}
+                onUrgentClick={handleWidgetUrgentTermClick}
+                onNewTermsClick={handleWidgetNewTermsClick}
+                onDiscussionClick={handleWidgetDiscussionReplyClick}
+            />
             <MaterialReactTable table={table} />
             <Modal open={openPopup} onClose={handleClosePopup}>
                 <Box
                     sx={{
                         position: 'fixed',
-                        top: {xs: '50%', xl: '25%'},
+                        top: { xs: '50%', xl: '25%' },
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
                         backgroundColor: 'white',
@@ -788,6 +828,26 @@ const VocabularyMainTable = ({
                     />
                 }
             />
+            {urgentVoteTerm && urgentVoteData && (
+                <MaterialUIPopUp
+                    open={activeMUIPopUp === MaterialUIPopUpTypes.ACTIVE_CONSENSUS}
+                    onClose={() => {
+                        setActiveMUIPopUp(null);
+                    }}
+                    title="Active consensus"
+                    message={
+                        <VoteView
+                            term={urgentVoteTerm}
+                            vote={urgentVoteData}
+                            username={currentUser.displayName}
+                            setVoteViewMode={() => {
+                                setUrgentVoteTerm(null);
+                                setUrgentVoteData(null);
+                            }}
+                        />
+                    }
+                />
+            )}
         </ScrollableDiv>
     );
 };
