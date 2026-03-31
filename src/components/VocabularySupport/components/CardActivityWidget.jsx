@@ -1,18 +1,33 @@
-import { Popover, List, ListItemButton, ListItemText, Grid, Card, CardContent, Chip, Typography, Box } from '@mui/material';
+import { Popover, List, ListItemButton, ListItemText, Grid, Card, CardContent, Chip, Typography, Box, ListItemIcon, Tooltip } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
+import { colorStyled } from '../../../styledComponents/styledColor';
 
-export const CardActivityWidget = ({ urgentTerms, discussionReplies, newTerms, onUrgentClick, onDiscussionClick, onNewTermsClick }) => {
+export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newTerms, onUrgentClick, onDiscussionClick, onNewTermsClick }) => {
     const [activeAnchorEl, setActiveAnchorEl] = useState(null);
     const [activeCard, setActiveCard] = useState(null);
 
     if (!urgentTerms && !discussionReplies && !newTerms) return null;
+
+    const nearClosedConsensuses = [];
+    votes?.forEach(vote => {
+        const approvedCount = vote.decisions.filter(e => e.choice === 'approved').length;
+        const rejectedCount = vote.decisions.filter(e => e.choice === 'rejected').length;
+        const leadingCount = Math.max(approvedCount, rejectedCount);
+        const THRESHOLD_COUNT = 4;
+        const isOneVoteShort = THRESHOLD_COUNT - leadingCount === 1;
+        if (isOneVoteShort) {
+            nearClosedConsensuses.push(vote.term_uuid);
+        }
+    });
 
     const actionCards = [
         {
             label: 'Urgent',
             color: 'error',
             text: urgentTerms.length === 1 ? urgentTerms.length + ' term is waiting for you' : urgentTerms.length + ' terms are waiting for you',
+            nearClosed: nearClosedConsensuses.length !== 0 ? `With ${nearClosedConsensuses.length} needing only one vote to close` : undefined,
             sub: 'Open voting window →',
             onClick: e => {
                 setActiveAnchorEl(e.currentTarget);
@@ -77,6 +92,13 @@ export const CardActivityWidget = ({ urgentTerms, discussionReplies, newTerms, o
                                 }}
                             >
                                 <ListItemText primary={term.label} secondary={`Status: ${term.status}`} />
+                                {nearClosedConsensuses?.includes(term.identifier) && (
+                                    <ListItemIcon>
+                                        <Tooltip title="Just one vote left to reach consensus">
+                                            <LocalFireDepartmentOutlinedIcon sx={{ color: colorStyled.ORANGE_COLOR }} />
+                                        </Tooltip>
+                                    </ListItemIcon>
+                                )}
                             </ListItemButton>
                         ))}
                     </List>
