@@ -769,6 +769,7 @@ const VocabularyMainTable = ({
         <ScrollableDiv>
             <CardActivityWidget
                 urgentTerms={terms.filter(term => votesMap.some(vote => vote.term_uuid === term.identifier))}
+                votes={votesMap}
                 discussionReplies={terms.filter(term =>
                     discussions.some(discussion => discussion.comments.length !== 0 && term.identifier === discussion.resourceId)
                 )}
