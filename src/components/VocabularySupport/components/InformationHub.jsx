@@ -21,8 +21,7 @@ import {
     Popover,
     Select,
     MenuItem,
-    Button,
-    LinearProgress
+    Button
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -129,12 +128,12 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                 badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
                 sx={{
                     '& .MuiBadge-badge': {
-                        backgroundColor: decision.choice === 'approved' ? colorStyled.GREEN_COLOR : colorStyled.ORANGE_COLOR,
-                        color: 'white',
+                        backgroundColor: decision.choice === 'approved' ? colorStyled.primary : colorStyled.error,
+                        color: decision.choice === 'approved' ? colorStyled.onPrimary : colorStyled.onError,
                         width: 16,
                         height: 16,
                         fontSize: 12,
-                        border: '2px solid white'
+                        border: `1px solid ${colorStyled.outlineVariant}`
                     }
                 }}
             >
@@ -433,7 +432,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     top: 0,
                     zIndex: 1000,
                     backgroundColor: 'background.paper',
-                    borderBottom: `1px solid ${colorStyled.BORDER_COLOR}`,
+                    borderBottom: `1px solid ${colorStyled.outlineVariant}`,
                     pb: 1
                 }}
             >
@@ -444,10 +443,11 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                             variant="outlined"
                             size="small"
                             sx={{
-                                bgcolor: colorStyled.ORANGE_COLOR,
-                                color: colorStyled.PRIMARY.lighter,
+                                bgcolor: colorStyled.tertiary,
+                                color: colorStyled.onTertiary,
                                 '&:hover': {
-                                    bgcolor: '#b63011'
+                                    bgcolor: colorStyled.tertiaryContainer,
+                                    color: colorStyled.onTertiaryContainer
                                 }
                             }}
                         >

@@ -58,7 +58,7 @@ class UserViewDetails extends Component {
                             newState[selector] = obj[selector];
                             this.setState(newState);
                         }}
-                        style={{ marginLeft: '10px', backgroundColor: colorStyled.SECONDARY.dark }}
+                        style={{ marginLeft: '10px', backgroundColor: colorStyled.primary }}
                     >
                         Reset
                     </Button>
@@ -72,7 +72,7 @@ class UserViewDetails extends Component {
                             this.props.redux_updateUserSettings({ user: { displayName: obj[selector] } });
                             this.setState(newState);
                         }}
-                        style={{ marginLeft: '10px', backgroundColor: colorStyled.SECONDARY.dark }}
+                        style={{ marginLeft: '10px', backgroundColor: colorStyled.primary }}
                     >
                         Save
                     </Button>

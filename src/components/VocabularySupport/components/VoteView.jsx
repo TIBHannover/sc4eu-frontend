@@ -18,11 +18,12 @@ import { ConsensusProgress } from '../utils/Consensus';
 const styles = {
     button: {
         padding: '10px 20px',
-        backgroundColor: colorStyled.SECONDARY.dark,
-        '&:hover': { backgroundColor: 'darkgray' }
+        backgroundColor: colorStyled.primary,
+        color: colorStyled.onPrimary,
+        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
     },
     voteProgress: {
-        backgroundColor: colorStyled.PRIMARY.lighter,
+        backgroundColor: colorStyled.surfaceContainerLow,
         p: 2,
         borderRadius: 1,
         mb: 3
@@ -32,14 +33,14 @@ const styles = {
         borderRadius: 1,
         mb: 3,
         border: '1px solid',
-        borderColor: 'divider',
-        backgroundColor: colorStyled.CONTAINER_BACKGROUND_COLOR
+        borderColor: colorStyled.outlineVariant,
+        backgroundColor: colorStyled.surfaceContainerLow
     },
     recentVotesContainer: {
         maxHeight: 400,
         overflow: 'auto',
         border: '1px solid',
-        borderColor: colorStyled.SCROLLBAR_BORDER_COLOR,
+        borderColor: colorStyled.outlineVariant,
         borderRadius: 1,
         p: 1
     },
@@ -49,9 +50,9 @@ const styles = {
         gap: 1,
         p: 1.5,
         borderBottom: '1px solid',
-        borderColor: 'divider',
+        borderColor: colorStyled.outlineVariant,
         '&:hover': {
-            backgroundColor: 'action.hover'
+            backgroundColor: `${colorStyled.primary}1A` // primary at 10% opacity
         },
         '&:last-child': {
             borderBottom: 'none'
@@ -65,7 +66,7 @@ const styles = {
     commentBox: {
         pl: 4.5,
         borderLeft: '2px solid',
-        borderColor: colorStyled.BORDER_COLOR,
+        borderColor: colorStyled.outline,
         ml: 1
     },
     stickySidebar: {
@@ -100,7 +101,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
     }, [decisionMade]);
 
     const handleExpertDecision = async () => {
-        console.log('expert decision updated: ', vote)
+        console.log('expert decision updated: ', vote);
         await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
         setDecisionMade(true);
         setUserHasVoted(true);
@@ -244,7 +245,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                                         variant="body2"
                                         sx={{
                                             fontStyle: 'italic',
-                                            color: colorStyled.TEXTCOLOR,
+                                            color: colorStyled.onSurfaceVariant,
                                             mt: 1
                                         }}
                                     >
@@ -295,7 +296,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                                                             variant="body2"
                                                             sx={{
                                                                 fontStyle: 'italic',
-                                                                color: colorStyled.TEXTCOLOR,
+                                                                color: colorStyled.onSurfaceVariant,
                                                                 mt: 0.5
                                                             }}
                                                         >
@@ -320,7 +321,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                                                                         setExpandedComments(newExpanded);
                                                                     }}
                                                                     sx={{
-                                                                        color: colorStyled.SECONDARY.link,
+                                                                        color: colorStyled.primary,
                                                                         cursor: 'pointer',
                                                                         ml: 0.5,
                                                                         '&:hover': {

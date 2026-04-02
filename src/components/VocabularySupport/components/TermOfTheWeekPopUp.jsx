@@ -1,20 +1,6 @@
 import React, { useState } from 'react';
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    Typography,
-    Box,
-    IconButton,
-    CircularProgress, TextField
-} from '@mui/material';
-import {
-    Cancel as RejectedIcon,
-    ThumbUpAltOutlined,
-    ThumbDownAltOutlined
-} from '@mui/icons-material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, IconButton, CircularProgress, TextField } from '@mui/material';
+import { Cancel as RejectedIcon, ThumbUpAltOutlined, ThumbDownAltOutlined } from '@mui/icons-material';
 import { updateExpertDecision } from '../../../network/TermVoteCalls';
 import { colorStyled } from '../../../styledComponents/styledColor';
 
@@ -38,7 +24,7 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
 
     if (!term || !open) return null;
 
-    const handleWeekVote = async (decision) => {
+    const handleWeekVote = async decision => {
         setLoadingDecision(decision);
         try {
             const res = await updateExpertDecision(term.identifier, term.vote_uuid, username, decision, comment);
@@ -69,7 +55,7 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                     '& .MuiDialog-paper': {
                         borderRadius: '12px',
                         boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                        bgcolor: colorStyled.CONTAINER_BACKGROUND_COLOR
+                        bgcolor: colorStyled.surfaceContainerHigh
                     }
                 }}
             >
@@ -78,8 +64,8 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        bgcolor: colorStyled.PRIMARY.main,
-                        color: colorStyled.PRIMARY.darker,
+                        bgcolor: colorStyled.primaryContainer,
+                        color: colorStyled.onPrimaryContainer,
                         px: 3,
                         py: 2
                     }}
@@ -93,7 +79,7 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                         onClick={handleClose}
                         size="small"
                         sx={{
-                            color: colorStyled.PRIMARY.darker,
+                            color: colorStyled.primaryContainer,
                             '&:hover': { bgcolor: 'rgba(0,0,0,0.05)' }
                         }}
                     >
@@ -103,12 +89,12 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
 
                 <DialogContent dividers sx={{ p: 3 }}>
                     <Box mb={2}>
-                        <Typography variant="h5" fontWeight="bold" gutterBottom color={colorStyled.TEXTCOLOR}>
+                        <Typography variant="h5" fontWeight="bold" gutterBottom color={colorStyled.onSurface}>
                             {term.label || 'What do you think?'}
                         </Typography>
 
                         {term.description && (
-                            <Typography variant="body1" color={colorStyled.TEXTCOLOR} paragraph>
+                            <Typography variant="body1" color={colorStyled.onSurface} paragraph>
                                 {term.description}
                             </Typography>
                         )}
@@ -120,11 +106,11 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                         alignItems="center"
                         gap={2}
                         sx={{
-                            bgcolor: colorStyled.PRIMARY.lighter,
+                            bgcolor: colorStyled.surfaceContainerLow,
+                            border: `1px solid ${colorStyled.outlineVariant}`,
                             p: 2,
                             borderRadius: '8px',
-                            mb: 3,
-                            border: `1px solid ${colorStyled.BORDER_COLOR}`
+                            mb: 3
                         }}
                     >
                         <Typography variant="body1" paragraph>
@@ -135,11 +121,14 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                         </Typography>
                     </Box>
 
-                    <Typography variant="body2" color={colorStyled.TEXTCOLOR} align="center" mb={2}>
+                    <Typography variant="body2" color={colorStyled.onSurface} align="center" mb={2}>
                         Just 1 click to vote
                     </Typography>
 
-                    <Box>
+                    <Box sx={{ 
+                        backgroundColor: colorStyled.surfaceContainerLow,
+                        color: colorStyled.onSurface
+                    }}>
                         <TextField
                             label="Comment (Optional)"
                             multiline
@@ -168,15 +157,14 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                             handleWeekVote('approved');
                         }}
                         disabled={loadingDecision !== null}
-                        startIcon={loadingDecision === 'approved' ? <CircularProgress size={18} color="inherit" /> :
-                            <ThumbUpAltOutlined />}
+                        startIcon={loadingDecision === 'approved' ? <CircularProgress size={18} color="inherit" /> : <ThumbUpAltOutlined />}
                         sx={{
                             px: 4,
                             py: 1.5,
                             fontWeight: 'bold',
-                            bgcolor: colorStyled.GREEN_COLOR,
+                            bgcolor: colorStyled.primary,
                             '&:hover': {
-                                bgcolor: '#03570e'
+                                bgcolor: colorStyled.primaryContainer,
                             }
                         }}
                     >
@@ -185,8 +173,7 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                     <Button
                         variant="contained"
                         color="error"
-                        startIcon={loadingDecision === 'rejected' ? <CircularProgress size={18} color="inherit" /> :
-                            <ThumbDownAltOutlined />}
+                        startIcon={loadingDecision === 'rejected' ? <CircularProgress size={18} color="inherit" /> : <ThumbDownAltOutlined />}
                         onClick={() => {
                             handleWeekVote('rejected');
                         }}
@@ -195,10 +182,8 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                             px: 4,
                             py: 1.5,
                             fontWeight: 'bold',
-                            bgcolor: colorStyled.ORANGE_COLOR,
-                            '&:hover': {
-                                bgcolor: '#b63011'
-                            }
+                            bgcolor: colorStyled.error,
+                            '&:hover': { bgcolor: colorStyled.onErrorContainer }
                         }}
                     >
                         Not Agree

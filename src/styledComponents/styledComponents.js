@@ -55,12 +55,12 @@ export const StyledBadge = styled(
 )(({ customVariant }) => ({
     '& .MuiBadge-badge': {
         ...(customVariant === 'orange' && {
-            backgroundColor: colorStyled.ORANGE_COLOR,
-            color: colorStyled.CONTAINER_BACKGROUND_COLOR
+            backgroundColor: colorStyled.tertiary,
+            color: colorStyled.onTertiary
         }),
         ...(customVariant === 'blue' && {
-            backgroundColor: colorStyled.PRIMARY.main,
-            color: colorStyled.CONTAINER_BACKGROUND_COLOR
+            backgroundColor: colorStyled.primaryContainer,
+            color: colorStyled.onPrimaryContainer
         })
     }
 }));
@@ -72,12 +72,12 @@ StyledBadge.propTypes = {
 export const StyledChip = styled(Chip)(({ customVariant }) => ({
     '&.MuiChip-root': {
         ...(customVariant === 'mention' && {
-            backgroundColor: colorStyled.ORANGE_COLOR,
-            color: colorStyled.CONTAINER_BACKGROUND_COLOR
+            backgroundColor: colorStyled.tertiary,
+            color: colorStyled.onTertiary
         }),
         ...(customVariant === 'agreement' && {
-            backgroundColor: colorStyled.PRIMARY.lightMain,
-            color: colorStyled.CONTAINER_BACKGROUND_COLOR
+            backgroundColor: colorStyled.primaryContainer,
+            color: colorStyled.onPrimaryContainer
         })
     }
 }));

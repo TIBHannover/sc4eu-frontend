@@ -7,7 +7,7 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
 import { selectVisualNotation } from 'redux/actions/globalUI_actions';
 import styled, { keyframes } from 'styled-components';
-import { PRIMARY, SECONDARY } from '../RRView/StyledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
 import html2canvas from 'html2canvas';
 import ScreenCapture from '../ScreenCapture';
 import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
@@ -82,7 +82,7 @@ class GraphVisUi extends Component {
                 node_mouseSingleClick: true,
                 node_mouseDoubleClick: true,
                 node_hasNodeSelection: true,
-                graphBgColor: PRIMARY.lighter, // could be customizable
+                graphBgColor: colorStyled.secondaryContainer, // could be customizable
                 configSelected: 'Default',
                 link_mouseDrag: true,
                 link_mouseHover: true
@@ -238,7 +238,7 @@ class GraphVisUi extends Component {
                         onChange={e => {
                             this.graph.updateColorOfObjectPropsWithPrefix(item, e.target.value);
                             this.updateColorValuesOProps[item] = e.target.value;
-                            this.setState(prevState=> ({ updateFlipFlop: !prevState.updateFlipFlop }));
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
                         }}
                         value={this.updateColorValuesOProps[item]}
                         onBlur={() => {
@@ -274,7 +274,7 @@ class GraphVisUi extends Component {
                         }));
                     }}
                 >
-                    <DropdownToggle caret style={{ backgroundColor: SECONDARY.dark, height: '35px' }}>
+                    <DropdownToggle caret style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary, height: '35px' }}>
                         Notation: {this.props.visualNotation}
                     </DropdownToggle>
                     <DropdownMenu>
@@ -447,7 +447,8 @@ class GraphVisUi extends Component {
                         marginBottom: '10px',
                         paddingLeft: '10px',
                         paddingRight: '10px',
-                        background: PRIMARY.lighter,
+                        background: colorStyled.secondaryContainer,
+                        color: colorStyled.onPrimary,
                         position: 'relative',
                         borderTopLeftRadius: '10px',
                         borderTopRightRadius: '10px',
@@ -477,7 +478,8 @@ class GraphVisUi extends Component {
                             this.graph.zoomToExtent();
                         }}
                         style={{
-                            backgroundColor: SECONDARY.dark,
+                            backgroundColor: colorStyled.primary,
+                            color: colorStyled.onPrimary,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -488,7 +490,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: SECONDARY.dark,
+                            backgroundColor: colorStyled.primary,
+                            color: colorStyled.onPrimary,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -500,7 +503,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: SECONDARY.dark,
+                            backgroundColor: colorStyled.primary,
+                            color: colorStyled.onPrimary,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -512,7 +516,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: SECONDARY.dark,
+                            backgroundColor: colorStyled.primary,
+                            color: colorStyled.onPrimary,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -524,7 +529,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: SECONDARY.dark,
+                            backgroundColor: colorStyled.primary,
+                            color: colorStyled.onPrimary,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -543,7 +549,7 @@ class GraphVisUi extends Component {
                             onClick={() => {
                                 this.setState(prevState => ({ leftSideBarExpanded: !prevState.leftSideBarExpanded }));
                             }}
-                            style={{ backgroundColor: SECONDARY.dark }}
+                            style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
                         >
                             {this.state.leftSideBarExpanded ? '<' : '>'}
                         </StyledButton>
@@ -566,7 +572,7 @@ class GraphVisUi extends Component {
                                 onClick={() => {
                                     this.setState(prevState => ({ rightSideBarExpanded: !prevState.rightSideBarExpanded }));
                                 }}
-                                style={{ backgroundColor: SECONDARY.dark }}
+                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
                             >
                                 {this.state.rightSideBarExpanded ? '>' : '<'}
                             </Button>

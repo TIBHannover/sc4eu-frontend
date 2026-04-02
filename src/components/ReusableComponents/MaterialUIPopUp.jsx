@@ -21,7 +21,7 @@ const MaterialUIPopUp = ({ open, onClose, title, message }) => {
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
             <DialogActions style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.primary }}>
                     Close
                 </Button>
             </DialogActions>

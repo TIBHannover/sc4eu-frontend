@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { faProjectDiagram, faCubesStacked, faAlignJustify, faCircleNodes } from '@fortawesome/free-solid-svg-icons';
+import { faProjectDiagram, faAlignJustify } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
-import { PRIMARY, SECONDARY } from './StyledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { fontStyled } from '../../styledComponents/styledFont';
 
@@ -43,9 +43,9 @@ class ItemController extends Component {
             if (this.props.itemContext.isHighlighted) {
                 return 'black';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return PRIMARY.lightMain;
+                return colorStyled.primaryContainer;
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
-                return PRIMARY.main;
+                return colorStyled.secondaryContainer;
             }
             return '#838a92';
         } else {
@@ -180,7 +180,7 @@ const LabelDiv = styled.div`
     height: 30px;
     color: ${props => (props.typedBasedFontColor ? props.typedBasedFontColor : 'black')};
     background-color: ${props =>
-        props.isHighlighted === true ? `${SECONDARY.dark}` : props.typedBasedColor ? props.typedBasedColor : `${PRIMARY.light}`};
+        props.isHighlighted === true ? `${colorStyled.primaryContainer}` : props.typedBasedColor ? props.typedBasedColor : `${colorStyled.secondaryContainer}`};
     font-size: ${fontStyled.fontSize.NormalText};
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
@@ -194,7 +194,7 @@ const ControlButton = styled.div`
     border-bottom: none;
     text-align: center;
     margin-right: ${props => (props.type === 'control' ? '3px' : '-1px')};
-    background-color: ${props => (props?.active === true ? '#005c5f' : `${SECONDARY.dark}`)};
+    background-color: ${props => (props?.active === true ? `${colorStyled.primary}` : `${colorStyled.secondary}`)};
 
     width: 30px;
     height: 30px;

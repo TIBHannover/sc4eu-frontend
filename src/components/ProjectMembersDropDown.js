@@ -30,13 +30,13 @@ function ProjectMembersDropdown(props, { ...args }) {
                 </DropdownToggle>
                 <StyledDropdownMenu {...args}>
                     <DropdownItem style={{ padding: '0.5rem 0.1rem', width: '100%', backgroundColor: 'lightgray' }}>
-                        <div style={{ marginLeft: '3%', float: 'left', fontWeight: 500, color: `${colorStyled.SECONDARY.dark}` }}>
+                        <div style={{ marginLeft: '3%', float: 'left', fontWeight: 500, color: `${colorStyled.secondaryContainer}` }}>
                             Project Members
                         </div>
                         <FontAwesomeIcon
                             icon={faUserPlus}
                             size={'lg'}
-                            color={colorStyled.SECONDARY.darker}
+                            color={colorStyled.onSecondaryContainer}
                             title={'Click to add new user'}
                             style={{ float: 'right', marginRight: '1%' }}
                             onClick={() => {
@@ -62,7 +62,7 @@ function ProjectMembersDropdown(props, { ...args }) {
                                         <FontAwesomeIcon
                                             icon={faTrash}
                                             size={'1x'}
-                                            color={colorStyled.SECONDARY.darker}
+                                            color={colorStyled.onSecondaryContainer}
                                             title={'Click to unregister this user from this Project'}
                                             style={{ float: 'right', marginRight: '3%' }}
                                             onClick={() => {

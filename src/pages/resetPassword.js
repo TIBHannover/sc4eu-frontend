@@ -106,7 +106,7 @@ class ResetPassword extends Component {
                         </FormGroup>
                         <FormGroup check row>
                             <Col sm={{ offset: 2 }}>
-                                <Button onClick={this.handleSetNewPassword} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                                <Button onClick={this.handleSetNewPassword} style={{ backgroundColor: colorStyled.primary }}>
                                     Submit
                                 </Button>
                             </Col>

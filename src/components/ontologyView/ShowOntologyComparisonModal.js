@@ -23,7 +23,7 @@ class ShowOntologyComparisonModal extends Component {
                 <ModalFooter>
                     <Button
                         id="finishButton"
-                        style={{ background: colorStyled.SECONDARY.dark }}
+                        style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
                         onClick={() => {
                             this.props.callback();
                         }}

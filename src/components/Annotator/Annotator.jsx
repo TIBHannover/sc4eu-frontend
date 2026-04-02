@@ -22,7 +22,6 @@ import {
     lightSelectStyles
 } from './styles';
 import { colorStyled } from '../../styledComponents/styledColor';
-import { PRIMARY } from '../RRView/StyledComponents';
 import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
 
@@ -84,7 +83,7 @@ export const Annotator = () => {
                             ancestor_iri: ancestor.iri,
                             ancestor_synonyms: ancestor.synonyms || [],
                             ontologyId: ancestor.ontologyId,
-                            labels: new Set(),
+                            labels: new Set()
                         };
                     }
 
@@ -94,7 +93,7 @@ export const Annotator = () => {
 
             return Object.values(grouped).map(entry => ({
                 ...entry,
-                labels: Array.from(entry.labels),
+                labels: Array.from(entry.labels)
             }));
         } else {
             const uniqueTerms = new Map();
@@ -109,7 +108,7 @@ export const Annotator = () => {
                         ancestor_term: match.ancestors?.[maxDepth - 1]?.label || '',
                         iri: match.iri,
                         ontologyId: match.ontologyId,
-                        synonyms: match.synonyms,
+                        synonyms: match.synonyms
                     });
                 }
             });
@@ -122,7 +121,8 @@ export const Annotator = () => {
         columns: createColumns(groupByAncestor),
         data: tableData,
         initialState: {
-            pagination: { pageSize: 5, pageIndex: 0 }, density: 'compact',
+            pagination: { pageSize: 5, pageIndex: 0 },
+            density: 'compact',
             enableColumnOrdering: true,
             columnOrder: groupByAncestor
                 ? ['mrt-row-expand', 'ancestor_term', 'ontologyId', 'labels', 'ancestor_iri', 'ancestor_synonyms']
@@ -138,28 +138,19 @@ export const Annotator = () => {
                 ancestor_synonyms: !isMobile,
                 iri: !isMobile,
                 synonyms: !isMobile
-            },
+            }
         },
         enablePagination: true,
         enableExpanding: true,
         renderDetailPanel: ({ row }) => (
             <Box sx={{ p: 2 }}>
                 {console.log(row.original)}
+                <Typography variant="body2">Ontology ID: {row.original.ontologyId}</Typography>
+                <Typography variant="body2">Ancestor Term: {row.original.ancestor_term}</Typography>
+                <Typography variant="body2">Synonyms: {row.original.synonyms}</Typography>
                 <Typography variant="body2">
-                    Ontology ID: {row.original.ontologyId}
-                </Typography>
-                <Typography variant="body2">
-                    Ancestor Term: {row.original.ancestor_term}
-                </Typography>
-                <Typography variant="body2">
-                    Synonyms: {row.original.synonyms}
-                </Typography>
-                <Typography variant="body2">
-                    IRI: {' '}
-                    <Link
-                        href={row.original.iri}
-                        target="_blank"
-                        rel="noopener noreferrer">
+                    IRI:{' '}
+                    <Link href={row.original.iri} target="_blank" rel="noopener noreferrer">
                         {row.original.iri}
                     </Link>
                 </Typography>
@@ -183,14 +174,15 @@ export const Annotator = () => {
                             display="flex"
                             alignItems="center"
                             border="1px solid"
-                            borderColor={colorStyled.SECONDARY.dark}
+                            borderColor={colorStyled.outline}
                             borderRadius={2}
                             px={1}
                             py={1}
                             gap={1}
-                            backgroundColor={PRIMARY.light}
+                            backgroundColor={colorStyled.secondaryContainer}
+                            color={colorStyled.onSecondaryContainer}
                         >
-                            <Box display="flex" alignItems="center" gap={1} >
+                            <Box display="flex" alignItems="center" gap={1}>
                                 <Typography variant="body2" sx={{ whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
                                     Ancestor Depth:
                                 </Typography>
@@ -200,10 +192,10 @@ export const Annotator = () => {
                                             { value: 1, label: '1' },
                                             { value: 2, label: '2' },
                                             { value: 3, label: '3' },
-                                            { value: 4, label: '4' },
+                                            { value: 4, label: '4' }
                                         ]}
                                         value={selectedDepthOption}
-                                        onChange={(selectedOption) => {
+                                        onChange={selectedOption => {
                                             setSelectedDepthOption(selectedOption);
                                             setMaxDepth(selectedOption.value);
                                         }}
@@ -223,7 +215,7 @@ export const Annotator = () => {
                                     onChange={() => setGroupByAncestor(!groupByAncestor)}
                                     name="groupByAncestor"
                                     size="small"
-                                    style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                                    style={{ backgroundColor: colorStyled.primary }}
                                     disabled={!annotatedText}
                                 />
                             </Box>
@@ -235,16 +227,24 @@ export const Annotator = () => {
         renderBottomToolbarCustomActions: () => (
             <ButtonGroup variant="contained" size="small" aria-label="Basic button group">
                 {csvData.length === 0 ? (
-                    <Button variant="contained" disabled style={{ backgroundColor: colorStyled.SECONDARY.dark, opacity: 0.5, color: "rgba(255, 255, 255, 0.7)" }}>
+                    <Button
+                        variant="contained"
+                        disabled
+                        style={{
+                            backgroundColor: colorStyled.primary,
+                            color: colorStyled.onPrimary,
+                            opacity: 0.5
+                        }}
+                    >
                         Download CSV
                     </Button>
                 ) : (
-                    <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                    <Button variant="contained" style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}>
                         <CSVLink
                             data={csvData}
                             headers={csvHeaders}
                             filename="annotations.csv"
-                            style={{ color: "white", textDecoration: "none", display: "block", width: "100%" }}
+                            style={{ color: 'white', textDecoration: 'none', display: 'block', width: '100%' }}
                         >
                             Download CSV
                         </CSVLink>
@@ -256,35 +256,34 @@ export const Annotator = () => {
                     onClick={exportToExcel}
                     disabled={csvData.length === 0}
                     style={{
-                        backgroundColor: colorStyled.SECONDARY.dark,
+                        backgroundColor: colorStyled.primary,
                         opacity: csvData.length === 0 ? 0.5 : 1,
-                        color: csvData.length === 0 ? "rgba(255, 255, 255, 0.7)" : "white"
+                        color: colorStyled.onPrimary,
                     }}
                 >
                     Download Excel
                 </Button>
             </ButtonGroup>
         )
-
     });
 
     const csvHeaders = groupByAncestor
         ? [
-            { label: 'Ancestor Term', key: 'ancestor_term' },
-            { label: 'Matched Terms', key: 'labels' },
-            { label: 'Ontology ID', key: 'ontologyId' },
-            { label: 'Ancestor IRI', key: 'ancestor_iri' },
-            { label: 'Ancestor Synonyms', key: 'ancestor_synonyms' },
-        ]
+              { label: 'Ancestor Term', key: 'ancestor_term' },
+              { label: 'Matched Terms', key: 'labels' },
+              { label: 'Ontology ID', key: 'ontologyId' },
+              { label: 'Ancestor IRI', key: 'ancestor_iri' },
+              { label: 'Ancestor Synonyms', key: 'ancestor_synonyms' }
+          ]
         : [
-            { label: 'Matched Term', key: 'label' },
-            { label: 'Ancestor Term', key: 'ancestor_term' },
-            { label: 'Ontology ID', key: 'ontologyId' },
-            { label: 'Matched Term IRI', key: 'iri' },
-            { label: 'Matched Term Synonyms', key: 'synonyms' }
-        ];
+              { label: 'Matched Term', key: 'label' },
+              { label: 'Ancestor Term', key: 'ancestor_term' },
+              { label: 'Ontology ID', key: 'ontologyId' },
+              { label: 'Matched Term IRI', key: 'iri' },
+              { label: 'Matched Term Synonyms', key: 'synonyms' }
+          ];
 
-    const csvData = tableData
+    const csvData = tableData;
 
     // Export to Excel
     const exportToExcel = () => {
@@ -399,7 +398,7 @@ export const Annotator = () => {
                 <ButtonContainer>
                     <Button
                         variant="contained"
-                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                        style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
                         onClick={handleAnnotate}
                         disabled={isAnnotateDisabled}
                         aria-label="Annotate text"
@@ -408,7 +407,7 @@ export const Annotator = () => {
                     </Button>
                     <Button
                         variant="contained"
-                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                        style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
                         onClick={handleReset}
                         disabled={isResetDisabled}
                         aria-label="Reset form"

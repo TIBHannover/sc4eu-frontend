@@ -17,21 +17,21 @@ const UpdateConfirmationDialog = ({
         onClose={onClose}
         PaperProps={{
             style: {
-                backgroundColor: colorStyled.PRIMARY.light,
+                backgroundColor: colorStyled.surfaceContainerHigh,
                 borderRadius: '12px',
                 padding: '8px'
             }
         }}
     >
-        <DialogTitle style={{ color: colorStyled.SECONDARY.dark, fontWeight: 'bold' }}>{title}</DialogTitle>
+        <DialogTitle style={{ color: colorStyled.onSurface, fontWeight: 'bold' }}>{title}</DialogTitle>
         <DialogContent>
-            <DialogContentText style={{ color: colorStyled.SECONDARY.darker }}>{contentText}</DialogContentText>
+            <DialogContentText style={{ color: colorStyled.onSurfaceVariant }}>{contentText}</DialogContentText>
         </DialogContent>
         <DialogActions>
             <Button
                 onClick={onClose}
                 style={{
-                    color: colorStyled.SECONDARY.dark,
+                    color: colorStyled.primary,
                     textTransform: 'none'
                 }}
             >
@@ -40,8 +40,8 @@ const UpdateConfirmationDialog = ({
             <Button
                 onClick={onConfirm}
                 style={{
-                    backgroundColor: colorStyled.SECONDARY.dark,
-                    color: 'white',
+                    backgroundColor: colorStyled.primary,
+                    color: colorStyled.onPrimary,
                     textTransform: 'none'
                 }}
                 variant="contained"

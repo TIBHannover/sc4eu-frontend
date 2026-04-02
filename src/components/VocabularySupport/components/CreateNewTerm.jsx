@@ -56,9 +56,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             label: value.label[0],
             id: value.iri,
             description: value.definition?.[0]
-                ? (typeof value.definition[0] === "object"
+                ? typeof value.definition[0] === 'object'
                     ? value.definition[0].value
-                    : value.definition[0])
+                    : value.definition[0]
                 : 'Not Available',
             seeAlso: `url:${url}`,
             status: 'draft',
@@ -99,7 +99,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             // Creating/editing a new term
             if (validateForm()) {
                 const allCells = row.getAllCells();
-                console.log('allCells: ', allCells)
+                console.log('allCells: ', allCells);
                 const tableCells = allCells.filter(cell => cell.column.id !== 'mrt-row-expand' && cell.column.id !== 'mrt-row-actions');
 
                 const newTerm = tableCells.reduce((acc, cell) => {
@@ -305,9 +305,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                 <Button
                     onClick={handleCancel}
                     sx={{
-                        backgroundColor: colorStyled.SECONDARY.dark,
-                        color: 'white',
-                        '&:hover': { backgroundColor: 'darkgray' }
+                        backgroundColor: colorStyled.primary,
+                        color: colorStyled.onPrimary,
+                        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                     }}
                 >
                     Cancel
@@ -316,9 +316,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                     onClick={handleSave}
                     variant="contained"
                     sx={{
-                        backgroundColor: colorStyled.SECONDARY.dark,
-                        color: 'white',
-                        '&:hover': { backgroundColor: 'darkgray' }
+                        backgroundColor: colorStyled.primary,
+                        color: colorStyled.onPrimary,
+                        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                     }}
                 >
                     {activeTab === 0 && selectedTerm ? 'Add Selected Term' : displayType === 'create' ? 'Create' : 'Save'}

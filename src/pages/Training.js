@@ -8,6 +8,7 @@ import SemanticWeb from '../assets/images/SemanticWeb.png';
 import SpoSemantic from '../assets/images/SPOSemanticWeb.png';
 import WEBPROTEGEIMAGE from '../assets/images/WEBPROTEGEImage.png';
 import { MAX_WIDTH } from '../styledComponents/styledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
 
 const items = [
     {
@@ -47,7 +48,7 @@ const documentData = [
         id: '1',
         heading: 'Welcome to the Ontology Curation Portal Training section',
         content:
-            'This Ontology Curation Portal (OCP) is a solution that has emerged from the <a href="https://sc3-project.automotive.oth-aw.de/" target="_blank">Semantically Connected Semiconductor Supply Chains</a> project funded by the <a href="https://cordis.europa.eu/project/id/101007312/de" target="_blank">European Commission</a>. The portal is intended to be used by anyone involved in implementing processes or tools to support accurate information exchange and validation. Not only between humans, but also between machines, without human involvement, applying ontologies. In the next sections we give a brief overview and introduction to the general challenge we are addressing, what an ontology is and how it can be created and maintained, collection, visualization and authoring of ontologies.<br>' +
+            `This Ontology Curation Portal (OCP) is a solution that has emerged from the <a href="https://sc3-project.automotive.oth-aw.de/" target="_blank">Semantically Connected Semiconductor Supply Chains</a> project funded by the <a href="https://cordis.europa.eu/project/id/101007312/de" target="_blank">European Commission</a>. The portal is intended to be used by anyone involved in implementing processes or tools to support accurate information exchange and validation. Not only between humans, but also between machines, without human involvement, applying ontologies. In the next sections we give a brief overview and introduction to the general challenge we are addressing, what an ontology is and how it can be created and maintained, collection, visualization and authoring of ontologies.<br>` +
             '<br>' +
             'All sections of this training are as much as possible independent from other sections but interconnected. You can therefore read them randomly if you are only interested in certain topics. However, if you read them in our suggested order, you will get a good introduction to the features of the portal and the thinking behind them. <br><br>' +
             'Have fun :-)\n'
@@ -400,7 +401,7 @@ const LeftSidebar = styled.div`
         color: #333;
         font-family: 'Roboto', sans-serif;
     }
-    
+
     @media (max-width: ${MAX_WIDTH}) {
         width: 100%;
         padding: 10px;
@@ -455,18 +456,22 @@ const Page = styled.div`
 
 const PageTitle = styled.h3`
     margin-bottom: 10px;
-    color: #333;
+    color: ${colorStyled.onSurface};
 `;
 
 const PageContent = styled.p`
     text-align: justify;
-    color: #666;
+    color: ${colorStyled.onSurfaceVariant};
+
+    a {
+        color: ${colorStyled.primary};
+    }
 `;
 
 const StyledLink = styled(Link)`
     display: block;
     overflow: hidden;
-    color: #333;
+    color: ${colorStyled.onSurface};
     text-decoration: none;
     margin-bottom: 10px;
     padding: 5px 10px;
@@ -474,27 +479,12 @@ const StyledLink = styled(Link)`
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: #f0f0f0;
+        background-color: ${colorStyled.primary}1A;
     }
 
     &.active {
-        background-color: #e9ecef;
+        background-color: ${colorStyled.primary}29;
         font-weight: bold;
-    }
-`;
-
-const VideoWrapper = styled.div`
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    position: relative;
-    margin: 16px 0;
-
-    iframe {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
     }
 `;
 
@@ -587,7 +577,6 @@ class Training extends Component {
             </RootDiv>
         );
     }
-
 }
 
 export default Training;

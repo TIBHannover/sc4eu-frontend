@@ -49,10 +49,9 @@ export const StyledResourceAndRelationHeader = styled.div`
     padding: 5px;
     // border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
     padding: 5px;
-    color: white;
-    //background-color: ${props => (props.isHighlighted === true ? 'black' : '#4388cc')};
-    background-color: ${props => (props.experimentalLayout ? PRIMARY.dark : props.isHighlighted === true ? 'black' : '#4388cc')};
-    color:${props => (props.experimentalLayout ? 'black' : 'blue')};
+    color: ${colorStyled.onPrimary};
+    background-color: ${props => (props.experimentalLayout ? colorStyled.surface : props.isHighlighted === true ? colorStyled.primary : colorStyled.surfaceContainer)};
+    color:${props => (props.experimentalLayout ? colorStyled.onSurface : colorStyled.onPrimaryContainer)};
     :focus {
         outline: none;
     }
@@ -97,23 +96,12 @@ export const HeaderValueInput = styled(Input)`
     }
 `;
 
-export const PRIMARY = {
-    lighter: '#F7FBFC',
-    light: '#D6E6F2',
-    lightMain: '#92bdff',
-    main: '#B9D7EA',
-    dark: '#769FCD'
-};
-export const SECONDARY = {
-    dark: '#536b78'
-};
-
 export const StyledHeaderDiv = styled.div`
     margin: 10px 6px 10px 10px;
     border-radius: 7px 7px 7px 7px;
-    text-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background-color: ${colorStyled.PRIMARY.dark};
+    text-color: ${colorStyled.onPrimaryContainer};
+    color: ${colorStyled.onPrimaryContainer};
+    background-color: ${colorStyled.primaryContainer};
     height: 50px;
     display: flex;
     align-items: center;

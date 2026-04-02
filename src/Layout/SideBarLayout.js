@@ -19,7 +19,7 @@ const createMixin = activePage => ({
     top: 0,
     overflow: 'hidden',
     transition: '0.6s',
-    backgroundColor: `${colorStyled.PRIMARY.lighter}`,
+    backgroundColor: `${colorStyled.surfaceContainerLow}`,
     [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
         height: activePage === '/' ? 'calc(100% - 55px)' : 'calc(100% - 0px)',
         top: 50
@@ -44,12 +44,12 @@ const MobileDrawerButton = styled(IconButton)(({ theme }) => ({
     top: 8,
     left: 8,
     zIndex: theme.zIndex.drawer + 1,
-    backgroundColor: colorStyled.PRIMARY.lighter,
+    backgroundColor: colorStyled.surfaceContainerLow,
     boxShadow: theme.shadows[2],
     borderRadius: '50%',
 
     '&:hover': {
-        backgroundColor: colorStyled.PRIMARY.light,
+        backgroundColor: colorStyled.surfaceContainerHigh,
     },
 }));
 

@@ -1,197 +1,192 @@
-import React, { Component } from 'react';
-import { Collapse, Button, Container, Table } from 'reactstrap';
-import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import styled from 'styled-components';
+import React from 'react';
+import { Box, Accordion, AccordionSummary, AccordionDetails, Typography, Card, CardContent, Link, Container } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { colorStyled } from '../styledComponents/styledColor';
 import { fontStyled } from '../styledComponents/styledFont';
 
-export default class Faq extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            collapseUserRole: false,
-            collapseIssueManagement: false,
-            collapseWebProtege: false
-        };
+const USER_ROLES = [
+    {
+        name: 'System Admin',
+        role:
+            '· Read and write permission on all ontologies\n\n' +
+            '· Can create/remove Projects\n\n' +
+            '· Add/remove all other users to projects\n\n' +
+            '· Can grant to another user Project Admin rights\n\n' +
+            '· Mark ontologies Public, or Not-Public'
+    },
+    {
+        name: 'Project Admin',
+        role:
+            '· Read and write permission on project content\n\n' +
+            '· Can add and remove *Users to his projects\n\n' +
+            '· Mark ontologies Public, or Not-Public'
+    },
+    {
+        name: 'Public User',
+        role: '· Read permission on all public content\n\n· Write ontologies in public Projects'
+    },
+    {
+        name: 'Member',
+        role: '· Has read and write permission in his projects'
     }
+];
 
-    componentDidMount() {
+const ISSUE_MANAGEMENT_LINK = 'https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues';
+const PORTAL_LINK = 'https://service.tib.eu/sc3/';
+const WEBPROTEGE_LINK = 'https://service.tib.eu/sc3/webprotege';
+
+const accordionSx = {
+    mb: 2,
+    borderRadius: '10px',
+    overflow: 'hidden',
+    '&:before': { display: 'none' }
+};
+
+const accordionHeaderSx = {
+    backgroundColor: colorStyled.primary,
+    px: { xs: 1.5, sm: 2 },
+    minHeight: '48px',
+    '& .MuiAccordionSummary-content': {
+        margin: 0,
+        alignItems: 'center'
+    },
+    '&:hover': {
+        backgroundColor: colorStyled.primaryContainer
     }
+};
 
-    toggleUserRole = () => {
-        this.setState(prevState => ({ collapseUserRole: !prevState.collapseUserRole }));
-    };
+const accordionTitleSx = {
+    color: colorStyled.onPrimary
+};
 
-    toggleIssueManagement = () => {
-        this.setState(prevState => ({ collapseIssueManagement: !prevState.collapseIssueManagement }));
-    };
+const expandIconSx = {
+    color: colorStyled.onPrimary
+};
 
-    toggleWebProtege = () => {
-        this.setState(prevState => ({ collapseWebProtege: !prevState.collapseWebProtege }));
-    };
-
-    render() {
-        const items = [
-            {
-                name: 'System Admin',
-                role:
-                    '· Read and write permission  on all ontologies\n' +
-                    '\n' +
-                    '· Can create/remove Projects\n' +
-                    '\n' +
-                    '· Add/remove all other users to projects\n' +
-                    '\n' +
-                    '· Can grant to another user Project Admin rights\n' +
-                    '\n' +
-                    '· Mark ontologies Public, or Not-Public'
-            },
-            {
-                name: 'Project Admin',
-                role:
-                    '· Read and write permission  on project content\n' +
-                    '\n' +
-                    '· Can add and remove *Users to his projects\n' +
-                    '\n' +
-                    '· Mark ontologies Public, or Not-Public'
-            },
-            {
-                name: 'Public User',
-                role: '· Read permission on all public content\n\n· Write ontologies in public Projects'
-            },
-            {
-                name: 'Member',
-                role: '· Has read and write permission in his projects '
-            }
-        ];
-        return (
-            <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-                <FaqContainer>
-                    <FaqButton className="btn" onClick={this.toggleUserRole}>
-                        <Icon icon={!this.state.collapseUserRole ? faCaretRight : faCaretDown}
-                              style={{ marginRight: '5px' }} />
-                        Definition of User Roles
-                    </FaqButton>
-                    <Collapse isOpen={this.state.collapseUserRole}>
-                        {items.map((item, id) => (
-                            <RoleCard key={id}>
-                                <RoleName>{item.name}</RoleName>
-                                <RoleText>{item.role}</RoleText>
-                            </RoleCard>
-                        ))}{' '}
-                    </Collapse>
-                    <FaqButton className="btn" onClick={this.toggleIssueManagement}>
-                        <Icon icon={!this.state.collapseIssueManagement ? faCaretRight : faCaretDown}
-                              style={{ marginRight: '5px' }} />
-                        Issue Management
-                    </FaqButton>
-                    <Collapse isOpen={this.state.collapseIssueManagement}>
-                        <StyledText>
-                            <span>
-                                If you face any problems with our portal, face any issues with our running system or if you have any further
-                                questions, please get in contact with us via our issue management system that you will find here :
-                            </span>
-                            <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                href="https://gitlab.com/TIBHannover/sc3-project/sc3-issue-management/-/issues"
-                                rel="noreferrer"
-                            >
-                                SC4EU Issue Management
-                            </a>
-                        </StyledText>
-                    </Collapse>
-                    <FaqButton className="btn" onClick={this.toggleWebProtege}>
-                        <Icon icon={!this.state.collapseWebProtege ? faCaretRight : faCaretDown}
-                              style={{ marginRight: '5px' }} />
-                        WebProtege
-                    </FaqButton>
-                    <Collapse isOpen={this.state.collapseWebProtege}>
-                        <StyledText>
-                            <span>
-                                WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology
-                                Curation Curation Portal ({' '}
-                            </span>
-                            <a style={{ color: colorStyled.SECONDARY.link }} target="_blank"
-                               href="https://service.tib.eu/sc3/" rel="noreferrer">
-                                SC4EU Ontology Curation Portal
-                            </a>
-                            <span>) and WebProtege (</span>
-                            <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                href="https://service.tib.eu/sc3/webprotege"
-                                rel="noreferrer"
-                            >
-                                WebProtege
-                            </a>
-                            <span>
-                                ) are only loosely coupled. Both have their own authentication solutions and data management systems. It is therefore
-                                not yet possible to access WebProtege content directly from the Visualization tab. A workaround is to first work
-                                collaboratively Web-protege. Then download the ontology from WebProtege and from there into the visualization tool. A
-                                more integrated solution is coming.
-                            </span>
-                        </StyledText>
-                    </Collapse>
-                </FaqContainer>
-            </div>
-        );
+const bodyTextSx = {
+    color: colorStyled.onSurfaceVariant,
+    textAlign: 'justify',
+    mt: 1,
+    fontSize: {
+        xs: fontStyled.fontSize.MobileViewNormalText,
+        md: fontStyled.fontSize.LaptopAndDesktopViewNormalText
     }
+};
+
+const linkSx = {
+    color: colorStyled.primary,
+    textDecoration: 'none',
+    '&:hover': {
+        color: colorStyled.onPrimaryContainer,
+        textDecoration: 'underline'
+    }
+};
+
+const cardSx = {
+    borderRadius: '8px',
+    mb: 1.5,
+    backgroundColor: colorStyled.surfaceContainerLow,
+    borderColor: colorStyled.outlineVariant
+};
+
+const cardContentSx = {
+    p: 1.5,
+    '&:last-child': { pb: 1.5 }
+};
+
+const cardTitleSx = {
+    color: colorStyled.onSurface
+};
+
+const cardBodySx = {
+    whiteSpace: 'pre-line',
+    color: colorStyled.onSurfaceVariant
+};
+
+function AccordionHeader({ title }) {
+    return (
+        <AccordionSummary expandIcon={<ExpandMoreIcon sx={expandIconSx} />} sx={accordionHeaderSx}>
+            <Typography variant="h6" sx={accordionTitleSx}>
+                {title}
+            </Typography>
+        </AccordionSummary>
+    );
 }
 
-const StyledText = styled.p`
-    color: ${colorStyled.TEXTCOLOR};
-    text-align: justify;
-    margin-top: 2%;
-    font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
+function ExternalLink({ href, children }) {
+    return (
+        <Link href={href} target="_blank" rel="noreferrer" sx={linkSx}>
+            {children}
+        </Link>
+    );
+}
 
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewNormalText};
-    }
-`;
+function UserRoleCard({ name, role }) {
+    return (
+        <Card variant="outlined" sx={cardSx}>
+            <CardContent sx={cardContentSx}>
+                <Typography variant="h6" sx={cardTitleSx}>
+                    {name}
+                </Typography>
+                <Typography variant="body1" sx={cardBodySx}>
+                    {role}
+                </Typography>
+            </CardContent>
+        </Card>
+    );
+}
 
-const FaqButton = styled(Button)`
-    width: 100%;
-    margin-top: 16px;
-    text-align: left;
-    background: ${colorStyled.SECONDARY.dark};
-    padding: 12px 16px;
-    min-height: 48px;
-    font-size: 16px;
+export default function Faq() {
+    return (
+        <Box
+            sx={{
+                width: '100%',
+                height: '100%',
+                overflow: 'auto',
+                backgroundColor: colorStyled.background
+            }}
+        >
+            <Container
+                sx={{
+                    backgroundColor: colorStyled.surfaceContainerLowest,
+                    borderRadius: '10px',
+                    p: { xs: 1.5, sm: 2 }
+                }}
+            >
+                <Accordion sx={accordionSx}>
+                    <AccordionHeader title="Definition of User Roles" />
+                    <AccordionDetails>
+                        {USER_ROLES.map(item => (
+                            <UserRoleCard key={item.name} name={item.name} role={item.role} />
+                        ))}
+                    </AccordionDetails>
+                </Accordion>
 
-    display: flex;
-    align-items: center;
+                <Accordion sx={accordionSx}>
+                    <AccordionHeader title="Issue Management" />
+                    <AccordionDetails>
+                        <Typography sx={bodyTextSx}>
+                            If you face any problems with our portal, face any issues with our running system or if you have any further questions,
+                            please get in contact with us via our issue management system that you will find here:{' '}
+                            <ExternalLink href={ISSUE_MANAGEMENT_LINK}>SC4EU Issue Management</ExternalLink>
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
 
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: 14px;
-        padding: 14px;
-    }
-`;
-
-const FaqContainer = styled(Container)`
-    background-color: #ffffff;
-    border-radius: 10px;
-    padding: 16px;
-    height: auto;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        padding: 12px;
-    }
-`;
-
-const RoleCard = styled.div`
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
-`;
-
-const RoleName = styled.div`
-    font-weight: 600;
-    margin-bottom: 6px;
-`;
-
-const RoleText = styled.div`
-    white-space: pre-line;
-`;
+                <Accordion sx={accordionSx}>
+                    <AccordionHeader title="WebProtege" />
+                    <AccordionDetails>
+                        <Typography sx={bodyTextSx}>
+                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology Curation
+                            Portal ( <ExternalLink href={PORTAL_LINK}>SC4EU Ontology Curation Portal</ExternalLink> ) and WebProtege ({' '}
+                            <ExternalLink href={WEBPROTEGE_LINK}>WebProtege</ExternalLink> ) are only loosely coupled. Both have their own
+                            authentication solutions and data management systems. It is therefore not yet possible to access WebProtege content
+                            directly from the Visualization tab. A workaround is to first work collaboratively in WebProtege. Then download the
+                            ontology from WebProtege and from there into the visualization tool. A more integrated solution is coming.
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+            </Container>
+        </Box>
+    );
+}
