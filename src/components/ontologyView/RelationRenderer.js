@@ -215,7 +215,7 @@ class RelationRenderer extends Component {
                     </InputGroup>
                 </div>
                 {/* Relations*/}
-                <Scrollbars style={{ marginTop: '10px', height: 'calc(50vh)' }}>
+                <Scrollbars style={{ marginTop: '10px', height: 'calc(100vh - 120px)' }}>
                     <div key={this.state.updateFlipFlop} style={{ paddingRight: '5px' }}>
                         {this.renderAllRelations()}
                     </div>

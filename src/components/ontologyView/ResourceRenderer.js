@@ -207,7 +207,7 @@ class ResourceRenderer extends Component {
                 {/* Resources*/}
 
                 {/*WHY IS KEY A BOOL??? */}
-                <Scrollbars style={{ marginTop: '10px', height: 'calc(40vh - 100px)' }}>
+                <Scrollbars style={{ marginTop: '10px', height: 'calc(100vh - 120px)' }}>
                     <div id="resourceRendererContainer" key={this.state.updateFlipFlop} style={{ paddingRight: '5px' }}>
                         {this.renderAllResources()}
                     </div>
