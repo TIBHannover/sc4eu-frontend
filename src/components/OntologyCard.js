@@ -12,7 +12,6 @@ import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import theme from '../theme';
 import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
 import DeleteConfirmationDialog from '../utils/DeleteConfirmationDialog';
 import UpdateConfirmationDialog from '../utils/UpdateConfirmationDialog';
@@ -25,8 +24,8 @@ import { updateOntologyData } from '../network/UpdateOntologyData';
 
 const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
     & .MuiTooltip-tooltip {
-        background-color: ${colorStyled.PRIMARY.dark};
-        color: white;
+        background-color: ${colorStyled.inverseSurface};
+        color: ${colorStyled.inverseOnSurface};
         font-size: 14px;
         padding: 12px 16px;
         border-radius: 8px;
@@ -35,7 +34,7 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
         margin: 8px;
     }
     & .MuiTooltip-arrow {
-        color: ${colorStyled.PRIMARY.dark};
+        color: ${colorStyled.inverseSurface};
     }
 `;
 
@@ -201,7 +200,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 {ontology.commitsBehind > 0 && (
                                     <>
                                         <br />
-                                        <strong style={{ color: theme.palette.warning.main }}>
+                                        <strong style={{ color: colorStyled.onErrorContainer }}>
                                             {ontology.commitsBehind} {ontology.commitsBehind === 1 ? 'commit' : 'commits'} behind
                                         </strong>
                                     </>
@@ -213,7 +212,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 component="div"
                                 style={{
                                     marginTop: '8px',
-                                    color: theme.palette.error.main,
+                                    color: colorStyled.errorContainer,
                                     fontWeight: 'bold'
                                 }}
                             >
@@ -277,7 +276,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 </Typography>
                             </div>
                             <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '16px' }}>
-                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={1}>
                                     {ontology.name}
                                 </Typography>
                             </CardContent>
@@ -359,7 +358,7 @@ export default connect(null, mapDispatchToProps)(OntologyCard);
 
 const StyledCard = styled(Card)`
     && {
-        background-color: ${colorStyled.SECONDARY.dark};
+        background-color: ${colorStyled.primary};
         padding: 3px;
         border-radius: 20px;
         transition: transform 0.2s;

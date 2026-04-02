@@ -47,8 +47,8 @@ const StyledHeadingDiv = styled.div`
     border-radius: 10px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
-    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background-color: ${colorStyled.PRIMARY.dark};
+    background-color: ${colorStyled.surfaceContainer};
+    color: ${colorStyled.onSurface};
     height: 50px;
     display: flex;
     align-items: center;
@@ -61,7 +61,8 @@ const OpenCloseButton = styled(Button)`
     width: 28px;
     border-radius: 30px;
     padding: 0;
-    background-color: ${colorStyled.SECONDARY.dark};
+    background-color: ${colorStyled.primary};
+    color: ${colorStyled.onPrimary};
     position: relative;
     top: -15px;
     left: -20px;

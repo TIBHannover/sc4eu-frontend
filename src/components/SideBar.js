@@ -58,27 +58,27 @@ const StyledText = styled.span`
         margin-left: 20px;
     }
 `;
+
 const StyledLink = styled(NavLink)`
     width: 100%;
     height: 40px;
     display: inline-block;
     border-radius: 4px;
     padding: 7px 10px 7px 11px;
-    border: 1px;
     background: transparent;
-    color: black;
+    color: ${colorStyled.onSurface};
     text-decoration: none !important;
     font-size: 14px;
+    transition: background-color 0.15s ease;
 
     :hover {
-        background-color: ${colorStyled.PRIMARY.light};
-        color: black;
+        background-color: ${colorStyled.primary}1A;
+        color: ${colorStyled.onSurface};
     }
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 30px;
         padding: 3px 10px 10px 5px;
-        font-size: ${colorStyled.PRIMARY.light};
     }
 `;
 
@@ -88,13 +88,15 @@ const StyledButton = styled.button`
     display: inline-block;
     padding: 7px 100px 7px 11px;
     background: transparent;
-    color: black;
+    color: ${colorStyled.onSurface};
     border-radius: 4px;
     border: none;
     font-size: 14px;
+    transition: background-color 0.15s ease;
 
     :hover {
-        background-color: ${colorStyled.PRIMARY.light};
+        background-color: ${colorStyled.primary}1A;
+        color: ${colorStyled.onSurface};
     }
 `;
 
@@ -118,10 +120,10 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
         Cookies.set(MODE_OF_OPERATIONS, val);
         setIsActiveTab(val);
     };
-
+    
     const ActiveStyle = {
-        backgroundColor: `${colorStyled.PRIMARY.light}`,
-        color: 'black'
+        backgroundColor: colorStyled.secondaryContainer,
+        color: colorStyled.onSecondaryContainer
     };
 
     const getOntologyFileForDocumentation = async () => {

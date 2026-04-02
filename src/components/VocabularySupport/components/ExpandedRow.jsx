@@ -195,8 +195,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         onClick={() => handleAgreementSubmit()}
                                         variant="contained"
                                         sx={{
-                                            backgroundColor: colorStyled.ORANGE_COLOR,
-                                            '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }
+                                            backgroundColor: colorStyled.primary,
+                                            color: colorStyled.onPrimary,
+                                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                                         }}
                                         disabled={!agreementType}
                                     >
@@ -310,7 +311,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     <Chip
                                         label="Check last consensus"
                                         size="small"
-                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.PRIMARY.main }}
+                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.tertiary, color: colorStyled.onTertiary }}
                                         onClick={() => setOpenLastConsensusDialog(true)}
                                     />
                                 )}
@@ -342,8 +343,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             onClick={() => setViewAgreementMode(true)}
                                             variant="contained"
                                             sx={{
-                                                backgroundColor: colorStyled.ORANGE_COLOR,
-                                                '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }
+                                                backgroundColor: colorStyled.primary,
+                                                color: colorStyled.onPrimary,
+                                                '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                                             }}
                                             fullWidth={isMobile ? true : false}
                                         >
@@ -365,7 +367,14 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                                     setIsConsensusClosed(true);
                                                 }}
                                                 variant="contained"
-                                                sx={buttonStyle}
+                                                sx={{
+                                                    backgroundColor: colorStyled.tertiary,
+                                                    color: colorStyled.onTertiary,
+                                                    '&:hover': {
+                                                        backgroundColor: colorStyled.tertiaryContainer,
+                                                        color: colorStyled.onTertiaryContainer
+                                                    }
+                                                }}
                                                 fullWidth
                                             >
                                                 Close consensus
@@ -507,6 +516,7 @@ export default ExpandedRow;
 
 const buttonStyle = {
     padding: '10px 20px',
-    backgroundColor: colorStyled.SECONDARY.dark,
-    '&:hover': { backgroundColor: 'darkgray' }
+    backgroundColor: colorStyled.primary,
+    color: colorStyled.onPrimary,
+    '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
 };

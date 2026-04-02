@@ -56,7 +56,7 @@ class OntologyIndexInteractions extends Component {
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
                         <span>Back</span>
                     </Link>
-                    <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.SECONDARY.dark }}>
+                    <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.secondaryContainer }}>
                         <u id="tootlipTarget">{projectName}</u> Project
                     </h4>
                     <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
@@ -126,18 +126,6 @@ const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyIndexInteractions);
 
-const StyledHeadingDiv = styled.div`
-    display: flex;
-    height: 60px; /* Absolute height for all screen sizes */
-    justify-content: center;
-    text-align: center;
-    align-items: center;
-    background-color: ${colorStyled.PRIMARY.dark};
-    border-radius: 10px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-`;
-
 const StyledSubHeadingDiv = styled.div`
     height: 70px; /* Absolute height for all screen sizes */
 `;
@@ -149,7 +137,8 @@ const StyledContentDiv = styled.div`
 const StyledButtonToUploadOntology = styled(Button)`
     float: right;
     margin: 10px 15px 15px 0px;
-    background-color: ${colorStyled.SECONDARY.dark};
+    background-color: ${colorStyled.secondary};
+    color: ${colorStyled.onSecondary};
     margin-left: 1%;
     font-size: ${fontStyled.fontSize.NormalText};
 

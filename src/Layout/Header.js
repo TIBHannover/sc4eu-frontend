@@ -200,7 +200,7 @@ class Header extends Component {
                             </div>
                         ) : (
                             <Button
-                                style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                                style={{ backgroundColor: colorStyled.primary }}
                                 className="clearfix"
                                 onClick={() => {
                                     // push that to the redux state so that the user is rederected to its prev location;
@@ -251,7 +251,6 @@ export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)
 const StyledRootDiv = styled.div`
     height: 50px;
     overflow: auto;
-        //background: ${colorStyled.PRIMARY.light};
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
@@ -288,8 +287,8 @@ const StyledRightSideDiv = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-    background: #d6e6f2;
-    color: #000;
+    backgroundColor: ${colorStyled.secondary};
+    color: ${colorStyled.onSecondary};
     font-size: 14px;
     border-radius: 14px;
     border: none !important;
@@ -303,8 +302,8 @@ const StyledButton = styled(Button)`
     transition: background-color 0.3s, color 0.3s;
 
     &:hover {
-        background-color: ${colorStyled.SECONDARY.dark};
-        color: #fff;
+        background-color: ${colorStyled.secondary}1A;
+        color: ${colorStyled.onSecondaryContainer};
         border: none !important;
     }
 `;

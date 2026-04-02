@@ -343,7 +343,7 @@ export const BullWhipEffect = () => {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <Button variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={handleSubmit}>
+                        <Button variant="contained" style={{ backgroundColor: colorStyled.primary }} onClick={handleSubmit}>
                             Submit
                         </Button>
                     </Grid>

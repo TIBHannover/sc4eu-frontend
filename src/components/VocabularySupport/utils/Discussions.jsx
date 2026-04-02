@@ -236,7 +236,7 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                                                     <Typography
                                                         variant="body2"
                                                         sx={{
-                                                            color: colorStyled.SECONDARY.link,
+                                                            color: colorStyled.onBackground,
                                                             cursor: 'pointer',
                                                             display: 'inline-block'
                                                         }}

@@ -348,7 +348,8 @@ const StyledButton = styled(Button)`
     text-align: left;
     font-weight: bold;
     font-size: ${fontStyled.fontSize.NormalText};
-    background-color: ${colorStyled.SECONDARY.dark};
+    background-color: ${colorStyled.primary};
+    color: ${colorStyled.onPrimary};
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};

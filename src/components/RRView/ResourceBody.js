@@ -2,8 +2,8 @@ import React, { createRef, Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import { StyledResourceBody, StyledBodyInput, PRIMARY } from './StyledComponents';
-
+import { StyledResourceBody, StyledBodyInput } from './StyledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
 import { transformResourceToTTL, calculateBodyRows } from '../../mappers/ResToTTL';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
 import AnnotationsDropDown from '../ontologyView/AnnotationsDropDown';
@@ -44,7 +44,7 @@ class ResourceBody extends Component {
                 {numRowsRequired !== 0 && (
                     <div style={{ height: 'auto', display: 'flex', width: '100%', maxHeight: '100%', maxWidth: '100%' }}>
                         <StyledBodyInput
-                            style={{ background: PRIMARY.lighter }}
+                            style={{ backgroundColor: colorStyled.surfaceContainerLowest, color: colorStyled.onSurface }}
                             type="textarea"
                             display={'flex'}
                             width="100%"

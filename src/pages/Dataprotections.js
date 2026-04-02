@@ -8,7 +8,7 @@ export default class Dataprotections extends Component {
     render() {
         return (
             <StyledDiv>
-                <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '1%' }}>Privacy Statement </h3>
+                <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '1%', color: colorStyled.onSurface }}>Privacy Statement </h3>
                 <StyledText>
                     Data protection is of high priority for the Technische Informationsbibliothek (TIB). As a general rule, the use of TIBʼs services
                     does not require the provision of any personal data. However, the processing of personal data may be required where a data subject
@@ -23,7 +23,7 @@ export default class Dataprotections extends Component {
                     The terms used in this privacy statement are to be understood within the meaning of the European General Data Protection General
                     Data Protection Regulation (GDPR).
                 </StyledText>
-                <h5>Name and address of the controller</h5>
+                <h5 style={{ color: colorStyled.onSurface }}>Name and address of the controller</h5>
                 <StyledText>
                     The controller under data protection law shall be:
                     <br />
@@ -38,16 +38,16 @@ export default class Dataprotections extends Component {
                     Phone : +49 511 762-8989
                     <br />
                     Email :&nbsp;
-                    <a href="https://www.tib.eu" style={{ color: colorStyled.SECONDARY.link }} target="_blank" rel="noreferrer">
+                    <a href="https://www.tib.eu" style={{ color: colorStyled.primary }} target="_blank" rel="noreferrer">
                         www.tib.eu
                     </a>
                     <br />
                     Website :&nbsp;
-                    <a href="https://www.tib.eu" style={{ color: colorStyled.SECONDARY.link }} target="_blank" rel="noreferrer">
+                    <a href="https://www.tib.eu" style={{ color: colorStyled.primary }} target="_blank" rel="noreferrer">
                         www.tib.eu
                     </a>
                 </StyledText>
-                <h5>Name and address of the data protection officer</h5>
+                <h5 style={{ color: colorStyled.onSurface }}>Name and address of the data protection officer</h5>
                 <StyledText>
                     The data protection officer of the controller shall be:
                     <br />
@@ -56,12 +56,12 @@ export default class Dataprotections extends Component {
                     Phone : +49 511 762-8138
                     <br />
                     Email : &nbsp;
-                    <a href="mailto:datenschutz@tib.eu" style={{ color: colorStyled.SECONDARY.link }}>
+                    <a href="mailto:datenschutz@tib.eu" style={{ color: colorStyled.primary }}>
                         datenschutz(AT)tib.eu
                     </a>
                     <br />
                 </StyledText>
-                <h5>Postal Address :</h5>
+                <h5 style={{ color: colorStyled.onSurface }}>Postal Address :</h5>
                 <StyledText>
                     Technische Informationsbibliothek (TIB)
                     <br />
@@ -74,7 +74,7 @@ export default class Dataprotections extends Component {
                     Germany
                     <br />
                 </StyledText>
-                <h5>Visiting Address:</h5>
+                <h5 style={{ color: colorStyled.onSurface }}>Visiting Address:</h5>
                 <StyledText>
                     TIB Conti-Campus
                     <br />
@@ -88,7 +88,7 @@ export default class Dataprotections extends Component {
                     protection at any time.
                     <br />
                 </StyledText>
-                <h5>Cookies</h5>
+                <h5 style={{ color: colorStyled.onSurface }}>Cookies</h5>
                 <StyledText>
                     The TIB websites use cookies. Cookies are text files that are placed and stored on a computer system via an Internet browser and
                     serve to render the offer of the TIB more user-friendly, effective and secure.
@@ -104,7 +104,7 @@ export default class Dataprotections extends Component {
                     <br />
                 </StyledText>
 
-                <h5>Web Analytics</h5>
+                <h5 style={{ color: colorStyled.onSurface }}>Web Analytics</h5>
                 <StyledText>
                     The information generated with Matomo about the use of this website is processed and stored exclusively by TIB.
                 </StyledText>
@@ -112,7 +112,7 @@ export default class Dataprotections extends Component {
                     <iframe
                         title="data policy"
                         src="https://support.tib.eu/piwik/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=en&amp;backgroundColor=&amp;fontColor=&amp;fontSize=&amp;fontFamily=sans-serif"
-                        style={{ border: 0, height: '250px', width: '100%', color: colorStyled.TEXTCOLOR, textAlign: 'justify' }}
+                        style={{ border: 0, height: '250px', width: '100%', color: colorStyled.onSurfaceVariant, textAlign: 'justify' }}
                     />
                 </div>
             </StyledDiv>
@@ -136,7 +136,7 @@ const StyledDiv = styled.div`
 `;
 
 const StyledText = styled.p`
-    color: ${colorStyled.TEXTCOLOR};
+    color: ${colorStyled.onSurfaceVariant};
     text-align: justify;
     font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
 

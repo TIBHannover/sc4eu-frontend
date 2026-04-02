@@ -138,7 +138,7 @@ class ViewOntology extends Component {
         return (
             <>
                 <StyledRootDiv>
-                    <div style={{ height: '100%', backgroundColor: colorStyled.PRIMARY.lighter }}>
+                    <div style={{ height: '100%', backgroundColor: colorStyled.background }}>
                         {this.state.isLoading === true && (
                             <div className="text-center text-primary mt-4 mb-4">
                                 {/*using a manual fixed scale value for the spinner scale! */}

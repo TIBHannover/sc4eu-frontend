@@ -7,8 +7,7 @@ import { Card, CardBody } from 'reactstrap';
 import styled from 'styled-components';
 import { fontStyled } from '../../styledComponents/styledFont';
 import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
-import { PRIMARY } from '../RRView/StyledComponents';
-
+import { colorStyled } from 'styledComponents/styledColor';
 class CardWidgetVis extends Component {
     constructor(props) {
         super(props);
@@ -34,7 +33,7 @@ class CardWidgetVis extends Component {
 
         return (
             <div>
-                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', background: PRIMARY.lighter }}>
+                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', backgroundColor: colorStyled.secondaryContainer, color: colorStyled.onSecondaryContainer }}>
                     <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
                     <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
                         {this.renderResourceDescription(itemOfInterest)}
@@ -51,7 +50,7 @@ class CardWidgetVis extends Component {
         return (
             <div>
                 {/*<div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>*/}
-                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', background: PRIMARY.lighter }}>
+                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', backgroundColor: colorStyled.secondaryContainer, color: colorStyled.onSecondaryContainer }}>
                     <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
                     <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>{this.renderDescription(itemOfInterest)}</CardBody>
                 </Card>
@@ -142,7 +141,7 @@ class CardWidgetVis extends Component {
 
     render() {
         return (
-            <div style={{ backgroundColor: PRIMARY.lighter, borderTop: 'none', overflow: 'auto' }}>
+            <div style={{ backgroundColor: colorStyled.surfaceContainer, color: colorStyled.onSurface, borderTop: 'none', overflow: 'auto' }}>
                 {this.props.isExpanded && <div style={{ display: 'block' }}>{this.renderWidget()}</div>}
             </div>
         );

@@ -238,7 +238,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                         variant="contained"
                         style={{
                             ...buttonStyle,
-                            backgroundColor: newCommentText.trim() ? colorStyled.SECONDARY.dark : 'gray'
+                            backgroundColor: newCommentText.trim() ? colorStyled.secondary : 'gray'
                         }} // Adjust styling as needed
                         onClick={() => addComment(userDisplayName, newCommentText, mentionedUsers)}
                         disabled={!newCommentText.trim()}
@@ -292,6 +292,5 @@ const authorDateStyle = {
 
 const buttonStyle = {
     borderRadius: '20px',
-    backgroundColor: colorStyled.SECONDARY.dark,
     display: 'flex'
 };

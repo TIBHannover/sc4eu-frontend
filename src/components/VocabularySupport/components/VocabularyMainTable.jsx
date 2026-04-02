@@ -16,7 +16,7 @@ import { useHistory } from 'react-router-dom';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import Cookies from 'js-cookie';
-import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
+import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength } from '../utils/Discussions';
 import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
 import { useMediaQuery } from '@mui/material';
@@ -667,7 +667,12 @@ const VocabularyMainTable = ({
                         onClick={() => {
                             handleCreateRow(row);
                         }}
-                        sx={{ backgroundColor: colorStyled.SECONDARY.dark, whiteSpace: 'nowrap', minWidth: 50 }}
+                        sx={{
+                            backgroundColor: colorStyled.primary,
+                            whiteSpace: 'nowrap',
+                            minWidth: 50,
+                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                        }}
                     >
                         {isLargeScreen ? 'New Term' : 'Create New Term'}
                     </Button>
@@ -678,7 +683,12 @@ const VocabularyMainTable = ({
                         onClick={() => {
                             setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
                         }}
-                        sx={{ backgroundColor: colorStyled.SECONDARY.dark, whiteSpace: 'nowrap', minWidth: 50 }}
+                        sx={{
+                            backgroundColor: colorStyled.primary,
+                            whiteSpace: 'nowrap',
+                            minWidth: 50,
+                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                        }}
                     >
                         Timeline
                     </Button>
@@ -692,7 +702,12 @@ const VocabularyMainTable = ({
                                 setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
                                 Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
                             }}
-                            sx={{ backgroundColor: colorStyled.SECONDARY.dark, whiteSpace: 'nowrap', minWidth: 50 }}
+                            sx={{
+                                backgroundColor: colorStyled.primary,
+                                whiteSpace: 'nowrap',
+                                minWidth: 50,
+                                '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                            }}
                         >
                             {isLargeScreen ? 'Hub' : 'Information Hub'}
                         </Button>
@@ -708,7 +723,7 @@ const VocabularyMainTable = ({
                         disabled={!hasUncommittedChanges}
                         onClick={() => setOpenCommit(true)}
                         style={{
-                            backgroundColor: hasUncommittedChanges ? colorStyled.SECONDARY.dark : 'gray',
+                            backgroundColor: hasUncommittedChanges ? colorStyled.primary : 'gray',
                             border: hasUncommittedChanges ? '2px' + ' solid red' : ''
                         }}
                     >
@@ -739,7 +754,7 @@ const VocabularyMainTable = ({
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: colorStyled.SECONDARY.dark }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" style={{ color: colorStyled.secondary }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>

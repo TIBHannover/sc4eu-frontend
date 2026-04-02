@@ -24,10 +24,10 @@ const AcceptDeclineDialog = ({ open, onDecline, onAccept, title, message }) => {
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
             <DialogActions style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button onClick={onDecline} variant='contained' style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                <Button onClick={onDecline} variant='contained' style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}>
                     No thanks
                 </Button>
-                <Button onClick={onAccept} variant="contained" style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                <Button onClick={onAccept} variant="contained" style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}>
                     Yes please
                 </Button>
             </DialogActions>

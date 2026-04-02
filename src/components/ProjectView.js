@@ -364,7 +364,7 @@ class ProjectView extends Component {
                                 <span style={{ marginLeft: '10px' }}>
                                     <StyledIcon
                                         icon={faEnvelope}
-                                        color={colorStyled.SECONDARY.darker}
+                                        color={colorStyled.tertiary}
                                         onClick={() => {
                                             this.setState({ showEmailModal: true });
                                         }}
@@ -452,7 +452,7 @@ const StyledProjectsGrid = styled.div`
 const StyledRootDiv = styled.div`
     width: 100%;
     margin-left: auto;
-    background-color: ${colorStyled.PRIMARY.lighter};
+    background-color: ${colorStyled.surfaceContainer};
     margin-top: 0.5%;
     height: calc(100vh - 100px); /* Adjust for the header height */
     margin-right: 2%;
@@ -489,7 +489,8 @@ const StyledInfoSpan = styled.span`
 
 const StyledButtonToAddProject = styled(Button)`
     margin: 10px 15px 15px 0px;
-    background-color: ${colorStyled.SECONDARY.dark};
+    background-color: ${colorStyled.secondary};
+    color: ${colorStyled.onSecondary};
     font-size: ${fontStyled.fontSize.NormalText};
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
@@ -508,7 +509,7 @@ const StyledIcon = styled(FontAwesomeIcon)`
 
 const StyledScrollbarDiv = styled.div`
     height: calc(100% - 100px); /* Subtract StyledSubHeadingDiv height */
-    border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
+    border-top: 0.01rem solid ${colorStyled.outline};
 
     @media (max-width: ${MAX_WIDTH}) {
         height: calc(100% - 120px); 

@@ -25,7 +25,6 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
     const actionCards = [
         {
             label: 'Urgent',
-            color: 'error',
             text: urgentTerms.length === 1 ? urgentTerms.length + ' term is waiting for you' : urgentTerms.length + ' terms are waiting for you',
             nearClosed: nearClosedConsensuses.length !== 0 ? `With ${nearClosedConsensuses.length} needing only one vote to close` : undefined,
             sub: 'Open voting window →',
@@ -33,26 +32,30 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
                 setActiveAnchorEl(e.currentTarget);
                 setActiveCard('urgent');
             },
-            count: urgentTerms.length
+            count: urgentTerms.length,
+            backGroundColor: colorStyled.error,
+            fontColor: colorStyled.onError
         },
         {
             label: 'Discussion',
-            color: 'success',
             text: 'Someone replied to you in ' + discussionReplies.length + ' terms',
             sub: 'Jump to thread →',
             onClick: e => {
                 setActiveAnchorEl(e.currentTarget);
                 setActiveCard('discussion');
             },
-            count: discussionReplies.length
+            count: discussionReplies.length,
+            backGroundColor: colorStyled.tertiary,
+            fontColor: colorStyled.onTertiary
         },
         {
             label: 'New terms',
-            color: 'warning',
             text: newTerms.length === 1 ? newTerms.length + ' term is waiting for you' : newTerms.length + ' terms are waiting for you',
             sub: 'Filter table →',
             onClick: onNewTermsClick,
-            count: newTerms.length
+            count: newTerms.length,
+            backGroundColor: colorStyled.tertiaryContainer,
+            fontColor: colorStyled.onTertiaryContainer  
         }
     ].filter(card => card.count > 0);
 
@@ -62,7 +65,7 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
                 <Grid item xs={12} sm={4} key={card.label}>
                     <Card variant="outlined" sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'grey.50' } }} onClick={card.onClick}>
                         <CardContent>
-                            <Chip label={card.label} size="small" color={card.color} />
+                            <Chip label={card.label} size="small" style={{ backgroundColor: card.backGroundColor, color: card.fontColor }} />
                             <Typography variant="body2" fontWeight={500} mt={1}>
                                 {card.text}
                             </Typography>
@@ -95,7 +98,7 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
                                 {nearClosedConsensuses?.includes(term.identifier) && (
                                     <ListItemIcon>
                                         <Tooltip title="Just one vote left to reach consensus">
-                                            <LocalFireDepartmentOutlinedIcon sx={{ color: colorStyled.ORANGE_COLOR }} />
+                                            <LocalFireDepartmentOutlinedIcon sx={{ color: colorStyled.tertiary }} />
                                         </Tooltip>
                                     </ListItemIcon>
                                 )}

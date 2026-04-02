@@ -215,19 +215,18 @@ const StyledTable = styled.table`
     }
 
     tr:nth-child(even) {
-        background-color: ${colorStyled.PRIMARY.light};
+        background-color: ${colorStyled.tertiary};
     }
 
     tr:hover {
-        background-color: ${colorStyled.SECONDARY.dark};
-        color: black;
+        background-color: ${colorStyled.secondary}1A;
     }
 
     th {
         padding-top: 12px;
         padding-bottom: 12px;
         text-align: center;
-        background-color: ${colorStyled.SECONDARY.dark};
-        color: white;
+        background-color: ${colorStyled.secondary};
+        color: ${colorStyled.onSecondary};
     }
 `;

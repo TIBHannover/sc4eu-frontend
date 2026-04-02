@@ -357,7 +357,7 @@ export default class UploadOntology extends Component {
                                                         }}
                                                     />
                                                     <Button
-                                                        style={{ backgroundColor: colorStyled.SECONDARY.dark, marginLeft: '1%' }}
+                                                        style={{ backgroundColor: colorStyled.primary, marginLeft: '1%' }}
                                                         onClick={this.handleGitHubUrl}
                                                     >
                                                         Upload
@@ -384,7 +384,7 @@ export default class UploadOntology extends Component {
                                                         }}
                                                     />
                                                     <Button
-                                                        style={{ backgroundColor: colorStyled.SECONDARY.dark, marginLeft: '1%' }}
+                                                        style={{ backgroundColor: colorStyled.primary, marginLeft: '1%' }}
                                                         onClick={this.handleGitlabUrl}
                                                     >
                                                         Upload
@@ -466,7 +466,7 @@ export default class UploadOntology extends Component {
                         <Button
                             id="finishButton"
                             innerRef={this.finishRef}
-                            style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                            style={{ backgroundColor: colorStyled.primary }}
                             hidden={
                                 !this.state.hasContent ||
                                 this.state.waitingForResult ||

@@ -13,14 +13,13 @@ import private_collection from '../assets/images/private_collection.png';
 import sandbox_collection from '../assets/images/sandbox.png';
 import public_collection from '../assets/images/public_collection.png';
 import sc4eu_collection from '../assets/images/logo.png';
-import theme from '../theme';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
 import PropTypes from 'prop-types';
 
 const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
     & .MuiTooltip-tooltip {
-        background-color: ${colorStyled.SECONDARY.dark};
-        color: white;
+        background-color: ${colorStyled.inverseSurface};
+        color: ${colorStyled.inverseOnSurface};
         font-size: 14px;
         padding: 12px 16px;
         border-radius: 8px;
@@ -29,7 +28,7 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
         margin: 8px;
     }
     & .MuiTooltip-arrow {
-        color: ${colorStyled.SECONDARY.dark};
+        color: ${colorStyled.inverseSurface};
     }
 `;
 
@@ -128,7 +127,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             />
                             <Typography
                                 variant="subtitle2"
-                                color="textSecondary"
+                                color={colorStyled.onSurface}
                                 fontWeight={'bold'}
                                 style={{
                                     marginLeft: '8px',
@@ -141,7 +140,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             </Typography>
                         </div>
                         <CardContent style={{ paddingTop: '20px', paddingLeft: '45px', paddingBottom: '16px' }}>
-                            <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                            <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={1}>
                                 {project.name}
                             </Typography>
                         </CardContent>
@@ -179,7 +178,8 @@ export default connect(null, mapDispatchToProps)(ProjectCard);
 
 const StyledCard = styled(Card)`
     && {
-        background-color: ${colorStyled.PRIMARY.light};
+        background-color: ${colorStyled.primaryContainer};
+        color: ${colorStyled.onPrimaryContainer};
         padding: 3px;
         borderradius: 20px;
         transition: transform 0.2s;

@@ -11,7 +11,7 @@ import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { expandAllBodies } from '../../redux/actions/globalUI_actions';
 import styled from 'styled-components';
 import { Button } from 'reactstrap';
-import { SECONDARY } from '../RRView/StyledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
 import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { fontStyled } from '../../styledComponents/styledFont';
 import FadingNotification from '../ReusableComponents/FadingNotification';
@@ -116,7 +116,8 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyContentViewer);
 
 const ControlButton = styled(Button)`
-    background: ${SECONDARY.dark};
+    background: ${colorStyled.primary};
+    color: ${colorStyled.onPrimary};
     border-radius: 5px 5px;
     margin-top: 10px;
     margin-right: 10px;

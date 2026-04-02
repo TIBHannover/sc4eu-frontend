@@ -37,7 +37,7 @@ const StyledRootDiv = styled.div`
 const CenterDisplayDiv = styled.div`
     width: 95%;
     transition: width 0.5s ease-out;
-    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    background-color: ${colorStyled.surfaceContainer};
     margin-left: auto;
     margin-top: 0.5%;
     height: 95%;
