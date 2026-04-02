@@ -117,7 +117,7 @@ export default function SideBarLayout(props) {
                     </StyledDiv>
                     <Divider />
                     <List style={{ marginTop: '-20px' }}>
-                        <SideBar isOpen={open} onNavigate={isMobile ? () => setOpen(false) : undefined}/>
+                        <SideBar isOpen={open} onNavigate={isMobile ? () => setOpen(false) : () => {}}/>
                     </List>
                 </Scrollbars>
             </SwipeableDrawer>
