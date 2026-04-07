@@ -75,7 +75,7 @@ class IntroductoryPopUp extends Component {
         return (
             <StyledRootDiv>
                 <StyledModal isOpen={this.state.firstModal}>
-                    <ModalBody style={{ backgroundColor: 'rgba(214, 230, 242, .3)' }}>
+                    <ModalBody style={{ backgroundColor: colorStyled.surfaceContainerHigh }}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <h4 style={{ marginLeft: 'auto' }}>
                                 <p>Thank you for visiting our portal</p>
@@ -85,7 +85,7 @@ class IntroductoryPopUp extends Component {
                                 style={{
                                     background: 'none',
                                     border: 'none',
-                                    color: colorStyled.TEXTCOLOR,
+                                    color: colorStyled.onSecondaryContainer,
                                     fontWeight: 600,
                                     marginLeft: 'auto',
                                     marginRight: '10px',
@@ -100,7 +100,7 @@ class IntroductoryPopUp extends Component {
                         <span
                             style={{
                                 fontSize: '18px',
-                                color: colorStyled.TEXTCOLOR
+                                color: colorStyled.onSurfaceVariant
                             }}
                         >
                             {SliderText[this.state.sliderIndex].value}
@@ -130,7 +130,7 @@ class IntroductoryPopUp extends Component {
                                                   borderRadius: '50%',
                                                   border: `3px solid ${colorStyled.secondary}`,
                                                   margin: '0 5px',
-                                                  backgroundColor: '#f1f1f1'
+                                                  backgroundColor: colorStyled.surfaceContainerHigh
                                               }
                                             : {
                                                   width: '15px',

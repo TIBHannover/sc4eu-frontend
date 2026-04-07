@@ -52,11 +52,11 @@ class OntologyIndexInteractions extends Component {
         return (
             <div style={{ height: '100%', fontFamily: fontStyled.fontFamily }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginLeft: '1%' }}>
+                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginLeft: '1%', color: colorStyled.primary }}>
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
                         <span>Back</span>
                     </Link>
-                    <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.secondaryContainer }}>
+                    <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.onSurface }}>
                         <u id="tootlipTarget">{projectName}</u> Project
                     </h4>
                     <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
@@ -141,6 +141,17 @@ const StyledButtonToUploadOntology = styled(Button)`
     color: ${colorStyled.onSecondary};
     margin-left: 1%;
     font-size: ${fontStyled.fontSize.NormalText};
+    border: none;
+
+    &:hover {
+        background-color: ${colorStyled.secondary}CC;
+        color: ${colorStyled.onSecondary};
+    }
+
+    &:disabled {
+        background-color: ${colorStyled.secondary}4D;
+        color: ${colorStyled.onSecondary}4D;
+    }
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};

@@ -97,7 +97,11 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
         >
             <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
                 <div style={{ position: 'relative', height: '100%' }}>
-                    <CardActionArea onClick={handleCardClick} style={{ height: 'calc(100% - 48px)' }}>
+                    <CardActionArea
+                        onClick={handleCardClick}
+                        style={{ height: 'calc(100% - 48px)' }}
+                        sx={{ '&:hover .MuiCardActionArea-focusHighlight': { opacity: 0 } }}
+                    >
                         <div
                             style={{
                                 display: 'flex',
@@ -127,11 +131,10 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             />
                             <Typography
                                 variant="subtitle2"
-                                color={colorStyled.onSurface}
                                 fontWeight={'bold'}
                                 style={{
+                                    color: `${colorStyled.onTertiary}D9`,
                                     marginLeft: '8px',
-                                    fontWeight: 'bold',
                                     fontSize: '1rem',
                                     pointerEvents: 'auto'
                                 }}
@@ -154,10 +157,10 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             padding: '8px'
                         }}
                     >
-                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete}>
+                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete} sx={{ color: colorStyled.onTertiary }}>
                             <Edit />
                         </IconButton>
-                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete}>
+                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete} sx={{ color: colorStyled.onTertiary }}>
                             <Delete />
                         </IconButton>
                     </CardActions>
@@ -178,15 +181,16 @@ export default connect(null, mapDispatchToProps)(ProjectCard);
 
 const StyledCard = styled(Card)`
     && {
-        background-color: ${colorStyled.primaryContainer};
-        color: ${colorStyled.onPrimaryContainer};
+        background-color: ${colorStyled.tertiary};
+        color: ${colorStyled.onTertiary};
         padding: 3px;
-        borderradius: 20px;
+        border-radius: 20px;
         transition: transform 0.2s;
-        width: 300px; // Set the width
-        height: 300px; // Set the height
+        width: 300px;
+        height: 300px;
         &:hover {
             transform: scale(1.05);
+            background-color: ${colorStyled.tertiary}CC;
         }
     }
 `;
@@ -196,7 +200,7 @@ ProjectCard.propTypes = {
         name: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
         access_type: PropTypes.string.isRequired,
-        canDelete: PropTypes.bool.isRequired,
+        canDelete: PropTypes.bool.isRequired
     }),
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
