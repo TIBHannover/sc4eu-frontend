@@ -71,9 +71,13 @@ const VocabularyMainTable = ({
     const [urgentVoteData, setUrgentVoteData] = useState(null);
     const [votesMap, setVotesMap] = useState([]);
 
-    useEffect(async () => {
-        const votesData = await getVotes();
-        setVotesMap(votesData);
+    useEffect(() => {
+        const fetchVotes = async () => {
+            const votesData = await getVotes();
+            setVotesMap(votesData);
+        };
+
+        fetchVotes();
     }, []);
 
     useEffect(() => {
@@ -292,6 +296,51 @@ const VocabularyMainTable = ({
                 }
             },
             {
+                id: 'activeConsensus',
+                accessorFn: row => !!votesMap.find(consensus => consensus.term_uuid === row.original.identifier),
+                header: 'Consensus',
+                Header: ({ column }) => (
+                    <Tooltip title="Shows if there is an active consensus. Clicking open active consensus vote view">
+                        <span>{column.columnDef.header}</span>
+                        <StyledChip label="New" size="small" customVariant="agreement" sx={{ ml: '0.5' }} />
+                    </Tooltip>
+                ),
+                size: 140,
+                enableEditing: false,
+                filterVariant: 'checkbox',
+                filterSelectOptions: [
+                    { text: 'In Consensus', value: true },
+                    { text: 'Not in Consensus', value: false }
+                ],
+                muiFilterTextFieldProps: {
+                    placeholder: 'Filter'
+                },
+
+                Cell: ({ row }) => {
+                    const inConsensus = votesMap.find(consensus => consensus.term_uuid === row.original.identifier);
+
+                    return inConsensus ? (
+                        <StyledChip
+                            label="In Consensus"
+                            size="small"
+                            customVariant="agreement"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={async event => {
+                                event.stopPropagation();
+                                await handleWidgetUrgentTermClick(row.original);
+                            }}
+                        />
+                    ) : null;
+                },
+
+                muiTableBodyCellProps: {
+                    sx: { maxWidth: 140 }
+                },
+                muiTableHeadCellProps: {
+                    sx: { maxWidth: 140 }
+                }
+            },
+            {
                 accessorKey: 'seeAlso',
                 header: 'See Also',
                 Header: (
@@ -386,7 +435,6 @@ const VocabularyMainTable = ({
                     >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <span>{column.columnDef.header}</span>
-                            <StyledChip label="New" size="small" customVariant="agreement" sx={{ ml: '0.5' }} />
                         </div>
                     </Tooltip>
                 ),
@@ -542,6 +590,7 @@ const VocabularyMainTable = ({
         label: '', // Default value for label
         altLabel: [], // Default value for altLabel
         description: '', // Default value for description
+        activeConsensus: '',
         seeAlso: '', // Default value for seeAlso
         status: 'draft', // Override 'status' with 'draft'
         created: new Date().toLocaleDateString('en-CA'), // Default value for created

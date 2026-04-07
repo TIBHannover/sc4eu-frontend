@@ -76,8 +76,8 @@ export const StyledChip = styled(Chip)(({ customVariant }) => ({
             color: colorStyled.onTertiary
         }),
         ...(customVariant === 'agreement' && {
-            backgroundColor: colorStyled.primaryContainer,
-            color: colorStyled.onPrimaryContainer
+            backgroundColor: colorStyled.secondaryContainer,
+            color: colorStyled.onSecondaryContainer
         })
     }
 }));
