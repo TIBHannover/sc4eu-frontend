@@ -297,7 +297,7 @@ const VocabularyMainTable = ({
             },
             {
                 id: 'activeConsensus',
-                accessorFn: row => !!votesMap.find(consensus => consensus.term_uuid === row.original.identifier),
+                accessorFn: row => (votesMap.some(c => c.term_uuid === row.identifier) ? 'true' : 'false'),
                 header: 'Consensus',
                 Header: ({ column }) => (
                     <Tooltip title="Shows if there is an active consensus. Clicking open active consensus vote view">
@@ -307,18 +307,17 @@ const VocabularyMainTable = ({
                 ),
                 size: 140,
                 enableEditing: false,
-                filterVariant: 'checkbox',
+                filterVariant: 'select',
                 filterSelectOptions: [
-                    { text: 'In Consensus', value: true },
-                    { text: 'Not in Consensus', value: false }
+                    { text: 'In Consensus', value: 'true' },
+                    { text: 'Not in Consensus', value: 'false' }
                 ],
-                muiFilterTextFieldProps: {
-                    placeholder: 'Filter'
+                filterFn: (row, columnId, filterValue) => {
+                    if (filterValue === '' || filterValue === null || filterValue === undefined) return true;
+                    return row.getValue(columnId) === filterValue;
                 },
-
                 Cell: ({ row }) => {
                     const inConsensus = votesMap.find(consensus => consensus.term_uuid === row.original.identifier);
-
                     return inConsensus ? (
                         <StyledChip
                             label="In Consensus"
@@ -332,7 +331,6 @@ const VocabularyMainTable = ({
                         />
                     ) : null;
                 },
-
                 muiTableBodyCellProps: {
                     sx: { maxWidth: 140 }
                 },
@@ -529,7 +527,7 @@ const VocabularyMainTable = ({
                 }
             }
         ],
-        [validationErrors]
+        [validationErrors, votesMap]
     );
 
     const handleCreateTerm = async ({ values, table }) => {
