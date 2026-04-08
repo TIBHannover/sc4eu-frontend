@@ -28,6 +28,36 @@ class Documentations extends Component {
     };
 
     render() {
+        const HybridTEXT =
+            "We identified that the most crucial requirement for the approach is to serve user's needs from various audiences with " +
+            'diverse backgrounds and in different contexts. Because web-based approaches are ready-to-use without the need to install ' +
+            'additional software, they reduce entrance barriers and engage different user groups more directly.\n' +
+            'Having defined the above-mentioned domain experts (non-experts as to ontology modelling) and the knowledge engineers (expert users) as the two ' +
+            'relevant user groups in the project, we describes the individual requirements as follows:\n' +
+            '“For domain experts the approach should be easy-to-learn/easy-to-use with a least complex OWL modelling, providing guidance and best-practice ' +
+            'suggestions during the modelling. The approach should support all modelling features of the commonly used open source ontology editor Protégé for ' +
+            'expert users. Additionally, visual modelling paradigms in the form of node-link diagrams can address the requirements of easy-to-use and low complexity.\n' +
+            'However, they have to provide additional customizations for the visual representation to facilitate understanding. ' +
+            'The requirements guidance and best practices can be addressed using auto-complete functionalities to align the created nodes and ' +
+            'links with existing terms of ontologies, reducing manual labor to transform high-level conceptualizations to OWL elements.\n' +
+            'To support all OWL modelling features, we envision the use and extension of the OWL-API (Java Application Programming Interface), the backbone of Protégé. ' +
+            'Additionally, to engage diverse groups in the modelling process, we envision three modes of modelling operation: textual (for expert users), ' +
+            'widget-based (for intermediate users) and visual or Graph (for novel users).\n' +
+            'For a successful adoption and broad use, we define additional requirements for a collaborative ontology development framework ' +
+            'which allows to create and to share different views, thus enabling and fostering communication on all abstraction levels and between various stakeholders.\n' +
+            'Since the created ontologies and their conceptualizations thrive from discussions and joint agreement upon their definitions and their usage, block chain ' +
+            'technologies providing the means for versioning and history of changes should be part of the solution. Integrating them with ontology ' +
+            'development will foster trust and validation of ontologies and enable long term support for downward compatible systems using old ontology versions”.';
+
+        const FrameworkText =
+            'A machine-readable conceptualization of the semiconductor domain and related supply chains requires standardize ontologies of high quality and a common ' +
+            'set of conceptualizations in order to apply Semantic Web technologies widely to the semiconductor domain. Knowledge engineers and domain experts usually work ' +
+            'together on ontology development. ' +
+            'The latter have less expertise in a specific domain, whereas domain experts often struggle to understand logical notations used in OWL (Web Ontology Language). ' +
+            'It is necessary to reduce the complexity of OWL formalization for domain experts in order to more directly involve them in ontology modelling and foster ' +
+            'communication with knowledge engineers. ' +
+            'However, they must maintain full OWL modelling capabilities for knowledge engineers. Because of this, we are developing a user-centered approach to ' +
+            'collaborative ontology development, addressing the needs and backgrounds of different user groups.';
 
         const UserGuidance =
             'A commonly agreed terminology is essential for efficient communication in a project involving various stakeholders. ' +
