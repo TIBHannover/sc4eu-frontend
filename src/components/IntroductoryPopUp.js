@@ -75,7 +75,7 @@ class IntroductoryPopUp extends Component {
         return (
             <StyledRootDiv>
                 <StyledModal isOpen={this.state.firstModal}>
-                    <ModalBody style={{ backgroundColor: 'rgba(214, 230, 242, .3)' }}>
+                    <ModalBody style={{ backgroundColor: colorStyled.surfaceContainerHigh }}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <h4 style={{ marginLeft: 'auto' }}>
                                 <p>Thank you for visiting our portal</p>
@@ -85,7 +85,7 @@ class IntroductoryPopUp extends Component {
                                 style={{
                                     background: 'none',
                                     border: 'none',
-                                    color: colorStyled.TEXTCOLOR,
+                                    color: colorStyled.onSecondaryContainer,
                                     fontWeight: 600,
                                     marginLeft: 'auto',
                                     marginRight: '10px',
@@ -100,13 +100,13 @@ class IntroductoryPopUp extends Component {
                         <span
                             style={{
                                 fontSize: '18px',
-                                color: colorStyled.TEXTCOLOR
+                                color: colorStyled.onSurfaceVariant
                             }}
                         >
                             {SliderText[this.state.sliderIndex].value}
                         </span>
                         <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}>
                                 {this.state.buttonText}
                             </Button>
                         </div>
@@ -128,17 +128,17 @@ class IntroductoryPopUp extends Component {
                                                   width: '15px',
                                                   height: '15px',
                                                   borderRadius: '50%',
-                                                  border: `3px solid ${colorStyled.SECONDARY.dark}`,
+                                                  border: `3px solid ${colorStyled.secondary}`,
                                                   margin: '0 5px',
-                                                  backgroundColor: '#f1f1f1'
+                                                  backgroundColor: colorStyled.surfaceContainerHigh
                                               }
                                             : {
                                                   width: '15px',
                                                   height: '15px',
                                                   borderRadius: '50%',
-                                                  border: `3px solid ${colorStyled.SECONDARY.dark}`,
+                                                  border: `3px solid ${colorStyled.secondary}`,
                                                   margin: '0 5px',
-                                                  backgroundColor: colorStyled.SECONDARY.dark
+                                                  backgroundColor: colorStyled.secondary
                                               }
                                     }
                                 />
@@ -156,9 +156,6 @@ export default IntroductoryPopUp;
 const StyledRootDiv = styled.div`
     display: block;
 
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
 `;
 
 const StyledModal = styled(Modal)`
@@ -171,7 +168,4 @@ const StyledModal = styled(Modal)`
     overflow: hidden;
     font-family: ${fontStyled.fontFamily};
 
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
 `;

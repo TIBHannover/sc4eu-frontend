@@ -3,7 +3,6 @@ import 'react-app-polyfill/stable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { unregister } from './registerServiceWorker';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor, history } from './store';
@@ -14,9 +13,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import ReactPiwik from 'react-piwik';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from './theme';
-
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 // To connect Matomo Use React library react-piwik
 
 const piwik = new ReactPiwik({
@@ -41,9 +38,7 @@ const render = () => {
                 <Provider store={store}>
                     <PersistGate loading={null} persistor={persistor}>
                         <QueryClientProvider client={queryClient}>
-                            <ThemeProvider theme={theme}>
-                                <App history={piwikHistory} />
-                            </ThemeProvider>
+                            <App history={piwikHistory} />
                             <ReactQueryDevtools />
                         </QueryClientProvider>
                     </PersistGate>
@@ -55,7 +50,13 @@ const render = () => {
 };
 
 render();
-unregister();
+serviceWorkerRegistration.register({
+    onUpdate: registration => {
+        if (registration && registration.waiting) {
+            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+    }
+});
 
 // Hot reloading components and reducers
 if (module.hot) {

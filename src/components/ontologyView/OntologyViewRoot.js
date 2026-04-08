@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-// import RightSideBar from './RightSideBar';
 import { fontStyled } from '../../styledComponents/styledFont';
 import styled from 'styled-components';
 import OntologyContentViewer from './OntologyContentViewer';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
+import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { colorStyled } from '../../styledComponents/styledColor';
 
 class OntologyViewRoot extends Component {
@@ -16,9 +14,6 @@ class OntologyViewRoot extends Component {
             isSidebarOpen: true
         };
     }
-    // toggleSidebar = () => {
-    //     this.setState({ isSidebarOpen: !this.state.isSidebarOpen });
-    // };
 
     render() {
         return (
@@ -26,9 +21,6 @@ class OntologyViewRoot extends Component {
                 <CenterDisplayDiv isSidebarOpen={this.state.isSidebarOpen}>
                     <OntologyContentViewer experimentalLayout={this.state.experimentalLayout} />
                 </CenterDisplayDiv>
-                {/*<RightSideDisplayDiv isSidebarOpen={this.state.isSidebarOpen}>*/}
-                {/*    <RightSideBar isSidebarOpen={this.state.isSidebarOpen} toggleSidebar={this.toggleSidebar} />*/}
-                {/*</RightSideDisplayDiv>*/}
             </StyledRootDiv>
         );
     }
@@ -45,7 +37,7 @@ const StyledRootDiv = styled.div`
 const CenterDisplayDiv = styled.div`
     width: 95%;
     transition: width 0.5s ease-out;
-    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    background-color: ${colorStyled.surfaceContainer};
     margin-left: auto;
     margin-top: 0.5%;
     height: 95%;
@@ -59,22 +51,11 @@ const CenterDisplayDiv = styled.div`
         width: 90%;
         margin-right: 5%;
     }
+    
+    @media (max-width: ${MAX_WIDTH}) {
+        width: 100%;
+        height: auto;
+    }
 `;
-
-// const RightSideDisplayDiv = styled.div`
-//     transition: width 0.5s ease-out, margin-right 0.5s ease-out;
-//     background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-//     margin-top: 0.5%;
-//     height: 95%;
-//     width: ${({ isSidebarOpen }) => (isSidebarOpen ? '25%' : '0')};
-//     font-family: ${fontStyled.fontFamily};
-//     border-radius: 10px;
-//     border-bottom-right-radius: 0;
-//     border-bottom-left-radius: 0;
-//
-//     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-//         width: ${({ isSidebarOpen }) => (isSidebarOpen ? '22%' : '0')};
-//     }
-// `;
 
 export default OntologyViewRoot;

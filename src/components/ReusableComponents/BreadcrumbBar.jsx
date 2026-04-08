@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
     breadcrumbContainer: {
-        backgroundColor: colorStyled.CONTAINER_BACKGROUND_COLOR,
+        backgroundColor: colorStyled.onPrimaryContainer,
         borderRadius: '12px',
         padding: '8px 16px',
         display: 'inline-block',

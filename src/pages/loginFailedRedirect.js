@@ -10,7 +10,7 @@ class LoginFailedRedirect extends Component {
                     style={{
                         textAlign: 'center',
                         fontWeight: '600',
-                        backgroundColor: colorStyled.PRIMARY.lighter,
+                        backgroundColor: colorStyled.surfaceContainerHighest,
                         height: '100%',
                         fontSize: '22px'
                     }}

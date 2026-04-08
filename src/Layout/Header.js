@@ -18,14 +18,16 @@ import background from '../assets/images/Curve_Line.svg';
 import styled from 'styled-components';
 import { colorStyled } from '../styledComponents/styledColor';
 import { SettingsOutlined, LogoutOutlined, AccountCircleOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
-
+import { NotificationToggle } from '../components/ReusableComponents/NotificationToggle';
+import { NotificationManager } from '../utils/NotificationManager';
 class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isHomePageStyle: this.props.location.pathname === ROUTES.HOME,
             userTooltipOpen: false,
-            redirectOnAuthAction: false
+            redirectOnAuthAction: false,
+            showNotificationPrompt: false
         };
 
         this.userPopup = React.createRef();
@@ -131,10 +133,12 @@ class Header extends Component {
 
         return (
             <StyledRootDiv>
+                {this.props.user?.displayName && (<NotificationManager user={this.props.user.displayName} />)}
                 <StyledHeaderDiv>
                     <StyledRightSideDiv>
                         {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
                             <div>
+                                <NotificationToggle user={this.props.user.displayName} />
                                 <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
                                 <StyledAuthTooltip
                                     fade={false}
@@ -196,7 +200,7 @@ class Header extends Component {
                             </div>
                         ) : (
                             <Button
-                                style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                                style={{ backgroundColor: colorStyled.primary }}
                                 className="clearfix"
                                 onClick={() => {
                                     // push that to the redux state so that the user is rederected to its prev location;
@@ -247,7 +251,6 @@ export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)
 const StyledRootDiv = styled.div`
     height: 50px;
     overflow: auto;
-        //background: ${colorStyled.PRIMARY.light};
 
     @media (max-width: ${MAX_WIDTH}) {
         height: 50px;
@@ -275,13 +278,17 @@ const StyledRightSideDiv = styled.div`
     margin-right: 1%;
 
     @media (max-width: ${MAX_WIDTH}) {
-        display: none;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        margin-right: 0;
+        z-index: 1000;
     }
 `;
 
 const StyledButton = styled(Button)`
-    background: #d6e6f2;
-    color: #000;
+    backgroundColor: ${colorStyled.secondary};
+    color: ${colorStyled.onSecondary};
     font-size: 14px;
     border-radius: 14px;
     border: none !important;
@@ -295,8 +302,8 @@ const StyledButton = styled(Button)`
     transition: background-color 0.3s, color 0.3s;
 
     &:hover {
-        background-color: ${colorStyled.SECONDARY.dark};
-        color: #fff;
+        background-color: ${colorStyled.secondary}1A;
+        color: ${colorStyled.onSecondaryContainer};
         border: none !important;
     }
 `;

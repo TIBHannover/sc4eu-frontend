@@ -10,7 +10,7 @@ import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from './CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { CollapsibleItem, GraphVisButton, WidgetVisButton } from './StyledComponents';
-import { PRIMARY } from '../RRView/StyledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
 import AnnotationsDropDown from './AnnotationsDropDown';
 
 class SingleRelation extends Component {
@@ -130,10 +130,10 @@ class SingleRelation extends Component {
                     display: isVisible,
                     backgroundColor:
                         this.props.relationContext.type[0].toLowerCase() === 'owl:DatatypeProperty'.toLowerCase()
-                            ? PRIMARY.main
+                            ? colorStyled.surface
                             : this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()
-                            ? PRIMARY.lightMain
-                            : PRIMARY.lighter,
+                            ? colorStyled.surfaceContainer
+                            : colorStyled.surfaceContainerLow,
                     borderRadius: '10px 10px 0px 0px',
                     marginBottom: '5px'
                 }}

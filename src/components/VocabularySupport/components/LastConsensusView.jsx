@@ -22,7 +22,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                 <Box
                     sx={{
                         p: 3,
-                        bgcolor: colorStyled.CONTAINER_BACKGROUND_COLOR,
+                        bgcolor: colorStyled.surfaceContainerHigh,
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 3,
@@ -85,7 +85,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                     <Paper
                         variant="outlined"
                         sx={{
-                            backgroundColor: colorStyled.PRIMARY.lighter,
+                            backgroundColor: colorStyled.surface,
                             p: 2,
                             borderRadius: 1,
                             borderColor: 'divider'
@@ -121,7 +121,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                             borderRadius: 1,
                             border: '1px solid',
                             borderColor: 'divider',
-                            backgroundColor: colorStyled.CONTAINER_BACKGROUND_COLOR
+                            backgroundColor: colorStyled.surface
                         }}
                     >
                         <Typography variant="subtitle1" gutterBottom>
@@ -151,7 +151,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                 sx={{
                                     mt: 1,
                                     fontStyle: 'italic',
-                                    color: colorStyled.TEXTCOLOR
+                                    color: colorStyled.onSurface
                                 }}
                             >
                                 “{consensus.reason}”
@@ -165,7 +165,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                             p: 2,
                             borderRadius: 1,
                             borderColor: 'divider',
-                            backgroundColor: colorStyled.CONTAINER_BACKGROUND_COLOR,
+                            backgroundColor: colorStyled.surface,
                             maxHeight: 300,
                             overflow: 'auto'
                         }}
@@ -233,7 +233,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                             sx={{
                                                 pl: 4.5,
                                                 borderLeft: '2px solid',
-                                                borderColor: colorStyled.BORDER_COLOR,
+                                                borderColor: colorStyled.outlineVariant,
                                                 ml: 1
                                             }}
                                         >
@@ -242,7 +242,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                                 sx={{
                                                     mt: 0.5,
                                                     fontStyle: 'italic',
-                                                    color: colorStyled.TEXTCOLOR
+                                                    color: colorStyled.onSurface
                                                 }}
                                             >
                                                 “{decision.comment}”

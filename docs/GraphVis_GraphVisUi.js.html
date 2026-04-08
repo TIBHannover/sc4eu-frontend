@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: GraphVis/GraphVisUi.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: GraphVis/GraphVisUi.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component } from 'react';
+import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input } from 'reactstrap';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import MapperModule from '../../GraphVisLib/implementation/MapperModule';
+import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
+import { selectVisualNotation } from 'redux/actions/globalUI_actions';
+import styled, { keyframes } from 'styled-components';
+import { colorStyled } from '../../styledComponents/styledColor'
+import html2canvas from 'html2canvas';
+import ScreenCapture from '../ScreenCapture';
+import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
+import FadingNotification from '../ReusableComponents/FadingNotification';
+import { getJSON_ModelForOntologyWithQuery } from '../../network/GetOntologyData';
+import GraphVisUiQueryPopup from './GraphVisUiQueryPopup';
+import SparqlQueryInputModal from './SparqlQueryInputModal';
+
+class GraphVisUi extends Component {
+    constructor(props) {
+        super(props);
+
+        this.possibleNotations = ['VOWL', 'UML'];
+
+        this.graph = this.props.DonatelloGraph;
+        this.graph.setSelectionPropagationFunction(this.handleSelection);
+        this.mapperModule = new MapperModule();
+        this.mapperModule.setGraphReference(this.graph);
+
+        const modelAsJsonObject = { resources: this.props.resources, relations: this.props.relations };
+        this.currentResourceRelationModel = {
+            resultingModel: {
+                type: 'TYPE_RESOURCE_RELATION_MODEL',
+                modelAsJsonObject: modelAsJsonObject
+            }
+        };
+        this.currentResourceRelationModel.resultingModel.getResult = function() {
+            return modelAsJsonObject;
+        };
+
+        this.defaultSparqlQuery = `CONSTRUCT {\n  ?subject ?predicate ?object\n}\nWHERE {\n  ?subject ?predicate ?object\n}\nLIMIT 100`;
+        this.state = {
+            notationSelectionOpen: false,
+            layoutPlay: true,
+            leftSideBarExpanded: false,
+            rightSideBarExpanded: false,
+            selectedItem: null,
+            updateFlipFlop: false,
+            screenCapture: '',
+            open: false,
+            startCapture: false,
+            showCopyNotification: false,
+            showQueryPopup: false,
+            queryGraphData: null,
+            showQueryInputModal: false,
+            queryInputMode: 'freeform',
+            freeformQuery: this.defaultSparqlQuery,
+            visualBuilderQuery: ''
+        };
+        this.queryGraphRef = React.createRef();
+        this.componentRef = React.createRef();
+    }
+
+    componentDidMount() {
+        // add a flag to check if the tab is actually active
+        if (this.props.visualizationTabIsActive === false) {
+            return;
+        }
+
+        document.body.style.overflowX = 'hidden';
+        // add resize event
+        window.addEventListener('resize', this.updateDimensions);
+        this.updateDimensions();
+
+        if (!this.graph.graphIsInitialized) {
+            // we will need to extract our resource relation model and feed it into the graph vis ;
+            const config = {
+                graph_mouseZoom: true,
+                graph_mouseDrag: true,
+                node_mouseDrag: true,
+                node_mouseHover: true,
+                node_mouseSingleClick: true,
+                node_mouseDoubleClick: true,
+                node_hasNodeSelection: true,
+                graphBgColor: colorStyled.secondaryContainer, // could be customizable
+                configSelected: 'Default',
+                link_mouseDrag: true,
+                link_mouseHover: true
+            };
+            this.graph.setRenderingContainer('donatello_rendering_div');
+            this.graph.configureGraphInteractions(config);
+
+            // extract the resourceRelationModel;
+            // wrapper object
+
+            this.mapperModule.setResourceRelationModelInput(this.currentResourceRelationModel);
+            this.mapperModule.setGraphReference(this.graph);
+            this.mapperModule.setNodeLinkType(this.props.visualNotation);
+            this.mapperModule.execute().then(model => {
+                this.graph.setModel(model);
+                // do the rendering magic
+                this.graph.initializeRenderingContainer();
+                this.graph.createRenderingElements();
+                this.graph.drawRenderingPrimitives();
+                this.graph.setGraphInitialized(true);
+            });
+        } else {
+            // just rerender the graph as it is at the moment;
+            this.mapperModule.setResourceRelationModelInput(this.currentResourceRelationModel);
+            this.mapperModule.setNodeLinkType(this.props.visualNotation);
+            // this.mapperModule.execute().then(model => {
+            //     this.graph.setModel(model);
+            //     // do the rendering magic
+            //     this.graph.initializeRenderingContainer();
+            //     this.graph.createRenderingElements();
+            //     this.graph.drawRenderingPrimitives();
+            //     this.graph.setGraphInitialized(true);
+            // });
+            this.graph.bruteForceRedrawGraph();
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.visualNotation !== this.props.visualNotation) {
+            this.mapperModule.setNodeLinkType(this.props.visualNotation);
+            this.mapperModule.execute().then(model => {
+                this.graph.integrateUpdatedNodeLink(model);
+            });
+        }
+    }
+
+    updateDimensions = () => {
+        this.graph.updateGraphSize();
+    };
+
+    handleSelection = item => {
+        this.setState({ selectedItem: item });
+    };
+
+    // helper:
+    getPrefixOfURI = uri => {
+        //TODO this needs to be fixed properly, check why the uir is empty
+        if (!uri) {
+            return;
+        }
+        const lastIndexOfHash = uri.lastIndexOf('#');
+        const lastIndexOfSlash = uri.lastIndexOf('/');
+        let prefixUri = '';
+        if (lastIndexOfHash > lastIndexOfSlash) {
+            prefixUri = uri.substring(0, lastIndexOfHash + 1);
+        } else {
+            prefixUri = uri.substring(0, lastIndexOfSlash + 1);
+        }
+        return prefixUri;
+    };
+
+    /** RENDERING FUNCTIONS **/
+
+    renderGlobalCustomizationOptions = () => {
+        // lets try for nodes first;
+        const usedPrefixesNodes = [];
+        const usedPrefixesOProps = [];
+        this.props.resources.forEach(resource => {
+            const res = this.getPrefixOfURI(resource.resourceURI);
+            if (usedPrefixesNodes.indexOf(res) === -1) {
+                usedPrefixesNodes.push(res);
+            }
+        });
+        this.props.relations
+            .filter(item => item.type[0] === 'owl:ObjectProperty')
+            .forEach(relation => {
+                const res = this.getPrefixOfURI(relation.resourceURI);
+                if (usedPrefixesOProps.indexOf(res) === -1) {
+                    usedPrefixesOProps.push(res);
+                }
+            });
+        // TODO: improve the default colors based on types:
+        const confNodes = this.graph.renderingConfig.getNodeConfigFromType('owl:class');
+        let defaultValue = '#000';
+        if (confNodes) {
+            defaultValue = confNodes.style.bgColor;
+        }
+        if (!this.updateColorValuesNodes) {
+            this.updateColorValuesNodes = {};
+            usedPrefixesNodes.forEach(item => {
+                this.updateColorValuesNodes[item] = defaultValue;
+            });
+        }
+
+        if (!this.updateColorValuesOProps) {
+            this.updateColorValuesOProps = {};
+            usedPrefixesOProps.forEach(item => {
+                this.updateColorValuesOProps[item] = defaultValue;
+            });
+        }
+
+        const colorOptionsNodes = usedPrefixesNodes.map((item, index) => {
+            let prefixLabel = '';
+            if (this.props.prefixList.longToShort[item]) {
+                prefixLabel = this.props.prefixList.longToShort[item];
+            } else {
+                prefixLabel = item;
+            }
+
+            // fetch default color using owl:class selector from a rendering config;
+
+            return (
+                &lt;div style={{ display: 'flex', marginBottom: '5px' }} key={'__key_colorSelector_' + index}>
+                    &lt;Input
+                        style={{ width: '50px', minWidth: '50px', height: '25px', marginRight: '5px' }}
+                        type="color"
+                        onChange={e => {
+                            this.graph.updateColorOfNodesWithPrefix(item, e.target.value);
+                            this.updateColorValuesNodes[item] = e.target.value;
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
+                        }}
+                        value={this.updateColorValuesNodes[item]}
+                    />
+                    {prefixLabel}:
+                &lt;/div>
+            );
+        });
+        const colorOptionsObjectProps = usedPrefixesOProps.map((item, index) => {
+            let prefixLabel = '';
+            if (this.props.prefixList.longToShort[item]) {
+                prefixLabel = this.props.prefixList.longToShort[item];
+            } else {
+                prefixLabel = item;
+            }
+
+            // fetch default color using owl:class selector from a rendering config;
+
+            return (
+                &lt;div style={{ display: 'flex', marginBottom: '5px' }} key={'__key_colorSelector_' + index}>
+                    &lt;Input
+                        style={{ width: '50px', minWidth: '50px', height: '25px', marginRight: '5px' }}
+                        type="color"
+                        onChange={e => {
+                            this.graph.updateColorOfObjectPropsWithPrefix(item, e.target.value);
+                            this.updateColorValuesOProps[item] = e.target.value;
+                            this.setState(prevState=> ({ updateFlipFlop: !prevState.updateFlipFlop }));
+                        }}
+                        value={this.updateColorValuesOProps[item]}
+                        onBlur={() => {
+                            this.graph.bruteForceRedrawGraph();
+                        }}
+                    />
+                    {prefixLabel}:
+                &lt;/div>
+            );
+        });
+
+        return (
+            &lt;div>
+                Color nodes by prefix:
+                &lt;div>{colorOptionsNodes}&lt;/div>
+                Color object properties by prefix:
+                &lt;div>{colorOptionsObjectProps}&lt;/div>
+            &lt;/div>
+        );
+    };
+
+    createDropDownForNotations = () => {
+        return (
+            &lt;div>
+                &lt;Dropdown
+                    color="secondary"
+                    size="sm"
+                    isOpen={this.state.visSelectionOpen}
+                    style={{ paddingTop: '2px' }}
+                    toggle={() => {
+                        this.setState(prevState => ({
+                            visSelectionOpen: !prevState.visSelectionOpen
+                        }));
+                    }}
+                >
+                    &lt;DropdownToggle caret style={{ backgroundColor: colorStyled.primary, height: '35px' }}>
+                        Notation: {this.props.visualNotation}
+                    &lt;/DropdownToggle>
+                    &lt;DropdownMenu>
+                        {this.possibleNotations.map((item, id) => {
+                            return (
+                                &lt;DropdownItem
+                                    key={'graphNotationDropDown_' + id}
+                                    onClick={() => this.props.selectVisualNotation({ ui_visual_notation_selector: item })}
+                                >
+                                    {item}
+                                &lt;/DropdownItem>
+                            );
+                        })}
+                    &lt;/DropdownMenu>
+                &lt;/Dropdown>
+            &lt;/div>
+        );
+    };
+    renderCustomizationOptions = () => {
+        const fontsize = this.state.selectedItem.renderingConfig().fontStyle.fontSize.split('px')[0];
+        const overwriteOffset = this.state.selectedItem.renderingConfig().options.overwriteOffset;
+        const cfg = this.state.selectedItem.renderingConfig();
+        return (
+            &lt;div>
+                &lt;div>
+                    &lt;div style={{ display: 'flex' }}>
+                        &lt;div>Color:&lt;/div>{' '}
+                        &lt;Input
+                            type="color"
+                            onChange={e => {
+                                cfg.style.bgColor = e.target.value;
+                                this.state.selectedItem.redraw();
+                                this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
+                                this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
+                            }}
+                            value={this.state.selectedItem.renderingConfig().style.bgColor}
+                        />
+                    &lt;/div>
+                &lt;/div>
+                &lt;div style={{ display: 'flex', padding: '5px' }}>
+                    &lt;div>Font Size:&lt;/div>
+                    &lt;Input
+                        type="number"
+                        value={fontsize}
+                        onChange={e => {
+                            cfg.fontStyle.fontSize = e.target.value + 'px';
+                            this.state.selectedItem.redraw();
+                            this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
+                        }}
+                    />
+                &lt;/div>
+                &lt;div style={{ display: 'flex', padding: '5px' }}>
+                    &lt;input
+                        type="checkbox"
+                        onChange={e => {
+                            cfg.options.overwritesShapeSize = e.target.checked;
+                            this.state.selectedItem.redraw();
+                            this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
+                        }}
+                        checked={cfg.options.overwritesShapeSize}
+                    />{' '}
+                    Overwrite Shapesize
+                &lt;/div>
+                &lt;div style={{ display: 'flex', padding: '5px' }}>
+                    &lt;div>Offset:&lt;/div>
+                    &lt;Input
+                        type="number"
+                        value={overwriteOffset}
+                        onChange={e => {
+                            cfg.options.overwriteOffset = e.target.value;
+                            this.state.selectedItem.redraw();
+                            this.graph.interactionHandler.nodeInteractions.reapplyNodeInteractions(this.state.selectedItem);
+                            this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
+                        }}
+                    />
+                &lt;/div>
+            &lt;/div>
+        );
+    };
+
+    captureScreenshot = () => {
+        const MainRenderingContainer = document.querySelector('#MainRenderingContainer');
+        if (!MainRenderingContainer) {
+            return;
+        }
+
+        html2canvas(MainRenderingContainer, {
+            scale: 3
+        }).then(canvas => {
+            const screenshotUrl = canvas.toDataURL();
+
+            const link = document.createElement('a');
+            link.href = screenshotUrl;
+            link.download = 'screenshot.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    };
+
+    handleScreenCapture = CapturedImage => {
+        this.setState({ screenCapture: CapturedImage }, () => {
+            this.setState({ open: true });
+        });
+    };
+
+    copyUrlToClipboard = () => {
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            this.setState({ showCopyNotification: true });
+            setTimeout(() => {
+                this.setState({ showCopyNotification: false });
+            }, 2000);
+        });
+    };
+
+    openSparqlQueryInput = (mode = 'freeform') => {
+        this.setState({ showQueryInputModal: true, queryInputMode: mode });
+    };
+
+    closeSparqlQueryInput = () => {
+        this.setState({ showQueryInputModal: false });
+    };
+
+    runSparqlQuery = async (sparqlQuery, mode) => {
+        this.setState({ showQueryInputModal: false });
+        if (mode === 'freeform') {
+            this.setState({ freeformQuery: sparqlQuery });
+        } else {
+            this.setState({ visualBuilderQuery: sparqlQuery });
+        }
+        const query = { sparql_query: sparqlQuery };
+        if (query) {
+            const result = await getJSON_ModelForOntologyWithQuery(query);
+            if (result &amp;&amp; result.resources &amp;&amp; result.relations) {
+                this.setState({
+                    showQueryPopup: true,
+                    queryGraphData: result
+                });
+            } else {
+                alert('No graph data returned from query.');
+            }
+        }
+    };
+
+    closeQueryPopup = () => {
+        this.setState({ showQueryPopup: false, queryGraphData: null });
+    };
+
+    render() {
+        if (this.props.visualizationTabIsActive === false) {
+            return &lt;div>This should never be visible&lt;/div>;
+        }
+        return (
+            &lt;div>
+                &lt;div style={{ textAlign: 'center', fontSize: '1.5em' }}>
+                    {this.props.selectedOntology
+                        ? this.props.selectedOntology.name.length > 42
+                            ? `${this.props.selectedOntology.name.substring(0, 40)}...`
+                            : this.props.selectedOntology.name
+                        : 'N/A'}
+                &lt;/div>
+                &lt;div
+                    style={{
+                        display: 'flex',
+                        width: 'auto',
+                        marginRight: '50px',
+                        marginBottom: '10px',
+                        paddingLeft: '10px',
+                        paddingRight: '10px',
+                        background: colorStyled.secondaryContainer,
+                        position: 'relative',
+                        borderTopLeftRadius: '10px',
+                        borderTopRightRadius: '10px',
+                        height: '35px'
+                    }}
+                >
+                    &lt;Button
+                        color={!this.state.layoutPlay ? 'primary' : 'secondary'}
+                        size="sm"
+                        className="mr-sm-1"
+                        style={{ borderRadius: '20px', marginTop: '3px', height: '30px', padding: 0 }}
+                        onClick={() => {
+                            this.graph.setForceLayoutPlayState(this.state.layoutPlay);
+                            this.setState(prevState => ({ layoutPlay: !prevState.layoutPlay }));
+                        }}
+                    >
+                        &lt;Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
+                    &lt;/Button>
+                    {/*TODO: Enable UML Notation view once the error has been resolved*/}
+                    {/*/ As of Now we disabled the VOWl TO UML view in Graph Visualization because when we are switching from VOWL to
+                    UML it is throwing error The Problem could be in all-services\frontend\src\GraphVisLib\implementation\Renderes\gizmoRenderer\LineTools.js
+                     it has function computeIntersectionPointsWithProperty has domain and range Parameter so sometimes domain.x has value,
+                      but it is returning 0 same as the range so that could be problem but still further investigation needed  */}
+                    {/*{this.createDropDownForNotations()}*/}
+                    &lt;Button
+                        onClick={() => {
+                            this.graph.zoomToExtent();
+                        }}
+                        style={{
+                            backgroundColor: colorStyled.primary,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
+                    >
+                        Zoom
+                    &lt;/Button>
+                    &lt;Button
+                        style={{
+                            backgroundColor: colorStyled.primary,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
+                        onClick={this.captureScreenshot}
+                    >
+                        Visible-page capture
+                    &lt;/Button>
+                    &lt;Button
+                        style={{
+                            backgroundColor: colorStyled.primary,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
+                        onClick={() => this.setState({ startCapture: true })}
+                    >
+                        Interactive Capture
+                    &lt;/Button>
+                    &lt;Button
+                        style={{
+                            backgroundColor: colorStyled.primary,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
+                        onClick={this.copyUrlToClipboard}
+                    >
+                        Copy URL
+                    &lt;/Button>
+                    &lt;Button
+                        style={{
+                            backgroundColor: colorStyled.primary,
+                            textAlign: 'center',
+                            marginLeft: '5px',
+                            marginTop: '2px',
+                            height: '35px'
+                        }}
+                        onClick={this.openSparqlQueryInput}
+                    >
+                        Run SPARQL Query
+                    &lt;/Button>
+                &lt;/div>
+
+                &lt;div id="MainRenderingContainer" ref={this.componentRef}>
+                    &lt;SelectionSideBar expanded={this.state.leftSideBarExpanded}>
+                        &lt;StyledButton
+                            expanded={this.state.leftSideBarExpanded}
+                            onClick={() => {
+                                this.setState(prevState => ({ leftSideBarExpanded: !prevState.leftSideBarExpanded }));
+                            }}
+                            style={{ backgroundColor: colorStyled.primary }}
+                        >
+                            {this.state.leftSideBarExpanded ? '&lt;' : '>'}
+                        &lt;/StyledButton>
+                        {this.state.leftSideBarExpanded &amp;&amp; (
+                            &lt;div>
+                                &lt;h3>Customization Options&lt;/h3>
+                                &lt;div>Selected Item: {this.state.selectedItem ? this.state.selectedItem.__displayName : 'NONE'}&lt;/div>
+                                {this.state.selectedItem &amp;&amp; this.renderCustomizationOptions()}
+                            &lt;/div>
+                        )}
+                    &lt;/SelectionSideBar>
+
+                    &lt;SelectionRightSidebar
+                        style={{ position: 'absolute', backgroundColor: 'white' }}
+                        expanded={this.state.rightSideBarExpanded}
+                        width={350}
+                    >
+                        &lt;div style={{ position: 'relative', right: '35px' }}>
+                            &lt;Button
+                                onClick={() => {
+                                    this.setState(prevState => ({ rightSideBarExpanded: !prevState.rightSideBarExpanded }));
+                                }}
+                                style={{ backgroundColor: colorStyled.primary }}
+                            >
+                                {this.state.rightSideBarExpanded ? '>' : '&lt;'}
+                            &lt;/Button>
+                        &lt;/div>
+                        &lt;div
+                            style={{
+                                position: 'relative',
+                                top: '-40px',
+                                padding: '5px'
+                            }}
+                        >
+                            {this.renderGlobalCustomizationOptions()}
+                        &lt;/div>
+                    &lt;/SelectionRightSidebar>
+
+                    &lt;Container
+                        id="donatello_parent_container"
+                        style={{
+                            marginTop: '-5px',
+                            maxWidth: '100%',
+                            height: 'calc(100vh - 140px)',
+                            backgroundColor: '#eeeeee',
+                            padding: 0,
+                            overflow: 'hidden'
+                        }}
+                    >
+                        &lt;div id="donatello_rendering_div" style={{ height: '100%', overflow: 'hidden' }} />
+                    &lt;/Container>
+                &lt;/div>
+                {this.state.open &amp;&amp; (
+                    &lt;ScreenCaptureModal
+                        toggle={() => {
+                            this.setState(prevState => ({ open: !prevState.open, screenCapture: '', startCapture: false }));
+                        }}
+                        modelOpen={this.state.open}
+                        screenCapture={this.state.screenCapture}
+                    />
+                )}
+                {this.state.startCapture &amp;&amp; &lt;ScreenCapture onEndCapture={this.handleScreenCapture} onStartCapture={this.state.capture} />}
+                {this.state.showCopyNotification &amp;&amp; &lt;FadingNotification message="URL copied to clipboard" timeout={2000} />}
+                {/* SPARQL Query Input Modal */}
+                &lt;SparqlQueryInputModal
+                    open={this.state.showQueryInputModal}
+                    onClose={this.closeSparqlQueryInput}
+                    onRun={this.runSparqlQuery}
+                    defaultQuery={this.state.freeformQuery}
+                    defaultMode={this.state.queryInputMode}
+                    defaultVisualQuery={this.state.visualBuilderQuery}
+                />
+                {/* SPARQL Query Result Popup as separate component */}
+                &lt;GraphVisUiQueryPopup open={this.state.showQueryPopup} onClose={this.closeQueryPopup} queryGraphData={this.state.queryGraphData} />
+            &lt;/div>
+        );
+    }
+}
+
+const mapStateToProps = state => {
+    return {
+        resources: state.ResourceRelationModelReducer.resources,
+        relations: state.ResourceRelationModelReducer.relations,
+        prefixList: state.ResourceRelationModelReducer.metaInformation.prefixList,
+        visualNotation: state.globalUIReducer.ui_visual_notation_selector,
+        selectedOntology: state.ResourceRelationModelReducer.ontology
+    };
+};
+
+GraphVisUi.propTypes = {
+    visualizationTabIsActive: PropTypes.bool.isRequired,
+    resources: PropTypes.array.isRequired,
+    relations: PropTypes.array.isRequired,
+    prefixList: PropTypes.object.isRequired,
+    DonatelloGraph: PropTypes.object.isRequired,
+    visualNotation: PropTypes.string.isRequired,
+    selectVisualNotation: PropTypes.func.isRequired,
+    selectedOntology: PropTypes.object.isRequired
+};
+
+const mapDispatchToProps = dispatch => ({
+    selectVisualNotation: payload => dispatch(selectVisualNotation(payload))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(GraphVisUi);
+
+const expandContentContainerAnimationRight = ({ expanded, width }) => {
+    return keyframes`
+        from {
+            right: ${expanded ? -width : 0}px;
+        }
+        to {
+            right: ${expanded ? 0 : -width}px;
+
+        }
+    `;
+};
+export const SelectionSideBar = styled.div`
+    position: absolute;
+    width: ${props => (props.expanded ? '350px' : '0')};
+    height: calc(100% - 140px);
+    transition: width 0.3s ease;
+    background-color: white;
+    border: ${props => (props.expanded ? '1px solid black' : 'none')};
+
+    :focus {
+        outline: none;
+    }
+
+    ::-moz-focus-inner {
+        border: 0;
+    }
+
+    word-break: none;
+    white-space: nowrap;
+`;
+
+const StyledButton = styled(Button)`
+    position: absolute;
+    left: ${props => (props.expanded ? '350px' : '0px')};
+    transition: left 0.3s ease;
+`;
+
+export const SelectionRightSidebar = styled.div`
+    background-color: red;
+    border: 1px solid black;
+    color: black;
+    width: 350px;
+    height: calc(100% - 140px);
+    background: white;
+
+    :focus {
+        outline: none;
+    }
+
+    ::-moz-focus-inner {
+        border: 0;
+    }
+
+    word-break: none;
+    white-space: nowrap;
+
+    border-bottom: 1px solid black;
+    padding: 2px;
+    position: relative;
+    animation-name: ${expandContentContainerAnimationRight};
+    animation-duration: 400ms;
+    // opacity: 0.5;
+    right: ${props => (props.expanded ? 0 : -props.width)}px;
+`;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#TermOfWeekPopup">TermOfWeekPopup</a></li><li><a href="global.html#generateLightColor">generateLightColor</a></li><li><a href="global.html#generateLink">generateLink</a></li><li><a href="global.html#getContext">getContext</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Feb 16 2026 16:19:58 GMT+0100 (Central European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -36,77 +36,116 @@ class Documentations extends Component {
         return (
             <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '3%' }}>
                 <StyledDiv>
-                    <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%' }}>What the Portal will do for you</h3>
-                    <h5>Connecting Domain Experts with Knowledge Engineers</h5>
+                    <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%', color: colorStyled.onSurface }}>
+                        What the Portal will do for you
+                    </h3>
+                    <h5 style={{ color: colorStyled.onSurface }}>Connecting Domain Experts with Knowledge Engineers</h5>
                     <StyledText>
-                        <>{UserGuidance}</>
+                        {this.state.isreadmoreUserGuidance ? (
+                            <>
+                                {UserGuidance}
+                                <div style={{ textAlign: 'center' }}>
+                                    <img src={UserRole} alt="UserRole" style={{ maxWidth: '100%' }} />
+                                    <StyledText>
+                                        We identified that the most crucial requirement for ontology development is to serve users' needs from various
+                                        audiences with diverse backgrounds and in different contexts. We have therefore introduced several modes of
+                                        operations.
+                                    </StyledText>
+                                </div>
+                            </>
+                        ) : (
+                            UserGuidance.substring(0, 300)
+                        )}
+                        <button style={{ color: colorStyled.primary, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
+                            {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
+                        </button>
                     </StyledText>
-                    <h5>About Term structure</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>About SC4EU Ontology Curation Portal</h5>
                     <StyledText>
-                        A term consists of at least one Label (e.g., “Demand”) and a Definition (e.g., “Demand represents the quantity of products
-                        requested by customers”), as well as optional additional details. Everyone is invited to add new terms to the portal. All such
-                        collected term details can be next discussed via the portal and adjustments made accordingly. E.g. “The definition should be
-                        revised to consider XYZ. I propose to change it to …..”. During such discussions, each term remains in a “Draft” status. The
-                        discussion and revision of terms bring them after a while to a next level of maturity. We want to make this explicit by
-                        changing its status indication. Possible values are “Accepted” and “Not-Accepted”. This status change can only be achieved
-                        through a joint and transparent agreement process, which we call “Consensus”. To reach a consensus for changing the status a
-                        given threshold of participants must be met and a 2/3 majority must be achieved.
+                        <span>
+                            SC4EU Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and
+                            machines, as machines, as well as all other partners.The key objective of this platform is to implement data documentation
+                            of an actionable ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies,
+                            and complemented by new ones for other subdomains to ensure interoperability of data. "Further information about the
+                            project you can find on our
+                        </span>
+                        <a
+                            style={{ color: colorStyled.primary }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://sc3-project.automotive.oth-aw.de/"
+                        >
+                            SC4EU webpage
+                        </a>
+                        <span>, on our </span>
+                        <a
+                            style={{ color: colorStyled.primary }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
+                        >
+                            YouTube chanel
+                        </a>
+                        <span>, or </span>
+                        <a
+                            style={{ color: colorStyled.primary }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
+                        >
+                            via LinkedIn.
+                        </a>
                     </StyledText>
-                    <h5>How to participate in a consensus</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>Framework for Collaborative Ontology Development</h5>
+                    <p
+                        style={{
+                            whiteSpace: 'pre-wrap',
+                            cursor: 'text',
+                            textAlign: 'justify',
+                            color: colorStyled.onSurfaceVariant
+                        }}
+                    >
+                        {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
+                        <button style={{ color: colorStyled.primary, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
+                            {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
+                        </button>
+                    </p>
+
+                    <h5 style={{ color: colorStyled.onSurface }}>Be part of the SC4EU Community and Collaborate with us </h5>
                     <StyledText>
-                        <ol>
-                            <li>Please visit the                         <a
-                                style={{ color: colorStyled.SECONDARY.link }}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href="https://service.tib.eu/vocab/vocabulary_support"
-                            >
-                                Vocabulary Development
-                            </a> and login. If you are not registered yet, please follow the instructions.</li>
-                            <li>Open the Information Hub, by clicking on the respective button on the upper part of the window.</li>
-                            <li>
-                                Here you have two choices:
-                                <ol type="a">
-                                    <li>
-                                        Terms with Discussion: here you find all terms that are currently under discussion. If you check the box “Only
-                                        my mentions”, you will see only those where your input was directly requested.
-                                    </li>
-                                    <li>
-                                        Terms with active Consensus: here you find entries where we are asking for your opinion to either Approve or
-                                        Reject a request (see description below).
-                                    </li>
-                                </ol>
-                            </li>
-                        </ol>
+                        SC4EU is a{' '}
+                        <a style={{ color: colorStyled.primary }} target="_blank" rel="noopener noreferrer" href="https://www.kdt-ju.europa.eu/">
+                            KDT JU
+                        </a>{' '}
+                        funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited to
+                        participate in the project development.
+                        <br />
+                        If you would like to setup your own SC4EU Portal or if you would like to contribute to our codebase, please visit:&nbsp;
+                        <a
+                            style={{ color: colorStyled.primary }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://gitlab.com/TIBHannover/sc3-project/"
+                        >
+                            SC4EU Project GitLab
+                        </a>
+                        <br />
+                        You will find all our code under MIT licence, instructions. Check it out!
                     </StyledText>
-                    <h5>Consensus workflow: Do we only support these two types?</h5>
-                    <StyledText>
-                        <ol>
-                            <li>
-                                If the current consensus asks for <em>Change term status to Accept</em>:
-                                <ol type="a">
-                                    <li>
-                                        Agree: means you agree to all Term Details. With a majority of this vote the general term Status will change
-                                        to Accepted.
-                                    </li>
-                                    <li>
-                                        Not Agree: you are not satisfied with the current Term Details. With a majority of this votes the general term
-                                        status will stay Draft. Further discussion and refinement is needed before starting a new consensus.
-                                    </li>
-                                </ol>
-                            </li>
-                            <li>
-                                If the current consensus asks for <em>Change term status to Not Accepted</em>:
-                                <ol type="a">
-                                    <li>Agree: means you are agreeing that the term Status is set to Not Accepted.</li>
-                                    <li>
-                                        Not Agree: you want to keep this Term for now. Its status will stay Draft and further discussion and
-                                        refinement is needed before starting a new consensus.
-                                    </li>
-                                </ol>
-                            </li>
-                        </ol>
-                    </StyledText>
+                    <h5 style={{ color: colorStyled.onSurface }}>Hybrid Modes of Operation</h5>
+                    <p
+                        style={{
+                            whiteSpace: 'pre-wrap',
+                            cursor: 'text',
+                            textAlign: 'justify',
+                            color: colorStyled.onSurfaceVariant
+                        }}
+                    >
+                        {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
+                        <button style={{ color: colorStyled.primary, cursor: 'pointer' }} onClick={this.toggleReadmore}>
+                            {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
+                        </button>
+                    </p>
                 </StyledDiv>
             </div>
         );
@@ -129,7 +168,7 @@ const StyledDiv = styled.div`
 `;
 
 const StyledText = styled.p`
-    color: ${colorStyled.TEXTCOLOR};
+    color: ${colorStyled.onSurfaceVariant};
     white-space: pre-wrap;
     text-align: justify;
     font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};

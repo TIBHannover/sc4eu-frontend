@@ -166,7 +166,7 @@ class LoginViaEmail extends Component {
                                             <h2 style={{ marginBottom: '20px' }}>Sign In</h2>
                                             <p className="mt-3">
                                                 Don't have an account? &nbsp;
-                                                <Link to="" style={{ color: colorStyled.SECONDARY.link }} onClick={this.toggleSignupModel}>
+                                                <Link to="" style={{ color: colorStyled.primary }} onClick={this.toggleSignupModel}>
                                                     Sign Up
                                                 </Link>
                                             </p>
@@ -302,7 +302,8 @@ class LoginViaEmail extends Component {
                                                 style={{
                                                     width: '90%',
                                                     marginTop: '15px',
-                                                    backgroundColor: colorStyled.SECONDARY.dark
+                                                    backgroundColor: colorStyled.primary,
+                                                    color: colorStyled.onPrimary
                                                 }}
                                                 onClick={this.handleLogin}
                                             >
@@ -310,7 +311,7 @@ class LoginViaEmail extends Component {
                                             </Button>
                                         </div>
                                         <p style={{ textAlign: 'center' }}>
-                                            <Link to="" onClick={this.toggleResetPasswordModel}>
+                                            <Link to="" onClick={this.toggleResetPasswordModel} style={{ color: colorStyled.primary }}>
                                                 Forgot Password ?
                                             </Link>
                                         </p>
@@ -390,10 +391,10 @@ class LoginViaEmail extends Component {
                                             </div>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={this.handleRegister}>
+                                            <Button style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }} onClick={this.handleRegister}>
                                                 Register
                                             </Button>
-                                            <Button style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={this.props.toggleAuthDialog}>
+                                            <Button style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }} onClick={this.props.toggleAuthDialog}>
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
@@ -427,10 +428,10 @@ class LoginViaEmail extends Component {
                                             </div>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={this.handleForgotPassword}>
+                                            <Button style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }} onClick={this.handleForgotPassword}>
                                                 Reset
                                             </Button>
-                                            <Button style={{ backgroundColor: colorStyled.SECONDARY.dark }} onClick={this.props.toggleAuthDialog}>
+                                            <Button style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }} onClick={this.props.toggleAuthDialog}>
                                                 Cancel
                                             </Button>
                                         </ModalFooter>

@@ -6,7 +6,7 @@ import styled, { keyframes } from 'styled-components';
 import { Input } from 'reactstrap';
 
 import { transformRelationToTTL, calculateBodyRows } from '../../mappers/RelationToTTL';
-import { PRIMARY } from './StyledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
 
 class RelationBody extends Component {
@@ -49,7 +49,7 @@ class RelationBody extends Component {
                             id="ontologyContent"
                             rows={numRowsRequired}
                             value={content}
-                            style={{ padding: '2px', backgroundColor: PRIMARY.lighter }}
+                            style={{ padding: '2px', backgroundColor: colorStyled.surfaceContainerLowest, color: colorStyled.onSurface }}
                         />
                     </div>
                 )}

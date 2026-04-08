@@ -1,28 +1,10 @@
-import {
-    Box,
-    Typography,
-    TextField,
-    Button,
-    Tooltip,
-    IconButton,
-    Link,
-    FormControlLabel,
-    RadioGroup,
-    Radio,
-    Paper,
-    Chip
-} from '@mui/material';
+import { Box, Typography, TextField, Button, Tooltip, IconButton, Link, FormControlLabel, RadioGroup, Radio, Paper, Chip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
 import { colorStyled } from '../../../styledComponents/styledColor';
-import {
-    getTermLastConsensus,
-    getTermVote,
-    initiateNewVote,
-    manualCloseConsensus
-} from '../../../network/TermVoteCalls';
+import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
@@ -31,6 +13,8 @@ import { StyledTooltip } from '../../../styledComponents/styledComponents';
 import LastConsensusView from './LastConsensusView';
 import { commitChanges } from '../utils/CommitChanges';
 import { useQueryClient } from '@tanstack/react-query';
+import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
+import { useMediaQuery } from '@material-ui/core';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const [editMode, setEditMode] = useState(false);
@@ -45,6 +29,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     const [isConsensusSubmitted, setIsConsensusSubmitted] = useState(false);
     const [isConsensusClosed, setIsConsensusClosed] = useState(false);
     const queryClient = useQueryClient();
+    const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
     const [updatedTerm, setUpdatedTerm] = useState({
         ...term,
@@ -58,17 +43,17 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
 
     useEffect(() => {
         const getVote = async () => {
-            const data = await getTermVote(term.identifier);
+            const data = await getTermVotes(term.identifier);
             if (!data.error) {
                 setActiveAgreement(data[0]);
             }
         };
         const getLastConsensus = async () => {
             const data = await getTermLastConsensus(term.identifier);
-            if (!data.error) {
+            if (data || !data?.error) {
                 setLastConsensus(data);
             }
-        }
+        };
 
         getVote();
         getLastConsensus();
@@ -137,7 +122,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     };
 
     return (
-        <Box sx={{ paddingLeft: 2, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Box>
             {notification && <FadingNotification message="Vote successfully submitted" timeout={3000} />}
             {initiateTermAgreement && (
                 <MaterialUIPopUp
@@ -153,8 +138,8 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             <Paper sx={{ p: 2 }}>
                                 <Typography variant="body1" paragraph>
                                     This action invites all users registered in a vocabulary platform to participate in deciding the term’s status.
-                                    Once enough people have voted, the decision is made by a two-thirds majority,
-                                    ensuring that changes reflect broad agreement in a community.
+                                    Once enough people have voted, the decision is made by a two-thirds majority, ensuring that changes reflect broad
+                                    agreement in a community.
                                 </Typography>
                             </Paper>
                             <Paper sx={{ p: 2 }}>
@@ -210,8 +195,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         onClick={() => handleAgreementSubmit()}
                                         variant="contained"
                                         sx={{
-                                            backgroundColor: colorStyled.ORANGE_COLOR,
-                                            '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }
+                                            backgroundColor: colorStyled.primary,
+                                            color: colorStyled.onPrimary,
+                                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                                         }}
                                         disabled={!agreementType}
                                     >
@@ -221,27 +207,21 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             </Tooltip>
                         </Box>
                     }
-                    paperSizeStyles={{
-                        minHeight: '0%',
-                        maxHeight: '60%',
-                        minWidth: '60%',
-                        maxWidth: '60%'
-                    }}
                 />
             )}
             {openLastConsensusDialog && (
-                <LastConsensusView consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)}/>
+                <LastConsensusView consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)} />
             )}
             {viewAgreementMode && (
                 <VoteView term={term} vote={activeAgreement} username={currentUser.displayName} setVoteViewMode={setViewAgreementMode} />
             )}
             {!editMode && !viewAgreementMode && (
                 <Box>
-                    <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, gap: '20px', padding: '5px' }}>
+                    <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, flexDirection: { xs: 'column', xl: 'row' }, gap: 2 }}>
                         <Paper
                             elevation={2}
                             sx={{
-                                width: '50%',
+                                width: { xs: '100%', xl: '50%' },
                                 maxHeight: 'calc(90vh - 100px)',
                                 flex: '1',
                                 display: 'flex',
@@ -331,18 +311,17 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     <Chip
                                         label="Check last consensus"
                                         size="small"
-                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.PRIMARY.main }}
+                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.tertiary, color: colorStyled.onTertiary }}
                                         onClick={() => setOpenLastConsensusDialog(true)}
                                     />
                                 )}
                             </Typography>
 
-                            {/* Action buttons */}
-                            <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
-                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle}>
+                            <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px', flexWrap: 'wrap' }}>
+                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile ? true : false}>
                                     Edit Term
                                 </Button>
-                                <Button onClick={handleClose} variant="contained" sx={buttonStyle}>
+                                <Button onClick={handleClose} variant="contained" sx={buttonStyle} fullWidth={isMobile ? true : false}>
                                     Close
                                 </Button>
                                 {!activeAgreement && (
@@ -352,6 +331,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
                                             sx={buttonStyle}
+                                            fullWidth={isMobile ? true : false}
                                         >
                                             Start consensus
                                         </Button>
@@ -363,9 +343,11 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             onClick={() => setViewAgreementMode(true)}
                                             variant="contained"
                                             sx={{
-                                                backgroundColor: colorStyled.ORANGE_COLOR,
-                                                '&:hover': { backgroundColor: colorStyled.ORANGE_COLOR }
+                                                backgroundColor: colorStyled.primary,
+                                                color: colorStyled.onPrimary,
+                                                '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                                             }}
+                                            fullWidth={isMobile ? true : false}
                                         >
                                             View ongoing consensus
                                         </Button>
@@ -373,19 +355,27 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             <Button
                                                 onClick={async () => {
                                                     const data = await manualCloseConsensus(term.identifier, activeAgreement.uuid);
-                                                    if (data.status === "accept" || data.status === "not accept") {
+                                                    if (data.status === 'accept' || data.status === 'not accept') {
                                                         const newTerm = {
                                                             ...term,
                                                             status: data.status,
-                                                            modified: new Date().toISOString(),
+                                                            modified: new Date().toISOString()
                                                         };
                                                         await updateTerm(newTerm);
-                                                        await commitChanges(queryClient, `Update ${term.label} status after consensus` );
+                                                        await commitChanges(queryClient, `Update ${term.label} status after consensus`);
                                                     }
                                                     setIsConsensusClosed(true);
                                                 }}
                                                 variant="contained"
-                                                sx={buttonStyle}
+                                                sx={{
+                                                    backgroundColor: colorStyled.tertiary,
+                                                    color: colorStyled.onTertiary,
+                                                    '&:hover': {
+                                                        backgroundColor: colorStyled.tertiaryContainer,
+                                                        color: colorStyled.onTertiaryContainer
+                                                    }
+                                                }}
+                                                fullWidth
                                             >
                                                 Close consensus
                                             </Button>
@@ -396,7 +386,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         </Paper>
                         <Box
                             sx={{
-                                width: '50%',
+                                width: { xs: '100%', xl: '50%' },
                                 padding: '10px',
                                 backgroundColor: '#f4f4f4',
                                 borderRadius: '8px',
@@ -419,7 +409,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                 </Box>
             )}
             {editMode && !viewAgreementMode && (
-                <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, gap: '20px', padding: '5px' }}>
+                <Box sx={{ display: 'flex', width: '100%', gap: '20px', padding: '5px' }}>
                     <Box
                         sx={{
                             width: '50%',
@@ -502,25 +492,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             </Button>
                         </Box>
                     </Box>
-
-                    <Box
-                        sx={{
-                            width: '50%',
-                            padding: '10px',
-                            backgroundColor: '#f4f4f4',
-                            borderRadius: '8px',
-                            overflowY: 'auto',
-                            maxHeight: 'calc(100vh - 100px)'
-                        }}
-                    >
-                        <CommentsSection
-                            resourceId={term.identifier}
-                            comments={updatedTerm.comments || []}
-                            mentionedUsers={[]}
-                            handleSaveDiscussion={handleSaveDiscussion}
-                            setHasUncommittedChanges={setHasUncommittedChanges}
-                        />
-                    </Box>
                 </Box>
             )}
 
@@ -545,6 +516,7 @@ export default ExpandedRow;
 
 const buttonStyle = {
     padding: '10px 20px',
-    backgroundColor: colorStyled.SECONDARY.dark,
-    '&:hover': { backgroundColor: 'darkgray' }
+    backgroundColor: colorStyled.primary,
+    color: colorStyled.onPrimary,
+    '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
 };

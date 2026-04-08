@@ -11,8 +11,8 @@ import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { expandAllBodies } from '../../redux/actions/globalUI_actions';
 import styled from 'styled-components';
 import { Button } from 'reactstrap';
-import { SECONDARY } from '../RRView/StyledComponents';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
+import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { fontStyled } from '../../styledComponents/styledFont';
 import FadingNotification from '../ReusableComponents/FadingNotification';
 class OntologyContentViewer extends Component {
@@ -41,7 +41,7 @@ class OntologyContentViewer extends Component {
     render() {
         return (
             <div style={{ height: '100%' }}>
-                <div style={{ paddingBottom: '1.0em', height: '55px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <HeaderBar>
                     {this.props.selectedProject ? (
                         <ControlLink
                             to={{
@@ -77,14 +77,14 @@ class OntologyContentViewer extends Component {
                             {this.props.globalUIReducer.ui_all_resource_bodies_expanded ? 'Collapse' : 'Expand'} all resources/relations
                         </ControlButton>
                     </div>
-                </div>
+                </HeaderBar>
                 <StyledDiv>
-                    <div style={{ width: '50%' }}>
+                    <Column>
                         <ResourceRenderer experimentalLayout={this.props.experimentalLayout} />
-                    </div>
-                    <div style={{ width: '50%' }}>
+                    </Column>
+                    <Column>
                         <RelationRenderer experimentalLayout={this.props.experimentalLayout} />
-                    </div>
+                    </Column>
                 </StyledDiv>
                 {this.state.showCopyNotification && <FadingNotification message="URL copied to clipboard" timeout={2000} />}
             </div>
@@ -116,7 +116,8 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyContentViewer);
 
 const ControlButton = styled(Button)`
-    background: ${SECONDARY.dark};
+    background: ${colorStyled.primary};
+    color: ${colorStyled.onPrimary};
     border-radius: 5px 5px;
     margin-top: 10px;
     margin-right: 10px;
@@ -161,4 +162,33 @@ const ControlLink = styled(Link)`
 const StyledDiv = styled.div`
     display: flex;
     height: calc(100% - 55px);
+
+    @media (max-width: ${MAX_WIDTH}) {
+        flex-direction: column; 
+        height: auto;
+    }
+`;
+
+const Column = styled.div`
+    width: 50%;
+    overflow-y: auto;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        width: 100%;
+    }
+`;
+
+const HeaderBar = styled.div`
+    padding: 8px 12px;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    @media (max-width: ${MAX_WIDTH}) {
+        flex-wrap: wrap;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
 `;

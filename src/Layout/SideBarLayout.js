@@ -1,40 +1,26 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
+import MuiSwipeableDrawer from '@mui/material/SwipeableDrawer';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import PropTypes from 'prop-types';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
+import { SMALL_SCREEN_WIDTH } from '../styledComponents/styledComponents';
 import SideBar from '../components/SideBar';
 import { colorStyled } from '../styledComponents/styledColor';
 import { useLocation } from 'react-router-dom';
-import { Button } from 'reactstrap';
 import IconButton from '@mui/material/IconButton';
-import { CloseOutlined, KeyboardDoubleArrowLeftOutlined, KeyboardDoubleArrowRightOutlined, Menu } from '@mui/icons-material';
+import { KeyboardDoubleArrowLeftOutlined, KeyboardDoubleArrowRightOutlined, Menu, MenuOpenOutlined } from '@mui/icons-material';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-
-const StyledButtonMobileView = styled('div')(() => ({
-    display: 'none',
-
-    [`@media (max-width: ${MAX_WIDTH})`]: {
-        display: 'flex',
-        height: '40px',
-        position: 'fixed',
-        width: '40px',
-        left: 0,
-        top: 5,
-        zIndex: 999
-    }
-}));
+import { useMediaQuery } from '@mui/material';
 
 const createMixin = activePage => ({
     height: activePage === '/' ? 'calc(100% - 55px)' : 'calc(100% - 0px)',
     top: 0,
     overflow: 'hidden',
     transition: '0.6s',
-    backgroundColor: `${colorStyled.PRIMARY.lighter}`,
-    [`@media (max-width: ${MAX_WIDTH})`]: {
+    backgroundColor: `${colorStyled.surfaceContainerLow}`,
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
         height: activePage === '/' ? 'calc(100% - 55px)' : 'calc(100% - 0px)',
         top: 50
     }
@@ -48,18 +34,30 @@ const openedMixin = activepage => ({
 const closedMixin = activepage => ({
     width: '80px',
     ...createMixin(activepage),
-    [`@media (max-width: ${MAX_WIDTH})`]: {
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
         width: '0px'
     }
 });
 
-const Drawer = styled(MuiDrawer)(({ open, activepage }) => ({
+const MobileDrawerButton = styled(IconButton)(({ theme }) => ({
+    position: 'fixed',
+    top: 8,
+    left: 8,
+    zIndex: theme.zIndex.drawer + 1,
+    backgroundColor: colorStyled.surfaceContainerLow,
+    boxShadow: theme.shadows[2],
+    borderRadius: '50%',
+
+    '&:hover': {
+        backgroundColor: colorStyled.surfaceContainerHigh,
+    },
+}));
+
+
+const SwipeableDrawer = styled(MuiSwipeableDrawer)(({ open, activepage }) => ({
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
     ...(open ? openedMixin(activepage) : closedMixin(activepage)),
-    [`@media (max-width: ${MAX_WIDTH})`]: {
-        width: '0px'
-    },
     '& .MuiDrawer-paper': {
         ...(open ? openedMixin(activepage) : closedMixin(activepage))
     }
@@ -69,14 +67,19 @@ const StyledDiv = styled('div')(({ open }) => ({
     display: 'flex',
     justifyContent: open ? 'flex-start' : 'center',
 
-    [`@media (max-width: ${MAX_WIDTH})`]: {
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
         display: 'none'
     }
 }));
 
 export default function SideBarLayout(props) {
-    const [open, setOpen] = React.useState(true);
+    const isMobile = useMediaQuery(`(max-width: ${SMALL_SCREEN_WIDTH})`);
+    const [open, setOpen] = React.useState(!isMobile);
     const location = useLocation();
+
+    React.useEffect(() => {
+        setOpen(!isMobile);
+    }, [isMobile]);
 
     const handleDrawer = () => {
         setOpen(!open);
@@ -84,12 +87,21 @@ export default function SideBarLayout(props) {
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <StyledButtonMobileView position="fixed">
-                <Button color="inherit" onClick={handleDrawer}>
-                    {open ? <CloseOutlined /> : <Menu />}
-                </Button>
-            </StyledButtonMobileView>
-            <Drawer variant="permanent" open={open} activepage={location.pathname}>
+            {isMobile && (
+                <MobileDrawerButton
+                    onClick={() => setOpen(!open)}
+                >
+                    {open ? <MenuOpenOutlined /> : <Menu />}
+                </MobileDrawerButton>
+            )}
+            <SwipeableDrawer
+                variant={isMobile ? 'temporary' : 'permanent'}
+                open={open}
+                onOpen={() => setOpen(true)}
+                onClose={() => setOpen(false)}
+                swipeAreaWidth={0}
+                activepage={location.pathname}
+            >
                 <Scrollbars style={{ overflowX: 'hidden' }}>
                     <StyledDiv open={open}>
                         <IconButton onClick={handleDrawer} style={{ padding: '10px 10px 10px 10px' }}>
@@ -105,10 +117,10 @@ export default function SideBarLayout(props) {
                     </StyledDiv>
                     <Divider />
                     <List style={{ marginTop: '-20px' }}>
-                        <SideBar isOpen={open} />
+                        <SideBar isOpen={open} onNavigate={isMobile ? () => setOpen(false) : () => {}}/>
                     </List>
                 </Scrollbars>
-            </Drawer>
+            </SwipeableDrawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3, margin: 0, padding: 0 }}>
                 <StyledAppContent activePage={location.pathname}>{props.children}</StyledAppContent>
             </Box>

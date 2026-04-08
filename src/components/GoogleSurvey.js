@@ -51,7 +51,7 @@ const GoogleSurvey = () => {
 
     return (
         <div>
-            <StyledButton variant="extended" size="large" aria-label="add" onClick={handleModalToggle}>
+            <StyledButton size="large" aria-label="add" onClick={handleModalToggle}>
                 <ThumbUp />
                 <StyledSpan>Rate Us</StyledSpan>
             </StyledButton>
@@ -89,7 +89,8 @@ const GoogleSurvey = () => {
                         style={{
                             marginTop: '10px',
                             marginLeft: '10px',
-                            backgroundColor: colorStyled.SECONDARY.dark
+                            backgroundColor: colorStyled.primary,
+                            color: colorStyled.onPrimary
                         }}
                         onClick={handleModalToggle}
                     >
@@ -108,13 +109,19 @@ const StyledButton = styled(Button)`
     justify-content: space-around;
     right: 60px;
     min-width: 150px;
-    background-color: #ee7356;
+    background-color: ${colorStyled.tertiary};
+    color: ${colorStyled.onTertiary};
     color: white;
     border-radius: 4px;
 
     @media (max-width: 1300px) {
         right: 50px;
         min-width: 50px;
+    }
+
+    :hover {
+        background-color: ${colorStyled.tertiaryContainer};
+        color: ${colorStyled.onTertiaryContainer};
     }
 `;
 

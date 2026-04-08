@@ -41,7 +41,7 @@ class ProjectIndexCards extends Component {
                         <StyledIcon
                             icon={faEnvelope}
                             hidden={!this.props.user}
-                            color={colorStyled.SECONDARY.darker}
+                            color={colorStyled.onSecondaryContainer}
                             onClick={() => {
                                 this.setState({ showEmailModal: true });
                             }}
@@ -122,10 +122,10 @@ const StyledLabel = styled(Label)`
 
 const StyledCardHeader = styled.div`
     border-radius: 10px 10px 0 0;
-    border: 1px solid ${colorStyled.PRIMARY.dark};
+    border: 1px solid ${colorStyled.outline};
     padding: 2px;
-    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background: ${colorStyled.PRIMARY.light};
+    color: ${colorStyled.onPrimaryContainer};
+    background: ${colorStyled.primaryContainer};
     :focus {
         outline: none;
     }
@@ -134,13 +134,13 @@ const StyledCardHeader = styled.div`
     }
 
     // :hover {
-    //     background: ${colorStyled.SECONDARY.dark}; //00b4cc
+    //     background: ${colorStyled.secondaryContainer}; //00b4cc
     // }
 `;
 
 const StyledCardBody = styled.div`
     padding: 5px;
-    border: 1px solid ${colorStyled.PRIMARY.dark};
+    border: 1px solid ${colorStyled.outline};
     font-size: ${fontStyled.fontSize.NormalText};
     border-top: none;
     :focus {

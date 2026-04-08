@@ -7,30 +7,6 @@ import { Tooltip as ReactstrapTooltip } from "reactstrap";
 import { colorStyled } from './styledColor';
 import PropTypes from 'prop-types';
 
-export const StyledTopBar = styled.div`
-    margin-bottom: 0;
-    width: 100%;
-    height: 40px;
-    color: red;
-    position: fixed;
-    // padding-top: 5px;
-
-    // For the background
-    background: #5f6474;
-`;
-
-export const StyledLink = styled(Link)`
-    padding: 10px;
-
-    :focus {
-        outline: none;
-    }
-
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
-
 export const StyledGravatar = styled(Gravatar)`
     border: 3px solid black;
     cursor: pointer;
@@ -79,12 +55,12 @@ export const StyledBadge = styled(
 )(({ customVariant }) => ({
     '& .MuiBadge-badge': {
         ...(customVariant === 'orange' && {
-            backgroundColor: colorStyled.ORANGE_COLOR,
-            color: colorStyled.CONTAINER_BACKGROUND_COLOR
+            backgroundColor: colorStyled.tertiary,
+            color: colorStyled.onTertiary
         }),
         ...(customVariant === 'blue' && {
-            backgroundColor: colorStyled.PRIMARY.main,
-            color: colorStyled.CONTAINER_BACKGROUND_COLOR
+            backgroundColor: colorStyled.primaryContainer,
+            color: colorStyled.onPrimaryContainer
         })
     }
 }));
@@ -96,12 +72,12 @@ StyledBadge.propTypes = {
 export const StyledChip = styled(Chip)(({ customVariant }) => ({
     '&.MuiChip-root': {
         ...(customVariant === 'mention' && {
-            backgroundColor: colorStyled.ORANGE_COLOR,
-            color: colorStyled.CONTAINER_BACKGROUND_COLOR
+            backgroundColor: colorStyled.tertiary,
+            color: colorStyled.onTertiary
         }),
         ...(customVariant === 'agreement' && {
-            backgroundColor: colorStyled.PRIMARY.lightMain,
-            color: colorStyled.CONTAINER_BACKGROUND_COLOR
+            backgroundColor: colorStyled.secondaryContainer,
+            color: colorStyled.onSecondaryContainer
         })
     }
 }));
@@ -121,5 +97,9 @@ export const StyledTooltip = styled(({ className, ...props }) => (
 }));
 
 export const MAX_WIDTH = '769px';
+
+export const SMALL_SCREEN_WIDTH = '480px';
+
+export const LARGE_SCREEN_SIZE = '1200px';
 
 export const MIN_WIDTH_FOR_MONITOR = '1750px';

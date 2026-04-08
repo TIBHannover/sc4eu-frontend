@@ -8,7 +8,7 @@ import { Button, Card, CardBody, Collapse, Table } from 'reactstrap';
 import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { fontStyled } from '../../styledComponents/styledFont';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
+import { MIN_WIDTH_FOR_MONITOR, SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 import { colorStyled } from '../../styledComponents/styledColor';
 import Tippy from '@tippyjs/react';
 import { getBranchFromUrl, getLicense } from '../../network/GithubAPICalls';
@@ -109,7 +109,7 @@ class MetaDataModal extends React.Component {
                     return (
                         <tr key={'description_title_' + itemKey + keyIndex++}>
                             <th style={{ textAlign: 'left' }}>{itemKey}:</th>
-                            <td style={{ textAlign: 'left' }}>{itemValueInLang}</td>
+                            <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>{itemValueInLang}</td>
                         </tr>
                     );
                 });
@@ -117,7 +117,7 @@ class MetaDataModal extends React.Component {
                 return (
                     <tr key={'iri_version_' + itemKey + keyIndex++}>
                         <th style={{ textAlign: 'left' }}>{itemKey}</th>
-                        <td style={{ textAlign: 'left' }}>{obj[itemKey]}</td>
+                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>{obj[itemKey]}</td>
                     </tr>
                 );
             }
@@ -132,13 +132,14 @@ class MetaDataModal extends React.Component {
                 // const shortToLong = shortKey + ':' + prefixList[shortKey];
                 return (
                     <tr key={'prefix_' + shortKey}>
-                        <td style={{ textAlign: 'left' }}>{shortKey}:</td>
+                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>{shortKey}:</td>
                         <Tippy content={shortToLongValues[shortKey]}>
                             <td
                                 style={{
                                     justifyContent: 'start',
                                     display: 'flex',
-                                    overflow: 'hidden'
+                                    overflow: 'hidden',
+                                    wordBreak: 'break-word'
                                 }}
                             >
                                 {shortToLongValues[shortKey]}
@@ -215,7 +216,7 @@ class MetaDataModal extends React.Component {
                             top: '50%',
                             left: '50%',
                             transform: 'translate(-50%, -50%)',
-                            width: '70%',
+                            width: '90%',
                             bgcolor: 'background.paper',
                             boxShadow: 24,
                             paddingLeft: 4,
@@ -224,7 +225,11 @@ class MetaDataModal extends React.Component {
                             textAlign: 'center',
                             maxHeight: '90%', // Add maximum height
                             display: 'flex',
-                            flexDirection: 'column'
+                            flexDirection: 'column',
+
+                            '@media (min-width: ${SMALL_SCREEN_WIDTH})': {
+                                width: '100%'
+                            }
                         }}
                     >
                         <div
@@ -264,11 +269,13 @@ class MetaDataModal extends React.Component {
                                                 <tbody>
                                                     <tr>
                                                         <th style={{ textAlign: 'left' }}>URL</th>
-                                                        <td style={{ textAlign: 'left' }}>{this.props.selectedOntology.lookup_path}</td>
+                                                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>
+                                                            {this.props.selectedOntology.lookup_path}
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <th style={{ textAlign: 'left' }}>License</th>
-                                                        <td style={{ textAlign: 'left' }}>
+                                                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>
                                                             <a
                                                                 href={this.state.licenseURL ? this.state.licenseURL : null}
                                                                 target="_blank"
@@ -280,7 +287,7 @@ class MetaDataModal extends React.Component {
                                                     </tr>
                                                     <tr>
                                                         <th style={{ textAlign: 'left' }}>Branch</th>
-                                                        <td style={{ textAlign: 'left' }}>{this.state.ontologyVersion}</td>
+                                                        <td style={{ textAlign: 'left', wordBreak: 'break-word' }}>{this.state.ontologyVersion}</td>
                                                     </tr>
                                                 </tbody>
                                             </Table>
@@ -341,7 +348,8 @@ const StyledButton = styled(Button)`
     text-align: left;
     font-weight: bold;
     font-size: ${fontStyled.fontSize.NormalText};
-    background-color: ${colorStyled.SECONDARY.dark};
+    background-color: ${colorStyled.primary};
+    color: ${colorStyled.onPrimary};
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};

@@ -10,7 +10,7 @@ import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { GraphVisButton, WidgetVisButton, CollapsibleItem } from './StyledComponents';
-import { PRIMARY } from '../RRView/StyledComponents';
+import { colorStyled } from 'styledComponents/styledColor';
 import AnnotationsDropDown from './AnnotationsDropDown';
 class SingleResource extends Component {
     constructor(props) {
@@ -110,7 +110,8 @@ class SingleResource extends Component {
                     marginLeft: '10px',
                     overflow: 'none',
                     display: isVisible,
-                    backgroundColor: PRIMARY.light,
+                    backgroundColor: colorStyled.surface,
+                    color: colorStyled.surface,
                     borderRadius: '10px 10px 0px 0px ',
                     marginBottom: '5px'
                 }}

@@ -10,18 +10,20 @@ import {
 } from '@mui/icons-material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import PropTypes from 'prop-types';
-import { getTermVote, updateExpertDecision } from '../../../network/TermVoteCalls';
+import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
 import { stringAvatar } from './CommentsSection';
+import { ConsensusProgress } from '../utils/Consensus';
 
 const styles = {
     button: {
         padding: '10px 20px',
-        backgroundColor: colorStyled.SECONDARY.dark,
-        '&:hover': { backgroundColor: 'darkgray' }
+        backgroundColor: colorStyled.primary,
+        color: colorStyled.onPrimary,
+        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
     },
     voteProgress: {
-        backgroundColor: colorStyled.PRIMARY.lighter,
+        backgroundColor: colorStyled.surfaceContainerLow,
         p: 2,
         borderRadius: 1,
         mb: 3
@@ -31,14 +33,14 @@ const styles = {
         borderRadius: 1,
         mb: 3,
         border: '1px solid',
-        borderColor: 'divider',
-        backgroundColor: colorStyled.CONTAINER_BACKGROUND_COLOR
+        borderColor: colorStyled.outlineVariant,
+        backgroundColor: colorStyled.surfaceContainerLow
     },
     recentVotesContainer: {
         maxHeight: 400,
         overflow: 'auto',
         border: '1px solid',
-        borderColor: colorStyled.SCROLLBAR_BORDER_COLOR,
+        borderColor: colorStyled.outlineVariant,
         borderRadius: 1,
         p: 1
     },
@@ -48,9 +50,9 @@ const styles = {
         gap: 1,
         p: 1.5,
         borderBottom: '1px solid',
-        borderColor: 'divider',
+        borderColor: colorStyled.outlineVariant,
         '&:hover': {
-            backgroundColor: 'action.hover'
+            backgroundColor: `${colorStyled.primary}1A` // primary at 10% opacity
         },
         '&:last-child': {
             borderBottom: 'none'
@@ -64,7 +66,7 @@ const styles = {
     commentBox: {
         pl: 4.5,
         borderLeft: '2px solid',
-        borderColor: colorStyled.BORDER_COLOR,
+        borderColor: colorStyled.outline,
         ml: 1
     },
     stickySidebar: {
@@ -90,7 +92,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
 
     useEffect(() => {
         const getVote = async () => {
-            const data = await getTermVote(term.identifier);
+            const data = await getTermVotes(term.identifier);
             if (data.length !== 0) {
                 setDecisions(data[0].decisions);
             }
@@ -99,7 +101,8 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
     }, [decisionMade]);
 
     const handleExpertDecision = async () => {
-        await updateExpertDecision(term.identifier, vote.uuid, username, decision, comment);
+        console.log('expert decision updated: ', vote);
+        await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
         setDecisionMade(true);
         setUserHasVoted(true);
         setComment(null);
@@ -140,18 +143,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                         </Typography>
                     </Box>
 
-                    <Box sx={styles.voteProgress}>
-                        <Typography variant="body1" paragraph>
-                            <strong>Consensus progress:</strong> {totalVotes} people voted
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {approvedCount} agree • {rejectedCount} not agree
-                        </Typography>
-                        <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                            Note: At least three votes are required to reach a consensus. Furthermore, a two-thirds majority is required for the
-                            proposed change of status.
-                        </Typography>
-                    </Box>
+                    <ConsensusProgress term={vote} />
                 </Grid>
 
                 <Grid item xs={12} md={8}>
@@ -253,7 +245,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                                         variant="body2"
                                         sx={{
                                             fontStyle: 'italic',
-                                            color: colorStyled.TEXTCOLOR,
+                                            color: colorStyled.onSurfaceVariant,
                                             mt: 1
                                         }}
                                     >
@@ -304,7 +296,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                                                             variant="body2"
                                                             sx={{
                                                                 fontStyle: 'italic',
-                                                                color: colorStyled.TEXTCOLOR,
+                                                                color: colorStyled.onSurfaceVariant,
                                                                 mt: 0.5
                                                             }}
                                                         >
@@ -329,7 +321,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
                                                                         setExpandedComments(newExpanded);
                                                                     }}
                                                                     sx={{
-                                                                        color: colorStyled.SECONDARY.link,
+                                                                        color: colorStyled.primary,
                                                                         cursor: 'pointer',
                                                                         ml: 0.5,
                                                                         '&:hover': {

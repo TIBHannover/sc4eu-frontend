@@ -9,9 +9,9 @@ export default class Imprint extends Component {
         return (
             <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
                 <StyledDiv>
-                    <h3 style={{ textAlign: 'center' }}>Imprint</h3>
+                    <h3 style={{ textAlign: 'center', color: colorStyled.onSurface }}>Imprint</h3>
                     <StyledText>Imprint for this website ‐ also serves as provider identification according to § 5 Telemediengesetz (TMG)</StyledText>
-                    <h5>Provider:</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>Provider:</h5>
                     <StyledText>
                         Technische Informationsbibliothek (TIB)
                         <br />
@@ -21,7 +21,7 @@ export default class Imprint extends Component {
                         <br />
                     </StyledText>
 
-                    <h5>Authorised Representative:</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>Authorised Representative:</h5>
 
                     <StyledText>
                         Prof. Dr. Sören Auer (Director of TIB)
@@ -30,11 +30,11 @@ export default class Imprint extends Component {
                         <br />
                     </StyledText>
 
-                    <h5>Responsible Supervisory Authority:</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>Responsible Supervisory Authority:</h5>
 
                     <StyledText>Ministry for Science and Culture of Lower Saxony</StyledText>
 
-                    <h5>Contact:</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>Contact:</h5>
 
                     <StyledText>
                         Customer service phone : +49 511 762-8989
@@ -44,29 +44,29 @@ export default class Imprint extends Component {
                         Fax : +49 511 762-4076
                         <br />
                         Email : &nbsp;
-                        <a href="mailto:information@tib.eu" style={{ color: colorStyled.SECONDARY.link }}>
+                        <a href="mailto:information@tib.eu" style={{ color: colorStyled.primary }}>
                             information(AT)tib.eu
                         </a>
                         <br />
                     </StyledText>
 
-                    <h5>VAT (sales tax) registration number :</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>VAT (sales tax) registration number :</h5>
 
                     <StyledText>DE 214931803</StyledText>
 
-                    <h5>Editorial Office:</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>Editorial Office:</h5>
 
                     <StyledText>
                         Felix Engel
                         <br />
                         Email : &nbsp;
-                        <a href="mailto:felix.engel@tib.eu" style={{ color: colorStyled.SECONDARY.link }}>
+                        <a href="mailto:felix.engel@tib.eu" style={{ color: colorStyled.primary }}>
                             felix.engel(AT)tib.eu
                         </a>
                         <br />
                     </StyledText>
 
-                    <h5>Copyright Notice:</h5>
+                    <h5 style={{ color: colorStyled.onSurface }}>Copyright Notice:</h5>
 
                     <StyledText>
                         The layout of the homepage, the graphics used and the other content are protected by copyright.
@@ -91,7 +91,7 @@ const StyledDiv = styled.div`
 `;
 
 const StyledText = styled.p`
-    color: ${colorStyled.TEXTCOLOR};
+    color: ${colorStyled.onSurfaceVariant};
     text-align: justify;
     font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
 

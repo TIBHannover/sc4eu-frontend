@@ -13,14 +13,13 @@ import private_collection from '../assets/images/private_collection.png';
 import sandbox_collection from '../assets/images/sandbox.png';
 import public_collection from '../assets/images/public_collection.png';
 import sc4eu_collection from '../assets/images/logo.png';
-import theme from '../theme';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
 import PropTypes from 'prop-types';
 
 const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
     & .MuiTooltip-tooltip {
-        background-color: ${colorStyled.SECONDARY.dark};
-        color: white;
+        background-color: ${colorStyled.inverseSurface};
+        color: ${colorStyled.inverseOnSurface};
         font-size: 14px;
         padding: 12px 16px;
         border-radius: 8px;
@@ -29,7 +28,7 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
         margin: 8px;
     }
     & .MuiTooltip-arrow {
-        color: ${colorStyled.SECONDARY.dark};
+        color: ${colorStyled.inverseSurface};
     }
 `;
 
@@ -98,7 +97,11 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
         >
             <StyledCard sx={{ maxWidth: 345, cursor: 'pointer' }}>
                 <div style={{ position: 'relative', height: '100%' }}>
-                    <CardActionArea onClick={handleCardClick} style={{ height: 'calc(100% - 48px)' }}>
+                    <CardActionArea
+                        onClick={handleCardClick}
+                        style={{ height: 'calc(100% - 48px)' }}
+                        sx={{ '&:hover .MuiCardActionArea-focusHighlight': { opacity: 0 } }}
+                    >
                         <div
                             style={{
                                 display: 'flex',
@@ -128,11 +131,10 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             />
                             <Typography
                                 variant="subtitle2"
-                                color="textSecondary"
                                 fontWeight={'bold'}
                                 style={{
+                                    color: `${colorStyled.onTertiary}D9`,
                                     marginLeft: '8px',
-                                    fontWeight: 'bold',
                                     fontSize: '1rem',
                                     pointerEvents: 'auto'
                                 }}
@@ -141,7 +143,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             </Typography>
                         </div>
                         <CardContent style={{ paddingTop: '20px', paddingLeft: '45px', paddingBottom: '16px' }}>
-                            <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                            <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={1}>
                                 {project.name}
                             </Typography>
                         </CardContent>
@@ -155,10 +157,10 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             padding: '8px'
                         }}
                     >
-                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete}>
+                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete} sx={{ color: colorStyled.onTertiary }}>
                             <Edit />
                         </IconButton>
-                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete}>
+                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete} sx={{ color: colorStyled.onTertiary }}>
                             <Delete />
                         </IconButton>
                     </CardActions>
@@ -179,14 +181,16 @@ export default connect(null, mapDispatchToProps)(ProjectCard);
 
 const StyledCard = styled(Card)`
     && {
-        background-color: ${colorStyled.PRIMARY.light};
+        background-color: ${colorStyled.tertiary};
+        color: ${colorStyled.onTertiary};
         padding: 3px;
-        borderradius: 20px;
+        border-radius: 20px;
         transition: transform 0.2s;
-        width: 300px; // Set the width
-        height: 300px; // Set the height
+        width: 300px;
+        height: 300px;
         &:hover {
             transform: scale(1.05);
+            background-color: ${colorStyled.tertiary}CC;
         }
     }
 `;
@@ -196,7 +200,7 @@ ProjectCard.propTypes = {
         name: PropTypes.string.isRequired,
         description: PropTypes.string.isRequired,
         access_type: PropTypes.string.isRequired,
-        canDelete: PropTypes.bool.isRequired,
+        canDelete: PropTypes.bool.isRequired
     }),
     onEdit: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,

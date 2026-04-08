@@ -126,7 +126,7 @@ class RightSideProjectBar extends Component {
                     </p>
                 </StyledInfoDiv>
                 <StyledScrollbarDiv>
-                    <Scrollbars style={{ borderTop: `0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR}` }}>
+                    <Scrollbars style={{ borderTop: `0.01rem solid ${colorStyled.outline}` }}>
                         <div style={{ textAlign: 'left', marginRight: '1.5%' }}>
                             {this.state.results.length > 0 ? (
                                 this.state.results.map(item => {
@@ -172,7 +172,7 @@ const StyledRootDiv = styled.div`
     width: 25%;
     margin-top: 0.5%;
     height: 95%;
-    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
+    background-color: ${colorStyled.surface};
     font-family: ${fontStyled.fontFamily};
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
@@ -182,8 +182,8 @@ const StyledRootDiv = styled.div`
 
 const StyledHeadingDiv = styled.div`
     border-radius: 10px 0 0 0;
-    color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    background-color: ${colorStyled.SECONDARY.dark};
+    background-color: ${colorStyled.surfaceContainer};
+    color: ${colorStyled.onSurface};
     height: 60px;
     display: flex;
     align-items: center;

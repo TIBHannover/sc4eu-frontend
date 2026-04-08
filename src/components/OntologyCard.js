@@ -12,7 +12,6 @@ import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
-import theme from '../theme';
 import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
 import DeleteConfirmationDialog from '../utils/DeleteConfirmationDialog';
 import UpdateConfirmationDialog from '../utils/UpdateConfirmationDialog';
@@ -25,8 +24,8 @@ import { updateOntologyData } from '../network/UpdateOntologyData';
 
 const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
     & .MuiTooltip-tooltip {
-        background-color: ${colorStyled.PRIMARY.dark};
-        color: white;
+        background-color: ${colorStyled.inverseSurface};
+        color: ${colorStyled.inverseOnSurface};
         font-size: 14px;
         padding: 12px 16px;
         border-radius: 8px;
@@ -35,7 +34,7 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
         margin: 8px;
     }
     & .MuiTooltip-arrow {
-        color: ${colorStyled.PRIMARY.dark};
+        color: ${colorStyled.inverseSurface};
     }
 `;
 
@@ -201,7 +200,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 {ontology.commitsBehind > 0 && (
                                     <>
                                         <br />
-                                        <strong style={{ color: theme.palette.warning.main }}>
+                                        <strong style={{ color: colorStyled.onErrorContainer }}>
                                             {ontology.commitsBehind} {ontology.commitsBehind === 1 ? 'commit' : 'commits'} behind
                                         </strong>
                                     </>
@@ -213,7 +212,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 component="div"
                                 style={{
                                     marginTop: '8px',
-                                    color: theme.palette.error.main,
+                                    color: colorStyled.error,
                                     fontWeight: 'bold'
                                 }}
                             >
@@ -233,6 +232,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                             onClick={cardActionDisabled ? undefined : handleCardClick}
                             style={{ height: 'calc(100% - 48px)' }}
                             disabled={cardActionDisabled}
+                            sx={{ '&:hover .MuiCardActionArea-focusHighlight': { opacity: 0 } }}
                         >
                             <div
                                 style={{
@@ -263,11 +263,10 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 />
                                 <Typography
                                     variant="subtitle2"
-                                    color="textSecondary"
                                     fontWeight={'bold'}
                                     style={{
+                                        color: `${colorStyled.onPrimary}D9`,
                                         marginLeft: '8px',
-                                        color: 'white',
                                         fontWeight: 'bold',
                                         fontSize: '1rem',
                                         pointerEvents: 'auto'
@@ -277,7 +276,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 </Typography>
                             </div>
                             <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '16px' }}>
-                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={theme.spacing(1)}>
+                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={1} style={{ color: colorStyled.onPrimary }}>
                                     {ontology.name}
                                 </Typography>
                             </CardContent>
@@ -359,7 +358,8 @@ export default connect(null, mapDispatchToProps)(OntologyCard);
 
 const StyledCard = styled(Card)`
     && {
-        background-color: ${colorStyled.SECONDARY.dark};
+        background-color: ${colorStyled.primary};
+        color: ${colorStyled.onPrimary};
         padding: 3px;
         border-radius: 20px;
         transition: transform 0.2s;
@@ -368,16 +368,17 @@ const StyledCard = styled(Card)`
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         &:hover {
             transform: scale(1.05);
+            background-color: ${colorStyled.primary}CC;
         }
 
         .MuiTypography-root {
-            color: white;
+            color: ${colorStyled.onPrimary};
         }
 
         .MuiIconButton-root {
-            color: white;
+            color: ${colorStyled.onPrimary};
             &:disabled {
-                color: rgba(255, 255, 255, 0.3);
+                color: ${colorStyled.onPrimary}4D; 
             }
         }
     }

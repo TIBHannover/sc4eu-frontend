@@ -1,7 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Box, Button, Chip, darken, Grid, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
+import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -16,9 +16,13 @@ import { useHistory } from 'react-router-dom';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import Cookies from 'js-cookie';
-import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength, RenderGroupedMentions } from '../utils/Discussions';
-import { StyledBadge, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength } from '../utils/Discussions';
+import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
 import InformationHub from './InformationHub';
+import { useMediaQuery } from '@mui/material';
+import { CardActivityWidget } from './CardActivityWidget';
+import { getTermVotes, getVotes } from '../../../network/TermVoteCalls';
+import VoteView from './VoteView';
 
 /* eslint-disable react/prop-types */
 const VocabularyMainTable = ({
@@ -55,6 +59,26 @@ const VocabularyMainTable = ({
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
     const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
+    const isLargeScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
+
+    const [pagination, setPagination] = useState({
+        pageSize: isLargeScreen ? 10 : 10,
+        pageIndex: 0
+    });
+    const [density, setDensity] = useState(isLargeScreen ? 'comfortable' : 'compact');
+
+    const [urgentVoteTerm, setUrgentVoteTerm] = useState(null);
+    const [urgentVoteData, setUrgentVoteData] = useState(null);
+    const [votesMap, setVotesMap] = useState([]);
+
+    useEffect(() => {
+        const fetchVotes = async () => {
+            const votesData = await getVotes();
+            setVotesMap(votesData);
+        };
+
+        fetchVotes();
+    }, []);
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -86,6 +110,14 @@ const VocabularyMainTable = ({
     useEffect(() => {
         refetch();
     }, [refetch]);
+
+    useEffect(() => {
+        setPagination(prev => ({
+            ...prev,
+            pageSize: isLargeScreen ? 10 : 10
+        }));
+        setDensity(() => (isLargeScreen ? 'comfortable' : 'compact'));
+    }, [isLargeScreen]);
 
     const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
@@ -120,6 +152,23 @@ const VocabularyMainTable = ({
             return false;
         }
     }
+
+    const columnVisibility = useMemo(() => {
+        return isLargeScreen
+            ? {
+                  identifier: false,
+                  altLabel: false,
+                  seeAlso: false,
+                  description: false,
+                  created: false,
+                  modified: false
+              }
+            : {
+                  identifier: false,
+                  altLabel: false,
+                  seeAlso: false
+              };
+    }, [isLargeScreen]);
 
     const TerminologyCellComponent = ({ row }) => {
         const seeAlso = row.original.seeAlso;
@@ -179,31 +228,25 @@ const VocabularyMainTable = ({
             },
             {
                 accessorKey: 'label',
-                header: 'Label', // Keep this as a string to retain sorting & actions
-                Header: (
-                    { column } // Custom header with tooltip
-                ) => (
-                    <Tooltip title="Provides a human-readable version of a resource's name. In the final agreed term, only one preferred and many alternative labels exist.">
-                        <span>{column.columnDef.header}</span>
-                    </Tooltip>
-                ),
-                size: 150,
-                Cell: ({ cell }) => EllipsisTextCell({ value: cell.getValue() }),
-                muiEditTextFieldProps: {
-                    required: true,
-                    error: !!validationErrors?.label,
-                    helperText: validationErrors?.label,
-                    onFocus: () =>
-                        setValidationErrors({
-                            ...validationErrors,
-                            label: undefined
-                        })
+                header: 'Label',
+                size: 190,
+
+                muiTableBodyCellProps: {
+                    sx: {
+                        maxWidth: 190,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                    }
                 },
-                filterVariant: 'text',
-                muiFilterTextFieldProps: {
-                    placeholder: 'Filter Label',
-                    sx: { minWidth: '120px' }
-                }
+
+                muiTableHeadCellProps: {
+                    sx: {
+                        maxWidth: 190
+                    }
+                },
+
+                Cell: ({ cell }) => <EllipsisTextCell value={cell.getValue()} />
             },
             {
                 accessorKey: 'altLabel',
@@ -250,6 +293,49 @@ const VocabularyMainTable = ({
                 muiFilterTextFieldProps: {
                     placeholder: 'Filter Description',
                     sx: { minWidth: '120px' }
+                }
+            },
+            {
+                id: 'activeConsensus',
+                accessorFn: row => (votesMap.some(c => c.term_uuid === row.identifier) ? 'true' : 'false'),
+                header: 'Consensus',
+                Header: ({ column }) => (
+                    <Tooltip title="Shows if there is an active consensus. Clicking open active consensus vote view">
+                        <span>{column.columnDef.header}</span>
+                        <StyledChip label="New" size="small" customVariant="agreement" sx={{ ml: '0.5' }} />
+                    </Tooltip>
+                ),
+                size: 140,
+                enableEditing: false,
+                filterVariant: 'select',
+                filterSelectOptions: [
+                    { text: 'In Consensus', value: 'true' },
+                    { text: 'Not in Consensus', value: 'false' }
+                ],
+                filterFn: (row, columnId, filterValue) => {
+                    if (filterValue === '' || filterValue === null || filterValue === undefined) return true;
+                    return row.getValue(columnId) === filterValue;
+                },
+                Cell: ({ row }) => {
+                    const inConsensus = votesMap.find(consensus => consensus.term_uuid === row.original.identifier);
+                    return inConsensus ? (
+                        <StyledChip
+                            label="In Consensus"
+                            size="small"
+                            customVariant="agreement"
+                            sx={{ cursor: 'pointer' }}
+                            onClick={async event => {
+                                event.stopPropagation();
+                                await handleWidgetUrgentTermClick(row.original);
+                            }}
+                        />
+                    ) : null;
+                },
+                muiTableBodyCellProps: {
+                    sx: { maxWidth: 140 }
+                },
+                muiTableHeadCellProps: {
+                    sx: { maxWidth: 140 }
                 }
             },
             {
@@ -313,23 +399,22 @@ const VocabularyMainTable = ({
                     placeholder: 'Filter',
                     select: true,
                     sx: {
-                        width: '100%',
+                        width: '100%'
                     }
                 },
                 muiTableHeadCellProps: {
                     sx: {
                         width: '90px',
                         minWidth: '90px',
-                        maxWidth: '90px',
+                        maxWidth: '90px'
                     }
                 },
                 muiTableBodyCellProps: {
                     sx: {
                         width: '90px',
                         minWidth: '90px',
-                        maxWidth: '90px',
-
-                    },
+                        maxWidth: '90px'
+                    }
                 }
             },
             {
@@ -348,7 +433,6 @@ const VocabularyMainTable = ({
                     >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <span>{column.columnDef.header}</span>
-                            <Chip label="New" size="small" sx={{ ml: 0.5, backgroundColor: colorStyled.PRIMARY.main }} />
                         </div>
                     </Tooltip>
                 ),
@@ -390,22 +474,22 @@ const VocabularyMainTable = ({
                     placeholder: 'Filter Modified',
                     select: true,
                     sx: {
-                        width: '100%',
+                        width: '100%'
                     }
                 },
                 muiTableHeadCellProps: {
                     sx: {
                         width: '150px',
                         minWidth: '150px',
-                        maxWidth: '150px',
+                        maxWidth: '150px'
                     }
                 },
                 muiTableBodyCellProps: {
                     sx: {
                         width: '150px',
                         minWidth: '150px',
-                        maxWidth: '150px',
-                    },
+                        maxWidth: '150px'
+                    }
                 }
             },
             {
@@ -418,7 +502,7 @@ const VocabularyMainTable = ({
                         <span>{column.columnDef.header}</span>
                     </Tooltip>
                 ),
-                size: 150,
+                size: 100,
                 enableEditing: false,
                 filterVariant: 'select',
                 filterFn: 'equals',
@@ -428,12 +512,22 @@ const VocabularyMainTable = ({
                     { text: 'Accept', value: 'accept' }
                 ],
                 muiFilterTextFieldProps: {
-                    placeholder: 'Filter Status',
+                    placeholder: 'Filter',
                     select: true
+                },
+                muiTableBodyCellProps: {
+                    sx: {
+                        maxWidth: 100
+                    }
+                },
+                muiTableHeadCellProps: {
+                    sx: {
+                        maxWidth: 100
+                    }
                 }
             }
         ],
-        [validationErrors]
+        [validationErrors, votesMap]
     );
 
     const handleCreateTerm = async ({ values, table }) => {
@@ -494,6 +588,7 @@ const VocabularyMainTable = ({
         label: '', // Default value for label
         altLabel: [], // Default value for altLabel
         description: '', // Default value for description
+        activeConsensus: '',
         seeAlso: '', // Default value for seeAlso
         status: 'draft', // Override 'status' with 'draft'
         created: new Date().toLocaleDateString('en-CA'), // Default value for created
@@ -519,17 +614,23 @@ const VocabularyMainTable = ({
         initialState: {
             sorting: [{ id: 'label', desc: false }],
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
-            density: 'compact',
+            density: isLargeScreen ? 'comfortable' : 'compact',
             pagination: { pageSize: 15, pageIndex: 0 },
-            showColumnFilters: true // Show filter search box by default
+            showColumnFilters: !isLargeScreen
         },
+        onPaginationChange: setPagination,
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
         enableEditing: true,
         getRowId: row => row.identifier,
+        enableRowActions: false,
         positionActionsColumn: 'last',
         enableSorting: true,
         enableFiltering: true,
+        enableDensityToggle: false,
+        enableFullScreenToggle: false,
+        enableGlobalFilter: false,
+        enableHiding: false,
         muiTableBodyRowProps: ({ row }) => ({
             onClick: event => handleRowClick(row, event, discussions),
             sx: {
@@ -606,16 +707,21 @@ const VocabularyMainTable = ({
             );
         },
         renderTopToolbarCustomActions: ({ table, row }) => (
-            <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-start', flexWrap: 'nowrap' }}>
                 <Tooltip title="Add new term">
                     <Button
                         variant="contained"
                         onClick={() => {
                             handleCreateRow(row);
                         }}
-                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                        sx={{
+                            backgroundColor: colorStyled.primary,
+                            whiteSpace: 'nowrap',
+                            minWidth: 50,
+                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                        }}
                     >
-                        Create New Term
+                        {isLargeScreen ? 'New Term' : 'Create New Term'}
                     </Button>
                 </Tooltip>
                 <Tooltip title="View this vocabulary history of changes">
@@ -624,7 +730,12 @@ const VocabularyMainTable = ({
                         onClick={() => {
                             setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
                         }}
-                        style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                        sx={{
+                            backgroundColor: colorStyled.primary,
+                            whiteSpace: 'nowrap',
+                            minWidth: 50,
+                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                        }}
                     >
                         Timeline
                     </Button>
@@ -638,16 +749,17 @@ const VocabularyMainTable = ({
                                 setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
                                 Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
                             }}
-                            style={{ backgroundColor: colorStyled.SECONDARY.dark }}
+                            sx={{
+                                backgroundColor: colorStyled.primary,
+                                whiteSpace: 'nowrap',
+                                minWidth: 50,
+                                '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                            }}
                         >
-                            Information Hub
+                            {isLargeScreen ? 'Hub' : 'Information Hub'}
                         </Button>
                     </StyledBadge>
                 </Tooltip>
-
-                {/*{hasUncommittedChanges && (*/}
-                {/*    <span style={{ fontSize: '1.5em', color: 'red' }}> You have made changes, Please don't forget to save your changes</span>*/}
-                {/*)}*/}
             </div>
         ),
         renderBottomToolbarCustomActions: () => (
@@ -658,7 +770,7 @@ const VocabularyMainTable = ({
                         disabled={!hasUncommittedChanges}
                         onClick={() => setOpenCommit(true)}
                         style={{
-                            backgroundColor: hasUncommittedChanges ? colorStyled.SECONDARY.dark : 'gray',
+                            backgroundColor: hasUncommittedChanges ? colorStyled.primary : 'gray',
                             border: hasUncommittedChanges ? '2px' + ' solid red' : ''
                         }}
                     >
@@ -671,11 +783,15 @@ const VocabularyMainTable = ({
                         openCommit={openCommit}
                         setOpenCommit={setOpenCommit}
                         setHasUncommittedChanges={setHasUncommittedChanges}
+                        user={currentUser.displayName}
                     />
                 )}
             </>
         ),
         state: {
+            columnVisibility,
+            pagination,
+            density,
             isLoading: isLoadingTerms,
             isSaving: isCreatingTerm || isUpdatingTerm || isDeletingTerm,
             showAlertBanner: isLoadingTermsError,
@@ -684,14 +800,8 @@ const VocabularyMainTable = ({
 
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
-                {/*<Tooltip title="Edit">*/}
-                {/*    <IconButton style={{ color: colorStyled.SECONDARY.dark }} onClick={() => table.setEditingRow(row)}>*/}
-                {/*        <EditIcon />*/}
-                {/*    </IconButton>*/}
-                {/*</Tooltip>*/}
-
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: colorStyled.SECONDARY.dark }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" style={{ color: colorStyled.secondary }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -699,24 +809,52 @@ const VocabularyMainTable = ({
         )
     });
 
+    const handleWidgetNewTermsClick = () => {
+        table.setColumnFilters([{ id: 'created', value: 'last3months' }]);
+    };
+
+    const handleWidgetDiscussionReplyClick = term => {
+        setSelectedTerm(term);
+        const currentResourceDiscussion = discussions.find(d => d.resourceId === term.identifier);
+        setTermComments(currentResourceDiscussion.comments);
+        setOpenPopup(true);
+    };
+
+    const handleWidgetUrgentTermClick = async term => {
+        const data = await getTermVotes(term.identifier);
+        setUrgentVoteTerm(term);
+        setUrgentVoteData(data[0]);
+        setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
+    };
+
     return (
         <ScrollableDiv>
+            <CardActivityWidget
+                urgentTerms={terms.filter(term => votesMap.some(vote => vote.term_uuid === term.identifier))}
+                votes={votesMap}
+                discussionReplies={terms.filter(term =>
+                    discussions.some(discussion => discussion.comments.length !== 0 && term.identifier === discussion.resourceId)
+                )}
+                newTerms={terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)))}
+                onUrgentClick={handleWidgetUrgentTermClick}
+                onNewTermsClick={handleWidgetNewTermsClick}
+                onDiscussionClick={handleWidgetDiscussionReplyClick}
+            />
             <MaterialReactTable table={table} />
             <Modal open={openPopup} onClose={handleClosePopup}>
                 <Box
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 2,
-                        backgroundColor: 'white',
-                        margin: 'auto',
-                        width: '70%',
-                        overflowY: 'auto',
                         position: 'fixed',
-                        top: 0,
-                        left: '15%',
-                        outline: 'none'
+                        top: { xs: '50%', xl: '25%' },
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        backgroundColor: 'white',
+                        width: { xs: '95%', xl: '70vw' },
+                        height: { xs: '95%', xl: '53%' },
+                        overflowY: 'auto',
+                        padding: 2,
+                        outline: 'none',
+                        borderRadius: 1
                     }}
                 >
                     {selectedTerm && (
@@ -745,16 +883,34 @@ const VocabularyMainTable = ({
                 onClose={() => setActiveMUIPopUp(null)}
                 title="Information Hub"
                 message={
-                    <Grid container spacing={2}>
-                        <InformationHub
-                            terms={terms}
-                            discussions={discussions}
-                            mentionedUser={currentUser.displayName}
-                            onTermSelect={handleNavigateToMentionedTerm}
-                        />
-                    </Grid>
+                    <InformationHub
+                        terms={terms}
+                        discussions={discussions}
+                        mentionedUser={currentUser.displayName}
+                        onTermSelect={handleNavigateToMentionedTerm}
+                    />
                 }
             />
+            {urgentVoteTerm && urgentVoteData && (
+                <MaterialUIPopUp
+                    open={activeMUIPopUp === MaterialUIPopUpTypes.ACTIVE_CONSENSUS}
+                    onClose={() => {
+                        setActiveMUIPopUp(null);
+                    }}
+                    title="Active consensus"
+                    message={
+                        <VoteView
+                            term={urgentVoteTerm}
+                            vote={urgentVoteData}
+                            username={currentUser.displayName}
+                            setVoteViewMode={() => {
+                                setUrgentVoteTerm(null);
+                                setUrgentVoteData(null);
+                            }}
+                        />
+                    }
+                />
+            )}
         </ScrollableDiv>
     );
 };
@@ -784,9 +940,15 @@ function validateTerm(term) {
 }
 
 const ScrollableDiv = styled.div`
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding-bottom: 5px;
-    height: 80vh;
+    max-height: 90vh;
+
+    @media (max-width: ${LARGE_SCREEN_SIZE}) {
+        padding: 5px;
+    }
 `;
 
 const CellContent = styled.div`

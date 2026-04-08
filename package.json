@@ -32,6 +32,7 @@
     "classnames": "^2.5.1",
     "connected-react-router": "^6.9.3",
     "d3": "^3.5.6",
+    "date-fns": "^2.30.0",
     "detect-browser": "^4.7.0",
     "diff2html": "^3.4.51",
     "dot-prop-immutable": "^2.1.1",
@@ -41,6 +42,7 @@
     "html-react-parser": "^0.14.2",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
+    "jsdoc": "^4.0.5",
     "lodash": "^4.17.21",
     "marked": "^9.1.6",
     "material-react-table": "^2.13.0",
@@ -81,6 +83,12 @@
     "typed.js": "^2.1.0",
     "util": "^0.12.5",
     "validator": "^13.11.0",
+    "workbox-core": "^7.4.0",
+    "workbox-expiration": "^7.4.0",
+    "workbox-precaching": "^7.4.0",
+    "workbox-routing": "^7.4.0",
+    "workbox-strategies": "^7.4.0",
+    "workbox-webpack-plugin": "^7.4.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
@@ -105,7 +113,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.js",
-    "lint:fix": "eslint src/**/*.js --fix"
+    "lint:fix": "eslint src/**/*.js --fix",
+    "docs": "jsdoc -c jsdoc.json"
   },
   "auto-changelog": {
     "template": "./keepachangelog.hbs",

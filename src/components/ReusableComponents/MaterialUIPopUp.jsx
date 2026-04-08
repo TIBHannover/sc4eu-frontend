@@ -2,40 +2,26 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import PropTypes from 'prop-types';
 import { colorStyled } from '../../styledComponents/styledColor';
 
-const MaterialUIPopUp = ({ open, onClose, title, message, paperSizeStyles }) => {
-    const defaultPaperSizeStyles = {
-        minHeight: '70%',
-        maxHeight: '70%',
-        minWidth: '80%',
-        maxWidth: '80%'
-    };
-
+const MaterialUIPopUp = ({ open, onClose, title, message }) => {
     return (
         <Dialog
             open={open}
             onClose={onClose}
             PaperProps={{
-                style: {
-                    ...defaultPaperSizeStyles,
-                    ...paperSizeStyles
+                sx: {
+                    minWidth: { xs: '95%', lg: '80%' },
+                    maxWidth: { xs: '95%', lg: '80%' },
+                    minHeight: { xs: '95%', lg: '80%' },
+                    maxHeight: { xs: '95%', lg: '80%' }
                 }
             }}
-            //should be used instead of PaperProps, after material-ui version update
-            // slotProps={{
-            //     paper: {
-            //         style: {
-            //             ...defaultPaperSizeStyles,
-            //             ...paperSizeStyles
-            //         }
-            //     }
-            // }}
         >
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
             <DialogActions style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.SECONDARY.dark }}>
+                <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.primary }}>
                     Close
                 </Button>
             </DialogActions>
@@ -53,7 +39,8 @@ MaterialUIPopUp.propTypes = {
 
 export const MaterialUIPopUpTypes = {
     HISTORY: 'history',
-    DISCUSSIONS: 'discussions'
+    DISCUSSIONS: 'discussions',
+    ACTIVE_CONSENSUS: 'active_consensus'
 };
 
 export default MaterialUIPopUp;

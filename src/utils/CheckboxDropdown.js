@@ -90,14 +90,14 @@ const DropdownButton = styled.button`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    border: 1px solid ${colorStyled.PRIMARY.dark};
+    background-color: ${colorStyled.background};
+    border: 1px solid ${colorStyled.outline};
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
 
     &:hover {
-        background-color: ${colorStyled.PRIMARY.light};
+        background-color: ${colorStyled.primary}1A;
     }
 `;
 
@@ -106,8 +106,8 @@ const DropdownMenu = styled.div`
     top: 100%;
     left: 0;
     width: 100%;
-    background-color: ${colorStyled.CONTAINER_BACKGROUND_COLOR};
-    border: 1px solid ${colorStyled.PRIMARY.dark};
+    background-color: ${colorStyled.background};
+    border: 1px solid ${colorStyled.outline};
     border-radius: 4px;
     margin-top: 4px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -116,7 +116,7 @@ const DropdownMenu = styled.div`
 
 const DropdownItem = styled.div`
     padding: 8px 12px;
-    border-bottom: 1px solid ${colorStyled.PRIMARY.lighter};
+    border-bottom: 1px solid ${colorStyled.outlineVariant};
     display: flex;
     align-items: center;
 
@@ -125,7 +125,7 @@ const DropdownItem = styled.div`
     }
 
     &:hover {
-        background-color: ${colorStyled.PRIMARY.lighter};
+        background-color: ${colorStyled.primary}1A;
     }
 `;
 
@@ -144,5 +144,5 @@ CheckboxDropdown.propTypes = {
     options: PropTypes.arrayOf(PropTypes.string).isRequired,
     defaultOptions: PropTypes.arrayOf(PropTypes.string),
     title: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-}
+    onChange: PropTypes.func.isRequired
+};
