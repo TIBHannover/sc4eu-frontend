@@ -203,6 +203,12 @@ router.get(
     }
 );
 
+// add middle-ware
+router.use(express.static(path.join(__dirname, '..', 'build')));
+router.use(express.static('public'));
+
+router.use(express.static(path.join(__dirname, 'public')));
+
 router.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
 });
