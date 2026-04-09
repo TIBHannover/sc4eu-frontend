@@ -30,10 +30,6 @@ const processing = require('./ontologyProcessingCalls');
 
 auth.initializeAuth(router, passport);
 
-// add middle-ware
-router.use(express.static(path.join(__dirname, '..', 'build')));
-router.use(express.static('public'));
-
 // start express server on port
 app.listen(APPLICATION_PORT, () => {
     console.log('server started on port ' + APPLICATION_PORT);
@@ -62,7 +58,6 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: false, parameterLimit: 
 
 router.use(express.urlencoded({ extended: false }));
 router.use(cookieParser());
-router.use(express.static(path.join(__dirname, 'public')));
 
 // apply individual "endPoints"
 server.servicesStatus(router);
