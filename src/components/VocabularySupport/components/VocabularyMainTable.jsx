@@ -833,7 +833,12 @@ const VocabularyMainTable = ({
                 urgentTerms={terms.filter(term => votesMap.some(vote => vote.term_uuid === term.identifier))}
                 votes={votesMap}
                 discussionReplies={terms.filter(term =>
-                    discussions.some(discussion => discussion.comments.length !== 0 && term.identifier === discussion.resourceId)
+                    discussions.some(
+                        discussion =>
+                            discussion.comments.length !== 0 &&
+                            term.identifier === discussion.resourceId &&
+                            discussion.comments.some(comment => comment.mentionedUsers && comment.mentionedUsers.includes(currentUser.displayName))
+                    )
                 )}
                 newTerms={terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)))}
                 onUrgentClick={handleWidgetUrgentTermClick}
