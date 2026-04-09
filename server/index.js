@@ -23,7 +23,7 @@ const router = express.Router();
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-router.get('/auth/test', (req, res) => {
+router.get('/oauth/test', (req, res) => {
     console.log('AUTH TEST route reached!');
     res.json({ message: 'auth test reached', timestamp: new Date() });
 });
