@@ -210,7 +210,7 @@ router.get(
 );
 
 router.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, '..', 'build/ocp', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
 });
 
 app.use('/ocp', router);
