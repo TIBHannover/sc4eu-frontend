@@ -49,9 +49,14 @@ app.use(
 );
 
 app.use((req, res, next) => {
-    console.log('Incoming request:', req.method, req.url);
+    console.log('APP level - Incoming request:', req.method, req.url);
     next();
 });
+
+app.use('/ocp', (req, res, next) => {
+    console.log('ROUTER level - Incoming request:', req.method, req.url);
+    next();
+}, router);
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false, parameterLimit: 50000 }));
