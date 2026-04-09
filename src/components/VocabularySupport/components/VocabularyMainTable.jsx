@@ -827,10 +827,20 @@ const VocabularyMainTable = ({
         setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
     };
 
+    const handleConsensusDecisionMade = async () => {
+        const updatedVotes = await getVotes();
+        setVotesMap(updatedVotes);
+    };
+
     return (
         <ScrollableDiv>
             <CardActivityWidget
-                urgentTerms={terms.filter(term => votesMap.some(vote => vote.term_uuid === term.identifier))}
+                urgentTerms={terms.filter(term =>
+                    votesMap.some(
+                        vote =>
+                            vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName)
+                    )
+                )}
                 votes={votesMap}
                 discussionReplies={terms.filter(term =>
                     discussions.some(
@@ -914,6 +924,7 @@ const VocabularyMainTable = ({
                                 setUrgentVoteTerm(null);
                                 setUrgentVoteData(null);
                             }}
+                            onDecisionMade={handleConsensusDecisionMade}
                         />
                     }
                     type={MaterialUIPopUpTypes.ACTIVE_CONSENSUS}
