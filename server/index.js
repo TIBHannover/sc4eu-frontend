@@ -143,10 +143,16 @@ router.get(
     }
 );
 
-router.get('/auth/gitlab', (req, res, next) => {
-    console.log('>>> HIT GITLAB ROUTE');
+router.get('/auth/gitlab',
+  (req, res, next) => {
+    console.log("➡️  /auth/gitlab hit");
+    console.log("Headers:", req.headers);
+    console.log("Query:", req.query);
     next();
-}, passport.authenticate('gitlab', { scope: ['read_user'] }));
+  },
+
+  passport.authenticate('gitlab', { scope: ['read_user'] })
+);
 router.get(
     '/auth/gitlab/callback',
     passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
