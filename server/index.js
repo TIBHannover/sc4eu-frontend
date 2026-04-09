@@ -58,19 +58,10 @@ app.use(
     })
 );
 
-// app.use(
-//     proxy('/sc3/EmailVerify/**', {
-//         target: API_SERVICE_URL,
-//         changeOrigin: true
-//         // pathRewrite: {
-//         //     '/sc3/EmailVerify': '/sc3/Documentation'
-//         // }
-//     })
-// );
-//
-// router.use('/EmailVerify', (req, res) => {
-//     console.log('Email EmailVerify');
-// });
+app.use((req, res, next) => {
+    console.log('Incoming request:', req.method, req.url);
+    next();
+});
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false, parameterLimit: 50000 }));
