@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import PropTypes from 'prop-types';
 import { colorStyled } from '../../styledComponents/styledColor';
 
-const MaterialUIPopUp = ({ open, onClose, title, message }) => {
+const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
     return (
         <Dialog
             open={open}
@@ -20,11 +20,13 @@ const MaterialUIPopUp = ({ open, onClose, title, message }) => {
             <DialogContent>
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
-            <DialogActions style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.primary }}>
-                    Close
-                </Button>
-            </DialogActions>
+            {type !== MaterialUIPopUpTypes.ACTIVE_CONSENSUS && (
+                <DialogActions style={{ display: 'flex', justifyContent: 'flex-start' }}>
+                    <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.primary }}>
+                        Close
+                    </Button>
+                </DialogActions>
+            )}
         </Dialog>
     );
 };
@@ -34,7 +36,8 @@ MaterialUIPopUp.propTypes = {
     onClose: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     message: PropTypes.element.isRequired,
-    paperSizeStyles: PropTypes.object
+    paperSizeStyles: PropTypes.object,
+    type: PropTypes.string.isRequired
 };
 
 export const MaterialUIPopUpTypes = {

@@ -877,6 +877,7 @@ const VocabularyMainTable = ({
                 }}
                 title="Timeline"
                 message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development/refs/heads/main/sc4eu_vo.ttl" />}
+                type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
@@ -890,6 +891,7 @@ const VocabularyMainTable = ({
                         onTermSelect={handleNavigateToMentionedTerm}
                     />
                 }
+                type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             {urgentVoteTerm && urgentVoteData && (
                 <MaterialUIPopUp
@@ -909,6 +911,7 @@ const VocabularyMainTable = ({
                             }}
                         />
                     }
+                    type={MaterialUIPopUpTypes.ACTIVE_CONSENSUS}
                 />
             )}
         </ScrollableDiv>
