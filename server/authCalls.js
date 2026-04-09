@@ -148,7 +148,7 @@ const generateJWT = user => {
 };
 
 module.exports = {
-    initializeAuth: function(app, passport) {
+    initializeAuth: function(app, router, passport) {
         // passport stuff
         passport.serializeUser(function(user, done) {
             done(null, user);
@@ -169,37 +169,6 @@ module.exports = {
         );
         app.use(passport.initialize());
         app.use(passport.session());
-
-        // try {
-        //     passport.use(
-        //         'oauth2',
-        //         new OAuth2Strategy(oauthConfig.oauth2, async function(accessToken, refreshToken, profile, cb) {
-        //             try {
-        //                 // Fetch user info from the provider
-        //                 const userInfoUrl = process.env.OAUTH2_USER_INFO_URL;
-        //                 const userInfo = await fetchOAuth2UserInfo(accessToken, userInfoUrl);
-
-        //                 // Find or create user in the backend
-        //                 const user = await findOrCreateUser({
-        //                     displayName: 'userInfo.name || userInfo.login',
-        //                     email: userInfo.email,
-        //                     auth_type: 'AUTH_OAUTH2',
-        //                     token: 'undefined'
-        //                 });
-
-        //                 // Generate JWT token
-        //                 const local_accessToken = generateJWT(user);
-
-        //                 // Return user data
-        //                 cb(null, { jwt: local_accessToken });
-        //             } catch (error) {
-        //                 cb(handleAuthError(error, 'OAuth2'), null);
-        //             }
-        //         })
-        //     );
-        // } catch (e) {
-        //     handleAuthError(e, 'OAuth2 Strategy Setup');
-        // }
 
         try {
             passport.use(

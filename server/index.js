@@ -28,7 +28,7 @@ const server = require('./serverCalls');
 const database = require('./databaseCalls');
 const processing = require('./ontologyProcessingCalls');
 
-auth.initializeAuth(router, passport);
+auth.initializeAuth(app, router, passport);
 
 // start express server on port
 app.listen(APPLICATION_PORT, () => {
