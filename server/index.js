@@ -23,6 +23,11 @@ const router = express.Router();
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
+router.get('/auth/test', (req, res) => {
+    console.log('AUTH TEST route reached!');
+    res.json({ message: 'auth test reached', timestamp: new Date() });
+});
+
 const auth = require('./authCalls');
 const server = require('./serverCalls');
 const database = require('./databaseCalls');
@@ -52,11 +57,6 @@ app.use((req, res, next) => {
     console.log('APP level - Incoming request:', req.method, req.url);
     next();
 });
-
-app.use('/ocp', (req, res, next) => {
-    console.log('ROUTER level - Incoming request:', req.method, req.url);
-    next();
-}, router);
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false, parameterLimit: 50000 }));
