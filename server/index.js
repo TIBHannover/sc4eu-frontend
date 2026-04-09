@@ -119,9 +119,9 @@ processing.getWidocoDocumentation(router);
 processing.getHtmlForWidoco(router);
 
 /** GITHUB OAUTH STUFF**/
-router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
+router.get('/oauth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
 router.get(
-    '/auth/github/callback',
+    '/oauth/github/callback',
     passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         // Successful authentication, redirect home.
@@ -138,9 +138,9 @@ router.get(
     }
 );
 
-router.get('/auth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
+router.get('/oauth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
 router.get(
-    '/auth/gitlab/callback',
+    '/oauth/gitlab/callback',
     passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
@@ -155,9 +155,9 @@ router.get(
     }
 );
 
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/oauth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
-    '/auth/google/callback',
+    '/oauth/google/callback',
     passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
@@ -172,9 +172,9 @@ router.get(
     }
 );
 
-router.get('/auth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
+router.get('/oauth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
 router.get(
-    '/auth/sap/callback',
+    '/oauth/sap/callback',
     passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
@@ -188,6 +188,11 @@ router.get(
         res.redirect(redirectURL);
     }
 );
+
+// add middle-ware
+router.use(express.static(path.join(__dirname, '..', 'build')));
+router.use(express.static('public'));
+router.use(express.static(path.join(__dirname, 'public')));
 
 router.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
