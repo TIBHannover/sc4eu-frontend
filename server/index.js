@@ -40,19 +40,13 @@ app.listen(APPLICATION_PORT, () => {
     console.log('You can access it via ' + APPLICATION_URL + ':' + APPLICATION_PORT);
 });
 
-// TODO : make this configurable
-// app.use(
-//     cors({
-//         origin: 'http://localhost:9000', // allow to server to accept request from different origin
-//         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//         credentials: true // allow session cookie from browser to pass through
-//     })
-// );
-
 // THIS IS ONLY FOR DECOUPLED DEBUGING STUFF, means the react app runs on its own server e.g. localhost:3000
 app.use(
     cors({
-        origin: 'http://localhost:3000', // allow to server to accept request from different origin
+        origin: [
+            'http://localhost:3000',
+            process.env.REDIRECT_URL
+        ], // allow to server to accept request from different origin
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true // allow session cookie from browser to pass through
     })
