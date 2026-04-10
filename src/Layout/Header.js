@@ -137,7 +137,7 @@ class Header extends Component {
                 <StyledHeaderDiv>
                     <StyledRightSideDiv>
                         {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
-                            <div>
+                            <div style={{ display: 'flex'}}>
                                 <NotificationToggle user={this.props.user.displayName} />
                                 <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
                                 <StyledAuthTooltip

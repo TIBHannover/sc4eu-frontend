@@ -20,10 +20,10 @@ export const URL_PRE_INIT = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}initial
 export const URL_GET_JSON_MODEL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelVOWL`;
 export const URL_GET_JSON_MODEL_WITH_QUERY = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getJsonModelVOWLWithQuery`;
 
-export const URL_LOGIN_VIA_GITHUB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/github`;
-export const URL_LOGIN_VIA_GITLAB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/gitlab`;
-export const URL_LOGIN_VIA_GOOGLE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/google`;
-export const URL_LOGIN_VIA_SAP = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/sap`;
+export const URL_LOGIN_VIA_GITHUB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}oauth/github`;
+export const URL_LOGIN_VIA_GITLAB = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}oauth/gitlab`;
+export const URL_LOGIN_VIA_GOOGLE = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}oauth/google`;
+export const URL_LOGIN_VIA_SAP = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}oauth/sap`;
 export const URL_LOGIN_VIA_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/email`;
 export const URL_PROJECT_ACCESS_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}auth/projectAccessEmail`;
 export const URL_REGISTER_VIA_EMAIL = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}users/register`;

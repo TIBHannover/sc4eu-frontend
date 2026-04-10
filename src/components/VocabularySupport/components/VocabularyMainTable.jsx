@@ -621,9 +621,9 @@ const VocabularyMainTable = ({
         onPaginationChange: setPagination,
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
-        enableEditing: true,
         getRowId: row => row.identifier,
-        enableRowActions: false,
+        enableEditing: currentUser.role === 'System Admin',
+        enableRowActions: currentUser.role === 'System Admin',
         positionActionsColumn: 'last',
         enableSorting: true,
         enableFiltering: true,
@@ -827,13 +827,28 @@ const VocabularyMainTable = ({
         setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
     };
 
+    const handleConsensusDecisionMade = async () => {
+        const updatedVotes = await getVotes();
+        setVotesMap(updatedVotes);
+    };
+
     return (
         <ScrollableDiv>
             <CardActivityWidget
-                urgentTerms={terms.filter(term => votesMap.some(vote => vote.term_uuid === term.identifier))}
+                urgentTerms={terms.filter(term =>
+                    votesMap.some(
+                        vote =>
+                            vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName)
+                    )
+                )}
                 votes={votesMap}
                 discussionReplies={terms.filter(term =>
-                    discussions.some(discussion => discussion.comments.length !== 0 && term.identifier === discussion.resourceId)
+                    discussions.some(
+                        discussion =>
+                            discussion.comments.length !== 0 &&
+                            term.identifier === discussion.resourceId &&
+                            discussion.comments.some(comment => comment.mentionedUsers && comment.mentionedUsers.includes(currentUser.displayName))
+                    )
                 )}
                 newTerms={terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)))}
                 onUrgentClick={handleWidgetUrgentTermClick}
@@ -877,6 +892,7 @@ const VocabularyMainTable = ({
                 }}
                 title="Timeline"
                 message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development/refs/heads/main/sc4eu_vo.ttl" />}
+                type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
@@ -890,6 +906,7 @@ const VocabularyMainTable = ({
                         onTermSelect={handleNavigateToMentionedTerm}
                     />
                 }
+                type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             {urgentVoteTerm && urgentVoteData && (
                 <MaterialUIPopUp
@@ -907,8 +924,10 @@ const VocabularyMainTable = ({
                                 setUrgentVoteTerm(null);
                                 setUrgentVoteData(null);
                             }}
+                            onDecisionMade={handleConsensusDecisionMade}
                         />
                     }
+                    type={MaterialUIPopUpTypes.ACTIVE_CONSENSUS}
                 />
             )}
         </ScrollableDiv>

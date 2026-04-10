@@ -78,7 +78,7 @@ const styles = {
     }
 };
 
-const VoteView = ({ term, vote, username, setVoteViewMode }) => {
+const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => {
     const [decision, setDecision] = useState('');
     const [comment, setComment] = useState(null);
     const [decisions, setDecisions] = useState(vote.decisions);
@@ -107,6 +107,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode }) => {
         setUserHasVoted(true);
         setComment(null);
         setDecision('');
+        onDecisionMade();
     };
 
     return (
@@ -361,7 +362,8 @@ VoteView.propTypes = {
     term: PropTypes.object.isRequired,
     vote: PropTypes.object.isRequired,
     username: PropTypes.string.isRequired,
-    setVoteViewMode: PropTypes.object.isRequired
+    setVoteViewMode: PropTypes.object.isRequired,
+    onDecisionMade: PropTypes.func
 };
 
 export default VoteView;

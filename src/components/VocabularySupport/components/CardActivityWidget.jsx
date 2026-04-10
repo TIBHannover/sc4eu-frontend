@@ -50,7 +50,7 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
         },
         {
             label: 'New terms',
-            text: newTerms.length === 1 ? newTerms.length + ' term is waiting for you' : newTerms.length + ' terms are waiting for you',
+            text: newTerms.length === 1 ? newTerms.length + ' term has been added in the last 70 days' : newTerms.length + ' terms have been added in the last 70 days',
             sub: 'Filter table →',
             onClick: onNewTermsClick,
             count: newTerms.length,

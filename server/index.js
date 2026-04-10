@@ -28,11 +28,7 @@ const server = require('./serverCalls');
 const database = require('./databaseCalls');
 const processing = require('./ontologyProcessingCalls');
 
-auth.initializeAuth(router, passport);
-
-// add middle-ware
-router.use(express.static(path.join(__dirname, '..', 'build')));
-router.use(express.static('public'));
+auth.initializeAuth(app, router, passport);
 
 // start express server on port
 app.listen(APPLICATION_PORT, () => {
@@ -40,44 +36,28 @@ app.listen(APPLICATION_PORT, () => {
     console.log('You can access it via ' + APPLICATION_URL + ':' + APPLICATION_PORT);
 });
 
-// TODO : make this configurable
-// app.use(
-//     cors({
-//         origin: 'http://localhost:9000', // allow to server to accept request from different origin
-//         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//         credentials: true // allow session cookie from browser to pass through
-//     })
-// );
-
 // THIS IS ONLY FOR DECOUPLED DEBUGING STUFF, means the react app runs on its own server e.g. localhost:3000
 app.use(
     cors({
-        origin: 'http://localhost:3000', // allow to server to accept request from different origin
+        origin: [
+            'http://localhost:3000',
+            process.env.REDIRECT_URL
+        ], // allow to server to accept request from different origin
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true // allow session cookie from browser to pass through
     })
 );
 
-// app.use(
-//     proxy('/sc3/EmailVerify/**', {
-//         target: API_SERVICE_URL,
-//         changeOrigin: true
-//         // pathRewrite: {
-//         //     '/sc3/EmailVerify': '/sc3/Documentation'
-//         // }
-//     })
-// );
-//
-// router.use('/EmailVerify', (req, res) => {
-//     console.log('Email EmailVerify');
-// });
+app.use((req, res, next) => {
+    console.log('Incoming request:', req.method, req.url);
+    next();
+});
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false, parameterLimit: 50000 }));
 
 router.use(express.urlencoded({ extended: false }));
 router.use(cookieParser());
-router.use(express.static(path.join(__dirname, 'public')));
 
 // apply individual "endPoints"
 server.servicesStatus(router);
@@ -139,10 +119,10 @@ processing.getWidocoDocumentation(router);
 processing.getHtmlForWidoco(router);
 
 /** GITHUB OAUTH STUFF**/
-router.get('/auth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
+router.get('/oauth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
 router.get(
-    '/auth/github/callback',
-    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/vocab/LoginFailedRedirect` }),
+    '/oauth/github/callback',
+    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         // Successful authentication, redirect home.
         // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
@@ -158,10 +138,10 @@ router.get(
     }
 );
 
-router.get('/auth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
+router.get('/oauth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
 router.get(
-    '/auth/gitlab/callback',
-    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
+    '/oauth/gitlab/callback',
+    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
             pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
@@ -175,10 +155,10 @@ router.get(
     }
 );
 
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/oauth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
-    '/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
+    '/oauth/google/callback',
+    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
             pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
@@ -192,10 +172,10 @@ router.get(
     }
 );
 
-router.get('/auth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
+router.get('/oauth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
 router.get(
-    '/auth/sap/callback',
-    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
+    '/oauth/sap/callback',
+    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
             pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
@@ -208,6 +188,11 @@ router.get(
         res.redirect(redirectURL);
     }
 );
+
+// add middle-ware
+router.use(express.static(path.join(__dirname, '..', 'build')));
+router.use(express.static('public'));
+router.use(express.static(path.join(__dirname, 'public')));
 
 router.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
