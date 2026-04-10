@@ -891,7 +891,7 @@ const VocabularyMainTable = ({
                     setActiveMUIPopUp(null);
                 }}
                 title="Timeline"
-                message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development/refs/heads/main/sc4eu_vo.ttl" />}
+                message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development_ver_1/refs/heads/main/terms.ttl" />}
                 type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             <MaterialUIPopUp
