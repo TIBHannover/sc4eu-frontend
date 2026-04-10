@@ -14,8 +14,8 @@ module.exports = {
         callbackURL: `${process.env.CALLBACK_URL}/ocp/oauth/gitlab/callback`
     },
     github: {
-        clientID: process.env.GITHUB_CLIENT_ID_FOR_LOGIN,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET_FOR_LOGIN,
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL: `${process.env.CALLBACK_URL}/ocp/oauth/github/callback`
     },
     sap: {
