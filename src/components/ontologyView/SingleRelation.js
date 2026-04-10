@@ -130,10 +130,10 @@ class SingleRelation extends Component {
                     display: isVisible,
                     backgroundColor:
                         this.props.relationContext.type[0].toLowerCase() === 'owl:DatatypeProperty'.toLowerCase()
-                            ? colorStyled.surface
+                            ? colorStyled.old.main
                             : this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()
-                            ? colorStyled.surfaceContainer
-                            : colorStyled.surfaceContainerLow,
+                            ? colorStyled.old.lightMain
+                            : colorStyled.old.lighter,
                     borderRadius: '10px 10px 0px 0px',
                     marginBottom: '5px'
                 }}

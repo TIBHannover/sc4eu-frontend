@@ -110,8 +110,8 @@ class SingleResource extends Component {
                     marginLeft: '10px',
                     overflow: 'none',
                     display: isVisible,
-                    backgroundColor: colorStyled.surface,
-                    color: colorStyled.surface,
+                    backgroundColor: colorStyled.surfaceVariant,
+                    color: colorStyled.onSurfaceVariant,
                     borderRadius: '10px 10px 0px 0px ',
                     marginBottom: '5px'
                 }}

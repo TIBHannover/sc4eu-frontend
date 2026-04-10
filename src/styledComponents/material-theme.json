@@ -55,7 +55,18 @@
             "surfaceContainerLow": "#F3F3FA",
             "surfaceContainer": "#EDEDF4",
             "surfaceContainerHigh": "#E7E8EE",
-            "surfaceContainerHighest": "#E1E2E9"
+            "surfaceContainerHighest": "#E1E2E9",
+
+            "old": {
+                "lighter": "#F7FBFC",
+                "light": "#D6E6F2",
+                "lightMain": "#92bdff",
+                "main": "#B9D7EA",
+                "darkPrimary": "#769FCD",
+                "darkSecondary": "#536b78",
+                "darkerSecondary": "#2f3d45",
+                "linkSecondary": "#0000EE"
+            }
         },
         "light-medium-contrast": {
             "primary": "#0B3765",
