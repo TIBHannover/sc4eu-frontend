@@ -18,12 +18,12 @@ import { ConsensusProgress } from '../utils/Consensus';
 const styles = {
     button: {
         padding: '10px 20px',
-        backgroundColor: colorStyled.primary,
-        color: colorStyled.onPrimary,
-        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+        backgroundColor: colorStyled.old.darkSecondary,
+        color: colorStyled.onSecondary,
+        '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
     },
     voteProgress: {
-        backgroundColor: colorStyled.surfaceContainerLow,
+        backgroundColor: colorStyled.old.lighter,
         p: 2,
         borderRadius: 1,
         mb: 3
@@ -322,7 +322,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                                         setExpandedComments(newExpanded);
                                                                     }}
                                                                     sx={{
-                                                                        color: colorStyled.primary,
+                                                                        color: colorStyled.old.linkSecondary,
                                                                         cursor: 'pointer',
                                                                         ml: 0.5,
                                                                         '&:hover': {

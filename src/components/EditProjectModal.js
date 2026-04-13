@@ -91,10 +91,10 @@ export default class EditProjectModal extends Component {
                     </FormGroup>
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={this.handleSubmit} style={{ background: colorStyled.primary, color: colorStyled.onPrimary }}>
+                    <Button onClick={this.handleSubmit} style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
                         Submit
                     </Button>
-                    <Button onClick={this.handleCancel} style={{ background: colorStyled.primary, color: colorStyled.onPrimary }}>
+                    <Button onClick={this.handleCancel} style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
                         Cancel
                     </Button>
                 </ModalFooter>

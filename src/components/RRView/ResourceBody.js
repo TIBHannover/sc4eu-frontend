@@ -44,7 +44,7 @@ class ResourceBody extends Component {
                 {numRowsRequired !== 0 && (
                     <div style={{ height: 'auto', display: 'flex', width: '100%', maxHeight: '100%', maxWidth: '100%' }}>
                         <StyledBodyInput
-                            style={{ backgroundColor: colorStyled.surfaceContainerLowest, color: colorStyled.onSurface }}
+                            style={{ backgroundColor: colorStyled.old.lighter, color: colorStyled.shadow }}
                             type="textarea"
                             display={'flex'}
                             width="100%"

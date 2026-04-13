@@ -82,7 +82,7 @@ class GraphVisUi extends Component {
                 node_mouseSingleClick: true,
                 node_mouseDoubleClick: true,
                 node_hasNodeSelection: true,
-                graphBgColor: colorStyled.secondaryContainer, // could be customizable
+                graphBgColor: colorStyled.old.lighter, // could be customizable
                 configSelected: 'Default',
                 link_mouseDrag: true,
                 link_mouseHover: true
@@ -274,7 +274,7 @@ class GraphVisUi extends Component {
                         }));
                     }}
                 >
-                    <DropdownToggle caret style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary, height: '35px' }}>
+                    <DropdownToggle caret style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary, height: '35px' }}>
                         Notation: {this.props.visualNotation}
                     </DropdownToggle>
                     <DropdownMenu>
@@ -447,8 +447,8 @@ class GraphVisUi extends Component {
                         marginBottom: '10px',
                         paddingLeft: '10px',
                         paddingRight: '10px',
-                        background: colorStyled.secondaryContainer,
-                        color: colorStyled.onPrimary,
+                        background: colorStyled.old.lighter,
+                        color: colorStyled.shadow,
                         position: 'relative',
                         borderTopLeftRadius: '10px',
                         borderTopRightRadius: '10px',
@@ -478,8 +478,8 @@ class GraphVisUi extends Component {
                             this.graph.zoomToExtent();
                         }}
                         style={{
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: colorStyled.old.darkSecondary,
+                            color: colorStyled.onSecondary,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -490,8 +490,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: colorStyled.old.darkSecondary,
+                            color: colorStyled.onSecondary,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -503,7 +503,7 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.primary,
+                            backgroundColor: colorStyled.old.darkPrimary,
                             color: colorStyled.onPrimary,
                             textAlign: 'center',
                             marginLeft: '5px',
@@ -516,7 +516,7 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.primary,
+                            backgroundColor: colorStyled.old.darkPrimary,
                             color: colorStyled.onPrimary,
                             textAlign: 'center',
                             marginLeft: '5px',
@@ -529,7 +529,7 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.primary,
+                            backgroundColor: colorStyled.old.darkPrimary,
                             color: colorStyled.onPrimary,
                             textAlign: 'center',
                             marginLeft: '5px',
@@ -549,7 +549,7 @@ class GraphVisUi extends Component {
                             onClick={() => {
                                 this.setState(prevState => ({ leftSideBarExpanded: !prevState.leftSideBarExpanded }));
                             }}
-                            style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                            style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
                         >
                             {this.state.leftSideBarExpanded ? '<' : '>'}
                         </StyledButton>
@@ -572,7 +572,7 @@ class GraphVisUi extends Component {
                                 onClick={() => {
                                     this.setState(prevState => ({ rightSideBarExpanded: !prevState.rightSideBarExpanded }));
                                 }}
-                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                                style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
                             >
                                 {this.state.rightSideBarExpanded ? '>' : '<'}
                             </Button>

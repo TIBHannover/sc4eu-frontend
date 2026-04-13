@@ -43,9 +43,9 @@ class ItemController extends Component {
             if (this.props.itemContext.isHighlighted) {
                 return 'black';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return colorStyled.primaryContainer;
+                return colorStyled.old.lightMain;
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
-                return colorStyled.secondaryContainer;
+                return colorStyled.old.main;
             }
             return '#838a92';
         } else {
@@ -180,7 +180,7 @@ const LabelDiv = styled.div`
     height: 30px;
     color: ${props => (props.typedBasedFontColor ? props.typedBasedFontColor : 'black')};
     background-color: ${props =>
-        props.isHighlighted === true ? `${colorStyled.primaryContainer}` : props.typedBasedColor ? props.typedBasedColor : `${colorStyled.secondaryContainer}`};
+        props.isHighlighted === true ? `${colorStyled.old.darkSecondary}` : props.typedBasedColor ? props.typedBasedColor : `${colorStyled.old.light}`};
     font-size: ${fontStyled.fontSize.NormalText};
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
@@ -194,7 +194,7 @@ const ControlButton = styled.div`
     border-bottom: none;
     text-align: center;
     margin-right: ${props => (props.type === 'control' ? '3px' : '-1px')};
-    background-color: ${props => (props?.active === true ? `${colorStyled.primary}` : `${colorStyled.secondary}`)};
+    background-color: ${props => (props?.active === true ? `${colorStyled.secondary}` : `${colorStyled.old.darkSecondary}`)};
 
     width: 30px;
     height: 30px;

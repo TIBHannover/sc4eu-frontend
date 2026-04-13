@@ -38,12 +38,12 @@ export default class Dataprotections extends Component {
                     Phone : +49 511 762-8989
                     <br />
                     Email :&nbsp;
-                    <a href="https://www.tib.eu" style={{ color: colorStyled.primary }} target="_blank" rel="noreferrer">
+                    <a href="https://www.tib.eu" style={{ color: colorStyled.old.linkSecondary }} target="_blank" rel="noreferrer">
                         www.tib.eu
                     </a>
                     <br />
                     Website :&nbsp;
-                    <a href="https://www.tib.eu" style={{ color: colorStyled.primary }} target="_blank" rel="noreferrer">
+                    <a href="https://www.tib.eu" style={{ color: colorStyled.old.linkSecondary }} target="_blank" rel="noreferrer">
                         www.tib.eu
                     </a>
                 </StyledText>
@@ -56,7 +56,7 @@ export default class Dataprotections extends Component {
                     Phone : +49 511 762-8138
                     <br />
                     Email : &nbsp;
-                    <a href="mailto:datenschutz@tib.eu" style={{ color: colorStyled.primary }}>
+                    <a href="mailto:datenschutz@tib.eu" style={{ color: colorStyled.old.linkSecondary }}>
                         datenschutz(AT)tib.eu
                     </a>
                     <br />

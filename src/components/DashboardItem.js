@@ -231,7 +231,7 @@ class DashboardItem extends Component {
                                                     hidden={this.state.roleValue?.value === option.value}
                                                     icon={faPlus}
                                                     size={'1x'}
-                                                    color={colorStyled.onSecondaryContainer}
+                                                    color={colorStyled.old.darkerSecondary}
                                                     title={'Click to change user role'}
                                                     style={{ float: 'right', marginRight: '3%' }}
                                                 />
@@ -274,7 +274,7 @@ class DashboardItem extends Component {
                                                         <FontAwesomeIcon
                                                             icon={faPlus}
                                                             size={'1x'}
-                                                            color={colorStyled.onSecondaryContainer}
+                                                            color={colorStyled.old.darkerSecondary}
                                                             title={'Click to add new project to this user'}
                                                             style={{ float: 'right', marginRight: '3%' }}
                                                             onClick={() => this.addNewProjectFromUser(user, project)}
@@ -309,7 +309,7 @@ class DashboardItem extends Component {
                                                         <FontAwesomeIcon
                                                             icon={faTrash}
                                                             size={'1x'}
-                                                            color={colorStyled.onSecondaryContainer}
+                                                            color={colorStyled.old.darkerSecondary}
                                                             title={'Click to unregister this user from this Project'}
                                                             style={{ float: 'right', marginRight: '3%' }}
                                                             onClick={() => this.deleteProjectFromUser(item, user)}

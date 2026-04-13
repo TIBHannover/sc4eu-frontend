@@ -144,7 +144,7 @@ export default connect(mapStateToProps, null)(OntologyIndexing);
 const StyledContainer = styled(Container)`
     height: 95%;
     width: 100%;
-    background-color: ${colorStyled.background};
+    background-color: ${colorStyled.old.lighter};
     padding: 0.5% 2%;
     max-width: 1800px;
     margin: 0 auto;

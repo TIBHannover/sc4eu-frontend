@@ -305,9 +305,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                 <Button
                     onClick={handleCancel}
                     sx={{
-                        backgroundColor: colorStyled.primary,
-                        color: colorStyled.onPrimary,
-                        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                        backgroundColor: colorStyled.old.darkSecondary,
+                        color: colorStyled.onSecondary,
+                        '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
                     }}
                 >
                     Cancel
@@ -316,9 +316,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                     onClick={handleSave}
                     variant="contained"
                     sx={{
-                        backgroundColor: colorStyled.primary,
-                        color: colorStyled.onPrimary,
-                        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                        backgroundColor: colorStyled.old.darkSecondary,
+                        color: colorStyled.onSecondary,
+                        '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
                     }}
                 >
                     {activeTab === 0 && selectedTerm ? 'Add Selected Term' : displayType === 'create' ? 'Create' : 'Save'}

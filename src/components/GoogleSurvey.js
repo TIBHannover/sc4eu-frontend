@@ -89,8 +89,8 @@ const GoogleSurvey = () => {
                         style={{
                             marginTop: '10px',
                             marginLeft: '10px',
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary
+                            backgroundColor: colorStyled.old.darkSecondary,
+                            color: colorStyled.onSecondary
                         }}
                         onClick={handleModalToggle}
                     >

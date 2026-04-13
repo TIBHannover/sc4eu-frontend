@@ -116,8 +116,8 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyContentViewer);
 
 const ControlButton = styled(Button)`
-    background: ${colorStyled.primary};
-    color: ${colorStyled.onPrimary};
+    background: ${colorStyled.old.darkSecondary};
+    color: ${colorStyled.onSecondary};
     border-radius: 5px 5px;
     margin-top: 10px;
     margin-right: 10px;

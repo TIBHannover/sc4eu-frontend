@@ -85,7 +85,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                     <Paper
                         variant="outlined"
                         sx={{
-                            backgroundColor: colorStyled.surface,
+                            backgroundColor: colorStyled.old.lighter,
                             p: 2,
                             borderRadius: 1,
                             borderColor: 'divider'

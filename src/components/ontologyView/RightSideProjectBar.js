@@ -182,8 +182,8 @@ const StyledRootDiv = styled.div`
 
 const StyledHeadingDiv = styled.div`
     border-radius: 10px 0 0 0;
-    background-color: ${colorStyled.surfaceContainer};
-    color: ${colorStyled.onSurface};
+    background-color: ${colorStyled.old.darkSecondary};
+    color: ${colorStyled.onSecondary};
     height: 60px;
     display: flex;
     align-items: center;

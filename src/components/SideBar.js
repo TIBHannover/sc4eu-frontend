@@ -66,14 +66,14 @@ const StyledLink = styled(NavLink)`
     border-radius: 4px;
     padding: 7px 10px 7px 11px;
     background: transparent;
-    color: ${colorStyled.onSurface};
+    color: ${colorStyled.shadow};
     text-decoration: none !important;
     font-size: 14px;
     transition: background-color 0.15s ease;
 
     :hover {
-        background-color: ${colorStyled.primary}1A;
-        color: ${colorStyled.onSurface};
+        background-color: ${colorStyled.old.light};
+        color: ${colorStyled.shadow};
     }
 
     @media (max-width: ${MAX_WIDTH}) {
@@ -88,15 +88,15 @@ const StyledButton = styled.button`
     display: inline-block;
     padding: 7px 100px 7px 11px;
     background: transparent;
-    color: ${colorStyled.onSurface};
+    color: ${colorStyled.shadow};
     border-radius: 4px;
     border: none;
     font-size: 14px;
     transition: background-color 0.15s ease;
 
     :hover {
-        background-color: ${colorStyled.primary}1A;
-        color: ${colorStyled.onSurface};
+        background-color: ${colorStyled.old.light};
+        color: ${colorStyled.shadow};
     }
 `;
 
@@ -122,8 +122,8 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
     };
     
     const ActiveStyle = {
-        backgroundColor: colorStyled.secondaryContainer,
-        color: colorStyled.onSecondaryContainer
+        backgroundColor: colorStyled.old.light,
+        color: colorStyled.shadow
     };
 
     const getOntologyFileForDocumentation = async () => {

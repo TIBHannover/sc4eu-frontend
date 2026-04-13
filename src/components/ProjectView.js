@@ -364,7 +364,7 @@ class ProjectView extends Component {
                                 <span style={{ marginLeft: '10px' }}>
                                     <StyledIcon
                                         icon={faEnvelope}
-                                        color={colorStyled.tertiary}
+                                        color={colorStyled.old.darkerSecondary}
                                         onClick={() => {
                                             this.setState({ showEmailModal: true });
                                         }}
@@ -452,7 +452,7 @@ const StyledProjectsGrid = styled.div`
 const StyledRootDiv = styled.div`
     width: 100%;
     margin-left: auto;
-    background-color: ${colorStyled.surfaceContainer};
+    background-color: ${colorStyled.old.lighter};
     margin-top: 0.5%;
     height: calc(100vh - 100px); /* Adjust for the header height */
     margin-right: 2%;
@@ -489,7 +489,7 @@ const StyledInfoSpan = styled.span`
 
 const StyledButtonToAddProject = styled(Button)`
     margin: 10px 15px 15px 0px;
-    background-color: ${colorStyled.secondary};
+    background-color: ${colorStyled.old.darkSecondary};
     color: ${colorStyled.onSecondary};
     font-size: ${fontStyled.fontSize.NormalText};
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {

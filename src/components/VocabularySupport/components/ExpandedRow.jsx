@@ -195,9 +195,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         onClick={() => handleAgreementSubmit()}
                                         variant="contained"
                                         sx={{
-                                            backgroundColor: colorStyled.primary,
-                                            color: colorStyled.onPrimary,
-                                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                                            backgroundColor: colorStyled.tertiary,
+                                            color: colorStyled.onTertiary,
+                                            '&:hover': { backgroundColor: colorStyled.tertiaryContainer, color: colorStyled.onTertiaryContainer }
                                         }}
                                         disabled={!agreementType}
                                     >
@@ -311,7 +311,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     <Chip
                                         label="Check last consensus"
                                         size="small"
-                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.tertiary, color: colorStyled.onTertiary }}
+                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.old.main, color: colorStyled.shadow }}
                                         onClick={() => setOpenLastConsensusDialog(true)}
                                     />
                                 )}
@@ -343,9 +343,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             onClick={() => setViewAgreementMode(true)}
                                             variant="contained"
                                             sx={{
-                                                backgroundColor: colorStyled.primary,
-                                                color: colorStyled.onPrimary,
-                                                '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                                                backgroundColor: colorStyled.tertiary,
+                                                color: colorStyled.onTertiary,
+                                                '&:hover': { backgroundColor: colorStyled.tertiaryContainer, color: colorStyled.onTertiaryContainer }
                                             }}
                                             fullWidth={isMobile ? true : false}
                                         >

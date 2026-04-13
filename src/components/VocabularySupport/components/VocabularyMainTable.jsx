@@ -715,10 +715,10 @@ const VocabularyMainTable = ({
                             handleCreateRow(row);
                         }}
                         sx={{
-                            backgroundColor: colorStyled.primary,
+                            backgroundColor: colorStyled.old.darkSecondary,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                            '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
                         }}
                     >
                         {isLargeScreen ? 'New Term' : 'Create New Term'}
@@ -731,10 +731,10 @@ const VocabularyMainTable = ({
                             setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
                         }}
                         sx={{
-                            backgroundColor: colorStyled.primary,
+                            backgroundColor: colorStyled.old.darkSecondary,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                            '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
                         }}
                     >
                         Timeline
@@ -750,10 +750,10 @@ const VocabularyMainTable = ({
                                 Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
                             }}
                             sx={{
-                                backgroundColor: colorStyled.primary,
+                                backgroundColor: colorStyled.old.darkSecondary,
                                 whiteSpace: 'nowrap',
                                 minWidth: 50,
-                                '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                                '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
                             }}
                         >
                             {isLargeScreen ? 'Hub' : 'Information Hub'}
@@ -770,7 +770,7 @@ const VocabularyMainTable = ({
                         disabled={!hasUncommittedChanges}
                         onClick={() => setOpenCommit(true)}
                         style={{
-                            backgroundColor: hasUncommittedChanges ? colorStyled.primary : 'gray',
+                            backgroundColor: hasUncommittedChanges ? colorStyled.old.darkSecondary : 'gray',
                             border: hasUncommittedChanges ? '2px' + ' solid red' : ''
                         }}
                     >
@@ -801,7 +801,7 @@ const VocabularyMainTable = ({
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: colorStyled.secondary }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" style={{ color: colorStyled.old.darkSecondary }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>

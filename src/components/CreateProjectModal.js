@@ -176,7 +176,7 @@ class CreateProject extends Component {
                 <ModalFooter>
                     <Button
                         id="finishButton"
-                        style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                        style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
                         onClick={() => {
                             this.createProject();
                         }}

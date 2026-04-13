@@ -79,11 +79,11 @@ export const ErrorText = styled.div`
 export const lightSelectStyles = {
     control: (base, state) => ({
         ...base,
-        backgroundColor: colorStyled.surfaceContainerLow,
-        borderColor: state.isFocused ? colorStyled.primary : colorStyled.outline,
-        boxShadow: state.isFocused ? `0 0 0 1px ${colorStyled.primary}` : 'none',
+        backgroundColor: colorStyled.old.lighter,
+        borderColor: state.isFocused ? colorStyled.old.lightMain : colorStyled.old.light,
+        boxShadow: state.isFocused ? `0 0 0 1px ${colorStyled.old.lightMain}` : 'none',
         '&:hover': {
-            borderColor: colorStyled.primary,
+            borderColor: colorStyled.old.lightMain,
         },
         minHeight: '28px',
         fontSize: '12px',
@@ -111,9 +111,9 @@ export const lightSelectStyles = {
         fontSize: '12px',
         padding: '4px 8px',
         backgroundColor: state.isSelected
-            ? colorStyled.primaryContainer
+            ? colorStyled.old.lightMain
             : state.isFocused
-                ? `${colorStyled.primary}1A`
+                ? `${colorStyled.old.light}`
                 : colorStyled.surface,
         color: state.isSelected
             ? colorStyled.onPrimaryContainer

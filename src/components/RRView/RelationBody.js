@@ -49,7 +49,7 @@ class RelationBody extends Component {
                             id="ontologyContent"
                             rows={numRowsRequired}
                             value={content}
-                            style={{ padding: '2px', backgroundColor: colorStyled.surfaceContainerLowest, color: colorStyled.onSurface }}
+                            style={{ padding: '2px', backgroundColor: colorStyled.old.lighter, color: colorStyled.shadow }}
                         />
                     </div>
                 )}

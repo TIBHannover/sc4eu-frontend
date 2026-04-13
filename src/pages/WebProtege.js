@@ -29,7 +29,7 @@ export default class WebProtege extends Component {
 }
 
 const Container = styled.div`
-    background-color: ${colorStyled.background};
+    background-color: ${colorStyled.old.lighter};
     width: 100%;
     height: 100vh; /* Full viewport height */
     position: relative;

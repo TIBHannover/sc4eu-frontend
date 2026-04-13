@@ -25,7 +25,7 @@ export default class AddProjectUserModal extends Component {
                     toggle={this.props.toggleAddUserPopup}
                     autoFocus={false}
                 >
-                    <ModalHeader style={{ display: 'block', backgroundColor: colorStyled.surfaceContainer }} autoFocus={false}>
+                    <ModalHeader style={{ display: 'block', backgroundColor: colorStyled.old.darkPrimary }} autoFocus={false}>
                         <span style={{ color: '#000000' }}>Add User to Project</span>
                         <Button
                             style={{
@@ -65,7 +65,7 @@ export default class AddProjectUserModal extends Component {
                         </label>
                         <Button
                             id="finishButton"
-                            style={{ background: colorStyled.primary }}
+                            style={{ background: colorStyled.old.darkSecondary }}
                             onClick={() => {
                                 if (!this.state.email) {
                                     this.setState({ emailWarning: 'Email can not be Empty ', showWarning: 'true' });

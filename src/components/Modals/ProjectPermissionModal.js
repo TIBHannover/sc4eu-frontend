@@ -85,7 +85,7 @@ export default class ProjectPermissionModal extends Component {
                         toggle={this.props.toggle}
                         autoFocus={false}
                     >
-                        <ModalHeader style={{ backgroundColor: colorStyled.surfaceContainer }} autoFocus={false}>
+                        <ModalHeader style={{ backgroundColor: colorStyled.old.darkPrimary }} autoFocus={false}>
                             {this.props.title}
                         </ModalHeader>
                         <ModalBody
@@ -129,7 +129,7 @@ export default class ProjectPermissionModal extends Component {
                             <label htmlFor="finishButton" style={{ color: 'red', alignContent: 'right', display: this.state.showWarning ? 'block' : 'none' }}>
                                 Subject and Message can not be empty
                             </label>
-                            <Button id="finishButton" style={{ background: colorStyled.primary }} onClick={this.handelClick} autoFocus={true}>
+                            <Button id="finishButton" style={{ background: colorStyled.old.darkSecondary }} onClick={this.handelClick} autoFocus={true}>
                                 Submit
                             </Button>
                         </ModalFooter>

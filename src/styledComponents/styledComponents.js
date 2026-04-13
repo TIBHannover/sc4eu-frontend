@@ -59,8 +59,8 @@ export const StyledBadge = styled(
             color: colorStyled.onTertiary
         }),
         ...(customVariant === 'blue' && {
-            backgroundColor: colorStyled.primaryContainer,
-            color: colorStyled.onPrimaryContainer
+            backgroundColor: colorStyled.old.main,
+            color: colorStyled.onPrimary
         })
     }
 }));
@@ -76,8 +76,8 @@ export const StyledChip = styled(Chip)(({ customVariant }) => ({
             color: colorStyled.onTertiary
         }),
         ...(customVariant === 'agreement' && {
-            backgroundColor: colorStyled.secondaryContainer,
-            color: colorStyled.onSecondaryContainer
+            backgroundColor: colorStyled.old.lightMain,
+            color: colorStyled.shadow
         })
     }
 }));

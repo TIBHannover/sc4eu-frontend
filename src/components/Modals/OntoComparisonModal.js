@@ -236,7 +236,7 @@ export default connect(mapStateToProps)(OntoComparisonModal);
 const ShowComparisonButton = styled(Button)`
     margin: 5px;
     font-size: ${fontStyled.fontSize.NormalText};
-    background-color: ${colorStyled.primary};
+    background-color: ${colorStyled.old.darkSecondary};
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};

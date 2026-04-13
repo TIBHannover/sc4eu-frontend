@@ -43,7 +43,7 @@ const accordionSx = {
 };
 
 const accordionHeaderSx = {
-    backgroundColor: colorStyled.primary,
+    backgroundColor: colorStyled.old.darkSecondary,
     px: { xs: 1.5, sm: 2 },
     minHeight: '48px',
     '& .MuiAccordionSummary-content': {
@@ -51,7 +51,7 @@ const accordionHeaderSx = {
         alignItems: 'center'
     },
     '&:hover': {
-        backgroundColor: colorStyled.primaryContainer
+        backgroundColor: `${colorStyled.old.darkSecondary}CC`
     }
 };
 
@@ -74,7 +74,7 @@ const bodyTextSx = {
 };
 
 const linkSx = {
-    color: colorStyled.primary,
+    color: colorStyled.old.linkSecondary,
     textDecoration: 'none',
     '&:hover': {
         color: colorStyled.onPrimaryContainer,

@@ -50,7 +50,7 @@ export const StyledResourceAndRelationHeader = styled.div`
     // border-radius: ${props => (props.experimentalLayout === true ? '0px 0px 0 0' : '10px 10px 0 0')};
     padding: 5px;
     color: ${colorStyled.onPrimary};
-    background-color: ${props => (props.experimentalLayout ? colorStyled.surface : props.isHighlighted === true ? colorStyled.primary : colorStyled.surfaceContainer)};
+    background-color: ${props => (props.experimentalLayout ? colorStyled.old.darkPrimary : props.isHighlighted === true ? colorStyled.shadow : colorStyled.old.lightMain)};
     color:${props => (props.experimentalLayout ? colorStyled.onSurface : colorStyled.onPrimaryContainer)};
     :focus {
         outline: none;
@@ -99,9 +99,9 @@ export const HeaderValueInput = styled(Input)`
 export const StyledHeaderDiv = styled.div`
     margin: 10px 6px 10px 10px;
     border-radius: 7px 7px 7px 7px;
-    text-color: ${colorStyled.onPrimaryContainer};
-    color: ${colorStyled.onPrimaryContainer};
-    background-color: ${colorStyled.primaryContainer};
+    text-color: ${colorStyled.onPrimary};
+    color: ${colorStyled.onPrimary};
+    background-color: ${colorStyled.old.darkPrimary};
     height: 50px;
     display: flex;
     align-items: center;

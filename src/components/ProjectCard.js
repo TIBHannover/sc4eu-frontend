@@ -18,8 +18,8 @@ import PropTypes from 'prop-types';
 
 const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
     & .MuiTooltip-tooltip {
-        background-color: ${colorStyled.inverseSurface};
-        color: ${colorStyled.inverseOnSurface};
+        background-color: ${colorStyled.old.darkSecondary};
+        color: ${colorStyled.onSecondary};
         font-size: 14px;
         padding: 12px 16px;
         border-radius: 8px;
@@ -28,7 +28,7 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
         margin: 8px;
     }
     & .MuiTooltip-arrow {
-        color: ${colorStyled.inverseSurface};
+        color: ${colorStyled.old.darkSecondary};
     }
 `;
 
@@ -133,7 +133,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                                 variant="subtitle2"
                                 fontWeight={'bold'}
                                 style={{
-                                    color: `${colorStyled.onTertiary}D9`,
+                                    color: `${colorStyled.onSecondary}`,
                                     marginLeft: '8px',
                                     fontSize: '1rem',
                                     pointerEvents: 'auto'
@@ -157,10 +157,10 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             padding: '8px'
                         }}
                     >
-                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete} sx={{ color: colorStyled.onTertiary }}>
+                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete} sx={{ color: colorStyled.onSecondary }}>
                             <Edit />
                         </IconButton>
-                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete} sx={{ color: colorStyled.onTertiary }}>
+                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete} sx={{ color: colorStyled.onSecondary }}>
                             <Delete />
                         </IconButton>
                     </CardActions>
@@ -181,8 +181,8 @@ export default connect(null, mapDispatchToProps)(ProjectCard);
 
 const StyledCard = styled(Card)`
     && {
-        background-color: ${colorStyled.tertiary};
-        color: ${colorStyled.onTertiary};
+        background-color: ${colorStyled.secondary};
+        color: ${colorStyled.onSecondary};
         padding: 3px;
         border-radius: 20px;
         transition: transform 0.2s;
@@ -190,7 +190,6 @@ const StyledCard = styled(Card)`
         height: 300px;
         &:hover {
             transform: scale(1.05);
-            background-color: ${colorStyled.tertiary}CC;
         }
     }
 `;

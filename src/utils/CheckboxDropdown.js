@@ -91,13 +91,13 @@ const DropdownButton = styled.button`
     justify-content: space-between;
     align-items: center;
     background-color: ${colorStyled.background};
-    border: 1px solid ${colorStyled.outline};
+    border: 1px solid ${colorStyled.old.darkPrimary};
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
 
     &:hover {
-        background-color: ${colorStyled.primary}1A;
+        background-color: ${colorStyled.old.light};
     }
 `;
 
@@ -107,7 +107,7 @@ const DropdownMenu = styled.div`
     left: 0;
     width: 100%;
     background-color: ${colorStyled.background};
-    border: 1px solid ${colorStyled.outline};
+    border: 1px solid ${colorStyled.old.darkPrimary};
     border-radius: 4px;
     margin-top: 4px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -116,7 +116,7 @@ const DropdownMenu = styled.div`
 
 const DropdownItem = styled.div`
     padding: 8px 12px;
-    border-bottom: 1px solid ${colorStyled.outlineVariant};
+    border-bottom: 1px solid ${colorStyled.old.lighter};
     display: flex;
     align-items: center;
 
@@ -125,7 +125,7 @@ const DropdownItem = styled.div`
     }
 
     &:hover {
-        background-color: ${colorStyled.primary}1A;
+        background-color: ${colorStyled.old.lighter};
     }
 `;
 

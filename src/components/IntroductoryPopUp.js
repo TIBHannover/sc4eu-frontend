@@ -106,7 +106,7 @@ class IntroductoryPopUp extends Component {
                             {SliderText[this.state.sliderIndex].value}
                         </span>
                         <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}>
+                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
                                 {this.state.buttonText}
                             </Button>
                         </div>
@@ -128,7 +128,7 @@ class IntroductoryPopUp extends Component {
                                                   width: '15px',
                                                   height: '15px',
                                                   borderRadius: '50%',
-                                                  border: `3px solid ${colorStyled.secondary}`,
+                                                  border: `3px solid ${colorStyled.old.darkSecondary}`,
                                                   margin: '0 5px',
                                                   backgroundColor: colorStyled.surfaceContainerHigh
                                               }
@@ -136,9 +136,9 @@ class IntroductoryPopUp extends Component {
                                                   width: '15px',
                                                   height: '15px',
                                                   borderRadius: '50%',
-                                                  border: `3px solid ${colorStyled.secondary}`,
+                                                  border: `3px solid ${colorStyled.old.darkSecondary}`,
                                                   margin: '0 5px',
-                                                  backgroundColor: colorStyled.secondary
+                                                  backgroundColor: colorStyled.old.darkSecondary
                                               }
                                     }
                                 />

@@ -91,7 +91,7 @@ class Documentations extends Component {
                         ) : (
                             UserGuidance.substring(0, 300)
                         )}
-                        <button style={{ color: colorStyled.primary, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
+                        <button style={{ color: colorStyled.old.linkSecondary, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
                             {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
                         </button>
                     </StyledText>
@@ -105,7 +105,7 @@ class Documentations extends Component {
                             project you can find on our
                         </span>
                         <a
-                            style={{ color: colorStyled.primary }}
+                            style={{ color: colorStyled.old.linkSecondary }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://sc3-project.automotive.oth-aw.de/"
@@ -114,7 +114,7 @@ class Documentations extends Component {
                         </a>
                         <span>, on our </span>
                         <a
-                            style={{ color: colorStyled.primary }}
+                            style={{ color: colorStyled.old.linkSecondary }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
@@ -123,7 +123,7 @@ class Documentations extends Component {
                         </a>
                         <span>, or </span>
                         <a
-                            style={{ color: colorStyled.primary }}
+                            style={{ color: colorStyled.old.linkSecondary }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
@@ -141,7 +141,7 @@ class Documentations extends Component {
                         }}
                     >
                         {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
-                        <button style={{ color: colorStyled.primary, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
+                        <button style={{ color: colorStyled.old.linkSecondary, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
                             {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
                         </button>
                     </p>
@@ -149,7 +149,7 @@ class Documentations extends Component {
                     <h5 style={{ color: colorStyled.onSurface }}>Be part of the SC4EU Community and Collaborate with us </h5>
                     <StyledText>
                         SC4EU is a{' '}
-                        <a style={{ color: colorStyled.primary }} target="_blank" rel="noopener noreferrer" href="https://www.kdt-ju.europa.eu/">
+                        <a style={{ color: colorStyled.old.linkSecondary }} target="_blank" rel="noopener noreferrer" href="https://www.kdt-ju.europa.eu/">
                             KDT JU
                         </a>{' '}
                         funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited to
@@ -157,7 +157,7 @@ class Documentations extends Component {
                         <br />
                         If you would like to setup your own SC4EU Portal or if you would like to contribute to our codebase, please visit:&nbsp;
                         <a
-                            style={{ color: colorStyled.primary }}
+                            style={{ color: colorStyled.old.linkSecondary }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://gitlab.com/TIBHannover/sc3-project/"
@@ -177,7 +177,7 @@ class Documentations extends Component {
                         }}
                     >
                         {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
-                        <button style={{ color: colorStyled.primary, cursor: 'pointer' }} onClick={this.toggleReadmore}>
+                        <button style={{ color: colorStyled.old.linkSecondary, cursor: 'pointer' }} onClick={this.toggleReadmore}>
                             {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
                         </button>
                     </p>

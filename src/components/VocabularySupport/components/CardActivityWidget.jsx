@@ -33,8 +33,8 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
                 setActiveCard('urgent');
             },
             count: urgentTerms.length,
-            backGroundColor: colorStyled.error,
-            fontColor: colorStyled.onError
+            backGroundColor: colorStyled.tertiary,
+            fontColor: colorStyled.onTertiary
         },
         {
             label: 'Discussion',
@@ -54,8 +54,8 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
             sub: 'Filter table →',
             onClick: onNewTermsClick,
             count: newTerms.length,
-            backGroundColor: colorStyled.tertiaryContainer,
-            fontColor: colorStyled.onTertiaryContainer  
+            backGroundColor: colorStyled.tertiary,
+            fontColor: colorStyled.onTertiary 
         }
     ].filter(card => card.count > 0);
 

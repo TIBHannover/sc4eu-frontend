@@ -82,11 +82,11 @@ const StyledTable = styled.table`
     }
 
     tr:nth-child(even) {
-        background-color: ${colorStyled.primary};
+        background-color: ${colorStyled.old.light};
     }
 
     tr:hover {
-        background-color: ${colorStyled.secondaryContainer};
+        background-color: ${colorStyled.old.darkerSecondary};
         color: white;
     }
 
@@ -94,7 +94,7 @@ const StyledTable = styled.table`
         padding-top: 12px;
         padding-bottom: 12px;
         text-align: center;
-        background-color: ${colorStyled.secondary};
+        background-color: ${colorStyled.old.darkSecondary};
         color: white;
     }
 `;

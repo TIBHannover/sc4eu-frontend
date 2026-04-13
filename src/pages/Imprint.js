@@ -44,7 +44,7 @@ export default class Imprint extends Component {
                         Fax : +49 511 762-4076
                         <br />
                         Email : &nbsp;
-                        <a href="mailto:information@tib.eu" style={{ color: colorStyled.primary }}>
+                        <a href="mailto:information@tib.eu" style={{ color: colorStyled.old.linkSecondary }}>
                             information(AT)tib.eu
                         </a>
                         <br />
@@ -60,7 +60,7 @@ export default class Imprint extends Component {
                         Felix Engel
                         <br />
                         Email : &nbsp;
-                        <a href="mailto:felix.engel@tib.eu" style={{ color: colorStyled.primary }}>
+                        <a href="mailto:felix.engel@tib.eu" style={{ color: colorStyled.old.linkSecondary }}>
                             felix.engel(AT)tib.eu
                         </a>
                         <br />

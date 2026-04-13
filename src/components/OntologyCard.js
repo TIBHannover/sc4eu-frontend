@@ -24,8 +24,8 @@ import { updateOntologyData } from '../network/UpdateOntologyData';
 
 const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
     & .MuiTooltip-tooltip {
-        background-color: ${colorStyled.inverseSurface};
-        color: ${colorStyled.inverseOnSurface};
+        background-color: ${colorStyled.old.darkPrimary};
+        color: ${colorStyled.onPrimary};
         font-size: 14px;
         padding: 12px 16px;
         border-radius: 8px;
@@ -34,7 +34,7 @@ const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} cl
         margin: 8px;
     }
     & .MuiTooltip-arrow {
-        color: ${colorStyled.inverseSurface};
+        color: ${colorStyled.old.darkPrimary};
     }
 `;
 
@@ -358,8 +358,8 @@ export default connect(null, mapDispatchToProps)(OntologyCard);
 
 const StyledCard = styled(Card)`
     && {
-        background-color: ${colorStyled.primary};
-        color: ${colorStyled.onPrimary};
+        background-color: ${colorStyled.old.darkSecondary};
+        color: ${colorStyled.onSecondaryO};
         padding: 3px;
         border-radius: 20px;
         transition: transform 0.2s;

@@ -49,6 +49,6 @@ const AutoModal = styled(Modal)`
 const StyledButton = styled(Button)`
     height: 40px;
     width: 70px;
-    background-color: ${colorStyled.primary};
-    color: ${colorStyled.onPrimary};
+    background-color: ${colorStyled.old.darkSecondary};
+    color: ${colorStyled.onSecondary};
 `;

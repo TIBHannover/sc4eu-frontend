@@ -39,7 +39,7 @@ class EmailVerify extends Component {
 
     render() {
         return (
-            <StyledDiv style={{ backgroundColor: colorStyled.background, height: '100%' }}>
+            <StyledDiv style={{ backgroundColor: colorStyled.old.lighter, height: '100%' }}>
                 <div>
                     <PopUp
                         open={this.state.openPopUp}

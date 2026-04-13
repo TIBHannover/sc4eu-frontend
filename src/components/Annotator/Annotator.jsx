@@ -174,13 +174,13 @@ export const Annotator = () => {
                             display="flex"
                             alignItems="center"
                             border="1px solid"
-                            borderColor={colorStyled.outline}
+                            borderColor={colorStyled.old.darkSecondary}
                             borderRadius={2}
                             px={1}
                             py={1}
                             gap={1}
-                            backgroundColor={colorStyled.secondaryContainer}
-                            color={colorStyled.onSecondaryContainer}
+                            backgroundColor={colorStyled.old.darkSecondary}
+                            color={colorStyled.onSecondary}
                         >
                             <Box display="flex" alignItems="center" gap={1}>
                                 <Typography variant="body2" sx={{ whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
@@ -215,7 +215,7 @@ export const Annotator = () => {
                                     onChange={() => setGroupByAncestor(!groupByAncestor)}
                                     name="groupByAncestor"
                                     size="small"
-                                    style={{ backgroundColor: colorStyled.primary }}
+                                    style={{ backgroundColor: colorStyled.old.darkPrimary }}
                                     disabled={!annotatedText}
                                 />
                             </Box>
@@ -231,15 +231,15 @@ export const Annotator = () => {
                         variant="contained"
                         disabled
                         style={{
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: colorStyled.old.darkSecondary,
+                            color: colorStyled.onSecondary,
                             opacity: 0.5
                         }}
                     >
                         Download CSV
                     </Button>
                 ) : (
-                    <Button variant="contained" style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}>
+                    <Button variant="contained" style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
                         <CSVLink
                             data={csvData}
                             headers={csvHeaders}
@@ -256,9 +256,9 @@ export const Annotator = () => {
                     onClick={exportToExcel}
                     disabled={csvData.length === 0}
                     style={{
-                        backgroundColor: colorStyled.primary,
+                        backgroundColor: colorStyled.old.darkSecondary,
+                        color: colorStyled.onSecondary,
                         opacity: csvData.length === 0 ? 0.5 : 1,
-                        color: colorStyled.onPrimary,
                     }}
                 >
                     Download Excel
@@ -398,7 +398,7 @@ export const Annotator = () => {
                 <ButtonContainer>
                     <Button
                         variant="contained"
-                        style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                        style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
                         onClick={handleAnnotate}
                         disabled={isAnnotateDisabled}
                         aria-label="Annotate text"
@@ -407,7 +407,7 @@ export const Annotator = () => {
                     </Button>
                     <Button
                         variant="contained"
-                        style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                        style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
                         onClick={handleReset}
                         disabled={isResetDisabled}
                         aria-label="Reset form"

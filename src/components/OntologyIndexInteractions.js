@@ -56,7 +56,7 @@ class OntologyIndexInteractions extends Component {
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
                         <span>Back</span>
                     </Link>
-                    <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.onSurface }}>
+                    <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.old.darkSecondary }}>
                         <u id="tootlipTarget">{projectName}</u> Project
                     </h4>
                     <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
@@ -137,19 +137,19 @@ const StyledContentDiv = styled.div`
 const StyledButtonToUploadOntology = styled(Button)`
     float: right;
     margin: 10px 15px 15px 0px;
-    background-color: ${colorStyled.secondary};
+    background-color: ${colorStyled.old.darkSecondary};
     color: ${colorStyled.onSecondary};
     margin-left: 1%;
     font-size: ${fontStyled.fontSize.NormalText};
     border: none;
 
     &:hover {
-        background-color: ${colorStyled.secondary}CC;
+        background-color: ${colorStyled.old.darkSecondary}CC;
         color: ${colorStyled.onSecondary};
     }
 
     &:disabled {
-        background-color: ${colorStyled.secondary}4D;
+        background-color: ${colorStyled.old.darkSecondary}4D;
         color: ${colorStyled.onSecondary}4D;
     }
 

@@ -78,7 +78,7 @@ const StyledBodyDiv = styled.div`
     padding-left: 3%;
     padding-right: 3%;
     height: 55px;
-    background-color: ${colorStyled.surfaceContainerHigh};
+    background-color: ${colorStyled.old.light};
     color: ${colorStyled.onSurface};
     overflow: hidden;
 

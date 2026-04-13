@@ -23,7 +23,7 @@ const PopUp = props => {
                 <StyledImage src={SC3} alt="/" height="50px" width="50px" />
                 <hr />
             </button>
-            <div style={{ height: '80%', backgroundColor: colorStyled.surfaceContainer }}>
+            <div style={{ height: '80%', backgroundColor: colorStyled.old.lighter }}>
                 <div style={{ height: '80%' }}>
                     <div style={{ padding: '30px', float: 'left' }}>
                         <img style={{ height: '150x', width: '150px' }} src={props.image} alt="/" />
@@ -44,7 +44,7 @@ const PopUp = props => {
                 <div style={{ height: '20%' }}>
                     <Button
                         onClick={props.onClose}
-                        style={{ float: 'right', margin: '0px 30px 30px 0', width: '80px', backgroundColor: colorStyled.primary }}
+                        style={{ float: 'right', margin: '0px 30px 30px 0', width: '80px', backgroundColor: colorStyled.old.darkSecondary }}
                     >
                         OK
                     </Button>

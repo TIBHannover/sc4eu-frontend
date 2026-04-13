@@ -33,7 +33,7 @@ class CardWidgetVis extends Component {
 
         return (
             <div>
-                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', backgroundColor: colorStyled.secondaryContainer, color: colorStyled.onSecondaryContainer }}>
+                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', backgroundColor: colorStyled.old.lighter, color: colorStyled.shadow }}>
                     <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
                     <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
                         {this.renderResourceDescription(itemOfInterest)}
@@ -50,7 +50,7 @@ class CardWidgetVis extends Component {
         return (
             <div>
                 {/*<div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>*/}
-                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', backgroundColor: colorStyled.secondaryContainer, color: colorStyled.onSecondaryContainer }}>
+                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', backgroundColor: colorStyled.old.lighter, color: colorStyled.shadow }}>
                     <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
                     <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>{this.renderDescription(itemOfInterest)}</CardBody>
                 </Card>
@@ -141,7 +141,7 @@ class CardWidgetVis extends Component {
 
     render() {
         return (
-            <div style={{ backgroundColor: colorStyled.surfaceContainer, color: colorStyled.onSurface, borderTop: 'none', overflow: 'auto' }}>
+            <div style={{ backgroundColor: colorStyled.old.lighter, color: colorStyled.shadow, borderTop: 'none', overflow: 'auto' }}>
                 {this.props.isExpanded && <div style={{ display: 'block' }}>{this.renderWidget()}</div>}
             </div>
         );
