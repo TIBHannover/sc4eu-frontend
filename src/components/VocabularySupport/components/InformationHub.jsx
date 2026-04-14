@@ -128,8 +128,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                 badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
                 sx={{
                     '& .MuiBadge-badge': {
-                        backgroundColor: decision.choice === 'approved' ? colorStyled.primary : colorStyled.error,
-                        color: decision.choice === 'approved' ? colorStyled.onPrimary : colorStyled.onError,
+                        backgroundColor: decision.choice === 'approved' ? colorStyled.secondaryFixed : colorStyled.error,
+                        color: decision.choice === 'approved' ? colorStyled.onSecondaryFixed : colorStyled.onError,
                         width: 16,
                         height: 16,
                         fontSize: 12,
@@ -443,11 +443,11 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                             variant="outlined"
                             size="small"
                             sx={{
-                                bgcolor: colorStyled.tertiary,
-                                color: colorStyled.onTertiary,
+                                bgcolor: colorStyled.old.darkSecondary,
+                                color: colorStyled.onSecondary,
                                 '&:hover': {
-                                    bgcolor: colorStyled.tertiaryContainer,
-                                    color: colorStyled.onTertiaryContainer
+                                    bgcolor: `${colorStyled.old.darkSecondary}BF`,
+                                    color: colorStyled.onSecondary
                                 }
                             }}
                         >

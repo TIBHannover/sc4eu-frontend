@@ -20,7 +20,7 @@ const styles = {
         padding: '10px 20px',
         backgroundColor: colorStyled.old.darkSecondary,
         color: colorStyled.onSecondary,
-        '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
+        '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}BF`, color: colorStyled.onSecondary }
     },
     voteProgress: {
         backgroundColor: colorStyled.old.lighter,
@@ -52,7 +52,7 @@ const styles = {
         borderBottom: '1px solid',
         borderColor: colorStyled.outlineVariant,
         '&:hover': {
-            backgroundColor: `${colorStyled.primary}1A` // primary at 10% opacity
+            backgroundColor: `${colorStyled.primary}1A`
         },
         '&:last-child': {
             borderBottom: 'none'
@@ -121,7 +121,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
 
                         <Divider
                             sx={{
-                                bgcolor: vote.type === 'accept' ? 'success.main' : 'error.main',
+                                bgcolor: vote.type === 'accept' ? colorStyled.secondaryFixed : colorStyled.error,
                                 height: 2,
                                 mb: 1
                             }}
@@ -130,7 +130,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                         <Typography
                             variant="body1"
                             sx={{
-                                color: vote.type === 'accept' ? 'success.dark' : 'error.dark',
+                                color: vote.type === 'accept' ? colorStyled.secondaryFixed : colorStyled.error,
                                 fontWeight: 500,
                                 textTransform: 'uppercase',
                                 letterSpacing: 0.5
@@ -180,7 +180,9 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 >
                                     <FormControlLabel
                                         value="approved"
-                                        control={<Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color="success" />} />}
+                                        control={
+                                            <Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color={colorStyled.secondaryFixed} />} />
+                                        }
                                         label="Agree"
                                     />
                                 </Tooltip>
@@ -193,7 +195,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 >
                                     <FormControlLabel
                                         value="rejected"
-                                        control={<Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color="error" />} />}
+                                        control={<Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color={colorStyled.error} />} />}
                                         label="Not Agree"
                                     />
                                 </Tooltip>

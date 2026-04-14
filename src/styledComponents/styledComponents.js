@@ -55,8 +55,8 @@ export const StyledBadge = styled(
 )(({ customVariant }) => ({
     '& .MuiBadge-badge': {
         ...(customVariant === 'orange' && {
-            backgroundColor: colorStyled.tertiary,
-            color: colorStyled.onTertiary
+            backgroundColor: colorStyled.primaryFixed,
+            color: colorStyled.onPrimaryFixed
         }),
         ...(customVariant === 'blue' && {
             backgroundColor: colorStyled.old.main,
@@ -72,12 +72,12 @@ StyledBadge.propTypes = {
 export const StyledChip = styled(Chip)(({ customVariant }) => ({
     '&.MuiChip-root': {
         ...(customVariant === 'mention' && {
-            backgroundColor: colorStyled.tertiary,
-            color: colorStyled.onTertiary
+            backgroundColor: colorStyled.primaryFixed,
+            color: colorStyled.onPrimaryFixed
         }),
         ...(customVariant === 'agreement' && {
-            backgroundColor: colorStyled.old.lightMain,
-            color: colorStyled.shadow
+            backgroundColor: colorStyled.secondary,
+            color: colorStyled.onSecondary
         })
     }
 }));

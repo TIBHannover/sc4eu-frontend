@@ -194,11 +194,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     <Button
                                         onClick={() => handleAgreementSubmit()}
                                         variant="contained"
-                                        sx={{
-                                            backgroundColor: colorStyled.tertiary,
-                                            color: colorStyled.onTertiary,
-                                            '&:hover': { backgroundColor: colorStyled.tertiaryContainer, color: colorStyled.onTertiaryContainer }
-                                        }}
+                                        sx={buttonStyle}
                                         disabled={!agreementType}
                                     >
                                         Initiate Consensus
@@ -311,7 +307,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     <Chip
                                         label="Check last consensus"
                                         size="small"
-                                        sx={{ ml: 0.5, mb: 0.5, backgroundColor: colorStyled.old.main, color: colorStyled.shadow }}
+                                        sx={buttonStyle}
                                         onClick={() => setOpenLastConsensusDialog(true)}
                                     />
                                 )}
@@ -342,11 +338,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <Button
                                             onClick={() => setViewAgreementMode(true)}
                                             variant="contained"
-                                            sx={{
-                                                backgroundColor: colorStyled.tertiary,
-                                                color: colorStyled.onTertiary,
-                                                '&:hover': { backgroundColor: colorStyled.tertiaryContainer, color: colorStyled.onTertiaryContainer }
-                                            }}
+                                            sx={buttonStyle}
                                             fullWidth={isMobile ? true : false}
                                         >
                                             View ongoing consensus
@@ -367,14 +359,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                                     setIsConsensusClosed(true);
                                                 }}
                                                 variant="contained"
-                                                sx={{
-                                                    backgroundColor: colorStyled.tertiary,
-                                                    color: colorStyled.onTertiary,
-                                                    '&:hover': {
-                                                        backgroundColor: colorStyled.tertiaryContainer,
-                                                        color: colorStyled.onTertiaryContainer
-                                                    }
-                                                }}
+                                                sx={buttonStyle}
                                                 fullWidth
                                             >
                                                 Close consensus
@@ -516,7 +501,7 @@ export default ExpandedRow;
 
 const buttonStyle = {
     padding: '10px 20px',
-    backgroundColor: colorStyled.primary,
-    color: colorStyled.onPrimary,
-    '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+    backgroundColor: colorStyled.old.darkSecondary,
+    color: colorStyled.onSecondary,
+    '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}99`, color: colorStyled.onSecondary }
 };

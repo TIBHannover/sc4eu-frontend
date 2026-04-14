@@ -33,8 +33,8 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
                 setActiveCard('urgent');
             },
             count: urgentTerms.length,
-            backGroundColor: colorStyled.tertiary,
-            fontColor: colorStyled.onTertiary
+            backGroundColor: colorStyled.error,
+            fontColor: colorStyled.onError
         },
         {
             label: 'Discussion',
@@ -45,8 +45,8 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
                 setActiveCard('discussion');
             },
             count: discussionReplies.length,
-            backGroundColor: colorStyled.tertiary,
-            fontColor: colorStyled.onTertiary
+            backGroundColor: colorStyled.secondaryFixed,
+            fontColor: colorStyled.onSecondaryFixed
         },
         {
             label: 'New terms',
@@ -54,8 +54,8 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
             sub: 'Filter table →',
             onClick: onNewTermsClick,
             count: newTerms.length,
-            backGroundColor: colorStyled.tertiary,
-            fontColor: colorStyled.onTertiary 
+            backGroundColor: colorStyled.primaryFixed,
+            fontColor: colorStyled.onPrimaryFixed 
         }
     ].filter(card => card.count > 0);
 
@@ -98,7 +98,7 @@ export const CardActivityWidget = ({ urgentTerms, votes, discussionReplies, newT
                                 {nearClosedConsensuses?.includes(term.identifier) && (
                                     <ListItemIcon>
                                         <Tooltip title="Just one vote left to reach consensus">
-                                            <LocalFireDepartmentOutlinedIcon sx={{ color: colorStyled.tertiary }} />
+                                            <LocalFireDepartmentOutlinedIcon sx={{ color: colorStyled.primary }} />
                                         </Tooltip>
                                     </ListItemIcon>
                                 )}

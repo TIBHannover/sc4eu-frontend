@@ -152,7 +152,6 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                 >
                     <Button
                         variant="contained"
-                        color="success"
                         onClick={() => {
                             handleWeekVote('approved');
                         }}
@@ -162,9 +161,9 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                             px: 4,
                             py: 1.5,
                             fontWeight: 'bold',
-                            bgcolor: colorStyled.primary,
+                            bgcolor: colorStyled.old.darkSecondary,
                             '&:hover': {
-                                bgcolor: colorStyled.primaryContainer,
+                                bgcolor: `${colorStyled.old.darkSecondary}BF`,
                             }
                         }}
                     >
@@ -172,7 +171,6 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                     </Button>
                     <Button
                         variant="contained"
-                        color="error"
                         startIcon={loadingDecision === 'rejected' ? <CircularProgress size={18} color="inherit" /> : <ThumbDownAltOutlined />}
                         onClick={() => {
                             handleWeekVote('rejected');
@@ -183,7 +181,7 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                             py: 1.5,
                             fontWeight: 'bold',
                             bgcolor: colorStyled.error,
-                            '&:hover': { bgcolor: colorStyled.onErrorContainer }
+                            '&:hover': { bgcolor: `${colorStyled.error}BF`, color: colorStyled.onError }
                         }}
                     >
                         Not Agree

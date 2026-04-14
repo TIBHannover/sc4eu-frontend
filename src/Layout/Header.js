@@ -171,7 +171,6 @@ class Header extends Component {
                                     <div className="user-details">
                                         {this.showDashboard()}
                                         <StyledButton
-                                            color="secondary"
                                             onClick={this.toggleUserTooltip}
                                             tag={Link}
                                             to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
@@ -287,14 +286,13 @@ const StyledRightSideDiv = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-    backgroundColor: ${colorStyled.old.light};
-    color: ${colorStyled.shadow};
+    background-color: ${colorStyled.old.darkSecondary};
+    color: ${colorStyled.onSecondary};
     font-size: 14px;
     border-radius: 14px;
     border: none !important;
     display: flex;
     align-items: center;
-    // justify-content: center;
     width: 100%;
     margin: 10px 0;
     margin-bottom: 8px;
@@ -302,7 +300,7 @@ const StyledButton = styled(Button)`
     transition: background-color 0.3s, color 0.3s;
 
     &:hover {
-        background-color: ${colorStyled.old.darkSecondary};
+        background-color: ${colorStyled.old.darkPrimary};
         color: ${colorStyled.onSecondary};
         border: none !important;
     }

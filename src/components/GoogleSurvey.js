@@ -109,8 +109,8 @@ const StyledButton = styled(Button)`
     justify-content: space-around;
     right: 60px;
     min-width: 150px;
-    background-color: ${colorStyled.tertiary};
-    color: ${colorStyled.onTertiary};
+    background-color: ${colorStyled.old.darkSecondary};
+    color: ${colorStyled.onSecondary};
     color: white;
     border-radius: 4px;
 
@@ -120,8 +120,8 @@ const StyledButton = styled(Button)`
     }
 
     :hover {
-        background-color: ${colorStyled.tertiaryContainer};
-        color: ${colorStyled.onTertiaryContainer};
+        background-color: ${colorStyled.old.darkPrimary};
+        color: ${colorStyled.onSecondary};
     }
 `;
 

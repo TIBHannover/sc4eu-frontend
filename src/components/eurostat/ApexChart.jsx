@@ -1,5 +1,6 @@
 import ReactApexChart from 'react-apexcharts';
 import PropTypes from 'prop-types';
+import { colorStyled } from 'styledComponents/styledColor';
 
 export const MyApexChart = ({ data, title, yAxisTitle, xAxisTitle }) => {
     const series = data
@@ -88,7 +89,8 @@ export const MyApexChart = ({ data, title, yAxisTitle, xAxisTitle }) => {
                     return new Date(val).getFullYear();
                 }
             }
-        }
+        },
+        colors: [`${colorStyled.primary}`]
     };
 
     return (
