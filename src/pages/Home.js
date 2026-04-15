@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
-import Logo from '../assets/images/sandbox_orange_logo.svg';
+import Logo from '../assets/images/nfdi4ing_logo_1.svg';
 import GoogleSurvey from '../components/GoogleSurvey';
 import Typography from "@mui/material/Typography";
 
