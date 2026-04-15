@@ -455,10 +455,10 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS} onClick={onNavigate}>
+                    {/* <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS} onClick={onNavigate}>
                         <HandshakeOutlined color="action" />
                         <StyledText>Partners</StyledText>
-                    </StyledLink>
+                    </StyledLink> */}
                 </div>
             </ListItem>
         </List>
