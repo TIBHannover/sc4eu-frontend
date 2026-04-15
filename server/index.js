@@ -122,13 +122,13 @@ processing.getHtmlForWidoco(router);
 router.get('/oauth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
 router.get(
     '/oauth/github/callback',
-    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/vocab/nfdi4ing/LoginFailedRedirect` }),
     (req, res) => {
         // Successful authentication, redirect home.
         // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
         res.redirect(
             url.format({
-                pathname: `${process.env.CALLBACK_URL}/vocab/loggedIn`,
+                pathname: `${process.env.CALLBACK_URL}/vocab/nfdi4ing/loggedIn`,
                 query: {
                     success: true,
                     token: req.user.jwt
@@ -141,10 +141,10 @@ router.get(
 router.get('/oauth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
 router.get(
     '/oauth/gitlab/callback',
-    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt
@@ -158,10 +158,10 @@ router.get(
 router.get('/oauth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
     '/oauth/google/callback',
-    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt
@@ -175,10 +175,10 @@ router.get(
 router.get('/oauth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
 router.get(
     '/oauth/sap/callback',
-    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt
