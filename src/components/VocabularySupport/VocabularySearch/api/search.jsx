@@ -16,7 +16,7 @@ export async function olsSearch({
 }) {
     try {
         const rangeStart = (page - 1) * size;
-        let searchUrl = process.env.REACT_APP_SEARCH_URL + `?q=${searchQuery}&start=${rangeStart}&groupField=iri&rows=${size}`;
+        let searchUrl = process.env.REACT_APP_OLS4_API_V1 + `/suggest/?q=${searchQuery}&start=${rangeStart}&groupField=iri&rows=${size}`;
         searchUrl = selectedOntologies.length !== 0 ? searchUrl + `&ontology=${selectedOntologies.join(',')}` : searchUrl;
         searchUrl = selectedTypes.length !== 0 ? searchUrl + `&type=${selectedTypes.join(',')}` : searchUrl;
         searchUrl = searchInValues.length !== 0 ? searchUrl + `&queryFields=${searchInValues.join(',')}` : searchUrl;
@@ -41,8 +41,8 @@ export async function olsSearch({
 
 export async function getJumpToResult(inputData, count = 10) {
     try {
-        let autocompleteApiBaseUrl = process.env.REACT_APP_SEARCH_URL2;
-        let url = `${autocompleteApiBaseUrl}?search=${inputData['searchQuery']}&size=${count}&page=0exactMatch=false&includeObsoleteEntities=false&exclusive=false&option=LINEAR`;
+        let autocompleteApiBaseUrl = process.env.REACT_APP_OLS4_API_V2;
+        let url = `${autocompleteApiBaseUrl}/classes/?search=${inputData['searchQuery']}&size=${count}&page=0exactMatch=false&includeObsoleteEntities=false&exclusive=false&option=LINEAR`;
         let result = await fetch(url, getCallSetting);
         result = await result.json();
         result = result['elements'];
@@ -56,7 +56,7 @@ export async function getJumpToResult(inputData, count = 10) {
 
 export async function getAutoCompleteResult(inputData, count = 5) {
     try {
-        let url = process.env.REACT_APP_API_URL + `/suggest?q=${inputData['searchQuery']}&rows=${count}`;
+        let url = process.env.REACT_APP_OLS4_API_V1 + `/suggest?q=${inputData['searchQuery']}&rows=${count}`;
         url = inputData['ontologyIds'] ? url + `&ontology=${inputData['ontologyIds']}` : url;
         url = inputData['types'] ? url + `&type=${inputData['types']}` : url;
         url = inputData['obsoletes'] ? url + '&obsoletes=true' : url;
