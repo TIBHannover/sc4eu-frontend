@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
-import Logo from '../assets/images/nfdi4ing_logo_1.svg';
+import Logo from '../assets/images/nfdi4ing_logo.svg';
 import GoogleSurvey from '../components/GoogleSurvey';
 import Typography from "@mui/material/Typography";
 
@@ -151,21 +151,21 @@ const StyledBodyDiv = styled.div`
 `;
 
 const StyledBodyLogo = styled.img`
-    width: 200px;
-    height: 170px;
+    width: 450px;
+    height: auto;
     align-self: center;
     margin-top: -20px;
 
     @media (max-width: ${MAX_WIDTH}) {
-        width: 110px;
-        height: 90px;
+        width: 180px;
+        height: auto;
         align-self: center;
         margin-bottom: 10px;
     }
 
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 240px;
-        height: 210px;
+        width: 360px;
+        height: auto;
     }
 `;
 
