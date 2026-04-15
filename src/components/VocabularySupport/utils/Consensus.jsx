@@ -11,7 +11,7 @@ export const ConsensusProgress = ({ term }) => {
     const rejectedCount = term.decisions.filter(e => e.choice === 'rejected').length;
     const totalVotes = approvedCount + rejectedCount;
     const leadingCount = Math.max(approvedCount, rejectedCount);
-    const progressColour = approvedCount >= rejectedCount ? colorStyled.GREEN_COLOR : colorStyled.RED_COLOR;
+    const progressColour = approvedCount >= rejectedCount ? colorStyled.secondaryFixed : colorStyled.error;
     const barValue = Math.min((leadingCount / THRESHOLD_COUNT) * 100, 100);
     const majority = totalVotes > 0 ? Math.round((leadingCount / totalVotes) * 100) : 0;
     const isOneVoteShort = THRESHOLD_COUNT - leadingCount === 1;
@@ -27,7 +27,7 @@ export const ConsensusProgress = ({ term }) => {
                 ) : leadingCount >= THRESHOLD_COUNT && majority >= 75 ? (
                     <Typography variant="caption" color="text.secondary">
                         {majority === 100 ? 'Unanimous' : 'Majority'} consensus reached{' '}
-                        <CelebrationOutlinedIcon sx={{ color: colorStyled.TEXTCOLOR }} />
+                        <CelebrationOutlinedIcon sx={{ color: colorStyled.secondaryFixed }} />
                     </Typography>
                 ) : (
                     <>
@@ -38,7 +38,7 @@ export const ConsensusProgress = ({ term }) => {
                             {leadingCount}/{THRESHOLD_COUNT} votes · {majority}% majority{' '}
                             {isOneVoteShort && (
                                 <Tooltip title="Just one vote left to reach consensus">
-                                    <LocalFireDepartmentOutlinedIcon sx={{ color: colorStyled.ORANGE_COLOR }} />
+                                    <LocalFireDepartmentOutlinedIcon sx={{ color: colorStyled.primaryFixed }} />
                                 </Tooltip>
                             )}
                         </Typography>

@@ -1,31 +1,34 @@
-import ReactApexChart from "react-apexcharts";
+import ReactApexChart from 'react-apexcharts';
 import PropTypes from 'prop-types';
+import { colorStyled } from 'styledComponents/styledColor';
 
 export const ApexBarChart = ({ data, categories }) => {
-    const series = [{
-        data: data
-    }]
+    const series = [
+        {
+            data: data
+        }
+    ];
 
     const options = {
         chart: {
-            type: "bar",
+            type: 'bar',
             height: '100%',
-            width: '100%',
+            width: '100%'
         },
         plotOptions: {
             bar: {
                 borderRadius: 4,
-                borderRadiusApplication: "end",
-                horizontal: true,
-            },
+                borderRadiusApplication: 'end',
+                horizontal: true
+            }
         },
         dataLabels: {
-            enabled: false,
+            enabled: false
         },
         xaxis: {
             categories,
             labels: {
-                formatter: (value) => {
+                formatter: value => {
                     if (value >= 1_000_000_000) return (value / 1_000_000_000).toFixed(1) + 'B';
                     if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + 'M';
                     if (value >= 1_000) return (value / 1_000).toFixed(1) + 'K';
@@ -34,16 +37,16 @@ export const ApexBarChart = ({ data, categories }) => {
             }
         },
         noData: {
-            text: 'Nothing was found with the chosen parameters, try to increase number of products, change flow type, increase the interval or change reporter and/or partner'
+            text:
+                'Nothing was found with the chosen parameters, try to increase number of products, change flow type, increase the interval or change reporter and/or partner'
         },
+        colors: [`${colorStyled.primary}`]
     };
 
-    return (
-        <ReactApexChart options={options} series={series} type="bar" />
-    );
+    return <ReactApexChart options={options} series={series} type="bar" />;
 };
 
 ApexBarChart.propTypes = {
     data: PropTypes.array.isRequired,
-    categories: PropTypes.array.isRequired,
-}
+    categories: PropTypes.array.isRequired
+};
