@@ -10,10 +10,16 @@ const getUserFromUrl = GitHubAPIUrl => {
     const url = new URL(GitHubAPIUrl);
     return url.pathname.split('/')[1];
 };
+
 const getRepoFromUrl = GitHubAPIUrl => {
     const url = new URL(GitHubAPIUrl);
     return url.pathname.split('/')[2];
 };
+
+const getBranchFromUrl = GitHubAPIUrl => {
+    return new URL(GitHubAPIUrl).pathname.split('/')[3];
+};
+
 const getFilePath = GitHubAPIUrl => {
     const url = new URL(GitHubAPIUrl);
     let repoPath;
@@ -31,10 +37,6 @@ const getFilePath = GitHubAPIUrl => {
     return repoPath;
 };
 
-const getBranchFromUrl = GitHubAPIUrl => {
-    return new URL(GitHubAPIUrl).pathname.split('/')[5];
-}
-
 export const getFileDataFromGitHub = async GitHubAPIUrl => {
     const owner = getUserFromUrl(GitHubAPIUrl);
     const repo = getRepoFromUrl(GitHubAPIUrl); // the name of the repository
@@ -45,7 +47,7 @@ export const getFileDataFromGitHub = async GitHubAPIUrl => {
         owner,
         repo,
         path,
-        ...(ref && {ref})
+        ...(ref && { ref })
     });
     return data;
 };
