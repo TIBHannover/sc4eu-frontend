@@ -191,12 +191,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             </Paper>
                             <Tooltip title="Select at least one vote type" disableHoverListener={!!agreementType}>
                                 <Box sx={{ width: 'fit-content' }}>
-                                    <Button
-                                        onClick={() => handleAgreementSubmit()}
-                                        variant="contained"
-                                        sx={buttonStyle}
-                                        disabled={!agreementType}
-                                    >
+                                    <Button onClick={() => handleAgreementSubmit()} variant="contained" sx={buttonStyle} disabled={!agreementType}>
                                         Initiate Consensus
                                     </Button>
                                 </Box>
@@ -316,9 +311,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px', flexWrap: 'wrap' }}>
                                 <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile ? true : false}>
                                     Edit Term
-                                </Button>
-                                <Button onClick={handleClose} variant="contained" sx={buttonStyle} fullWidth={isMobile ? true : false}>
-                                    Close
                                 </Button>
                                 {!activeAgreement && (
                                     <Tooltip title="Decide if the term's status is ready to be changed">
@@ -480,8 +472,29 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                 </Box>
             )}
 
-            <Typography sx={{ fontSize: '12px', color: 'gray', textAlign: 'center', marginTop: '10px' }}>
-                Press escape to go back to the table
+            <Typography
+                variant="body2"
+                sx={{
+                    mt: 2,
+                    textAlign: 'center',
+                    color: 'text.secondary',
+                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' }
+                }}
+            >
+                Press <strong>Esc</strong> to go back to the table or{' '}
+                <Typography
+                    component="span"
+                    onClick={handleClose}
+                    sx={{
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                        color: colorStyled.old.linkSecondary,
+                        fontWeight: 500,
+                        '&:hover': { color: `${colorStyled.old.linkSecondary}B3` }
+                    }}
+                >
+                    click here to close
+                </Typography>
             </Typography>
         </Box>
     );
