@@ -8,13 +8,11 @@ import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import Logo from '../assets/images/nfdi4ing_logo.svg';
 import GoogleSurvey from '../components/GoogleSurvey';
-import Typography from "@mui/material/Typography";
+import Typography from '@mui/material/Typography';
 
 const VocabularyReferenceTxt = (
     <>
-        <p>
-            You could find more information about the tool in about Portal and FAQ sections in a menu on the left side.
-        </p>
+        <p>You could find more information about the tool in about Portal and FAQ sections in a menu on the left side.</p>
     </>
 );
 
@@ -36,8 +34,11 @@ export default class Home extends Component {
                     <StyledBody>
                         <StyledBodyDiv style={{ maxWidth: 700, alignSelf: 'center', marginBottom: 20 }}>
                             <StyledBodyLogo src={Logo} alt="Welcome to the testing Vocabulary platform" />
-                            <Typography variant="h4">
-                                Welcome to the Sandbox Vocabulary Development Support Tool (VDST) server
+                            <Typography variant="h4">Welcome to the Sandbox Vocabulary Development Support Tool (VDST) server, access:</Typography>
+                            <Typography variant="h6">
+                                <a href="https://service.tib.eu/vocab/nfdi4ing/vocabulary_support" style={{ color: colorStyled.primary }}>
+                                    https://service.tib.eu/vocab/nfdi4ing/vocabulary_support
+                                </a>
                             </Typography>
                             <StyledBodyTextBigger>{VocabularyReferenceTxt}</StyledBodyTextBigger>
                         </StyledBodyDiv>
@@ -231,7 +232,6 @@ const StyledBodyTextBigger = styled.div`
         font-size: calc(${fontStyled.fontSize.DesktopViewNormalText} * 1.3);
     }
 `;
-
 
 const StyledBodyText = styled.p`
     font-size: calc(${fontStyled.fontSize.NormalText} * 1.15);
