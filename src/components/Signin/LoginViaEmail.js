@@ -80,7 +80,7 @@ class LoginViaEmail extends Component {
             });
         } else {
             if (token && token.jwt) {
-                this.props.updateCookies({ token: token.jwt });
+                await this.props.updateCookies({ token: token.jwt });
             }
             if (this.props.redirectRoute) {
                 window.location.href = this.props.redirectRoute;
