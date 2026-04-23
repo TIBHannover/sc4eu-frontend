@@ -8,13 +8,34 @@ import { Box, Typography, Button, Link } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
+import { connect } from 'react-redux';
+import { openAuthDialog } from '../redux/actions/auth';
+import { selectIsAuthenticated } from '../redux/reducers/auth';
 
 const CENTER_ROW = { display: 'flex', alignItems: 'center' };
+const VOCABULARY_URL = 'https://service.tib.eu/vocab/nfdi4ing/vocabulary_support';
 
-export default class Home extends Component {
+class Home extends Component {
+    state = { fading: false };
+
+    handleToolOpen = () => {
+        if (this.props.isAuthenticated) {
+            this.setState({ fading: true });
+            setTimeout(() => {
+                window.location.href = VOCABULARY_URL;
+            }, 500);
+        } else {
+            this.props.openAuthDialog({
+                action: 'signin',
+                redirectRoute: VOCABULARY_URL,
+                signInRequired: true
+            });
+        }
+    };
+
     render() {
         return (
-            <Box sx={{ overflow: 'auto' }}>
+            <Box sx={{ overflow: 'auto', transition: 'opacity 0.5s ease', opacity: this.state.fading ? 0 : 1 }}>
                 <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                     <IntroductoryPopUp />
                 </Box>
@@ -45,19 +66,19 @@ export default class Home extends Component {
                             variant="h3"
                             sx={{ fontWeight: 800, color: colorStyled.onSurface, lineHeight: 1.15, fontSize: { xs: '2rem', md: '3rem' } }}
                         >
-                            Terminologie für Engineering-Daten klar entwickeln.
+                            Develop clear terminology for engineering data
                         </Typography>
 
                         <Typography variant="body1" sx={{ color: colorStyled.onPrimaryFixedVariant, lineHeight: 1.7 }}>
-                            Der NFDI4Ing Vocabulary Service unterstützt Communities dabei, kontrollierte Vokabulare aufzubauen, zu dokumentieren und
-                            als verlässliche Grundlage für interoperable Forschungsdaten bereitzustellen.
+                            The NFDI4Ing Vocabulary Service supports communities in building and documenting controlled vocabularies and providing
+                            them as a reliable basis for interoperable research data
                         </Typography>
 
                         <Box sx={{ ...CENTER_ROW, gap: 3, flexWrap: 'wrap' }}>
                             <Button
                                 variant="contained"
                                 endIcon={<ArrowForwardIcon />}
-                                href="https://service.tib.eu/vocab/nfdi4ing/vocabulary_support"
+                                onClick={this.handleToolOpen}
                                 sx={{
                                     backgroundColor: colorStyled.primary,
                                     textTransform: 'none',
@@ -65,14 +86,14 @@ export default class Home extends Component {
                                     '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                                 }}
                             >
-                                Tool öffnen
+                                Open tool
                             </Button>
 
                             <Link
                                 href="https://service.tib.eu/vocab/nfdi4ing/Documentations"
                                 sx={{ ...CENTER_ROW, gap: 0.5, color: colorStyled.primary, fontWeight: 600, textDecoration: 'none' }}
                             >
-                                Dokumentation ansehen <OpenInNewIcon sx={{ fontSize: '1rem' }} />
+                                See documentation <OpenInNewIcon sx={{ fontSize: '1rem' }} />
                             </Link>
                         </Box>
                     </Box>
@@ -87,18 +108,13 @@ export default class Home extends Component {
                             boxShadow: 2
                         }}
                     >
-
                         <Box sx={{ ...CENTER_ROW, justifyContent: 'space-between', my: 2 }}>
                             <Typography variant="h5" sx={{ fontWeight: 700, color: colorStyled.onSurface }}>
                                 Vocabulary Tool
                             </Typography>
                         </Box>
 
-                        {[
-                            'Begriffe und Konzepte kuratieren',
-                            'Definitionen nachvollziehbar dokumentieren',
-                            'Vocabulary-Arbeit in Trainings vertiefen'
-                        ].map(item => (
+                        {['Curate terms and concepts', 'Document definitions clearly', 'Reinforce vocabulary work in training sessions'].map(item => (
                             <Box
                                 key={item}
                                 sx={{
@@ -108,7 +124,7 @@ export default class Home extends Component {
                                     pl: 2,
                                     mb: 1.5,
                                     borderLeft: `3px solid ${colorStyled.primary}`,
-                                    backgroundColor: colorStyled.surfaceContainer,
+                                    backgroundColor: colorStyled.surfaceContainerLow,
                                     borderRadius: '0 4px 4px 0'
                                 }}
                             >
@@ -138,3 +154,13 @@ export default class Home extends Component {
         );
     }
 }
+
+const mapStateToProps = state => ({
+    isAuthenticated: selectIsAuthenticated(state)
+});
+
+const mapDispatchToProps = {
+    openAuthDialog
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

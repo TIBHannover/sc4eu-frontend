@@ -79,11 +79,18 @@ class LoginViaEmail extends Component {
                 image: error
             });
         } else {
-            this.props.callback();
+            if (token && token.jwt) {
+                this.props.updateCookies({ token: token.jwt });
+            }
+            if (this.props.redirectRoute) {
+                setTimeout(() => {
+                    window.location.href = this.props.redirectRoute;
+                }, 500);
+            } else {
+                this.props.callback();
+            }
         }
-        if (token && token.jwt) {
-            this.props.updateCookies({ token: token.jwt });
-        }
+
         this.setState({ loading: false });
         return true;
     };
@@ -391,10 +398,16 @@ class LoginViaEmail extends Component {
                                             </div>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }} onClick={this.handleRegister}>
+                                            <Button
+                                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                                                onClick={this.handleRegister}
+                                            >
                                                 Register
                                             </Button>
-                                            <Button style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }} onClick={this.props.toggleAuthDialog}>
+                                            <Button
+                                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                                                onClick={this.props.toggleAuthDialog}
+                                            >
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
@@ -428,10 +441,16 @@ class LoginViaEmail extends Component {
                                             </div>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }} onClick={this.handleForgotPassword}>
+                                            <Button
+                                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                                                onClick={this.handleForgotPassword}
+                                            >
                                                 Reset
                                             </Button>
-                                            <Button style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }} onClick={this.props.toggleAuthDialog}>
+                                            <Button
+                                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                                                onClick={this.props.toggleAuthDialog}
+                                            >
                                                 Cancel
                                             </Button>
                                         </ModalFooter>

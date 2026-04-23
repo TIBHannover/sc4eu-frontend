@@ -27,7 +27,7 @@ const StyledBody = styled.div`
     min-height: calc(100vh - 0px);
     height: 100%;
     background-color: ${
-            colorStyled.background
+            colorStyled.surfaceContainerLowest
     };
     font-family: ${
             fontStyled.fontFamily

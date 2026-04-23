@@ -74,12 +74,8 @@ const StyledDiv = styled('div')(({ open }) => ({
 
 export default function SideBarLayout(props) {
     const isMobile = useMediaQuery(`(max-width: ${SMALL_SCREEN_WIDTH})`);
-    const [open, setOpen] = React.useState(!isMobile);
+    const [open, setOpen] = React.useState(false);
     const location = useLocation();
-
-    React.useEffect(() => {
-        setOpen(!isMobile);
-    }, [isMobile]);
 
     const handleDrawer = () => {
         setOpen(!open);
