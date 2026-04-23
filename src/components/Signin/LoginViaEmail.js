@@ -83,9 +83,7 @@ class LoginViaEmail extends Component {
                 this.props.updateCookies({ token: token.jwt });
             }
             if (this.props.redirectRoute) {
-                setTimeout(() => {
-                    window.location.href = this.props.redirectRoute;
-                }, 500);
+                window.location.href = this.props.redirectRoute;
             } else {
                 this.props.callback();
             }
