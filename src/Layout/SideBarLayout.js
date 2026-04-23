@@ -19,7 +19,7 @@ const createMixin = activePage => ({
     top: 0,
     overflow: 'hidden',
     transition: '0.6s',
-    backgroundColor: `${colorStyled.surfaceContainerLow}`,
+    backgroundColor: `${colorStyled.surfaceContainerLowest}`,
     [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
         height: activePage === '/' ? 'calc(100% - 55px)' : 'calc(100% - 0px)',
         top: 50

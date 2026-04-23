@@ -55,23 +55,16 @@ class Home extends Component {
                     }}
                 >
                     <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 3 }}>
-                        <Box sx={{ ...CENTER_ROW, gap: 1, borderBottom: `2px solid ${colorStyled.primary}`, pb: 1, width: 'fit-content' }}>
-                            <AutoAwesomeOutlinedIcon sx={{ fontSize: '1.1rem', color: colorStyled.primary }} />
-                            <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: colorStyled.primary }}>
-                                Sandbox Vocabulary Development Support Tool
-                            </Typography>
-                        </Box>
-
                         <Typography
                             variant="h3"
                             sx={{ fontWeight: 800, color: colorStyled.onSurface, lineHeight: 1.15, fontSize: { xs: '2rem', md: '3rem' } }}
                         >
-                            Develop clear terminology for engineering data
+                            Develop clear and consistent terminology for research data in engineering
                         </Typography>
 
                         <Typography variant="body1" sx={{ color: colorStyled.onPrimaryFixedVariant, lineHeight: 1.7 }}>
-                            The NFDI4Ing Vocabulary Service supports communities in building and documenting controlled vocabularies and providing
-                            them as a reliable basis for interoperable research data
+                            The Vocabulary Service supports communities in building and documenting controlled vocabularies and providing them as a
+                            reliable basis for interoperable research data
                         </Typography>
 
                         <Box sx={{ ...CENTER_ROW, gap: 3, flexWrap: 'wrap' }}>
@@ -114,7 +107,7 @@ class Home extends Component {
                             </Typography>
                         </Box>
 
-                        {['Curate terms and concepts', 'Document definitions clearly', 'Reinforce vocabulary work in training sessions'].map(item => (
+                        {['Creating relevant terms', 'Group discussion', 'A transparent voting process (consensus)'].map(item => (
                             <Box
                                 key={item}
                                 sx={{
