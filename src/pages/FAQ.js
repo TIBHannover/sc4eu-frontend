@@ -85,7 +85,7 @@ const linkSx = {
 const cardSx = {
     borderRadius: '8px',
     mb: 1.5,
-    backgroundColor: colorStyled.surfaceContainerLow,
+    backgroundColor: colorStyled.surfaceContainerLowest,
     borderColor: colorStyled.outlineVariant
 };
 
@@ -143,7 +143,7 @@ export default function Faq() {
                 width: '100%',
                 height: '100%',
                 overflow: 'auto',
-                backgroundColor: colorStyled.background
+                backgroundColor: colorStyled.surfaceContainerLowest
             }}
         >
             <Container

@@ -122,8 +122,8 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
     };
     
     const ActiveStyle = {
-        backgroundColor: colorStyled.secondaryContainer,
-        color: colorStyled.onSecondaryContainer
+        backgroundColor: colorStyled.surfaceContainerLow,
+        color: colorStyled.onSurface
     };
 
     const getOntologyFileForDocumentation = async () => {
