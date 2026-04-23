@@ -1,327 +1,140 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import IntroductoryPopUp from '../components/IntroductoryPopUp';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import Logo from '../assets/images/nfdi4ing_logo.svg';
 import GoogleSurvey from '../components/GoogleSurvey';
-import Typography from '@mui/material/Typography';
+import { Box, Typography, Button, Link } from '@mui/material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 
-const VocabularyReferenceTxt = (
-    <>
-        <p>You could find more information about the tool in about Portal and FAQ sections in a menu on the left side.</p>
-    </>
-);
+const CENTER_ROW = { display: 'flex', alignItems: 'center' };
 
 export default class Home extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isreadmore: false
-        };
-    }
-
     render() {
         return (
-            <>
-                <StyledRootDiv>
-                    <StyledDivPopUp>
-                        <IntroductoryPopUp />
-                    </StyledDivPopUp>
-                    <StyledBody>
-                        <StyledBodyDiv style={{ maxWidth: 700, alignSelf: 'center', marginBottom: 20 }}>
-                            <StyledBodyLogo src={Logo} alt="Welcome to the testing Vocabulary platform" />
-                            <Typography variant="h4">Welcome to the Sandbox Vocabulary Development Support Tool (VDST) server, access:</Typography>
-                            <Typography variant="h6">
-                                <a href="https://service.tib.eu/vocab/nfdi4ing/vocabulary_support" style={{ color: colorStyled.primary }}>
-                                    https://service.tib.eu/vocab/nfdi4ing/vocabulary_support
-                                </a>
+            <Box sx={{ overflow: 'auto' }}>
+                <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                    <IntroductoryPopUp />
+                </Box>
+
+                <Box sx={{ px: { xs: 3, md: 37 }, py: 2 }}>
+                    <Box component="img" src={Logo} alt="NFDI4Ing Logo" sx={{ width: { xs: '10rem', md: '20rem' }, height: 'auto' }} />
+                </Box>
+
+                <Box
+                    sx={{
+                        ...CENTER_ROW,
+                        flexDirection: { xs: 'column', md: 'row' },
+                        alignItems: { xs: 'stretch', md: 'center' },
+                        px: { xs: 3, md: 40 },
+                        py: { xs: 4, md: 8 },
+                        gap: { xs: 4, md: 15 }
+                    }}
+                >
+                    <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 3 }}>
+                        <Box sx={{ ...CENTER_ROW, gap: 1, borderBottom: `2px solid ${colorStyled.primary}`, pb: 1, width: 'fit-content' }}>
+                            <AutoAwesomeOutlinedIcon sx={{ fontSize: '1.1rem', color: colorStyled.primary }} />
+                            <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: colorStyled.primary }}>
+                                Sandbox Vocabulary Development Support Tool
                             </Typography>
-                            <StyledBodyTextBigger>{VocabularyReferenceTxt}</StyledBodyTextBigger>
-                        </StyledBodyDiv>
-                    </StyledBody>
-                </StyledRootDiv>
-                <StyledSurveyDiv>
+                        </Box>
+
+                        <Typography
+                            variant="h3"
+                            sx={{ fontWeight: 800, color: colorStyled.onSurface, lineHeight: 1.15, fontSize: { xs: '2rem', md: '3rem' } }}
+                        >
+                            Terminologie für Engineering-Daten klar entwickeln.
+                        </Typography>
+
+                        <Typography variant="body1" sx={{ color: colorStyled.onPrimaryFixedVariant, lineHeight: 1.7 }}>
+                            Der NFDI4Ing Vocabulary Service unterstützt Communities dabei, kontrollierte Vokabulare aufzubauen, zu dokumentieren und
+                            als verlässliche Grundlage für interoperable Forschungsdaten bereitzustellen.
+                        </Typography>
+
+                        <Box sx={{ ...CENTER_ROW, gap: 3, flexWrap: 'wrap' }}>
+                            <Button
+                                variant="contained"
+                                endIcon={<ArrowForwardIcon />}
+                                href="https://service.tib.eu/vocab/nfdi4ing/vocabulary_support"
+                                sx={{
+                                    backgroundColor: colorStyled.primary,
+                                    textTransform: 'none',
+                                    fontWeight: 600,
+                                    '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                                }}
+                            >
+                                Tool öffnen
+                            </Button>
+
+                            <Link
+                                href="https://service.tib.eu/vocab/nfdi4ing/Documentations"
+                                sx={{ ...CENTER_ROW, gap: 0.5, color: colorStyled.primary, fontWeight: 600, textDecoration: 'none' }}
+                            >
+                                Dokumentation ansehen <OpenInNewIcon sx={{ fontSize: '1rem' }} />
+                            </Link>
+                        </Box>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: { xs: '100%', md: '40%' },
+                            border: `1px solid ${colorStyled.outlineVariant}`,
+                            p: 3,
+                            boxShadow: 2
+                        }}
+                    >
+
+                        <Box sx={{ ...CENTER_ROW, justifyContent: 'space-between', my: 2 }}>
+                            <Typography variant="h5" sx={{ fontWeight: 700, color: colorStyled.onSurface }}>
+                                Vocabulary Tool
+                            </Typography>
+                        </Box>
+
+                        {[
+                            'Begriffe und Konzepte kuratieren',
+                            'Definitionen nachvollziehbar dokumentieren',
+                            'Vocabulary-Arbeit in Trainings vertiefen'
+                        ].map(item => (
+                            <Box
+                                key={item}
+                                sx={{
+                                    ...CENTER_ROW,
+                                    gap: 2,
+                                    py: 2,
+                                    pl: 2,
+                                    mb: 1.5,
+                                    borderLeft: `3px solid ${colorStyled.primary}`,
+                                    backgroundColor: colorStyled.surfaceContainer,
+                                    borderRadius: '0 4px 4px 0'
+                                }}
+                            >
+                                <Box
+                                    sx={{
+                                        width: '0.6rem',
+                                        height: '0.6rem',
+                                        minWidth: '0.6rem',
+                                        borderRadius: '50%',
+                                        backgroundColor: colorStyled.primary
+                                    }}
+                                />
+                                <Typography variant="body2" sx={{ fontWeight: 600, color: colorStyled.onSurface }}>
+                                    {item}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                </Box>
+
+                <Box sx={{ position: 'fixed', bottom: '5rem', right: 0, display: { xs: 'none', md: 'block' } }}>
                     <GoogleSurvey />
-                </StyledSurveyDiv>
+                </Box>
+
                 <Footer />
-            </>
+            </Box>
         );
     }
 }
-
-const StyledRootDiv = styled.div`
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-`;
-
-const StyledHeadingDiv = styled.div`
-    display: flex;
-    justify-content: center;
-    height: 10%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
-`;
-
-const StyledHeading = styled.div`
-    font-size: ${fontStyled.fontSize.subHeading};
-    margin-top: 4%;
-    color: black;
-    font-weight: 600;
-    font-family: sans-serif;
-    text-align-last: center;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: 12px;
-        margin-top: 3%;
-        text-align: center;
-        color: black;
-        font-weight: 600;
-        font-family: sans-serif;
-        margin-right: 25px;
-    }
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.mainHeading};
-    }
-`;
-
-const StyledLogo = styled.img`
-    height: 70px;
-    width: 70px;
-    margin-right: 10px;
-    float: left;
-    margin-top: 3%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: 25px;
-        width: 45px;
-    }
-    overflow: auto;
-`;
-
-const StyledBody = styled.div`
-    height: auto;
-    margin: auto;
-    text-align: center;
-    padding-top: 50px;
-    margin-left: 10%;
-    margin-right: 10%;
-    display: flex;
-    flex-direction: column;
-    color: black;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: auto;
-        flex-direction: column;
-        text-align: center;
-        margin-left: 2%;
-        padding-top: 5%;
-        margin-right: 2%;
-        display: flex;
-        color: black;
-        margin-bottom: 0px;
-        overflow: auto;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        margin-left: 15%;
-        margin-right: 15%;
-    }
-`;
-
-const StyledBodyDiv = styled.div`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding-left: 1%;
-    padding-right: 3%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding-left: 2.5%;
-        padding-right: 2.5%;
-    }
-`;
-
-const StyledBodyLogo = styled.img`
-    width: 450px;
-    height: auto;
-    align-self: center;
-    margin-top: -20px;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        width: 180px;
-        height: auto;
-        align-self: center;
-        margin-bottom: 10px;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 360px;
-        height: auto;
-    }
-`;
-
-const StyledBodyLinkBiger = styled(Link)`
-    font-size: ${fontStyled.fontSize.mainHeading};
-    font-weight: 600;
-    color: black;
-    padding-bottom: 3%;
-    font-family: ${fontStyled.fontFamily};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewHeading};
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.DesktopViewSubHeading};
-    }
-`;
-
-const StyledBodyLink = styled(Link)`
-    font-size: ${fontStyled.fontSize.subHeading};
-    font-weight: 600;
-    color: black;
-    padding-bottom: 3%;
-    font-family: ${fontStyled.fontFamily};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewHeading};
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.DesktopViewSubHeading};
-    }
-`;
-
-const StyledBodyTextBigger = styled.div`
-    font-size: calc(${fontStyled.fontSize.NormalText} * 1.3);
-    font-family: ${fontStyled.fontFamily};
-    line-height: 1.6;
-    color: ${colorStyled.TEXTCOLOR};
-    text-align: left;
-    margin-top: 1rem;
-
-    p {
-        margin-bottom: 1rem;
-        text-align: justify;
-    }
-
-    ul {
-        margin-top: 0.5rem;
-        list-style-type: disc;
-    }
-
-    li {
-        margin-bottom: 0.5rem;
-    }
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: calc(${fontStyled.fontSize.MobileViewNormalText} * 1.3);
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: calc(${fontStyled.fontSize.DesktopViewNormalText} * 1.3);
-    }
-`;
-
-const StyledBodyText = styled.p`
-    font-size: calc(${fontStyled.fontSize.NormalText} * 1.15);
-    font-family: ${fontStyled.fontFamily};
-    text-align: justify;
-    text-align-last: center;
-    color: ${colorStyled.TEXTCOLOR};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: calc(${fontStyled.fontSize.MobileViewNormalText} * 1.15);
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: calc(${fontStyled.fontSize.DesktopViewNormalText} * 1.15);
-    }
-`;
-
-const StyledVisLogo = styled.img`
-    width: 200px;
-    height: 120px;
-    align-self: center;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        width: 90px;
-        height: 80px;
-        align-self: center;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 240px;
-        height: 160px;
-    }
-`;
-
-const StyledEditLogo = styled.img`
-    width: 180px;
-    height: 120px;
-    align-self: center;
-    margin-right: 20%;
-    padding-right: 8%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        width: 100px;
-        height: 75px;
-        align-self: center;
-        margin-right: 1%;
-        margin-top: 4%;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 220px;
-        height: 160px;
-    }
-`;
-
-const StyledSurveyDiv = styled.div`
-    position: fixed;
-    display: block;
-    bottom: 80px;
-    right: 0;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
-`;
-
-const StyledDivPopUp = styled.div`
-    display: block;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
-`;
-
-const SmallLogoLeft = styled.img`
-    width: 105px;
-    height: 105px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translate(-60%, -40%);
-    z-index: 2;
-`;
-
-const SmallLogoRight = styled.img`
-    width: 80px;
-    height: 80px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    transform: translate(15%, -50%);
-    z-index: 2;
-`;
