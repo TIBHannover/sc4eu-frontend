@@ -36,8 +36,10 @@ import {
     BarChartOutlined,
     TimelineOutlined,
     BorderAllOutlined,
-    HandshakeOutlined
+    HandshakeOutlined,
+    StackedBarChartOutlined
 } from '@mui/icons-material';
+
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { getOntologyById } from '../network/ontologyIndexing';
@@ -120,7 +122,7 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
         Cookies.set(MODE_OF_OPERATIONS, val);
         setIsActiveTab(val);
     };
-    
+
     const ActiveStyle = {
         backgroundColor: colorStyled.old.light,
         color: colorStyled.shadow
@@ -368,6 +370,10 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR} onClick={onNavigate}>
                             <BorderAllOutlined color="action" />
                             <StyledText>Annotator</StyledText>
+                        </StyledLink>
+                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.MPC} onClick={onNavigate}>
+                            <StackedBarChartOutlined color="action" />
+                            <StyledText>MPC</StyledText>
                         </StyledLink>
                         <StyledLink
                             title="Open Eurostat Visualisation"

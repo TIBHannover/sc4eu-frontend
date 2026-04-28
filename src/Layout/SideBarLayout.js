@@ -134,5 +134,5 @@ SideBarLayout.propTypes = {
 
 const StyledAppContent = styled('div')(({ activePage }) => ({
     height: activePage === '/' ? 'calc(100vh - 155px)' : 'calc(100vh - 100px)',
-    overflow: 'hidden'
+    overflow: 'auto'
 }));

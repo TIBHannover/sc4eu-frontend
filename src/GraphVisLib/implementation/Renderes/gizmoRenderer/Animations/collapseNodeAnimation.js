@@ -1,4 +1,7 @@
 import * as d3 from 'd3';
+import { parseTranslate } from '../utils/GraphUtils';
+
+
 
 export const hideSingleNodeAnimation = (node, parent, callback) => {
     const animationDuration = 400;
@@ -7,17 +10,19 @@ export const hideSingleNodeAnimation = (node, parent, callback) => {
 
         node.groupRoot
             .transition()
-            .tween('attr.translate', function() {
-                return function(t) {
-                    const tr = d3.transform(node.groupRoot.attr('transform'));
-                    node.x = tr.translate[0];
-                    node.y = tr.translate[1];
+            .attrTween('transform', function() {
+                return function() {
+                    const currentPosition = parseTranslate(node.groupRoot.attr('transform'));
+                    node.x = currentPosition.x;
+                    node.y = currentPosition.y;
                     node.px = node.x;
                     node.py = node.y;
                     node.updateRenderingPosition();
                     node.incomingLinks.forEach(link => {
                         link.updateRenderingPosition();
                     });
+                    // Returning null lets the .attr() call below control the value.
+                    return null;
                 };
             })
             .duration(animationDuration)
@@ -63,14 +68,15 @@ export const collapseNodeAnimationForDelete = (node, last, callback) => {
             }
             node.groupRoot
                 .transition()
-                .tween('attr.translate', function() {
-                    return function(t) {
-                        const tr = d3.transform(node.groupRoot.attr('transform'));
-                        node.x = tr.translate[0];
-                        node.y = tr.translate[1];
+                .attrTween('transform', function() {
+                    return function() {
+                        const currentPosition = parseTranslate(node.groupRoot.attr('transform'));
+                        node.x = currentPosition.x;
+                        node.y = currentPosition.y;
                         node.px = node.x;
                         node.py = node.y;
                         node.updateRenderingPosition();
+                        return null;
                     };
                 })
                 .duration(animationDuration)
@@ -113,14 +119,15 @@ export const collapseNodeAnimation = (node, last, callback) => {
 
             propertyNode.groupRoot
                 .transition()
-                .tween('attr.translate', function() {
-                    return function(t) {
-                        const tr = d3.transform(propertyNode.groupRoot.attr('transform'));
-                        propertyNode.x = tr.translate[0];
-                        propertyNode.y = tr.translate[1];
+                .attrTween('transform', function() {
+                    return function() {
+                        const currentPosition = parseTranslate(propertyNode.groupRoot.attr('transform'));
+                        propertyNode.x = currentPosition.x;
+                        propertyNode.y = currentPosition.y;
                         propertyNode.px = propertyNode.x;
                         propertyNode.py = propertyNode.y;
                         propertyNode.updateRenderingPosition();
+                        return null;
                     };
                 })
                 .duration(animationDuration)
@@ -132,10 +139,11 @@ export const collapseNodeAnimation = (node, last, callback) => {
 
             node.groupRoot
                 .transition()
-                .tween('attr.translate', function() {
-                    return function(t) {
-                        const tr = d3.transform(node.groupRoot.attr('transform'));
-                        node.setPosition(tr.translate[0], tr.translate[1]);
+                .attrTween('transform', function() {
+                    return function() {
+                        const currentPosition = parseTranslate(node.groupRoot.attr('transform'));
+                        node.setPosition(currentPosition.x, currentPosition.y);
+                        return null;
                     };
                 })
                 .duration(animationDuration)
@@ -172,14 +180,15 @@ export const expandNodeAnimation = (node, targetPosition, last, callback) => {
 
             node.groupRoot
                 .transition()
-                .tween('attr.translate', function() {
-                    return function(t) {
-                        const tr = d3.transform(node.groupRoot.attr('transform'));
-                        node.x = tr.translate[0];
-                        node.y = tr.translate[1];
+                .attrTween('transform', function() {
+                    return function() {
+                        const currentPosition = parseTranslate(node.groupRoot.attr('transform'));
+                        node.x = currentPosition.x;
+                        node.y = currentPosition.y;
                         node.px = node.x;
                         node.py = node.y;
                         node.updateRenderingPosition();
+                        return null;
                     };
                 })
                 .duration(animationDuration)
