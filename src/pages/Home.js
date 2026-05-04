@@ -35,13 +35,21 @@ class Home extends Component {
 
     render() {
         return (
-            <Box sx={{ overflow: 'auto', transition: 'opacity 0.5s ease', opacity: this.state.fading ? 0 : 1 }}>
+            <Box
+                sx={{
+                    overflow: 'auto',
+                    transition: 'opacity 0.5s ease',
+                    opacity: this.state.fading ? 0 : 1,
+                    minHeight: '100vh',
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem', lg: '1.2rem' }
+                }}
+            >
                 <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                     <IntroductoryPopUp />
                 </Box>
 
-                <Box sx={{ px: { xs: 3, md: 37 }, py: 2 }}>
-                    <Box component="img" src={Logo} alt="NFDI4Ing Logo" sx={{ width: { xs: '10rem', md: '20rem' }, height: 'auto' }} />
+                <Box sx={{ px: { xs: 3, md: 5, xl: 37 }, py: 2 }}>
+                    <Box component="img" src={Logo} alt="NFDI4Ing Logo" sx={{ width: { xs: '10rem', md: '15rem', xl: '20rem' }, height: 'auto' }} />
                 </Box>
 
                 <Box
@@ -49,15 +57,21 @@ class Home extends Component {
                         ...CENTER_ROW,
                         flexDirection: { xs: 'column', md: 'row' },
                         alignItems: { xs: 'stretch', md: 'center' },
-                        px: { xs: 3, md: 40 },
-                        py: { xs: 4, md: 8 },
-                        gap: { xs: 4, md: 15 }
+                        px: { xs: 3, md: 6, xl: 40 },
+                        py: { xs: 0, xl: 8 },
+                        gap: { xs: 0, md: 8, xl: 15 }
                     }}
                 >
                     <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 3 }}>
                         <Typography
                             variant="h3"
-                            sx={{ fontWeight: 800, color: colorStyled.onSurface, lineHeight: 1.15, fontSize: { xs: '2rem', md: '3rem' } }}
+                            sx={{
+                                fontWeight: 800,
+                                color: colorStyled.onSurface,
+                                lineHeight: 1.15,
+                                fontSize: { xs: '1.5rem', md: '2rem', xl: '3rem' },
+                                maxWidth: '100%'
+                            }}
                         >
                             Develop clear and consistent terminology for research data in engineering
                         </Typography>
@@ -130,7 +144,10 @@ class Home extends Component {
                                         backgroundColor: colorStyled.primary
                                     }}
                                 />
-                                <Typography variant="body2" sx={{ fontWeight: 600, color: colorStyled.onSurface }}>
+                                <Typography
+                                    variant="body2"
+                                    sx={{ fontWeight: 600, color: colorStyled.onSurface, fontSize: { xs: '0.7rem', md: '0.8rem', xl: '1rem' } }}
+                                >
                                     {item}
                                 </Typography>
                             </Box>
