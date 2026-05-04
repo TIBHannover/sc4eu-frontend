@@ -42,7 +42,7 @@ export async function olsSearch({
 export async function getJumpToResult(inputData, count = 10) {
     try {
         let autocompleteApiBaseUrl = process.env.REACT_APP_OLS4_API_V2;
-        let url = `${autocompleteApiBaseUrl}/classes/?search=${inputData['searchQuery']}&size=${count}&page=0exactMatch=false&includeObsoleteEntities=false&exclusive=false&option=LINEAR`;
+        let url = `${autocompleteApiBaseUrl}/ontologies/m4i/classes/?search=${inputData['searchQuery']}&size=${count}&page=0exactMatch=false&includeObsoleteEntities=false&exclusive=false&option=LINEAR`;
         let result = await fetch(url, getCallSetting);
         result = await result.json();
         result = result['elements'];
@@ -56,11 +56,7 @@ export async function getJumpToResult(inputData, count = 10) {
 
 export async function getAutoCompleteResult(inputData, count = 5) {
     try {
-        let url = process.env.REACT_APP_OLS4_API_V1 + `/suggest?q=${inputData['searchQuery']}&rows=${count}`;
-        url = inputData['ontologyIds'] ? url + `&ontology=${inputData['ontologyIds']}` : url;
-        url = inputData['types'] ? url + `&type=${inputData['types']}` : url;
-        url = inputData['obsoletes'] ? url + '&obsoletes=true' : url;
-        url = inputData['collectionIds'] ? url + `&schema=collection&classification=${inputData['collectionIds']}` : url;
+        let url = process.env.REACT_APP_OLS4_API_V1 + `/suggest?q=${inputData['searchQuery']}&rows=${count}&ontology=m4i`;
         let searchResult = await fetch(url, getCallSetting);
         searchResult = (await searchResult.json())['response']['docs'];
         return searchResult;
