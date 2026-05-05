@@ -483,7 +483,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '10h' }
                         );
-                        const callbackURL = `${process.env.CALLBACK_URL}/vocab/EmailVerify/${result.user_id}/${token}`;
+                        const callbackURL = `${process.env.CALLBACK_URL}/vocab/nfdi4ing/EmailVerify/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.username,
                             subject: 'VDST Email Verification',
@@ -509,7 +509,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '1h' }
                         );
-                        res.json({ jwt: local_accessToken });
+                        res.json({ jwt: local_accessToken, redirectRoute: `${process.env.REDIRECT_URL}/vocab/nfdi4ing` });
                     } else {
                         res.json({ error: result.error });
                     }
