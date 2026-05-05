@@ -91,7 +91,7 @@ self.addEventListener('push', event => {
         title: 'New Notification',
         body: 'You have a new notification',
         data: {
-            url: '/ocp/'
+            url: '/vocab/nfdi4ing/'
         }
     };
 

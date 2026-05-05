@@ -1,6 +1,6 @@
 {
-    "short_name": "OCP",
-    "name": "Ontology Curation Portal",
+    "short_name": "NFDI4ING Vocab",
+    "name": "NFDI4ING Vocabulary",
     "icons": [
         {
             "src": "logo.png",
@@ -8,7 +8,7 @@
             "type": "image/png"
         }
     ],
-    "start_url": "/ocp/",
+    "start_url": "/vocab/nfdi4ing",
     "display": "standalone",
     "theme_color": "#000000",
     "background_color": "#ffffff"
