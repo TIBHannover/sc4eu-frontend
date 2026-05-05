@@ -89,10 +89,7 @@ class LoginViaEmail extends Component {
                 }, 500);
             }
             if (token.redirectRoute) {
-                this.setState({ fading: true });
-                setTimeout(() => {
-                    window.location.href = token.redirectRoute;
-                }, 500);
+                window.location.href = token.redirectRoute;
             } else {
                 this.props.callback();
             }
