@@ -509,7 +509,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '1h' }
                         );
-                        res.json({ jwt: local_accessToken, redirectRoute: `${process.env.REDIRECT_URL}/vocab/nfdi4ing` });
+                        res.json({ jwt: local_accessToken, redirectRoute: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/` });
                     } else {
                         res.json({ error: result.error });
                     }
