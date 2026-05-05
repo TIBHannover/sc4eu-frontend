@@ -184,8 +184,8 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                     <Box>
                         <Typography variant="subtitle2" gutterBottom>
                             Start typing below to search for Existing Terms in{' '}
-                            <a href="https://terminology.tib.eu/ts/ontologies/" target="_blank" rel="noopener noreferrer">
-                                Terminology Service
+                            <a href="https://terminology.tib.eu/ts/ontologies/m4i?lang=en" target="_blank" rel="noopener noreferrer">
+                                Terminology Service Metadata4Ing Ontology
                             </a>
                         </Typography>
                         <hr />
