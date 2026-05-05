@@ -133,11 +133,11 @@ class Header extends Component {
 
         return (
             <StyledRootDiv>
-                {this.props.user?.displayName && (<NotificationManager user={this.props.user.displayName} />)}
+                {this.props.user?.displayName && <NotificationManager user={this.props.user.displayName} />}
                 <StyledHeaderDiv>
                     <StyledRightSideDiv>
                         {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
-                            <div style={{ display: 'flex'}}>
+                            <div style={{ display: 'flex' }}>
                                 <NotificationToggle user={this.props.user.displayName} />
                                 <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
                                 <StyledAuthTooltip
@@ -206,7 +206,7 @@ class Header extends Component {
                                     // push that to the redux state so that the user is rederected to its prev location;
                                     this.props.openAuthDialog({
                                         action: 'signin',
-                                        redirectRoute: this.props.location.pathname
+                                        redirectRoute: window.location.href
                                     });
                                 }}
                             >
@@ -287,7 +287,7 @@ const StyledRightSideDiv = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-    backgroundColor: ${colorStyled.secondary};
+    backgroundcolor: ${colorStyled.secondary};
     color: ${colorStyled.onSecondary};
     font-size: 14px;
     border-radius: 14px;
