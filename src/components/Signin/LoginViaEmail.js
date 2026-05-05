@@ -82,10 +82,9 @@ class LoginViaEmail extends Component {
             if (token && token.jwt) {
                 await this.props.updateCookies({ token: token.jwt });
             }
-            else if (this.props.redirectRoute) {
+            if (this.props.redirectRoute) {
                 window.location.href = this.props.redirectRoute;
-            }
-            else if (token.redirectRoute) {
+            } else if (token.redirectRoute) {
                 window.location.href = token.redirectRoute;
             } else {
                 this.props.callback();
