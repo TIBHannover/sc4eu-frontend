@@ -79,16 +79,11 @@ class LoginViaEmail extends Component {
                 image: error
             });
         } else {
-            if (token && token.jwt) {
-                await this.props.updateCookies({ token: token.jwt });
-            }
-            if (this.props.redirectRoute) {
-                window.location.href = this.props.redirectRoute;
-            } else {
-                this.props.callback();
-            }
+            this.props.callback();
         }
-
+        if (token && token.jwt) {
+           await this.props.updateCookies({ token: token.jwt });
+        }
         this.setState({ loading: false });
         return true;
     };
