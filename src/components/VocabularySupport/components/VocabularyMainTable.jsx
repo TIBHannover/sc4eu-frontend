@@ -59,17 +59,31 @@ const VocabularyMainTable = ({
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
     const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
-    const isLargeScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
+    const isMobileScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
-    const [pagination, setPagination] = useState({
-        pageSize: isLargeScreen ? 10 : 10,
-        pageIndex: 0
-    });
-    const [density, setDensity] = useState(isLargeScreen ? 'comfortable' : 'compact');
+    const [density, setDensity] = useState(isMobileScreen ? 'comfortable' : 'compact');
 
     const [urgentVoteTerm, setUrgentVoteTerm] = useState(null);
     const [urgentVoteData, setUrgentVoteData] = useState(null);
     const [votesMap, setVotesMap] = useState([]);
+
+    const [pagination, setPagination] = useState({
+        pageSize: 10,
+        pageIndex: 0
+    });
+
+    const urgentTerms = terms.filter(term =>
+        votesMap.some(vote => vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName))
+    );
+    const discussionReplies = terms.filter(term =>
+        discussions.some(
+            discussion =>
+                discussion.comments.length !== 0 &&
+                term.identifier === discussion.resourceId &&
+                discussion.comments.some(comment => comment.mentionedUsers && comment.mentionedUsers.includes(currentUser.displayName))
+        )
+    );
+    const newTerms = terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)));
 
     useEffect(() => {
         const fetchVotes = async () => {
@@ -112,12 +126,41 @@ const VocabularyMainTable = ({
     }, [refetch]);
 
     useEffect(() => {
+        const activeCardCount = countActiveCards(urgentTerms, discussionReplies, newTerms);
+        const newPageSize = isMobileScreen ? getPageSize(activeCardCount) : 10;
+
+        if (table.getState().pagination.pageSize !== newPageSize) {
+            table.setPagination(prev => ({
+                ...prev,
+                pageSize: newPageSize,
+                pageIndex: 0
+            }));
+        }
+    }, [urgentTerms, discussionReplies, newTerms, isMobileScreen]);
+
+    const countActiveCards = (urgentTerms, discussionReplies, newTerms) => {
+        return [urgentTerms.length > 0, discussionReplies.length > 0, newTerms.length > 0].filter(Boolean).length;
+    };
+
+    const getPageSize = (cards) => {
+        if (isMobileScreen) {
+            if (cards === 3) return 6;
+            if (cards === 2) return 7;
+            if (cards === 1) return 9;
+            return 10;
+        } else {
+            return 10;
+        }
+    };
+
+    useEffect(() => {
+        const newPageSize = getPageSize();
         setPagination(prev => ({
             ...prev,
-            pageSize: isLargeScreen ? 10 : 10
+            pageSize: newPageSize
         }));
-        setDensity(() => (isLargeScreen ? 'comfortable' : 'compact'));
-    }, [isLargeScreen]);
+        setDensity(isMobileScreen ? 'comfortable' : 'compact');
+    }, [isMobileScreen, terms.length]);
 
     const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
@@ -154,7 +197,7 @@ const VocabularyMainTable = ({
     }
 
     const columnVisibility = useMemo(() => {
-        return isLargeScreen
+        return isMobileScreen
             ? {
                   identifier: false,
                   altLabel: false,
@@ -168,7 +211,7 @@ const VocabularyMainTable = ({
                   altLabel: false,
                   seeAlso: false
               };
-    }, [isLargeScreen]);
+    }, [isMobileScreen]);
 
     const TerminologyCellComponent = ({ row }) => {
         const seeAlso = row.original.seeAlso;
@@ -229,11 +272,11 @@ const VocabularyMainTable = ({
             {
                 accessorKey: 'label',
                 header: 'Label',
-                size: 190,
+                size: 150,
 
                 muiTableBodyCellProps: {
                     sx: {
-                        maxWidth: 190,
+                        maxWidth: 150,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis'
@@ -242,7 +285,7 @@ const VocabularyMainTable = ({
 
                 muiTableHeadCellProps: {
                     sx: {
-                        maxWidth: 190
+                        maxWidth: 150
                     }
                 },
 
@@ -305,7 +348,7 @@ const VocabularyMainTable = ({
                         <StyledChip label="New" size="small" customVariant="agreement" sx={{ ml: '0.5' }} />
                     </Tooltip>
                 ),
-                size: 140,
+                size: 100,
                 enableEditing: false,
                 filterVariant: 'select',
                 filterSelectOptions: [
@@ -332,10 +375,10 @@ const VocabularyMainTable = ({
                     ) : null;
                 },
                 muiTableBodyCellProps: {
-                    sx: { maxWidth: 140 }
+                    sx: { maxWidth: 100 }
                 },
                 muiTableHeadCellProps: {
-                    sx: { maxWidth: 140 }
+                    sx: { maxWidth: 100 }
                 }
             },
             {
@@ -614,11 +657,10 @@ const VocabularyMainTable = ({
         initialState: {
             sorting: [{ id: 'label', desc: false }],
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
-            density: isLargeScreen ? 'comfortable' : 'compact',
-            pagination: { pageSize: 15, pageIndex: 0 },
-            showColumnFilters: !isLargeScreen
+            density: isMobileScreen ? 'comfortable' : 'compact',
+            pagination: { pageSize: getPageSize(), pageIndex: 0 },
+            showColumnFilters: !isMobileScreen
         },
-        onPaginationChange: setPagination,
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
         getRowId: row => row.identifier,
@@ -631,6 +673,10 @@ const VocabularyMainTable = ({
         enableFullScreenToggle: false,
         enableGlobalFilter: false,
         enableHiding: false,
+        muiPaginationProps: {
+            rowsPerPageOptions: [],
+            showRowsPerPage: false
+        },
         muiTableBodyRowProps: ({ row }) => ({
             onClick: event => handleRowClick(row, event, discussions),
             sx: {
@@ -721,7 +767,7 @@ const VocabularyMainTable = ({
                             '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                         }}
                     >
-                        {isLargeScreen ? 'New Term' : 'Create New Term'}
+                        {isMobileScreen ? 'New Term' : 'Create New Term'}
                     </Button>
                 </Tooltip>
                 <Tooltip title="View this vocabulary history of changes">
@@ -756,7 +802,7 @@ const VocabularyMainTable = ({
                                 '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
                             }}
                         >
-                            {isLargeScreen ? 'Hub' : 'Information Hub'}
+                            {isMobileScreen ? 'Hub' : 'Information Hub'}
                         </Button>
                     </StyledBadge>
                 </Tooltip>
@@ -790,14 +836,14 @@ const VocabularyMainTable = ({
         ),
         state: {
             columnVisibility,
-            pagination,
             density,
+            pagination,
             isLoading: isLoadingTerms,
             isSaving: isCreatingTerm || isUpdatingTerm || isDeletingTerm,
             showAlertBanner: isLoadingTermsError,
             showProgressBars: isFetchingTerms
         },
-
+        onPaginationChange: setPagination,
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Tooltip title="Delete">
@@ -835,27 +881,25 @@ const VocabularyMainTable = ({
     return (
         <ScrollableDiv>
             <CardActivityWidget
-                urgentTerms={terms.filter(term =>
-                    votesMap.some(
-                        vote =>
-                            vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName)
-                    )
-                )}
+                urgentTerms={urgentTerms}
                 votes={votesMap}
-                discussionReplies={terms.filter(term =>
-                    discussions.some(
-                        discussion =>
-                            discussion.comments.length !== 0 &&
-                            term.identifier === discussion.resourceId &&
-                            discussion.comments.some(comment => comment.mentionedUsers && comment.mentionedUsers.includes(currentUser.displayName))
-                    )
-                )}
-                newTerms={terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)))}
+                discussionReplies={discussionReplies}
+                newTerms={newTerms}
                 onUrgentClick={handleWidgetUrgentTermClick}
                 onNewTermsClick={handleWidgetNewTermsClick}
                 onDiscussionClick={handleWidgetDiscussionReplyClick}
+                isMobileScreen={isMobileScreen}
             />
-            <MaterialReactTable table={table} />
+            <MaterialReactTable
+                table={table}
+                muiTableContainerProps={{
+                    sx: {
+                        width: '50%',
+                        maxWidth: '50vw',
+                        overflowX: 'auto'
+                    }
+                }}
+            />
             <Modal open={openPopup} onClose={handleClosePopup}>
                 <Box
                     sx={{

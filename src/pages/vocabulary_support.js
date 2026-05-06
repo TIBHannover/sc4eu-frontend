@@ -38,7 +38,7 @@ const StyledDiv = styled.div`
     overflow-y: auto;
 
     @media (max-width: ${MAX_WIDTH}) {
-        padding-left: 5%;
-        padding-right: 5%;
+        padding-left: 0%;
+        padding-right: 0%;
     }
 `;
