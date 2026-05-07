@@ -49,10 +49,9 @@ const MobileDrawerButton = styled(IconButton)(({ theme }) => ({
     borderRadius: '50%',
 
     '&:hover': {
-        backgroundColor: colorStyled.surfaceContainerHigh,
-    },
+        backgroundColor: colorStyled.surfaceContainerHigh
+    }
 }));
-
 
 const SwipeableDrawer = styled(MuiSwipeableDrawer)(({ open, activepage }) => ({
     whiteSpace: 'nowrap',
@@ -83,13 +82,7 @@ export default function SideBarLayout(props) {
 
     return (
         <Box sx={{ display: 'flex' }}>
-            {isMobile && (
-                <MobileDrawerButton
-                    onClick={() => setOpen(!open)}
-                >
-                    {open ? <MenuOpenOutlined /> : <Menu />}
-                </MobileDrawerButton>
-            )}
+            {isMobile && <MobileDrawerButton onClick={() => setOpen(!open)}>{open ? <MenuOpenOutlined /> : <Menu />}</MobileDrawerButton>}
             <SwipeableDrawer
                 variant={isMobile ? 'temporary' : 'permanent'}
                 open={open}
@@ -113,7 +106,7 @@ export default function SideBarLayout(props) {
                     </StyledDiv>
                     <Divider />
                     <List style={{ marginTop: '-20px' }}>
-                        <SideBar isOpen={open} onNavigate={isMobile ? () => setOpen(false) : () => {}}/>
+                        <SideBar isOpen={open} onNavigate={isMobile ? () => setOpen(false) : () => {}} />
                     </List>
                 </Scrollbars>
             </SwipeableDrawer>
@@ -130,5 +123,10 @@ SideBarLayout.propTypes = {
 
 const StyledAppContent = styled('div')(({ activePage }) => ({
     height: activePage === '/' ? 'calc(100vh - 155px)' : 'calc(100vh - 100px)',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
+        overflow: 'auto',
+        height: '100vh'
+    }
 }));

@@ -42,12 +42,13 @@ export function InstallBanner() {
   };
 
   return (
-    <Slide direction="up" in={isVisible} mountOnEnter unmountOnExit>
+    <Slide direction="down" in={isVisible} mountOnEnter unmountOnExit>
       <Paper
         elevation={3}
         sx={{
           position: 'fixed',
-          bottom: 16,
+          top: {xs: 64, md: 'auto'},
+          bottom: { xs: 'auto', md: 16},
           left: 16,
           right: 16,
           maxWidth: 480,

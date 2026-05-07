@@ -41,7 +41,8 @@ class Home extends Component {
                     transition: 'opacity 0.5s ease',
                     opacity: this.state.fading ? 0 : 1,
                     minHeight: '100vh',
-                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem', lg: '1.2rem' }
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem', lg: '1.2rem' },
+                
                 }}
             >
                 <Box sx={{ display: { xs: 'none', md: 'block' } }}>
@@ -58,7 +59,7 @@ class Home extends Component {
                         flexDirection: { xs: 'column', md: 'row' },
                         alignItems: { xs: 'stretch', md: 'center' },
                         px: { xs: 3, md: 6, xl: 40 },
-                        py: { xs: 0, xl: 8 },
+                        py: { xs: 0, xl: 5 },
                         gap: { xs: 0, md: 8, xl: 15 }
                     }}
                 >
@@ -152,6 +153,60 @@ class Home extends Component {
                                 </Typography>
                             </Box>
                         ))}
+                    </Box>
+                </Box>
+
+                <Box sx={{ px: { xs: 3, md: 6, xl: 40 }, py: { xs: 3, xl: 0} }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: 2,
+                            p: 2,
+                            backgroundColor: colorStyled.surfaceContainerLow,
+                            border: `1px solid ${colorStyled.outlineVariant}`,
+                            borderRadius: 2
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: 36,
+                                height: 36,
+                                minWidth: 36,
+                                borderRadius: 1,
+                                backgroundColor: colorStyled.primaryContainer,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                mt: '2px'
+                            }}
+                        >
+                            <AutoAwesomeOutlinedIcon sx={{ fontSize: '1.1rem', color: colorStyled.onPrimaryContainer }} />
+                        </Box>
+
+                        <Box>
+                            <Typography variant="h6" sx={{ fontWeight: 600, color: colorStyled.onSurface, mb: 0.5 }}>
+                                Available as an app
+                            </Typography>
+                            <Typography variant="body1" sx={{ color: colorStyled.onPrimaryFixedVariant, lineHeight: 1.6 }}>
+                                You can install this site on your desktop or phone — no app store needed.
+                                <br />
+                                <Link
+                                    href="https://blogs.phrase.trade/how-to-install-pwa"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    sx={{
+                                        color: colorStyled.primary,
+                                        fontWeight: 600,
+                                        textDecoration: 'none',
+                                        fontSize: { xs: '0.9rem' }
+                                    }}
+                                >
+                                    What's a web app and how to install?{' '}
+                                    <OpenInNewIcon sx={{ fontSize: { xs: '1rem' }, verticalAlign: 'middle' }} />
+                                </Link>
+                            </Typography>
+                        </Box>
                     </Box>
                 </Box>
 

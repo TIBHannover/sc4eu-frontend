@@ -29,11 +29,12 @@ const StyledBodyDiv = styled.div`
     height: 55px;
     background-color: ${colorStyled.surfaceContainerLowest};
     color: ${colorStyled.onSurface};
-    overflow: hidden;
+    
 
     @media (max-width: ${MAX_WIDTH}) {
         padding-left: 1%;
         padding-right: 1%;
+        height: 0;  
     }
 
     @media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
