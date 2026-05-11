@@ -1,8 +1,13 @@
 import { submitGetRequest, submitPostRequest } from './networkRequests';
 import {
-    URL_CREATE_NEW_TERM_VOTE, URL_GET_TERM_LAST_CONSENSUS, URL_GET_TERM_OF_THE_WEEK,
-    URL_GET_TERM_VOTES, URL_MANUAL_CLOSE_CONSENSUS, URL_GET_VOTES,
-    URL_UPDATE_EXPERT_VOTE_DECISION
+    URL_CREATE_NEW_TERM_VOTE,
+    URL_GET_TERM_LAST_CONSENSUS,
+    URL_GET_TERM_OF_THE_WEEK,
+    URL_GET_TERM_VOTES,
+    URL_MANUAL_CLOSE_CONSENSUS,
+    URL_GET_VOTES,
+    URL_UPDATE_EXPERT_VOTE_DECISION,
+    URL_DELETE_TERM_VOTES
 } from '../constants/services';
 
 export const getTermLastConsensus = term_uuid => {
@@ -11,6 +16,17 @@ export const getTermLastConsensus = term_uuid => {
 
 export const getTermVotes = term_uuid => {
     return submitGetRequest(`${URL_GET_TERM_VOTES}/?term_uuid=${term_uuid}&status=under_agreement`, {}, false);
+};
+
+export const deleteTermVotes = term_uuids => {
+        const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
+    };
+    const data = {
+        term_uuids: term_uuids
+    };
+    return submitPostRequest(`${URL_DELETE_TERM_VOTES}`, headers, data);
 };
 
 export const getVotes = () => {
@@ -61,4 +77,3 @@ export const manualCloseConsensus = (term_uuid, vote_uuid) => {
     };
     return submitPostRequest(URL_MANUAL_CLOSE_CONSENSUS, headers, data);
 };
-

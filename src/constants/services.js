@@ -57,6 +57,7 @@ export const URL_CREATE_NEW_TERM_VOTE = `${process.env.REACT_APP_EXPRESS_BACKEND
 export const URL_UPDATE_EXPERT_VOTE_DECISION = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}updateVoteDecision`;
 export const URL_GET_TERM_LAST_CONSENSUS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermLastConsensus`;
 export const URL_GET_TERM_VOTES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermVotes`
+export const URL_DELETE_TERM_VOTES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}removeVotes`
 export const URL_GET_VOTES = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getVotes`
 export const URL_GET_TERM_OF_THE_WEEK = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}getTermOfTheWeek`
 export const URL_MANUAL_CLOSE_CONSENSUS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}closeConsensus`;

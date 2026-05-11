@@ -1,5 +1,5 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
@@ -21,7 +21,7 @@ import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../..
 import InformationHub from './InformationHub';
 import { useMediaQuery } from '@mui/material';
 import { CardActivityWidget } from './CardActivityWidget';
-import { getTermVotes, getVotes } from '../../../network/TermVoteCalls';
+import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 
 /* eslint-disable react/prop-types */
@@ -85,6 +85,8 @@ const VocabularyMainTable = ({
     );
     const newTerms = terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)));
 
+    const pendingDeletedTermIds = useRef([]);
+
     useEffect(() => {
         const fetchVotes = async () => {
             const votesData = await getVotes();
@@ -142,7 +144,7 @@ const VocabularyMainTable = ({
         return [urgentTerms.length > 0, discussionReplies.length > 0, newTerms.length > 0].filter(Boolean).length;
     };
 
-    const getPageSize = (cards) => {
+    const getPageSize = cards => {
         if (isMobileScreen) {
             if (cards === 3) return 6;
             if (cards === 2) return 7;
@@ -620,6 +622,7 @@ const VocabularyMainTable = ({
         if (window.confirm('Are you sure you want to delete this term?')) {
             await deleteTerm(row.id);
             await handleDeleteDiscussion(row.id);
+            pendingDeletedTermIds.current.push(row.id);
             table.setEditingRow(null);
             setHasUncommittedChanges(true);
         }
@@ -830,6 +833,13 @@ const VocabularyMainTable = ({
                         setOpenCommit={setOpenCommit}
                         setHasUncommittedChanges={setHasUncommittedChanges}
                         user={currentUser.displayName}
+                        onSuccess={async () => {
+                            await deleteTermVotes(pendingDeletedTermIds.current);
+                            pendingDeletedTermIds.current = [];
+                        }}
+                        onFail={() => {
+                            console.error(`Error while commiting changes with ${pendingDeletedTermIds.current} terms`);
+                        }}
                     />
                 )}
             </>
