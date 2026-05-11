@@ -82,7 +82,6 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
         });
         return response.data;
     } catch (e) {
-        console.log(e.toString());
+        throw e;
     }
-    return null;
 };

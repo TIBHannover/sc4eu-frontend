@@ -4,7 +4,7 @@ const request = require('request');
 const verifyToken = require('./veryfyToken');
 
 module.exports = {
-    getProjectIndex: function (app) {
+    getProjectIndex: function(app) {
         app.get('/projectIndex', (req, res) => {
             const project_indexOptions = {
                 uri: `${process.env.BACKEND_SERVER_URL}/projectIndex`,
@@ -14,7 +14,7 @@ module.exports = {
                 }
             };
 
-            request(project_indexOptions, function (error, response) {
+            request(project_indexOptions, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -29,7 +29,7 @@ module.exports = {
         });
     },
 
-    createProject: function (app) {
+    createProject: function(app) {
         app.post('/createProject', verifyToken, (req, res) => {
             console.log('Wants to create the Project');
             if (req.token === null) {
@@ -50,7 +50,7 @@ module.exports = {
                         body: projectData
                     };
 
-                    request(project_options, function (error, response) {
+                    request(project_options, function(error, response) {
                         if (response && response.body) {
                             try {
                                 const result = JSON.parse(response.body);
@@ -67,7 +67,7 @@ module.exports = {
         });
     },
 
-    editProject: function (app) {
+    editProject: function(app) {
         app.post('/editProject', verifyToken, (req, res) => {
             if (req.token === null) {
                 res.json({ result: false });
@@ -85,7 +85,7 @@ module.exports = {
                         body: projectData
                     };
 
-                    request(project_options, function (error, response) {
+                    request(project_options, function(error, response) {
                         if (response && response.body) {
                             try {
                                 const result = JSON.parse(response.body);
@@ -102,7 +102,7 @@ module.exports = {
         });
     },
 
-    deleteProject: function (app) {
+    deleteProject: function(app) {
         app.post('/deleteProject', verifyToken, (req, res) => {
             console.log('Deleting Project as POST ');
             const token = jwt.verify(req.token, process.env.JWT_SECRET);
@@ -121,7 +121,7 @@ module.exports = {
 
             console.log('about to send request to the backend to delete', delete_options);
             try {
-                request(delete_options, function (error, response) {
+                request(delete_options, function(error, response) {
                     if (response && response.body) {
                         console.log('has response', response.body);
                         try {
@@ -141,7 +141,7 @@ module.exports = {
         });
     },
 
-    getOntologyIndex: function (app) {
+    getOntologyIndex: function(app) {
         app.get('/ontologyIndex', (req, res) => {
             const query = req.query;
             console.log('Requesting Ontology Index', `${process.env.BACKEND_SERVER_URL}/ontologyIndex?project_id=${query['project_id']}`);
@@ -153,7 +153,7 @@ module.exports = {
                 }
             };
 
-            request(ontology_indexOptions, function (error, response) {
+            request(ontology_indexOptions, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -169,7 +169,7 @@ module.exports = {
     },
 
     // this returns the ttl file content with some meta information Could be used for downloads, KEEP FOR NOW
-    getOntologyByID: function (app) {
+    getOntologyByID: function(app) {
         app.get('/getOntologyById', (req, res) => {
             const query = req.query;
             const ontology_indexOptions = {
@@ -180,7 +180,7 @@ module.exports = {
                 }
             };
 
-            request(ontology_indexOptions, function (error, response) {
+            request(ontology_indexOptions, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -195,7 +195,7 @@ module.exports = {
         });
     },
 
-    getOntologyGitData: function (app) {
+    getOntologyGitData: function(app) {
         app.get('/getOntologyGitdata', (req, res) => {
             const query = req.query;
             const ontology_id = query['ontology_id'];
@@ -207,7 +207,7 @@ module.exports = {
                 }
             };
 
-            request(ontology_indexOptions, function (error, response) {
+            request(ontology_indexOptions, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -222,7 +222,7 @@ module.exports = {
         });
     },
 
-    deleteOntology: function (app) {
+    deleteOntology: function(app) {
         app.post('/deleteOntology', verifyToken, (req, res) => {
             console.log('Deleting Ontology as POST ');
             const token = jwt.verify(req.token, process.env.JWT_SECRET);
@@ -241,7 +241,7 @@ module.exports = {
 
             console.log('about to send request to the backend to delete', delete_options);
             try {
-                request(delete_options, function (error, response) {
+                request(delete_options, function(error, response) {
                     if (response && response.body) {
                         console.log('has response', response.body);
                         try {
@@ -266,7 +266,7 @@ module.exports = {
         });
     },
 
-    uploadOntology: function (app) {
+    uploadOntology: function(app) {
         app.post('/uploadOntology', verifyToken, (req, res) => {
             if (req.token === null) {
                 res.json({ result: false });
@@ -284,7 +284,7 @@ module.exports = {
                         body: data
                     };
 
-                    request(upload_options, function (error, response) {
+                    request(upload_options, function(error, response) {
                         if (response && response.body) {
                             try {
                                 const result = JSON.parse(response.body);
@@ -301,7 +301,7 @@ module.exports = {
         });
     },
 
-    updateOntology: function (app) {
+    updateOntology: function(app) {
         app.post('/updateOntology', verifyToken, (req, res) => {
             console.log('Processing ontology update request');
             if (req.token === null) {
@@ -320,7 +320,7 @@ module.exports = {
                         body: data
                     };
 
-                    request(update_options, function (error, response) {
+                    request(update_options, function(error, response) {
                         if (response && response.body) {
                             try {
                                 const result = JSON.parse(response.body);
@@ -337,7 +337,7 @@ module.exports = {
         });
     },
 
-    viewUserSettings: function (app) {
+    viewUserSettings: function(app) {
         app.get('/user/viewProfile/', verifyToken, (req, res) => {
             if (req.token === null) {
                 res.send(JSON.stringify({ result: 'empty' }));
@@ -353,7 +353,7 @@ module.exports = {
                         }
                     };
 
-                    request(options, function (error, response) {
+                    request(options, function(error, response) {
                         if (response && response.body) {
                             const result = JSON.parse(response.body);
                             if (result) {
@@ -372,7 +372,7 @@ module.exports = {
         });
     },
 
-    getAllUsers: function (app) {
+    getAllUsers: function(app) {
         app.get('/users/all', (req, res) => {
             try {
                 const options = {
@@ -383,7 +383,7 @@ module.exports = {
                     }
                 };
 
-                request(options, function (error, response) {
+                request(options, function(error, response) {
                     if (response && response.body) {
                         try {
                             const result = JSON.parse(response.body);
@@ -398,7 +398,7 @@ module.exports = {
             }
         });
     },
-    unregisterUserFromProject: function (app) {
+    unregisterUserFromProject: function(app) {
         app.put('/project/unregisterUser/', verifyToken, (req, res) => {
             const token = jwt.verify(req.token, process.env.JWT_SECRET);
             const userId = token.userId;
@@ -413,7 +413,7 @@ module.exports = {
             };
 
             try {
-                request(options, function (error, response) {
+                request(options, function(error, response) {
                     if (response && response.body) {
                         try {
                             const result = JSON.parse(response.body);
@@ -431,7 +431,7 @@ module.exports = {
         });
     },
 
-    addUserToProject: function (app) {
+    addUserToProject: function(app) {
         app.put('/project/addUser/', verifyToken, (req, res) => {
             const token = jwt.verify(req.token, process.env.JWT_SECRET);
             const userId = token.userId;
@@ -446,7 +446,7 @@ module.exports = {
             };
 
             try {
-                request(options, function (error, response) {
+                request(options, function(error, response) {
                     if (response && response.body) {
                         try {
                             const result = JSON.parse(response.body);
@@ -464,7 +464,7 @@ module.exports = {
         });
     },
 
-    createTermVote: function (app) {
+    createTermVote: function(app) {
         app.post('/newVote', verifyToken, (req, res) => {
             if (req.token === null) {
                 res.json({ result: false });
@@ -484,7 +484,7 @@ module.exports = {
                         body: data
                     };
 
-                    request(project_options, function (error, response) {
+                    request(project_options, function(error, response) {
                         if (response && response.body) {
                             try {
                                 const result = JSON.parse(response.body);
@@ -501,7 +501,7 @@ module.exports = {
         });
     },
 
-    getVotes: function (app) {
+    getVotes: function(app) {
         app.get('/getVotes', (req, res) => {
             const query = req.query;
             const url = new URL(`${process.env.BACKEND_FASTAPI_SERVER_URL}/votes`);
@@ -516,7 +516,7 @@ module.exports = {
                 }
             };
 
-            request(vote_Options, function (error, response) {
+            request(vote_Options, function(error, response) {
                 if (response && response.body) {
                     let result;
                     try {
@@ -532,7 +532,7 @@ module.exports = {
         });
     },
 
-    getTermVotes: function (app) {
+    getTermVotes: function(app) {
         app.get('/getTermVotes', (req, res) => {
             const query = req.query;
             const url = new URL(`${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/${encodeURIComponent(query.term_uuid)}/votes`);
@@ -547,7 +547,7 @@ module.exports = {
                 }
             };
 
-            request(vote_Options, function (error, response) {
+            request(vote_Options, function(error, response) {
                 if (response && response.body) {
                     let result;
                     try {
@@ -563,7 +563,7 @@ module.exports = {
         });
     },
 
-    getTermLastConsensus: function (app) {
+    getTermLastConsensus: function(app) {
         app.get('/getTermLastConsensus', (req, res) => {
             const query = req.query;
             let uri = `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/consensus/${encodeURIComponent(query['term_uuid'])}`;
@@ -575,7 +575,7 @@ module.exports = {
                 }
             };
 
-            request(vote_Options, function (error, response) {
+            request(vote_Options, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -590,7 +590,7 @@ module.exports = {
         });
     },
 
-    updateVoteDecision: function (app) {
+    updateVoteDecision: function(app) {
         app.post('/updateVoteDecision', verifyToken, (req, res) => {
             if (req.token === null) {
                 res.json({ result: false });
@@ -613,8 +613,8 @@ module.exports = {
                         body: data
                     };
 
-                    console.log("project_options.body: ", project_options.body);
-                    request(project_options, function (error, response) {
+                    console.log('project_options.body: ', project_options.body);
+                    request(project_options, function(error, response) {
                         if (response && response.body) {
                             try {
                                 const result = JSON.parse(response.body);
@@ -631,7 +631,7 @@ module.exports = {
         });
     },
 
-    closeConsensus: function (app) {
+    closeConsensus: function(app) {
         app.post('/closeConsensus', verifyToken, (req, res) => {
             if (req.token === null) {
                 res.json({ result: false });
@@ -651,7 +651,7 @@ module.exports = {
                         body: data
                     };
 
-                    request(project_options, function (error, response) {
+                    request(project_options, function(error, response) {
                         if (response && response.body) {
                             try {
                                 const result = JSON.parse(response.body);
@@ -668,7 +668,42 @@ module.exports = {
         });
     },
 
-    getTermOfTheWeek: function (app) {
+    removeVotes: function(app) {
+        app.post('/removeVotes', verifyToken, (req, res) => {
+            if (req.token === null) {
+                res.json({ result: false });
+            } else {
+                const token = jwt.verify(req.token, process.env.JWT_SECRET);
+                console.log(token);
+                if (token) {
+                    const data = JSON.stringify(req.body);
+                    const project_options = {
+                        uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms`,
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: data
+                    };
+
+                    request(project_options, function(error, response) {
+                        if (response && response.body) {
+                            try {
+                                const result = JSON.parse(response.body);
+                                res.json(result);
+                            } catch (e) {
+                                res.json({ error: 'Something went wrong' });
+                            }
+                        } else {
+                            res.json({ error: 'Something went wrong' });
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+    getTermOfTheWeek: function(app) {
         app.get('/getTermOfTheWeek', (req, res) => {
             const query = req.query;
             let uri = `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/ofTheWeek`;
@@ -680,7 +715,7 @@ module.exports = {
                 }
             };
 
-            request(vote_Options, function (error, response) {
+            request(vote_Options, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -695,9 +730,9 @@ module.exports = {
             });
         });
     },
-    subscribePush: function (app) {
+    subscribePush: function(app) {
         app.post('/subscriber', (req, res) => {
-            console.log('Proxy received subscribe request, sending to server')
+            console.log('Proxy received subscribe request, sending to server');
             const data = JSON.stringify(req.body);
             console.log(data);
             const project_options = {
@@ -709,7 +744,7 @@ module.exports = {
                 body: data
             };
 
-            request(project_options, function (error, response) {
+            request(project_options, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -721,12 +756,11 @@ module.exports = {
                     res.json({ error: 'Something went wrong' });
                 }
             });
-
         });
     },
-    unsubscribePush: function (app) {
+    unsubscribePush: function(app) {
         app.post('/unsubscriber', (req, res) => {
-            console.log('Proxy received unsubscribe request, sending to server')
+            console.log('Proxy received unsubscribe request, sending to server');
             const data = JSON.stringify(req.body);
             console.log(data);
             const project_options = {
@@ -738,7 +772,7 @@ module.exports = {
                 body: data
             };
 
-            request(project_options, function (error, response) {
+            request(project_options, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -750,13 +784,12 @@ module.exports = {
                     res.json({ error: 'Something went wrong' });
                 }
             });
-
         });
     },
 
-    notifyAddRemoveTerm: function (app) {
+    notifyAddRemoveTerm: function(app) {
         app.post('/notifyAddRemoveTerm', (req, res) => {
-            console.log('Proxy received about new/removed term, sending to server')
+            console.log('Proxy received about new/removed term, sending to server');
             const data = JSON.stringify(req.body);
             console.log(data);
             const project_options = {
@@ -768,7 +801,7 @@ module.exports = {
                 body: data
             };
 
-            request(project_options, function (error, response) {
+            request(project_options, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -780,13 +813,12 @@ module.exports = {
                     res.json({ error: 'Something went wrong' });
                 }
             });
-
         });
     },
 
-    notifyNewComment: function (app) {
+    notifyNewComment: function(app) {
         app.post('/notifyNewComment', (req, res) => {
-            console.log('Proxy received about new discussion, sending to server')
+            console.log('Proxy received about new discussion, sending to server');
             const data = JSON.stringify(req.body);
             console.log(data);
             const project_options = {
@@ -798,7 +830,7 @@ module.exports = {
                 body: data
             };
 
-            request(project_options, function (error, response) {
+            request(project_options, function(error, response) {
                 if (response && response.body) {
                     try {
                         const result = JSON.parse(response.body);
@@ -810,8 +842,7 @@ module.exports = {
                     res.json({ error: 'Something went wrong' });
                 }
             });
-
         });
-    },
+    }
 };
 

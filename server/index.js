@@ -103,6 +103,7 @@ database.getOntologyGitData(router);
 database.createTermVote(router);
 database.getTermLastConsensus(router);
 database.getTermVotes(router);
+database.removeVotes(router);
 database.getVotes(router);
 database.updateVoteDecision(router);
 database.getTermOfTheWeek(router);
