@@ -676,7 +676,7 @@ module.exports = {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
                 console.log(token);
                 if (token) {
-                    const data = JSON.stringify(req.body);
+                    const data = JSON.stringify(req.body.term_uuids);
                     const project_options = {
                         uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms`,
                         method: 'DELETE',
