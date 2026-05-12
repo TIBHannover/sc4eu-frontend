@@ -1,5 +1,5 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import { colorStyled } from '../../../styledComponents/styledColor';
@@ -21,7 +21,7 @@ import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../..
 import InformationHub from './InformationHub';
 import { useMediaQuery } from '@mui/material';
 import { CardActivityWidget } from './CardActivityWidget';
-import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
+import { getTermVotes, getVotes } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 
 /* eslint-disable react/prop-types */
@@ -60,9 +60,7 @@ const VocabularyMainTable = ({
     const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
     const isMobileScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
-    const isMobileScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
-    const [density, setDensity] = useState(isMobileScreen ? 'comfortable' : 'compact');
     const [density, setDensity] = useState(isMobileScreen ? 'comfortable' : 'compact');
 
     const [urgentVoteTerm, setUrgentVoteTerm] = useState(null);
@@ -160,10 +158,7 @@ const VocabularyMainTable = ({
         setPagination(prev => ({
             ...prev,
             pageSize: newPageSize
-            pageSize: newPageSize
         }));
-        setDensity(isMobileScreen ? 'comfortable' : 'compact');
-    }, [isMobileScreen, terms.length]);
         setDensity(isMobileScreen ? 'comfortable' : 'compact');
     }, [isMobileScreen, terms.length]);
 
@@ -203,7 +198,6 @@ const VocabularyMainTable = ({
 
     const columnVisibility = useMemo(() => {
         return isMobileScreen
-        return isMobileScreen
             ? {
                   identifier: false,
                   altLabel: false,
@@ -217,7 +211,6 @@ const VocabularyMainTable = ({
                   altLabel: false,
                   seeAlso: false
               };
-    }, [isMobileScreen]);
     }, [isMobileScreen]);
 
     const TerminologyCellComponent = ({ row }) => {
@@ -280,11 +273,9 @@ const VocabularyMainTable = ({
                 accessorKey: 'label',
                 header: 'Label',
                 size: 150,
-                size: 150,
 
                 muiTableBodyCellProps: {
                     sx: {
-                        maxWidth: 150,
                         maxWidth: 150,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -294,7 +285,6 @@ const VocabularyMainTable = ({
 
                 muiTableHeadCellProps: {
                     sx: {
-                        maxWidth: 150
                         maxWidth: 150
                     }
                 },
@@ -359,7 +349,6 @@ const VocabularyMainTable = ({
                     </Tooltip>
                 ),
                 size: 100,
-                size: 100,
                 enableEditing: false,
                 filterVariant: 'select',
                 filterSelectOptions: [
@@ -387,10 +376,8 @@ const VocabularyMainTable = ({
                 },
                 muiTableBodyCellProps: {
                     sx: { maxWidth: 100 }
-                    sx: { maxWidth: 100 }
                 },
                 muiTableHeadCellProps: {
-                    sx: { maxWidth: 100 }
                     sx: { maxWidth: 100 }
                 }
             },
@@ -633,7 +620,6 @@ const VocabularyMainTable = ({
         if (window.confirm('Are you sure you want to delete this term?')) {
             await deleteTerm(row.id);
             await handleDeleteDiscussion(row.id);
-            pendingDeletedTermIds.current.push(row.id);
             table.setEditingRow(null);
             setHasUncommittedChanges(true);
         }
@@ -674,9 +660,6 @@ const VocabularyMainTable = ({
             density: isMobileScreen ? 'comfortable' : 'compact',
             pagination: { pageSize: getPageSize(), pageIndex: 0 },
             showColumnFilters: !isMobileScreen
-            density: isMobileScreen ? 'comfortable' : 'compact',
-            pagination: { pageSize: getPageSize(), pageIndex: 0 },
-            showColumnFilters: !isMobileScreen
         },
         createDisplayMode: 'modal',
         editDisplayMode: 'modal',
@@ -690,10 +673,6 @@ const VocabularyMainTable = ({
         enableFullScreenToggle: false,
         enableGlobalFilter: false,
         enableHiding: false,
-        muiPaginationProps: {
-            rowsPerPageOptions: [],
-            showRowsPerPage: false
-        },
         muiPaginationProps: {
             rowsPerPageOptions: [],
             showRowsPerPage: false
@@ -789,7 +768,6 @@ const VocabularyMainTable = ({
                         }}
                     >
                         {isMobileScreen ? 'New Term' : 'Create New Term'}
-                        {isMobileScreen ? 'New Term' : 'Create New Term'}
                     </Button>
                 </Tooltip>
                 <Tooltip title="View this vocabulary history of changes">
@@ -825,7 +803,6 @@ const VocabularyMainTable = ({
                             }}
                         >
                             {isMobileScreen ? 'Hub' : 'Information Hub'}
-                            {isMobileScreen ? 'Hub' : 'Information Hub'}
                         </Button>
                     </StyledBadge>
                 </Tooltip>
@@ -853,13 +830,6 @@ const VocabularyMainTable = ({
                         setOpenCommit={setOpenCommit}
                         setHasUncommittedChanges={setHasUncommittedChanges}
                         user={currentUser.displayName}
-                        onSuccess={async () => {
-                            await deleteTermVotes(pendingDeletedTermIds.current);
-                            pendingDeletedTermIds.current = [];
-                        }}
-                        onFail={() => {
-                            console.error(`Error while commiting changes with ${pendingDeletedTermIds.current} terms`);
-                        }}
                     />
                 )}
             </>
@@ -868,13 +838,11 @@ const VocabularyMainTable = ({
             columnVisibility,
             density,
             pagination,
-            pagination,
             isLoading: isLoadingTerms,
             isSaving: isCreatingTerm || isUpdatingTerm || isDeletingTerm,
             showAlertBanner: isLoadingTermsError,
             showProgressBars: isFetchingTerms
         },
-        onPaginationChange: setPagination,
         onPaginationChange: setPagination,
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
@@ -914,27 +882,13 @@ const VocabularyMainTable = ({
         <ScrollableDiv>
             <CardActivityWidget
                 urgentTerms={urgentTerms}
-                urgentTerms={urgentTerms}
                 votes={votesMap}
-                discussionReplies={discussionReplies}
-                newTerms={newTerms}
                 discussionReplies={discussionReplies}
                 newTerms={newTerms}
                 onUrgentClick={handleWidgetUrgentTermClick}
                 onNewTermsClick={handleWidgetNewTermsClick}
                 onDiscussionClick={handleWidgetDiscussionReplyClick}
                 isMobileScreen={isMobileScreen}
-                isMobileScreen={isMobileScreen}
-            />
-            <MaterialReactTable
-                table={table}
-                muiTableContainerProps={{
-                    sx: {
-                        width: '50%',
-                        maxWidth: '50vw',
-                        overflowX: 'auto'
-                    }
-                }}
             />
             <MaterialReactTable
                 table={table}
