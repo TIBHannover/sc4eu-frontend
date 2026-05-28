@@ -1,6 +1,6 @@
 {
-    "short_name": "NFDI4ING Vocab",
-    "name": "NFDI4ING Vocabulary",
+    "short_name": "IMAGINE Labs Vocab",
+    "name": "IMAGINE Labs Vocabulary",
     "icons": [
         {
             "src": "logo.png",
@@ -8,7 +8,7 @@
             "type": "image/png"
         }
     ],
-    "start_url": "/vocab/nfdi4ing",
+    "start_url": "/vocab/imagine",
     "display": "standalone",
     "theme_color": "#000000",
     "background_color": "#ffffff"

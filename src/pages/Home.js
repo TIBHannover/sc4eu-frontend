@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
 import IntroductoryPopUp from '../components/IntroductoryPopUp';
 import { colorStyled } from '../styledComponents/styledColor';
-import Logo from '../assets/images/nfdi4ing_logo.svg';
 import GoogleSurvey from '../components/GoogleSurvey';
 import { Box, Typography, Button, Link } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -13,7 +12,7 @@ import { openAuthDialog } from '../redux/actions/auth';
 import { selectIsAuthenticated } from '../redux/reducers/auth';
 
 const CENTER_ROW = { display: 'flex', alignItems: 'center' };
-const VOCABULARY_URL = 'https://service.tib.eu/vocab/nfdi4ing/vocabulary_support';
+const VOCABULARY_URL = 'https://service.tib.eu/vocab/imagine/vocabulary_support';
 
 class Home extends Component {
     state = { fading: false };
@@ -41,8 +40,7 @@ class Home extends Component {
                     transition: 'opacity 0.5s ease',
                     opacity: this.state.fading ? 0 : 1,
                     minHeight: '100vh',
-                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem', lg: '1.2rem' },
-                
+                    fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem', lg: '1.2rem' }
                 }}
             >
                 <Box sx={{ display: { xs: 'none', md: 'block' } }}>
@@ -50,7 +48,7 @@ class Home extends Component {
                 </Box>
 
                 <Box sx={{ px: { xs: 3, md: 5, xl: 37 }, py: 2 }}>
-                    <Box component="img" src={Logo} alt="NFDI4Ing Logo" sx={{ width: { xs: '10rem', md: '15rem', xl: '20rem' }, height: 'auto' }} />
+                    <Typography variant="h3">IMAGINE Labs</Typography>
                 </Box>
 
                 <Box
@@ -98,7 +96,7 @@ class Home extends Component {
                             </Button>
 
                             <Link
-                                href="https://service.tib.eu/vocab/nfdi4ing/Documentations"
+                                href="https://service.tib.eu/vocab/imagine/Documentations"
                                 sx={{ ...CENTER_ROW, gap: 0.5, color: colorStyled.primary, fontWeight: 600, textDecoration: 'none' }}
                             >
                                 See documentation <OpenInNewIcon sx={{ fontSize: '1rem' }} />
@@ -156,7 +154,7 @@ class Home extends Component {
                     </Box>
                 </Box>
 
-                <Box sx={{ px: { xs: 3, md: 6, xl: 40 }, py: { xs: 3, xl: 0} }}>
+                <Box sx={{ px: { xs: 3, md: 6, xl: 40 }, py: { xs: 3, xl: 0 } }}>
                     <Box
                         sx={{
                             display: 'flex',
@@ -202,8 +200,7 @@ class Home extends Component {
                                         fontSize: { xs: '0.9rem' }
                                     }}
                                 >
-                                    What's a web app and how to install?{' '}
-                                    <OpenInNewIcon sx={{ fontSize: { xs: '1rem' }, verticalAlign: 'middle' }} />
+                                    What's a web app and how to install? <OpenInNewIcon sx={{ fontSize: { xs: '1rem' }, verticalAlign: 'middle' }} />
                                 </Link>
                             </Typography>
                         </Box>

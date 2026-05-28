@@ -2,7 +2,7 @@
   "name": "vdst-demo-application",
   "version": "0.0.1",
   "private": true,
-  "homepage": "/vocab/nfdi4ing/",
+  "homepage": "/vocab/imagine/",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
