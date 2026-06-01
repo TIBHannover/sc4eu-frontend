@@ -346,7 +346,7 @@ module.exports = {
                         process.env.JWT_SECRET,
                         { expiresIn: '1h' }
                     );
-                    const callbackURL = `${process.env.CALLBACK_URL}/vocab/EmailVerify/${result.user_id}/${token}`;
+                    const callbackURL = `${process.env.CALLBACK_URL}/vocab/imagine/EmailVerify/${result.user_id}/${token}`;
                     const EmailFields = {
                         email: req.body.username,
                         subject: 'VDST Email Verification',
@@ -374,7 +374,7 @@ module.exports = {
     },
 
     verifyEmail: function(app) {
-        const pathname = `${process.env.CALLBACK_URL}/vocab/EmailVerify`;
+        const pathname = `${process.env.CALLBACK_URL}/vocab/imagine/EmailVerify`;
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
@@ -694,7 +694,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '1h' }
                         );
-                        const callbackURL = `${process.env.CALLBACK_URL}/vocab/verifResetPassword/${result.user_id}/${token}`;
+                        const callbackURL = `${process.env.CALLBACK_URL}/vocab/imagine/verifResetPassword/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.email_address,
                             subject: 'VDST Password Reset',
@@ -724,7 +724,7 @@ module.exports = {
     },
 
     verifResetPassword: function(app) {
-        const pathname = `${process.env.CALLBACK_URL}/vocab/ResetPassword`;
+        const pathname = `${process.env.CALLBACK_URL}/vocab/imagine/ResetPassword`;
         app.get(`/verifResetPassword/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             const { user_id } = req.params;
