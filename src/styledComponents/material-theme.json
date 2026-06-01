@@ -7,16 +7,18 @@
     "extendedColors": [],
     "schemes": {
         "light": {
-            "primary": "#525A92",
+            "primary": "#4F4E96",
+            "primaryContainer": "#DEE0FF",
+            "tertiary": "#A851A1",
+
             "surfaceTint": "#525A92",
             "onPrimary": "#FFFFFF",
-            "primaryContainer": "#DEE0FF",
             "onPrimaryContainer": "#3A4379",
             "secondary": "#5B5D72",
             "onSecondary": "#FFFFFF",
             "secondaryContainer": "#E0E1F9",
             "onSecondaryContainer": "#434559",
-            "tertiary": "#77536D",
+
             "onTertiary": "#FFFFFF",
             "tertiaryContainer": "#FFD7F1",
             "onTertiaryContainer": "#5D3C54",

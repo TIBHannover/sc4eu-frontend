@@ -3,13 +3,14 @@ import Footer from '../Layout/Footer';
 import IntroductoryPopUp from '../components/IntroductoryPopUp';
 import { colorStyled } from '../styledComponents/styledColor';
 import GoogleSurvey from '../components/GoogleSurvey';
-import { Box, Typography, Button, Link } from '@mui/material';
+import { Box, Typography, Button, Link, Stack } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { connect } from 'react-redux';
 import { openAuthDialog } from '../redux/actions/auth';
 import { selectIsAuthenticated } from '../redux/reducers/auth';
+import Logo from '../assets/images/logo.png';
 
 const CENTER_ROW = { display: 'flex', alignItems: 'center' };
 const VOCABULARY_URL = 'https://service.tib.eu/vocab/imagine/vocabulary_support';
@@ -47,15 +48,16 @@ class Home extends Component {
                     <IntroductoryPopUp />
                 </Box>
 
-                <Box sx={{ px: { xs: 3, md: 5, xl: 37 }, py: 2 }}>
-                    <Typography variant="h3">IMAGINE Labs</Typography>
-                </Box>
+                <Stack direction="row" alignItems="end" spacing={2} sx={{ px: { xs: 3, md: 5, xl: 37 }, py: 2 }}>
+                    <Box component="img" src={Logo} alt="IMAGINE Labs Logo" sx={{ width: { xs: '10rem' }, height: 'auto' }} />
+                    <Typography variant="h5">IMAGINE Labs - project proposal</Typography>
+                </Stack>
 
                 <Box
                     sx={{
                         ...CENTER_ROW,
                         flexDirection: { xs: 'column', md: 'row' },
-                        alignItems: { xs: 'stretch', md: 'center' },
+                        alignItems: { xs: 'stretch', md: 'flex-start' },
                         px: { xs: 3, md: 6, xl: 40 },
                         py: { xs: 0, xl: 5 },
                         gap: { xs: 0, md: 8, xl: 15 }
@@ -63,23 +65,16 @@ class Home extends Component {
                 >
                     <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 3 }}>
                         <Typography
-                            variant="h3"
+                            variant="h5"
                             sx={{
-                                fontWeight: 800,
-                                color: colorStyled.onSurface,
-                                lineHeight: 1.15,
-                                fontSize: { xs: '1.5rem', md: '2rem', xl: '3rem' },
-                                maxWidth: '100%'
+                                color: colorStyled.onPrimaryFixed,
+                                lineHeight: 1.5
                             }}
                         >
-                            Develop clear and consistent terminology for research data in engineering
+                            This Vocabulary Service empowers communities to co-create, standardize, and vote on controlled vocabularies—turning
+                            fragmented terminology into a reliable, machine-readable basis for cross-disciplinary collaboration.
                         </Typography>
-
-                        <Typography variant="body1" sx={{ color: colorStyled.onPrimaryFixedVariant, lineHeight: 1.7 }}>
-                            The Vocabulary Service supports communities in building and documenting controlled vocabularies and providing them as a
-                            reliable basis for interoperable research data
-                        </Typography>
-
+                        <Typography variant='body1' sx={{ color: colorStyled.onPrimaryFixedVariant}}>Build a shared framework for interdisciplinary communication</Typography>
                         <Box sx={{ ...CENTER_ROW, gap: 3, flexWrap: 'wrap' }}>
                             <Button
                                 variant="contained"
@@ -116,41 +111,43 @@ class Home extends Component {
                     >
                         <Box sx={{ ...CENTER_ROW, justifyContent: 'space-between', my: 2 }}>
                             <Typography variant="h5" sx={{ fontWeight: 700, color: colorStyled.onSurface }}>
-                                Vocabulary Tool
+                                The IMAGINE Labs Vocabulary Tool
                             </Typography>
                         </Box>
 
-                        {['Creating relevant terms', 'Group discussion', 'A transparent voting process (consensus)'].map(item => (
-                            <Box
-                                key={item}
-                                sx={{
-                                    ...CENTER_ROW,
-                                    gap: 2,
-                                    py: 2,
-                                    pl: 2,
-                                    mb: 1.5,
-                                    borderLeft: `3px solid ${colorStyled.primary}`,
-                                    backgroundColor: colorStyled.surfaceContainerLow,
-                                    borderRadius: '0 4px 4px 0'
-                                }}
-                            >
+                        {['Establish a common language', 'Create a shared understanding', 'Provide transparent voting process (consensus)'].map(
+                            item => (
                                 <Box
+                                    key={item}
                                     sx={{
-                                        width: '0.6rem',
-                                        height: '0.6rem',
-                                        minWidth: '0.6rem',
-                                        borderRadius: '50%',
-                                        backgroundColor: colorStyled.primary
+                                        ...CENTER_ROW,
+                                        gap: 2,
+                                        py: 2,
+                                        pl: 2,
+                                        mb: 1.5,
+                                        borderLeft: `3px solid ${colorStyled.primary}`,
+                                        backgroundColor: colorStyled.surfaceContainerLow,
+                                        borderRadius: '0 4px 4px 0'
                                     }}
-                                />
-                                <Typography
-                                    variant="body2"
-                                    sx={{ fontWeight: 600, color: colorStyled.onSurface, fontSize: { xs: '0.7rem', md: '0.8rem', xl: '1rem' } }}
                                 >
-                                    {item}
-                                </Typography>
-                            </Box>
-                        ))}
+                                    <Box
+                                        sx={{
+                                            width: '0.6rem',
+                                            height: '0.6rem',
+                                            minWidth: '0.6rem',
+                                            borderRadius: '50%',
+                                            backgroundColor: colorStyled.primary
+                                        }}
+                                    />
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ fontWeight: 600, color: colorStyled.onSurface, fontSize: { xs: '0.7rem', md: '0.8rem', xl: '1rem' } }}
+                                    >
+                                        {item}
+                                    </Typography>
+                                </Box>
+                            )
+                        )}
                     </Box>
                 </Box>
 
