@@ -74,7 +74,9 @@ class Home extends Component {
                             This Vocabulary Service empowers communities to co-create, standardize, and vote on controlled vocabularies—turning
                             fragmented terminology into a reliable, machine-readable basis for cross-disciplinary collaboration.
                         </Typography>
-                        <Typography variant='body1' sx={{ color: colorStyled.onPrimaryFixedVariant}}>Build a shared framework for interdisciplinary communication</Typography>
+                        <Typography variant="body1" sx={{ color: colorStyled.onPrimaryFixedVariant }}>
+                            Build a shared framework for interdisciplinary communication
+                        </Typography>
                         <Box sx={{ ...CENTER_ROW, gap: 3, flexWrap: 'wrap' }}>
                             <Button
                                 variant="contained"
@@ -91,10 +93,12 @@ class Home extends Component {
                             </Button>
 
                             <Link
-                                href="https://service.tib.eu/vocab/imagine/Documentations"
+                                href="https://www.youtube.com/watch?v=dS8nmqGKgeg"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 sx={{ ...CENTER_ROW, gap: 0.5, color: colorStyled.primary, fontWeight: 600, textDecoration: 'none' }}
                             >
-                                See documentation <OpenInNewIcon sx={{ fontSize: '1rem' }} />
+                                See explanation video <OpenInNewIcon sx={{ fontSize: '1rem' }} />
                             </Link>
                         </Box>
                     </Box>
