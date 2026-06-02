@@ -145,17 +145,67 @@ export default class GraphInteractions {
     };
 
     selectionBoxFeature = (active = true) => {
-        if (!active) return;
+        if (!active || !this.graphObject?.svgRoot) return;
 
         const svg = this.graphObject.svgRoot;
         const zoomBehavior = this.zoom;
 
-        // ... (rest of your selection box setup)
+        // Helper function to build the rectangle path
+        const buildRectPath = (x, y, width, height) => {
+            return `M${x},${y} l${width},0 l0,${height} l${-width},0 z`;
+        };
 
+        // Create and style the selection rectangle
+        const selectionRect = svg
+            .append('path')
+            .attr('visibility', 'hidden')
+            .style('opacity', '0.5')
+            .style('fill', '#ADD8E6')
+            .style('stroke', '#ADD8E6')
+            .style('fill-opacity', '0.3')
+            .style('stroke-opacity', '0.7')
+            .style('stroke-width', '2')
+            .style('stroke-dasharray', '5, 5');
+
+        // Selection handlers
+        const startSelection = startPoint => {
+            selectionRect.attr('d', buildRectPath(startPoint[0], startPoint[1], 0, 0)).attr('visibility', 'visible');
+            this.disableGraphTranslation = true;
+        };
+
+        const moveSelection = (startPoint, currentPoint) => {
+            const width = currentPoint[0] - startPoint[0];
+            const height = currentPoint[1] - startPoint[1];
+            selectionRect.attr('d', buildRectPath(startPoint[0], startPoint[1], width, height));
+        };
+
+        const endSelection = (startPoint, endPoint) => {
+            selectionRect.attr('visibility', 'hidden');
+            this.disableGraphTranslation = false;
+
+            // Reset zoom state to match current graph position
+            const resetTransform = buildZoomTransform(this.graphTranslation, this.zoomFactor);
+            this.graphObject.svgRoot.call(zoomBehavior.transform, resetTransform);
+
+            // Convert screen coordinates to graph coordinates
+            const startInGraphSpace = getGraphCoordinates(startPoint[0], startPoint[1], this.graphTranslation, this.zoomFactor);
+            const endInGraphSpace = getGraphCoordinates(endPoint[0], endPoint[1], this.graphTranslation, this.zoomFactor);
+
+            // Get and process selected elements
+            const selectedElements = getSelectedElements(startInGraphSpace, endInGraphSpace, this.graphObject);
+
+            selectedElements.forEach(item => {
+                if (item.groupRoot?.nodeHoverIn) {
+                    item.nodeHoverIn(item);
+                }
+            });
+        };
+
+        // Set up the mouse event handlers
         svg.on('mousedown', mouseEvent => {
             if (!mouseEvent.ctrlKey) return;
 
-            // Temporarily disable zoom
+            // Temporarily disable zoom to prevent interference
             svg.on('.zoom', null);
 
             const parent = svg.node().parentNode;
