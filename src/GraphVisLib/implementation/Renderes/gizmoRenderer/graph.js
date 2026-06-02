@@ -342,18 +342,15 @@ export default class GraphRenderer {
                     return that.transform(pos_interpolation(t), cx, cy, that);
                 };
             })
-            .each('end', function() {
-                if (that.interactionHandler.graphInteractions.zoom) {
-                    that.graphRoot.attr(
-                        'transform',
-                        'translate(' +
-                            that.interactionHandler.graphInteractions.graphTranslation +
-                            ')scale(' +
-                            that.interactionHandler.graphInteractions.zoomFactor +
-                            ')'
-                    );
-                    that.interactionHandler.graphInteractions.zoom.translate(that.interactionHandler.graphInteractions.graphTranslation);
-                    that.interactionHandler.graphInteractions.zoom.scale(that.interactionHandler.graphInteractions.zoomFactor);
+            .on('end', function() {
+                const gi = that.interactionHandler.graphInteractions;
+
+                if (gi.zoom) {
+                    that.graphRoot.attr('transform', `translate(${gi.graphTranslation})scale(${gi.zoomFactor})`);
+
+                    const newTransform = d3.zoomIdentity.translate(gi.graphTranslation[0], gi.graphTranslation[1]).scale(gi.zoomFactor);
+
+                    that.svgRoot.call(gi.zoom.transform, newTransform);
                 }
             });
     };
