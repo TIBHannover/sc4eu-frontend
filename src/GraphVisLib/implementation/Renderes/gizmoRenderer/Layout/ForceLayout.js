@@ -48,7 +48,10 @@ export default class ForceLayout extends BaseLayoutComponent {
     resumeForce() {
         this.forceLayoutPaused = false;
         if (this.force) {
-            this.force.alphaTarget(SIMULATION_ALPHA_RESUME_TARGET).restart();
+            this.force
+                .alpha(0.5)
+                .alphaTarget(0)
+                .restart();
         }
     }
 
@@ -104,9 +107,7 @@ export default class ForceLayout extends BaseLayoutComponent {
 
         this.createForceElements(debug);
 
-        // D3 v7: restart() replaces start().
-        this.force.restart();
-        this.force.stop();
+        this.force.alpha(1).restart();
 
         // Nudge alpha slightly on re-initialisation so the layout settles.
         if (this.forceIsInitialized) {
@@ -185,6 +186,9 @@ export default class ForceLayout extends BaseLayoutComponent {
             this.graph.drawForceNodes(this.forceNodes);
         }
 
+        const centreX = this.layoutSize[0] / 2;
+        const centreY = this.layoutSize[1] / 2;
+
         this.forceNodes.forEach(node => {
             node.layoutHandlerReference = this;
 
@@ -203,9 +207,6 @@ export default class ForceLayout extends BaseLayoutComponent {
 
         this.distanceValue = 400;
 
-        const centreX = this.layoutSize[0] / 2;
-        const centreY = this.layoutSize[1] / 2;
-
         // D3 v7: forces are registered by name on the simulation.
         // Each force is independently configurable after creation via
         // simulation.force('name') which returns the registered force object.
@@ -220,15 +221,17 @@ export default class ForceLayout extends BaseLayoutComponent {
                     .forceLink(this.forceLinks)
                     .id(node => node.id)
                     .distance(this.computeLinkDistance)
-                    .strength(1.5)
+                    .strength(0.3)
             )
             // center: weak attraction toward the canvas centre.
             // gravity(0.025) in v3 maps to strength(0.25) here —
             // the v7 centre force strength scale differs by ~10x.
-            .force('center', d3.forceCenter(centreX, centreY).strength(0.1))
+            .force('center', d3.forceCenter(centreX, centreY))
             .force(
                 'collision',
-                d3.forceCollide().radius(30)
+                d3.forceCollide().radius(node => {
+                    return node.radius ? node.radius + 20 : 50;
+                })
             );
 
         this.recalculatePositions();
@@ -244,6 +247,10 @@ export default class ForceLayout extends BaseLayoutComponent {
     }
 
     computeChargeStrength(item) {
-        return CHARGE_STRENGTH_BY_TYPE[item.__internalObjectType] ?? CHARGE_STRENGTH_FALLBACK;
+        const value = CHARGE_STRENGTH_BY_TYPE[item.__internalObjectType] ?? CHARGE_STRENGTH_FALLBACK;
+
+        console.log('charge:', item.__internalObjectType, value);
+
+        return value;
     }
 }
