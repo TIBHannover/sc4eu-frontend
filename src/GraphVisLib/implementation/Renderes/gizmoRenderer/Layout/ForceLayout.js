@@ -6,18 +6,18 @@ const SIMULATION_ALPHA_STOP_TARGET = 0;
 const SIMULATION_ALPHA_NUDGE = 0.1;
 
 const LINK_DISTANCE_BY_TYPE = {
-    direct: 150,
-    loop: 100,
-    mlPart: 120,
-    hiddenML: 150
+    direct: 200,
+    loop: 120,
+    mlPart: 150,
+    hiddenML: 200
 };
-const LINK_DISTANCE_FALLBACK = 150;
+const LINK_DISTANCE_FALLBACK = 200;
 
 const CHARGE_STRENGTH_BY_TYPE = {
-    node: -200,
-    propertyNode: -300
+    node: -600,
+    propertyNode: -800
 };
-const CHARGE_STRENGTH_FALLBACK = -400;
+const CHARGE_STRENGTH_FALLBACK = -1000;
 
 export default class ForceLayout extends BaseLayoutComponent {
     constructor(graph) {
@@ -225,7 +225,7 @@ export default class ForceLayout extends BaseLayoutComponent {
             // center: weak attraction toward the canvas centre.
             // gravity(0.025) in v3 maps to strength(0.25) here —
             // the v7 centre force strength scale differs by ~10x.
-            .force('center', d3.forceCenter(centreX, centreY).strength(0.5))
+            .force('center', d3.forceCenter(centreX, centreY).strength(0.1))
             .force(
                 'collision',
                 d3.forceCollide().radius(30)
