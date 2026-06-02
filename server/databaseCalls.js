@@ -7,7 +7,7 @@ module.exports = {
     getProjectIndex: function(app) {
         app.get('/projectIndex', (req, res) => {
             const project_indexOptions = {
-                uri: `${process.env.BACKEND_SERVER_URL}/projectIndex`,
+                uri: `${process.env.BACKEND_SERVER_URL}/projectIndex/`,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
