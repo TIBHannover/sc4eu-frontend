@@ -269,12 +269,11 @@ export default class DrawTools {
         }
     }
 
-    __directLineFunction = d3.svg.line();
-    __curveLineFunction = d3.svg.line().interpolate('cardinal');
-    __loopLineFunction = d3.svg
+    __directLineFunction = d3.line();
+    __curveLineFunction = d3.line().curve(d3.curveCardinal);
+    __loopLineFunction = d3
         .line()
-        .interpolate('cardinal')
-        .tension(-1);
+        .curve(d3.curveCardinal.tension(0));
 
     drawDisplayName = (group, text, cfg) => {
         // 2) Label

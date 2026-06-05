@@ -342,18 +342,15 @@ export default class GraphRenderer {
                     return that.transform(pos_interpolation(t), cx, cy, that);
                 };
             })
-            .each('end', function() {
-                if (that.interactionHandler.graphInteractions.zoom) {
-                    that.graphRoot.attr(
-                        'transform',
-                        'translate(' +
-                            that.interactionHandler.graphInteractions.graphTranslation +
-                            ')scale(' +
-                            that.interactionHandler.graphInteractions.zoomFactor +
-                            ')'
-                    );
-                    that.interactionHandler.graphInteractions.zoom.translate(that.interactionHandler.graphInteractions.graphTranslation);
-                    that.interactionHandler.graphInteractions.zoom.scale(that.interactionHandler.graphInteractions.zoomFactor);
+            .on('end', function() {
+                const gi = that.interactionHandler.graphInteractions;
+
+                if (gi.zoom) {
+                    that.graphRoot.attr('transform', `translate(${gi.graphTranslation})scale(${gi.zoomFactor})`);
+
+                    const newTransform = d3.zoomIdentity.translate(gi.graphTranslation[0], gi.graphTranslation[1]).scale(gi.zoomFactor);
+
+                    that.svgRoot.call(gi.zoom.transform, newTransform);
                 }
             });
     };
@@ -659,21 +656,22 @@ export default class GraphRenderer {
 
     transform(p, cx, cy, parent) {
         if (parent) {
-            // one iteration step for the locate target animation
-            parent.interactionHandler.graphInteractions.zoomFactor = parent.svgRoot.node().getBoundingClientRect().height / p[2];
-            parent.interactionHandler.graphInteractions.graphTranslation = [
-                cx - p[0] * parent.interactionHandler.graphInteractions.zoomFactor,
-                cy - p[1] * parent.interactionHandler.graphInteractions.zoomFactor
-            ];
-            parent.interactionHandler.graphInteractions.zoom.translate(parent.interactionHandler.graphInteractions.graphTranslation);
-            parent.interactionHandler.graphInteractions.zoom.scale(parent.interactionHandler.graphInteractions.zoomFactor);
-            return (
-                'translate(' +
-                parent.interactionHandler.graphInteractions.graphTranslation +
-                ')scale(' +
-                parent.interactionHandler.graphInteractions.zoomFactor +
-                ')'
-            );
+            // Calculate zoom factor and translation
+            const zoomFactor = parent.svgRoot.node().getBoundingClientRect().height / p[2];
+            const graphTranslation = [cx - p[0] * zoomFactor, cy - p[1] * zoomFactor];
+
+            // Create the new transform using d3.zoomIdentity
+            const transform = d3.zoomIdentity.translate(graphTranslation[0], graphTranslation[1]).scale(zoomFactor);
+
+            // Apply the transform to the zoom behavior
+            parent.svgRoot.call(parent.interactionHandler.graphInteractions.zoom.transform, transform);
+
+            // Update the interaction handler's state
+            parent.interactionHandler.graphInteractions.zoomFactor = zoomFactor;
+            parent.interactionHandler.graphInteractions.graphTranslation = graphTranslation;
+
+            // Return the transform string for the SVG element
+            return transform.toString();
         }
     }
 
