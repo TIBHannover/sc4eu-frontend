@@ -10,6 +10,7 @@ import { Alert } from 'reactstrap';
 import DefaultLayout from 'Layout/DefaultLayout';
 import './assets/scss/CustomBootstrap.scss';
 import { InstallBanner } from './InstallBanner';
+import { VocabularySurveyBanner } from 'VocabularySurveyBanner';
 
 class App extends Component {
     constructor(props) {
@@ -42,6 +43,7 @@ class App extends Component {
                     )}
                     {/* Suspense is used for when the component is lazy loaded */}
                     <InstallBanner />
+                    <VocabularySurveyBanner />
                     <Suspense fallback={<div className="mt-5 mb-2 text-center">Loading...</div>}>
                         <Switch>{renderRoutes(routes)}</Switch>
                     </Suspense>
