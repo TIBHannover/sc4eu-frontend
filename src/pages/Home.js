@@ -11,7 +11,6 @@ import ROUTES from 'constants/routes';
 import { fontStyled } from '../styledComponents/styledFont';
 import { colorStyled } from '../styledComponents/styledColor';
 import Logo from '../assets/images/logo.png';
-import GoogleSurvey from '../components/GoogleSurvey';
 const digitalReferenceURL = process.env.REACT_APP_DIGITAL_REFERENCE_ONTOLOGY_URL;
 
 const CurationTxt = (
@@ -113,9 +112,6 @@ export default class Home extends Component {
                         </div>
                     </StyledBody>
                 </StyledRootDiv>
-                <StyledSurveyDiv>
-                    <GoogleSurvey />
-                </StyledSurveyDiv>
                 <Footer />
             </>
         );
@@ -354,17 +350,6 @@ const StyledEditLogo = styled.img`
     @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
         width: 220px;
         height: 160px;
-    }
-`;
-
-const StyledSurveyDiv = styled.div`
-    position: fixed;
-    display: block;
-    bottom: 80px;
-    right: 0;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
     }
 `;
 
