@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
-
 import SparqlQueryForm from './SparqlQueryForm';
-
-// Styled component for preview area (must be defined before use)
-const PreviewArea = styled.div`
-    width: 100%;
-    background: #f9fafb;
-    border-radius: 6px;
-    border: 1px solid #eee;
-    padding: 8px 0 0 0;
-`;
+import { ModalOverlay, ModalContent, SparqlQueryInputModalButton, Title, Header, ModeSwitch, SwitchButton, ContentArea, Textarea, PreviewArea, Footer } from 'styledComponents/styledComponents';
 
 const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery = '', defaultMode, defaultVisualQuery = '' }) => {
     // Always default to 'freeform' if defaultMode is not provided or is empty
@@ -84,10 +74,10 @@ const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery = '', defaul
                     {mode === 'visual' && <SparqlQueryForm open={true} onClose={onClose} onRun={q => setVisualQuery(q)} />}
                 </ContentArea>
                 <Footer>
-                    <Button onClick={onClose} style={{ marginRight: 10 }}>
+                    <SparqlQueryInputModalButton onClick={onClose} style={{ marginRight: 10 }}>
                         Cancel
-                    </Button>
-                    <Button
+                    </SparqlQueryInputModalButton>
+                    <SparqlQueryInputModalButton
                         primary
                         onClick={() => {
                             if (mode === 'freeform' || mode === 'llm') {
@@ -99,32 +89,13 @@ const SparqlQueryInputModal = ({ open, onClose, onRun, defaultQuery = '', defaul
                         disabled={mode === 'visual' && !visualQuery}
                     >
                         Run
-                    </Button>
+                    </SparqlQueryInputModalButton>
                 </Footer>
             </ModalContent>
         </ModalOverlay>
     );
 };
-const ModeSwitch = styled.div`
-    display: flex;
-    gap: 8px;
-    margin-left: auto;
-`;
 
-const SwitchButton = styled.button`
-    font-size: 1rem;
-    padding: 5px 16px;
-    background: ${props => (props.active ? '#2a7ae2' : '#eee')};
-    color: ${props => (props.active ? '#fff' : '#222')};
-    border: 1px solid #bbb;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 0;
-    transition: background 0.2s;
-    &:hover {
-        background: ${props => (props.active ? '#1a5ab8' : '#ddd')};
-    }
-`;
 
 SparqlQueryInputModal.propTypes = {
     open: PropTypes.bool.isRequired,
@@ -143,82 +114,3 @@ SparqlQueryInputModal.defaultProps = {
 
 export default SparqlQueryInputModal;
 
-const ModalOverlay = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 2100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-const ModalContent = styled.div`
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.25);
-    width: 700px;
-    max-width: 98vw;
-    min-height: 320px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-`;
-
-const Header = styled.div`
-    padding: 18px 28px 8px 28px;
-    border-bottom: 1px solid #eee;
-    background: #f8f8f8;
-`;
-
-const Title = styled.div`
-    font-size: 1.3rem;
-    font-weight: 600;
-`;
-
-const ContentArea = styled.div`
-    flex: 1;
-    padding: 18px 28px;
-    background: #f4f7fa;
-    display: flex;
-    flex-direction: column;
-`;
-
-const Textarea = styled.textarea`
-    width: 100%;
-    height: 200px;
-    font-size: 1.05rem;
-    font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
-    border: 1px solid #bbb;
-    border-radius: 6px;
-    padding: 10px;
-    resize: vertical;
-    background: #fff;
-`;
-
-const Footer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 16px 28px 18px 28px;
-    border-top: 1px solid #eee;
-    background: #f8f8f8;
-`;
-
-const Button = styled.button`
-    font-size: 1rem;
-    padding: 7px 22px;
-    background: ${props => (props.primary ? '#2a7ae2' : '#eee')};
-    color: ${props => (props.primary ? '#fff' : '#222')};
-    border: 1px solid #bbb;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 0;
-    transition: background 0.2s;
-    &:hover {
-        background: ${props => (props.primary ? '#1a5ab8' : '#ddd')};
-    }
-`;

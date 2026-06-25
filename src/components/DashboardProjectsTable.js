@@ -1,10 +1,8 @@
 import React from 'react';
 import { useTable } from 'react-table';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import ProjectMembersDropdown from './ProjectMembersDropDown';
-import { colorStyled } from '../styledComponents/styledColor';
-
+import { StyledTable } from 'styledComponents/styledComponents';
 function DashboardProjectsTable(props) {
     const columns = props.columns;
     const data = props.userProjectsDetail;
@@ -68,33 +66,3 @@ DashboardProjectsTable.propTypes = {
 
 export default DashboardProjectsTable;
 
-const StyledTable = styled.table`
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 100%;
-    border: 1px solid #ddd;
-
-    th,
-    td {
-        text-align: left;
-        padding: 16px;
-        border: 1px solid #ddd;
-    }
-
-    tr:nth-child(even) {
-        background-color: ${colorStyled.old.light};
-    }
-
-    tr:hover {
-        background-color: ${colorStyled.old.darkerSecondary};
-        color: white;
-    }
-
-    th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: center;
-        background-color: ${colorStyled.old.darkSecondary};
-        color: white;
-    }
-`;

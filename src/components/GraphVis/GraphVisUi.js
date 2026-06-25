@@ -6,8 +6,6 @@ import MapperModule from '../../GraphVisLib/implementation/MapperModule';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
 import { selectVisualNotation } from 'redux/actions/globalUI_actions';
-import styled, { keyframes } from 'styled-components';
-import { colorStyled } from 'styledComponents/styledColor';
 import html2canvas from 'html2canvas';
 import ScreenCapture from '../ScreenCapture';
 import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
@@ -15,6 +13,8 @@ import FadingNotification from '../ReusableComponents/FadingNotification';
 import { getJSON_ModelForOntologyWithQuery } from '../../network/GetOntologyData';
 import GraphVisUiQueryPopup from './GraphVisUiQueryPopup';
 import SparqlQueryInputModal from './SparqlQueryInputModal';
+import { withTheme } from '@emotion/react';
+import { StyledHeaderButton, SelectionSideBar, SelectionRightSidebar } from 'styledComponents/styledComponents';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -62,6 +62,7 @@ class GraphVisUi extends Component {
     }
 
     componentDidMount() {
+        const { theme } = this.props;
         // add a flag to check if the tab is actually active
         if (this.props.visualizationTabIsActive === false) {
             return;
@@ -82,7 +83,7 @@ class GraphVisUi extends Component {
                 node_mouseSingleClick: true,
                 node_mouseDoubleClick: true,
                 node_hasNodeSelection: true,
-                graphBgColor: colorStyled.old.lighter, // could be customizable
+                graphBgColor: theme.palette.background.default, 
                 configSelected: 'Default',
                 link_mouseDrag: true,
                 link_mouseHover: true
@@ -261,6 +262,7 @@ class GraphVisUi extends Component {
     };
 
     createDropDownForNotations = () => {
+        const { theme } = this.props;
         return (
             <div>
                 <Dropdown
@@ -274,7 +276,7 @@ class GraphVisUi extends Component {
                         }));
                     }}
                 >
-                    <DropdownToggle caret style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary, height: '35px' }}>
+                    <DropdownToggle caret style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText, height: '35px' }}>
                         Notation: {this.props.visualNotation}
                     </DropdownToggle>
                     <DropdownMenu>
@@ -427,9 +429,11 @@ class GraphVisUi extends Component {
     };
 
     render() {
+        const { theme } = this.props;
         if (this.props.visualizationTabIsActive === false) {
             return <div>This should never be visible</div>;
         }
+
         return (
             <div>
                 <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
@@ -447,8 +451,8 @@ class GraphVisUi extends Component {
                         marginBottom: '10px',
                         paddingLeft: '10px',
                         paddingRight: '10px',
-                        background: colorStyled.old.lighter,
-                        color: colorStyled.shadow,
+                        background: theme.palette.background.default,
+                        color: theme.palette.text.primary,
                         position: 'relative',
                         borderTopLeftRadius: '10px',
                         borderTopRightRadius: '10px',
@@ -478,8 +482,8 @@ class GraphVisUi extends Component {
                             this.graph.zoomToExtent();
                         }}
                         style={{
-                            backgroundColor: colorStyled.old.darkSecondary,
-                            color: colorStyled.onSecondary,
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -490,8 +494,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.old.darkSecondary,
-                            color: colorStyled.onSecondary,
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -503,8 +507,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.old.darkPrimary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.primary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -516,8 +520,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.old.darkPrimary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.primary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -529,8 +533,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.old.darkPrimary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.primary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -544,15 +548,15 @@ class GraphVisUi extends Component {
 
                 <div id="MainRenderingContainer" ref={this.componentRef}>
                     <SelectionSideBar expanded={this.state.leftSideBarExpanded}>
-                        <StyledButton
+                        <StyledHeaderButton
                             expanded={this.state.leftSideBarExpanded}
                             onClick={() => {
                                 this.setState(prevState => ({ leftSideBarExpanded: !prevState.leftSideBarExpanded }));
                             }}
-                            style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
+                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                         >
                             {this.state.leftSideBarExpanded ? '<' : '>'}
-                        </StyledButton>
+                        </StyledHeaderButton>
                         {this.state.leftSideBarExpanded && (
                             <div>
                                 <h3>Customization Options</h3>
@@ -572,7 +576,7 @@ class GraphVisUi extends Component {
                                 onClick={() => {
                                     this.setState(prevState => ({ rightSideBarExpanded: !prevState.rightSideBarExpanded }));
                                 }}
-                                style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
+                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                             >
                                 {this.state.rightSideBarExpanded ? '>' : '<'}
                             </Button>
@@ -654,69 +658,6 @@ const mapDispatchToProps = dispatch => ({
     selectVisualNotation: payload => dispatch(selectVisualNotation(payload))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GraphVisUi);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(GraphVisUi));
 
-const expandContentContainerAnimationRight = ({ expanded, width }) => {
-    return keyframes`
-        from {
-            right: ${expanded ? -width : 0}px;
-        }
-        to {
-            right: ${expanded ? 0 : -width}px;
 
-        }
-    `;
-};
-export const SelectionSideBar = styled.div`
-    position: absolute;
-    width: ${props => (props.expanded ? '350px' : '0')};
-    height: calc(100% - 140px);
-    transition: width 0.3s ease;
-    background-color: white;
-    border: ${props => (props.expanded ? '1px solid black' : 'none')};
-
-    :focus {
-        outline: none;
-    }
-
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    word-break: none;
-    white-space: nowrap;
-`;
-
-const StyledButton = styled(Button)`
-    position: absolute;
-    left: ${props => (props.expanded ? '350px' : '0px')};
-    transition: left 0.3s ease;
-`;
-
-export const SelectionRightSidebar = styled.div`
-    background-color: red;
-    border: 1px solid black;
-    color: black;
-    width: 350px;
-    height: calc(100% - 140px);
-    background: white;
-
-    :focus {
-        outline: none;
-    }
-
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    word-break: none;
-    white-space: nowrap;
-
-    border-bottom: 1px solid black;
-    padding: 2px;
-    position: relative;
-    animation-name: ${expandContentContainerAnimationRight};
-    animation-duration: 400ms;
-    // opacity: 0.5;
-    right: ${props => (props.expanded ? 0 : -props.width)}px;
-`;

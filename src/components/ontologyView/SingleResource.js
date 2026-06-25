@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
 import ResourceHeader from '../RRView/ResourceHeader';
 import ResourceBody from '../RRView/ResourceBody';
@@ -10,8 +8,9 @@ import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { GraphVisButton, WidgetVisButton, CollapsibleItem } from './StyledComponents';
-import { colorStyled } from 'styledComponents/styledColor';
 import AnnotationsDropDown from './AnnotationsDropDown';
+import { withTheme } from '@emotion/react';
+
 class SingleResource extends Component {
     constructor(props) {
         super(props);
@@ -102,6 +101,7 @@ class SingleResource extends Component {
             itemOfInterest: this.props.resourceContext,
             callback: this.updateSiblings
         };
+        const { theme } = this.props;
         return (
             <div
                 ref={this.ref}
@@ -110,8 +110,8 @@ class SingleResource extends Component {
                     marginLeft: '10px',
                     overflow: 'none',
                     display: isVisible,
-                    backgroundColor: colorStyled.old.light,
-                    color: colorStyled.shadow,
+                    backgroundColor: theme.palette.secondary.main,
+                    color: theme.palette.secondary.contrastText,
                     borderRadius: '10px 10px 0px 0px ',
                     marginBottom: '5px'
                 }}
@@ -223,4 +223,4 @@ const mapDispatchToProps = dispatch => ({
     redux_editResource: data => dispatch(redux_editResource(data))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleResource);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(SingleResource));

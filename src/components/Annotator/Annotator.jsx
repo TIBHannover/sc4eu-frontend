@@ -1,5 +1,19 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Button, TextField, Typography, CircularProgress, IconButton, Backdrop, Grid, Tooltip, Box, Switch, ButtonGroup, Link } from '@mui/material';
+import {
+    Button,
+    TextField,
+    Typography,
+    CircularProgress,
+    IconButton,
+    Backdrop,
+    Grid,
+    Tooltip,
+    Box,
+    Switch,
+    ButtonGroup,
+    Link,
+    useTheme
+} from '@mui/material';
 import Select from 'react-select';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -21,7 +35,6 @@ import {
     ErrorText,
     lightSelectStyles
 } from './styles';
-import { colorStyled } from '../../styledComponents/styledColor';
 import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
 
@@ -36,6 +49,7 @@ export const Annotator = () => {
     const [groupByAncestor, setGroupByAncestor] = useState(false);
     const [error, setError] = useState(null);
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
+    const theme = useTheme();
 
     const highlightedText = useMemo(() => {
         if (!annotatedText || matches.length === 0) return annotatedText;
@@ -174,13 +188,13 @@ export const Annotator = () => {
                             display="flex"
                             alignItems="center"
                             border="1px solid"
-                            borderColor={colorStyled.old.darkSecondary}
+                            borderColor={theme.palette.secondary.main}
                             borderRadius={2}
                             px={1}
                             py={1}
                             gap={1}
-                            backgroundColor={colorStyled.old.darkSecondary}
-                            color={colorStyled.onSecondary}
+                            backgroundColor={theme.palette.secondary.main}
+                            color={theme.palette.secondary.contrastText}
                         >
                             <Box display="flex" alignItems="center" gap={1}>
                                 <Typography variant="body2" sx={{ whiteSpace: 'nowrap', fontSize: '0.8rem' }}>
@@ -215,7 +229,7 @@ export const Annotator = () => {
                                     onChange={() => setGroupByAncestor(!groupByAncestor)}
                                     name="groupByAncestor"
                                     size="small"
-                                    style={{ backgroundColor: colorStyled.old.darkPrimary }}
+                                    style={{ backgroundColor: theme.palette.primary.main }}
                                     disabled={!annotatedText}
                                 />
                             </Box>
@@ -231,20 +245,23 @@ export const Annotator = () => {
                         variant="contained"
                         disabled
                         style={{
-                            backgroundColor: colorStyled.old.darkSecondary,
-                            color: colorStyled.onSecondary,
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText,
                             opacity: 0.5
                         }}
                     >
                         Download CSV
                     </Button>
                 ) : (
-                    <Button variant="contained" style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
+                    <Button
+                        variant="contained"
+                        style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                    >
                         <CSVLink
                             data={csvData}
                             headers={csvHeaders}
                             filename="annotations.csv"
-                            style={{ color: 'white', textDecoration: 'none', display: 'block', width: '100%' }}
+                            style={{ color: theme.palette.secondary.contrastText, textDecoration: 'none', display: 'block', width: '100%' }}
                         >
                             Download CSV
                         </CSVLink>
@@ -256,9 +273,9 @@ export const Annotator = () => {
                     onClick={exportToExcel}
                     disabled={csvData.length === 0}
                     style={{
-                        backgroundColor: colorStyled.old.darkSecondary,
-                        color: colorStyled.onSecondary,
-                        opacity: csvData.length === 0 ? 0.5 : 1,
+                        backgroundColor: theme.palette.secondary.main,
+                        color: theme.palette.secondary.contrastText,
+                        opacity: csvData.length === 0 ? 0.5 : 1
                     }}
                 >
                     Download Excel
@@ -341,20 +358,20 @@ export const Annotator = () => {
     return (
         <ContentContainer>
             <div role="main" aria-label="Text Annotator">
-                <Typography variant="h5" gutterBottom textAlign="center">
+                <Typography variant="h5" gutterBottom textAlign="center" style={{ color: theme.palette.text.primary}}>
                     Annotator
                 </Typography>
-                <Typography variant="body2" gutterBottom>
+                <Typography variant="body2" gutterBottom style={{ color: theme.palette.text.primary}}>
                     This annotator utilizes terms from Digital Reference Ontology to match input text. We generate n-grams (unigrams, bigrams,
                     trigrams, Quadgrams, Pentagrams) from the text and perform matching with a confidence score greater than 90%.
                 </Typography>
-                <Typography variant="body2" gutterBottom>
+                <Typography variant="body2" gutterBottom style={{ color: theme.palette.text.primary}}>
                     <b>Future Work:</b> Our future plans include enhancing this service with semantic annotation capabilities using Sentence-BERT
                     (SBERT), as well as integrating additional descriptive metadata.
                 </Typography>
                 {!annotatedText ? (
                     <InputContainer>
-                        <Typography variant="h6">Text To Annotate</Typography>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary}}>Text To Annotate</Typography>
                         <TextField
                             variant="outlined"
                             multiline
@@ -388,8 +405,8 @@ export const Annotator = () => {
                     </InputContainer>
                 ) : (
                     <AnnotatedText>
-                        <Typography variant="h6">Annotated Text</Typography>
-                        <ScrollableText role="region" aria-label="Annotated text with highlighted terms">
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary}}>Annotated Text</Typography>
+                        <ScrollableText role="region" aria-label="Annotated text with highlighted terms" style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary}}>
                             {highlightedText}
                         </ScrollableText>
                     </AnnotatedText>
@@ -398,7 +415,7 @@ export const Annotator = () => {
                 <ButtonContainer>
                     <Button
                         variant="contained"
-                        style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
+                        style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                         onClick={handleAnnotate}
                         disabled={isAnnotateDisabled}
                         aria-label="Annotate text"
@@ -407,7 +424,7 @@ export const Annotator = () => {
                     </Button>
                     <Button
                         variant="contained"
-                        style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
+                        style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                         onClick={handleReset}
                         disabled={isResetDisabled}
                         aria-label="Reset form"
@@ -416,7 +433,7 @@ export const Annotator = () => {
                     </Button>
                 </ButtonContainer>
 
-                <Backdrop open={isLoading} sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}>
+                <Backdrop open={isLoading} sx={{ color: theme.palette.background.default, zIndex: theme => theme.zIndex.drawer + 1 }}>
                     <CircularProgress color="inherit" />
                 </Backdrop>
 

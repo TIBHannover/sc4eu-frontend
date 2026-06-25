@@ -4,11 +4,11 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import parse from 'html-react-parser';
 import PropTypes from 'prop-types';
-import { colorStyled } from '../../styledComponents/styledColor';
 import { fontStyled } from '../../styledComponents/styledFont';
-
+import { withTheme } from '@emotion/react';
 class ShowOntologyComparisonModal extends Component {
     render() {
+        const { theme } = this.props;
         return (
             <Modal
                 style={{ width: '70%', maxWidth: '80%', height: '100%', maxHeight: '50%', fontFamily: fontStyled.fontFamily }}
@@ -23,7 +23,7 @@ class ShowOntologyComparisonModal extends Component {
                 <ModalFooter>
                     <Button
                         id="finishButton"
-                        style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
+                        style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                         onClick={() => {
                             this.props.callback();
                         }}
@@ -46,4 +46,4 @@ ShowOntologyComparisonModal.propTypes = {
 
 const mapStateToProps = state => ({});
 
-export default compose(connect(mapStateToProps))(ShowOntologyComparisonModal);
+export default compose(connect(mapStateToProps))(withTheme(ShowOntologyComparisonModal));

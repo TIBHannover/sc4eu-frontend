@@ -11,6 +11,8 @@ import DefaultLayout from 'Layout/DefaultLayout';
 import './assets/scss/CustomBootstrap.scss';
 import { InstallBanner } from './InstallBanner';
 import { VocabularySurveyBanner } from 'VocabularySurveyBanner';
+import { Experimental_CssVarsProvider } from '@mui/material/styles';
+import theme from 'styledComponents/theme';
 
 class App extends Component {
     constructor(props) {
@@ -26,28 +28,30 @@ class App extends Component {
             this.state.showBrowserWarning = true;
         }
     }
-    
+
     render() {
         // console.log(this.props.history);
         // return <div> Hello2 </div>;
 
         return (
             <ConnectedRouter history={this.props.history}>
-                {/*<ScrollToTop>*/}
-                <DefaultLayout>
-                    {this.state.showBrowserWarning && (
-                        <Alert color="danger" style={alertStyle} className="text-center">
-                            <strong>Outdated browser</strong> You are using Internet Explorer which is not supported. Please upgrade your browser for
-                            the best experience
-                        </Alert>
-                    )}
-                    {/* Suspense is used for when the component is lazy loaded */}
-                    <InstallBanner />
-                    <VocabularySurveyBanner />
-                    <Suspense fallback={<div className="mt-5 mb-2 text-center">Loading...</div>}>
-                        <Switch>{renderRoutes(routes)}</Switch>
-                    </Suspense>
-                </DefaultLayout>
+                <Experimental_CssVarsProvider theme={theme} defaultMode="system">
+                    {/*<ScrollToTop>*/}
+                    <DefaultLayout>
+                        {this.state.showBrowserWarning && (
+                            <Alert color="danger" style={alertStyle} className="text-center">
+                                <strong>Outdated browser</strong> You are using Internet Explorer which is not supported. Please upgrade your browser
+                                for the best experience
+                            </Alert>
+                        )}
+                        {/* Suspense is used for when the component is lazy loaded */}
+                        <InstallBanner />
+                        <VocabularySurveyBanner />
+                        <Suspense fallback={<div className="mt-5 mb-2 text-center">Loading...</div>}>
+                            <Switch>{renderRoutes(routes)}</Switch>
+                        </Suspense>
+                    </DefaultLayout>
+                </Experimental_CssVarsProvider>
             </ConnectedRouter>
         );
     }

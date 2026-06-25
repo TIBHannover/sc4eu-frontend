@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import { colorStyled } from '../../../styledComponents/styledColor';
 import { Box, ListItem, ListItemAvatar, Paper } from '@mui/material';
 import { getAllUsers } from '../../../network/UserProfileCalls';
 import List from '@mui/material/List';
@@ -18,7 +17,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { usePushNotifications } from '../../../hooks/usePushNotifications';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
-
+import { useTheme } from '@mui/material';
 function stringToColor(string) {
     let hash = 0;
     let i;
@@ -83,6 +82,8 @@ function getTimeDifferenceString(isoDateString) {
 }
 
 const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion, setHasUncommittedChanges }) => {
+    const theme = useTheme();
+
     const userDisplayName = user?.['displayName'];
     const [newCommentText, setNewCommentText] = useState('');
     const [comments, setComments] = useState(termComments);
@@ -105,6 +106,36 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             setUsers(users);
         });
     }, []); // Empty dependency array means this runs once on mount
+
+    const avatarStyle = {
+        marginRight: '10px'
+    };
+
+    const contentStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        flex: 1,
+        minWidth: 0
+    };
+
+    const dividerStyle = {
+        flexGrow: 1,
+        border: 'none',
+        borderBottom: '1px solid #ccc'
+    };
+
+    const authorDateStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        flexWrap: 'wrap'
+    };
+
+    const buttonStyle = {
+        borderRadius: '20px',
+        display: 'flex',
+        backgroundColor: theme.palette.secondary.main
+    };
 
     const addComment = async (author, content, mentionedUsers) => {
         const newComment = {
@@ -238,7 +269,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                         variant="contained"
                         style={{
                             ...buttonStyle,
-                            backgroundColor: newCommentText.trim() ? colorStyled.old.darkSecondary : 'gray'
+                            backgroundColor: newCommentText.trim() ? theme.palette.secondary.main : 'gray'
                         }} // Adjust styling as needed
                         onClick={() => addComment(userDisplayName, newCommentText, mentionedUsers)}
                         disabled={!newCommentText.trim()}
@@ -264,34 +295,3 @@ CommentsSection.propTypes = {
 };
 
 export default connect(mapStateToProps)(CommentsSection);
-
-// Styling
-const avatarStyle = {
-    marginRight: '10px'
-};
-
-const contentStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-    minWidth: 0
-};
-
-const dividerStyle = {
-    flexGrow: 1,
-    border: 'none',
-    borderBottom: '1px solid #ccc'
-};
-
-const authorDateStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    flexWrap: 'wrap'
-};
-
-const buttonStyle = {
-    borderRadius: '20px',
-    display: 'flex',
-    backgroundColor: colorStyled.old.darkSecondary
-};

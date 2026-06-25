@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Modal, Button, Backdrop, CircularProgress } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Box, Modal, Button, Backdrop, CircularProgress, useTheme } from '@mui/material';
 import { ThumbUp } from '@mui/icons-material';
-import { colorStyled } from '../styledComponents/styledColor';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
-
+import { StyledButton, StyledSpan } from 'styledComponents/styledComponents';
 const style = {
     position: 'fixed',
     top: '50%',
@@ -29,7 +26,7 @@ const closeBtnStyle = {
 const GoogleSurvey = () => {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-
+    const theme = useTheme();
     const handleModalToggle = () => {
         setOpen(!open);
     };
@@ -89,8 +86,8 @@ const GoogleSurvey = () => {
                         style={{
                             marginTop: '10px',
                             marginLeft: '10px',
-                            backgroundColor: colorStyled.old.darkSecondary,
-                            color: colorStyled.onSecondary
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText
                         }}
                         onClick={handleModalToggle}
                     >
@@ -104,31 +101,4 @@ const GoogleSurvey = () => {
 
 export default GoogleSurvey;
 
-const StyledButton = styled(Button)`
-    display: flex;
-    justify-content: space-around;
-    right: 60px;
-    min-width: 150px;
-    background-color: ${colorStyled.old.darkSecondary};
-    color: ${colorStyled.onSecondary};
-    color: white;
-    border-radius: 4px;
 
-    @media (max-width: 1300px) {
-        right: 50px;
-        min-width: 50px;
-    }
-
-    :hover {
-        background-color: ${colorStyled.old.darkPrimary};
-        color: ${colorStyled.onSecondary};
-    }
-`;
-
-const StyledSpan = styled('span')`
-    display: block;
-
-    @media (max-width: 1300px) {
-        display: none;
-    }
-`;

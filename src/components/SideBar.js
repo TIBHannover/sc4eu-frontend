@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import 'react-modern-drawer/dist/index.css';
-import styled from 'styled-components';
+import { useTheme } from '@mui/material';
 import ROUTES from 'constants/routes';
-import { NavLink } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import { MAX_WIDTH, StyledBadge } from '../styledComponents/styledComponents';
+import { StyledBadge } from '../styledComponents/styledComponents';
 import Cookies from 'js-cookie';
 import { connect, useSelector } from 'react-redux';
 import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
 import List from '@mui/material/List';
 import { ListItem, Tooltip } from '@mui/material';
 import Divider from '@mui/material/Divider';
@@ -51,56 +49,7 @@ import ChangesTimeline from './ondet/ChangesTimeline';
 import { useGetDiscussion } from './VocabularySupport/hooks/useGetDiscussion';
 import { getMentionedCommentsLength } from './VocabularySupport/utils/Discussions';
 import { compose } from 'redux';
-
-const StyledText = styled.span`
-    margin-left: 20px;
-    white-space: nowrap;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        margin-left: 20px;
-    }
-`;
-
-const StyledLink = styled(NavLink)`
-    width: 100%;
-    height: 40px;
-    display: inline-block;
-    border-radius: 4px;
-    padding: 7px 10px 7px 11px;
-    background: transparent;
-    color: ${colorStyled.shadow};
-    text-decoration: none !important;
-    font-size: 14px;
-    transition: background-color 0.15s ease;
-
-    :hover {
-        background-color: ${colorStyled.old.light};
-        color: ${colorStyled.shadow};
-    }
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: 30px;
-        padding: 3px 10px 10px 5px;
-    }
-`;
-
-const StyledButton = styled.button`
-    width: 100%;
-    height: 40px;
-    display: inline-block;
-    padding: 7px 100px 7px 11px;
-    background: transparent;
-    color: ${colorStyled.shadow};
-    border-radius: 4px;
-    border: none;
-    font-size: 14px;
-    transition: background-color 0.15s ease;
-
-    :hover {
-        background-color: ${colorStyled.old.light};
-        color: ${colorStyled.shadow};
-    }
-`;
+import { StyledLink, StyledText, StyledSideBarButton } from '../styledComponents/styledComponents';
 
 const SideBar = ({ isOpen, onNavigate, user }) => {
     const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
@@ -123,9 +72,10 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
         setIsActiveTab(val);
     };
 
+    const theme = useTheme();
     const ActiveStyle = {
-        backgroundColor: colorStyled.old.light,
-        color: colorStyled.shadow
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.text.primary
     };
 
     const getOntologyFileForDocumentation = async () => {
@@ -263,7 +213,7 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                             <FormatAlignJustifyOutlined color="action" />
                                             <StyledText>Text</StyledText>
                                         </StyledLink>
-                                        <StyledButton
+                                        <StyledSideBarButton
                                             title="metaData"
                                             onClick={() => {
                                                 setMetaDataModalOpen(true);
@@ -272,7 +222,7 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                         >
                                             <DiscountOutlined color="action" />
                                             <StyledText>Meta Data</StyledText>
-                                        </StyledButton>
+                                        </StyledSideBarButton>
                                         {isMetaDataModalOpen && (
                                             <MetaDataModal
                                                 toggle={() => {
@@ -281,10 +231,10 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                                 isModalOpen={isMetaDataModalOpen}
                                             />
                                         )}
-                                        <StyledButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
+                                        <StyledSideBarButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
                                             <ArticleOutlined color="action" />
                                             <StyledText>Onto Document</StyledText>
-                                        </StyledButton>
+                                        </StyledSideBarButton>
                                         {isLoadingForWidoco && (
                                             <div className="text-center text-primary" style={{ marginTop: '10px' }}>
                                                 <h6 className="h6">
@@ -297,13 +247,13 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                         )}
                                         {selectedOntology.lookup_type === 'online' || selectedOntology.lookup_type === 'online-gitlab' ? (
                                             <>
-                                                <StyledButton
+                                                <StyledSideBarButton
                                                     title="Ontology Git commit Comparison"
                                                     onClick={() => setIsOntoComparisonModalOpen(true)}
                                                 >
                                                     <DifferenceOutlined color="action" />
                                                     <StyledText>Version Compare</StyledText>
-                                                </StyledButton>
+                                                </StyledSideBarButton>
                                                 {isOntoComparisonModalOpen && (
                                                     <MaterialUIPopUp
                                                         open={isOntoComparisonModalOpen}

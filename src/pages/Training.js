@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import WhatISOntology from '../assets/images/WhatIsOntology.png';
 import EstablishMaintainOnto from '../assets/images/Establish&MaintainOnto.png';
 import SemanticWeb from '../assets/images/SemanticWeb.png';
 import SpoSemantic from '../assets/images/SPOSemanticWeb.png';
 import WEBPROTEGEIMAGE from '../assets/images/WEBPROTEGEImage.png';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import { colorStyled } from 'styledComponents/styledColor';
+import { Page, PageTitle, PageContent, StyledTrainingLink, MobileTOC, LeftSidebar, RightSidebar, RootDiv } from 'styledComponents/styledComponents';
+import { withTheme } from '@emotion/react';
 
 const items = [
     {
@@ -378,116 +376,6 @@ const documentData = [
     }
 ];
 
-const RootDiv = styled.div`
-    display: flex;
-    height: 100%;
-    overflow: hidden;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-`;
-
-const LeftSidebar = styled.div`
-    width: 25%;
-    padding: 20px;
-    overflow: hidden;
-    background-color: #f8f9fa;
-
-    h3 {
-        margin-bottom: 20px;
-        color: #333;
-        font-family: 'Roboto', sans-serif;
-    }
-
-    @media (max-width: ${MAX_WIDTH}) {
-        width: 100%;
-        padding: 10px;
-        display: none;
-    }
-`;
-
-const RightSidebar = styled.div`
-    flex-grow: 1;
-    height: 100%;
-    padding: 20px;
-    width: calc(100% - 25%);
-    background-color: #fff;
-    overflow-x: hidden;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        padding: 12px;
-        width: 100%;
-    }
-`;
-
-const MobileTOC = styled.select`
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    font-size: 16px;
-
-    @media (min-width: ${MAX_WIDTH}) {
-        display: none;
-    }
-`;
-
-const Page = styled.div`
-    margin: 0 auto 20px auto;
-    padding: 12px;
-    max-width: 900px;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    iframe {
-        width: 100%;
-        height: auto;
-        min-height: 220px;
-        aspect-ratio: 16 / 9;
-    }
-
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-`;
-
-const PageTitle = styled.h3`
-    margin-bottom: 10px;
-    color: ${colorStyled.onSurface};
-`;
-
-const PageContent = styled.p`
-    text-align: justify;
-    color: ${colorStyled.onSurfaceVariant};
-
-    a {
-        color: ${colorStyled.primary};
-    }
-`;
-
-const StyledLink = styled(Link)`
-    display: block;
-    overflow: hidden;
-    color: ${colorStyled.onSurface};
-    text-decoration: none;
-    margin-bottom: 10px;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-
-    &:hover {
-        background-color: ${colorStyled.primary}1A;
-    }
-
-    &.active {
-        background-color: ${colorStyled.primary}29;
-        font-weight: bold;
-    }
-`;
-
 class Training extends Component {
     constructor(props) {
         super(props);
@@ -532,13 +420,13 @@ class Training extends Component {
         return documentData.map(item => {
             return (
                 <li key={item.id}>
-                    <StyledLink
+                    <StyledTrainingLink
                         to={`#${item.id}`}
                         onClick={() => this.SelectedSection(item)}
                         className={selectedSection?.id === item.id ? 'active' : ''}
                     >
                         {item.heading}
-                    </StyledLink>
+                    </StyledTrainingLink>
                 </li>
             );
         });
@@ -561,11 +449,12 @@ class Training extends Component {
     );
 
     render() {
+        const { theme } = this.props;
         return (
             <RootDiv>
                 <LeftSidebar>
                     <Scrollbars style={{ height: '100%' }}>
-                        <h3 style={{ textAlign: 'center' }}>Table of Contents</h3>
+                        <h3 style={{ textAlign: 'center', color: theme.palette.text.primary }}>Table of Contents</h3>
                         <ul style={{ listStyle: 'none', padding: 0 }}>{this.renderTableOfContents()}</ul>
                     </Scrollbars>
                 </LeftSidebar>
@@ -579,4 +468,4 @@ class Training extends Component {
     }
 }
 
-export default Training;
+export default withTheme(Training);

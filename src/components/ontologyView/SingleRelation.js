@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
 import { redux_editRelation, redux_removeRelation } from '../../redux/actions/rrm_actions';
 import RelationHeader from '../RRView/RelationHeader';
@@ -10,8 +8,8 @@ import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from './CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { CollapsibleItem, GraphVisButton, WidgetVisButton } from './StyledComponents';
-import { colorStyled } from 'styledComponents/styledColor';
 import AnnotationsDropDown from './AnnotationsDropDown';
+import { withTheme } from '@emotion/react';
 
 class SingleRelation extends Component {
     constructor(props) {
@@ -120,6 +118,7 @@ class SingleRelation extends Component {
             itemOfInterest: this.props.relationContext,
             callback: this.updateSiblings
         };
+        const { theme } = this.props;
         return (
             <div
                 ref={this.ref}
@@ -130,10 +129,10 @@ class SingleRelation extends Component {
                     display: isVisible,
                     backgroundColor:
                         this.props.relationContext.type[0].toLowerCase() === 'owl:DatatypeProperty'.toLowerCase()
-                            ? colorStyled.old.main
+                            ? theme.palette.background.paper
                             : this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()
-                            ? colorStyled.old.lightMain
-                            : colorStyled.old.lighter,
+                            ? theme.palette.primary.light
+                            : theme.palette.background.default,
                     borderRadius: '10px 10px 0px 0px',
                     marginBottom: '5px'
                 }}
@@ -249,4 +248,4 @@ const mapDispatchToProps = dispatch => ({
     redux_editRelation: data => dispatch(redux_editRelation(data))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleRelation);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(SingleRelation));

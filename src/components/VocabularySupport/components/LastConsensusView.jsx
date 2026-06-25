@@ -1,5 +1,5 @@
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
-import { Box, Chip, LinearProgress, Paper, Typography } from '@mui/material';
+import { Box, Chip, LinearProgress, Paper, Typography, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -7,9 +7,9 @@ import Avatar from '@mui/material/Avatar';
 import { stringAvatar } from './CommentsSection';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { colorStyled } from '../../../styledComponents/styledColor';
 
 const LastConsensusView = ({ consensus, open, onClose }) => {
+    const theme = useTheme();
 
     const approvalPercentage = (consensus.approved_decisions / consensus.rejected_decisions) * 100;
     const consensusPassed = consensus.status === "accept";
@@ -22,7 +22,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                 <Box
                     sx={{
                         p: 3,
-                        bgcolor: colorStyled.surfaceContainerHigh,
+                        bgcolor: theme.palette.background.paper,
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 3,
@@ -85,7 +85,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                     <Paper
                         variant="outlined"
                         sx={{
-                            backgroundColor: colorStyled.old.lighter,
+                            backgroundColor: theme.palette.background.default,
                             p: 2,
                             borderRadius: 1,
                             borderColor: 'divider'
@@ -102,7 +102,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                 borderRadius: 1,
                                 bgcolor: 'grey.300',
                                 mb: 1,
-                                '& .MuiLinearProgress-bar': {
+                                '.MuiLinearProgress-bar': {
                                     bgcolor: consensus.total_decisions === 0
                                         ? 'grey.500'
                                         : 'success.main',
@@ -121,7 +121,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                             borderRadius: 1,
                             border: '1px solid',
                             borderColor: 'divider',
-                            backgroundColor: colorStyled.surface
+                            backgroundColor: theme.palette.background.default
                         }}
                     >
                         <Typography variant="subtitle1" gutterBottom>
@@ -151,7 +151,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                 sx={{
                                     mt: 1,
                                     fontStyle: 'italic',
-                                    color: colorStyled.onSurface
+                                    color: theme.palette.text.primary
                                 }}
                             >
                                 “{consensus.reason}”
@@ -165,7 +165,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                             p: 2,
                             borderRadius: 1,
                             borderColor: 'divider',
-                            backgroundColor: colorStyled.surface,
+                            backgroundColor: theme.palette.background.default,
                             maxHeight: 300,
                             overflow: 'auto'
                         }}
@@ -233,7 +233,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                             sx={{
                                                 pl: 4.5,
                                                 borderLeft: '2px solid',
-                                                borderColor: colorStyled.outlineVariant,
+                                                borderColor: theme.palette.divider,
                                                 ml: 1
                                             }}
                                         >
@@ -242,7 +242,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                                 sx={{
                                                     mt: 0.5,
                                                     fontStyle: 'italic',
-                                                    color: colorStyled.onSurface
+                                                    color: theme.palette.text.primary
                                                 }}
                                             >
                                                 “{decision.comment}”

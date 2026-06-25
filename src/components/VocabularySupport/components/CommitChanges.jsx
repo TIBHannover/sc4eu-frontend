@@ -1,11 +1,10 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert, useTheme } from '@mui/material';
 import TextField from '@material-ui/core/TextField';
 import React, { useState } from 'react';
 import { commitChanges } from '../utils/CommitChanges';
 import PropTypes from 'prop-types';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePushNotifications } from '../../../hooks/usePushNotifications';
-import { colorStyled } from 'styledComponents/styledColor';
 
 const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedChanges, user, onSuccess, onFail }) => {
     const [commitMessage, setCommitMessage] = useState('');
@@ -28,6 +27,8 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
         }
     };
 
+    const theme = useTheme();
+
     return (
         <Dialog open={openCommit} onClose={() => setOpenCommit(false)} maxWidth="xl">
             <DialogTitle>Save Changes</DialogTitle>
@@ -38,10 +39,10 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
                         severity="error"
                         sx={{
                             mb: 1,
-                            backgroundColor: colorStyled.errorContainer,
-                            color: colorStyled.error,
-                            '& .MuiAlert-icon': {
-                                color: colorStyled.error
+                            backgroundColor: theme.palette.error.main,
+                            color: theme.palette.error.contrastText,
+                            '.MuiAlert-icon': {
+                                color: theme.palette.error.contrastText
                             }
                         }}
                     >

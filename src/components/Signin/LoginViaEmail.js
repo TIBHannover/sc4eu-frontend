@@ -12,12 +12,10 @@ import error from '../../assets/images/error.png';
 import PopUp from '../PopUp';
 import github from '../../assets/images/github.svg';
 import gitlab from '../../assets/images/gitlab.svg';
-import google from '../../assets/images/google.png';
 import sapLogo from '../../assets/images/sap-logo.png';
-import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB, URL_LOGIN_VIA_GOOGLE, URL_LOGIN_VIA_SAP } from '../../constants/services';
+import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB, URL_LOGIN_VIA_SAP } from '../../constants/services';
 import { fontStyled } from '../../styledComponents/styledFont';
-import { colorStyled } from '../../styledComponents/styledColor';
-
+import { withTheme } from '@emotion/react';
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
 
@@ -152,6 +150,7 @@ class LoginViaEmail extends Component {
         if (process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'True' || process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'true') {
             // disableRegisterAndGithub = true;
         }
+        const { theme } = this.props;
         return (
             <div>
                 {this.state.openPopUp ? (
@@ -164,9 +163,9 @@ class LoginViaEmail extends Component {
                                     <div style={{ margin: '20px 20px 30px 20px' }}>
                                         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                                             <h2 style={{ marginBottom: '20px' }}>Sign In</h2>
-                                            <p className="mt-3">
+                                            <p className="mt-3" style={{ color: theme.palette.text.primary }}>
                                                 Don't have an account? &nbsp;
-                                                <Link to="" style={{ color: colorStyled.old.linkSecondary }} onClick={this.toggleSignupModel}>
+                                                <Link to="" style={{ color: theme.palette.primary.main }} onClick={this.toggleSignupModel}>
                                                     Sign Up
                                                 </Link>
                                             </p>
@@ -248,7 +247,7 @@ class LoginViaEmail extends Component {
                                                 Sign in with SAP
                                             </a>
                                         </div>
-                                        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                        <div style={{ textAlign: 'center', marginTop: '20px', color: theme.palette.text.primary }}>
                                             <hr
                                                 style={{
                                                     float: 'left',
@@ -275,9 +274,13 @@ class LoginViaEmail extends Component {
                                                 marginTop: '10px'
                                             }}
                                         >
-                                            <Label style={{ width: '90%', textAlign: 'start' }}>Email</Label>
+                                            <Label style={{ width: '90%', textAlign: 'start', color: theme.palette.text.primary }}>Email</Label>
                                             <Input
-                                                style={{ width: '90%' }}
+                                                style={{
+                                                    width: '90%',
+                                                    backgroundColor: theme.palette.background.paper,
+                                                    color: theme.palette.text.primary
+                                                }}
                                                 type="email"
                                                 name="email"
                                                 placeholder="Enter email"
@@ -293,9 +296,13 @@ class LoginViaEmail extends Component {
                                                 marginTop: '10px'
                                             }}
                                         >
-                                            <Label style={{ width: '90%', textAlign: 'start' }}>Password</Label>
+                                            <Label style={{ width: '90%', textAlign: 'start', color: theme.palette.text.primary }}>Password</Label>
                                             <Input
-                                                style={{ width: '90%' }}
+                                                style={{
+                                                    width: '90%',
+                                                    backgroundColor: theme.palette.background.paper,
+                                                    color: theme.palette.text.primary
+                                                }}
                                                 type="password"
                                                 name="password"
                                                 placeholder="Enter password"
@@ -309,8 +316,8 @@ class LoginViaEmail extends Component {
                                                 style={{
                                                     width: '90%',
                                                     marginTop: '15px',
-                                                    backgroundColor: colorStyled.old.darkSecondary,
-                                                    color: colorStyled.onSecondary
+                                                    backgroundColor: theme.palette.secondary.main,
+                                                    color: theme.palette.secondary.contrastText
                                                 }}
                                                 onClick={this.handleLogin}
                                             >
@@ -318,7 +325,7 @@ class LoginViaEmail extends Component {
                                             </Button>
                                         </div>
                                         <p style={{ textAlign: 'center' }}>
-                                            <Link to="" onClick={this.toggleResetPasswordModel} style={{ color: colorStyled.old.linkSecondary }}>
+                                            <Link to="" onClick={this.toggleResetPasswordModel} style={{ color: theme.palette.primary.main }}>
                                                 Forgot Password ?
                                             </Link>
                                         </p>
@@ -398,10 +405,16 @@ class LoginViaEmail extends Component {
                                             </div>
                                         </ModalBody>
                                         <ModalFooter>
-                                            <Button style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }} onClick={this.handleRegister}>
+                                            <Button
+                                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                                                onClick={this.handleRegister}
+                                            >
                                                 Register
                                             </Button>
-                                            <Button style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }} onClick={this.props.toggleAuthDialog}>
+                                            <Button
+                                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                                                onClick={this.props.toggleAuthDialog}
+                                            >
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
@@ -413,12 +426,17 @@ class LoginViaEmail extends Component {
                                         isOpen={this.state.resetPasswordModel}
                                         toggle={this.props.toggleAuthDialog}
                                     >
-                                        <ModalHeader toggle={this.props.toggleAuthDialog}>Reset Password</ModalHeader>
-                                        <ModalBody>
+                                        <ModalHeader
+                                            toggle={this.props.toggleAuthDialog}
+                                            style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
+                                        >
+                                            Reset Password
+                                        </ModalHeader>
+                                        <ModalBody style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
                                             <div className="container">
                                                 <Form onSubmit={this.handleSubmit}>
                                                     <FormGroup row>
-                                                        <Label for="exampleEmail" sm={2}>
+                                                        <Label for="exampleEmail" sm={2} style={{ color: theme.palette.text.primary }}>
                                                             Email
                                                         </Label>
                                                         <Col sm={10}>
@@ -428,17 +446,27 @@ class LoginViaEmail extends Component {
                                                                 placeholder="Enter Email Address"
                                                                 value={this.state.email}
                                                                 onChange={event => this.setState({ email: event.target.value })}
+                                                                style={{
+                                                                    backgroundColor: theme.palette.background.paper,
+                                                                    color: theme.palette.text.primary
+                                                                }}
                                                             />
                                                         </Col>
                                                     </FormGroup>
                                                 </Form>
                                             </div>
                                         </ModalBody>
-                                        <ModalFooter>
-                                            <Button style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }} onClick={this.handleForgotPassword}>
+                                        <ModalFooter style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
+                                            <Button
+                                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                                                onClick={this.handleForgotPassword}
+                                            >
                                                 Reset
                                             </Button>
-                                            <Button style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }} onClick={this.props.toggleAuthDialog}>
+                                            <Button
+                                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                                                onClick={this.props.toggleAuthDialog}
+                                            >
                                                 Cancel
                                             </Button>
                                         </ModalFooter>
@@ -478,7 +506,4 @@ const mapDispatchToProps = dispatch => ({
     toggleAuthDialog: () => dispatch(toggleAuthDialog())
 });
 
-export default compose(
-    connect(mapStateToProps, mapDispatchToProps)
-    // withRouter
-)(LoginViaEmail);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(withTheme(LoginViaEmail));

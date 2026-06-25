@@ -1,11 +1,10 @@
-import { Autocomplete, Button, Grid, Link, TextField, Typography, Chip } from '@mui/material';
+import { Autocomplete, Button, Grid, Link, TextField, Typography, Chip, useTheme } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MyApexChart } from './ApexChart';
 import { Tab, Tabs, Box } from '@mui/material/';
 import { ApexBarChart } from './ApexBarChart';
-import { colorStyled } from '../../styledComponents/styledColor';
 import PropTypes from 'prop-types';
 
 const wordLinks = {
@@ -254,75 +253,77 @@ export const EurostatPortal = () => {
         onClick: PropTypes.func,
     }
 
+    const theme = useTheme();
+
     return (
         <Grid container justifyContent="center" sx={{ overflow: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
             <Grid item xs={11} md={11}>
                 <Grid container justifyContent="center" sx={{ mb: 2 }}>
                     <Grid item xs={12}>
-                        <Typography variant="h5" gutterBottom textAlign="center">
+                        <Typography variant="h5" gutterBottom textAlign="center" style={{ color: theme.palette.text.primary }}>
                             EU trade data since 1988
                         </Typography>
-                        <Typography>
+                        <Typography style={{ color: theme.palette.text.primary }}>
                             This{' '}
-                            <Link href={wordLinks.application} style={{ color: '#607D8B' }}>
+                            <Link href={wordLinks.application} style={{ color: theme.palette.primary.main }}>
                                 application
                             </Link>{' '}
                             is a standardised way of querying and visualising data from the EUROSTAT database{' '}
                             <Link
                                 href="https://ec.europa.eu/eurostat/databrowser/view/ds-045409$defaultview/default/table?lang=en"
-                                style={{ color: '#607D8B' }}
+                                style={{ color: theme.palette.primary.main }}
                             >
                                 ds-045409
                             </Link>
                             . EUROSTAT describes the content of the database as:{' '}
                             <i>
                                 „International trade in goods statistics (ITGS) published by Eurostat{' '}
-                                <Link href={wordLinks.measure} style={{ color: '#607D8B' }}>
+                                <Link href={wordLinks.measure} style={{ color: theme.palette.primary.main }}>
                                     measure
                                 </Link>{' '}
                                 the value and quantity of goods traded between the EU Member States (intra-EU trade) and goods traded by the EU Member
                                 States with non-EU countries (extra-EU trade). ‘Goods’ means all movable{' '}
-                                <Link href={wordLinks.property} style={{ color: '#607D8B' }}>
+                                <Link href={wordLinks.property} style={{ color: theme.palette.primary.main }}>
                                     property
                                 </Link>{' '}
                                 including{' '}
-                                <Link href={wordLinks.electricity} style={{ color: '#607D8B' }}>
+                                <Link href={wordLinks.electricity} style={{ color: theme.palette.primary.main }}>
                                     electricity
                                 </Link>
                                 . ‘European’ means that the statistics are compiled on the basis of the concepts and definitions set out in EU
                                 legislation. ‘National’ statistics, i.e. statistics published at national level by the Member States, are compiled on the
                                 basis of national rules which may differ from EU rules. European ITGS are the official harmonised{' '}
-                                <Link href={wordLinks.source} style={{ color: '#607D8B' }}>
+                                <Link href={wordLinks.source} style={{ color: theme.palette.primary.main }}>
                                     source
                                 </Link>{' '}
                                 of information about exports, imports and the trade balances of the EU, its Member States and the euro area.“
                             </i>
                         </Typography>
                         <br />
-                        <Typography>
+                        <Typography style={{ color: theme.palette.text.primary }}>
                             We have reduced the data to those relating to the trade in{' '}
-                            <Link href={wordLinks.semiconductors} style={{ color: '#607D8B' }}>
+                            <Link href={wordLinks.semiconductors} style={{ color: theme.palette.primary.main }}>
                                 semiconductors
                             </Link>
                             . The{' '}
-                            <Link href={wordLinks.products} style={{ color: '#607D8B' }}>
+                            <Link href={wordLinks.products} style={{ color: theme.palette.primary.main }}>
                                 products
                             </Link>{' '}
                             are described via the Harmonized{' '}
-                            <Link href="https://www.trade.gov/harmonized-system-hs-codes" style={{ color: '#607D8B' }}>
+                            <Link href="https://www.trade.gov/harmonized-system-hs-codes" style={{ color: theme.palette.primary.main }}>
                                 System (HS) Code
                             </Link>
                             . This data was first mapped in the{' '}
-                            <Link href="https://gitlab.com/coypu-project/coy-ontology" style={{ color: '#607D8B' }}>
+                            <Link href="https://gitlab.com/coypu-project/coy-ontology" style={{ color: theme.palette.primary.main }}>
                                 COY ontology
                             </Link>{' '}
                             and converted into a knowledge graph. The knowledge graph forms the basis for all queries that can be visualised
                             interactively. This enables us to quickly combine, query and visualise the available data for interactive exploration.
                         </Typography>
                         <br />
-                        <Typography>
+                        <Typography style={{ color: theme.palette.text.primary }}>
                             In next steps we will enrich these data by further databases as like the{' '}
-                            <Link href="https://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html" style={{ color: '#607D8B' }}>
+                            <Link href="https://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html" style={{ color: theme.palette.primary.main }}>
                                 BACI
                             </Link>
                             .
@@ -425,7 +426,7 @@ export const EurostatPortal = () => {
                     <Grid item xs={12} sm={3} md={2}>
                         <Button
                             variant="contained"
-                            style={{ backgroundColor: colorStyled.old.darkSecondary }}
+                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                             onClick={handleSubmit}
                         >
                             Submit

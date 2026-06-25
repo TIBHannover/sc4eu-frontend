@@ -9,13 +9,13 @@ import {
     List,
     ListItemText,
     Button,
-    Chip,
     Typography,
     IconButton,
     ListItemButton,
     Tabs,
     Tab,
-    Paper
+    Paper,
+    useTheme
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { Autocomplete } from '@mui/material';
@@ -24,9 +24,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { getAutoCompleteResult, getJumpToResult } from '../VocabularySearch/api/search';
-import { colorStyled } from '../../../styledComponents/styledColor';
 
 const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm, handleCancelCreateTerm }) => {
+    const theme = useTheme();
     const [searchQuery, setSearchQuery] = useState('');
     const [autoCompleteResults, setAutoCompleteResults] = useState([]);
     const [jumpToResults, setJumpToResults] = useState([]);
@@ -192,7 +192,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                         <Autocomplete
                             freeSolo
                             options={autoCompleteResults.map(result => result.autosuggest)}
-                            PaperComponent={props => <Paper {...props} style={{ backgroundColor: '#f5f5f5' }} />}
+                            PaperComponent={props => <Paper {...props} style={{ backgroundColor: theme.palette.background.paper }} />}
                             renderInput={params => (
                                 <TextField
                                     {...params}
@@ -207,6 +207,10 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                                                 </IconButton>
                                             </React.Fragment>
                                         )
+                                    }}
+                                    sx={{
+                                        backgroundColor: theme.palette.background.paper,
+                                        color: theme.palette.text.primary
                                     }}
                                 />
                             )}
@@ -305,9 +309,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                 <Button
                     onClick={handleCancel}
                     sx={{
-                        backgroundColor: colorStyled.old.darkSecondary,
-                        color: colorStyled.onSecondary,
-                        '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
+                        backgroundColor: theme.palette.secondary.main,
+                        color: theme.palette.secondary.contrastText,
+                        '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                     }}
                 >
                     Cancel
@@ -316,9 +320,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                     onClick={handleSave}
                     variant="contained"
                     sx={{
-                        backgroundColor: colorStyled.old.darkSecondary,
-                        color: colorStyled.onSecondary,
-                        '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
+                        backgroundColor: theme.palette.secondary.main,
+                        color: theme.palette.secondary.contrastText,
+                        '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                     }}
                 >
                     {activeTab === 0 && selectedTerm ? 'Add Selected Term' : displayType === 'create' ? 'Create' : 'Save'}

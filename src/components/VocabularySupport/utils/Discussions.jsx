@@ -12,7 +12,8 @@ import {
     MenuItem,
     Menu,
     TextField,
-    Tooltip
+    Tooltip,
+    useTheme
 } from '@mui/material';
 import { IconButton, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
@@ -24,7 +25,6 @@ import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { colorStyled } from '../../../styledComponents/styledColor';
 
 const menuFilterTypes = {
     comment: 'Filter by comment text...',
@@ -101,6 +101,7 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
     const [filterAnchorEl, setFilterAnchorEl] = useState(null);
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
+    const theme = useTheme();
 
     const isWithinRange = dateParam => {
         const date = new Date(dateParam);
@@ -236,7 +237,7 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                                                     <Typography
                                                         variant="body2"
                                                         sx={{
-                                                            color: colorStyled.old.darkSecondary,
+                                                            color: theme.palette.secondary.contrastText,
                                                             cursor: 'pointer',
                                                             display: 'inline-block'
                                                         }}

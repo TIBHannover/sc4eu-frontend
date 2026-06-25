@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, IconButton, CircularProgress, TextField } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, IconButton, CircularProgress, TextField, useTheme } from '@mui/material';
 import { Cancel as RejectedIcon, ThumbUpAltOutlined, ThumbDownAltOutlined } from '@mui/icons-material';
 import { updateExpertDecision } from '../../../network/TermVoteCalls';
-import { colorStyled } from '../../../styledComponents/styledColor';
 
 /**
  * Props
@@ -13,6 +12,8 @@ import { colorStyled } from '../../../styledComponents/styledColor';
  * onVote        : (choice) => void // called when user votes (agree/disagree)
  */
 const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) => {
+    const theme = useTheme();
+
     const approvedCount = term.decisions.filter(e => e.choice === 'approved').length;
     const rejectedCount = term.decisions.filter(e => e.choice === 'rejected').length;
     const votedUsers = term.decisions.filter(expert => expert.choice !== null);
@@ -52,10 +53,10 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                 maxWidth="sm"
                 fullWidth
                 sx={{
-                    '& .MuiDialog-paper': {
+                    '.MuiDialog-paper': {
                         borderRadius: '12px',
                         boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                        bgcolor: colorStyled.surfaceContainerHigh
+                        bgcolor: theme.palette.background.paper
                     }
                 }}
             >
@@ -64,8 +65,8 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        bgcolor: colorStyled.primaryContainer,
-                        color: colorStyled.onPrimaryContainer,
+                        bgcolor: theme.palette.primary.main,
+                        color: theme.palette.primary.contrastText,
                         px: 3,
                         py: 2
                     }}
@@ -79,7 +80,7 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                         onClick={handleClose}
                         size="small"
                         sx={{
-                            color: colorStyled.primaryContainer,
+                            color: theme.palette.primary.main,
                             '&:hover': { bgcolor: 'rgba(0,0,0,0.05)' }
                         }}
                     >
@@ -89,12 +90,12 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
 
                 <DialogContent dividers sx={{ p: 3 }}>
                     <Box mb={2}>
-                        <Typography variant="h5" fontWeight="bold" gutterBottom color={colorStyled.onSurface}>
+                        <Typography variant="h5" fontWeight="bold" gutterBottom color={theme.palette.text.primary}>
                             {term.label || 'What do you think?'}
                         </Typography>
 
                         {term.description && (
-                            <Typography variant="body1" color={colorStyled.onSurface} paragraph>
+                            <Typography variant="body1" color={theme.palette.text.primary} paragraph>
                                 {term.description}
                             </Typography>
                         )}
@@ -106,8 +107,8 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                         alignItems="center"
                         gap={2}
                         sx={{
-                            bgcolor: colorStyled.surfaceContainerLow,
-                            border: `1px solid ${colorStyled.outlineVariant}`,
+                            bgcolor: theme.palette.background.default,
+                            border: `1px solid ${theme.palette.divider}`,
                             p: 2,
                             borderRadius: '8px',
                             mb: 3
@@ -121,13 +122,13 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                         </Typography>
                     </Box>
 
-                    <Typography variant="body2" color={colorStyled.onSurface} align="center" mb={2}>
+                    <Typography variant="body2" color={theme.palette.text.primary} align="center" mb={2}>
                         Just 1 click to vote
                     </Typography>
 
                     <Box sx={{ 
-                        backgroundColor: colorStyled.surfaceContainerLow,
-                        color: colorStyled.onSurface
+                        backgroundColor: theme.palette.background.default,
+                        color: theme.palette.text.primary
                     }}>
                         <TextField
                             label="Comment (Optional)"
@@ -161,9 +162,9 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                             px: 4,
                             py: 1.5,
                             fontWeight: 'bold',
-                            bgcolor: colorStyled.old.darkSecondary,
+                            bgcolor: theme.palette.secondary.main,
                             '&:hover': {
-                                bgcolor: `${colorStyled.old.darkSecondary}BF`,
+                                bgcolor: `${theme.palette.secondary.main}BF`,
                             }
                         }}
                     >
@@ -180,8 +181,8 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
                             px: 4,
                             py: 1.5,
                             fontWeight: 'bold',
-                            bgcolor: colorStyled.error,
-                            '&:hover': { bgcolor: `${colorStyled.error}BF`, color: colorStyled.onError }
+                            bgcolor: theme.palette.error.main,
+                            '&:hover': { bgcolor: `${theme.palette.error.main}BF`, color: theme.palette.error.contrastText }
                         }}
                     >
                         Not Agree

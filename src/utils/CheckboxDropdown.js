@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
 import PropTypes from 'prop-types';
+import { DropdownSpan, DropdownContainer, DropdownButton, StyledCheckdropdownDropdownMenu, StyledDropdownItem, Checkbox, StyledCheckDropdownLabel } from 'styledComponents/styledComponents';
 
 const CheckboxDropdown = ({ options, defaultOptions = [], title, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -51,94 +50,32 @@ const CheckboxDropdown = ({ options, defaultOptions = [], title, onChange }) => 
     return (
         <DropdownContainer ref={dropdownRef}>
             <DropdownButton onClick={handleToggleDropdown}>
-                <span>
+                <DropdownSpan>
                     {title} ({selectedOptions.length} selected)
-                </span>
-                <span>{isOpen ? '▲' : '▼'}</span>
+                </DropdownSpan>
+                <DropdownSpan>{isOpen ? '▲' : '▼'}</DropdownSpan>
             </DropdownButton>
 
             {isOpen && (
-                <DropdownMenu>
+                <StyledCheckdropdownDropdownMenu>
                     {options.map((option, index) => (
-                        <DropdownItem key={index}>
+                        <StyledDropdownItem key={index}>
                             <Checkbox
                                 type="checkbox"
                                 id={`option-${index}`}
                                 checked={selectedOptions.includes(option)}
                                 onChange={() => handleCheckboxChange(option)}
                             />
-                            <Label htmlFor={`option-${index}`}>{option}</Label>
-                        </DropdownItem>
+                            <StyledCheckDropdownLabel htmlFor={`option-${index}`}>{option}</StyledCheckDropdownLabel>
+                        </StyledDropdownItem>
                     ))}
-                </DropdownMenu>
+                </StyledCheckdropdownDropdownMenu>
             )}
         </DropdownContainer>
     );
 };
 
 export default CheckboxDropdown;
-
-const DropdownContainer = styled.div`
-    position: relative;
-    width: 250px;
-    margin: 10px;
-`;
-
-const DropdownButton = styled.button`
-    width: 100%;
-    padding: 8px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: ${colorStyled.background};
-    border: 1px solid ${colorStyled.old.darkPrimary};
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-
-    &:hover {
-        background-color: ${colorStyled.old.light};
-    }
-`;
-
-const DropdownMenu = styled.div`
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: ${colorStyled.background};
-    border: 1px solid ${colorStyled.old.darkPrimary};
-    border-radius: 4px;
-    margin-top: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-`;
-
-const DropdownItem = styled.div`
-    padding: 8px 12px;
-    border-bottom: 1px solid ${colorStyled.old.lighter};
-    display: flex;
-    align-items: center;
-
-    &:last-child {
-        border-bottom: none;
-    }
-
-    &:hover {
-        background-color: ${colorStyled.old.lighter};
-    }
-`;
-
-const Checkbox = styled.input`
-    margin-right: 8px;
-    cursor: pointer;
-`;
-
-const Label = styled.label`
-    cursor: pointer;
-    flex-grow: 1;
-    margin: 0;
-`;
 
 CheckboxDropdown.propTypes = {
     options: PropTypes.arrayOf(PropTypes.string).isRequired,

@@ -3,32 +3,14 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, FormGroup, Input } from 'reactstrap';
-import styled from 'styled-components';
+import { FormGroup, Input } from 'reactstrap';
 import { getAllCommits, getRawUrlforCommit } from '../../network/GithubAPICalls';
 import { getGitlabCommits, getRawUrlForGitlabCommit } from '../../network/GitlabAPICalls';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { fontStyled } from '../../styledComponents/styledFont';
-import { colorStyled } from '../../styledComponents/styledColor';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { getOntologyComparison } from '../../network/GetOntologyData';
 import parse from 'html-react-parser';
-
-const ModalFooter = styled.div`
-    height: 60px;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    border-top: 1px solid #ccc;
-`;
-
-const CloseButton = styled(Button)`
-    float: right;
-    font-weight: bold;
-`;
-
+import { HeadingSpan, ShowComparisonButton, ModalFooter, CloseButton } from 'styledComponents/styledComponents';
 class OntoComparisonModal extends React.Component {
     constructor(props) {
         super(props);
@@ -232,21 +214,3 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(OntoComparisonModal);
-
-const ShowComparisonButton = styled(Button)`
-    margin: 5px;
-    font-size: ${fontStyled.fontSize.NormalText};
-    background-color: ${colorStyled.old.darkSecondary};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const HeadingSpan = styled.span`
-    font-size: 16px;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: 12px;
-    }
-`;

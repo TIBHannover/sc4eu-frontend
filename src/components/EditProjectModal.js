@@ -1,12 +1,10 @@
-import { Button, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { Button, FormGroup, Input, Label, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { editProject } from '../network/projectIndexing';
-import { colorStyled } from '../styledComponents/styledColor';
-import { fontStyled } from '../styledComponents/styledFont';
-
-export default class EditProjectModal extends Component {
+import { withTheme } from '@emotion/react';
+import { AutoModal } from 'styledComponents/styledComponents';
+class EditProjectModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -49,9 +47,9 @@ export default class EditProjectModal extends Component {
     };
 
     render() {
-        const { onClose, project } = this.props;
+        const { onClose, project, theme } = this.props;
         return (
-            <Modal style={{ width: '80%', fontFamily: fontStyled.fontFamily }} isOpen={!!project} toggle={onClose}>
+            <AutoModal isOpen={!!project} toggle={onClose}>
                 <ModalHeader>Edit Project</ModalHeader>
                 <ModalBody>
                     <FormGroup>
@@ -61,6 +59,7 @@ export default class EditProjectModal extends Component {
                             name="projectName"
                             value={this.state.projectName}
                             onChange={e => this.setState({ projectName: e.target.value })}
+                            style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary}}
                         />
                     </FormGroup>
                     <FormGroup>
@@ -70,6 +69,7 @@ export default class EditProjectModal extends Component {
                             name="projectDescription"
                             value={this.state.projectDescription}
                             onChange={e => this.setState({ projectDescription: e.target.value })}
+                            style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary}}
                         />
                     </FormGroup>
                     <FormGroup>
@@ -80,6 +80,7 @@ export default class EditProjectModal extends Component {
                             value={this.state.accessType}
                             onChange={e => this.setState({ accessType: e.target.value })}
                             disabled={this.state.isDropdownDisabled}
+                            style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary}}
                         >
                             <option value="">Select Access Type...</option>
                             <option value="Public">Public</option>
@@ -91,14 +92,14 @@ export default class EditProjectModal extends Component {
                     </FormGroup>
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={this.handleSubmit} style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
+                    <Button onClick={this.handleSubmit} style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}>
                         Submit
                     </Button>
-                    <Button onClick={this.handleCancel} style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
+                    <Button onClick={this.handleCancel} style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}>
                         Cancel
                     </Button>
                 </ModalFooter>
-            </Modal>
+            </AutoModal>
         );
     }
 }
@@ -108,3 +109,5 @@ EditProjectModal.propTypes = {
     onUpdate: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired
 };
+
+export default withTheme(EditProjectModal);

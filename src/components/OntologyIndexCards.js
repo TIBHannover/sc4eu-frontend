@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import OntologyCard from './OntologyCard';
 import { withCookies } from 'react-cookie';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
-
+import { StyledProjectsGrid, StyledScrollbarDiv } from 'styledComponents/styledComponents';
 class OntologyIndexCards extends Component {
     renderOntologyCards() {
         const { ontologies, currentUser, reloadAfterUpdate } = this.props;
@@ -54,35 +52,3 @@ OntologyIndexCards.propTypes = {
 
 export default withCookies(OntologyIndexCards);
 
-const StyledProjectsGrid = styled.div`
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
-    width: 100%;
-    min-height: 100%;
-
-    /* For screens that can fit 3 cards (min-width: 300px * 3 + gap * 2 + padding * 2) */
-    @media (min-width: 980px) {
-        justify-content: flex-start;
-    }
-
-    /* For screens that can fit 4 cards */
-    @media (min-width: 1300px) {
-        justify-content: flex-start;
-    }
-
-    /* For screens that can fit 5 cards */
-    @media (min-width: 1620px) {
-        justify-content: flex-start;
-    }
-`;
-
-const StyledScrollbarDiv = styled.div`
-    height: calc(100vh - 200px); /* Adjust 200px based on your header + footer height */
-    width: 100%;
-    border-top: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
-    border-bottom: 0.01rem solid ${colorStyled.SCROLLBAR_BORDER_COLOR};
-    overflow: hidden; /* Hide outer scrollbar */
-`;

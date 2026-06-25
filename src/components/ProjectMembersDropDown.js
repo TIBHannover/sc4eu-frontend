@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
+import { Dropdown, DropdownItem, DropdownToggle } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import AddProjectUserModal from './Modals/AddProjectUser';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import styled from 'styled-components';
 import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
+import { useTheme } from '@mui/material';
+import { StyledDropdownMenu } from 'styledComponents/styledComponents';
 
 function ProjectMembersDropdown(props, { ...args }) {
     const projectUsers = props.projectUsers;
     const projectUUID = props.projectUUID;
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [addUserPopupOpen, setAddUserPopupOpen] = useState(false);
+    const theme = useTheme();
 
     const toggle = () => {
         setDropdownOpen(!dropdownOpen);
@@ -30,13 +31,13 @@ function ProjectMembersDropdown(props, { ...args }) {
                 </DropdownToggle>
                 <StyledDropdownMenu {...args}>
                     <DropdownItem style={{ padding: '0.5rem 0.1rem', width: '100%', backgroundColor: 'lightgray' }}>
-                        <div style={{ marginLeft: '3%', float: 'left', fontWeight: 500, color: `${colorStyled.old.darkSecondary}` }}>
+                        <div style={{ marginLeft: '3%', float: 'left', fontWeight: 500, color: `${theme.palette.secondary.main}` }}>
                             Project Members
                         </div>
                         <FontAwesomeIcon
                             icon={faUserPlus}
                             size={'lg'}
-                            color={colorStyled.old.darkerSecondary}
+                            color={theme.palette.text.primary}
                             title={'Click to add new user'}
                             style={{ float: 'right', marginRight: '1%' }}
                             onClick={() => {
@@ -62,7 +63,7 @@ function ProjectMembersDropdown(props, { ...args }) {
                                         <FontAwesomeIcon
                                             icon={faTrash}
                                             size={'1x'}
-                                            color={colorStyled.old.darkerSecondary}
+                                            color={theme.palette.text.primary}
                                             title={'Click to unregister this user from this Project'}
                                             style={{ float: 'right', marginRight: '3%' }}
                                             onClick={() => {
@@ -90,8 +91,3 @@ ProjectMembersDropdown.propTypes = {
 
 export default ProjectMembersDropdown;
 
-const StyledDropdownMenu = styled(DropdownMenu)`
-    padding: 0 !important;
-    width: 100%;
-    margin: 0 !important;
-`;

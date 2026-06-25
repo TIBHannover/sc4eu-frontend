@@ -4,30 +4,11 @@ import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { faChevronCircleDown, faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
-import { Button, Card, CardBody, Collapse, Table } from 'reactstrap';
-import styled from 'styled-components';
-import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { fontStyled } from '../../styledComponents/styledFont';
-import { MIN_WIDTH_FOR_MONITOR, SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
-import { colorStyled } from '../../styledComponents/styledColor';
+import { Card, CardBody, Collapse, Table } from 'reactstrap';
 import Tippy from '@tippyjs/react';
 import { getBranchFromUrl, getLicense } from '../../network/GithubAPICalls';
 import { getGitlabBranchFromUrl, getGitlabLicense } from '../../network/GitlabAPICalls';
-
-const ModalFooter = styled.div`
-    height: 60px;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    border-top: 1px solid #ccc;
-`;
-
-const CloseButton = styled(Button)`
-    float: right;
-    font-weight: bold;
-`;
-
+import { StyledMetaDataButton, StyledMetaDataIcon, HeadingSpan, ModalFooter, CloseButton } from 'styledComponents/styledComponents';
 class MetaDataModal extends React.Component {
     constructor(props) {
         super(props);
@@ -160,10 +141,10 @@ class MetaDataModal extends React.Component {
             if (key === 'metaDescriptions') {
                 return (
                     <div key={'metaInformation_' + key} className="root" style={{ padding: '0 10px' }}>
-                        <StyledButton onClick={() => this.toggleMetaInformation()}>
-                            <StyledIcon icon={this.state.collapseMetaInfo ? faChevronCircleRight : faChevronCircleDown} />
+                        <StyledMetaDataButton onClick={() => this.toggleMetaInformation()}>
+                            <StyledMetaDataIcon icon={this.state.collapseMetaInfo ? faChevronCircleRight : faChevronCircleDown} />
                             Meta Information
-                        </StyledButton>
+                        </StyledMetaDataButton>
                         <Collapse isOpen={!this.state.collapseMetaInfo}>
                             <Card>
                                 <CardBody>
@@ -178,10 +159,10 @@ class MetaDataModal extends React.Component {
             } else if (key === 'prefixList') {
                 return (
                     <div key={'prefixList' + key} className="root" style={{ padding: '0 10px' }}>
-                        <StyledButton onClick={() => this.toggle()}>
-                            <StyledIcon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} />
+                        <StyledMetaDataButton onClick={() => this.toggle()}>
+                            <StyledMetaDataIcon icon={this.state.collapse ? faChevronCircleRight : faChevronCircleDown} />
                             Ontology Prefixes
-                        </StyledButton>
+                        </StyledMetaDataButton>
                         <Collapse isOpen={!this.state.collapse}>
                             <Card>
                                 <CardBody style={{ padding: '0 5px' }}>
@@ -260,10 +241,10 @@ class MetaDataModal extends React.Component {
                                 {this.props.selectedOntology.lookup_type === 'online' ||
                                 this.props.selectedOntology.lookup_type === 'online-gitlab' ? (
                                     <div style={{ padding: '0 10px' }}>
-                                        <StyledButton onClick={() => this.toggleGitCollapse()}>
-                                            <StyledIcon icon={this.state.gitCollapse ? faChevronCircleRight : faChevronCircleDown} />
+                                        <StyledMetaDataButton onClick={() => this.toggleGitCollapse()}>
+                                            <StyledMetaDataIcon icon={this.state.gitCollapse ? faChevronCircleRight : faChevronCircleDown} />
                                             {this.props.selectedOntology.lookup_type === 'online' ? 'Github' : 'Gitlab'}
-                                        </StyledButton>
+                                        </StyledMetaDataButton>
                                         <Collapse isOpen={!this.state.gitCollapse}>
                                             <Table striped>
                                                 <tbody>
@@ -327,31 +308,3 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps)(MetaDataModal);
-
-const HeadingSpan = styled.span`
-    font-size: 16px;
-`;
-
-const StyledIcon = styled(Icon)`
-    font-size: ${fontStyled.fontSize.NormalText};
-    margin-right: 5px;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledButton = styled(Button)`
-    margin-top: 5px;
-    height: 40px;
-    width: 100%;
-    text-align: left;
-    font-weight: bold;
-    font-size: ${fontStyled.fontSize.NormalText};
-    background-color: ${colorStyled.old.darkSecondary};
-    color: ${colorStyled.onSecondary};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;

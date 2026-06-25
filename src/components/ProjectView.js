@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import styled from 'styled-components';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
-import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import ProjectCard from './ProjectCard';
 import CreateProjectModal from './CreateProjectModal';
 import EditProjectModal from './EditProjectModal';
@@ -19,6 +13,7 @@ import { getAllProjects, deleteProject } from '../network/projectIndexing';
 import { getUserProjects } from '../network/UserProfileCalls';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
+import { StyledProjectsViewRootDiv, StyledSubHeadingDiv, StyledInfoSpan, StyledButtonProjectAndOntologyUpload, StyledIcon, StyledScrollbarDiv, StyledProjectsGrid } from 'styledComponents/styledComponents';
 
 class ProjectView extends Component {
     constructor(props) {
@@ -308,7 +303,7 @@ class ProjectView extends Component {
         const defaultOptions = ['Digital Reference Collection', 'Sandbox Collection'];
 
         return (
-            <StyledRootDiv>
+            <StyledProjectsViewRootDiv>
                 <StyledSubHeadingDiv>
                     <CheckboxDropdown
                         defaultOptions={defaultOptions}
@@ -319,7 +314,7 @@ class ProjectView extends Component {
                     <StyledInfoSpan style={{ margin: '15px 15px 15px 15px', float: 'left' }}>
                         Click on one of the projects below to view its ontologies
                     </StyledInfoSpan>
-                    <StyledButtonToAddProject
+                    <StyledButtonProjectAndOntologyUpload
                         disabled={this.state.canNotAddProject}
                         title={this.state.canNotAddProject ? 'Only Project Admin and System Admin can add projects' : 'Click to add new Project'}
                         onClick={() => {
@@ -327,7 +322,7 @@ class ProjectView extends Component {
                         }}
                     >
                         Add New Project
-                    </StyledButtonToAddProject>
+                    </StyledButtonProjectAndOntologyUpload>
                     <CreateProjectModal
                         showDialog={this.state.showCreateProjectModal}
                         toggle={() => {
@@ -364,7 +359,6 @@ class ProjectView extends Component {
                                 <span style={{ marginLeft: '10px' }}>
                                     <StyledIcon
                                         icon={faEnvelope}
-                                        color={colorStyled.old.darkerSecondary}
                                         onClick={() => {
                                             this.setState({ showEmailModal: true });
                                         }}
@@ -404,7 +398,7 @@ class ProjectView extends Component {
                     title="Delete Project"
                     contentText={`Are you sure you want to delete project "${this.state.projectToDelete?.name}"? This action cannot be undone.`}
                 />
-            </StyledRootDiv>
+            </StyledProjectsViewRootDiv>
         );
     }
 }
@@ -433,87 +427,3 @@ ProjectView.propTypes = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
 
-const StyledProjectsGrid = styled.div`
-    display: flex;
-    justify-content: center;
-    margin: 2px;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding-bottom: 20px;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        gap: 10px;
-        padding: 10px;
-        justify-content: center;
-        width: 100%;
-    }
-`;
-
-const StyledRootDiv = styled.div`
-    width: 100%;
-    margin-left: auto;
-    background-color: ${colorStyled.old.lighter};
-    margin-top: 0.5%;
-    height: calc(100vh - 100px); /* Adjust for the header height */
-    margin-right: 2%;
-    font-family: ${fontStyled.fontFamily};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        margin-right: 0;
-        margin-left: 0;
-        min-height: calc(100vh - 80px); 
-    }
-`;
-
-const StyledSubHeadingDiv = styled.div`
-    height: 100px;
-    
-    @media (max-width: ${MAX_WIDTH}) {
-        height: auto;
-        padding: 10px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-`;
-
-const StyledInfoSpan = styled.span`
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-        margin: 5px 0;
-        display: block;
-    }
-    
-`;
-
-const StyledButtonToAddProject = styled(Button)`
-    margin: 10px 15px 15px 0px;
-    background-color: ${colorStyled.old.darkSecondary};
-    color: ${colorStyled.onSecondary};
-    font-size: ${fontStyled.fontSize.NormalText};
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-        float: right;
-    }
-`;
-
-const StyledIcon = styled(FontAwesomeIcon)`
-    cursor: pointer;
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledScrollbarDiv = styled.div`
-    height: calc(100% - 100px); /* Subtract StyledSubHeadingDiv height */
-    border-top: 0.01rem solid ${colorStyled.outline};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: calc(100% - 120px); 
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-`;

@@ -8,8 +8,6 @@ import success from '../assets/images/success.png';
 import error from '../assets/images/error.png';
 import { setNewPassword } from '../network/loginCalls';
 import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
-
 class ResetPassword extends Component {
     constructor(props) {
         super(props);
@@ -64,6 +62,7 @@ class ResetPassword extends Component {
     };
 
     render() {
+         
         return (
             <div className="container" style={{ marginTop: '50px', fontFamily: fontStyled.fontFamily }}>
                 {this.state.redirectToHome ? <Redirect to="/" /> : <div />}
@@ -106,7 +105,7 @@ class ResetPassword extends Component {
                         </FormGroup>
                         <FormGroup check row>
                             <Col sm={{ offset: 2 }}>
-                                <Button onClick={this.handleSetNewPassword} style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
+                                <Button onClick={this.handleSetNewPassword}>
                                     Submit
                                 </Button>
                             </Col>

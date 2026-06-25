@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import { Col, Container, FormGroup, Input, Label, Button } from 'reactstrap';
-// import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-// import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyledGravatar } from '../styledComponents/styledComponents';
 import { updateUserSettings } from '../network/UserProfileCalls';
 import { redux_updateUserSettings } from '../redux/actions/auth';
-import { colorStyled } from '../styledComponents/styledColor';
-
+import { withTheme } from '@emotion/react';
 class UserViewDetails extends Component {
     constructor(props) {
         super(props);
@@ -22,7 +19,7 @@ class UserViewDetails extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {}
 
     createEditableEntryFor = (label, selector, obj) => {
-        // create a line for user to edit with a save button too;
+        const { theme } = this.props;
         return (
             <FormGroup row>
                 <Label for="exampleEmail" sm={2}>
@@ -58,7 +55,7 @@ class UserViewDetails extends Component {
                             newState[selector] = obj[selector];
                             this.setState(newState);
                         }}
-                        style={{ marginLeft: '10px', backgroundColor: colorStyled.old.darkSecondary }}
+                        style={{ marginLeft: '10px', backgroundColor: theme.palette.secondary.main }}
                     >
                         Reset
                     </Button>
@@ -72,7 +69,7 @@ class UserViewDetails extends Component {
                             this.props.redux_updateUserSettings({ user: { displayName: obj[selector] } });
                             this.setState(newState);
                         }}
-                        style={{ marginLeft: '10px', backgroundColor: colorStyled.old.darkSecondary }}
+                        style={{ marginLeft: '10px', backgroundColor: theme.palette.secondary.main }}
                     >
                         Save
                     </Button>
@@ -121,4 +118,4 @@ UserViewDetails.propTypes = {
     redux_updateUserSettings: PropTypes.func.isRequired
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserViewDetails);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(UserViewDetails));
