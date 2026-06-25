@@ -8,9 +8,9 @@ import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon, FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { addUserToProject } from '../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { colorStyled } from '../styledComponents/styledColor';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
-import styled from 'styled-components';
+import { withTheme } from '@emotion/react';
+import { CustomDropdownItem } from 'styledComponents/styledComponents';
 
 class DashboardItem extends Component {
     constructor(props) {
@@ -199,6 +199,7 @@ class DashboardItem extends Component {
         const availableProjects = this.props.projects.filter(
             project => !this.state.selectedProjectOptions.some(selectedProject => selectedProject?.value === project.value)
         );
+        const { theme } = this.props;
         return (
             <>
                 <td>{user.display_name}</td>
@@ -231,7 +232,7 @@ class DashboardItem extends Component {
                                                     hidden={this.state.roleValue?.value === option.value}
                                                     icon={faPlus}
                                                     size={'1x'}
-                                                    color={colorStyled.old.darkerSecondary}
+                                                    color={theme.palette.text.primary}
                                                     title={'Click to change user role'}
                                                     style={{ float: 'right', marginRight: '3%' }}
                                                 />
@@ -274,7 +275,7 @@ class DashboardItem extends Component {
                                                         <FontAwesomeIcon
                                                             icon={faPlus}
                                                             size={'1x'}
-                                                            color={colorStyled.old.darkerSecondary}
+                                                            color={theme.palette.text.primary}
                                                             title={'Click to add new project to this user'}
                                                             style={{ float: 'right', marginRight: '3%' }}
                                                             onClick={() => this.addNewProjectFromUser(user, project)}
@@ -309,7 +310,7 @@ class DashboardItem extends Component {
                                                         <FontAwesomeIcon
                                                             icon={faTrash}
                                                             size={'1x'}
-                                                            color={colorStyled.old.darkerSecondary}
+                                                            color={theme.palette.text.primary}
                                                             title={'Click to unregister this user from this Project'}
                                                             style={{ float: 'right', marginRight: '3%' }}
                                                             onClick={() => this.deleteProjectFromUser(item, user)}
@@ -385,14 +386,5 @@ const mapStateToProps = state => ({
     user: state.auth.user
 });
 
-export default compose(connect(mapStateToProps))(DashboardItem);
+export default compose(connect(mapStateToProps))(withTheme(DashboardItem));
 
-const CustomDropdownItem = styled(DropdownItem)`
-    &&& {
-        padding-left: 0;
-        padding-right: 0;
-        margin-left: 0;
-        margin-right: 0;
-        text-align: center;
-    }
-`;

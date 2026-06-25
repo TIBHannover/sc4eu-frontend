@@ -1,42 +1,41 @@
 import React, { Component } from 'react';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import styled from 'styled-components';
-import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
+import { withTheme } from '@emotion/react'
+import { StyledImprintDiv, StyledImprintText, StyledLinkH5 } from 'styledComponents/styledComponents';
 
-export default class Imprint extends Component {
+class Imprint extends Component {
     render() {
+        const { theme } = this.props;
         return (
             <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
-                <StyledDiv>
-                    <h3 style={{ textAlign: 'center', color: colorStyled.onSurface }}>Imprint</h3>
-                    <StyledText>Imprint for this website ‐ also serves as provider identification according to § 5 Telemediengesetz (TMG)</StyledText>
-                    <h5 style={{ color: colorStyled.onSurface }}>Provider:</h5>
-                    <StyledText>
+                <StyledImprintDiv>
+                    <h3 style={{ textAlign: 'center', color: theme.palette.text.primary }}>Imprint</h3>
+                    <StyledImprintText>Imprint for this website ‐ also serves as provider identification according to § 5 Telemediengesetz (TMG)</StyledImprintText>
+                    <StyledLinkH5>Provider:</StyledLinkH5>
+                    <StyledImprintText>
                         Technische Informationsbibliothek (TIB)
                         <br />
                         Welfengarten 1 B, 30167 Hannover
                         <br />
                         Postfach 6080, 30060 Hannover
                         <br />
-                    </StyledText>
+                    </StyledImprintText>
 
-                    <h5 style={{ color: colorStyled.onSurface }}>Authorised Representative:</h5>
+                    <StyledLinkH5>Authorised Representative:</StyledLinkH5>
 
-                    <StyledText>
+                    <StyledImprintText>
                         Prof. Dr. Sören Auer (Director of TIB)
                         <br />
                         Technische Informationsbibliothek (TIB) is a foundation of public law of the state of Lower Saxony.
                         <br />
-                    </StyledText>
+                    </StyledImprintText>
 
-                    <h5 style={{ color: colorStyled.onSurface }}>Responsible Supervisory Authority:</h5>
+                    <StyledLinkH5>Responsible Supervisory Authority:</StyledLinkH5>
 
-                    <StyledText>Ministry for Science and Culture of Lower Saxony</StyledText>
+                    <StyledImprintText>Ministry for Science and Culture of Lower Saxony</StyledImprintText>
 
-                    <h5 style={{ color: colorStyled.onSurface }}>Contact:</h5>
+                    <StyledLinkH5>Contact:</StyledLinkH5>
 
-                    <StyledText>
+                    <StyledImprintText>
                         Customer service phone : +49 511 762-8989
                         <br />
                         Central information desk phone : +49 511 762-2268
@@ -44,58 +43,38 @@ export default class Imprint extends Component {
                         Fax : +49 511 762-4076
                         <br />
                         Email : &nbsp;
-                        <a href="mailto:information@tib.eu" style={{ color: colorStyled.old.linkSecondary }}>
+                        <a href="mailto:information@tib.eu" style={{ color: theme.palette.primary.main }}>
                             information(AT)tib.eu
                         </a>
                         <br />
-                    </StyledText>
+                    </StyledImprintText>
 
-                    <h5 style={{ color: colorStyled.onSurface }}>VAT (sales tax) registration number :</h5>
+                    <StyledLinkH5>VAT (sales tax) registration number :</StyledLinkH5>
 
-                    <StyledText>DE 214931803</StyledText>
+                    <StyledImprintText>DE 214931803</StyledImprintText>
 
-                    <h5 style={{ color: colorStyled.onSurface }}>Editorial Office:</h5>
+                    <StyledLinkH5>Editorial Office:</StyledLinkH5>
 
-                    <StyledText>
+                    <StyledImprintText>
                         Felix Engel
                         <br />
                         Email : &nbsp;
-                        <a href="mailto:felix.engel@tib.eu" style={{ color: colorStyled.old.linkSecondary }}>
+                        <a href="mailto:felix.engel@tib.eu" style={{ color: theme.palette.primary.main }}>
                             felix.engel(AT)tib.eu
                         </a>
                         <br />
-                    </StyledText>
+                    </StyledImprintText>
 
-                    <h5 style={{ color: colorStyled.onSurface }}>Copyright Notice:</h5>
+                    <StyledLinkH5>Copyright Notice:</StyledLinkH5>
 
-                    <StyledText>
+                    <StyledImprintText>
                         The layout of the homepage, the graphics used and the other content are protected by copyright.
                         <br />
-                    </StyledText>
-                </StyledDiv>
+                    </StyledImprintText>
+                </StyledImprintDiv>
             </div>
         );
     }
 }
 
-const StyledDiv = styled.div`
-    padding-top: 20px;
-    padding-left: 20%;
-    padding-right: 20%;
-    font-family: ${fontStyled.fontFamily};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        padding-left: 10%;
-        padding-right: 10%;
-    }
-`;
-
-const StyledText = styled.p`
-    color: ${colorStyled.onSurfaceVariant};
-    text-align: justify;
-    font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewNormalText};
-    }
-`;
+export default withTheme(Imprint);

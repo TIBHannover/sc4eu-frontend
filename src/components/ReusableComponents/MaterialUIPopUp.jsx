@@ -1,8 +1,8 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useTheme } from '@mui/material';
 import PropTypes from 'prop-types';
-import { colorStyled } from '../../styledComponents/styledColor';
 
 const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
+    const theme = useTheme();
     return (
         <Dialog
             open={open}
@@ -22,7 +22,7 @@ const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
             </DialogContent>
             {type !== MaterialUIPopUpTypes.ACTIVE_CONSENSUS && (
                 <DialogActions style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                    <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.old.darkSecondary }}>
+                    <Button variant="contained" onClick={onClose} style={{ backgroundColor: theme.palette.secondary.main }}>
                         Close
                     </Button>
                 </DialogActions>

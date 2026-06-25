@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import { Modal, ModalBody, Button } from 'reactstrap';
+import { ModalBody, Button } from 'reactstrap';
 import Cookies from 'js-cookie';
-import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
-import styled from 'styled-components';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
-
+import { withTheme } from '@emotion/react';
+import { StyledRootDiv, StyledModal } from 'styledComponents/styledComponents';
 const SliderText = [
     {
         id: 0,
@@ -72,10 +69,11 @@ class IntroductoryPopUp extends Component {
     };
 
     render() {
+        const { theme } = this.props;
         return (
             <StyledRootDiv>
                 <StyledModal isOpen={this.state.firstModal}>
-                    <ModalBody style={{ backgroundColor: colorStyled.surfaceContainerHigh }}>
+                    <ModalBody style={{ backgroundColor: theme.palette.background.paper }}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <h4 style={{ marginLeft: 'auto' }}>
                                 <p>Thank you for visiting our portal</p>
@@ -85,7 +83,7 @@ class IntroductoryPopUp extends Component {
                                 style={{
                                     background: 'none',
                                     border: 'none',
-                                    color: colorStyled.onSecondaryContainer,
+                                    color: theme.palette.secondary.contrastText,
                                     fontWeight: 600,
                                     marginLeft: 'auto',
                                     marginRight: '10px',
@@ -100,13 +98,13 @@ class IntroductoryPopUp extends Component {
                         <span
                             style={{
                                 fontSize: '18px',
-                                color: colorStyled.onSurfaceVariant
+                                color: theme.palette.text.secondary
                             }}
                         >
                             {SliderText[this.state.sliderIndex].value}
                         </span>
                         <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
+                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}>
                                 {this.state.buttonText}
                             </Button>
                         </div>
@@ -128,17 +126,17 @@ class IntroductoryPopUp extends Component {
                                                   width: '15px',
                                                   height: '15px',
                                                   borderRadius: '50%',
-                                                  border: `3px solid ${colorStyled.old.darkSecondary}`,
+                                                  border: `3px solid ${theme.palette.secondary.main}`,
                                                   margin: '0 5px',
-                                                  backgroundColor: colorStyled.surfaceContainerHigh
+                                                  backgroundColor: theme.palette.background.paper
                                               }
                                             : {
                                                   width: '15px',
                                                   height: '15px',
                                                   borderRadius: '50%',
-                                                  border: `3px solid ${colorStyled.old.darkSecondary}`,
+                                                  border: `3px solid ${theme.palette.secondary.main}`,
                                                   margin: '0 5px',
-                                                  backgroundColor: colorStyled.old.darkSecondary
+                                                  backgroundColor: theme.palette.secondary.main
                                               }
                                     }
                                 />
@@ -151,21 +149,6 @@ class IntroductoryPopUp extends Component {
     }
 }
 
-export default IntroductoryPopUp;
+export default withTheme(IntroductoryPopUp);
 
-const StyledRootDiv = styled.div`
-    display: block;
 
-`;
-
-const StyledModal = styled(Modal)`
-    display: block;
-    max-width: 70%;
-    width: 100%;
-    margin-left: 20%;
-    margin-right: 10%;
-    border-radius: 15px;
-    overflow: hidden;
-    font-family: ${fontStyled.fontFamily};
-
-`;

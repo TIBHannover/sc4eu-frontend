@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import html2canvas from 'html2canvas';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import { Overlay, Crosshairs } from 'styledComponents/styledComponents';
 
 export default class ScreenCapture extends Component {
     state = {
@@ -173,43 +173,3 @@ ScreenCapture.propTypes = {
     onEndCapture: PropTypes.func
 };
 
-const Overlay = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-
-    &.highlighting {
-        background: none;
-        border-color: rgba(0, 0, 0, 0.5);
-        border-style: solid;
-    }
-`;
-
-const Crosshairs = styled.div`
-    position: absolute;
-    width: 100%;
-    z-index: 2147483645;
-
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-    }
-
-    &::before {
-        height: 24px;
-        width: 2px;
-        background: #000;
-        top: -11px;
-    }
-
-    &::after {
-        width: 24px;
-        height: 2px;
-        background: #000;
-        left: -11px;
-    }
-`;

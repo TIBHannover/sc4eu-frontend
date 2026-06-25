@@ -3,27 +3,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { toggleAuthDialog } from '../../redux/actions/auth';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import styled from 'styled-components';
+import { TransitionGroup } from 'react-transition-group';
 import LoginViaEmail from './LoginViaEmail';
-
-const AnimationContainer = styled(CSSTransition)`
-    &.fadeIn-enter {
-        opacity: 0;
-    }
-
-    &.fadeIn-enter.fadeIn-enter-active {
-        opacity: 1;
-        transition: 1s opacity;
-    }
-`;
-
+import { AnimationContainer } from 'styledComponents/styledComponents';
+import { withTheme } from '@emotion/react';
 class SignInModal extends Component {
     render() {
+        const { theme } = this.props;
         return (
             <>
                 <Modal isOpen={this.props.dialogIsOpen} toggle={this.props.toggleAuthDialog}>
-                    <div>
+                    <div style={{ backgroundColor: theme.palette.background.paper}}>
                         <TransitionGroup exit={false}>
                             {this.props.action === 'signin' && (
                                 <AnimationContainer key={1} classNames="fadeIn" timeout={{ enter: 700, exit: 0 }}>
@@ -54,4 +44,4 @@ SignInModal.propTypes = {
     callback: PropTypes.func.isRequired
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignInModal);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(SignInModal));

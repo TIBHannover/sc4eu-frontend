@@ -6,9 +6,8 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { createProject } from '../network/projectIndexing';
-import { colorStyled } from '../styledComponents/styledColor';
 import { fontStyled } from '../styledComponents/styledFont';
-
+import { withTheme } from '@emotion/react';
 class CreateProject extends Component {
     constructor(props) {
         super(props);
@@ -105,6 +104,8 @@ class CreateProject extends Component {
     };
 
     render() {
+        const { theme } = this.props;
+        
         return (
             <Modal
                 style={{ width: '80%', maxWidth: '50%', fontFamily: fontStyled.fontFamily }}
@@ -176,7 +177,7 @@ class CreateProject extends Component {
                 <ModalFooter>
                     <Button
                         id="finishButton"
-                        style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}
+                        style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                         onClick={() => {
                             this.createProject();
                         }}
@@ -201,4 +202,4 @@ const mapStateToProps = state => ({
     user: state.auth.user
 });
 
-export default compose(connect(mapStateToProps), withRouter)(CreateProject);
+export default compose(connect(mapStateToProps), withRouter)(withTheme(CreateProject));

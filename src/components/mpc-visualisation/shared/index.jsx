@@ -5,6 +5,7 @@ import {
   Paper,
   Chip,
   ListItem,
+  useTheme
 } from "@mui/material";
 import TrendingUpIcon   from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -41,6 +42,7 @@ export const GlassPanel = memo(function GlassPanel({ children, sx, ...rest }) {
 });
 
 export const MetaItem = memo(function MetaItem({ label, value }) {
+  const theme = useTheme();
   return (
     <ListItem
       disablePadding
@@ -52,7 +54,7 @@ export const MetaItem = memo(function MetaItem({ label, value }) {
           fontWeight:    700,
           textTransform: "uppercase",
           letterSpacing: 0.5,
-          color:         colorStyled.onSurfaceVariant,
+          color:         theme.palette.text.secondary,
         }}
       >
         {label}
@@ -72,7 +74,7 @@ export const LegendDot = memo(function LegendDot({
 }) {
   const isCircle = shape === "circle";
   const isDashed = shape === "dashed";
-
+const theme = useTheme();
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
       <Box
@@ -85,7 +87,7 @@ export const LegendDot = memo(function LegendDot({
           flexShrink:   0,
         }}
       />
-      <Typography sx={{ fontSize: FONT_SIZE_MICRO, color: colorStyled.onSurfaceVariant }}>
+      <Typography sx={{ fontSize: FONT_SIZE_MICRO, color: theme.palette.text.secondary }}>
         {label}
       </Typography>
     </Box>
@@ -98,18 +100,19 @@ export const NavChip = memo(function NavChip({
   accentColor,
   onClick,
 }) {
+  const theme = useTheme();
   const activeStyles = {
-    bgcolor:     accentColor ?? colorStyled.primary,
-    color:       colorStyled.onPrimary,
-    border:      `1px solid ${accentColor ?? colorStyled.primary}`,
-    "&:hover":   { bgcolor: accentColor ?? colorStyled.primary },
+    bgcolor:     accentColor ?? theme.palette.primary.main,
+    color:       theme.palette.primary.contrastText,
+    border:      `1px solid ${accentColor ?? theme.palette.primary.main}`,
+    "&:hover":   { bgcolor: accentColor ?? theme.palette.primary.main },
   };
 
   const inactiveStyles = {
     bgcolor:   "transparent",
-    color:     colorStyled.onSurfaceVariant,
+    color:     theme.palette.text.secondary,
     border:    `1px solid ${colorStyled.outlineVariant}`,
-    "&:hover": { bgcolor: colorStyled.surfaceContainerHigh },
+    "&:hover": { bgcolor: theme.palette.background.paper },
   };
 
   return (
@@ -128,6 +131,7 @@ export const NavChip = memo(function NavChip({
 });
 
 export const SignalChip = memo(function SignalChip({ bl1, bl2 }) {
+  const theme = useTheme();
   if (bl1 === null || bl2 === null) {
     return (
       <Typography variant="caption" sx={{ color: colorStyled.outline }}>
@@ -155,7 +159,7 @@ export const SignalChip = memo(function SignalChip({ bl1, bl2 }) {
       <TrendSignalChip
         icon={<TrendingDownIcon />}
         label="Both down"
-        backgroundColor={colorStyled.errorContainer}
+        backgroundColor={theme.palette.error.main}
         textColor={sentimentColors.negative}
       />
     );
@@ -165,8 +169,8 @@ export const SignalChip = memo(function SignalChip({ bl1, bl2 }) {
     <TrendSignalChip
       icon={<RemoveIcon />}
       label="Mixed"
-      backgroundColor={colorStyled.surfaceContainerHigh}
-      textColor={colorStyled.onSurfaceVariant}
+      backgroundColor={theme.palette.background.paper}
+      textColor={theme.palette.text.secondary}
     />
   );
 });
@@ -195,6 +199,7 @@ export const KpiCard = memo(function KpiCard({
   isSelected,
   onClick,
 }) {
+  const theme = useTheme();
   const primaryColor   = primaryValue  >= 0 ? sentimentColors.positive : sentimentColors.negative;
   const secondaryColor = secondaryValue >= 0 ? sentimentColors.positive : sentimentColors.negative;
 
@@ -222,7 +227,7 @@ export const KpiCard = memo(function KpiCard({
         borderRadius: 2,
         transition:   "all 0.2s",
         "&:hover": {
-          borderColor: colorStyled.primary,
+          borderColor: theme.palette.primary.main,
           boxShadow:   "0 2px 8px rgba(0,0,0,0.06)",
         },
         ...(isSelected ? selectedStyles : defaultStyles),
@@ -234,7 +239,7 @@ export const KpiCard = memo(function KpiCard({
           fontWeight:    700,
           textTransform: "uppercase",
           letterSpacing: 0.5,
-          color:         colorStyled.onSurfaceVariant,
+          color:         theme.palette.text.secondary,
           mb:            0.5,
         }}
       >

@@ -1,9 +1,8 @@
-import { Box, Typography, TextField, Button, Tooltip, IconButton, Link, FormControlLabel, RadioGroup, Radio, Paper, Chip } from '@mui/material';
+import { Box, Typography, TextField, Button, Tooltip, IconButton, Link, FormControlLabel, RadioGroup, Radio, Paper, Chip, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PropTypes from 'prop-types';
 import CommentsSection from './CommentsSection';
-import { colorStyled } from '../../../styledComponents/styledColor';
 import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
@@ -17,6 +16,8 @@ import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
+    const theme = useTheme();
+    
     const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
     const [activeAgreement, setActiveAgreement] = useState(false);
@@ -58,6 +59,13 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         getVote();
         getLastConsensus();
     }, [isConsensusSubmitted, isConsensusClosed, term.identifier]);
+
+    const buttonStyle = {
+        padding: '10px 20px',
+        backgroundColor: theme.palette.secondary.main,
+        color: theme.palette.secondary.contrastText,
+        '&:hover': { backgroundColor: `${theme.palette.secondary.main}99`, color: theme.palette.secondary.contrastText }
+    };
 
     const splitAltLabels = altLabel => {
         return altLabel ? altLabel.split(',') : [''];
@@ -365,7 +373,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             sx={{
                                 width: { xs: '100%', xl: '50%' },
                                 padding: '10px',
-                                backgroundColor: '#f4f4f4',
+                                backgroundColor: theme.palette.background.paper,
                                 borderRadius: '8px',
                                 overflowY: 'auto',
                                 maxHeight: 'calc(100vh - 100px)'
@@ -398,7 +406,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         }}
                     >
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                            <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
+                            <Typography variant="subtitle2" sx={{ marginBottom: '5px', color: theme.palette.text.primary }}>
                                 <strong>Label:</strong>
                             </Typography>
                             <TextField
@@ -413,7 +421,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         </Box>
                         {splitAltLabels(updatedTerm.altLabel).map((label, index) => (
                             <Box key={'altLabel_' + index} sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <Typography variant="subtitle2" sx={{ marginTop: '10px' }}>
+                                <Typography variant="subtitle2" sx={{ marginTop: '10px', color: theme.palette.text.primary }}>
                                     <strong>Alternative Label {index + 1}:</strong>
                                 </Typography>
                                 <TextField
@@ -433,7 +441,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         )}
                         {/* Other fields */}
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                            <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
+                            <Typography variant="subtitle2" sx={{ marginBottom: '5px', color: theme.palette.text.primary }}>
                                 <strong>Description:</strong>
                             </Typography>
                             <TextField
@@ -447,7 +455,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             />
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                            <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
+                            <Typography variant="subtitle2" sx={{ marginBottom: '5px', color: theme.palette.text.primary }}>
                                 <strong>See Also:</strong>
                             </Typography>
                             <TextField
@@ -477,7 +485,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                 sx={{
                     mt: 2,
                     textAlign: 'center',
-                    color: 'text.secondary',
+                    color: theme.palette.text.primary,
                     fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' }
                 }}
             >
@@ -488,9 +496,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                     sx={{
                         cursor: 'pointer',
                         textDecoration: 'underline',
-                        color: colorStyled.old.linkSecondary,
+                        color: theme.palette.primary.main,
                         fontWeight: 500,
-                        '&:hover': { color: `${colorStyled.old.linkSecondary}B3` }
+                        '&:hover': { color: `${theme.palette.primary.main}B3` }
                     }}
                 >
                     click here to close
@@ -511,10 +519,3 @@ ExpandedRow.propTypes = {
 };
 
 export default ExpandedRow;
-
-const buttonStyle = {
-    padding: '10px 20px',
-    backgroundColor: colorStyled.old.darkSecondary,
-    color: colorStyled.onSecondary,
-    '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}99`, color: colorStyled.onSecondary }
-};

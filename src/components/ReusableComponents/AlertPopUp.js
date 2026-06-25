@@ -1,10 +1,7 @@
 import React from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import { colorStyled } from '../../styledComponents/styledColor';
-import { fontStyled } from '../../styledComponents/styledFont';
-
+import { AutoModal, StyledAlertPopUpButton } from 'styledComponents/styledComponents';
 const AlertPopUp = props => {
     const handleOk = () => {
         props.isConfirm(true);
@@ -16,8 +13,8 @@ const AlertPopUp = props => {
             <ModalHeader toggle={props.onClose}>Alert</ModalHeader>
             <ModalBody>{props.bodyText}</ModalBody>
             <ModalFooter>
-                <StyledButton onClick={handleOk}>OK</StyledButton>
-                <StyledButton onClick={props.onClose}>Cancel</StyledButton>
+                <StyledAlertPopUpButton onClick={handleOk}>OK</StyledAlertPopUpButton>
+                <StyledAlertPopUpButton onClick={props.onClose}>Cancel</StyledAlertPopUpButton>
             </ModalFooter>
         </AutoModal>
     );
@@ -31,24 +28,3 @@ AlertPopUp.propTypes = {
 };
 
 export default AlertPopUp;
-
-const AutoModal = styled(Modal)`
-    font-family: ${fontStyled.fontFamily};
-    .modal-content {
-        max-width: 60%;
-        max-height: auto;
-        margin: auto;
-    }
-
-    .modal-header,
-    .modal-footer {
-        border: 0 !important;
-    }
-`;
-
-const StyledButton = styled(Button)`
-    height: 40px;
-    width: 70px;
-    background-color: ${colorStyled.old.darkSecondary};
-    color: ${colorStyled.onSecondary};
-`;

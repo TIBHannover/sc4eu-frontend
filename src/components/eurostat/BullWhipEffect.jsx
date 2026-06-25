@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Autocomplete, Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { Autocomplete, Button, Grid, Link, TextField, Typography, useTheme } from '@mui/material';
 import { MyApexChart } from './ApexChart';
 import { EurostatGeoEntities } from './static/EurostatGeoEntities';
-import { colorStyled } from '../../styledComponents/styledColor';
 import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
 
@@ -170,21 +169,23 @@ export const BullWhipEffect = () => {
         hasFetched.current = false;
     };
 
+    const theme = useTheme();
+
     return (
         <Grid container spacing={2} justifyContent="center" sx={{ overflow: 'auto', maxHeight: 'calc(100vh - 100px)' }}>
             <Grid item xs={11} md={11}>
                 <Grid container justifyContent="center" sx={{ mb: 2 }}>
                     <Grid item xs={12}>
-                        <Typography variant="h5" gutterBottom textAlign="center">
+                        <Typography variant="h5" gutterBottom textAlign="center" style={{ color: theme.palette.text.primary }}>
                             Bullwhip Effect
                         </Typography>
-                        <Typography>
+                        <Typography style={{ color: theme.palette.text.primary }}>
                             This{' '}
-                            <Link href={wordLinks.application} style={{ color: '#607D8B' }}>
+                            <Link href={wordLinks.application} style={{ color: theme.palette.primary.main }}>
                                 application
                             </Link>{' '}
                             is intended to study and find possible bullwhip effect in{' '}
-                            <Link href={wordLinks.supplyChain} style={{ color: '#607D8B' }}>
+                            <Link href={wordLinks.supplyChain} style={{ color: theme.palette.primary.main }}>
                                 supply chain
                             </Link>{' '}
                             networks. For this purpose several datasets from Eurostat were used:
@@ -194,29 +195,29 @@ export const BullWhipEffect = () => {
                                     <br />
                                     <i>
                                         Covers all activities of the business economy with the exception of agricultural activities and personal{' '}
-                                        <Link href={wordLinks.service} style={{ color: '#607D8B' }}>
+                                        <Link href={wordLinks.service} style={{ color: theme.palette.primary.main }}>
                                             services
                                         </Link>{' '}
-                                        and the data are provided by all EU Member States, Iceland, Norway and Switzerland, some candidate and potential
-                                        candidate countries.
+                                        and the data are provided by all EU Member States, Iceland, Norway and Switzerland, some candidate and
+                                        potential candidate countries.
                                         <br />
                                         The data are collected by domain of{' '}
-                                        <Link href={wordLinks.activity} style={{ color: '#607D8B' }}>
+                                        <Link href={wordLinks.activity} style={{ color: theme.palette.primary.main }}>
                                             activity
                                         </Link>{' '}
                                         (
-                                        <Link href={wordLinks.service} style={{ color: '#607D8B' }}>
+                                        <Link href={wordLinks.service} style={{ color: theme.palette.primary.main }}>
                                             Services
                                         </Link>{' '}
                                         ,{' '}
-                                        <Link href={wordLinks.industry} style={{ color: '#607D8B' }}>
+                                        <Link href={wordLinks.industry} style={{ color: theme.palette.primary.main }}>
                                             Industry
                                         </Link>{' '}
                                         , Trade and Constructions).
                                     </i>
                                     Link to the dataset:{' '}
                                     <Link
-                                        style={{ color: '#607D8B' }}
+                                        style={{ color: theme.palette.primary.main }}
                                         href="https://ec.europa.eu/eurostat/databrowser/view/sbs_na_sca_r2/default/table?lang=en"
                                     >
                                         sbs_na_sca_r2
@@ -226,16 +227,16 @@ export const BullWhipEffect = () => {
                                     Sold production, exports and imports.
                                     <br />
                                     <i>
-                                        Contains statistics on production of manufactured goods together with related external trade data. The purpose of
-                                        the statistics is to report, for each{' '}
-                                        <Link href={wordLinks.products} style={{ color: '#607D8B' }}>
+                                        Contains statistics on production of manufactured goods together with related external trade data. The purpose
+                                        of the statistics is to report, for each{' '}
+                                        <Link href={wordLinks.products} style={{ color: theme.palette.primary.main }}>
                                             product
                                         </Link>{' '}
                                         , how much has been produced in the reporting country during the reference period.
                                     </i>
                                     Link to the dataset:{' '}
                                     <Link
-                                        style={{ color: '#607D8B' }}
+                                        style={{ color: theme.palette.primary.main }}
                                         href="https://ec.europa.eu/eurostat/databrowser/view/ds-056120/default/table?lang=en"
                                     >
                                         ds-056120
@@ -245,16 +246,16 @@ export const BullWhipEffect = () => {
                                     Real GDP growth rate - volume.
                                     <br />
                                     <i>
-                                        National accounts are a coherent and consistent set of macroeconomic indicators, which provide an overall picture
-                                        of the economic{' '}
-                                        <Link href={wordLinks.situation} style={{ color: '#607D8B' }}>
+                                        National accounts are a coherent and consistent set of macroeconomic indicators, which provide an overall
+                                        picture of the economic{' '}
+                                        <Link href={wordLinks.situation} style={{ color: theme.palette.primary.main }}>
                                             situation
                                         </Link>{' '}
                                         and are widely used for economic analysis and forecasting, policy design and policy making.
                                     </i>
                                     Link to the dataset:{' '}
                                     <Link
-                                        style={{ color: '#607D8B' }}
+                                        style={{ color: theme.palette.primary.main }}
                                         href="https://ec.europa.eu/eurostat/databrowser/view/tec00115/default/table?lang=en"
                                     >
                                         tec00115
@@ -267,7 +268,7 @@ export const BullWhipEffect = () => {
 
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Typography variant="h6">Annual enterprise parameters</Typography>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>Annual enterprise parameters</Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Autocomplete
@@ -292,7 +293,7 @@ export const BullWhipEffect = () => {
                         ></Autocomplete>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="h6">Sold production parameters</Typography>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>Sold production parameters</Typography>
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
@@ -317,7 +318,7 @@ export const BullWhipEffect = () => {
                         ></Autocomplete>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="h6">Real GDP growth rate parameters</Typography>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>Real GDP growth rate parameters</Typography>
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
@@ -343,7 +344,11 @@ export const BullWhipEffect = () => {
                     </Grid>
 
                     <Grid item xs={12}>
-                        <Button variant="contained" style={{ backgroundColor: colorStyled.old.darkSecondary }} onClick={handleSubmit}>
+                        <Button
+                            variant="contained"
+                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                            onClick={handleSubmit}
+                        >
                             Submit
                         </Button>
                     </Grid>
@@ -351,7 +356,11 @@ export const BullWhipEffect = () => {
                         {annualData && (
                             <MyApexChart
                                 data={annualData}
-                                title={isMobile ? "Annual enterprise statistics" : "Annual enterprise statistics for special aggregates of NACE Rev.2 activities (2005-2020)"}
+                                title={
+                                    isMobile
+                                        ? 'Annual enterprise statistics'
+                                        : 'Annual enterprise statistics for special aggregates of NACE Rev.2 activities (2005-2020)'
+                                }
                                 yAxisTitle="Millions, Euro"
                                 xAxisTitle="Date"
                             />
@@ -362,7 +371,12 @@ export const BullWhipEffect = () => {
                     </Grid>
                     <Grid item xs={12} xl={10}>
                         {soldData && (
-                            <MyApexChart data={soldData} title={isMobile ? "Sold production (exp. & imp.)" : "Sold production, exports and imports"} yAxisTitle="Thousdans, Euro" xAxisTitle="Date" />
+                            <MyApexChart
+                                data={soldData}
+                                title={isMobile ? 'Sold production (exp. & imp.)' : 'Sold production, exports and imports'}
+                                yAxisTitle="Thousdans, Euro"
+                                xAxisTitle="Date"
+                            />
                         )}
                     </Grid>
                 </Grid>

@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import UserRole from '../assets/images/UserRole.jpg';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
-import { fontStyled } from '../styledComponents/styledFont';
-
+import { withTheme } from '@emotion/react';
+import { StyledDataProtectionText, StyledDocumentationsDiv } from 'styledComponents/styledComponents';
 class Documentations extends Component {
     constructor(props) {
         super(props);
@@ -28,6 +25,8 @@ class Documentations extends Component {
     };
 
     render() {
+        const { theme } = this.props;
+
         const HybridTEXT =
             "We identified that the most crucial requirement for the approach is to serve user's needs from various audiences with " +
             'diverse backgrounds and in different contexts. Because web-based approaches are ready-to-use without the need to install ' +
@@ -70,33 +69,33 @@ class Documentations extends Component {
 
         return (
             <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '3%' }}>
-                <StyledDiv>
-                    <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%', color: colorStyled.onSurface }}>
+                <StyledDocumentationsDiv>
+                    <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%', color: theme.palette.text.primary}}>
                         What the Portal will do for you
                     </h3>
-                    <h5 style={{ color: colorStyled.onSurface }}>Connecting Domain Experts with Knowledge Engineers</h5>
-                    <StyledText>
+                    <h5 style={{ color: theme.palette.text.primary}}>Connecting Domain Experts with Knowledge Engineers</h5>
+                    <StyledDataProtectionText>
                         {this.state.isreadmoreUserGuidance ? (
                             <>
                                 {UserGuidance}
                                 <div style={{ textAlign: 'center' }}>
                                     <img src={UserRole} alt="UserRole" style={{ maxWidth: '100%' }} />
-                                    <StyledText>
+                                    <StyledDataProtectionText>
                                         We identified that the most crucial requirement for ontology development is to serve users' needs from various
                                         audiences with diverse backgrounds and in different contexts. We have therefore introduced several modes of
                                         operations.
-                                    </StyledText>
+                                    </StyledDataProtectionText>
                                 </div>
                             </>
                         ) : (
                             UserGuidance.substring(0, 300)
                         )}
-                        <button style={{ color: colorStyled.old.linkSecondary, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
+                        <button style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
                             {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
                         </button>
-                    </StyledText>
-                    <h5 style={{ color: colorStyled.onSurface }}>About SC4EU Ontology Curation Portal</h5>
-                    <StyledText>
+                    </StyledDataProtectionText>
+                    <h5 style={{ color: theme.palette.text.primary}}>About SC4EU Ontology Curation Portal</h5>
+                    <StyledDataProtectionText>
                         <span>
                             SC4EU Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and
                             machines, as machines, as well as all other partners.The key objective of this platform is to implement data documentation
@@ -105,7 +104,7 @@ class Documentations extends Component {
                             project you can find on our
                         </span>
                         <a
-                            style={{ color: colorStyled.old.linkSecondary }}
+                            style={{ color: theme.palette.primary.main }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://sc3-project.automotive.oth-aw.de/"
@@ -114,7 +113,7 @@ class Documentations extends Component {
                         </a>
                         <span>, on our </span>
                         <a
-                            style={{ color: colorStyled.old.linkSecondary }}
+                            style={{ color: theme.palette.primary.main }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
@@ -123,33 +122,33 @@ class Documentations extends Component {
                         </a>
                         <span>, or </span>
                         <a
-                            style={{ color: colorStyled.old.linkSecondary }}
+                            style={{ color: theme.palette.primary.main }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
                         >
                             via LinkedIn.
                         </a>
-                    </StyledText>
-                    <h5 style={{ color: colorStyled.onSurface }}>Framework for Collaborative Ontology Development</h5>
+                    </StyledDataProtectionText>
+                    <h5 style={{ color: theme.palette.text.primary}}>Framework for Collaborative Ontology Development</h5>
                     <p
                         style={{
                             whiteSpace: 'pre-wrap',
                             cursor: 'text',
                             textAlign: 'justify',
-                            color: colorStyled.onSurfaceVariant
+                            color: theme.palette.text.primary
                         }}
                     >
                         {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
-                        <button style={{ color: colorStyled.old.linkSecondary, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
+                        <button style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
                             {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
                         </button>
                     </p>
 
-                    <h5 style={{ color: colorStyled.onSurface }}>Be part of the SC4EU Community and Collaborate with us </h5>
-                    <StyledText>
+                    <h5 style={{ color: theme.palette.text.primary}}>Be part of the SC4EU Community and Collaborate with us </h5>
+                    <StyledDataProtectionText>
                         SC4EU is a{' '}
-                        <a style={{ color: colorStyled.old.linkSecondary }} target="_blank" rel="noopener noreferrer" href="https://www.kdt-ju.europa.eu/">
+                        <a style={{ color: theme.palette.primary.main }} target="_blank" rel="noopener noreferrer" href="https://www.kdt-ju.europa.eu/">
                             KDT JU
                         </a>{' '}
                         funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited to
@@ -157,7 +156,7 @@ class Documentations extends Component {
                         <br />
                         If you would like to setup your own SC4EU Portal or if you would like to contribute to our codebase, please visit:&nbsp;
                         <a
-                            style={{ color: colorStyled.old.linkSecondary }}
+                            style={{ color: theme.palette.primary.main }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://gitlab.com/TIBHannover/sc3-project/"
@@ -166,22 +165,22 @@ class Documentations extends Component {
                         </a>
                         <br />
                         You will find all our code under MIT licence, instructions. Check it out!
-                    </StyledText>
-                    <h5 style={{ color: colorStyled.onSurface }}>Hybrid Modes of Operation</h5>
+                    </StyledDataProtectionText>
+                    <h5 style={{ color: theme.palette.text.primary}}>Hybrid Modes of Operation</h5>
                     <p
                         style={{
                             whiteSpace: 'pre-wrap',
                             cursor: 'text',
                             textAlign: 'justify',
-                            color: colorStyled.onSurfaceVariant
+                            color: theme.palette.text.primary
                         }}
                     >
                         {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
-                        <button style={{ color: colorStyled.old.linkSecondary, cursor: 'pointer' }} onClick={this.toggleReadmore}>
+                        <button style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }} onClick={this.toggleReadmore}>
                             {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
                         </button>
                     </p>
-                </StyledDiv>
+                </StyledDocumentationsDiv>
             </div>
         );
     }
@@ -189,26 +188,4 @@ class Documentations extends Component {
 
 Documentations.propTypes = {};
 
-export default Documentations;
-
-const StyledDiv = styled.div`
-    padding-left: 20%;
-    padding-right: 20%;
-    font-family: ${fontStyled.fontFamily};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        padding-left: 10%;
-        padding-right: 10%;
-    }
-`;
-
-const StyledText = styled.p`
-    color: ${colorStyled.onSurfaceVariant};
-    white-space: pre-wrap;
-    text-align: justify;
-    font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewNormalText};
-    }
-`;
+export default withTheme(Documentations);

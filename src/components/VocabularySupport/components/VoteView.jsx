@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Typography, Avatar, TextField, Button, Box, RadioGroup, FormControlLabel, Radio, Tooltip } from '@mui/material';
+import { Grid, Typography, Avatar, TextField, Button, Box, RadioGroup, FormControlLabel, Radio, Tooltip, useTheme } from '@mui/material';
 import {
     CheckCircle as ApprovedIcon,
     Cancel as RejectedIcon,
@@ -8,77 +8,15 @@ import {
     ThumbDownAltOutlined,
     ThumbDownAlt
 } from '@mui/icons-material';
-import { colorStyled } from '../../../styledComponents/styledColor';
 import PropTypes from 'prop-types';
 import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
 import { stringAvatar } from './CommentsSection';
 import { ConsensusProgress } from '../utils/Consensus';
 
-const styles = {
-    button: {
-        padding: '10px 20px',
-        backgroundColor: colorStyled.old.darkSecondary,
-        color: colorStyled.onSecondary,
-        '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}BF`, color: colorStyled.onSecondary }
-    },
-    voteProgress: {
-        backgroundColor: colorStyled.old.lighter,
-        p: 2,
-        borderRadius: 1,
-        mb: 3
-    },
-    voteCard: {
-        p: 2,
-        borderRadius: 1,
-        mb: 3,
-        border: '1px solid',
-        borderColor: colorStyled.outlineVariant,
-        backgroundColor: colorStyled.surfaceContainerLow
-    },
-    recentVotesContainer: {
-        maxHeight: 400,
-        overflow: 'auto',
-        border: '1px solid',
-        borderColor: colorStyled.outlineVariant,
-        borderRadius: 1,
-        p: 1
-    },
-    voteItem: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 1,
-        p: 1.5,
-        borderBottom: '1px solid',
-        borderColor: colorStyled.outlineVariant,
-        '&:hover': {
-            backgroundColor: `${colorStyled.primary}1A`
-        },
-        '&:last-child': {
-            borderBottom: 'none'
-        }
-    },
-    userInfoRow: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5
-    },
-    commentBox: {
-        pl: 4.5,
-        borderLeft: '2px solid',
-        borderColor: colorStyled.outline,
-        ml: 1
-    },
-    stickySidebar: {
-        position: 'sticky',
-        top: 20,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 3
-    }
-};
-
 const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => {
+    const theme = useTheme();
+    
     const [decision, setDecision] = useState('');
     const [comment, setComment] = useState(null);
     const [decisions, setDecisions] = useState(vote.decisions);
@@ -99,6 +37,69 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
         };
         getVote();
     }, [decisionMade]);
+
+    const styles = {
+        button: {
+            padding: '10px 20px',
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.secondary.contrastText,
+            '&:hover': { backgroundColor: `${theme.palette.secondary.main}BF`, color: theme.palette.secondary.contrastText }
+        },
+        voteProgress: {
+            backgroundColor: theme.palette.background.default,
+            p: 2,
+            borderRadius: 1,
+            mb: 3
+        },
+        voteCard: {
+            p: 2,
+            borderRadius: 1,
+            mb: 3,
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            backgroundColor: theme.palette.background.default
+        },
+        recentVotesContainer: {
+            maxHeight: 400,
+            overflow: 'auto',
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            borderRadius: 1,
+            p: 1
+        },
+        voteItem: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            p: 1.5,
+            borderBottom: '1px solid',
+            borderColor: theme.palette.divider,
+            '&:hover': {
+                backgroundColor: `${theme.palette.primary.main}1A`
+            },
+            '&:last-child': {
+                borderBottom: 'none'
+            }
+        },
+        userInfoRow: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5
+        },
+        commentBox: {
+            pl: 4.5,
+            borderLeft: '2px solid',
+            borderColor: theme.palette.divider,
+            ml: 1
+        },
+        stickySidebar: {
+            position: 'sticky',
+            top: 20,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3
+        }
+    };
 
     const handleExpertDecision = async () => {
         console.log('expert decision updated: ', vote);
@@ -121,7 +122,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
 
                         <Divider
                             sx={{
-                                bgcolor: vote.type === 'accept' ? colorStyled.secondaryFixed : colorStyled.error,
+                                bgcolor: vote.type === 'accept' ? theme.palette.secondary.main : theme.palette.error.main,
                                 height: 2,
                                 mb: 1
                             }}
@@ -130,7 +131,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                         <Typography
                             variant="body1"
                             sx={{
-                                color: vote.type === 'accept' ? colorStyled.secondaryFixed : colorStyled.error,
+                                color: vote.type === 'accept' ? theme.palette.secondary.main : theme.palette.error.main,
                                 fontWeight: 500,
                                 textTransform: 'uppercase',
                                 letterSpacing: 0.5
@@ -181,7 +182,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                     <FormControlLabel
                                         value="approved"
                                         control={
-                                            <Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color={colorStyled.secondaryFixed} />} />
+                                            <Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color={theme.palette.secondary.main} />} />
                                         }
                                         label="Agree"
                                     />
@@ -195,7 +196,9 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 >
                                     <FormControlLabel
                                         value="rejected"
-                                        control={<Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color={colorStyled.error} />} />}
+                                        control={
+                                            <Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color={theme.palette.error.main} />} />
+                                        }
                                         label="Not Agree"
                                     />
                                 </Tooltip>
@@ -248,7 +251,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                         variant="body2"
                                         sx={{
                                             fontStyle: 'italic',
-                                            color: colorStyled.onSurfaceVariant,
+                                            color: theme.palette.text.secondary,
                                             mt: 1
                                         }}
                                     >
@@ -299,7 +302,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                             variant="body2"
                                                             sx={{
                                                                 fontStyle: 'italic',
-                                                                color: colorStyled.onSurfaceVariant,
+                                                                color: theme.palette.text.secondary,
                                                                 mt: 0.5
                                                             }}
                                                         >
@@ -324,7 +327,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                                         setExpandedComments(newExpanded);
                                                                     }}
                                                                     sx={{
-                                                                        color: colorStyled.old.linkSecondary,
+                                                                        color: theme.palette.primary.main,
                                                                         cursor: 'pointer',
                                                                         ml: 0.5,
                                                                         '&:hover': {

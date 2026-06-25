@@ -18,7 +18,7 @@ import {
     Paper,
     Chip,
     Alert,
-    Grid
+    useTheme
 } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -31,6 +31,7 @@ import { buildBarOptions, buildRadarOptions, fmt } from './chartHelpers';
 import { GRAPH_VIEW } from '../graph/GraphViewToggle';
 // ─── SurveyDashboard ─────────────────────────────────────────────────────────
 
+
 export const SurveyDashboard = memo(function SurveyDashboard({
     surveys,
     activeSurvey,
@@ -40,12 +41,13 @@ export const SurveyDashboard = memo(function SurveyDashboard({
     uploadedSchema,
     activeView
 }) {
+    const theme = useTheme();
     const [baseline, setBaseline] = useState('both');
     const isForceView = activeView === GRAPH_VIEW.force;
     if (!surveys?.length || !activeSurvey) {
         return (
             <Box sx={{ p: 4, textAlign: 'center' }}>
-                <Typography sx={{ color: colorStyled.onSurfaceVariant }}>No survey data available.</Typography>
+                <Typography sx={{ color: theme.palette.text.secondary }}>No survey data available.</Typography>
             </Box>
         );
     }
@@ -78,7 +80,7 @@ export const SurveyDashboard = memo(function SurveyDashboard({
 
 const SurveyTabs = memo(function SurveyTabs({ surveys, activeKey, onChange }) {
     const value = surveys.findIndex(s => s.key === activeKey);
-
+    const theme = useTheme();
     return (
         <Tabs
             value={value === -1 ? 0 : value}
@@ -88,16 +90,16 @@ const SurveyTabs = memo(function SurveyTabs({ surveys, activeKey, onChange }) {
             sx={{
                 mb: 3,
                 borderBottom: `1px solid ${colorStyled.outlineVariant}`,
-                '& .MuiTab-root': {
+                '.MuiTab-root': {
                     fontSize: 12,
                     fontWeight: 600,
                     textTransform: 'none',
                     minHeight: 40,
                     py: 0.5,
-                    color: colorStyled.onSurfaceVariant
+                    color: theme.palette.text.secondary
                 },
-                '& .Mui-selected': { color: colorStyled.primary },
-                '& .MuiTabs-indicator': { backgroundColor: colorStyled.primary }
+                '.Mui-selected': { color: theme.palette.primary.main },
+                '.MuiTabs-indicator': { backgroundColor: theme.palette.primary.main }
             }}
         >
             {surveys.map(survey => (
@@ -118,16 +120,17 @@ const SurveyTabs = memo(function SurveyTabs({ surveys, activeKey, onChange }) {
 // ─── DashboardHeader ──────────────────────────────────────────────────────────
 
 const DashboardHeader = memo(function DashboardHeader({ survey, baseline, setBaseline }) {
+    const theme = useTheme();
     return (
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between" mb={2} flexWrap="wrap" gap={1}>
             <Box>
-                <Typography variant="overline" sx={{ color: colorStyled.onSurfaceVariant, letterSpacing: 1.5 }}>
+                <Typography variant="overline" sx={{ color: theme.palette.text.secondary, letterSpacing: 1.5 }}>
                     {survey.label} · {survey.subtitle}
                 </Typography>
                 <Typography variant="h5" fontWeight={800} sx={{ lineHeight: 1.2 }}>
                     {survey.label}
                 </Typography>
-                <Typography variant="body2" sx={{ color: colorStyled.onSurfaceVariant, mt: 0.5 }}>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.5 }}>
                     {survey.description}
                 </Typography>
             </Box>
@@ -138,12 +141,12 @@ const DashboardHeader = memo(function DashboardHeader({ survey, baseline, setBas
                 onChange={(_, newValue) => newValue && setBaseline(newValue)}
                 size="small"
                 sx={{
-                    '& .MuiToggleButton-root': {
+                    '.MuiToggleButton-root': {
                         fontSize: 11,
-                        color: colorStyled.onSurfaceVariant,
-                        '&.Mui-selected': {
-                            bgcolor: colorStyled.primaryContainer,
-                            color: colorStyled.onPrimaryContainer
+                        color: theme.palette.text.secondary,
+                        '.Mui-selected': {
+                            bgcolor: theme.palette.primary.mainContainer,
+                            color: theme.palette.primary.contrastTextContainer
                         }
                     }
                 }}
@@ -164,7 +167,6 @@ const DashboardHeader = memo(function DashboardHeader({ survey, baseline, setBas
 function ShortageAlert({ survey }) {
     const shortageData = survey.shortageData;
     if (!shortageData) return null;
-
     const hasShortage = shortageData.yes > 0;
 
     return (
@@ -182,6 +184,7 @@ function ShortageAlert({ survey }) {
 // ─── GroupDetailPanel ─────────────────────────────────────────────────────────
 
 const GroupDetailPanel = memo(function GroupDetailPanel({ survey, selectedGroup, onClear }) {
+    const theme = useTheme();
     const details = useMemo(() => {
         if (!selectedGroup) return null;
         const idx = survey.groups.indexOf(selectedGroup);
@@ -234,7 +237,7 @@ const GroupDetailPanel = memo(function GroupDetailPanel({ survey, selectedGroup,
             <Stack direction="row" spacing={4} flexWrap="wrap" useFlexGap>
                 {details.map(item => (
                     <Box key={item.label}>
-                        <Typography variant="caption" sx={{ color: colorStyled.onSurfaceVariant, display: 'block' }}>
+                        <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block' }}>
                             {item.label}
                         </Typography>
                         <Typography variant="body1" fontWeight={700}>
@@ -255,6 +258,7 @@ const GroupDetailPanel = memo(function GroupDetailPanel({ survey, selectedGroup,
 // strongest forward momentum.
 
 function FutureDemandChart({ survey }) {
+    const theme = useTheme();
     const { series, options } = useMemo(() => {
         const seriesData = Object.entries(survey.futureDemand).map(([groupName, groupData]) => ({
             name: groupName,
@@ -292,7 +296,7 @@ function FutureDemandChart({ survey }) {
                 <Typography variant="subtitle2" fontWeight={700}>
                     Future Demand Trajectory
                 </Typography>
-                <Typography variant="caption" sx={{ color: colorStyled.onSurfaceVariant }}>
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                     Forecast % change across upcoming quarters — Option 1 baseline
                 </Typography>
                 <Chart type="line" series={series} options={options} height={260} />
@@ -307,6 +311,7 @@ function FutureDemandChart({ survey }) {
 // contrasting with FutureDemandChart above.
 
 const CurrentDemandRow = memo(function CurrentDemandRow({ survey, baseline }) {
+    const theme = useTheme();
     const { series: barSeries, options: barOptions } = useMemo(() => buildBarOptions(survey, baseline), [survey, baseline]);
     const { series: radarSeries, options: radarOptions } = useMemo(() => buildRadarOptions(survey), [survey]);
 
@@ -317,7 +322,7 @@ const CurrentDemandRow = memo(function CurrentDemandRow({ survey, baseline }) {
                     <Typography variant="subtitle2" fontWeight={700} mb={0.5}>
                         Current Demand vs Baselines
                     </Typography>
-                    <Typography variant="caption" sx={{ color: colorStyled.onSurfaceVariant }}>
+                    <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                         % change vs BL1 (last month) and BL2 (last 12 months)
                     </Typography>
                     <Chart type="bar" series={barSeries} options={barOptions} height={260} />
@@ -329,7 +334,7 @@ const CurrentDemandRow = memo(function CurrentDemandRow({ survey, baseline }) {
                     <Typography variant="subtitle2" fontWeight={700} mb={0.5}>
                         Regional Demand Split
                     </Typography>
-                    <Typography variant="caption" sx={{ color: colorStyled.onSurfaceVariant }}>
+                    <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                         Current demand share by region
                     </Typography>
                     <Chart type="radar" series={radarSeries} options={radarOptions} height={260} />
@@ -346,6 +351,7 @@ const CurrentDemandRow = memo(function CurrentDemandRow({ survey, baseline }) {
 // Tier1: Component share activity grid.
 
 function SurveySpecificPanel({ survey, selectedGroup, onGroupSelect }) {
+    const theme = useTheme();
     if (survey.key === 'semi') {
         return <SemiInventoryPanel survey={survey} selectedGroup={selectedGroup} onGroupSelect={onGroupSelect} />;
     }
@@ -360,6 +366,7 @@ function SurveySpecificPanel({ survey, selectedGroup, onGroupSelect }) {
 // Previously buried in GroupDetailPanel — now shown as a first-class table.
 
 function SemiInventoryPanel({ survey, selectedGroup, onGroupSelect }) {
+    const theme = useTheme();
     const { inventoryTrend, inventoryTarget, orderCancellation, groups } = survey;
     if (!inventoryTrend && !inventoryTarget) return null;
 
@@ -369,7 +376,7 @@ function SemiInventoryPanel({ survey, selectedGroup, onGroupSelect }) {
                 <Typography variant="subtitle2" fontWeight={700} mb={0.5}>
                     Inventory Status by Technology Node
                 </Typography>
-                <Typography variant="caption" sx={{ color: colorStyled.onSurfaceVariant }}>
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                     Trend direction, target position and order cancellation activity
                 </Typography>
 
@@ -377,10 +384,10 @@ function SemiInventoryPanel({ survey, selectedGroup, onGroupSelect }) {
                     <TableHead>
                         <TableRow
                             sx={{
-                                '& th': {
+                                'th': {
                                     fontSize: 10,
                                     fontWeight: 700,
-                                    color: colorStyled.onSurfaceVariant,
+                                    color: theme.palette.text.secondary,
                                     bgcolor: colorStyled.surfaceContainerLow
                                 }
                             }}
@@ -406,7 +413,7 @@ function SemiInventoryPanel({ survey, selectedGroup, onGroupSelect }) {
                                     onClick={() => onGroupSelect(isSelected ? null : groupName)}
                                     sx={{
                                         cursor: 'pointer',
-                                        '&.Mui-selected': { bgcolor: selectionColors.background }
+                                        '.Mui-selected': { bgcolor: selectionColors.background }
                                     }}
                                 >
                                     <TableCell sx={{ fontWeight: isSelected ? 700 : 600, fontSize: 12 }}>{groupName}</TableCell>
@@ -434,6 +441,7 @@ function SemiInventoryPanel({ survey, selectedGroup, onGroupSelect }) {
 // From ComponentShare_Tier1 isActiveInCategory data.
 
 function ComponentSharePanel({ survey }) {
+    const theme = useTheme();
     const componentActivity = survey.componentActivity;
     if (!componentActivity) return null;
 
@@ -443,7 +451,7 @@ function ComponentSharePanel({ survey }) {
                 <Typography variant="subtitle2" fontWeight={700} mb={0.5}>
                     Component Category Activity
                 </Typography>
-                <Typography variant="caption" sx={{ color: colorStyled.onSurfaceVariant }}>
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                     Active component categories reported by Tier 1 suppliers
                 </Typography>
 
@@ -457,11 +465,11 @@ function ComponentSharePanel({ survey }) {
                             sx={{
                                 fontSize: 10,
                                 fontWeight: 600,
-                                bgcolor: isActive ? graphAccents.demand.fill : colorStyled.surfaceContainerHigh,
-                                color: isActive ? sentimentColors.positive : colorStyled.onSurfaceVariant,
+                                bgcolor: isActive ? graphAccents.demand.fill : theme.palette.background.paper,
+                                color: isActive ? sentimentColors.positive : theme.palette.text.secondary,
                                 borderColor: isActive ? sentimentColors.positive : colorStyled.outlineVariant,
                                 border: '1px solid',
-                                '& .MuiChip-icon': { color: sentimentColors.positive }
+                                '.MuiChip-icon': { color: sentimentColors.positive }
                             }}
                         />
                     ))}
@@ -474,6 +482,7 @@ function ComponentSharePanel({ survey }) {
 // ─── TrendChip ────────────────────────────────────────────────────────────────
 
 function TrendChip({ value }) {
+    const theme = useTheme();
     if (!value) {
         return (
             <Typography variant="caption" sx={{ color: colorStyled.outline }}>
@@ -494,7 +503,7 @@ function TrendChip({ value }) {
                     fontSize: 9,
                     bgcolor: graphAccents.demand.fill,
                     color: sentimentColors.positive,
-                    '& .MuiChip-icon': { color: sentimentColors.positive }
+                    '.MuiChip-icon': { color: sentimentColors.positive }
                 }}
             />
         );
@@ -508,9 +517,9 @@ function TrendChip({ value }) {
                 size="small"
                 sx={{
                     fontSize: 9,
-                    bgcolor: colorStyled.errorContainer,
+                    bgcolor: theme.palette.error.mainContainer,
                     color: sentimentColors.negative,
-                    '& .MuiChip-icon': { color: sentimentColors.negative }
+                    '.MuiChip-icon': { color: sentimentColors.negative }
                 }}
             />
         );
@@ -523,9 +532,9 @@ function TrendChip({ value }) {
             size="small"
             sx={{
                 fontSize: 9,
-                bgcolor: colorStyled.surfaceContainerHigh,
-                color: colorStyled.onSurfaceVariant,
-                '& .MuiChip-icon': { color: colorStyled.onSurfaceVariant }
+                bgcolor: theme.palette.background.paper,
+                color: theme.palette.text.secondary,
+                '.MuiChip-icon': { color: theme.palette.text.secondary }
             }}
         />
     );
@@ -534,6 +543,7 @@ function TrendChip({ value }) {
 // ─── TargetChip ───────────────────────────────────────────────────────────────
 
 function TargetChip({ value }) {
+    const theme = useTheme();
     if (!value) {
         return (
             <Typography variant="caption" sx={{ color: colorStyled.outline }}>
@@ -553,8 +563,8 @@ function TargetChip({ value }) {
             sx={{
                 fontSize: 9,
                 fontWeight: 600,
-                bgcolor: isAbove ? colorStyled.errorContainer : isBelow ? colorStyled.primaryContainer : graphAccents.demand.fill,
-                color: isAbove ? sentimentColors.negative : isBelow ? colorStyled.primary : sentimentColors.positive
+                bgcolor: isAbove ? theme.palette.error.mainContainer : isBelow ? theme.palette.primary.mainContainer : graphAccents.demand.fill,
+                color: isAbove ? sentimentColors.negative : isBelow ? theme.palette.primary.main : sentimentColors.positive
             }}
         />
     );

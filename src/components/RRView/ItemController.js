@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
-import styled from 'styled-components';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faProjectDiagram, faAlignJustify } from '@fortawesome/free-solid-svg-icons';
 import Tippy from '@tippyjs/react';
-import { colorStyled } from 'styledComponents/styledColor';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
-import { fontStyled } from '../../styledComponents/styledFont';
+import { withTheme } from '@emotion/react';
+import { StyledController, LabelDiv, ControlItemControllerButton } from 'styledComponents/styledComponents';
 
 class ItemController extends Component {
     constructor() {
@@ -39,13 +35,14 @@ class ItemController extends Component {
     };
 
     getBackgroundColor = () => {
+        const { theme } = this.props;
         if (this.props.itemType === 'Relation') {
             if (this.props.itemContext.isHighlighted) {
                 return 'black';
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return colorStyled.old.lightMain;
+                return theme.palette.primary.light;
             } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
-                return colorStyled.old.main;
+                return theme.palette.secondary.light;
             }
             return '#838a92';
         } else {
@@ -83,28 +80,16 @@ class ItemController extends Component {
                 <div style={{ width: '250px', minWidth: '100px', display: 'flex' }}>
                     {/*GRAPH VIEW*/}
                     <Tippy content={'Show Graph'}>
-                        <ControlButton size="sm" onClick={this.props.showGraphVis} active={this.props.showingGraph}>
+                        <ControlItemControllerButton size="sm" onClick={this.props.showGraphVis} active={this.props.showingGraph}>
                             <Icon icon={faProjectDiagram} />
-                        </ControlButton>
+                        </ControlItemControllerButton>
                     </Tippy>
 
                     <Tippy content={'Show Text View'}>
-                        <ControlButton size="sm" onClick={this.props.showBody} active={this.props.showingBody}>
+                        <ControlItemControllerButton size="sm" onClick={this.props.showBody} active={this.props.showingBody}>
                             <Icon icon={faAlignJustify} />
-                        </ControlButton>
+                        </ControlItemControllerButton>
                     </Tippy>
-
-                    {/*PROTEGE VIEW */}
-                    {/*<Tippy content={'Show Description'}>*/}
-                    {/*    <ControlButton size="sm" onClick={this.props.showWidget} active={this.props.showingWidget}>*/}
-                    {/*        <Icon icon={faCubesStacked} />*/}
-                    {/*    </ControlButton>*/}
-                    {/*</Tippy>*/}
-                    {/*<Tippy content={'Show Annotation'}>*/}
-                    {/*    <ControlButton size="sm" onClick={this.props.showWidgetAnnotation} active={this.props.showingWidgetAnnotation}>*/}
-                    {/*        <Icon icon={faCircleNodes} />*/}
-                    {/*    </ControlButton>*/}
-                    {/*</Tippy>*/}
                 </div>
                 <div style={{ width: '100%' }}>
                     <Tippy content={this.state.headerLabel}>
@@ -149,65 +134,5 @@ ItemController.propTypes = {
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ItemController);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(ItemController));
 
-const StyledController = styled.div`
-    padding: 5px;
-    // border-radius: 10px 10px 0 0;
-    // border: 1px solid black;
-    border-bottom: none;
-    padding: 5px;
-    color: white;
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
-const LabelDiv = styled.div`
-    overflow: hidden;
-    max-width: 260px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    border-radius: 10px 10px 0 0;
-    border-bottom: none;
-    padding: 5px;
-    color: white;
-    text-align: left;
-    margin-left: auto;
-    margin-right: auto;
-    height: 30px;
-    color: ${props => (props.typedBasedFontColor ? props.typedBasedFontColor : 'black')};
-    background-color: ${props =>
-        props.isHighlighted === true ? `${colorStyled.old.darkSecondary}` : props.typedBasedColor ? props.typedBasedColor : `${colorStyled.old.light}`};
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const ControlButton = styled.div`
-    padding: 5px;
-    border-radius: ${props => (props.type === 'control' ? '0' : '10px 10px 0 0')};
-    border-bottom: none;
-    text-align: center;
-    margin-right: ${props => (props.type === 'control' ? '3px' : '-1px')};
-    background-color: ${props => (props?.active === true ? `${colorStyled.secondary}` : `${colorStyled.old.darkSecondary}`)};
-
-    width: 30px;
-    height: 30px;
-    color: white;
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    :hover {
-        background-color: #005c5f;
-        cursor: pointer;
-    }
-`;

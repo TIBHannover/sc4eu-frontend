@@ -21,7 +21,8 @@ import {
     Popover,
     Select,
     MenuItem,
-    Button
+    Button,
+    useTheme
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -34,7 +35,6 @@ import { StyledChip, StyledBadge } from '../../../styledComponents/styledCompone
 import PropTypes from 'prop-types';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { colorStyled } from '../../../styledComponents/styledColor';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
@@ -50,6 +50,8 @@ const SORT_BY_OPTIONS = Object.freeze({
 });
 
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
+    const theme = useTheme();
+
     const [searchText, setSearchText] = useState('');
     const [showOnlyMentions, setShowOnlyMentions] = useState(false);
     const [dateFrom, setDateFrom] = useState(null);
@@ -127,13 +129,13 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
                 sx={{
-                    '& .MuiBadge-badge': {
-                        backgroundColor: decision.choice === 'approved' ? colorStyled.secondaryFixed : colorStyled.error,
-                        color: decision.choice === 'approved' ? colorStyled.onSecondaryFixed : colorStyled.onError,
+                    '.MuiBadge-badge': {
+                        backgroundColor: decision.choice === 'approved' ? theme.palette.secondary.main : theme.palette.error.main,
+                        color: decision.choice === 'approved' ? theme.palette.secondary.contrastText : theme.palette.error.contrastText,
                         width: 16,
                         height: 16,
                         fontSize: 12,
-                        border: `1px solid ${colorStyled.outlineVariant}`
+                        border: `1px solid ${theme.palette.divider}`
                     }
                 }}
             >
@@ -318,7 +320,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                             sx={{
                                                 gap: 0.5,
                                                 marginLeft: 2,
-                                                '& .MuiAvatar-root': {
+                                                '.MuiAvatar-root': {
                                                     width: 24,
                                                     height: 24,
                                                     fontSize: 12
@@ -432,7 +434,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     top: 0,
                     zIndex: 1000,
                     backgroundColor: 'background.paper',
-                    borderBottom: `1px solid ${colorStyled.outlineVariant}`,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
                     pb: 1
                 }}
             >
@@ -443,11 +445,11 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                             variant="outlined"
                             size="small"
                             sx={{
-                                bgcolor: colorStyled.old.darkSecondary,
-                                color: colorStyled.onSecondary,
+                                bgcolor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
                                 '&:hover': {
-                                    bgcolor: `${colorStyled.old.darkSecondary}BF`,
-                                    color: colorStyled.onSecondary
+                                    bgcolor: `${theme.palette.secondary.main}BF`,
+                                    color: theme.palette.secondary.contrastText
                                 }
                             }}
                         >

@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { colorStyled } from '../../styledComponents/styledColor';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-
+import { StyledHeadingDiv, OpenCloseButton, StyledRightSideBarScrollbarDiv } from 'styledComponents/styledComponents';
 class RightSideBar extends Component {
     render() {
         return (
@@ -22,11 +19,11 @@ class RightSideBar extends Component {
                         style={{ marginLeft: '5px', fontSize: '26px' }}
                     />
                 </OpenCloseButton>
-                <StyledScrollbarDiv>
+                <StyledRightSideBarScrollbarDiv>
                     <Scrollbars>
                         <div>data</div>
                     </Scrollbars>
-                </StyledScrollbarDiv>
+                </StyledRightSideBarScrollbarDiv>
             </>
         );
     }
@@ -43,32 +40,3 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(RightSideBar);
 
-const StyledHeadingDiv = styled.div`
-    border-radius: 10px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    background-color: ${colorStyled.old.darkPrimary};
-    color: ${colorStyled.onPrimary};
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-`;
-
-const OpenCloseButton = styled(Button)`
-    display: flex;
-    width: 28px;
-    border-radius: 30px;
-    padding: 0;
-    background-color: ${colorStyled.old.darkSecondary};
-    color: ${colorStyled.onSecondary};
-    position: relative;
-    top: -15px;
-    left: -20px;
-`;
-
-const StyledScrollbarDiv = styled.div`
-    height: calc(100% - 65px);
-    margin-top: -15px;
-`;

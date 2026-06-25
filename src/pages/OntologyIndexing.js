@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { getAllOntologies, getOntologyGitData } from '../network/ontologyIndexing';
@@ -8,9 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { checkFileUpdated } from '../network/GithubAPICalls';
 import { checkGitlabFileUpdated } from '../network/GitlabAPICalls';
-import styled from 'styled-components';
-import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
-import { colorStyled } from '../styledComponents/styledColor';
+import { StyledContainer } from 'styledComponents/styledComponents';
 
 class OntologyIndexing extends Component {
     constructor(props) {
@@ -140,17 +137,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, null)(OntologyIndexing);
-
-const StyledContainer = styled(Container)`
-    height: 95%;
-    width: 100%;
-    background-color: ${colorStyled.old.lighter};
-    padding: 0.5% 2%;
-    max-width: 1800px;
-    margin: 0 auto;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 100%;
-    }
-    
-`;

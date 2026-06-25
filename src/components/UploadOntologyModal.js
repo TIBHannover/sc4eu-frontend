@@ -9,9 +9,8 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faGithub, faGitlab } from '@fortawesome/free-brands-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
-
-export default class UploadOntology extends Component {
+import { withTheme } from '@emotion/react';
+class UploadOntology extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -256,6 +255,7 @@ export default class UploadOntology extends Component {
     };
 
     render() {
+        const { theme } = this.props;
         return (
             <Modal
                 style={{ width: '70%', maxWidth: '80%', fontFamily: fontStyled.fontFamily }}
@@ -357,7 +357,7 @@ export default class UploadOntology extends Component {
                                                         }}
                                                     />
                                                     <Button
-                                                        style={{ backgroundColor: colorStyled.old.darkSecondary, marginLeft: '1%' }}
+                                                        style={{ backgroundColor: theme.palette.secondary.main, marginLeft: '1%' }}
                                                         onClick={this.handleGitHubUrl}
                                                     >
                                                         Upload
@@ -384,7 +384,7 @@ export default class UploadOntology extends Component {
                                                         }}
                                                     />
                                                     <Button
-                                                        style={{ backgroundColor: colorStyled.old.darkSecondary, marginLeft: '1%' }}
+                                                        style={{ backgroundColor: theme.palette.secondary.main, marginLeft: '1%' }}
                                                         onClick={this.handleGitlabUrl}
                                                     >
                                                         Upload
@@ -466,7 +466,7 @@ export default class UploadOntology extends Component {
                         <Button
                             id="finishButton"
                             innerRef={this.finishRef}
-                            style={{ backgroundColor: colorStyled.old.darkSecondary }}
+                            style={{ backgroundColor: theme.palette.secondary.main }}
                             hidden={
                                 !this.state.hasContent ||
                                 this.state.waitingForResult ||
@@ -494,3 +494,5 @@ UploadOntology.propTypes = {
     project_id: PropTypes.string.isRequired,
     access_type: PropTypes.string.isRequired
 };
+
+export default withTheme(UploadOntology);

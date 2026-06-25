@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Spinner } from 'reactstrap';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
-
+import { StyledWebProtegeContainer, Iframe, LoadingOverlay } from 'styledComponents/styledComponents';
 export default class WebProtege extends Component {
     state = { isLoading: true };
 
@@ -12,7 +10,7 @@ export default class WebProtege extends Component {
 
     render() {
         return (
-            <Container>
+            <StyledWebProtegeContainer>
                 {this.state.isLoading && (
                     <LoadingOverlay>
                         <Button disabled>
@@ -23,30 +21,9 @@ export default class WebProtege extends Component {
                 )}
 
                 <Iframe title="WebProtege" src="https://service.tib.eu/wp4tib/" loading="lazy" onLoad={this.hideSpinner} />
-            </Container>
+            </StyledWebProtegeContainer>
         );
     }
 }
 
-const Container = styled.div`
-    background-color: ${colorStyled.old.lighter};
-    width: 100%;
-    height: 100vh; /* Full viewport height */
-    position: relative;
-`;
 
-const Iframe = styled.iframe`
-    width: 100%;
-    height: 100%;
-    border: none;
-`;
-
-const LoadingOverlay = styled.div`
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-`;

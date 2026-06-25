@@ -3,9 +3,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { doesUserExist } from '../../network/UserProfileCalls';
 import { fontStyled } from '../../styledComponents/styledFont';
-import { colorStyled } from '../../styledComponents/styledColor';
-
-export default class AddProjectUserModal extends Component {
+import { withTheme } from '@emotion/react';
+class AddProjectUserModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -17,6 +16,7 @@ export default class AddProjectUserModal extends Component {
     }
 
     render() {
+        const { theme } = this.props;
         return (
             <Form onSubmit={this.handleSubmit}>
                 <Modal
@@ -25,7 +25,7 @@ export default class AddProjectUserModal extends Component {
                     toggle={this.props.toggleAddUserPopup}
                     autoFocus={false}
                 >
-                    <ModalHeader style={{ display: 'block', backgroundColor: colorStyled.old.darkPrimary }} autoFocus={false}>
+                    <ModalHeader style={{ display: 'block', backgroundColor: theme.palette.primary.main }} autoFocus={false}>
                         <span style={{ color: '#000000' }}>Add User to Project</span>
                         <Button
                             style={{
@@ -65,7 +65,7 @@ export default class AddProjectUserModal extends Component {
                         </label>
                         <Button
                             id="finishButton"
-                            style={{ background: colorStyled.old.darkSecondary }}
+                            style={{ background: theme.palette.secondary.main }}
                             onClick={() => {
                                 if (!this.state.email) {
                                     this.setState({ emailWarning: 'Email can not be Empty ', showWarning: 'true' });
@@ -100,3 +100,5 @@ AddProjectUserModal.propTypes = {
     showDialog: PropTypes.bool.isRequired,
     callback: PropTypes.func.isRequired
 };
+
+export default withTheme(AddProjectUserModal);

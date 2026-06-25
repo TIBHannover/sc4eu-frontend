@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { colorStyled } from '../styledComponents/styledColor';
-
+import { withTheme } from '@emotion/react';
 class LoginFailedRedirect extends Component {
     render() {
+        const {theme} = this.props;
         return (
             <div style={{ height: '100%' }}>
                 <div
                     style={{
                         textAlign: 'center',
                         fontWeight: '600',
-                        backgroundColor: colorStyled.old.lighter,
+                        backgroundColor: theme.palette.background.default,
                         height: '100%',
                         fontSize: '22px'
                     }}
@@ -23,4 +23,4 @@ class LoginFailedRedirect extends Component {
     }
 }
 
-export default LoginFailedRedirect;
+export default withTheme(LoginFailedRedirect);

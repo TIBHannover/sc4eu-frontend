@@ -8,10 +8,10 @@ import PopUp from '../PopUp';
 import error from '../../assets/images/error.png';
 import success from '../../assets/images/success.png';
 import { getAllSystemAdmin } from '../../network/UserProfileCalls';
-import { colorStyled } from '../../styledComponents/styledColor';
 import { fontStyled } from '../../styledComponents/styledFont';
+import { withTheme } from '@emotion/react';
 
-export default class ProjectPermissionModal extends Component {
+class ProjectPermissionModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -73,6 +73,7 @@ export default class ProjectPermissionModal extends Component {
     };
 
     render() {
+        const { theme } = this.props;
         return (
             <div>
                 {this.state.openPopUp && (
@@ -85,7 +86,7 @@ export default class ProjectPermissionModal extends Component {
                         toggle={this.props.toggle}
                         autoFocus={false}
                     >
-                        <ModalHeader style={{ backgroundColor: colorStyled.old.darkPrimary }} autoFocus={false}>
+                        <ModalHeader style={{ backgroundColor: theme.palette.primary.main }} autoFocus={false}>
                             {this.props.title}
                         </ModalHeader>
                         <ModalBody
@@ -129,7 +130,7 @@ export default class ProjectPermissionModal extends Component {
                             <label htmlFor="finishButton" style={{ color: 'red', alignContent: 'right', display: this.state.showWarning ? 'block' : 'none' }}>
                                 Subject and Message can not be empty
                             </label>
-                            <Button id="finishButton" style={{ background: colorStyled.old.darkSecondary }} onClick={this.handelClick} autoFocus={true}>
+                            <Button id="finishButton" style={{ background: theme.palette.secondary.main }} onClick={this.handelClick} autoFocus={true}>
                                 Submit
                             </Button>
                         </ModalFooter>
@@ -150,3 +151,5 @@ ProjectPermissionModal.propTypes = {
     isRoleChanged: PropTypes.bool,
     title: PropTypes.string.isRequired
 };
+
+export default withTheme(ProjectPermissionModal);

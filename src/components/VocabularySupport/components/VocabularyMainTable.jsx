@@ -1,8 +1,7 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import styled from 'styled-components';
+import { styled } from '@mui/material';
 import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
-import { colorStyled } from '../../../styledComponents/styledColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
 import ExpandedRow from './ExpandedRow';
@@ -688,16 +687,16 @@ const VocabularyMainTable = ({
         }),
         muiTableBodyProps: {
             sx: theme => ({
-                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.1)
                 },
-                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.2)
                 },
-                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td': {
                     backgroundColor: lighten(baseBackgroundColor, 0.1)
                 },
-                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.2)
                 }
             })
@@ -764,10 +763,10 @@ const VocabularyMainTable = ({
                             handleCreateRow(row);
                         }}
                         sx={{
-                            backgroundColor: colorStyled.old.darkSecondary,
+                            backgroundColor: theme.palette.secondary.main,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                         }}
                     >
                         {isMobileScreen ? 'New Term' : 'Create New Term'}
@@ -780,10 +779,10 @@ const VocabularyMainTable = ({
                             setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
                         }}
                         sx={{
-                            backgroundColor: colorStyled.old.darkSecondary,
+                            backgroundColor: theme.palette.secondary.main,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                         }}
                     >
                         Timeline
@@ -799,10 +798,10 @@ const VocabularyMainTable = ({
                                 Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
                             }}
                             sx={{
-                                backgroundColor: colorStyled.old.darkSecondary,
+                                backgroundColor: theme.palette.secondary.main,
                                 whiteSpace: 'nowrap',
                                 minWidth: 50,
-                                '&:hover': { backgroundColor: `${colorStyled.old.darkSecondary}1A`, color: colorStyled.onSecondary }
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                             }}
                         >
                             {isMobileScreen ? 'Hub' : 'Information Hub'}
@@ -819,7 +818,7 @@ const VocabularyMainTable = ({
                         disabled={!hasUncommittedChanges}
                         onClick={() => setOpenCommit(true)}
                         style={{
-                            backgroundColor: hasUncommittedChanges ? colorStyled.old.darkSecondary : 'gray',
+                            backgroundColor: hasUncommittedChanges ? theme.palette.secondary.main : 'gray',
                             border: hasUncommittedChanges ? '2px' + ' solid red' : ''
                         }}
                     >
@@ -859,7 +858,7 @@ const VocabularyMainTable = ({
                 <Tooltip title="Delete">
                     <IconButton
                         className="action-button"
-                        style={{ color: colorStyled.old.darkSecondary }}
+                        style={{ color: theme.palette.secondary.main }}
                         onClick={() => openDeleteConfirmModal(row)}
                     >
                         <DeleteIcon />
@@ -921,7 +920,7 @@ const VocabularyMainTable = ({
                         top: { xs: '50%', xl: '25%' },
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        backgroundColor: 'white',
+                        backgroundColor: theme.palette.background.default,
                         width: { xs: '95%', xl: '70vw' },
                         height: { xs: '95%', xl: '53%' },
                         overflowY: 'auto',
@@ -1016,24 +1015,24 @@ function validateTerm(term) {
     };
 }
 
-const ScrollableDiv = styled.div`
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    padding-bottom: 5px;
-    max-height: 90vh;
+const ScrollableDiv = styled('div')(({ theme }) => ({
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
+    paddingBottom: '5px',
+    maxHeight: '90vh',
 
-    @media (max-width: ${LARGE_SCREEN_SIZE}) {
-        padding: 5px;
+    [`@media (max-width: ${LARGE_SCREEN_SIZE})`]: {
+        padding: '5px'
     }
-`;
+}));
 
-const CellContent = styled.div`
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-`;
+const CellContent = styled('div')(({ theme }) => ({
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    cursor: 'pointer'
+}));
 
 const EllipsisTextCell = ({ value }) => {
     const displayValue = value && value.length > 30 ? `${value.slice(0, 30)}...` : value;

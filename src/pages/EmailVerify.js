@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 import success from '../assets/images/success.png';
 import error from '../assets/images/error.png';
 import PopUp from '../components/PopUp';
 import { Redirect } from 'react-router-dom';
-import { colorStyled } from '../styledComponents/styledColor';
+import { withTheme } from '@emotion/react';
+import { StyledEmailVerifyDiv } from 'styledComponents/styledComponents';
 
 class EmailVerify extends Component {
     constructor(props) {
@@ -38,8 +38,9 @@ class EmailVerify extends Component {
     };
 
     render() {
+        const { theme } = this.props;
         return (
-            <StyledDiv style={{ backgroundColor: colorStyled.old.lighter, height: '100%' }}>
+            <StyledEmailVerifyDiv style={{ backgroundColor: theme.palette.background.default, height: '100%' }}>
                 <div>
                     <PopUp
                         open={this.state.openPopUp}
@@ -49,7 +50,7 @@ class EmailVerify extends Component {
                     />
                     {!this.state.openPopUp ? <Redirect to="/" /> : <div />}
                 </div>
-            </StyledDiv>
+            </StyledEmailVerifyDiv>
         );
     }
 }
@@ -58,13 +59,5 @@ EmailVerify.propTypes = {
     location: PropTypes.object.isRequired
 };
 
-export default withRouter(EmailVerify);
+export default withRouter(withTheme(EmailVerify));
 
-const StyledDiv = styled.div`
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-`;

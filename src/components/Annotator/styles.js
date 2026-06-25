@@ -1,89 +1,88 @@
-import styled from 'styled-components';
-import { colorStyled } from '../../styledComponents/styledColor';
+import { styled } from '@mui/material';
 import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 
-export const ContentContainer = styled.div`
-    width: 75%;
-    margin: 0 auto;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    overflow-y: visible;
-    min-height: 0;
+export const ContentContainer = styled('div')(({ theme }) => ({
+    width: '75%',
+    margin: '0 auto',
+    maxWidth: '1200px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+    overflowY: 'visible',
+    minHeight: 0,
 
-    & .MuiPaper-root {
-        overflow: visible;
-    }
+    '.MuiPaper-root': {
+        overflow: 'visible'
+    },
 
-    & .MuiTableContainer-root {
-        overflow-x: auto;
-    }
+    '.MuiTableContainer-root': {
+        overflowX: 'auto'
+    },
     
-    @media (max-width: ${SMALL_SCREEN_WIDTH}) {
-      width: 90vw;    
-      max-width: 90vw;
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
+      width: '90vw',    
+      maxWidth: '90vw'
     }
-`;
+}));
 
-export const HighlightedLabel = styled.span`
-    background-color: ${({ isHovered, color }) => (isHovered ? '#ffeb3b' : color)};
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+export const HighlightedLabel = styled('span')(({ theme }) => ({
+    backgroundColor: `${({ isHovered, color }) => (isHovered ? '#ffeb3b' : color)}`,
+    cursor: 'pointer',
+    padding: '2px 4px',
+    borderRadius: '4px',
+    transition: 'background-color 0.3s',
 
-    &:hover {
-        background-color: #ffeb3b;
+    '&:hover': {
+        backgroundColor: '#ffeb3b'
     }
-`;
+}));
 
-export const InputContainer = styled.div`
-    margin-bottom: 20px;
-`;
+export const InputContainer = styled('div')(({ theme }) => ({
+    marginBottom: '20px'
+}));
 
-export const HelperTextContainer = styled.div`
-    display: flex;
-    align-items: center;
-`;
+export const HelperTextContainer = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center'
+}));
 
-export const HelperText = styled.div`
-    margin-right: 8px;
-`;
+export const HelperText = styled('div')(({ theme }) => ({
+    marginRight: '8px'
+}));
 
-export const AnnotatedText = styled.div`
-    margin-bottom: 20px;
-`;
+export const AnnotatedText = styled('div')(({ theme }) => ({
+    marginBottom: '20px'
+}));
 
-export const ScrollableText = styled.div`
-    height: 180px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #f9f9f9;
-`;
+export const ScrollableText = styled('div')(({ theme }) => ({
+    height: '180px',
+    overflowY: 'auto',
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: '5px',
+    padding: '10px',
+    backgroundColor: theme.palette.background.default
+}));
 
-export const ButtonContainer = styled.div`
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-`;
+export const ButtonContainer = styled('div')(({ theme }) => ({
+    display: 'flex',
+    gap: '10px',
+    marginTop: '10px',
+    marginBottom: '10px'
+}));
 
-export const ErrorText = styled.div`
-    color: ${({ theme }) => theme.palette?.error?.main || '#f44336'};
-    margin-right: 8px;
-`;
+export const ErrorText = styled('div')(({ theme }) => ({
+    color: theme.palette.error.main,
+    marginRight: '8px'
+}))
 
-export const lightSelectStyles = {
+export const lightSelectStyles = styled('div')(({ theme }) => ({
     control: (base, state) => ({
         ...base,
-        backgroundColor: colorStyled.old.lighter,
-        borderColor: state.isFocused ? colorStyled.old.lightMain : colorStyled.old.light,
-        boxShadow: state.isFocused ? `0 0 0 1px ${colorStyled.old.lightMain}` : 'none',
+        backgroundColor: theme.palette.background.default,
+        borderColor: state.isFocused ? theme.palette.primary.light : theme.palette.secondary.light,
+        boxShadow: state.isFocused ? `0 0 0 1px ${theme.palette.primary.light}` : 'none',
         '&:hover': {
-            borderColor: colorStyled.old.lightMain,
+            borderColor: theme.palette.primary.light,
         },
         minHeight: '28px',
         fontSize: '12px',
@@ -111,21 +110,21 @@ export const lightSelectStyles = {
         fontSize: '12px',
         padding: '4px 8px',
         backgroundColor: state.isSelected
-            ? colorStyled.old.lightMain
+            ? theme.palette.primary.light
             : state.isFocused
-                ? `${colorStyled.old.light}`
-                : colorStyled.surface,
+                ? `${theme.palette.secondary.light}`
+                : theme.palette.background.default,
         color: state.isSelected
-            ? colorStyled.onPrimaryContainer
-            : colorStyled.onSurface,
+            ? theme.palette.primary.contrastText
+            : theme.palette.text.primary,
         '&:active': {
-            backgroundColor: colorStyled.primaryContainer,
+            backgroundColor: theme.palette.primary.light,
         },
     }),
     menu: (base) => ({
         ...base,
-        backgroundColor: colorStyled.surfaceContainerHigh,
+        backgroundColor: theme.palette.background.paper,
         zIndex: 9999,
     }),
-};
+}));
 

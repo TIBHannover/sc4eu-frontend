@@ -20,21 +20,17 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Box
+    Box,
+    styled,
+    useTheme
 } from '@mui/material';
 import { React, useEffect, useState } from 'react';
-import makeStyles from '@material-ui/styles/makeStyles';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { marked } from 'marked';
 import * as Diff2Html from 'diff2html';
 import 'diff2html/bundles/css/diff2html.min.css';
 import { LARGE_SCREEN_SIZE } from '../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
-
-const CustomTimelineSeparator = styled(TimelineSeparator)({
-    minHeight: '200px'
-});
 
 const MARKDOWN_FILE_START_REGEX = new RegExp(
     '# Ontology comparison\\n\\n## Left\\n- Ontology IRI: .+\\n- Version IRI: .+\\n- Loaded from: .+\\n\\n## Right\\n- Ontology IRI: .+\\n- Version IRI: .+\\n- Loaded from: .+\\n\\n'
@@ -55,57 +51,61 @@ marked.use({
     renderer
 });
 
-const useStyles = makeStyles(theme => ({
-    grid: {
-        backgroundColor: 'white',
-        borderRight: '1px solid',
-        borderLeft: '1px solid',
-        padding: '8px',
-        display: 'flex',
-        flexDirection: 'column'
-    },
-    rootPair: {
-        marginLeft: '24px',
-        minHeight: '82vh',
-        backgroundColor: 'white',
-        borderRadius: ' 10px 10px 10px 10px',
-        border: '1px solid'
-    },
-    timeline: {
-        maxHeight: '82vh',
-        overflowY: 'auto',
-        '@media (max-width: 900px)': {
-            maxHeight: 'unset',
-            overflowY: 'visible'
-        }
-    },
-    timelineItem: {
-        marginBottom: '160px',
-        '@media (max-width: 900px)': {
-            marginBottom: '40px'
-        }
-    },
-    timelineContent: {
-        paddingTop: '20px',
-        cursor: 'pointer'
-    },
-    commitMessage: {
-        display: '-webkit-box',
-        WebkitBoxOrient: 'vertical',
-        WebkitLineClamp: 3,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis'
-    }
+export const StyledGrid = styled(Grid)(({ theme }) => ({
+    backgroundColor: theme.palette.background.paper,
+    borderRight: '1px solid',
+    borderLeft: '1px solid',
+    padding: '8px',
+    display: 'flex',
+    flexDirection: 'column'
 }));
 
+export const StyledRootPair = styled('div')(({ theme }) => ({
+    marginLeft: '24px',
+    minHeight: '82vh',
+    backgroundColor: theme.palette.background.paper, // was hardcoded white
+    borderRadius: '10px',
+    border: '1px solid'
+}));
+
+export const StyledTimeline = styled(Timeline)({
+    maxHeight: '82vh',
+    overflowY: 'auto',
+    '@media (max-width: 900px)': {
+        maxHeight: 'unset',
+        overflowY: 'visible'
+    }
+});
+
+export const StyledTimelineItem = styled(TimelineItem)({
+    marginBottom: '160px',
+    '@media (max-width: 900px)': {
+        marginBottom: '40px'
+    }
+});
+
+export const StyledTimelineContent = styled(TimelineContent)({
+    paddingTop: '20px',
+    cursor: 'pointer'
+});
+
+export const StyledCommitMessage = styled(Typography)({
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: 3,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+});
+
 const ChangesTimeline = ({ id }) => {
+    const theme = useTheme();
+
     const [ontology, setOntology] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [html, setHtml] = useState(null);
     const [semanticHtml, setSemanticHtml] = useState('');
     const [gitHtml, setGitHtml] = useState('');
-    const classes = useStyles();
     const [commitsFetched, setCommitsFetched] = useState(false);
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -235,19 +235,15 @@ const ChangesTimeline = ({ id }) => {
             {!commitsFetched && !error && (
                 <>
                     {!isMobile && (
-                        <Grid item xs={12} xl={3} className={classes.grid}>
-                            <Timeline className={classes.timeline}>
+                        <StyledGrid item xs={3}>
+                            <StyledTimeline>
                                 {ontology.map((diff, index, arr) => {
                                     if (arr[index - 1] === undefined) {
                                         return null;
                                     }
 
                                     return (
-                                        <TimelineItem
-                                            key={index}
-                                            onClick={() => handleItemClick(arr[index - 1], index)}
-                                            className={classes.timelineItem}
-                                        >
+                                        <StyledTimelineItem key={index} onClick={() => handleItemClick(arr[index - 1], index)}>
                                             <TimelineOppositeContent>
                                                 <Typography variant="body2" color="textSecondary">
                                                     {diff.hasOwnProperty('commit')
@@ -255,25 +251,22 @@ const ChangesTimeline = ({ id }) => {
                                                         : new Date(arr[index - 1].date).toLocaleString()}
                                                 </Typography>
                                             </TimelineOppositeContent>
-                                            <CustomTimelineSeparator>
+                                            <TimelineSeparator sx={{ minHeight: '200px' }}>
                                                 <TimelineDot />
                                                 <TimelineConnector sx={{ width: '2px', height: '50px' }} />
-                                            </CustomTimelineSeparator>
-                                            <TimelineContent className={classes.timelineContent}>
+                                            </TimelineSeparator>
+                                            <StyledTimelineContent>
                                                 <Paper
                                                     elevation={3}
-                                                    className={classes.timelinePaper}
-                                                    sx={{ p: 2 }}
-                                                    style={
-                                                        selectedIndex === index
-                                                            ? {
-                                                                  backgroundColor: 'lightblue',
-                                                                  width: '10vw'
-                                                              }
-                                                            : { width: '10vw' }
-                                                    }
+                                                    sx={{
+                                                        p: 2,
+                                                        width: '10vw',
+                                                        ...(selectedIndex === index && {
+                                                            backgroundColor: theme.palette.primary.light
+                                                        })
+                                                    }}
                                                 >
-                                                    <Typography variant="h6" component="h6" className={classes.commitMessage}>
+                                                    <StyledCommitMessage variant="h6" component="h6">
                                                         {arr[index - 1] !== undefined
                                                             ? `${
                                                                   diff.hasOwnProperty('commit')
@@ -283,14 +276,14 @@ const ChangesTimeline = ({ id }) => {
                                                             : diff.hasOwnProperty('commit')
                                                             ? arr[index - 1].commit.message
                                                             : arr[index - 1].message}
-                                                    </Typography>
+                                                    </StyledCommitMessage>
                                                 </Paper>
-                                            </TimelineContent>
-                                        </TimelineItem>
+                                            </StyledTimelineContent>
+                                        </StyledTimelineItem>
                                     );
                                 })}
-                            </Timeline>
-                        </Grid>
+                            </StyledTimeline>
+                        </StyledGrid>
                     )}
                     {isMobile && (
                         <Grid item xs={12} padding={2}>
@@ -305,7 +298,7 @@ const ChangesTimeline = ({ id }) => {
                                         const arr = ontology;
                                         handleItemClick(arr[idx - 1], idx);
                                     }}
-                                    sx={{ backgroundColor: 'white' }}
+                                    sx={{ backgroundColor: theme.palette.background.paper }}
                                 >
                                     {timelineOptions.map(({ index, date, message }) => (
                                         <MenuItem key={index} value={index}>
@@ -348,14 +341,14 @@ const ChangesTimeline = ({ id }) => {
                                         see syntax differences
                                     </Link>
                                 </Typography>
-                                <div className={classes.timeline} style={{ display: 'flex' }}>
+                                <div style={{ display: 'flex' }}>
                                     <div id="semanticHtml" style={{ flex: 1, overflow: 'auto' }}>
                                         <Typography
                                             variant="h6"
                                             style={{
                                                 position: 'sticky',
                                                 top: 0,
-                                                backgroundColor: 'white',
+                                                backgroundColor: theme.palette.background.paper,
                                                 zIndex: 1,
                                                 textAlign: 'center',
                                                 paddingBottom: '20px'

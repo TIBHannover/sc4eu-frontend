@@ -1,7 +1,7 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import { ContentSparqlQueryFormArea, FormRow, PreviewBox } from 'styledComponents/styledComponents';
 
 const SparqlQueryForm = forwardRef(({ open, onClose, onRun }, ref) => {
     // Get resources and relations from redux
@@ -39,7 +39,7 @@ const SparqlQueryForm = forwardRef(({ open, onClose, onRun }, ref) => {
 
     // Render as a plain form (not a modal), no buttons
     return (
-        <ContentArea>
+        <ContentSparqlQueryFormArea>
             <FormRow>
                 <label htmlFor="subject">Subject:</label>
                 <input id="subject" type="text" value={subject} onChange={e => setSubject(e.target.value)} placeholder="?subject or <URI>" />
@@ -66,7 +66,7 @@ const SparqlQueryForm = forwardRef(({ open, onClose, onRun }, ref) => {
                     <PreviewBox>{buildQuery()}</PreviewBox>
                 </label>
             </FormRow>
-        </ContentArea>
+        </ContentSparqlQueryFormArea>
     );
 });
 
@@ -77,44 +77,3 @@ SparqlQueryForm.propTypes = {
 };
 
 export default SparqlQueryForm;
-
-// ...existing code...
-const ContentArea = styled.div`
-    flex: 1;
-    padding: 18px 28px;
-    background: #f4f7fa;
-    display: flex;
-    flex-direction: column;
-`;
-const FormRow = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-
-    & > label {
-        width: 90px;
-        font-weight: 500;
-        margin-right: 10px;
-    }
-
-    & > select,
-    & > input {
-        flex: 1;
-        font-size: 1rem;
-        padding: 6px 10px;
-        border-radius: 4px;
-        border: 1px solid #bbb;
-    }
-`;
-const PreviewBox = styled.pre`
-    background: #fff;
-    border: 1px solid #bbb;
-    border-radius: 6px;
-    padding: 10px;
-    font-size: 0.98rem;
-    font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
-    margin: 0;
-    width: 100%;
-    min-height: 60px;
-    color: #333;
-`;

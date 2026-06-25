@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
-import { colorStyled } from '../styledComponents/styledColor';
+import { useTheme } from '@mui/material/styles';
 
 const UpdateConfirmationDialog = ({
     open,
@@ -11,46 +11,51 @@ const UpdateConfirmationDialog = ({
     contentText,
     confirmButtonText = 'Update',
     cancelButtonText = 'Cancel'
-}) => (
-    <Dialog
-        open={open}
-        onClose={onClose}
-        PaperProps={{
-            style: {
-                backgroundColor: colorStyled.old.light,
-                borderRadius: '12px',
-                padding: '8px'
-            }
-        }}
-    >
-        <DialogTitle style={{ color: colorStyled.old.darkSecondary, fontWeight: 'bold' }}>{title}</DialogTitle>
-        <DialogContent>
-            <DialogContentText style={{ color: colorStyled.old.darkerSecondary }}>{contentText}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-            <Button
-                onClick={onClose}
-                style={{
-                    color: colorStyled.old.darkSecondary,
-                    textTransform: 'none'
-                }}
-            >
-                {cancelButtonText}
-            </Button>
-            <Button
-                onClick={onConfirm}
-                style={{
-                    backgroundColor: colorStyled.old.darkSecondary,
-                    color: colorStyled.onSecondary,
-                    textTransform: 'none'
-                }}
-                variant="contained"
-            >
-                {confirmButtonText}
-            </Button>
-        </DialogActions>
-    </Dialog>
-);
+}) => {
+
+    const theme = useTheme();
+
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            PaperProps={{
+                style: {
+                    backgroundColor: theme.palette.background.default,
+                    borderRadius: '12px',
+                    padding: '8px'
+                }
+            }}
+        >
+            <DialogTitle style={{ color: theme.palette.primary.main, fontWeight: 'bold' }}>{title}</DialogTitle>
+            <DialogContent>
+                <DialogContentText style={{ color: theme.palette.primary.main }}>{contentText}</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={onClose}
+                    style={{
+                        color: theme.palette.primary.main,
+                        textTransform: 'none'
+                    }}
+                >
+                    {cancelButtonText}
+                </Button>
+                <Button
+                    onClick={onConfirm}
+                    style={{
+                        backgroundColor: theme.palette.background.default,
+                        color: theme.palette.primary.main,
+                        textTransform: 'none'
+                    }}
+                    variant="contained"
+                >
+                    {confirmButtonText}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
 
 UpdateConfirmationDialog.propTypes = {
     open: PropTypes.bool.isRequired,

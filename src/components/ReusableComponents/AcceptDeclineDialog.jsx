@@ -1,9 +1,9 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useTheme } from '@mui/material';
 import PropTypes from 'prop-types';
-import { colorStyled } from '../../styledComponents/styledColor';
 import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 const AcceptDeclineDialog = ({ open, onDecline, onAccept, title, message }) => {
-
+    const theme = useTheme();
+    
     return (
         <Dialog
             open={open}
@@ -24,10 +24,10 @@ const AcceptDeclineDialog = ({ open, onDecline, onAccept, title, message }) => {
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
             <DialogActions style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button onClick={onDecline} variant='contained' style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
+                <Button onClick={onDecline} variant='contained' style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}>
                     No thanks
                 </Button>
-                <Button onClick={onAccept} variant="contained" style={{ backgroundColor: colorStyled.old.darkSecondary, color: colorStyled.onSecondary }}>
+                <Button onClick={onAccept} variant="contained" style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}>
                     Yes please
                 </Button>
             </DialogActions>

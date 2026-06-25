@@ -11,11 +11,9 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
 import AlertPopUp from '../components/ReusableComponents/AlertPopUp';
 import { withRouter } from 'react-router-dom';
-
+import { StyledTable } from 'styledComponents/styledComponents';
 class Dashboard extends Component {
     constructor(props) {
         super(props);
@@ -201,32 +199,3 @@ const mapStateToProps = state => ({
 
 export default compose(connect(mapStateToProps))(withRouter(Dashboard));
 
-const StyledTable = styled.table`
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 100%;
-    border: 1px solid #ddd;
-
-    th,
-    td {
-        text-align: left;
-        padding: 16px;
-        border: 1px solid #ddd;
-    }
-
-    tr:nth-child(even) {
-        background-color: ${colorStyled.old.light};
-    }
-
-    tr:hover {
-        background-color: ${colorStyled.old.light}1A;
-    }
-
-    th {
-        padding-top: 12px;
-        padding-bottom: 12px;
-        text-align: center;
-        background-color: ${colorStyled.old.darkSecondary};
-        color: ${colorStyled.onSecondary};
-    }
-`;

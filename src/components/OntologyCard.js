@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
+import { CardActionArea, CardActions, CardContent, CardMedia, useTheme } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { Delete, Download, Refresh } from '@mui/icons-material';
@@ -21,22 +19,7 @@ import githubIcon from '../assets/images/github.svg';
 import gitlabIcon from '../assets/images/gitlab.svg';
 import file_solid from '../assets/images/file-solid.svg';
 import { updateOntologyData } from '../network/UpdateOntologyData';
-
-const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
-    & .MuiTooltip-tooltip {
-        background-color: ${colorStyled.old.darkPrimary};
-        color: ${colorStyled.onPrimary};
-        font-size: 14px;
-        padding: 12px 16px;
-        border-radius: 8px;
-        max-width: 300px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
-        margin: 8px;
-    }
-    & .MuiTooltip-arrow {
-        color: ${colorStyled.old.darkPrimary};
-    }
-`;
+import { StyledCard, StyledOntologyTooltip } from 'styledComponents/styledComponents';
 
 function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVersion, redux_addOntology, redux_removeOntology }) {
     const history = useHistory();
@@ -48,6 +31,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
         refresh: false
     });
     const [error, setError] = useState(null);
+    const theme = useTheme();
 
     useEffect(() => {
         if (autoRefresh && ontology.lookup_type !== 'local' && ontology.commitsBehind > 0) {
@@ -185,7 +169,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
     const cardActionDisabled = loading.download || loading.delete || loading.refresh || loading.update;
     return (
         <>
-            <StyledTooltip
+            <StyledOntologyTooltip
                 title={
                     <React.Fragment>
                         <Typography component="div" style={{ fontWeight: 'bold', marginBottom: '8px' }}>
@@ -200,7 +184,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 {ontology.commitsBehind > 0 && (
                                     <>
                                         <br />
-                                        <strong style={{ color: colorStyled.onErrorContainer }}>
+                                        <strong style={{ color: theme.palette.error.contrastText }}>
                                             {ontology.commitsBehind} {ontology.commitsBehind === 1 ? 'commit' : 'commits'} behind
                                         </strong>
                                     </>
@@ -212,7 +196,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 component="div"
                                 style={{
                                     marginTop: '8px',
-                                    color: colorStyled.error,
+                                    color: theme.palette.error.contrastText,
                                     fontWeight: 'bold'
                                 }}
                             >
@@ -265,7 +249,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                     variant="subtitle2"
                                     fontWeight={'bold'}
                                     style={{
-                                        color: `${colorStyled.onPrimary}D9`,
+                                        color: `${theme.palette.primary.contrastText}D9`,
                                         marginLeft: '8px',
                                         fontWeight: 'bold',
                                         fontSize: '1rem',
@@ -276,7 +260,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 </Typography>
                             </div>
                             <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '16px' }}>
-                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={1} style={{ color: colorStyled.onPrimary }}>
+                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={1} style={{ color: theme.palette.primary.contrastText }}>
                                     {ontology.name}
                                 </Typography>
                             </CardContent>
@@ -320,7 +304,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                         </CardActions>
                     </div>
                 </StyledCard>
-            </StyledTooltip>
+            </StyledOntologyTooltip>
             <DeleteConfirmationDialog
                 open={deleteDialogOpen}
                 onClose={handleDeleteCancel}
@@ -355,31 +339,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(null, mapDispatchToProps)(OntologyCard);
-
-const StyledCard = styled(Card)`
-    && {
-        background-color: ${colorStyled.old.darkSecondary};
-        color: ${colorStyled.onSecondaryO};
-        padding: 3px;
-        border-radius: 20px;
-        transition: transform 0.2s;
-        width: 300px;
-        height: 300px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        &:hover {
-            transform: scale(1.05);
-            background-color: ${colorStyled.primary}CC;
-        }
-
-        .MuiTypography-root {
-            color: ${colorStyled.onPrimary};
-        }
-
-        .MuiIconButton-root {
-            color: ${colorStyled.onPrimary};
-            &:disabled {
-                color: ${colorStyled.onPrimary}4D; 
-            }
-        }
-    }
-`;

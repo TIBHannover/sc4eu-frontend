@@ -17,7 +17,7 @@ function NodeMetadataPanel({ metadata, palette, onClose }) {
           <Typography variant="subtitle2" sx={{ fontWeight: 700, color: palette.stroke }}>
             Node Metadata
           </Typography>
-          <IconButton size="small" onClick={onClose} sx={{ color: colorStyled.onSurfaceVariant }}>
+          <IconButton size="small" onClick={onClose}>
             <CloseIcon fontSize="small" />
           </IconButton>
         </Stack>

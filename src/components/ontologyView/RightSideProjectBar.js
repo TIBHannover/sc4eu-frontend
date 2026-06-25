@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
 import { getAllProjects } from '../../network/projectIndexing';
 import { getAllUsers, getUserProjects } from '../../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import ProjectSideBarCard from '../ProjectSideBarCard';
-import { colorStyled } from '../../styledComponents/styledColor';
-import { fontStyled } from '../../styledComponents/styledFont';
-
+import { StyledRightSideProjectBarRootDiv, StyledHeadingDiv, StyledInfoDiv, StyledScrollbarDiv, StyledInfoSpan } from 'styledComponents/styledComponents';
 class RightSideProjectBar extends Component {
     constructor(props) {
         super(props);
@@ -112,7 +108,7 @@ class RightSideProjectBar extends Component {
 
     render() {
         return (
-            <StyledRootDiv id="RightSidebarContainer" initialRendering={this.state.initialRendering}>
+            <StyledRightSideProjectBarRootDiv id="RightSidebarContainer" initialRendering={this.state.initialRendering}>
                 <StyledHeadingDiv>
                     <h4 style={{ width: '100%', margin: '0 auto' }}>{this.state.title}</h4>
                 </StyledHeadingDiv>
@@ -150,7 +146,7 @@ class RightSideProjectBar extends Component {
                         </div>
                     </Scrollbars>
                 </StyledScrollbarDiv>
-            </StyledRootDiv>
+            </StyledRightSideProjectBarRootDiv>
         );
     }
 }
@@ -168,48 +164,3 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps)(RightSideProjectBar);
 
-const StyledRootDiv = styled.div`
-    width: 25%;
-    margin-top: 0.5%;
-    height: 95%;
-    background-color: ${colorStyled.surface};
-    font-family: ${fontStyled.fontFamily};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 22%;
-    }
-`;
-
-const StyledHeadingDiv = styled.div`
-    border-radius: 10px 0 0 0;
-    background-color: ${colorStyled.old.darkSecondary};
-    color: ${colorStyled.onSecondary};
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-`;
-
-const StyledInfoSpan = styled.span`
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledInfoDiv = styled.div`
-    font-size: ${fontStyled.fontSize.NormalText};
-    float: left;
-    text-align: center;
-    height: 75px;
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledScrollbarDiv = styled.div`
-    height: calc(100% - 135px);
-`;

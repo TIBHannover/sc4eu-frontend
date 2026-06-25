@@ -1,7 +1,6 @@
 import React from 'react';
-import { Box, Accordion, AccordionSummary, AccordionDetails, Typography, Card, CardContent, Link, Container } from '@mui/material';
+import { Box, Accordion, AccordionSummary, AccordionDetails, Typography, Card, CardContent, Link, Container, useTheme } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { colorStyled } from '../styledComponents/styledColor';
 import { fontStyled } from '../styledComponents/styledFont';
 
 const USER_ROLES = [
@@ -42,66 +41,66 @@ const accordionSx = {
     '&:before': { display: 'none' }
 };
 
-const accordionHeaderSx = {
-    backgroundColor: colorStyled.old.darkSecondary,
+const accordionHeaderSx = theme => ({
+    backgroundColor: theme.palette.secondary.main,
     px: { xs: 1.5, sm: 2 },
     minHeight: '48px',
-    '& .MuiAccordionSummary-content': {
+    '.MuiAccordionSummary-content': {
         margin: 0,
         alignItems: 'center'
     },
     '&:hover': {
-        backgroundColor: `${colorStyled.old.darkSecondary}CC`
+        backgroundColor: `${theme.palette.secondary.main}CC`
     }
-};
+});
 
-const accordionTitleSx = {
-    color: colorStyled.onPrimary
-};
+const accordionTitleSx = theme => ({
+    color: theme.palette.primary.contrastText
+});
 
-const expandIconSx = {
-    color: colorStyled.onPrimary
-};
+const expandIconSx = theme => ({
+    color: theme.palette.primary.contrastText
+});
 
-const bodyTextSx = {
-    color: colorStyled.onSurfaceVariant,
+const bodyTextSx = theme => ({
+    color: theme.palette.text.primary,
     textAlign: 'justify',
     mt: 1,
     fontSize: {
         xs: fontStyled.fontSize.MobileViewNormalText,
         md: fontStyled.fontSize.LaptopAndDesktopViewNormalText
     }
-};
+});
 
-const linkSx = {
-    color: colorStyled.old.linkSecondary,
+const linkSx = theme => ({
+    color: theme.palette.primary.main,
     textDecoration: 'none',
     '&:hover': {
-        color: colorStyled.onPrimaryContainer,
+        color: theme.palette.primary.contrastText,
         textDecoration: 'underline'
     }
-};
+});
 
-const cardSx = {
+const cardSx = theme => ({
     borderRadius: '8px',
     mb: 1.5,
-    backgroundColor: colorStyled.surfaceContainerLow,
-    borderColor: colorStyled.outlineVariant
-};
+    backgroundColor: theme.palette.background.default,
+    borderColor: theme.palette.divider
+});
 
 const cardContentSx = {
     p: 1.5,
     '&:last-child': { pb: 1.5 }
 };
 
-const cardTitleSx = {
-    color: colorStyled.onSurface
-};
+const cardTitleSx = theme => ({
+    color: theme.palette.text.primary
+});
 
-const cardBodySx = {
+const cardBodySx = theme => ({
     whiteSpace: 'pre-line',
-    color: colorStyled.onSurfaceVariant
-};
+    color: theme.palette.text.primary
+});
 
 function AccordionHeader({ title }) {
     return (
@@ -137,18 +136,20 @@ function UserRoleCard({ name, role }) {
 }
 
 export default function Faq() {
+    const theme = useTheme();
+
     return (
         <Box
             sx={{
                 width: '100%',
                 height: '100%',
                 overflow: 'auto',
-                backgroundColor: colorStyled.background
+                backgroundColor: theme.palette.background.default
             }}
         >
             <Container
                 sx={{
-                    backgroundColor: colorStyled.surfaceContainerLowest,
+                    backgroundColor: theme.palette.background.default,
                     borderRadius: '10px',
                     p: { xs: 1.5, sm: 2 }
                 }}
