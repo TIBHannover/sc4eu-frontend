@@ -52,5 +52,3 @@ run `npm run start-client` in the current folder
 
 This will start a react 'server' hosting only the frontend application.
 It has the hotreloading and other helpful thigs which can help during the development process of the frontend.
-
-<b>Note:</b> Login functionallity will not work in this environment.
