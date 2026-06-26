@@ -38,9 +38,7 @@ You can find an example for the content in the file `/server/.env.example`
 
 # Starting the server
 
-run `npm start` in the current folder
-
-(which is the root folder containing the src and the server folders)
+run `npm start` in frontend/server/
 
 This command will build the the front end and then start the express server.
 
