@@ -51,4 +51,4 @@ This command will build the the front end and then start the express server.
 run `npm run start-client` in the current folder
 
 This will start a react 'server' hosting only the frontend application.
-It has the hotreloading and other helpful thigs which can help during the development process of the frontend.
+It has the hot reloading and other helpful thigs which can help during the development process of the frontend.
