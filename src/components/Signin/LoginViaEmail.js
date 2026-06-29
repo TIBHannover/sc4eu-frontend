@@ -116,7 +116,7 @@ class LoginViaEmail extends Component {
     isfieldValid = () => {
         const regexEmailValidation = /^(([^<>()\\[\]\\.,;:\s@"]+(\.[^<>()\\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        if (!this.state.displayName) {
+        if (!this.state.displayName || !this.state.displayName.trim()) {
             this.setState({
                 nameError: 'Name can not be empty'
             });
