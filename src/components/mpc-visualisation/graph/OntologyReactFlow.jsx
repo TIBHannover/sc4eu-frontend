@@ -1,25 +1,83 @@
 import { useState, useMemo, useEffect, useCallback, memo } from 'react';
 import ReactFlow, { Background, Controls, MiniMap, useNodesState, useEdgesState } from 'reactflow';
-import { Box, Typography, Stack, IconButton, List } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import { OntologyNode, buildGraphNodes, buildGraphEdges, resolveNodePalette } from './OntologyNode';
+import { Box, Typography, Chip } from '@mui/material';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import TouchAppIcon from '@mui/icons-material/TouchApp';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { OntologyNode, buildGraphNodes, buildGraphEdges } from './OntologyNode';
 import { layoutGraph } from '../utils/elk_layout';
-import { TIER_SCHEMA, OVERVIEW_SCHEMA, SURVEYS } from '../data/surveys';
-import { GlassPanel, LegendDot, NavChip, MetaItem } from '../shared';
-import { colorStyled, edgeColors } from '../config/theme';
+import { DOMAIN_ID_TO_SURVEY_KEY } from '../data/surveys';
+import { GlassPanel, LegendDot, NavChip } from '../shared';
+import { GraphHelpPopover } from '../shared/GraphHelpPopover';
+import { useThemePalette, chartColors } from '../config/theme';
 import 'reactflow/dist/style.css';
+import { extractSurveyDomains, filterSchemaByDomain } from '../data/parseTtl';
+import { resolveNodePalette } from './OntologyNode';
+
+const SURVEY_DOMAIN_LABELS = {
+    OEM_Survey: 'OEM Survey',
+    Semiconductor_Survey: 'Semiconductor',
+    Tier1_Survey: 'Tier 1 Suppliers'
+};
 
 const nodeTypes = { ontologyNode: OntologyNode };
 
-// Legend entries — static, defined at module scope.
+// Legend entries derived from the same role palette the nodes use.
 const LEGEND_ENTRIES = [
-    { shape: 'circle', label: 'Abstract', fill: colorStyled.surfaceContainerLow, stroke: colorStyled.outline },
-    { shape: 'solid', label: 'Tier', fill: colorStyled.primaryContainer, stroke: colorStyled.primary },
-    { shape: 'solid', label: 'Class', fill: colorStyled.secondaryContainer, stroke: colorStyled.secondary },
-    { shape: 'dashed', label: 'Instance', fill: colorStyled.surfaceContainerHigh, stroke: colorStyled.outline }
+    { shape: 'circle', label: 'Abstract', role: 'abstract' },
+    { shape: 'solid', label: 'Tier', role: 'tier' },
+    { shape: 'solid', label: 'Class', role: 'class' },
+    { shape: 'solid', label: 'Sub-class', role: 'sub' },
+    { shape: 'pill', label: 'Selectable', role: 'sub_clickable' }
 ];
 
-// ─── OntologyReactFlow ────────────────────────────────────────────────────────
+function useTtlSchemas(rawSchema, domainSchema) {
+    return useMemo(() => {
+        if (!rawSchema) return { overview: null, tierSchemas: {} };
+
+        // If parseTtlSchema already computed tierSchemas (keyed by survey class
+        // id like "OEM_Survey"), use them directly — they are built from the
+        // raw ontology edge attribution and are correctly differentiated per
+        // survey.  Fall back to filterSchemaByDomain for any schema that was
+        // produced without the tierSchemas field (e.g. file-uploaded TTL via
+        // parseTtlFile).
+        if (rawSchema.tierSchemas) {
+            // Re-key from ontology ids (OEM_Survey) to short survey keys (oem)
+            const tierSchemas = {};
+            Object.entries(rawSchema.tierSchemas).forEach(([ontologyId, schema]) => {
+                const surveyKey = DOMAIN_ID_TO_SURVEY_KEY[ontologyId] ?? ontologyId;
+                tierSchemas[surveyKey] = schema;
+            });
+
+            // Nodes already carry tierKey from parseTtlSchema
+            return { overview: { nodes: rawSchema.nodes, edges: rawSchema.edges }, tierSchemas };
+        }
+
+        // Legacy fallback: derive domains from instance graph and filter
+        const sourceForDomains = domainSchema ?? rawSchema;
+        const domains = extractSurveyDomains(sourceForDomains);
+        const tierSchemas = {};
+
+        domains.forEach(domain => {
+            const surveyKey = DOMAIN_ID_TO_SURVEY_KEY[domain.id] ?? domain.id;
+            tierSchemas[surveyKey] = filterSchemaByDomain(rawSchema, domain.memberNodeIds);
+        });
+
+        const overviewNodes = rawSchema.nodes.map(node => {
+            if (node.role !== 'tier') return node;
+            const domain = domains.find(d => d.memberNodeIds.has(node.id));
+            const surveyKey = domain ? DOMAIN_ID_TO_SURVEY_KEY[domain.id] ?? domain.id : null;
+            return surveyKey ? { ...node, tierKey: surveyKey } : node;
+        });
+
+        return {
+            overview: { nodes: overviewNodes, edges: rawSchema.edges },
+            tierSchemas
+        };
+    }, [rawSchema, domainSchema]);
+}
 
 const OntologyReactFlow = memo(function OntologyReactFlow({
     activeTier,
@@ -27,25 +85,66 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
     onGroupSelect,
     selectedGroup,
     overrideSchema,
+    domainSchema,
     onNodeMetadata
 }) {
-    const predefinedSchema = activeTier ? TIER_SCHEMA[activeTier] : OVERVIEW_SCHEMA;
-    const schema = overrideSchema ?? predefinedSchema;
+    const { colorStyled, edgeColors } = useThemePalette();
+
+    const { overview: ttlOverview, tierSchemas: ttlTierSchemas } = useTtlSchemas(overrideSchema, domainSchema);
+
+    // const predefinedSchema = activeTier ? TIER_SCHEMA[activeTier] : OVERVIEW_SCHEMA;
+    const ttlSchema = overrideSchema ? (activeTier ? ttlTierSchemas[activeTier] : ttlOverview) : null;
+    const schema = ttlSchema;
 
     const [flowNodes, setFlowNodes] = useNodesState([]);
     const [flowEdges, setFlowEdges] = useEdgesState([]);
     const [selectedNodeMetadata, setSelectedNodeMetadata] = useState(null);
 
-    // ── Layout ──────────────────────────────────────────────────────────────────
-    useEffect(() => {
-        const rawNodes = buildGraphNodes(schema);
-        const rawEdges = buildGraphEdges(schema);
+    const navSurveys = (() => {
+        if (!overrideSchema) return [];
 
-        layoutGraph(rawNodes, rawEdges).then(positionedNodes => {
+        const domains = overrideSchema.tierSchemas
+            ? Object.keys(overrideSchema.tierSchemas).map(id => ({
+                  id,
+                  label: SURVEY_DOMAIN_LABELS[id] ?? id
+              }))
+            : extractSurveyDomains(domainSchema ?? overrideSchema);
+
+        return domains.map(({ id, label }) => ({
+            key: DOMAIN_ID_TO_SURVEY_KEY[id] ?? id,
+            label
+        }));
+    })();
+
+    // ── Layout — reruns only when schema or tier changes ─────────────────────────
+    useEffect(() => {
+        if (!schema) return;
+        setSelectedNodeMetadata(null);  // clear node selection when schema changes
+        const rawNodes = buildGraphNodes(schema, null);
+        const rawEdges = buildGraphEdges(schema, edgeColors);
+        const isTier = Boolean(activeTier);
+
+        layoutGraph(rawNodes, rawEdges, isTier).then(positionedNodes => {
             setFlowNodes(positionedNodes);
             setFlowEdges(rawEdges);
         });
-    }, [schema]);
+    }, [schema, activeTier]);
+
+    // ── Patch active state when selectedGroup changes without re-layout ───────────
+    useEffect(() => {
+        setFlowNodes(prev =>
+            prev.map(n => ({
+                ...n,
+                data: {
+                    ...n.data,
+                    active:
+                        n.data.active && !n.data.groupKey // preserve tier active flags
+                            ? true
+                            : Boolean(n.data.groupKey && n.data.groupKey === selectedGroup)
+                }
+            }))
+        );
+    }, [selectedGroup]);
 
     // ── Node click ───────────────────────────────────────────────────────────────
     const handleNodeClick = useCallback(
@@ -55,7 +154,12 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
             if (clickedNode.data.role === 'tier') {
                 onTierChange(clickedNode.data.tierKey ?? null);
             }
-            if (clickedNode.data.role === 'instance') {
+            // Nodes with a groupKey trigger dashboard group selection.
+            // This covers sub-role nodes (BEHV/BEV/ICE, nm-nodes) and class
+            // nodes that map to a specific survey group (MarketSegment → Automotive).
+            if (clickedNode.data.groupKey) {
+                onGroupSelect(clickedNode.data.groupKey);
+            } else if (clickedNode.data.role === 'instance') {
                 onGroupSelect(clickedNode.data.label);
             }
         },
@@ -63,32 +167,44 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
     );
 
     // ── Edge highlight ──────────────────────────────────────────────────────────
+    // Highlights edges attached to:
+    //  - the selected dashboard group (groupKey match) — for sub_clickable nodes
+    //  - any clicked node by id — for class/abstract nodes with no groupKey
     const visibleEdges = useMemo(() => {
-        if (!selectedGroup) return flowEdges;
+        const selectedNodeId = selectedNodeMetadata?.id ?? null;
+        if (!selectedGroup && !selectedNodeId) return flowEdges;
 
         return flowEdges.map(edge => {
             const sourceNode = flowNodes.find(node => node.id === edge.source);
             const targetNode = flowNodes.find(node => node.id === edge.target);
 
-            const isAttached = sourceNode?.data.label === selectedGroup || targetNode?.data.label === selectedGroup;
+            // groupKey match — only fire when selectedGroup is a non-null string
+            const groupMatch = n =>
+                selectedGroup != null &&
+                (n?.data.groupKey === selectedGroup || n?.data.label === selectedGroup);
+
+            // id match — direct connection to the clicked node only
+            const idMatch = n =>
+                selectedNodeId != null && n?.id === selectedNodeId;
+
+            const isAttached =
+                groupMatch(sourceNode) || groupMatch(targetNode) ||
+                idMatch(sourceNode)    || idMatch(targetNode);
 
             const highlightedStyle = { ...edge.style, stroke: edgeColors.highlight, strokeWidth: 3, opacity: 1 };
-            const dimmedStyle = { ...edge.style, stroke: edgeColors.muted, opacity: 0.3 };
+            const dimmedStyle      = { ...edge.style, stroke: edgeColors.muted, opacity: 0.3 };
 
             return {
                 ...edge,
                 animated: isAttached,
-                zIndex: isAttached ? 10 : 1,
-                style: isAttached ? highlightedStyle : dimmedStyle
+                zIndex:   isAttached ? 10 : 1,
+                style:    isAttached ? highlightedStyle : dimmedStyle,
             };
         });
-    }, [flowEdges, flowNodes, selectedGroup]);
+    }, [flowEdges, flowNodes, selectedGroup, selectedNodeMetadata]);
 
-    const selectedNodePalette = selectedNodeMetadata
-        ? resolveNodePalette({ colorKey: selectedNodeMetadata.colorKey, role: selectedNodeMetadata.role })
-        : null;
-
-    const legendHintText = activeTier ? 'click instance to filter' : 'click tier to drill in';
+    const legendHintText = activeTier ? 'click selectable to filter dashboard' : 'click tier to drill in';
+    const [helpAnchor, setHelpAnchor] = useState(null);
 
     return (
         <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
@@ -106,10 +222,63 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
                     alignItems: 'center'
                 }}
             >
-                {LEGEND_ENTRIES.map(entry => (
-                    <LegendDot key={entry.label} shape={entry.shape} label={entry.label} fill={entry.fill} stroke={entry.stroke} />
-                ))}
+                {LEGEND_ENTRIES.map(entry => {
+                    const palette = resolveNodePalette({ role: entry.role }, colorStyled);
+                    return <LegendDot key={entry.label} shape={entry.shape} label={entry.label} fill={palette.fill} stroke={palette.stroke} />;
+                })}
                 <Typography sx={{ fontSize: 8.5, color: colorStyled.onSurfaceVariant, ml: 1 }}>{legendHintText}</Typography>
+
+                {/* Divider */}
+                <Box sx={{ width: '1px', height: 14, bgcolor: colorStyled.outlineVariant, mx: 0.25 }} />
+
+                {/* Help button */}
+                <Chip
+                    icon={<HelpOutlineIcon sx={{ fontSize: '13px !important' }} />}
+                    label="How to use"
+                    size="small"
+                    onClick={e => setHelpAnchor(e.currentTarget)}
+                    sx={{
+                        fontSize:  9,
+                        fontWeight: 600,
+                        height:    22,
+                        cursor:    'pointer',
+                        bgcolor:   'transparent',
+                        color:     colorStyled.onSurfaceVariant,
+                        border:    `1px solid ${colorStyled.outlineVariant}`,
+                        '&:hover': { bgcolor: colorStyled.surfaceContainerHigh },
+                    }}
+                />
+                <GraphHelpPopover
+                    anchor={helpAnchor}
+                    onClose={() => setHelpAnchor(null)}
+                    title="Hierarchy Graph — How to use"
+                    items={[
+                        {
+                            icon: <AccountTreeIcon fontSize="small" />,
+                            primary: activeTier ? 'Click a tier node to return to overview' : 'Click a tier node to drill in',
+                            secondary: activeTier
+                                ? 'Click "Overview" in the navigation bar below to go back to the full schema.'
+                                : 'Each survey tier (OEM Survey, Semiconductor, Tier 1) shows a detailed sub-schema when clicked.',
+                            highlight: true,
+                        },
+                        {
+                            icon: <FilterAltIcon fontSize="small" />,
+                            primary: 'Click a pill node to filter the dashboard',
+                            secondary: 'Pill-shaped nodes (BEHV, BEV, ICE, nm-node buckets) are selectable. Clicking one highlights it in the dashboard charts.',
+                            highlight: true,
+                        },
+                        {
+                            icon: <TouchAppIcon fontSize="small" />,
+                            primary: 'Click any node to highlight its connections',
+                            secondary: 'Clicking any node highlights all edges directly connected to it. Click the canvas background to clear.',
+                        },
+                        {
+                            icon: <ZoomInIcon fontSize="small" />,
+                            primary: 'Zoom and pan',
+                            secondary: 'Use the scroll wheel to zoom. Drag the background to pan. The minimap in the bottom-right shows your viewport.',
+                        },
+                    ]}
+                />
             </GlassPanel>
 
             {/* ReactFlow canvas */}
@@ -124,8 +293,8 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
                 <Background color={colorStyled.outlineVariant} gap={24} size={1} variant="dots" />
                 <Controls showInteractive={false} />
                 <MiniMap
-                    nodeColor={flowNode => resolveNodePalette({ colorKey: flowNode.data?.colorKey, role: flowNode.data?.role }).stroke}
-                    maskColor="rgba(255,255,255,0.7)"
+                    nodeColor={flowNode => resolveNodePalette({ role: flowNode.data?.role }, colorStyled).stroke}
+                    maskColor={chartColors.minimapMask}
                     style={{
                         border: `1px solid ${colorStyled.outlineVariant}`,
                         borderRadius: 8,
@@ -134,50 +303,18 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
                 />
             </ReactFlow>
 
-            {/* Metadata panel */}
-            {selectedNodeMetadata && (
-                <NodeMetadataPanel metadata={selectedNodeMetadata} palette={selectedNodePalette} onClose={() => setSelectedNodeMetadata(null)} />
-            )}
-
-            {/* Tier navigation — only shown when using predefined schemas */}
-            {!overrideSchema && <TierNavigationBar activeTier={activeTier} surveys={SURVEYS} onTierChange={onTierChange} />}
+            {/* Tier navigation */}
+            <TierNavigationBar activeTier={activeTier} surveys={navSurveys} onTierChange={onTierChange} />
         </Box>
     );
 });
 
 export default OntologyReactFlow;
 
-// ─── NodeMetadataPanel ────────────────────────────────────────────────────────
-
-function NodeMetadataPanel({ metadata, palette, onClose }) {
-    return (
-        <GlassPanel elevation={3} sx={{ position: 'absolute', bottom: 80, left: 14, zIndex: 20, width: 280, overflow: 'hidden' }}>
-            <Box sx={{ height: 4, bgcolor: palette.stroke }} />
-            <Box sx={{ px: 2, pt: 1.5, pb: 2 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: palette.stroke }}>
-                        Node Metadata
-                    </Typography>
-                    <IconButton size="small" onClick={onClose} sx={{ color: colorStyled.onSurfaceVariant }}>
-                        <CloseIcon fontSize="small" />
-                    </IconButton>
-                </Stack>
-                <Box sx={{ height: '1px', bgcolor: colorStyled.outlineVariant, mb: 1.5 }} />
-                <List disablePadding>
-                    <MetaItem label="Label" value={metadata.label} />
-                    <MetaItem label="Ontology Role" value={metadata.role} />
-                    <MetaItem label="Namespace" value="survey:http://semantichub.org/survey/" />
-                    <MetaItem label="Description" value={metadata.tip ?? 'No description provided in TTL.'} />
-                    {metadata.tierKey && <MetaItem label="Tier Identifier" value={metadata.tierKey} />}
-                </List>
-            </Box>
-        </GlassPanel>
-    );
-}
-
 // ─── TierNavigationBar ────────────────────────────────────────────────────────
 
 function TierNavigationBar({ activeTier, surveys, onTierChange }) {
+    const { colorStyled } = useThemePalette();
     return (
         <GlassPanel
             sx={{
@@ -199,10 +336,12 @@ function TierNavigationBar({ activeTier, surveys, onTierChange }) {
                     key={survey.key}
                     label={survey.label}
                     isActive={activeTier === survey.key}
-                    accentColor={resolveNodePalette({ colorKey: survey.key, role: 'tier' }).stroke}
+                    accentColor={resolveNodePalette({ role: 'tier' }, colorStyled).stroke}
                     onClick={() => onTierChange(survey.key)}
                 />
             ))}
         </GlassPanel>
     );
 }
+
+// (ReactFlowHelpPopover removed — uses shared GraphHelpPopover from ../shared/GraphHelpPopover)

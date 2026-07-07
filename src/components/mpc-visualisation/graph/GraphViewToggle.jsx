@@ -2,7 +2,6 @@ import { memo } from 'react';
 import { ToggleButtonGroup, ToggleButton, Tooltip, useTheme } from '@mui/material';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import BubbleChartIcon from '@mui/icons-material/BubbleChart';
-import { colorStyled } from '../config/theme';
 
 export const GRAPH_VIEW = {
     hierarchy: 'hierarchy',
@@ -20,8 +19,8 @@ const GraphViewToggle = memo(function GraphViewToggle({ activeView, onViewChange
             }}
             size="small"
             sx={{
-                bgcolor: colorStyled.surfaceContainerLowest,
-                border: `1px solid ${colorStyled.outlineVariant}`,
+                bgcolor: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.divider}`,
                 borderRadius: 2,
                 backdropFilter: 'blur(10px)',
                 '.MuiToggleButton-root': {

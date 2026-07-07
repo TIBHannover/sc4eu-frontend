@@ -26,11 +26,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { colorStyled, sentimentColors, selectionColors, graphAccents } from '../config/theme';
+import { useThemePalette, sentimentColors, selectionColors, graphAccents, chartColors } from '../config/theme';
 import { buildBarOptions, buildRadarOptions, fmt } from './chartHelpers';
-import { GRAPH_VIEW } from '../graph/GraphViewToggle';
-// ─── SurveyDashboard ─────────────────────────────────────────────────────────
 
+// ─── SurveyDashboard ─────────────────────────────────────────────────────────
 
 export const SurveyDashboard = memo(function SurveyDashboard({
     surveys,
@@ -38,12 +37,11 @@ export const SurveyDashboard = memo(function SurveyDashboard({
     onSurveyChange,
     selectedGroup,
     onGroupSelect,
-    uploadedSchema,
-    activeView
+    uploadedSchema
 }) {
     const theme = useTheme();
     const [baseline, setBaseline] = useState('both');
-    const isForceView = activeView === GRAPH_VIEW.force;
+
     if (!surveys?.length || !activeSurvey) {
         return (
             <Box sx={{ p: 4, textAlign: 'center' }}>
@@ -55,23 +53,18 @@ export const SurveyDashboard = memo(function SurveyDashboard({
     return (
         <Box sx={{ maxWidth: 1200, mx: 'auto', px: 3, py: 4 }}>
             <SurveyTabs surveys={surveys} activeKey={activeSurvey.key} onChange={onSurveyChange} />
-
             <DashboardHeader survey={activeSurvey} baseline={baseline} setBaseline={setBaseline} />
-
-            {/* Shortage alert — high signal, shown prominently */}
             <ShortageAlert survey={activeSurvey} />
-
-            {/* Click-through detail panel */}
             <GroupDetailPanel survey={activeSurvey} selectedGroup={selectedGroup} onClear={() => onGroupSelect(null)} />
 
-            {/* Future demand trajectory — the most forward-looking data */}
-            {isForceView && activeSurvey.futureDemand && uploadedSchema && <FutureDemandChart survey={activeSurvey} />}
+            {/* Row 1: current demand bar + regional radar — shown for all surveys */}
+            <CurrentDemandRow survey={activeSurvey} baseline={baseline} selectedGroup={selectedGroup} />
 
-            {/* Current demand snapshot + regional split */}
-            <CurrentDemandRow survey={activeSurvey} baseline={baseline} />
+            {/* Row 2: future demand line chart — shown when data is available */}
+            {activeSurvey.futureDemand && uploadedSchema && <FutureDemandChart survey={activeSurvey} selectedGroup={selectedGroup} />}
 
-            {/* Survey-specific deep-dive panels */}
-            {isForceView && <SurveySpecificPanel survey={activeSurvey} selectedGroup={selectedGroup} onGroupSelect={onGroupSelect} />}
+            {/* Row 3: survey-specific deep-dive */}
+            <SurveySpecificPanel survey={activeSurvey} selectedGroup={selectedGroup} onGroupSelect={onGroupSelect} />
         </Box>
     );
 });
@@ -79,6 +72,7 @@ export const SurveyDashboard = memo(function SurveyDashboard({
 // ─── SurveyTabs ───────────────────────────────────────────────────────────────
 
 const SurveyTabs = memo(function SurveyTabs({ surveys, activeKey, onChange }) {
+    const { colorStyled } = useThemePalette();
     const value = surveys.findIndex(s => s.key === activeKey);
     const theme = useTheme();
     return (
@@ -90,14 +84,7 @@ const SurveyTabs = memo(function SurveyTabs({ surveys, activeKey, onChange }) {
             sx={{
                 mb: 3,
                 borderBottom: `1px solid ${colorStyled.outlineVariant}`,
-                '.MuiTab-root': {
-                    fontSize: 12,
-                    fontWeight: 600,
-                    textTransform: 'none',
-                    minHeight: 40,
-                    py: 0.5,
-                    color: theme.palette.text.secondary
-                },
+                '.MuiTab-root': { fontSize: 12, fontWeight: 600, textTransform: 'none', minHeight: 40, py: 0.5, color: theme.palette.text.secondary },
                 '.Mui-selected': { color: theme.palette.primary.main },
                 '.MuiTabs-indicator': { backgroundColor: theme.palette.primary.main }
             }}
@@ -134,22 +121,12 @@ const DashboardHeader = memo(function DashboardHeader({ survey, baseline, setBas
                     {survey.description}
                 </Typography>
             </Box>
-
             <ToggleButtonGroup
                 value={baseline}
                 exclusive
-                onChange={(_, newValue) => newValue && setBaseline(newValue)}
+                onChange={(_, v) => v && setBaseline(v)}
                 size="small"
-                sx={{
-                    '.MuiToggleButton-root': {
-                        fontSize: 11,
-                        color: theme.palette.text.secondary,
-                        '.Mui-selected': {
-                            bgcolor: theme.palette.primary.mainContainer,
-                            color: theme.palette.primary.contrastTextContainer
-                        }
-                    }
-                }}
+                sx={{ '.MuiToggleButton-root': { fontSize: 11, color: theme.palette.text.secondary } }}
             >
                 <ToggleButton value="both">BL1 + BL2</ToggleButton>
                 <ToggleButton value="bl1">BL1 only</ToggleButton>
@@ -160,15 +137,11 @@ const DashboardHeader = memo(function DashboardHeader({ survey, baseline, setBas
 });
 
 // ─── ShortageAlert ────────────────────────────────────────────────────────────
-// Semiconductor shortage is a binary yes/no signal from each survey.
-// It is high-value information that was previously buried in GroupDetailPanel.
-// Now shown prominently at the top of the dashboard.
 
 function ShortageAlert({ survey }) {
     const shortageData = survey.shortageData;
     if (!shortageData) return null;
     const hasShortage = shortageData.yes > 0;
-
     return (
         <Alert
             severity={hasShortage ? 'warning' : 'success'}
@@ -176,7 +149,11 @@ function ShortageAlert({ survey }) {
             sx={{ mb: 2, fontSize: 12 }}
         >
             <strong>Semiconductor Shortage:</strong>{' '}
-            {hasShortage ? `${shortageData.yes} of ${shortageData.total} respondents report active shortage` : 'No shortage reported by respondents'}
+            {shortageData.total === 0
+                ? 'No respondents reported shortage data'
+                : hasShortage
+                ? `${shortageData.yes} of ${shortageData.total} respondents report active shortage`
+                : `${shortageData.no} of ${shortageData.total} respondents report no shortage`}
         </Alert>
     );
 }
@@ -184,21 +161,18 @@ function ShortageAlert({ survey }) {
 // ─── GroupDetailPanel ─────────────────────────────────────────────────────────
 
 const GroupDetailPanel = memo(function GroupDetailPanel({ survey, selectedGroup, onClear }) {
+    const { colorStyled } = useThemePalette();
     const theme = useTheme();
     const details = useMemo(() => {
         if (!selectedGroup) return null;
         const idx = survey.groups.indexOf(selectedGroup);
         if (idx === -1) return null;
-
         const items = [];
         if (survey.bl1[idx] != null) items.push({ label: 'vs BL1', value: fmt(survey.bl1[idx]) });
         if (survey.bl2[idx] != null) items.push({ label: 'vs BL2', value: fmt(survey.bl2[idx]) });
-        if (survey.futureDemand?.[selectedGroup])
-            items.push({ label: 'Current Qtr forecast', value: fmt(survey.futureDemand[selectedGroup].currentQtr) });
         if (survey.inventoryTrend?.[selectedGroup]) items.push({ label: 'Inventory trend', value: survey.inventoryTrend[selectedGroup] });
-        if (survey.inventoryTarget?.[selectedGroup]) items.push({ label: 'Inventory target', value: survey.inventoryTarget[selectedGroup] });
+        if (survey.inventoryTarget?.[selectedGroup]) items.push({ label: 'vs Target', value: survey.inventoryTarget[selectedGroup] });
         if (survey.orderCancellation?.[selectedGroup]) items.push({ label: 'Order cancellation', value: survey.orderCancellation[selectedGroup] });
-
         return items.length > 0 ? items : null;
     }, [selectedGroup, survey]);
 
@@ -207,14 +181,7 @@ const GroupDetailPanel = memo(function GroupDetailPanel({ survey, selectedGroup,
     return (
         <Paper
             variant="outlined"
-            sx={{
-                mb: 2,
-                p: 2,
-                borderColor: selectionColors.border,
-                bgcolor: selectionColors.background,
-                borderWidth: 2,
-                borderRadius: 2
-            }}
+            sx={{ mb: 2, p: 2, borderColor: selectionColors.border, bgcolor: selectionColors.background, borderWidth: 2, borderRadius: 2 }}
         >
             <Stack direction="row" alignItems="center" gap={1} mb={1}>
                 <InfoOutlinedIcon sx={{ fontSize: 16, color: selectionColors.border }} />
@@ -224,12 +191,7 @@ const GroupDetailPanel = memo(function GroupDetailPanel({ survey, selectedGroup,
                 <Typography
                     variant="caption"
                     onClick={onClear}
-                    sx={{
-                        ml: 'auto',
-                        cursor: 'pointer',
-                        color: colorStyled.outline,
-                        '&:hover': { color: colorStyled.onSurface }
-                    }}
+                    sx={{ ml: 'auto', cursor: 'pointer', color: colorStyled.outline, '&:hover': { color: colorStyled.onSurface } }}
                 >
                     clear ×
                 </Typography>
@@ -250,69 +212,15 @@ const GroupDetailPanel = memo(function GroupDetailPanel({ survey, selectedGroup,
     );
 });
 
-// ─── FutureDemandChart ────────────────────────────────────────────────────────
-// Line chart showing demand forecast across 8 quarters for each group.
-// This is the most forward-looking data in the TTL and was previously
-// only accessible by clicking individual groups in the old GroupDetailPanel.
-// Showing all groups together reveals which powertrain / tech node has the
-// strongest forward momentum.
-
-function FutureDemandChart({ survey }) {
-    const theme = useTheme();
-    const { series, options } = useMemo(() => {
-        const seriesData = Object.entries(survey.futureDemand).map(([groupName, groupData]) => ({
-            name: groupName,
-            data: (groupData.quarters ?? []).map(q => q.value ?? 0)
-        }));
-
-        const quarters = Object.values(survey.futureDemand)[0]?.quarters?.map(q => q.label) ?? [];
-
-        return {
-            series: seriesData,
-            options: {
-                chart: { type: 'line', toolbar: { show: false }, background: 'transparent' },
-                stroke: { curve: 'smooth', width: 2.5 },
-                xaxis: { categories: quarters, labels: { style: { fontSize: '10px' } } },
-                yaxis: {
-                    labels: {
-                        formatter: v => `${v > 0 ? '+' : ''}${v.toFixed(1)}%`,
-                        style: { fontSize: '10px' }
-                    }
-                },
-                legend: { position: 'top', horizontalAlign: 'right', fontSize: '11px' },
-                grid: { borderColor: colorStyled.outlineVariant, strokeDashArray: 4 },
-                tooltip: { y: { formatter: v => `${v > 0 ? '+' : ''}${v.toFixed(2)}%` } },
-                annotations: {
-                    yaxis: [{ y: 0, borderColor: colorStyled.outline, borderWidth: 1.5, label: { text: 'Baseline' } }]
-                },
-                markers: { size: 4 }
-            }
-        };
-    }, [survey]);
-
-    return (
-        <Card variant="outlined" sx={{ mb: 2 }}>
-            <CardContent>
-                <Typography variant="subtitle2" fontWeight={700}>
-                    Future Demand Trajectory
-                </Typography>
-                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                    Forecast % change across upcoming quarters — Option 1 baseline
-                </Typography>
-                <Chart type="line" series={series} options={options} height={260} />
-            </CardContent>
-        </Card>
-    );
-}
-
 // ─── CurrentDemandRow ─────────────────────────────────────────────────────────
-// Bar chart (BL1/BL2 comparison) + radar (regional split).
-// Renamed from ChartsRow — "current" makes it clear this is the snapshot,
-// contrasting with FutureDemandChart above.
 
-const CurrentDemandRow = memo(function CurrentDemandRow({ survey, baseline }) {
+const CurrentDemandRow = memo(function CurrentDemandRow({ survey, baseline, selectedGroup }) {
     const theme = useTheme();
-    const { series: barSeries, options: barOptions } = useMemo(() => buildBarOptions(survey, baseline), [survey, baseline]);
+    const { series: barSeries, options: barOptions } = useMemo(() => buildBarOptions(survey, baseline, selectedGroup), [
+        survey,
+        baseline,
+        selectedGroup
+    ]);
     const { series: radarSeries, options: radarOptions } = useMemo(() => buildRadarOptions(survey), [survey]);
 
     return (
@@ -323,12 +231,11 @@ const CurrentDemandRow = memo(function CurrentDemandRow({ survey, baseline }) {
                         Current Demand vs Baselines
                     </Typography>
                     <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                        % change vs BL1 (last month) and BL2 (last 12 months)
+                        % change vs BL1 (last month) and BL2 (last 12 months) - Automotive segment aggregation
                     </Typography>
-                    <Chart type="bar" series={barSeries} options={barOptions} height={260} />
+                    <Chart type="bar" series={barSeries} options={barOptions} height={240} />
                 </CardContent>
             </Card>
-
             <Card variant="outlined" sx={{ flex: 1, minWidth: 220 }}>
                 <CardContent>
                     <Typography variant="subtitle2" fontWeight={700} mb={0.5}>
@@ -337,35 +244,194 @@ const CurrentDemandRow = memo(function CurrentDemandRow({ survey, baseline }) {
                     <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                         Current demand share by region
                     </Typography>
-                    <Chart type="radar" series={radarSeries} options={radarOptions} height={260} />
+                    <Chart type="radar" series={radarSeries} options={radarOptions} height={240} />
                 </CardContent>
             </Card>
         </Stack>
     );
 });
 
+// ─── FutureDemandChart ────────────────────────────────────────────────────────
+// futureDemand shape: { groupName: [{ label, value }, ...], ... }
+// selectedGroup: highlight the matching series, dim all others.
+
+function FutureDemandChart({ survey, selectedGroup }) {
+    const { colorStyled } = useThemePalette();
+    const theme = useTheme();
+    const { series, options } = useMemo(() => {
+        const entries = Object.entries(survey.futureDemand);
+        const quarters = entries[0]?.[1]?.map(q => q.label) ?? [];
+        const hasSelection = Boolean(selectedGroup) && entries.some(([g]) => g === selectedGroup);
+
+        const seriesData = entries.map(([groupName, quarters_]) => ({
+            name: groupName,
+            data: quarters_.map(q => q.value ?? 0)
+        }));
+
+        const strokeWidths = seriesData.map(s => (!hasSelection || s.name === selectedGroup ? 3 : 1.5));
+        const seriesOpacity = seriesData.map(s => (!hasSelection || s.name === selectedGroup ? 1 : 0.15));
+
+        // Detect whether the first x-axis point is "Current Quarter" so we can
+        // annotate it with a clarifying label.
+        const firstLabel = quarters[0] ?? '';
+        const hasCurrentQtr = firstLabel.toLowerCase().includes('current');
+
+        return {
+            series: seriesData,
+            options: {
+                chart: {
+                    type: 'line',
+                    toolbar: { show: false },
+                    background: 'transparent',
+                    animations: { enabled: false }
+                },
+                stroke: { curve: 'smooth', width: strokeWidths },
+                fill: { opacity: seriesOpacity },
+                xaxis: {
+                    categories: quarters,
+                    labels: { style: { fontSize: '10px' } },
+                    tooltip: { enabled: false }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: v => `${v > 0 ? '+' : ''}${v.toFixed(1)}%`,
+                        style: { fontSize: '10px' }
+                    }
+                },
+                legend: { position: 'top', horizontalAlign: 'right', fontSize: '11px' },
+                grid: { borderColor: colorStyled.outlineVariant, strokeDashArray: 4 },
+                tooltip: {
+                    x: {
+                        // When hovering over "Current Quarter", append a clarifying note.
+                        formatter: val =>
+                            hasCurrentQtr &&
+                            String(val)
+                                .toLowerCase()
+                                .includes('current')
+                                ? `${val} (forecast made during this quarter)`
+                                : String(val)
+                    },
+                    y: { formatter: v => `${v > 0 ? '+' : ''}${v.toFixed(2)}%` }
+                },
+                annotations: {
+                    yaxis: [{ y: 0, borderColor: colorStyled.outline, borderWidth: 1.5, label: { text: 'Baseline' } }],
+                    // Vertical dashed line on "Current Quarter" with an explanatory label.
+                    ...(hasCurrentQtr
+                        ? {
+                              xaxis: [
+                                  {
+                                      x: firstLabel,
+                                      borderColor: colorStyled.primary,
+                                      borderWidth: 1.5,
+                                      strokeDashArray: 4
+                                  }
+                              ]
+                          }
+                        : {})
+                },
+                markers: {
+                    size: seriesData.map(s => (!hasSelection || s.name === selectedGroup ? 5 : 2)),
+                    strokeWidth: 0
+                }
+            }
+        };
+    }, [survey, selectedGroup, colorStyled]);
+
+    return (
+        <Card variant="outlined" sx={{ mb: 2 }}>
+            <CardContent>
+                <Typography variant="subtitle2" fontWeight={700}>
+                    Future Demand Trajectory {'   '}
+                    <Typography
+                        variant="caption"
+                        title="'Current Quarter' is the quarter during which this survey was collected. All other quarters are forward-looking forecasts made at that time."
+                        sx={{
+                            color: theme.palette.primary.main,
+                            cursor: 'help',
+                            borderBottom: `1px dotted ${theme.palette.primary.main}`
+                        }}
+                    >
+                        what is "Current Quarter"?
+                    </Typography>
+                </Typography>
+
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+                    Forecast % change vs baseline across upcoming quarters
+                    {selectedGroup ? ` · ${selectedGroup} highlighted` : ''}
+                </Typography>
+                <Chart type="line" series={series} options={options} height={260} />
+            </CardContent>
+        </Card>
+    );
+}
+
 // ─── SurveySpecificPanel ──────────────────────────────────────────────────────
-// Shows deep-dive data that is unique to each survey domain.
-// OEM:  Autonomous driving SAE level adoption by vehicle type + year.
-// Semi: Inventory development trend + target indicator table.
-// Tier1: Component share activity grid.
 
 function SurveySpecificPanel({ survey, selectedGroup, onGroupSelect }) {
-    const theme = useTheme();
+    if (survey.key === 'oem') {
+        return <AdDevelopmentPanel survey={survey} />;
+    }
     if (survey.key === 'semi') {
         return <SemiInventoryPanel survey={survey} selectedGroup={selectedGroup} onGroupSelect={onGroupSelect} />;
     }
     if (survey.key === 'tier1') {
-        return <ComponentSharePanel survey={survey} />;
+        return <Tier1SpecificPanel survey={survey} />;
     }
     return null;
 }
 
+// ─── AdDevelopmentPanel (OEM only) ───────────────────────────────────────────
+// Heatmap: rows = SAE Level 1–5, columns = Year 2026/2027/2028, series = vehicle type.
+
+function AdDevelopmentPanel({ survey }) {
+    const { colorStyled } = useThemePalette();
+    const theme = useTheme();
+    const adData = survey.autonomousDriving;
+    if (!adData) return null;
+
+    const vehicleTypes = Object.keys(adData);
+    const saeLevels = ['SAE 1', 'SAE 2', 'SAE 3', 'SAE 4', 'SAE 5'];
+    const years = [2026, 2027, 2028];
+
+    // Build one series per vehicle type; each series has one data point per SAE level per year.
+    // We flatten into a stacked bar: x = "VehicleType / Year", y = %.
+    const categories = vehicleTypes.flatMap(vt => years.map(yr => `${vt} ${yr}`));
+
+    const series = saeLevels.map(level => ({
+        name: level,
+        data: vehicleTypes.flatMap(vt => years.map(yr => Math.round(adData[vt]?.[level]?.[yr] ?? 0)))
+    }));
+
+    const options = {
+        chart: { type: 'bar', stacked: true, toolbar: { show: false }, background: 'transparent' },
+        plotOptions: { bar: { horizontal: false, columnWidth: '70%' } },
+        xaxis: { categories, labels: { style: { fontSize: '9px' }, rotate: -30 } },
+        yaxis: { max: 100, labels: { formatter: v => `${v}%`, style: { fontSize: '10px' } } },
+        legend: { position: 'top', fontSize: '11px' },
+        tooltip: { y: { formatter: v => `${v}%` } },
+        grid: { borderColor: colorStyled.outlineVariant, strokeDashArray: 4 },
+        dataLabels: { enabled: false }
+    };
+
+    return (
+        <Card variant="outlined" sx={{ mb: 2 }}>
+            <CardContent>
+                <Typography variant="subtitle2" fontWeight={700}>
+                    Autonomous Driving Development
+                </Typography>
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+                    SAE level adoption % by vehicle type and year (stacked to 100%)
+                </Typography>
+                <Chart type="bar" series={series} options={options} height={280} />
+            </CardContent>
+        </Card>
+    );
+}
+
 // ─── SemiInventoryPanel (Semiconductor only) ──────────────────────────────────
-// Combined inventory trend + target status table per technology node.
-// Previously buried in GroupDetailPanel — now shown as a first-class table.
 
 function SemiInventoryPanel({ survey, selectedGroup, onGroupSelect }) {
+    const { colorStyled } = useThemePalette();
     const theme = useTheme();
     const { inventoryTrend, inventoryTarget, orderCancellation, groups } = survey;
     if (!inventoryTrend && !inventoryTarget) return null;
@@ -377,54 +443,41 @@ function SemiInventoryPanel({ survey, selectedGroup, onGroupSelect }) {
                     Inventory Status by Technology Node
                 </Typography>
                 <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                    Trend direction, target position and order cancellation activity
+                    Trend direction, target position and order cancellation activity per process node
                 </Typography>
-
                 <Table size="small" sx={{ mt: 1.5 }}>
                     <TableHead>
                         <TableRow
                             sx={{
-                                'th': {
-                                    fontSize: 10,
-                                    fontWeight: 700,
-                                    color: theme.palette.text.secondary,
-                                    bgcolor: colorStyled.surfaceContainerLow
-                                }
+                                th: { fontSize: 10, fontWeight: 700, color: theme.palette.text.secondary, bgcolor: colorStyled.surfaceContainerLow }
                             }}
                         >
                             <TableCell>Node</TableCell>
                             <TableCell align="center">Inventory Trend</TableCell>
                             <TableCell align="center">vs Target</TableCell>
-                            <TableCell align="center">Cancellations</TableCell>
+                            <TableCell align="center">Order Cancellations</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {groups.map(groupName => {
-                            const trend = inventoryTrend?.[groupName];
-                            const target = inventoryTarget?.[groupName];
-                            const cancellation = orderCancellation?.[groupName];
                             const isSelected = selectedGroup === groupName;
-
                             return (
                                 <TableRow
                                     key={groupName}
                                     hover
                                     selected={isSelected}
                                     onClick={() => onGroupSelect(isSelected ? null : groupName)}
-                                    sx={{
-                                        cursor: 'pointer',
-                                        '.Mui-selected': { bgcolor: selectionColors.background }
-                                    }}
+                                    sx={{ cursor: 'pointer', '.Mui-selected': { bgcolor: selectionColors.background } }}
                                 >
                                     <TableCell sx={{ fontWeight: isSelected ? 700 : 600, fontSize: 12 }}>{groupName}</TableCell>
                                     <TableCell align="center">
-                                        <TrendChip value={trend} />
+                                        <TrendChip value={inventoryTrend?.[groupName]} />
                                     </TableCell>
                                     <TableCell align="center">
-                                        <TargetChip value={target} />
+                                        <TargetChip value={inventoryTarget?.[groupName]} />
                                     </TableCell>
                                     <TableCell align="center">
-                                        <TrendChip value={cancellation} />
+                                        <TrendChip value={orderCancellation?.[groupName]} />
                                     </TableCell>
                                 </TableRow>
                             );
@@ -436,42 +489,77 @@ function SemiInventoryPanel({ survey, selectedGroup, onGroupSelect }) {
     );
 }
 
-// ─── ComponentSharePanel (Tier 1 only) ───────────────────────────────────────
-// Shows which component categories Tier 1 suppliers are active in.
-// From ComponentShare_Tier1 isActiveInCategory data.
+// ─── Tier1SpecificPanel ───────────────────────────────────────────────────────
 
-function ComponentSharePanel({ survey }) {
+function Tier1SpecificPanel({ survey }) {
+    return (
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={2}>
+            <ComponentSplitDonut survey={survey} />
+            <InventoryTrendByComponent survey={survey} />
+        </Stack>
+    );
+}
+
+// ─── ComponentSplitDonut (Tier 1 only) ───────────────────────────────────────
+
+function ComponentSplitDonut({ survey }) {
+    const { colorStyled } = useThemePalette();
     const theme = useTheme();
-    const componentActivity = survey.componentActivity;
-    if (!componentActivity) return null;
+    const split = survey.componentSplit;
+    if (!split) return null;
+
+    const labels = Object.keys(split);
+    const values = Object.values(split);
+
+    const options = {
+        chart: { type: 'donut', toolbar: { show: false }, background: 'transparent' },
+        labels,
+        colors: [graphAccents.demand?.stroke ?? chartColors.series1, colorStyled.outline],
+        legend: { position: 'bottom', fontSize: '11px' },
+        dataLabels: { formatter: v => `${v.toFixed(0)}%` },
+        plotOptions: { pie: { donut: { size: '65%', labels: { show: true, total: { show: true, label: 'Split', fontSize: '12px' } } } } },
+        tooltip: { y: { formatter: v => `${v}%` } }
+    };
 
     return (
-        <Card variant="outlined" sx={{ mb: 2 }}>
+        <Card variant="outlined" sx={{ flex: 1 }}>
             <CardContent>
                 <Typography variant="subtitle2" fontWeight={700} mb={0.5}>
-                    Component Category Activity
+                    EV vs non-EV Component Split
                 </Typography>
                 <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                    Active component categories reported by Tier 1 suppliers
+                    Share of EV and non-EV components in Tier 1 supply
                 </Typography>
+                <Chart type="donut" series={values} options={options} height={240} />
+            </CardContent>
+        </Card>
+    );
+}
 
-                <Stack direction="row" flexWrap="wrap" gap={1} mt={1.5}>
-                    {Object.entries(componentActivity).map(([componentName, isActive]) => (
-                        <Chip
-                            key={componentName}
-                            label={componentName}
-                            size="small"
-                            icon={isActive ? <CheckCircleIcon /> : undefined}
-                            sx={{
-                                fontSize: 10,
-                                fontWeight: 600,
-                                bgcolor: isActive ? graphAccents.demand.fill : theme.palette.background.paper,
-                                color: isActive ? sentimentColors.positive : theme.palette.text.secondary,
-                                borderColor: isActive ? sentimentColors.positive : colorStyled.outlineVariant,
-                                border: '1px solid',
-                                '.MuiChip-icon': { color: sentimentColors.positive }
-                            }}
-                        />
+// ─── InventoryTrendByComponent (Tier 1 only) ──────────────────────────────────
+
+function InventoryTrendByComponent({ survey }) {
+    const theme = useTheme();
+    const trends = survey.inventoryTrends;
+    if (!trends || Object.keys(trends).length === 0) return null;
+
+    return (
+        <Card variant="outlined" sx={{ flex: 1 }}>
+            <CardContent>
+                <Typography variant="subtitle2" fontWeight={700} mb={0.5}>
+                    Inventory Trend by Component Type
+                </Typography>
+                <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+                    Direction of inventory change for EV, non-EV and combined components
+                </Typography>
+                <Stack spacing={1.5} mt={2}>
+                    {Object.entries(trends).map(([componentType, trend]) => (
+                        <Stack key={componentType} direction="row" justifyContent="space-between" alignItems="center">
+                            <Typography variant="body2" fontWeight={600}>
+                                {componentType}
+                            </Typography>
+                            <TrendChip value={trend} />
+                        </Stack>
                     ))}
                 </Stack>
             </CardContent>
@@ -482,14 +570,14 @@ function ComponentSharePanel({ survey }) {
 // ─── TrendChip ────────────────────────────────────────────────────────────────
 
 function TrendChip({ value }) {
+    const { colorStyled } = useThemePalette();
     const theme = useTheme();
-    if (!value) {
+    if (!value)
         return (
             <Typography variant="caption" sx={{ color: colorStyled.outline }}>
                 —
             </Typography>
         );
-    }
 
     const normalised = value.toLowerCase();
 
@@ -501,14 +589,13 @@ function TrendChip({ value }) {
                 size="small"
                 sx={{
                     fontSize: 9,
-                    bgcolor: graphAccents.demand.fill,
+                    bgcolor: graphAccents.demand?.fill ?? chartColors.series1 + '30',
                     color: sentimentColors.positive,
                     '.MuiChip-icon': { color: sentimentColors.positive }
                 }}
             />
         );
     }
-
     if (normalised.includes('decrease')) {
         return (
             <Chip
@@ -524,7 +611,6 @@ function TrendChip({ value }) {
             />
         );
     }
-
     return (
         <Chip
             icon={<RemoveIcon />}
@@ -543,14 +629,14 @@ function TrendChip({ value }) {
 // ─── TargetChip ───────────────────────────────────────────────────────────────
 
 function TargetChip({ value }) {
+    const { colorStyled } = useThemePalette();
     const theme = useTheme();
-    if (!value) {
+    if (!value)
         return (
             <Typography variant="caption" sx={{ color: colorStyled.outline }}>
                 —
             </Typography>
         );
-    }
 
     const normalised = value.toLowerCase();
     const isAbove = normalised.includes('above');
@@ -563,7 +649,11 @@ function TargetChip({ value }) {
             sx={{
                 fontSize: 9,
                 fontWeight: 600,
-                bgcolor: isAbove ? theme.palette.error.mainContainer : isBelow ? theme.palette.primary.mainContainer : graphAccents.demand.fill,
+                bgcolor: isAbove
+                    ? theme.palette.error.mainContainer
+                    : isBelow
+                    ? theme.palette.primary.mainContainer
+                    : graphAccents.demand?.fill ?? chartColors.series1 + '30',
                 color: isAbove ? sentimentColors.negative : isBelow ? theme.palette.primary.main : sentimentColors.positive
             }}
         />

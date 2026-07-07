@@ -1,3 +1,5 @@
+import { chartColors } from '../config/theme';
+
 export const buildRadarOptions = (survey) => {
   const regions = Object.keys(survey.regionalDemand);
   const vals = Object.values(survey.regionalDemand);
@@ -10,18 +12,35 @@ export const buildRadarOptions = (survey) => {
         background: "transparent",
       },
       xaxis: { categories: regions },
-      fill: { opacity: 0.25, colors: ["#3b82f6"] },
-      stroke: { show: true, width: 2, colors: ["#3b82f6"] },
-      markers: { size: 4, colors: ["#3b82f6"] },
+      fill: { opacity: 0.25, colors: [chartColors.series1] },
+      stroke: { show: true, width: 2, colors: [chartColors.series1] },
+      markers: { size: 4, colors: [chartColors.series1] },
       dataLabels: { enabled: true, style: { fontSize: "10px" } },
       yaxis: { show: false },
     },
   };
-}
+};
 
-export const buildBarOptions = (survey, baseline) => {
+// buildBarOptions: when selectedGroup is provided, highlight the matching column
+// and dim the rest. Uses a colours function — the only reliable ApexCharts
+// mechanism for per-data-point colouring across multiple series.
+export const buildBarOptions = (survey, baseline, selectedGroup) => {
   const showBL1 = baseline !== "bl2";
   const showBL2 = baseline !== "bl1";
+
+  const groups = survey.groups;
+  const hasSelection = Boolean(selectedGroup) && groups.includes(selectedGroup);
+
+  const baseColors = [chartColors.series1, chartColors.series2];
+
+  const colorsFn = ({ seriesIndex, dataPointIndex }) => {
+    const base = baseColors[seriesIndex] ?? chartColors.series1;
+    if (!hasSelection) return base;
+    return groups[dataPointIndex] === selectedGroup
+      ? base
+      : `${base}${chartColors.mutedAlpha}`;
+  };
+
   const series = [
     ...(showBL1
       ? [{ name: "vs BL1", data: survey.bl1.map((v) => v ?? 0) }]
@@ -30,6 +49,7 @@ export const buildBarOptions = (survey, baseline) => {
       ? [{ name: "vs BL2", data: survey.bl2.map((v) => v ?? 0) }]
       : []),
   ];
+
   return {
     series,
     options: {
@@ -37,9 +57,11 @@ export const buildBarOptions = (survey, baseline) => {
         type: "bar",
         toolbar: { show: false },
         background: "transparent",
+        animations: { enabled: false },
       },
       theme: { mode: "light" },
-      colors: ["#3b82f6", "#f97316"],
+      colors: [colorsFn],
+      fill: { opacity: 1 },
       plotOptions: {
         bar: {
           columnWidth: baseline === "both" ? "55%" : "30%",
@@ -59,11 +81,21 @@ export const buildBarOptions = (survey, baseline) => {
           return raw === null ? "" : fmt(raw);
         },
         offsetY: -18,
-        style: { fontSize: "10px", colors: ["#374151"], fontWeight: 600 },
+        style: { fontSize: "10px", colors: [chartColors.dataLabel], fontWeight: 600 },
       },
       xaxis: {
-        categories: survey.groups,
-        labels: { style: { fontSize: "11px", fontWeight: 600 } },
+        categories: groups,
+        labels: {
+          style: {
+            fontSize: "11px",
+            fontWeight: 600,
+            colors: groups.map(g =>
+              !hasSelection || g === selectedGroup
+                ? chartColors.axisLabelActive
+                : chartColors.axisLabelMuted
+            ),
+          },
+        },
       },
       yaxis: {
         labels: {
@@ -77,15 +109,15 @@ export const buildBarOptions = (survey, baseline) => {
         horizontalAlign: "right",
         fontSize: "11px",
       },
-      grid: { borderColor: "#e5e7eb", strokeDashArray: 4 },
+      grid: { borderColor: chartColors.gridBorder, strokeDashArray: 4 },
       tooltip: {
         y: { formatter: (v) => `${v > 0 ? "+" : ""}${v.toFixed(2)}%` },
       },
       annotations: {
-        yaxis: [{ y: 0, borderColor: "#9ca3af", borderWidth: 1.5 }],
+        yaxis: [{ y: 0, borderColor: chartColors.zeroline, borderWidth: 1.5 }],
       },
     },
   };
-}
+};
 
 export const fmt = (v) => v === null ? "—" : `${v > 0 ? "+" : ""}${v.toFixed(2)}%`;

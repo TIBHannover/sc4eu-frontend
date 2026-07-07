@@ -1,69 +1,77 @@
-import { memo } from "react";
-import { Handle, Position, MarkerType } from "reactflow";
-import { Typography } from "@mui/material";
-import { colorStyled, graphAccents, edgeColors } from "../config/theme";
+import { memo } from 'react';
+import { Handle, Position, MarkerType } from 'reactflow';
+import { Typography } from '@mui/material';
+import { useThemePalette, graphAccents, shadows } from '../config/theme';
 
 // ─── Ontology role constants ──────────────────────────────────────────────────
-// Matches the role strings set in the schema definitions.
-// Defined as a constant object so that a typo is a reference error,
-// not a silent string mismatch.
 
 const ONTOLOGY_ROLE = {
-  abstract: "abstract",
-  tier:     "tier",
-  class:    "class",
-  sub:      "sub",
-  instance: "instance",
+    abstract:      'abstract',
+    tier:          'tier',
+    class:         'class',
+    sub:           'sub',
+    sub_clickable: 'sub_clickable',
+    instance:      'instance',
 };
 
+// ─── Role palette factory ─────────────────────────────────────────────────────
+// Returns the full role→colours map for the given resolved colorStyled object.
+// Called inside components so it always reflects the current theme mode.
 
-// ─── Role palettes ────────────────────────────────────────────────────────────
-// Maps each ontology role to a Material token triple { fill, stroke, text }.
-// Every role in ONTOLOGY_ROLE has an entry so the lookup is always defined.
+function makeRolePalette(c) {
+    return {
+        [ONTOLOGY_ROLE.abstract]: {
+            fill:   c.surfaceContainerLow,
+            stroke: c.outline,
+            text:   c.onSurface,
+        },
+        [ONTOLOGY_ROLE.tier]: {
+            fill:   c.primaryContainer,
+            stroke: c.primary,
+            text:   c.onPrimaryContainer,
+        },
+        [ONTOLOGY_ROLE.class]: {
+            fill:   c.secondaryContainer,
+            stroke: c.secondary,
+            text:   c.onSecondaryContainer,
+        },
+        [ONTOLOGY_ROLE.sub]: {
+            fill:   c.tertiaryContainer,
+            stroke: c.tertiary,
+            text:   c.onTertiaryContainer,
+        },
+        [ONTOLOGY_ROLE.sub_clickable]: {
+            fill:   c.secondary,
+            stroke: c.secondary,
+            text:   c.onSecondary,
+        },
+        [ONTOLOGY_ROLE.instance]: {
+            fill:   c.surfaceContainerHigh,
+            stroke: c.outline,
+            text:   c.onSurfaceVariant,
+        },
+    };
+}
 
-const ROLE_PALETTE = {
-  [ONTOLOGY_ROLE.abstract]: {
-    fill:   colorStyled.surfaceContainerLow,
-    stroke: colorStyled.outline,
-    text:   colorStyled.onSurface,
-  },
-  [ONTOLOGY_ROLE.tier]: {
-    fill:   colorStyled.primaryContainer,
-    stroke: colorStyled.primary,
-    text:   colorStyled.onPrimaryContainer,
-  },
-  [ONTOLOGY_ROLE.class]: {
-    fill:   colorStyled.secondaryContainer,
-    stroke: colorStyled.secondary,
-    text:   colorStyled.onSecondaryContainer,
-  },
-  [ONTOLOGY_ROLE.sub]: {
-    fill:   colorStyled.tertiaryContainer,
-    stroke: colorStyled.tertiary,
-    text:   colorStyled.onTertiaryContainer,
-  },
-  [ONTOLOGY_ROLE.instance]: {
-    fill:   colorStyled.surfaceContainerHigh,
-    stroke: colorStyled.outline,
-    text:   colorStyled.onSurfaceVariant,
-  },
-};
+function makeFallbackPalette(c) {
+    return { fill: c.surfaceContainerLow, stroke: c.outline, text: c.onSurface };
+}
 
-const FALLBACK_PALETTE = {
-  fill:   colorStyled.surfaceContainerLow,
-  stroke: colorStyled.outline,
-  text:   colorStyled.onSurface,
-};
+// ─── resolveNodePalette ───────────────────────────────────────────────────────
+// Must be called inside a component (receives colorStyled from useThemePalette).
+// Exported for legend/minimap callers that already have colorStyled in scope.
 
-// Exported so OntologyGraph can resolve palette without duplicating this logic.
-export function resolveNodePalette({ colorKey, role }) {
-  return graphAccents[colorKey] ?? ROLE_PALETTE[role] ?? FALLBACK_PALETTE;
+export function resolveNodePalette({ role }, colorStyled) {
+    const palette = makeRolePalette(colorStyled);
+    return palette[role] ?? makeFallbackPalette(colorStyled);
 }
 
 // ─── Node geometry constants ──────────────────────────────────────────────────
 
 const CIRCLE_SIZE             = 100;
 const DEFAULT_NODE_HEIGHT     = 50;
+const SUB_NODE_HEIGHT         = 40;
+const SELECTABLE_NODE_HEIGHT  = 36;
 const MIN_LABEL_WIDTH         = 140;
 const LABEL_WIDTH_PER_CHAR    = 8;
 const LABEL_WIDTH_PADDING     = 40;
@@ -71,233 +79,258 @@ const HANDLE_SIZE             = 7;
 const HANDLE_BORDER_WIDTH     = 2;
 const GLOW_RING_INSET         = -3;
 const GLOW_RING_OPACITY       = 0.35;
-const CIRCLE_BORDER_RADIUS    = "50%";
+const CIRCLE_BORDER_RADIUS    = '50%';
+const PILL_BORDER_RADIUS      = '50px';
 const RECT_BORDER_RADIUS      = 10;
 const GLOW_RING_RECT_RADIUS   = 14;
 
 function isCircleRole(role) {
-  return role === ONTOLOGY_ROLE.abstract;
+    return role === ONTOLOGY_ROLE.abstract;
 }
 
-function resolveNodeDimensions({ role, label, overrideWidth, overrideHeight }) {
-  if (isCircleRole(role)) {
-    return { width: CIRCLE_SIZE, height: CIRCLE_SIZE };
-  }
-
-  const labelWidth = Math.max(
-    MIN_LABEL_WIDTH,
-    label.length * LABEL_WIDTH_PER_CHAR + LABEL_WIDTH_PADDING
-  );
-
-  return {
-    width:  overrideWidth  ?? labelWidth,
-    height: overrideHeight ?? DEFAULT_NODE_HEIGHT,
-  };
+function resolveNodeDimensions({ role, label, groupKey, overrideWidth, overrideHeight }) {
+    if (isCircleRole(role)) {
+        return { width: CIRCLE_SIZE, height: CIRCLE_SIZE };
+    }
+    const labelWidth = Math.max(MIN_LABEL_WIDTH, label.length * LABEL_WIDTH_PER_CHAR + LABEL_WIDTH_PADDING);
+    // Only sub_clickable nodes get the compact pill height.
+    // Class-role nodes with a groupKey keep standard class height.
+    const defaultHeight = role === ONTOLOGY_ROLE.sub_clickable
+        ? SELECTABLE_NODE_HEIGHT
+        : role === ONTOLOGY_ROLE.sub
+            ? SUB_NODE_HEIGHT
+            : DEFAULT_NODE_HEIGHT;
+    return {
+        width:  overrideWidth  ?? labelWidth,
+        height: overrideHeight ?? defaultHeight,
+    };
 }
 
-// ─── Active / default style resolution ───────────────────────────────────────
-// Active nodes invert the palette: stroke becomes the fill background.
-// Resolved into named objects before JSX so the render return has no
-// conditional expressions.
+function resolveActiveNodeStyle(palette, c) {
+    // Full inversion: stroke becomes background. Used for sub_clickable nodes.
+    return {
+        backgroundColor: palette.stroke,
+        textColor:       c.onPrimary,
+        borderColor:     c.primary,
+    };
+}
 
-function resolveActiveNodeStyle(palette) {
-  return {
-    backgroundColor: palette.stroke,
-    textColor:       colorStyled.onPrimary,
-    borderColor:     colorStyled.primary,
-  };
+// Lighter selection style for class-role nodes that are clickable.
+// Keeps the normal fill but adds a stronger border so the selection is visible
+// without mimicking sub_clickable's full inversion.
+function resolveActiveClassStyle(palette) {
+    return {
+        backgroundColor: palette.fill,
+        textColor:       palette.text,
+        borderColor:     palette.stroke,
+    };
 }
 
 function resolveDefaultNodeStyle(palette) {
-  return {
-    backgroundColor: palette.fill,
-    textColor:       palette.text,
-    borderColor:     palette.stroke,
-  };
+    return {
+        backgroundColor: palette.fill,
+        textColor:       palette.text,
+        borderColor:     palette.stroke,
+    };
 }
 
 // ─── OntologyNode ─────────────────────────────────────────────────────────────
 
 export const OntologyNode = memo(function OntologyNode({ data }) {
-  const palette   = resolveNodePalette({ colorKey: data.colorKey, role: data.role });
-  const isCircle  = isCircleRole(data.role);
-  const isDashed  = data.role === ONTOLOGY_ROLE.instance;
+    const { colorStyled } = useThemePalette();
 
-  const { width, height } = resolveNodeDimensions({
-    role:           data.role,
-    label:          data.label,
-    overrideWidth:  data.w,
-    overrideHeight: data.h,
-  });
+    const palette         = resolveNodePalette({ role: data.role }, colorStyled);
+    const isCircle        = isCircleRole(data.role);
+    const isDashed        = data.role === ONTOLOGY_ROLE.instance;
+    const isSub           = data.role === ONTOLOGY_ROLE.sub || data.role === ONTOLOGY_ROLE.sub_clickable;
+    const isPill          = data.role === ONTOLOGY_ROLE.sub_clickable;   // shape only for sub_clickable
+    const isSelectable    = Boolean(data.groupKey);                       // interactivity for any groupKey
+    const isSelected      = isSelectable && data.active;
+    const isClassSelected = isSelected && !isPill;                        // class-role node selected
 
-  const { backgroundColor, textColor, borderColor } = data.active
-    ? resolveActiveNodeStyle(palette)
-    : resolveDefaultNodeStyle(palette);
+    const { width, height } = resolveNodeDimensions({
+        role:          data.role,
+        label:         data.label,
+        groupKey:      data.groupKey,
+        overrideWidth: data.w,
+        overrideHeight: data.h,
+    });
 
-  const borderRadius   = isCircle ? CIRCLE_BORDER_RADIUS : RECT_BORDER_RADIUS;
-  const borderStyle    = isDashed ? "dashed" : "solid";
-  const glowRingRadius = isCircle ? CIRCLE_BORDER_RADIUS : GLOW_RING_RECT_RADIUS;
+    // Style resolution:
+    //  - sub_clickable selected → full inversion (pill, strong contrast)
+    //  - class-role selected    → tinted border highlight (keeps class fill)
+    //  - default                → normal palette
+    const { backgroundColor, textColor, borderColor } = isSelected && isPill
+        ? resolveActiveNodeStyle(palette, colorStyled)
+        : resolveDefaultNodeStyle(palette);
 
-  const boxShadow = data.active
-    ? `0 0 0 3px ${palette.stroke}33, 0 4px 12px rgba(0,0,0,0.1)`
-    : "0 1px 4px rgba(0,0,0,0.06)";
+    // Class-role selected nodes get a thicker, more prominent border
+    // using the selection highlight colour rather than full inversion.
+    const effectiveBorderColor = isClassSelected
+        ? colorStyled.primary
+        : borderColor;
 
-  const handleStyle = {
-    background: palette.stroke,
-    width:      HANDLE_SIZE,
-    height:     HANDLE_SIZE,
-    border:     `${HANDLE_BORDER_WIDTH}px solid ${colorStyled.surfaceContainerLowest}`,
-  };
+    const borderRadius   = isCircle ? CIRCLE_BORDER_RADIUS : isPill ? PILL_BORDER_RADIUS : RECT_BORDER_RADIUS;
+    const borderStyle    = isDashed ? 'dashed' : 'solid';
+    const glowRingRadius = isCircle ? CIRCLE_BORDER_RADIUS : isPill ? PILL_BORDER_RADIUS : GLOW_RING_RECT_RADIUS;
+    const borderWidth    = isSelected ? '2.5px' : '2px';
 
-  return (
-    <div
-      style={{
-        width,
-        height,
-        borderRadius,
-        background:     backgroundColor,
-        border:         `2.5px ${borderStyle} ${borderColor}`,
-        boxShadow,
-        color:          textColor,
-        cursor:         "pointer",
-        display:        "flex",
-        flexDirection:  "column",
-        alignItems:     "center",
-        justifyContent: "center",
-        textAlign:      "center",
-        padding:        "6px 10px",
-        userSelect:     "none",
-        position:       "relative",
-        transition:     "all 0.2s ease",
-      }}
-    >
-      <Handle type="target" position={Position.Top} style={handleStyle} />
+    const boxShadow = (isSelected && isPill)
+        ? shadows.nodeSelected(palette.stroke)
+        : isClassSelected
+            ? shadows.nodeSelected(colorStyled.primary)
+            : isSelectable
+                ? shadows.nodeSelectable(palette.stroke)
+                : shadows.nodeDefault;
 
-      {/* Stereotype label — e.g. «class», «survey», «instance» */}
-      <Typography
-        style={{ color: textColor }}
-        sx={{
-          fontSize:      8,
-          fontWeight:    600,
-          opacity:       0.6,
-          letterSpacing: 0.6,
-          lineHeight:    1,
-        }}
-      >
-        {data.stereotype}
-      </Typography>
+    const handleStyle = {
+        background: palette.stroke,
+        width:      HANDLE_SIZE,
+        height:     HANDLE_SIZE,
+        border:     `${HANDLE_BORDER_WIDTH}px solid ${colorStyled.surfaceContainerLowest}`,
+    };
 
-      {/* Node name */}
-      <Typography
-        style={{ color: textColor }}
-        sx={{
-          fontSize:   11.5,
-          fontWeight: 700,
-          lineHeight: 1.25,
-          mt:         "3px",
-        }}
-      >
-        {data.label}
-      </Typography>
+    return (
+        <div
+            style={{
+                width,
+                height,
+                borderRadius,
+                background:     backgroundColor,
+                border:         `${borderWidth} ${borderStyle} ${effectiveBorderColor}`,
+                boxShadow,
+                color:          textColor,
+                cursor:         isSelectable ? 'pointer' : 'default',
+                display:        'flex',
+                flexDirection:  'column',
+                alignItems:     'center',
+                justifyContent: 'center',
+                textAlign:      'center',
+                padding:        isPill ? '4px 16px' : '6px 10px',
+                userSelect:     'none',
+                position:       'relative',
+                transition:     'all 0.2s ease',
+            }}
+        >
+            <Handle type="target" position={Position.Top} style={handleStyle} />
 
-      {data.active && (
-        <GlowRing borderRadius={glowRingRadius} color={palette.text} />
-      )}
+            <Typography
+                style={{ color: textColor }}
+                sx={{ fontSize: 8, fontWeight: 600, opacity: 0.6, letterSpacing: 0.6, lineHeight: 1 }}
+            >
+                {data.stereotype}
+            </Typography>
 
-      <Handle type="source" position={Position.Bottom} style={handleStyle} />
-    </div>
-  );
+            <Typography
+                style={{ color: textColor }}
+                sx={{
+                    fontSize:   isSub || isSelectable ? 16 : 18,
+                    fontWeight: isSelected ? 800 : isSub || isSelectable ? 600 : 700,
+                    lineHeight: 1.25,
+                    mt:         '2px',
+                }}
+            >
+                {data.label}
+            </Typography>
+
+            {(data.active || isSelected) && (
+                <GlowRing
+                    borderRadius={glowRingRadius}
+                    color={isClassSelected ? colorStyled.primary : palette.stroke}
+                />
+            )}
+
+            <Handle type="source" position={Position.Bottom} style={handleStyle} />
+        </div>
+    );
 });
 
-// GlowRing is a purely decorative overlay — not exported.
-// It has no MUI equivalent so it stays as a plain div.
 function GlowRing({ borderRadius, color }) {
-  return (
-    <div
-      style={{
-        position:      "absolute",
-        inset:         GLOW_RING_INSET,
-        borderRadius,
-        border:        `1px solid ${color}`,
-        opacity:       GLOW_RING_OPACITY,
-        pointerEvents: "none",
-      }}
-    />
-  );
+    return (
+        <div
+            style={{
+                position:      'absolute',
+                inset:         GLOW_RING_INSET,
+                borderRadius,
+                border:        `1px solid ${color}`,
+                opacity:       GLOW_RING_OPACITY,
+                pointerEvents: 'none',
+            }}
+        />
+    );
 }
 
 // ─── buildGraphNodes ──────────────────────────────────────────────────────────
-// Converts schema node definitions into ReactFlow node objects.
-// Schema nodes use `ck` as the color key field name — renamed to `colorKey`
-// here so that downstream code never encounters the abbreviated form.
 
-export function buildGraphNodes(schema) {
-  return schema.nodes.map((schemaNode) => {
-    const { width, height } = resolveNodeDimensions({
-      role:  schemaNode.role,
-      label: schemaNode.label,
+export function buildGraphNodes(schema, selectedGroup) {
+    return schema.nodes.map(schemaNode => {
+        const { width, height } = resolveNodeDimensions({
+            role:  schemaNode.role,
+            label: schemaNode.label,
+        });
+
+        const isGroupSelected = selectedGroup && schemaNode.groupKey === selectedGroup;
+
+        return {
+            id:       schemaNode.id,
+            type:     'ontologyNode',
+            position: { x: 0, y: 0 },
+            data: {
+                ...schemaNode,
+                colorKey: schemaNode.ck,
+                groupKey: schemaNode.groupKey ?? null,
+                active:   schemaNode.active ?? isGroupSelected ?? false,
+            },
+            width,
+            height,
+        };
     });
-
-    return {
-      id:       schemaNode.id,
-      type:     "ontologyNode",
-      position: { x: 0, y: 0 }, // ELK overwrites positions after layout
-      data: {
-        ...schemaNode,
-        colorKey: schemaNode.ck,
-        active:   schemaNode.active ?? false,
-      },
-      width,
-      height,
-    };
-  });
 }
 
 // ─── buildGraphEdges ──────────────────────────────────────────────────────────
-// Converts schema edge definitions into ReactFlow edge objects.
-// Abbreviated schema fields (s, t, ck) are expanded to full names
-// so that the constructed ReactFlow objects are self-documenting.
+// edgeColors is passed in by the caller (resolved from useThemePalette in the
+// component) so that edge colours respond to dark/light mode switching.
 
-export function buildGraphEdges(schema) {
-  return schema.edges.map((schemaEdge, index) => {
-    const isSubclassEdge = schemaEdge.style === "sub";
-    const isInstanceEdge = schemaEdge.style === "inst";
+export function buildGraphEdges(schema, edgeColors) {
+    return schema.edges.map((schemaEdge, index) => {
+        const isSubclassEdge = schemaEdge.style === 'sub';
+        const isInstanceEdge = schemaEdge.style === 'inst';
 
-    const edgeStrokeColor = isSubclassEdge
-      ? edgeColors.subclass
-      : (graphAccents[schemaEdge.ck]?.stroke ?? edgeColors.property);
+        const edgeStrokeColor = isSubclassEdge
+            ? edgeColors.subclass
+            : (graphAccents[schemaEdge.ck]?.stroke ?? edgeColors.property);
 
-    const arrowMarkerType = isSubclassEdge
-      ? MarkerType.Arrow
-      : MarkerType.ArrowClosed;
+        const arrowMarkerType = isSubclassEdge ? MarkerType.Arrow : MarkerType.ArrowClosed;
+        const strokeDashPattern = isInstanceEdge ? '5,5' : '0';
 
-    const strokeDashPattern = isInstanceEdge ? "5,5" : "0";
+        const source = isSubclassEdge ? schemaEdge.t : schemaEdge.s;
+        const target = isSubclassEdge ? schemaEdge.s : schemaEdge.t;
 
-    return {
-      id:     `edge-${index}`,
-      source: schemaEdge.s,
-      target: schemaEdge.t,
-      label:  schemaEdge.label,
-      type:   "default",
-      style: {
-        stroke:          edgeStrokeColor,
-        strokeWidth:     isSubclassEdge ? 2 : 1.5,
-        strokeDasharray: strokeDashPattern,
-      },
-      labelBgStyle: {
-        fill:        colorStyled.surfaceContainerLowest,
-        fillOpacity: 0.9,
-      },
-      labelBgPadding: [6, 3],
-      labelStyle: {
-        fontSize:   9,
-        fill:       colorStyled.onSurfaceVariant,
-        fontWeight: 500,
-      },
-      markerEnd: {
-        type:  arrowMarkerType,
-        color: edgeStrokeColor,
-      },
-    };
-  });
+        return {
+            id:     `edge-${index}`,
+            source,
+            target,
+            label:  schemaEdge.label,
+            type:   'default',
+            style: {
+                stroke:          edgeStrokeColor,
+                strokeWidth:     isSubclassEdge ? 2 : 1.5,
+                strokeDasharray: strokeDashPattern,
+            },
+            labelBgStyle: {
+                fill:        edgeColors.labelBg,
+                fillOpacity: 0.9,
+            },
+            labelBgPadding: [6, 3],
+            labelStyle: {
+                fontSize:   9,
+                fill:       edgeColors.labelText,
+                fontWeight: 500,
+            },
+            markerEnd: {
+                type:  arrowMarkerType,
+                color: edgeStrokeColor,
+            },
+        };
+    });
 }
