@@ -11,10 +11,11 @@ import TrendingUpIcon   from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import RemoveIcon       from "@mui/icons-material/Remove";
 import {
-  colorStyled,
+  useThemePalette,
   sentimentColors,
   selectionColors,
   graphAccents,
+  shadows,
 } from '../config/theme';
 
 const FONT_SIZE_MICRO  = 8.5;   
@@ -24,6 +25,7 @@ const FONT_SIZE_KPI    = 20;
 const FONT_SIZE_DETAIL = 12;    
 
 export const GlassPanel = memo(function GlassPanel({ children, sx, ...rest }) {
+  const { colorStyled } = useThemePalette();
   return (
     <Paper
       elevation={0}
@@ -42,6 +44,7 @@ export const GlassPanel = memo(function GlassPanel({ children, sx, ...rest }) {
 });
 
 export const MetaItem = memo(function MetaItem({ label, value }) {
+  const { colorStyled } = useThemePalette();
   const theme = useTheme();
   return (
     <ListItem
@@ -74,14 +77,15 @@ export const LegendDot = memo(function LegendDot({
 }) {
   const isCircle = shape === "circle";
   const isDashed = shape === "dashed";
-const theme = useTheme();
+  const isPill   = shape === "pill";
+  const theme = useTheme();
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
       <Box
         sx={{
-          width:        isCircle ? 10 : 14,
+          width:        isCircle ? 10 : 20,
           height:       10,
-          borderRadius: isCircle ? "50%" : 1.5,
+          borderRadius: isCircle ? "50%" : isPill ? "50px" : 1.5,
           bgcolor:      fill,
           border:       `1.5px ${isDashed ? "dashed" : "solid"} ${stroke}`,
           flexShrink:   0,
@@ -100,6 +104,7 @@ export const NavChip = memo(function NavChip({
   accentColor,
   onClick,
 }) {
+  const { colorStyled } = useThemePalette();
   const theme = useTheme();
   const activeStyles = {
     bgcolor:     accentColor ?? theme.palette.primary.main,
@@ -131,6 +136,7 @@ export const NavChip = memo(function NavChip({
 });
 
 export const SignalChip = memo(function SignalChip({ bl1, bl2 }) {
+  const { colorStyled } = useThemePalette();
   const theme = useTheme();
   if (bl1 === null || bl2 === null) {
     return (
@@ -199,6 +205,7 @@ export const KpiCard = memo(function KpiCard({
   isSelected,
   onClick,
 }) {
+  const { colorStyled } = useThemePalette();
   const theme = useTheme();
   const primaryColor   = primaryValue  >= 0 ? sentimentColors.positive : sentimentColors.negative;
   const secondaryColor = secondaryValue >= 0 ? sentimentColors.positive : sentimentColors.negative;
@@ -207,6 +214,7 @@ export const KpiCard = memo(function KpiCard({
     borderColor: selectionColors.border,
     borderWidth: 2,
     bgcolor:     selectionColors.background,
+    
   };
 
   const defaultStyles = {
@@ -228,9 +236,10 @@ export const KpiCard = memo(function KpiCard({
         transition:   "all 0.2s",
         "&:hover": {
           borderColor: theme.palette.primary.main,
-          boxShadow:   "0 2px 8px rgba(0,0,0,0.06)",
+          boxShadow:   shadows.cardHover,
         },
         ...(isSelected ? selectedStyles : defaultStyles),
+
       }}
     >
       <Typography
@@ -242,6 +251,7 @@ export const KpiCard = memo(function KpiCard({
           color:         theme.palette.text.secondary,
           mb:            0.5,
         }}
+        
       >
         {label}
       </Typography>

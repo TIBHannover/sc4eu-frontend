@@ -4,9 +4,16 @@ import {
 import {
   Box, Typography, CircularProgress, Chip,
 } from "@mui/material";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import TouchAppIcon from "@mui/icons-material/TouchApp";
+import OpenWithIcon from "@mui/icons-material/OpenWith";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import * as d3 from "d3";
-import { colorStyled } from "../config/theme";
+import { domainColors, useThemePalette } from "../config/theme";
 import { extractSurveyDomains, filterSchemaByDomain } from "../data/parseTtl";
+import { NavChip } from "../shared";
+import { GraphHelpPopover } from "../shared/GraphHelpPopover";
 
 // ─── Instance node detection ──────────────────────────────────────────────────
 
@@ -81,28 +88,11 @@ function buildFilteredSchema(schema, expandedNodeIds) {
   };
 }
 
-// ─── Domain color assignment ──────────────────────────────────────────────────
+function makeFallbackColor(c) {
+  return { fill: c.surfaceContainerLow, stroke: c.outline, text: c.onSurfaceVariant };
+}
 
-const DOMAIN_COLORS = [
-  { fill: "#DBEAFE", stroke: "#2563EB", text: "#1E3A8A" },
-  { fill: "#DCFCE7", stroke: "#16A34A", text: "#14532D" },
-  { fill: "#FEF3C7", stroke: "#D97706", text: "#78350F" },
-  { fill: "#F3E8FF", stroke: "#9333EA", text: "#581C87" },
-  { fill: "#FFE4E6", stroke: "#E11D48", text: "#881337" },
-  { fill: "#CFFAFE", stroke: "#0891B2", text: "#164E63" },
-  { fill: "#FEE2E2", stroke: "#DC2626", text: "#7F1D1D" },
-  { fill: "#FFEDD5", stroke: "#EA580C", text: "#7C2D12" },
-  { fill: "#F0FDF4", stroke: "#15803D", text: "#14532D" },
-  { fill: "#EDE9FE", stroke: "#7C3AED", text: "#4C1D95" },
-];
-
-const FALLBACK_COLOR = {
-  fill: colorStyled.surfaceContainerLow,
-  stroke: colorStyled.outline,
-  text: colorStyled.onSurfaceVariant,
-};
-
-function assignDomainColors(allNodes, allEdges) {
+function assignDomainColors(allNodes, allEdges, fallbackColor) {
   const subclassEdges    = allEdges.filter((e) => e.style === "sub");
   const parentsByChildId = new Map(allNodes.map((n) => [n.id, []]));
 
@@ -119,7 +109,7 @@ function assignDomainColors(allNodes, allEdges) {
   const colorByRootId = new Map(
     domainRoots.map((rootNode, index) => [
       rootNode.id,
-      DOMAIN_COLORS[index % DOMAIN_COLORS.length],
+     domainColors[index % domainColors.length],
     ])
   );
 
@@ -150,7 +140,7 @@ function assignDomainColors(allNodes, allEdges) {
     const dominantRoot  = roots[0];
     colorByNodeId.set(
       n.id,
-      dominantRoot ? (colorByRootId.get(dominantRoot) ?? FALLBACK_COLOR) : FALLBACK_COLOR
+      dominantRoot ? (colorByRootId.get(dominantRoot) ?? fallbackColor) : fallbackColor
     );
   });
 
@@ -159,10 +149,38 @@ function assignDomainColors(allNodes, allEdges) {
 
 // ─── Simulation constants ─────────────────────────────────────────────────────
 
-const CHARGE_BY_ROLE   = { abstract: -400, tier: -320, class: -250, sub: -180, instance: -80 };
-const RADIUS_BY_ROLE   = { abstract: 26, tier: 20, class: 15, sub: 11, instance: 6 };
+const CHARGE_BY_ROLE    = { abstract: -400, tier: -320, class: -250, sub: -180, instance: -80 };
+const RADIUS_BY_ROLE    = { abstract: 26, tier: 20, class: 15, sub: 11, instance: 6 };
 const DISTANCE_BY_STYLE = { sub: 60, prop: 100, inst: 40 };
 const ROLES_WITH_LABELS = new Set(["abstract", "tier", "class"]);
+
+// ─── Shared helpers ───────────────────────────────────────────────────────────
+
+// Builds a simulation node object from a schema node. Used in both
+// buildSimulation and the expandedNodeIds incremental-update effect.
+function makeSimNode(schemaNode, { colorByNodeId, fallbackColor, instanceCountByParentId, expandedIds }) {
+  return {
+    id:            schemaNode.id,
+    label:         schemaNode.label,
+    role:          schemaNode.role,
+    radius:        RADIUS_BY_ROLE[schemaNode.role] ?? 8,
+    charge:        CHARGE_BY_ROLE[schemaNode.role] ?? -100,
+    domainColor:   colorByNodeId.get(schemaNode.id) ?? fallbackColor,
+    instanceCount: instanceCountByParentId.get(schemaNode.id) ?? 0,
+    isExpanded:    expandedIds.has(schemaNode.id),
+    isInstance:    isDataInstanceNode(schemaNode.id),
+  };
+}
+
+// Applies the standard stroke/width/dash/opacity attributes to a D3 link
+// selection. Used identically in buildSimulation and the expansion update.
+function applyLinkAttrs(selection, colorStyledRef) {
+  return selection
+    .attr("stroke",           colorStyledRef.current.outlineVariant ?? "#c7d0d4")
+    .attr("stroke-width",     (e) => e.style === "sub" ? 1.5 : 0.8)
+    .attr("stroke-dasharray", (e) => e.style === "inst" ? "3,3" : "none")
+    .attr("opacity",          (e) => e.style === "inst" ? 0.3 : 0.5);
+}
 
 // ─── Debounce utility ─────────────────────────────────────────────────────────
 // Delays execution until calls stop arriving for `delayMs` milliseconds.
@@ -185,24 +203,30 @@ const OntologyForceTree = memo(function OntologyForceTree({
   onNodeClick,
   onDomainChange
 }) {
+  const { colorStyled } = useThemePalette();
+
   const svgRef          = useRef(null);
   const simulationRef   = useRef(null);
   const nodeElementsRef = useRef(null);
   const linkElementsRef = useRef(null);
 
-  // Store callbacks in refs so they never appear in useCallback dependency arrays.
-  // This is the core fix for the layout-jumps-on-click problem.
-  const onNodeClickRef  = useRef(onNodeClick);
+  // Store callbacks and frequently-changing values in refs so they never
+  // appear in useCallback dependency arrays and never trigger simulation rebuilds.
+  const onNodeClickRef    = useRef(onNodeClick);
   const onDomainChangeRef = useRef(onDomainChange);
-  const selectedGroupRef = useRef(selectedGroup);
+  const selectedGroupRef  = useRef(selectedGroup);
+  const colorStyledRef    = useRef(colorStyled);
 
-  useEffect(() => { onNodeClickRef.current   = onNodeClick;    }, [onNodeClick]);
+  useEffect(() => { onNodeClickRef.current    = onNodeClick;    }, [onNodeClick]);
   useEffect(() => { onDomainChangeRef.current = onDomainChange; }, [onDomainChange]);
-  useEffect(() => { selectedGroupRef.current = selectedGroup;  }, [selectedGroup]);
+  useEffect(() => { selectedGroupRef.current  = selectedGroup;  }, [selectedGroup]);
+  useEffect(() => { colorStyledRef.current    = colorStyled;    }, [colorStyled]);
 
-  const [isSimulating,    setIsSimulating]    = useState(true);
-  const [expandedNodeIds, setExpandedNodeIds] = useState(new Set());
-  const [activeDomainId,  setActiveDomainId]  = useState(null);
+  const [isSimulating,        setIsSimulating]        = useState(true);
+  const [expandedNodeIds,     setExpandedNodeIds]     = useState(new Set());
+  const [activeDomainId,      setActiveDomainId]      = useState(null);
+  const [simulationNodeCount, setSimulationNodeCount] = useState(0);
+  const [hiddenInstanceCount, setHiddenInstanceCount] = useState(0);
 
   const surveyDomains = useMemo(
     () => (schema ? extractSurveyDomains(schema) : []),
@@ -240,8 +264,12 @@ const OntologyForceTree = memo(function OntologyForceTree({
   // Stored in a ref so the ResizeObserver can call the latest version
   // without being listed as a useCallback dependency (which would cause
   // the ResizeObserver to reconnect on every schema change).
+  // expandedNodeIds is accessed via ref to avoid restarting the simulation
+  // when a badge is clicked — expansion is handled by updateSimulationNodes.
 
-  const buildSimulationRef = useRef(null);
+  const buildSimulationRef   = useRef(null);
+  const expandedNodeIdsRef   = useRef(expandedNodeIds);
+  useEffect(() => { expandedNodeIdsRef.current = expandedNodeIds; }, [expandedNodeIds]);
 
   const buildSimulation = useCallback(() => {
     const svgElement = svgRef.current;
@@ -265,22 +293,21 @@ const OntologyForceTree = memo(function OntologyForceTree({
     setIsSimulating(true);
 
     const { visibleNodes, visibleEdges, instanceCountByParentId } =
-      buildFilteredSchema(activeSchema, expandedNodeIds);
+      buildFilteredSchema(activeSchema, expandedNodeIdsRef.current);
 
+    const fallbackColor = makeFallbackColor(colorStyled);
     const { colorByNodeId } =
-      assignDomainColors(activeSchema.nodes, activeSchema.edges);
+      assignDomainColors(activeSchema.nodes, activeSchema.edges, fallbackColor);
 
-    const simulationNodes = visibleNodes.map((schemaNode) => ({
-      id:            schemaNode.id,
-      label:         schemaNode.label,
-      role:          schemaNode.role,
-      radius:        RADIUS_BY_ROLE[schemaNode.role] ?? 8,
-      charge:        CHARGE_BY_ROLE[schemaNode.role] ?? -100,
-      domainColor:   colorByNodeId.get(schemaNode.id) ?? FALLBACK_COLOR,
-      instanceCount: instanceCountByParentId.get(schemaNode.id) ?? 0,
-      isExpanded:    expandedNodeIds.has(schemaNode.id),
-      isInstance:    isDataInstanceNode(schemaNode.id),
-    }));
+    const simNodeArgs = { colorByNodeId, fallbackColor, instanceCountByParentId, expandedIds: expandedNodeIdsRef.current };
+    const simulationNodes = visibleNodes.map((sn) => makeSimNode(sn, simNodeArgs));
+
+    // Track the actual number of structural nodes and total hidden instances
+    // so the status bar shows counts that match what is on screen.
+    const structuralCount = simulationNodes.filter((n) => !n.isInstance).length;
+    const hiddenCount = [...instanceCountByParentId.values()].reduce((sum, c) => sum + c, 0);
+    setSimulationNodeCount(structuralCount);
+    setHiddenInstanceCount(hiddenCount);
 
     const nodeById = Object.fromEntries(simulationNodes.map((n) => [n.id, n]));
 
@@ -316,16 +343,10 @@ const OntologyForceTree = memo(function OntologyForceTree({
 
     // ── Links ──────────────────────────────────────────────────────────────
 
-    const linkElements = zoomGroup
-      .append("g")
-      .attr("class", "links")
-      .selectAll("line")
-      .data(simulationLinks)
-      .join("line")
-      .attr("stroke",           colorStyled.outlineVariant)
-      .attr("stroke-width",     (e) => e.style === "sub" ? 1.5 : 0.8)
-      .attr("stroke-dasharray", (e) => e.style === "inst" ? "3,3" : "none")
-      .attr("opacity",          (e) => e.style === "inst" ? 0.3 : 0.5);
+    const linkElements = applyLinkAttrs(
+      zoomGroup.append("g").attr("class", "links").selectAll("line").data(simulationLinks).join("line"),
+      colorStyledRef
+    );
 
     linkElementsRef.current = linkElements;
 
@@ -406,9 +427,9 @@ const OntologyForceTree = memo(function OntologyForceTree({
       .attr("cy",           (simNode) => -simNode.radius * 0.75)
       .attr("r",            9)
       .attr("fill",         (simNode) =>
-        simNode.isExpanded ? colorStyled.primary : simNode.domainColor.stroke
+        simNode.isExpanded ? colorStyledRef.current.primary : simNode.domainColor.stroke
       )
-      .attr("stroke",       colorStyled.surfaceContainerLowest)
+      .attr("stroke",       colorStyledRef.current.surfaceContainerLowest)
       .attr("stroke-width", 1.5)
       .attr("cursor",       "pointer")
       .on("click", (clickEvent, simNode) => {
@@ -424,7 +445,7 @@ const OntologyForceTree = memo(function OntologyForceTree({
       .attr("text-anchor",    "middle")
       .attr("font-size",      7)
       .attr("font-weight",    700)
-      .attr("fill",           colorStyled.onPrimary)
+      .attr("fill",           colorStyledRef.current.onPrimary)
       .attr("pointer-events", "none")
       .text((simNode) => {
         if (simNode.isExpanded) return "−";
@@ -484,8 +505,8 @@ const OntologyForceTree = memo(function OntologyForceTree({
 
         linkElementsRef.current
           .attr("stroke", (simLink) => {
-            if (typeof simLink.source !== "object") return colorStyled.outlineVariant;
-            return simLink.source.domainColor?.stroke ?? colorStyled.outlineVariant;
+            if (typeof simLink.source !== "object") return colorStyledRef.current.outlineVariant ?? "#c7d0d4";
+            return simLink.source.domainColor?.stroke ?? colorStyledRef.current.outlineVariant ?? "#c7d0d4";
           })
           .attr("x1", (simLink) => simLink.source.x)
           .attr("y1", (simLink) => simLink.source.y)
@@ -500,17 +521,15 @@ const OntologyForceTree = memo(function OntologyForceTree({
 
     simulationRef.current = simulation;
 
-  // Intentionally excludes selectedGroup (handled by direct D3 update)
-  // and onNodeClick (accessed via ref).
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSchema, expandedNodeIds, handleBadgeClick]);
+  }, [activeSchema, handleBadgeClick]);
 
   // Keep buildSimulationRef current so ResizeObserver always calls the latest version.
   useEffect(() => {
     buildSimulationRef.current = buildSimulation;
   }, [buildSimulation]);
 
-  // ── Effect: run simulation when structure changes ──────────────────────────
+  // ── Effect: run simulation when schema/domain changes ─────────────────────
   useEffect(() => {
     buildSimulation();
     return () => {
@@ -520,6 +539,155 @@ const OntologyForceTree = memo(function OntologyForceTree({
       }
     };
   }, [buildSimulation]);
+
+  // ── Effect: update nodes in-place when expansion changes ──────────────────
+  // Does NOT rebuild the SVG — preserves all existing node positions.
+  // New instance nodes are spawned near their parent to avoid flying in from
+  // random positions.
+  useEffect(() => {
+    const sim = simulationRef.current;
+    const svgElement = svgRef.current;
+    if (!sim || !svgElement || !activeSchema) return;
+
+    const { visibleNodes, visibleEdges, instanceCountByParentId } =
+      buildFilteredSchema(activeSchema, expandedNodeIds);
+
+    const fallbackColor = makeFallbackColor(colorStyledRef.current);
+    const { colorByNodeId } =
+      assignDomainColors(activeSchema.nodes, activeSchema.edges, fallbackColor);
+
+    // Get current node positions from the running simulation so we can
+    // preserve them for nodes that already exist.
+    const existingById = Object.fromEntries(
+      (sim.nodes() ?? []).map((n) => [n.id, n])
+    );
+
+    const simNodeArgs = { colorByNodeId, fallbackColor, instanceCountByParentId, expandedIds: expandedNodeIds };
+    const newSimNodes = visibleNodes.map((schemaNode) => {
+      const existing = existingById[schemaNode.id];
+      const node = makeSimNode(schemaNode, simNodeArgs);
+      if (existing) {
+        // Preserve position and velocity so the node stays put
+        node.x  = existing.x;
+        node.y  = existing.y;
+        node.vx = existing.vx ?? 0;
+        node.vy = existing.vy ?? 0;
+        node.fx = existing.fx ?? null;
+        node.fy = existing.fy ?? null;
+      } else {
+        // New instance node: spawn near its parent to avoid flying in from afar
+        const parentEdge = visibleEdges.find(
+          (e) => e.t === schemaNode.id && existingById[e.s]
+        );
+        const parent = parentEdge ? existingById[parentEdge.s] : null;
+        const jitter = 20;
+        node.x = parent ? parent.x + (Math.random() - 0.5) * jitter : undefined;
+        node.y = parent ? parent.y + (Math.random() - 0.5) * jitter : undefined;
+      }
+      return node;
+    });
+
+    const nodeById = Object.fromEntries(newSimNodes.map((n) => [n.id, n]));
+    const newLinks = visibleEdges
+      .filter((e) => nodeById[e.s] && nodeById[e.t])
+      .map((e) => ({ source: e.s, target: e.t, style: e.style, distance: DISTANCE_BY_STYLE[e.style] ?? 80 }));
+
+    // Update status bar counts
+    const structuralCount = newSimNodes.filter((n) => !n.isInstance).length;
+    const hiddenCount = [...instanceCountByParentId.values()].reduce((s, c) => s + c, 0);
+    setSimulationNodeCount(structuralCount);
+    setHiddenInstanceCount(hiddenCount);
+
+    // Rebuild D3 DOM elements and update the running simulation
+    const zoomGroup = d3.select(svgElement).select("g.zoom-root");
+    if (zoomGroup.empty()) {
+      // SVG not yet built — let buildSimulation handle it
+      buildSimulation();
+      return;
+    }
+
+    // Update link elements
+    const linkGroup = zoomGroup.select("g.links");
+    const newLinkEls = linkGroup.selectAll("line").data(newLinks, (d) => `${d.source}-${d.target}`);
+    newLinkEls.exit().remove();
+    applyLinkAttrs(newLinkEls.enter().append("line"), colorStyledRef);
+    linkElementsRef.current = linkGroup.selectAll("line");
+
+    // Update node elements — only add new ones, remove departed ones
+    const nodeGroup = zoomGroup.select("g.nodes");
+    const newNodeEls = nodeGroup.selectAll("g").data(newSimNodes, (d) => d.id);
+    newNodeEls.exit().remove();
+
+    // For newly added nodes, append the full circle + label structure
+    const enteredNodes = newNodeEls.enter().append("g").attr("cursor", "pointer");
+
+    enteredNodes.append("circle")
+      .attr("r",            (n) => n.radius)
+      .attr("fill",         (n) => n.domainColor.fill)
+      .attr("stroke",       (n) => n.domainColor.stroke)
+      .attr("stroke-width", (n) => n.isInstance ? 1 : 1.5)
+      .attr("opacity",      (n) => n.isInstance ? 0.8 : 1);
+
+    enteredNodes.append("circle")
+      .attr("class",            "selection-ring")
+      .attr("r",                (n) => n.radius + 6)
+      .attr("fill",             "none")
+      .attr("stroke",           (n) => n.domainColor.stroke)
+      .attr("stroke-width",     2)
+      .attr("stroke-dasharray", "4,2")
+      .attr("opacity",          0.6)
+      .attr("display",          "none");
+
+    enteredNodes
+      .filter((n) => !n.isInstance)
+      .append("text")
+      .attr("dy",            "0.31em")
+      .attr("x",             (n) => n.radius + 5)
+      .attr("font-size",     (n) => n.role === "abstract" ? 11 : 9)
+      .attr("font-weight",   (n) => n.role === "abstract" ? 700 : 500)
+      .attr("fill",          (n) => n.domainColor.stroke)
+      .attr("pointer-events","none")
+      .text((n) => {
+        const max = n.role === "abstract" ? 22 : 18;
+        return n.label.length > max ? `${n.label.slice(0, max - 1)}…` : n.label;
+      });
+
+    enteredNodes
+      .filter((n) => n.isInstance)
+      .append("title")
+      .text((n) => n.label);
+
+    // Re-attach drag and click to all nodes (entered + existing)
+    const dragBehavior = d3.drag()
+      .on("start", (ev, n) => { if (!ev.active) sim.alphaTarget(0.1).restart(); n.fx = n.x; n.fy = n.y; })
+      .on("drag",  (ev, n) => { n.fx = ev.x; n.fy = ev.y; })
+      .on("end",   (ev, n) => { if (!ev.active) sim.alphaTarget(0); n.fx = n.x; n.fy = n.y; });
+
+    nodeElementsRef.current = nodeGroup.selectAll("g")
+      .call(dragBehavior)
+      .on("click", (ev, n) => { ev.stopPropagation(); onNodeClickRef.current(n); });
+
+    // Patch badge counts on existing nodes that changed
+    nodeElementsRef.current.each(function(n) {
+      const existing2 = existingById[n.id];
+      if (existing2 && existing2.instanceCount !== n.instanceCount) {
+        d3.select(this).select("text.badge-text").text(() => {
+          if (n.isExpanded) return "−";
+          return n.instanceCount > 99 ? "99+" : String(n.instanceCount);
+        });
+      }
+    });
+
+    // Update forceLink with new nodes/links and give a gentle nudge
+    sim.nodes(newSimNodes);
+    sim.force("link").links(newLinks);
+    // Low alpha restart so new nodes settle gently without throwing existing ones
+    sim.alpha(0.15).restart();
+    setIsSimulating(true);
+
+  // expandedNodeIds is the only trigger — activeSchema changes go through buildSimulation
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expandedNodeIds]);
 
   // ── Effect: update selection visuals without touching simulation ───────────
   // Runs when selectedGroup changes. Patches D3 attributes directly.
@@ -582,11 +750,6 @@ const OntologyForceTree = memo(function OntologyForceTree({
     // Uses refs to access latest values.
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const visibleStructural = activeSchema
-    ? activeSchema.nodes.filter((n) => !isDataInstanceNode(n.id)).length
-    : 0;
-  const totalNodeCount = schema?.nodes?.length ?? 0;
-
   return (
     <Box sx={{ width: "100%", height: "100%", position: "relative", bgcolor: colorStyled.background }}>
       <DomainFilterBar
@@ -596,8 +759,8 @@ const OntologyForceTree = memo(function OntologyForceTree({
       />
       {isSimulating && <SimulatingIndicator />}
       <LayoutStatusBar
-        structuralNodeCount={visibleStructural}
-        totalNodeCount={totalNodeCount}
+        structuralNodeCount={simulationNodeCount}
+        hiddenInstanceCount={hiddenInstanceCount}
         expandedCount={expandedNodeIds.size}
       />
       <svg ref={svgRef} style={{ width: "100%", height: "100%" }} />
@@ -610,6 +773,9 @@ export default OntologyForceTree;
 // ─── DomainFilterBar ──────────────────────────────────────────────────────────
 
 function DomainFilterBar({ domains, activeDomainId, onDomainChange }) {
+  const { colorStyled: c } = useThemePalette();
+  const [helpAnchor, setHelpAnchor] = useState(null);
+
   if (domains.length === 0) return null;
 
   return (
@@ -622,73 +788,92 @@ function DomainFilterBar({ domains, activeDomainId, onDomainChange }) {
         zIndex:    10,
         display:   "flex",
         gap:       0.75,
-        // Backdrop so chips are readable over the graph.
-        bgcolor:        `${colorStyled.surfaceContainerLowest}CC`,
+        alignItems: "center",
+        bgcolor:        `${c.surfaceContainerLowest}CC`,
         backdropFilter: "blur(8px)",
         borderRadius:   3,
         px:             1,
         py:             0.5,
-        border:         `1px solid ${colorStyled.outlineVariant}`,
+        border:         `1px solid ${c.outlineVariant}`,
       }}
     >
-      {/* "All" chip */}
-      <DomainChip
-        label="All"
-        isActive={activeDomainId === null}
-        onClick={() => onDomainChange(null)}
-      />
+      <NavChip label="All" isActive={activeDomainId === null} onClick={() => onDomainChange(null)} />
       {domains.map((domain) => (
-        <DomainChip
+        <NavChip
           key={domain.id}
-          label={`${domain.label} · ${domain.memberCount} classes`}
+          label={domain.label}
           isActive={activeDomainId === domain.id}
-          onClick={() =>
-            onDomainChange(activeDomainId === domain.id ? null : domain.id)
-          }
+          onClick={() => onDomainChange(activeDomainId === domain.id ? null : domain.id)}
         />
       ))}
+
+      {/* Divider */}
+      <Box sx={{ width: "1px", height: 14, bgcolor: c.outlineVariant, mx: 0.25 }} />
+
+      {/* Help button */}
+      <Chip
+        icon={<HelpOutlineIcon sx={{ fontSize: "13px !important" }} />}
+        label="How to use"
+        size="small"
+        onClick={(e) => setHelpAnchor(e.currentTarget)}
+        sx={{
+          fontSize:   9,
+          fontWeight: 600,
+          height:     22,
+          cursor:     "pointer",
+          bgcolor:    "transparent",
+          color:      c.onSurfaceVariant,
+          border:     `1px solid ${c.outlineVariant}`,
+          "&:hover":  { bgcolor: c.surfaceContainerHigh },
+        }}
+      />
+
+      <GraphHelpPopover
+        anchor={helpAnchor}
+        onClose={() => setHelpAnchor(null)}
+        title="Force Graph — How to use"
+        items={FORCE_HELP_ITEMS}
+      />
     </Box>
   );
 }
 
-function DomainChip({ label, isActive, onClick }) {
-  return (
-    <Chip
-      label={label}
-      size="small"
-      onClick={onClick}
-      sx={{
-        fontSize:   9,
-        fontWeight: 700,
-        cursor:     "pointer",
-        height:     22,
-        bgcolor:    isActive ? colorStyled.primary : "transparent",
-        color:      isActive ? colorStyled.onPrimary : colorStyled.onSurfaceVariant,
-        border:     `1px solid ${isActive ? colorStyled.primary : colorStyled.outlineVariant}`,
-        "&:hover": {
-          bgcolor: isActive ? colorStyled.primary : colorStyled.surfaceContainerHigh,
-        },
-      }}
-    />
-  );
-}
+const FORCE_HELP_ITEMS = [
+  {
+    icon: <TouchAppIcon fontSize="small" />,
+    primary: "Expand hidden instances",
+    secondary: "Nodes with a numbered badge have hidden data instances. Click the badge to reveal them next to the node.",
+    highlight: true,
+  },
+  {
+    icon: <FilterAltIcon fontSize="small" />,
+    primary: "Filter by survey domain",
+    secondary: "Use the domain chips above (OEM Survey, Semiconductor, Tier 1) to show only nodes belonging to that survey.",
+  },
+  {
+    icon: <TouchAppIcon fontSize="small" />,
+    primary: "Click a node",
+    secondary: "Clicking a node selects it in the dashboard. Clickable (pill-shaped) nodes filter the charts.",
+  },
+  {
+    icon: <OpenWithIcon fontSize="small" />,
+    primary: "Drag to pin",
+    secondary: "Drag any node to move and fix it in place. The rest of the graph continues to settle around it.",
+  },
+  {
+    icon: <ZoomInIcon fontSize="small" />,
+    primary: "Scroll to zoom",
+    secondary: "Use the mouse wheel to zoom in and out. Click and drag the background to pan.",
+  },
+];
 
-// ─── LayoutStatusBar ──────────────────────────────────────────────────────────
-
-function LayoutStatusBar({ structuralNodeCount, totalNodeCount, expandedCount }) {
-  const collapsedCount = totalNodeCount - structuralNodeCount;
+function LayoutStatusBar({ structuralNodeCount, hiddenInstanceCount, expandedCount }) {
+  const { colorStyled: c } = useThemePalette();
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        bottom:   12,
-        left:     14,
-        zIndex:   10,
-      }}
-    >
-      <Typography sx={{ fontSize: 9, color: colorStyled.outline }}>
+    <Box sx={{ position: "absolute", bottom: 12, left: 14, zIndex: 10 }}>
+      <Typography sx={{ fontSize: 9, color: c.outline }}>
         {structuralNodeCount} classes shown
-        {collapsedCount > 0 && ` · ${collapsedCount} instances hidden`}
+        {hiddenInstanceCount > 0 && ` · ${hiddenInstanceCount} instances hidden`}
         {expandedCount > 0  && ` · ${expandedCount} expanded`}
         {" · click badge to expand · drag to pin · scroll to zoom"}
       </Typography>
@@ -696,23 +881,12 @@ function LayoutStatusBar({ structuralNodeCount, totalNodeCount, expandedCount })
   );
 }
 
-// ─── SimulatingIndicator ──────────────────────────────────────────────────────
-
 function SimulatingIndicator() {
+  const { colorStyled: c } = useThemePalette();
   return (
-    <Box
-      sx={{
-        position:   "absolute",
-        bottom:     12,
-        right:      14,
-        zIndex:     10,
-        display:    "flex",
-        alignItems: "center",
-        gap:        1,
-      }}
-    >
-      <CircularProgress size={10} thickness={5} sx={{ color: colorStyled.outline }} />
-      <Typography sx={{ fontSize: 9, color: colorStyled.outline }}>
+    <Box sx={{ position: "absolute", bottom: 12, right: 14, zIndex: 10, display: "flex", alignItems: "center", gap: 1 }}>
+      <CircularProgress size={10} thickness={5} sx={{ color: c.outline }} />
+      <Typography sx={{ fontSize: 9, color: c.outline }}>
         Settling…
       </Typography>
     </Box>
