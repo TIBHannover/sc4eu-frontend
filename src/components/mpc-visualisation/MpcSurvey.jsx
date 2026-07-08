@@ -139,7 +139,7 @@ export const MpcSurvey = () => {
                 ...(isSplit ? {
                     position:  'sticky',
                     top:       0,
-                    height:    'calc(100vh - 50px)', 
+                    height:    'calc(100vh - 120px)', 
                     overflow:  'hidden',
                 } : {
                     position: 'relative',
