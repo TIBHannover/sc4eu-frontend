@@ -11,6 +11,9 @@ import {
     Radio,
     Paper,
     Chip,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
     useTheme
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -28,7 +31,7 @@ import { commitChanges } from '../utils/CommitChanges';
 import { useQueryClient } from '@tanstack/react-query';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
-
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const theme = useTheme();
@@ -252,14 +255,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 )}
                             </Typography>
                             <Typography>
-                                <Tooltip title="Unique identifier for the term">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>Identifier:</strong> {updatedTerm.identifier}
-                            </Typography>
-                            <Typography>
                                 <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative labels exist">
                                     <IconButton style={{ marginBottom: '4px' }} size="small">
                                         <HelpOutlineIcon fontSize="small" />
@@ -267,7 +262,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 </Tooltip>
                                 <strong>Label:</strong> {updatedTerm.label}
                             </Typography>
-                            {/* Alternative labels */}
                             {updatedTerm.altLabel &&
                                 splitAltLabels(updatedTerm.altLabel).map((label, index) => (
                                     <Typography key={'altLabel' + index}>
@@ -289,30 +283,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 <strong>Description:</strong> {updatedTerm.description}
                             </Typography>
                             {/* See also */}
-                            <Typography>
-                                <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>See Also:</strong> {renderSeeAlso()}
-                            </Typography>
-                            <Typography>
-                                <Tooltip title="Provides the creation date of the term">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
-                            </Typography>
-                            <Typography>
-                                <Tooltip title="Provides the last modified date of the term">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>Last modified:</strong> {new Date(updatedTerm.modified).toLocaleDateString() + ", " + new Date(updatedTerm.modified).toLocaleTimeString()}
-                            </Typography>
+
                             {/* Status */}
                             <Typography>
                                 <Tooltip title="Status: Draft, Reject, Accept">
@@ -330,7 +301,71 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     />
                                 )}
                             </Typography>
+                            <Accordion
+                                disableGutters
+                                elevation={0}
+                                sx={{
+                                    mt: 2,
+                                    backgroundColor: 'transparent',
+                                    border: theme => `1px solid ${theme.palette.divider}`,
+                                    borderRadius: 1,
+                                    '&:before': { display: 'none' }, 
+                                    '&.Mui-expanded': { margin: 0 }
+                                }}
+                            >
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon fontSize="small" />}
+                                    sx={{
+                                        minHeight: 36,
+                                        '& .MuiAccordionSummary-content': { margin: '8px 0' }
+                                    }}
+                                >
+                                    <Typography variant='body1'>
+                                        More technical details <Typography variant='caption' fontSize='0.85rem'>(id, created and modifed dates, see Also)</Typography>
+                                    </Typography>
+                                </AccordionSummary>
 
+                                <AccordionDetails sx={{ pt: 0 }}>
+                                    <Typography>
+                                        <Tooltip title="Unique identifier for the term">
+                                            <IconButton size="small">
+                                                <HelpOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <strong>Identifier:</strong> {updatedTerm.identifier}
+                                    </Typography>
+
+                                    <Typography>
+                                        <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
+                                            <IconButton size="small">
+                                                <HelpOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <strong>See Also:</strong> {renderSeeAlso()}
+                                    </Typography>
+
+                                    <Typography>
+                                        <Tooltip title="Provides the creation date of the term">
+                                            <IconButton size="small">
+                                                <HelpOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
+                                    </Typography>
+
+                                    <Typography>
+                                        <Tooltip title="Provides the last modified date of the term">
+                                            <IconButton size="small">
+                                                <HelpOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <strong>Last modified:</strong>{' '}
+                                        {new Date(updatedTerm.modified).toLocaleDateString() +
+                                            ', ' +
+                                            new Date(updatedTerm.modified).toLocaleTimeString()}
+                                    </Typography>
+                                </AccordionDetails>
+                            </Accordion>
                             <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px', flexWrap: 'wrap' }}>
                                 <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile ? true : false}>
                                     Edit Term
