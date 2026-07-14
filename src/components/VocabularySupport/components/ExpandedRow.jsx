@@ -303,7 +303,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
-                                <strong>Created at:</strong> {updatedTerm.created}
+                                <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
                             </Typography>
                             <Typography>
                                 <Tooltip title="Provides the last modified date of the term">
@@ -311,7 +311,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
-                                <strong>Last modified:</strong> {updatedTerm.modified}
+                                <strong>Last modified:</strong> {new Date(updatedTerm.modified).toLocaleDateString() + ", " + new Date(updatedTerm.modified).toLocaleTimeString()}
                             </Typography>
                             {/* Status */}
                             <Typography>

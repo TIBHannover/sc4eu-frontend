@@ -412,6 +412,9 @@ const VocabularyMainTable = ({
                         <span>{column.columnDef.header}</span>
                     </Tooltip>
                 ),
+                Cell: ({ cell }) => {
+                    return new Date(cell.getValue()).toLocaleDateString();
+                },
                 size: 90,
                 enableEditing: false,
                 filterVariant: 'select',
