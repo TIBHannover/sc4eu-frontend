@@ -1,4 +1,18 @@
-import { Box, Typography, TextField, Button, Tooltip, IconButton, Link, FormControlLabel, RadioGroup, Radio, Paper, Chip, useTheme } from '@mui/material';
+import {
+    Box,
+    Typography,
+    TextField,
+    Button,
+    Tooltip,
+    IconButton,
+    Link,
+    FormControlLabel,
+    RadioGroup,
+    Radio,
+    Paper,
+    Chip,
+    useTheme
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PropTypes from 'prop-types';
@@ -15,9 +29,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
 
+
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const theme = useTheme();
-    
+
     const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
     const [activeAgreement, setActiveAgreement] = useState(false);
@@ -479,31 +494,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                     </Box>
                 </Box>
             )}
-
-            <Typography
-                variant="body2"
-                sx={{
-                    mt: 2,
-                    textAlign: 'center',
-                    color: theme.palette.text.primary,
-                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' }
-                }}
-            >
-                Press <strong>Esc</strong> to go back to the table or{' '}
-                <Typography
-                    component="span"
-                    onClick={handleClose}
-                    sx={{
-                        cursor: 'pointer',
-                        textDecoration: 'underline',
-                        color: theme.palette.primary.main,
-                        fontWeight: 500,
-                        '&:hover': { color: `${theme.palette.primary.main}B3` }
-                    }}
-                >
-                    click here to close
-                </Typography>
-            </Typography>
         </Box>
     );
 };
