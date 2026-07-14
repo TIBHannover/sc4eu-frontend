@@ -254,17 +254,17 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     </StyledTooltip>
                                 )}
                             </Typography>
-                            <Typography sx={{ marginLeft: 4, marginBottom: 1}}>
+                            <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
                                 <strong>Label:</strong> {updatedTerm.label}
                             </Typography>
                             {updatedTerm.altLabel &&
                                 splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                                    <Typography key={'altLabel' + index} sx={{ marginLeft: 4, marginBottom: 1}}>
+                                    <Typography key={'altLabel' + index} sx={{ marginLeft: 4, marginBottom: 1 }}>
                                         <strong>Alternative Label {index + 1}:</strong> {label}
                                     </Typography>
                                 ))}
                             {/* Description */}
-                            <Typography sx={{ marginLeft: 4, marginBottom: 1}}>    
+                            <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
                                 <strong>Description:</strong> {updatedTerm.description}
                             </Typography>
                             {/* See also */}
@@ -276,7 +276,20 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
-                                <strong>Status:</strong> {updatedTerm.status}
+                                <strong>Status:</strong>{' '}
+                                <Typography
+                                    component="span"
+                                    sx={{
+                                        color: theme =>
+                                            ({
+                                                reject: theme.palette.error.main,
+                                                draft: theme.palette.primary.main,
+                                                accept: theme.palette.success.main
+                                            }[updatedTerm.status?.toLowerCase()] || theme.palette.text.primary)
+                                    }}
+                                >
+                                    {updatedTerm.status}
+                                </Typography>
                                 {lastConsensus && (
                                     <Chip
                                         label="Check last consensus"
@@ -294,7 +307,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     backgroundColor: 'transparent',
                                     border: theme => `1px solid ${theme.palette.divider}`,
                                     borderRadius: 1,
-                                    '&:before': { display: 'none' }, 
+                                    '&:before': { display: 'none' },
                                     '&.Mui-expanded': { margin: 0 }
                                 }}
                             >
@@ -305,8 +318,11 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         '& .MuiAccordionSummary-content': { margin: '8px 0' }
                                     }}
                                 >
-                                    <Typography variant='body1'>
-                                        More technical details <Typography variant='caption' fontSize='0.85rem' fontStyle='italic'>(id, created and modifed dates, see Also)</Typography>
+                                    <Typography variant="body1">
+                                        More technical details{' '}
+                                        <Typography variant="caption" fontSize="0.85rem" fontStyle="italic">
+                                            (id, created and modifed dates, see Also)
+                                        </Typography>
                                     </Typography>
                                 </AccordionSummary>
 
@@ -329,11 +345,11 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <strong>See Also:</strong> {renderSeeAlso()}
                                     </Typography>
 
-                                    <Typography sx={{ marginLeft: 4, marginBottom: 1}}>
+                                    <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
                                         <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
                                     </Typography>
 
-                                    <Typography sx={{ marginLeft: 4, marginBottom: 1}}>
+                                    <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
                                         <strong>Last modified:</strong>{' '}
                                         {new Date(updatedTerm.modified).toLocaleDateString() +
                                             ', ' +

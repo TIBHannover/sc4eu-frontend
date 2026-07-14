@@ -7,6 +7,7 @@ function makePalette(scheme, mode) {
             contrastText: scheme.onPrimary,
             // Extra tokens used in mpc-visualisation
             onContainer: scheme.onPrimaryContainer,
+            fixed: scheme.primaryFixed
         },
         secondary: {
             main: scheme.secondary,
