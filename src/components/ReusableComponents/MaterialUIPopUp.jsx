@@ -1,5 +1,7 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useTheme } from '@mui/material';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, IconButton, useTheme } from '@mui/material';
 import PropTypes from 'prop-types';
+import CloseIcon from '@mui/icons-material/Close';
+import React from 'react';
 
 const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
     const theme = useTheme();
@@ -20,13 +22,9 @@ const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
             <DialogContent>
                 <DialogContentText>{message}</DialogContentText>
             </DialogContent>
-            {type !== MaterialUIPopUpTypes.ACTIVE_CONSENSUS && (
-                <DialogActions style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                    <Button variant="contained" onClick={onClose} style={{ backgroundColor: theme.palette.secondary.main }}>
-                        Close
-                    </Button>
-                </DialogActions>
-            )}
+            <IconButton aria-label="close" onClick={onClose} sx={{ position: 'absolute', right: 0, top: 0 }}>
+                <CloseIcon />
+            </IconButton>
         </Dialog>
     );
 };
