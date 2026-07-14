@@ -254,40 +254,25 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     </StyledTooltip>
                                 )}
                             </Typography>
-                            <Typography>
-                                <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative labels exist">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
+                            <Typography sx={{ marginLeft: 4, marginBottom: 1}}>
                                 <strong>Label:</strong> {updatedTerm.label}
                             </Typography>
                             {updatedTerm.altLabel &&
                                 splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                                    <Typography key={'altLabel' + index}>
-                                        <Tooltip title="Provides an alternative Label">
-                                            <IconButton style={{ marginBottom: '4px' }} size="small">
-                                                <HelpOutlineIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
+                                    <Typography key={'altLabel' + index} sx={{ marginLeft: 4, marginBottom: 1}}>
                                         <strong>Alternative Label {index + 1}:</strong> {label}
                                     </Typography>
                                 ))}
                             {/* Description */}
-                            <Typography>
-                                <Tooltip title="Provides a human-readable description of a Term">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
+                            <Typography sx={{ marginLeft: 4, marginBottom: 1}}>    
                                 <strong>Description:</strong> {updatedTerm.description}
                             </Typography>
                             {/* See also */}
 
                             {/* Status */}
                             <Typography>
-                                <Tooltip title="Status: Draft, Reject, Accept">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
+                                <Tooltip title="Term readiness status: Draft, Reject, Accept">
+                                    <IconButton size="small">
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
@@ -321,7 +306,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     }}
                                 >
                                     <Typography variant='body1'>
-                                        More technical details <Typography variant='caption' fontSize='0.85rem'>(id, created and modifed dates, see Also)</Typography>
+                                        More technical details <Typography variant='caption' fontSize='0.85rem' fontStyle='italic'>(id, created and modifed dates, see Also)</Typography>
                                     </Typography>
                                 </AccordionSummary>
 
@@ -344,21 +329,11 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <strong>See Also:</strong> {renderSeeAlso()}
                                     </Typography>
 
-                                    <Typography>
-                                        <Tooltip title="Provides the creation date of the term">
-                                            <IconButton size="small">
-                                                <HelpOutlineIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
+                                    <Typography sx={{ marginLeft: 4, marginBottom: 1}}>
                                         <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
                                     </Typography>
 
-                                    <Typography>
-                                        <Tooltip title="Provides the last modified date of the term">
-                                            <IconButton size="small">
-                                                <HelpOutlineIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
+                                    <Typography sx={{ marginLeft: 4, marginBottom: 1}}>
                                         <strong>Last modified:</strong>{' '}
                                         {new Date(updatedTerm.modified).toLocaleDateString() +
                                             ', ' +
