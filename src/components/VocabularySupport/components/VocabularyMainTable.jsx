@@ -1,6 +1,6 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { styled } from '@mui/material';
+import { styled, Typography } from '@mui/material';
 import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -364,17 +364,23 @@ const VocabularyMainTable = ({
                 Cell: ({ row }) => {
                     const inConsensus = votesMap.find(consensus => consensus.term_uuid === row.original.identifier);
                     return inConsensus ? (
-                        <StyledChip
-                            label="In Consensus"
-                            size="small"
-                            customVariant="agreement"
-                            sx={{ cursor: 'pointer' }}
-                            onClick={async event => {
-                                event.stopPropagation();
-                                await handleWidgetUrgentTermClick(row.original);
-                            }}
-                        />
-                    ) : null;
+                        <Tooltip title="Check consensus">
+                            <StyledChip
+                                label="In Consensus"
+                                size="small"
+                                customVariant="agreement"
+                                sx={{ cursor: 'pointer' }}
+                                onClick={async event => {
+                                    event.stopPropagation();
+                                    await handleWidgetUrgentTermClick(row.original);
+                                }}
+                            />
+                        </Tooltip>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                            Not in Consensus
+                        </Typography>
+                    );
                 },
                 muiTableBodyCellProps: {
                     sx: { maxWidth: 100 }
