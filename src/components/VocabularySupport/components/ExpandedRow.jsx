@@ -365,6 +365,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     <Tooltip title="Decide if the term's status is ready to be changed">
                                         <Button
                                             disabled={activeAgreement}
+                                            hidden={currentUser.role !== "System Admin"}
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
                                             sx={buttonStyle}
