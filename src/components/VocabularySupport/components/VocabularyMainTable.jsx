@@ -923,11 +923,11 @@ const VocabularyMainTable = ({
                 <Box
                     sx={{
                         position: 'fixed',
-                        top: { xs: '50%', xl: '25%' },
+                        top: { xs: '50%', xl: '30%' },
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
                         width: { xs: '95%', xl: '70%' },
-                        height: { xs: '95%', xl: '47%' },
+                        height: { xs: '95%', xl: '60%' },
                         outline: 'none'
                     }}
                 >

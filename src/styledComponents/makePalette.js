@@ -5,7 +5,6 @@ function makePalette(scheme, mode) {
             main: scheme.primary,
             light: scheme.primaryContainer,
             contrastText: scheme.onPrimary,
-            // Extra tokens used in mpc-visualisation
             onContainer: scheme.onPrimaryContainer,
             fixed: scheme.primaryFixed
         },

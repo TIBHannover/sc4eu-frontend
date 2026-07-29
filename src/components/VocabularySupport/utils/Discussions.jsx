@@ -32,6 +32,13 @@ const menuFilterTypes = {
     author: 'Filter by author...'
 };
 
+export const COMMENT_EMOJI_SET = [
+    { code: 'thumbs_up', emoji: '👍', label: 'Like' },
+    { code: 'thumbs_down', emoji: '👎', label: 'Dislike' },
+    { code: 'smile', emoji: '😊', label: 'Smile' },
+    { code: 'celebration', emoji: '🎉', label: 'Celebration' }
+];
+
 export const getGroupedMentionsByCommentInstant = (terms, discussions, mentionedUser) => {
     let merged = [];
 
