@@ -25,7 +25,7 @@ export function VocabularySurveyBanner() {
         if (dismissed === SURVEY_COMPLETED) return;
         if (dismissed) {
             const timeSinceDismissed = differenceInCalendarDays(new Date(Date.now()), new Date(Number(dismissed)));
-            if (timeSinceDismissed >= 3) {
+            if (timeSinceDismissed >= 14) {
                 setIsDismissed(false);
                 setIsVisible(true);
                 return;
@@ -55,7 +55,7 @@ export function VocabularySurveyBanner() {
                 <Box display="flex" flexDirection="column" alignItems="center">
                     <span>Maybe Later</span>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.85rem', textTransform: 'none' }}>
-                        will be shown in 3 days
+                        will be shown in 14 days
                     </Typography>
                 </Box>
             </Button>
@@ -68,7 +68,7 @@ export function VocabularySurveyBanner() {
     return (
         <Dialog
             open={isVisible}
-            onClose={handleEscape}
+            onClose={handleDismiss}
             TransitionComponent={Slide}
             TransitionProps={{ direction: 'up' }}
             PaperProps={{
