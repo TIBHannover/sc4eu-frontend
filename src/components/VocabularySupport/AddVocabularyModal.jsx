@@ -24,6 +24,7 @@ export default function AddVocabulary({ currentUser }) {
     const handleSaveDiscussion = async newDiscussion => {
         allTermsDiscussion = await updateDiscussion(newDiscussion);
     };
+    
     const handleDeleteDiscussion = async resourceId => {
         allTermsDiscussion = await deleteDiscussion(resourceId);
     };

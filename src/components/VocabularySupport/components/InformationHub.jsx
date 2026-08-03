@@ -305,7 +305,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                         fontSize: '0.75rem'
                                     }}
                                 >
-                                    {new Date(term.modified).toLocaleDateString() + ' ' + new Date(term.modified).toLocaleTimeString()}
+                                    {new Date(term.modified).toLocaleDateString() + ', ' + new Date(term.modified).toLocaleTimeString()}
                                 </Typography>
 
                                 {term.hasVote && (

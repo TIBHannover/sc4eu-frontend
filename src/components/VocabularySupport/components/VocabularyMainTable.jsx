@@ -1,6 +1,6 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { styled } from '@mui/material';
+import { styled, Typography } from '@mui/material';
 import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ import { useMediaQuery } from '@mui/material';
 import { CardActivityWidget } from './CardActivityWidget';
 import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
+import CloseIcon from '@mui/icons-material/Close';
 
 /* eslint-disable react/prop-types */
 const VocabularyMainTable = ({
@@ -363,17 +364,23 @@ const VocabularyMainTable = ({
                 Cell: ({ row }) => {
                     const inConsensus = votesMap.find(consensus => consensus.term_uuid === row.original.identifier);
                     return inConsensus ? (
-                        <StyledChip
-                            label="In Consensus"
-                            size="small"
-                            customVariant="agreement"
-                            sx={{ cursor: 'pointer' }}
-                            onClick={async event => {
-                                event.stopPropagation();
-                                await handleWidgetUrgentTermClick(row.original);
-                            }}
-                        />
-                    ) : null;
+                        <Tooltip title="Check consensus">
+                            <StyledChip
+                                label="In Consensus"
+                                size="small"
+                                customVariant="agreement"
+                                sx={{ cursor: 'pointer' }}
+                                onClick={async event => {
+                                    event.stopPropagation();
+                                    await handleWidgetUrgentTermClick(row.original);
+                                }}
+                            />
+                        </Tooltip>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                            Not in Consensus
+                        </Typography>
+                    );
                 },
                 muiTableBodyCellProps: {
                     sx: { maxWidth: 100 }
@@ -411,6 +418,9 @@ const VocabularyMainTable = ({
                         <span>{column.columnDef.header}</span>
                     </Tooltip>
                 ),
+                Cell: ({ cell }) => {
+                    return new Date(cell.getValue()).toLocaleDateString();
+                },
                 size: 90,
                 enableEditing: false,
                 filterVariant: 'select',
@@ -856,11 +866,7 @@ const VocabularyMainTable = ({
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Tooltip title="Delete">
-                    <IconButton
-                        className="action-button"
-                        style={{ color: theme.palette.secondary.main }}
-                        onClick={() => openDeleteConfirmModal(row)}
-                    >
+                    <IconButton className="action-button" style={{ color: theme.palette.secondary.main }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -917,29 +923,48 @@ const VocabularyMainTable = ({
                 <Box
                     sx={{
                         position: 'fixed',
-                        top: { xs: '50%', xl: '25%' },
+                        top: { xs: '50%', xl: '30%' },
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        backgroundColor: theme.palette.background.default,
-                        width: { xs: '95%', xl: '70vw' },
-                        height: { xs: '95%', xl: '53%' },
-                        overflowY: 'auto',
-                        padding: 2,
-                        outline: 'none',
-                        borderRadius: 1
+                        width: { xs: '95%', xl: '70%' },
+                        height: { xs: '95%', xl: '60%' },
+                        outline: 'none'
                     }}
                 >
-                    {selectedTerm && (
-                        <ExpandedRow
-                            term={selectedTerm}
-                            currentUser={currentUser}
-                            updateTerm={updateTerm}
-                            termComments={termComments || []}
-                            handleSaveDiscussion={handleSaveDiscussion}
-                            setHasUncommittedChanges={setHasUncommittedChanges}
-                            handleClosePopup={handleClosePopup}
-                        />
-                    )}
+                    <Box
+                        sx={{
+                            backgroundColor: theme.palette.background.default,
+                            width: '100%',
+                            height: '100%',
+                            overflowY: 'auto',
+                            padding: 4,
+                            borderRadius: 1
+                        }}
+                    >
+                        {selectedTerm && (
+                            <ExpandedRow
+                                term={selectedTerm}
+                                currentUser={currentUser}
+                                updateTerm={updateTerm}
+                                termComments={termComments || []}
+                                handleSaveDiscussion={handleSaveDiscussion}
+                                setHasUncommittedChanges={setHasUncommittedChanges}
+                                handleClosePopup={handleClosePopup}
+                            />
+                        )}
+                    </Box>
+
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleClosePopup}
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
                 </Box>
             </Modal>
             <MaterialUIPopUp
