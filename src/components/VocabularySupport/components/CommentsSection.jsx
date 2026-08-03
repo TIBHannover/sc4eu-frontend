@@ -15,7 +15,8 @@ import {
     MenuItem,
     Tooltip,
     Popper,
-    useTheme
+    useTheme,
+    alpha
 } from '@mui/material';
 import { getAllUsers } from '../../../network/UserProfileCalls';
 import PropTypes from 'prop-types';
@@ -32,8 +33,28 @@ import { usePushNotifications } from '../../../hooks/usePushNotifications';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
 import { COMMENT_EMOJI_SET } from '../utils/Discussions';
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 
 const INDENT_PX = 20;
+
+const STATUS_OPTIONS = [
+    { value: 'none', label: 'None', icon: <FlagOutlinedIcon fontSize="small" /> },
+    { value: 'open', label: 'Open', icon: <FlagOutlinedIcon fontSize="small" sx={{ color: 'info.main' }} /> },
+    { value: 'resolved', label: 'Resolved', icon: <CheckOutlinedIcon fontSize="small" sx={{ color: 'success.main' }} /> }
+];
+
+const STATUS_ICON = {
+    none: <FlagOutlinedIcon fontSize="small" />,
+    open: <FlagOutlinedIcon fontSize="small" sx={{ color: 'info.main' }} />,
+    resolved: <CheckOutlinedIcon fontSize="small" sx={{ color: 'success.main' }} />
+};
+
+const STATUS_TOOLTIP = {
+    none: 'Set status',
+    open: 'Marked as open — requires help',
+    resolved: 'Marked as resolved — question answered'
+};
 
 function stringToColor(string) {
     let hash = 0;
@@ -223,6 +244,50 @@ function MentionPopper({ anchorEl, filteredUsers, onSelect }) {
     );
 }
 
+function StatusPicker({ commentId, status, onStatusChange, open, onOpen, onClose, visible }) {
+    const anchorRef = useRef(null);
+    const currentStatus = status ?? 'none';
+
+    return (
+        <>
+            <Tooltip title="Set status">
+                <IconButton
+                    size="small"
+                    ref={anchorRef}
+                    sx={{
+                        p: 0.25,
+                        visibility: visible ? 'visible' : 'hidden'
+                    }}
+                    onClick={() => (open ? onClose() : onOpen())}
+                >
+                    <FlagOutlinedIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+
+            <Popper open={open} anchorEl={anchorRef.current} placement="top-end" style={{ zIndex: 1300 }}>
+                <ClickAwayListener onClickAway={onClose}>
+                    <Paper sx={{ display: 'flex', gap: 0.5, p: 0.5 }}>
+                        {STATUS_OPTIONS.map(({ value, label, icon }) => (
+                            <Tooltip key={label} title={label}>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        onStatusChange(commentId, value);
+                                        onClose();
+                                    }}
+                                    sx={{ color: 'unset', backgroundColor: currentStatus === value ? 'action.selected' : 'transparent' }}
+                                >
+                                    {icon}
+                                </IconButton>
+                            </Tooltip>
+                        ))}
+                    </Paper>
+                </ClickAwayListener>
+            </Popper>
+        </>
+    );
+}
+
 function ReactionPicker({ commentId, onReact, open, onOpen, onClose, visible }) {
     const anchorRef = useRef(null);
 
@@ -378,33 +443,50 @@ function CommentNode({
     onReply,
     onVote,
     onReact,
+    onStatusChange,
     currentUser,
     collapsedIds,
     toggleCollapsed,
     replyingId,
     setReplyingId
 }) {
+    const theme = useTheme();
+
     const replying = replyingId === node.id;
     const isCollapsed = collapsedIds.has(node.id);
     const hasChildren = node.children.length > 0;
     const replyCount = countDescendants(node);
     const [hovered, setHovered] = useState(false);
     const [pickerOpen, setPickerOpen] = useState(false);
+    const [statusPickerOpen, setStatusPickerOpen] = useState(false);
 
     const avatarStyle = { marginRight: '10px' };
     const authorDateStyle = { display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' };
 
+    const hasStatus = node.status && node.status !== 'none';
+
     return (
         <Box
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            sx={theme => ({
+            sx={{
                 pl: depth > 0 ? `${INDENT_PX}px` : 0,
                 borderLeft: depth > 0 ? theme.palette.divider : 'none',
-                ml: depth > 0 ? 1 : 0
-            })}
+                ml: depth > 0 ? 1 : 0,
+                borderRadius: 2,
+                backgroundColor:
+                    node.status === 'open'
+                        ? alpha(theme.palette.info.main, 0.08)
+                        : hovered
+                        ? theme.palette.surface.container
+                        : theme.palette.background.paper,
+                transition: 'background-color 0.2s ease'
+            }}
         >
-            <ListItem alignItems="flex-start" style={{ paddingBottom: '1px', paddingLeft: depth > 0 ? 8 : 16 }}>
+            <ListItem
+                alignItems="flex-start"
+                style={{ paddingBottom: '1px', paddingLeft: depth > 0 ? 8 : 16 }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+            >
                 <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
                     <VoteColumn votes={node.votes} userVote={node.userVote} onVote={dir => onVote(node.id, dir)} />
 
@@ -423,6 +505,7 @@ function CommentNode({
                             <Typography variant="body2" color="textSecondary">
                                 {getTimeDifferenceString(node.timestamp)}
                             </Typography>
+                            {hasStatus && <Tooltip title={STATUS_TOOLTIP[node.status]}>{STATUS_ICON[node.status]}</Tooltip>}
                         </div>
 
                         <Typography variant="body1" gutterBottom style={{ wordBreak: 'break-word' }}>
@@ -463,14 +546,32 @@ function CommentNode({
                         </Box>
                     </Box>
                 </Box>
-                <ReactionPicker
-                    commentId={node.id}
-                    onReact={onReact}
-                    open={pickerOpen}
-                    onOpen={() => setPickerOpen(true)}
-                    onClose={() => setPickerOpen(false)}
-                    visible={hovered || pickerOpen}
-                />
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        borderRadius: 2,
+                        backgroundColor: hovered ? theme.palette.surface.containerHigh : 'transparent'
+                    }}
+                >
+                    <ReactionPicker
+                        commentId={node.id}
+                        onReact={onReact}
+                        open={pickerOpen}
+                        onOpen={() => setPickerOpen(true)}
+                        onClose={() => setPickerOpen(false)}
+                        visible={hovered || pickerOpen}
+                    />
+                    <StatusPicker
+                        commentId={node.id}
+                        status={node.status}
+                        onStatusChange={onStatusChange}
+                        open={statusPickerOpen}
+                        onOpen={() => setStatusPickerOpen(true)}
+                        onClose={() => setStatusPickerOpen(false)}
+                        visible={hovered || statusPickerOpen}
+                    />
+                </Box>
             </ListItem>
 
             <Collapse in={replying} unmountOnExit>
@@ -498,6 +599,7 @@ function CommentNode({
                                 onReply={onReply}
                                 onVote={onVote}
                                 onReact={onReact}
+                                onStatusChange={onStatusChange}
                                 currentUser={currentUser}
                                 collapsedIds={collapsedIds}
                                 toggleCollapsed={toggleCollapsed}
@@ -651,6 +753,17 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         persist(updatedComments);
     };
 
+    const handleStatusChange = (commentId, value) => {
+        const updatedComments = comments.map(comment => {
+            if (comment.id !== commentId) return comment;
+            if (comment.status === value) {
+                return { ...comment, status: undefined };
+            }
+            return { ...comment, status: value };
+        });
+        persist(updatedComments);
+    };
+
     return (
         <Paper elevation={0} style={{ paddingLeft: '1px', background: 'inherit' }}>
             <Box style={{ display: 'flex', alignItems: 'center' }}>
@@ -668,6 +781,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                         onReply={handleReply}
                         onVote={handleVote}
                         onReact={handleReact}
+                        onStatusChange={handleStatusChange}
                         currentUser={userDisplayName}
                         collapsedIds={collapsedIds}
                         toggleCollapsed={toggleCollapsed}
