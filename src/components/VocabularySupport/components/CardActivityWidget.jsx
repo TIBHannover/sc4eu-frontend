@@ -25,6 +25,7 @@ export const CardActivityWidget = ({
     onUrgentClick,
     onDiscussionClick,
     onNewTermsClick,
+    isNewTermsActive,
     isMobileScreen
 }) => {
     const [activeAnchorEl, setActiveAnchorEl] = useState(null);
@@ -74,9 +75,9 @@ export const CardActivityWidget = ({
             label: 'New terms',
             text:
                 newTerms.length === 1
-                    ? newTerms.length + ' term has been added in the last 70 days'
-                    : newTerms.length + ' terms have been added in the last 70 days',
-            sub: 'Filter table →',
+                    ? newTerms.length + ' term has been added in the last 3 months'
+                    : newTerms.length + ' terms have been added in the last 3 months',
+            sub: isNewTermsActive ? 'Selected · click again to clear' : 'Filter table →',
             onClick: onNewTermsClick,
             count: newTerms.length,
             backGroundColor: theme.palette.primary.main,
@@ -92,7 +93,14 @@ export const CardActivityWidget = ({
                         variant="outlined"
                         sx={{
                             cursor: 'pointer',
-                            backgroundColor: theme.palette.background.paper,
+                            backgroundColor:
+                                card.label === 'New terms' && isNewTermsActive ? `${theme.palette.primary.light}1A` : theme.palette.background.paper,
+                            border: theme =>
+                                card.label === 'New terms' && isNewTermsActive
+                                    ? `1px solid ${theme.palette.primary.main}`
+                                    : `1px solid ${theme.palette.divider}`,
+                            boxShadow: card.label === 'New terms' && isNewTermsActive ? 2 : 0,
+                            transition: 'all 0.15s ease-in-out',
                             '&:hover': { backgroundColor: `${theme.palette.primary.light}26` }
                         }}
                         onClick={card.onClick}
@@ -105,11 +113,17 @@ export const CardActivityWidget = ({
                                     flexDirection: isMobileScreen ? 'row' : 'column'
                                 }}
                             >
-                                <Chip label={card.label} size="small" style={{ backgroundColor: card.backGroundColor, color: card.fontColor }} />
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                    <Chip label={card.label} size="small" style={{ backgroundColor: card.backGroundColor, color: card.fontColor }} />
+                                </Box>
                                 <Typography variant="body2" fontWeight={500} sx={{ mx: isMobileScreen ? 0.5 : 0 }}>
                                     {card.text}
                                 </Typography>
-                                <Typography variant="caption" color="text.secondary">
+                                <Typography
+                                    variant="caption"
+                                    color={card.label === 'New terms' && isNewTermsActive ? 'primary.main' : 'text.secondary'}
+                                    fontWeight={card.label === 'New terms' && isNewTermsActive ? 600 : 400}
+                                >
                                     {card.sub}
                                 </Typography>
                             </Box>

@@ -1,6 +1,6 @@
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { styled, Typography } from '@mui/material';
+import { Chip, styled, Typography } from '@mui/material';
 import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
@@ -23,6 +23,7 @@ import { CardActivityWidget } from './CardActivityWidget';
 import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
 import CloseIcon from '@mui/icons-material/Close';
+import { differenceInDays } from 'date-fns';
 
 /* eslint-disable react/prop-types */
 const VocabularyMainTable = ({
@@ -41,7 +42,6 @@ const VocabularyMainTable = ({
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
     const { mutateAsync: deleteTerm, isPending: isDeletingTerm } = useDeleteTerm();
     const { mutateAsync: createDiscussion } = useCreateDiscussion();
-    //const [openNewTerm, setNewTermOpen] = useState(false);
     const [openCommit, setOpenCommit] = useState(false);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedTerm, setSelectedTerm] = useState(null);
@@ -83,7 +83,12 @@ const VocabularyMainTable = ({
                 discussion.comments.some(comment => comment.mentionedUsers && comment.mentionedUsers.includes(currentUser.displayName))
         )
     );
-    const newTerms = terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)));
+
+    const NEW_TERMS_INTERVAL = 180;
+    const newTerms = terms.filter(term => {
+        const daysSinceCreated = differenceInDays(new Date(), new Date(term.created));
+        return !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
+    });
 
     const pendingDeletedTermIds = useRef([]);
 
@@ -290,8 +295,19 @@ const VocabularyMainTable = ({
                         maxWidth: 150
                     }
                 },
+                Cell: ({ row }) => {
+                    const daysSinceCreated = differenceInDays(new Date(), new Date(row.original.created));
+                    const isNew = !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
 
-                Cell: ({ cell }) => <EllipsisTextCell value={cell.getValue()} />
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <span>{row.original.label}</span>
+                            {isNew && (
+                                <Chip label="Recently added" size="small" color="primary" variant="filled" sx={{ height: 20, fontSize: '0.7rem' }} />
+                            )}
+                        </Box>
+                    );
+                }
             },
             {
                 accessorKey: 'altLabel',
@@ -689,24 +705,31 @@ const VocabularyMainTable = ({
             rowsPerPageOptions: [],
             showRowsPerPage: false
         },
-        muiTableBodyRowProps: ({ row }) => ({
-            onClick: event => handleRowClick(row, event, discussions),
-            sx: {
-                cursor: 'pointer' //you might want to change the cursor too when adding an onClick
-            }
-        }),
+        muiTableBodyRowProps: ({ row }) => {
+            const daysSinceCreated = differenceInDays(new Date(), new Date(row.original.created));
+            const isNew = !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
+
+            return {
+                onClick: event => handleRowClick(row, event, discussions),
+                'data-new': isNew ? 'true' : undefined,
+                sx: {
+                    cursor: 'pointer',
+                    backgroundColor: isNew ? `${theme.palette.primary.main}66` : 'transparent'
+                }
+            };
+        },
         muiTableBodyProps: {
             sx: theme => ({
-                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]) > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.1)
                 },
-                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]):hover > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.2)
                 },
-                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]) > td': {
                     backgroundColor: lighten(baseBackgroundColor, 0.1)
                 },
-                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]):hover > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.2)
                 }
             })
@@ -874,8 +897,10 @@ const VocabularyMainTable = ({
         )
     });
 
+    const isNewTermsCardActive = table.getState().columnFilters.some(filter => filter.id === 'created' && filter.value === 'last3months');
+
     const handleWidgetNewTermsClick = () => {
-        table.setColumnFilters([{ id: 'created', value: 'last3months' }]);
+        table.setColumnFilters(isNewTermsCardActive ? [] : [{ id: 'created', value: 'last3months' }]);
     };
 
     const handleWidgetDiscussionReplyClick = term => {
@@ -906,6 +931,7 @@ const VocabularyMainTable = ({
                 newTerms={newTerms}
                 onUrgentClick={handleWidgetUrgentTermClick}
                 onNewTermsClick={handleWidgetNewTermsClick}
+                isNewTermsActive={isNewTermsCardActive}
                 onDiscussionClick={handleWidgetDiscussionReplyClick}
                 isMobileScreen={isMobileScreen}
             />
