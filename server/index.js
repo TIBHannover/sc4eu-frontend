@@ -32,24 +32,20 @@ auth.initializeAuth(app, router, passport);
 
 // start express server on port
 app.listen(APPLICATION_PORT, () => {
-    console.log('server started on port ' + APPLICATION_PORT);
-    console.log('You can access it via ' + APPLICATION_URL + ':' + APPLICATION_PORT);
+    console.info(`Server started on port ${APPLICATION_PORT}`);
+    console.info(`You can access it via ${APPLICATION_URL}:${APPLICATION_PORT}`);
 });
 
 // THIS IS ONLY FOR DECOUPLED DEBUGING STUFF, means the react app runs on its own server e.g. localhost:3000
 app.use(
     cors({
-        origin: [
-            'http://localhost:3000',
-            process.env.REDIRECT_URL
-        ], // allow to server to accept request from different origin
+        origin: ['http://localhost:3000', process.env.REDIRECT_URL], // allow to server to accept request from different origin
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true // allow session cookie from browser to pass through
     })
 );
 
 app.use((req, res, next) => {
-    console.log('Incoming request:', req.method, req.url);
     next();
 });
 

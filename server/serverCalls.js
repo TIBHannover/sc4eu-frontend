@@ -25,10 +25,8 @@ module.exports = {
                     'Content-Type': 'application/json'
                 }
             };
-            console.log('Requesting the following url', options.uri);
             request(options, function(error, response) {
                 if (response && response.body) {
-                    console.log(response.body);
                     res.json({ success: 'true' });
                 } else {
                     res.json({ error: 'network error' });
@@ -44,7 +42,6 @@ module.exports = {
             } else {
                 try {
                     const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                    console.log(token);
                     if (token) {
                         const userId = token.userId;
                         const options = {
@@ -213,7 +210,6 @@ module.exports = {
             } else {
                 try {
                     const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                    console.log(token);
                     if (token) {
                         const userId = token.userId;
                         const options = {
@@ -249,7 +245,6 @@ module.exports = {
             } else {
                 try {
                     const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                    console.log(token);
                     if (token) {
                         const userId = token.userId;
                         const options = {
@@ -264,7 +259,6 @@ module.exports = {
                             if (response && response.body) {
                                 try {
                                     const result = JSON.parse(response.body);
-                                    console.log('result', result);
                                     res.json(result);
                                 } catch (e) {
                                     res.json({ result: false });
@@ -284,7 +278,6 @@ module.exports = {
             const query = req.query;
 
             if (req.token === null) {
-                console.log('No token');
                 res.send(JSON.stringify({ result: 'empty' }));
             } else {
                 const userId = query['userId'];
@@ -388,7 +381,7 @@ module.exports = {
                 });
             } catch (e) {
                 res.json({ error: 'Something went wrong' });
-                console.log(e);
+                console.error(e);
             }
         });
     },

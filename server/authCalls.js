@@ -521,7 +521,6 @@ module.exports = {
     },
     userSettings: function(app) {
         app.put('/user/updateSettings', verifyToken, (req, res) => {
-            console.log('Body', req.body);
             if (req.token === null || req.token === undefined) {
                 res.send(JSON.stringify({ result: 'empty' }));
             } else {
@@ -596,7 +595,6 @@ module.exports = {
         });
 
         app.put('/user/updateUserProjects', verifyToken, (req, res) => {
-            console.log('Body', req.body);
             if (req.token === null || req.token === undefined) {
                 res.send(JSON.stringify({ result: 'empty' }));
             } else {
@@ -781,9 +779,7 @@ module.exports = {
                 subject: req.body.emailSubject,
                 body: req.body.emailContent
             };
-            console.log(emailFields);
             sendProjectPermissionEmail(emailFields).then(response => {
-                console.log(response);
                 if (response.success) {
                     res.json({
                         success: true,

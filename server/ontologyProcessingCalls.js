@@ -20,7 +20,6 @@ module.exports = {
     initializeOntology: function(app) {
         app.post('/initializeOntology', (req, res) => {
             // this communicates with the Processing service;
-            console.log('Wants to preInitialize ONtolog  y:');
 
             const preInitialize_ontology = {
                 uri: `${process.env.PROCESSING_SERVER_URL}/initializeOntology/`,
@@ -31,11 +30,9 @@ module.exports = {
                 body: JSON.stringify(req.body)
             };
 
-            //console.log('PreInitialize_ontology', preInitialize_ontology);
             try {
                 request(preInitialize_ontology, function(error, response) {
                     try {
-                        console.log('Inside preInitialize_ontology ', response.body);
                         // const resultingData = { ontology_data: jsonModel };
                         res.json(response.body);
                     } catch (e) {
@@ -64,11 +61,11 @@ module.exports = {
                 body: JSON.stringify(req.body)
             };
 
-            //console.log('PreInitialize_ontology', preInitialize_ontology);
+            //
             try {
                 request(compare_ontology_header, function(error, response) {
                     try {
-                        //console.log('Inside compareTwoontologies ', response.body);
+                        //
                         // const resultingData = { ontology_data: jsonModel };
                         res.json(response.body);
                     } catch (e) {
@@ -85,7 +82,7 @@ module.exports = {
             //
             // childProcess(command, function(err, stdout, stderr) {
             //     if (err) {
-            //         console.log(err);
+            //
             //     }
             //     res.json(stdout);
             // });
@@ -116,7 +113,6 @@ module.exports = {
             };
 
             // two nested requests, one fetches the data from backend, the other fetches the json model from processing
-            console.log('REQUESTING DATA FROM BACKEND:', ontology_indexOptions.uri);
 
             request(ontology_indexOptions, function(error, response) {
                 // Handle request error
@@ -152,8 +148,6 @@ module.exports = {
                         throw new Error('No ontology data in response');
                     }
 
-                    console.log('Got ontology data for ID:', query.ontology_id);
-
                     const ontologyProcessing_options = {
                         uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModelVOWL`,
                         method: 'POST',
@@ -164,8 +158,6 @@ module.exports = {
                         body: JSON.stringify({ ontologyData: result.ontology_data }),
                         timeout: 10000
                     };
-
-                    console.log('Requesting some data from processing service', ontologyProcessing_options.uri);
 
                     request(ontologyProcessing_options, function(procError, procResponse) {
                         if (procError) {
@@ -200,7 +192,6 @@ module.exports = {
 
     getJSONModelForOntologyIDWithQuery: function(app) {
         app.post('/getJsonModelVOWLWithQuery', (req, res) => {
-            console.log('Received request to get JSON model for ontology with query');
             const { sparql_query } = req.body;
 
             if (!sparql_query) {
@@ -242,7 +233,7 @@ module.exports = {
 
     getWidocoDocumentation: function(app) {
         const storage = multer.memoryStorage();
-        const upload = multer({ storage: storage });
+        const upload = multer({ storage: storage, limits: { fileSize: 8_000_000 } });
         app.post('/getWidoco', upload.single('file'), (req, res) => {
             const file = req.file;
             if (!file) {
