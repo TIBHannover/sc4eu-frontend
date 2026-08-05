@@ -145,7 +145,7 @@ export const Annotator = () => {
         state: {
             columnVisibility: {
                 ancestor_term: groupByAncestor ? true : !isMobile,
-                label: isMobile ? true : true,
+                label: !isMobile,
                 ontologyId: !isMobile,
                 labels: !isMobile,
                 ancestor_iri: !isMobile,

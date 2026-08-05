@@ -156,7 +156,7 @@ export const MpcSurvey = () => {
                     right:     isSplit ? 12 : 0,
                     zIndex:    30,
                     display:   'flex',
-                    justifyContent: isSplit ? 'flex-end' : 'flex-end',
+                    justifyContent: 'flex-end',
                     p:         isSplit ? 0 : 1,
                 }}
             >

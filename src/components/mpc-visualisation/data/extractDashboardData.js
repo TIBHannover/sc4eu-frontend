@@ -92,7 +92,7 @@ function extractAutonomousDriving(schema) {
 
         const vehicleType = parts[0]; // BEHV | BEV | ICE
         const saeLevel = `SAE ${parts[3]}`; // SAE 1 .. SAE 5
-        const year = parseInt(parts[5], 10); // 2026 | 2027 | 2028
+        const year = Number.parseInt(parts[5], 10); // 2026 | 2027 | 2028
         const pct = prop(node, 'hasPercentage'); // ratio e.g. 0.22
 
         if (pct === null) return;
@@ -306,7 +306,7 @@ function extractComponentActivity(schema) {
         const rawValue = prop(node, 'isActiveInCategory');
         if (rawValue == null) return;
         const yesMatch = String(rawValue).match(/'Yes':\s*([\d.]+)/);
-        result[displayName] = yesMatch ? parseFloat(yesMatch[1]) > 0 : false;
+        result[displayName] = yesMatch ? Number.parseFloat(yesMatch[1]) > 0 : false;
     });
     return Object.keys(result).length > 0 ? result : null;
 }

@@ -9,10 +9,11 @@ const PopUp = props => {
     if (!props.open) {
         return null;
     }
-    
+
     return (
         <StyledDiv>
             <button
+                type="button"
                 style={{ height: '20%' }}
                 onClick={e => {
                     e.stopPropagation();

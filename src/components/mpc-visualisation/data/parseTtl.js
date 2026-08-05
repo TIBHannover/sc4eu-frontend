@@ -68,7 +68,7 @@ function extractId(uri) {
 function extractLabel(uri) {
   const localName = extractId(uri);
   const decoded = decodeURIComponent(localName);
-  return decoded.replace(/_/g, " ");
+  return decoded.replaceAll('_', ' ');
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -183,7 +183,7 @@ function collectGraph(ttlText) {
           if (PRESERVED_LITERAL_PROPERTIES.has(predicateLocal)) {
             const rawValue = quad.object.value;
             const numericValue = Number(rawValue);
-            subjectData.properties[predicateLocal] = isNaN(numericValue)
+            subjectData.properties[predicateLocal] = Number.isNaN(numericValue)
               ? rawValue
               : numericValue;
           }
