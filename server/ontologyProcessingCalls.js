@@ -192,9 +192,8 @@ module.exports = {
 
     getJSONModelForOntologyIDWithQuery: function(app) {
         app.post('/getJsonModelVOWLWithQuery', (req, res) => {
-            const { sparql_query } = req.body;
 
-            if (!sparql_query) {
+            if (!req.body) {
                 return res.status(400).json({ error: 'Missing sparql_query in request body' });
             }
 
@@ -219,12 +218,11 @@ module.exports = {
                 }
                 try {
                     // The response is already JSON (RRM), so just send it back
-                    return res.send(response.body);
+                    return res.send(req.body);
                 } catch (parseError) {
                     console.error('Failed to parse processing response:', parseError);
                     return res.status(500).json({
-                        error: 'Invalid response from processing service',
-                        details: response.body
+                        error: 'Invalid response from processing service'
                     });
                 }
             });
