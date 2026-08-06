@@ -41,9 +41,9 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
     }, [autoRefresh]);
 
     const getSourceIcon = ontology => {
-        if (ontology && ontology.lookup_type === 'online') {
+        if (ontology?.lookup_type === 'online') {
             return githubIcon;
-        } else if (ontology && ontology.lookup_type === 'online-gitlab') {
+        } else if (ontology?.lookup_type === 'online-gitlab') {
             return gitlabIcon;
         }
         return file_solid;
@@ -260,7 +260,13 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                 </Typography>
                             </div>
                             <CardContent style={{ paddingTop: '45px', paddingLeft: '45px', paddingBottom: '16px' }}>
-                                <Typography gutterBottom component="div" fontWeight={'bold'} marginBottom={1} style={{ color: theme.palette.primary.contrastText }}>
+                                <Typography
+                                    gutterBottom
+                                    component="div"
+                                    fontWeight={'bold'}
+                                    marginBottom={1}
+                                    style={{ color: theme.palette.primary.contrastText }}
+                                >
                                     {ontology.name}
                                 </Typography>
                             </CardContent>
@@ -296,7 +302,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                     <IconButton
                                         aria-label="refresh"
                                         onClick={handleRefresh}
-                                        disabled={loading.refresh || !(ontology.commitsBehind > 0)}
+                                        disabled={loading.refresh || ontology.commitsBehind <= 0}
                                     >
                                         {loading.refresh ? <CircularProgress size={24} /> : <Refresh />}
                                     </IconButton>

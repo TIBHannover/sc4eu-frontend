@@ -162,8 +162,6 @@ export default class LinkPrimitive extends BasePrimitive {
         this.fixed = false;
     };
 
-    resetPropertyPosition() {}
-
     initializePropertyNodePosition() {
         const pos = this.drawTools().lineTools.computeShapeBasedCenterPoint(this.sourceNode, this.targetNode, 1);
 
@@ -214,10 +212,8 @@ export default class LinkPrimitive extends BasePrimitive {
             // CHECK THE CURVE ATTRIBUTE
             if (this.renderingConfig().options.link_renderingType === 'line') {
                 this.setInternalType('singleLink');
-            } else {
-                if (this.renderingConfig().options.link_renderingType === 'curve' && this.__internalType !== 'loop') {
-                    this.setInternalType('multiLink');
-                }
+            } else if (this.renderingConfig().options.link_renderingType === 'curve' && this.__internalType !== 'loop') {
+                this.setInternalType('multiLink');
             }
         }
 

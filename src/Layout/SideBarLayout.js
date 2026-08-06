@@ -3,14 +3,19 @@ import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import PropTypes from 'prop-types';
-import { SMALL_SCREEN_WIDTH } from '../styledComponents/styledComponents';
 import SideBar from '../components/SideBar';
 import { useLocation } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import { KeyboardDoubleArrowLeftOutlined, KeyboardDoubleArrowRightOutlined, Menu, MenuOpenOutlined } from '@mui/icons-material';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { useMediaQuery } from '@mui/material';
-import { MobileDrawerButton, SwipeableDrawer, StyledSideBarLayoutDiv, StyledAppContent } from '../styledComponents/styledComponents';
+import {
+    MobileDrawerButton,
+    SwipeableDrawer,
+    StyledSideBarLayoutDiv,
+    StyledAppContent,
+    SMALL_SCREEN_WIDTH
+} from '../styledComponents/styledComponents';
 
 export default function SideBarLayout(props) {
     const isMobile = useMediaQuery(`(max-width: ${SMALL_SCREEN_WIDTH})`);
@@ -65,4 +70,3 @@ export default function SideBarLayout(props) {
 SideBarLayout.propTypes = {
     children: PropTypes.array.isRequired
 };
-

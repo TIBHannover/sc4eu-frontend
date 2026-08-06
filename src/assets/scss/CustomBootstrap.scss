@@ -1,50 +1,40 @@
 @import './ThemeVariables.scss';
 @import '~bootstrap/scss/bootstrap.scss';
 
-
-
-.navBar{
-  background: #b6b4b8;
-  display:block;
-  height:40px;
+.navBar {
+    background: #b6b4b8;
+    display: block;
+    height: 40px;
 }
 
-//.active{
-//  background-color: black;
-//  padding: 11px;
-//}
-
 @media (max-width: 1400px) {
-  .title{
-    font-size: 20px;
-    width:100%;
-    text-align: left
-  }
-  .ontologyShow {
-    width: 50vw;
-  }
+    .title {
+        font-size: 20px;
+        width: 100%;
+        text-align: left;
+    }
+    .ontologyShow {
+        width: 50vw;
+    }
 }
 
 .noSelect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none;
-  /* Non-prefixed version, currently
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
                                    supported by Chrome and Opera */
 }
 
-
 .clamp-lines.custom-class .clamp-lines__button {
-  background: none;
-  border: none;
-  padding-left: 2px;
-  color: blue;
-  display: block;
+    background: none;
+    border: none;
+    padding-left: 2px;
+    color: blue;
+    display: block;
 }
-
-
 
 //CSS overrides (not everything can be changed using theme variables)

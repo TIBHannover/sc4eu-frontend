@@ -52,7 +52,7 @@ export default class MapperModule {
     };
 
     setNodeLinkType = val => {
-        if (this.supportedMapperTypes.indexOf(val) !== -1) {
+        if (this.supportedMapperTypes.includes(val)) {
             this.nodeLinkMapper = val;
             if (val === 'UML') {
                 this.graphReference.setRenderingConfig(this.umlBasedRenderingConfing);

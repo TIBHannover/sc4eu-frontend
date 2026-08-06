@@ -60,8 +60,8 @@ export const Annotator = () => {
 
         sortedMatches.forEach((match, index) => {
             if (match.start >= lastIndex) {
-                parts.push(annotatedText.slice(lastIndex, match.start));
                 parts.push(
+                    annotatedText.slice(lastIndex, match.start),
                     <HighlightedLabel
                         key={`label_${index}`}
                         color={termColors[match.label]}
@@ -71,6 +71,7 @@ export const Annotator = () => {
                         {annotatedText.slice(match.start, match.end)}
                     </HighlightedLabel>
                 );
+
                 lastIndex = match.end;
             }
         });
@@ -145,7 +146,7 @@ export const Annotator = () => {
         state: {
             columnVisibility: {
                 ancestor_term: groupByAncestor ? true : !isMobile,
-                label: isMobile ? true : true,
+                label: !isMobile,
                 ontologyId: !isMobile,
                 labels: !isMobile,
                 ancestor_iri: !isMobile,
@@ -357,21 +358,23 @@ export const Annotator = () => {
 
     return (
         <ContentContainer>
-            <div role="main" aria-label="Text Annotator">
-                <Typography variant="h5" gutterBottom textAlign="center" style={{ color: theme.palette.text.primary}}>
+            <main role="main" aria-label="Text Annotator">
+                <Typography variant="h5" gutterBottom textAlign="center" style={{ color: theme.palette.text.primary }}>
                     Annotator
                 </Typography>
-                <Typography variant="body2" gutterBottom style={{ color: theme.palette.text.primary}}>
+                <Typography variant="body2" gutterBottom style={{ color: theme.palette.text.primary }}>
                     This annotator utilizes terms from Digital Reference Ontology to match input text. We generate n-grams (unigrams, bigrams,
                     trigrams, Quadgrams, Pentagrams) from the text and perform matching with a confidence score greater than 90%.
                 </Typography>
-                <Typography variant="body2" gutterBottom style={{ color: theme.palette.text.primary}}>
+                <Typography variant="body2" gutterBottom style={{ color: theme.palette.text.primary }}>
                     <b>Future Work:</b> Our future plans include enhancing this service with semantic annotation capabilities using Sentence-BERT
                     (SBERT), as well as integrating additional descriptive metadata.
                 </Typography>
                 {!annotatedText ? (
                     <InputContainer>
-                        <Typography variant="h6" style={{ color: theme.palette.text.primary}}>Text To Annotate</Typography>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>
+                            Text To Annotate
+                        </Typography>
                         <TextField
                             variant="outlined"
                             multiline
@@ -405,8 +408,14 @@ export const Annotator = () => {
                     </InputContainer>
                 ) : (
                     <AnnotatedText>
-                        <Typography variant="h6" style={{ color: theme.palette.text.primary}}>Annotated Text</Typography>
-                        <ScrollableText role="region" aria-label="Annotated text with highlighted terms" style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary}}>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>
+                            Annotated Text
+                        </Typography>
+                        <ScrollableText
+                            role="region"
+                            aria-label="Annotated text with highlighted terms"
+                            style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
+                        >
                             {highlightedText}
                         </ScrollableText>
                     </AnnotatedText>
@@ -438,7 +447,7 @@ export const Annotator = () => {
                 </Backdrop>
 
                 {!isLoading && matches.length > 0 && <MaterialReactTable table={table} />}
-            </div>
+            </main>
         </ContentContainer>
     );
 };

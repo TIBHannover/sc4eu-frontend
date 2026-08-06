@@ -1,6 +1,5 @@
 import React from 'react';
-import { CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
-import { useTheme } from '@mui/material';
+import { CardActionArea, CardActions, CardContent, CardMedia, useTheme } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { Edit, Delete } from '@mui/icons-material';

@@ -1,12 +1,8 @@
 import React, { useState, useImperativeHandle, forwardRef } from 'react';
-import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ContentSparqlQueryFormArea, FormRow, PreviewBox } from 'styledComponents/styledComponents';
 
 const SparqlQueryForm = forwardRef(({ open, onClose, onRun }, ref) => {
-    // Get resources and relations from redux
-    const resources = useSelector(state => state.ResourceRelationModelReducer.resources) || [];
-    const relations = useSelector(state => state.ResourceRelationModelReducer.relations) || [];
 
     // Triple pattern fields: subject, predicate, object, filter, limit
     const [subject, setSubject] = useState('?subject');

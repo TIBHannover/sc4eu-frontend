@@ -18,10 +18,6 @@ class ResourceBody extends Component {
         this.bodyRef = createRef();
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     render() {
         const resDef = this.props.resourceContext;
         const prefixList = this.props.metaInformation.prefixList.longToShort;

@@ -70,10 +70,10 @@ class Documentations extends Component {
         return (
             <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '3%' }}>
                 <StyledDocumentationsDiv>
-                    <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%', color: theme.palette.text.primary}}>
+                    <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%', color: theme.palette.text.primary }}>
                         What the Portal will do for you
                     </h3>
-                    <h5 style={{ color: theme.palette.text.primary}}>Connecting Domain Experts with Knowledge Engineers</h5>
+                    <h5 style={{ color: theme.palette.text.primary }}>Connecting Domain Experts with Knowledge Engineers</h5>
                     <StyledDataProtectionText>
                         {this.state.isreadmoreUserGuidance ? (
                             <>
@@ -90,11 +90,15 @@ class Documentations extends Component {
                         ) : (
                             UserGuidance.substring(0, 300)
                         )}
-                        <button style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }} onClick={this.toggleReadmoreUserGuidance}>
+                        <button
+                            type="button"
+                            style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }}
+                            onClick={this.toggleReadmoreUserGuidance}
+                        >
                             {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
                         </button>
                     </StyledDataProtectionText>
-                    <h5 style={{ color: theme.palette.text.primary}}>About SC4EU Ontology Curation Portal</h5>
+                    <h5 style={{ color: theme.palette.text.primary }}>About SC4EU Ontology Curation Portal</h5>
                     <StyledDataProtectionText>
                         <span>
                             SC4EU Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and
@@ -130,7 +134,7 @@ class Documentations extends Component {
                             via LinkedIn.
                         </a>
                     </StyledDataProtectionText>
-                    <h5 style={{ color: theme.palette.text.primary}}>Framework for Collaborative Ontology Development</h5>
+                    <h5 style={{ color: theme.palette.text.primary }}>Framework for Collaborative Ontology Development</h5>
                     <p
                         style={{
                             whiteSpace: 'pre-wrap',
@@ -140,15 +144,24 @@ class Documentations extends Component {
                         }}
                     >
                         {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
-                        <button style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }} onClick={this.toggleReadmoreFrameworkText}>
+                        <button
+                            type="button"
+                            style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }}
+                            onClick={this.toggleReadmoreFrameworkText}
+                        >
                             {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
                         </button>
                     </p>
 
-                    <h5 style={{ color: theme.palette.text.primary}}>Be part of the SC4EU Community and Collaborate with us </h5>
+                    <h5 style={{ color: theme.palette.text.primary }}>Be part of the SC4EU Community and Collaborate with us </h5>
                     <StyledDataProtectionText>
                         SC4EU is a{' '}
-                        <a style={{ color: theme.palette.primary.main }} target="_blank" rel="noopener noreferrer" href="https://www.kdt-ju.europa.eu/">
+                        <a
+                            style={{ color: theme.palette.primary.main }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href="https://www.kdt-ju.europa.eu/"
+                        >
                             KDT JU
                         </a>{' '}
                         funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited to
@@ -166,7 +179,7 @@ class Documentations extends Component {
                         <br />
                         You will find all our code under MIT licence, instructions. Check it out!
                     </StyledDataProtectionText>
-                    <h5 style={{ color: theme.palette.text.primary}}>Hybrid Modes of Operation</h5>
+                    <h5 style={{ color: theme.palette.text.primary }}>Hybrid Modes of Operation</h5>
                     <p
                         style={{
                             whiteSpace: 'pre-wrap',
@@ -176,7 +189,11 @@ class Documentations extends Component {
                         }}
                     >
                         {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
-                        <button style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }} onClick={this.toggleReadmore}>
+                        <button
+                            type="button"
+                            style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }}
+                            onClick={this.toggleReadmore}
+                        >
                             {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
                         </button>
                     </p>

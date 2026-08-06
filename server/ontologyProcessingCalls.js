@@ -3,12 +3,12 @@ require('dotenv').config();
 const request = require('request');
 const verifyToken = require('./veryfyToken');
 const { stdout } = require('nodemon/lib/config/defaults');
-const childProcess = require('child_process').exec;
+const childProcess = require('node:child_process').exec;
 const multer = require('multer');
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const { time } = require('console');
+const path = require('node:path');
+const fs = require('node:fs');
+const { time } = require('node:console');
 
 module.exports = {
     preInitialization: function(app) {
@@ -49,9 +49,6 @@ module.exports = {
 
     compareTwoOntologies: function(app) {
         app.post('/getComparisonResult', (req, res) => {
-            const body = req.body;
-            //-------------------------------------------------------------------------------------------------
-
             const compare_ontology_header = {
                 uri: `${process.env.PROCESSING_SERVER_URL}/getComparisonResult`,
                 method: 'POST',
@@ -61,12 +58,9 @@ module.exports = {
                 body: JSON.stringify(req.body)
             };
 
-            //
             try {
                 request(compare_ontology_header, function(error, response) {
                     try {
-                        //
-                        // const resultingData = { ontology_data: jsonModel };
                         res.json(response.body);
                     } catch (e) {
                         res.json({ error: 'Something went wrong' });
@@ -75,23 +69,10 @@ module.exports = {
             } catch (e) {
                 res.json({ error: 'Something went wrong' });
             }
-
-            //---------------------------------------------------------------------------------------------------
-            // const command =
-            //     'java -jar robot.jar  diff --left-iri ' + body['first_ontology'] + ' --right-iri ' + body['second_ontology'] + '  --format html';
-            //
-            // childProcess(command, function(err, stdout, stderr) {
-            //     if (err) {
-            //
-            //     }
-            //     res.json(stdout);
-            // });
         });
     },
 
     getJSONModelForOntologyID: function(app) {
-        // TODO : this should only work when we have verified the token
-
         app.get('/getJsonModelForId', (req, res) => {
             const query = req.query;
 
@@ -125,7 +106,7 @@ module.exports = {
                 }
 
                 // Check response status
-                if (!response || response.statusCode !== 200) {
+                if (response?.statusCode !== 200) {
                     console.error('Backend error:', {
                         statusCode: response?.statusCode,
                         body: response?.body
@@ -201,15 +182,12 @@ module.exports = {
             const processingOptions = {
                 uri: `${process.env.PROCESSING_SERVER_URL}/getJsonModelVOWLWithQuery`,
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json'
-                },
-                body: JSON.stringify({ sparql_query }),
+                json: true,
+                body: { sparql_query },
                 timeout: 15000
             };
 
-            request(processingOptions, function(error, response) {
+            request(processingOptions, function(error, response, body) {
                 if (error) {
                     console.error('Processing service error:', error);
                     return res.status(500).json({
@@ -217,16 +195,8 @@ module.exports = {
                         details: error.message
                     });
                 }
-                try {
-                    // The response is already JSON (RRM), so just send it back
-                    return res.send(response.body);
-                } catch (parseError) {
-                    console.error('Failed to parse processing response:', parseError);
-                    return res.status(500).json({
-                        error: 'Invalid response from processing service',
-                        details: response.body
-                    });
-                }
+
+                return res.json(body);
             });
         });
     },

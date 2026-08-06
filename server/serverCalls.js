@@ -26,7 +26,7 @@ module.exports = {
                 }
             };
             request(options, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     res.json({ success: 'true' });
                 } else {
                     res.json({ error: 'network error' });
@@ -53,17 +53,19 @@ module.exports = {
                         };
 
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 try {
                                     const result = JSON.parse(response.body);
                                     res.json(result);
                                 } catch (e) {
+                                    console.error(e);
                                     res.json({ error: 'Network error occurred' });
                                 }
                             }
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'You dont have access to view this page' });
                 }
             }
@@ -88,16 +90,18 @@ module.exports = {
                     };
 
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Network error occurred' });
                             }
                         }
                     });
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Getting User Role: You dont have access to view this page' });
                 }
             }
@@ -121,16 +125,18 @@ module.exports = {
                     };
 
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Network error occurred' });
                             }
                         }
                     });
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Getting User Role: You dont have access to view this page' });
                 }
             }
@@ -154,16 +160,18 @@ module.exports = {
                     };
 
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Network error occurred in userProjectDetail' });
                             }
                         }
                     });
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Getting User Role: You dont have access to view this page' });
                 }
             }
@@ -187,16 +195,18 @@ module.exports = {
                     };
 
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Network error occurred in projectUsersDetail' });
                             }
                         }
                     });
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Getting Project Users Details: You dont have access to view this page' });
                 }
             }
@@ -221,17 +231,19 @@ module.exports = {
                         };
 
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 try {
                                     const result = JSON.parse(response.body);
                                     res.json(result);
                                 } catch (e) {
+                                    console.error(e);
                                     res.json({ error: 'Network error occurred' });
                                 }
                             }
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'You dont have access to view this page' });
                 }
             }
@@ -256,17 +268,19 @@ module.exports = {
                         };
 
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 try {
                                     const result = JSON.parse(response.body);
                                     res.json(result);
                                 } catch (e) {
+                                    console.error(e);
                                     res.json({ result: false });
                                 }
                             }
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.json({ result: false });
                 }
             }
@@ -290,7 +304,7 @@ module.exports = {
                 };
                 try {
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             const result = JSON.parse(response.body);
                             if (result) {
                                 return res.json(result);
@@ -302,6 +316,7 @@ module.exports = {
                         }
                     });
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Network Error' });
                 }
             }
@@ -326,7 +341,7 @@ module.exports = {
                         };
 
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result) {
                                     if (result.error) {
@@ -350,13 +365,13 @@ module.exports = {
                         res.json({ error: 'Invalid Token' });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Invalid Token' });
                 }
             }
         });
     },
 
-    //TODO:  THESE FUNCTIONS NEED ADDITIONAL BACKEND COMMUNICATION FOR ONTOLOGY PROCESSING
     transformVOWL_JSON: function(app) {
         app.post('/playground/transformVOWL_JSON', (req, res) => {
             const result = req.body;
@@ -376,12 +391,13 @@ module.exports = {
                         const resultingData = { ontology_data: jsonModel };
                         res.json(resultingData);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 });
             } catch (e) {
-                res.json({ error: 'Something went wrong' });
                 console.error(e);
+                res.json({ error: 'Something went wrong' });
             }
         });
     },
@@ -403,6 +419,7 @@ module.exports = {
                     const resultingData = { ontology_data: jsonModel };
                     res.json(resultingData);
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Something went wrong' });
                 }
             });
@@ -426,16 +443,18 @@ module.exports = {
                     };
 
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Network error occurred' });
                             }
                         }
                     });
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Checking if User exists: You dont have access to view this page' });
                 }
             }

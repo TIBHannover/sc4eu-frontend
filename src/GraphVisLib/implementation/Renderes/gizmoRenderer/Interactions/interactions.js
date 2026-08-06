@@ -3,8 +3,8 @@ import NodeInteractions from './nodeInteractions';
 import LinkInteractions from './linkInteractions';
 
 export default class Interactions {
+    graphInteractions = null;
     constructor() {
-        this.graphInteractions = null;
         this.nodeInteractions = null;
         this.linkInteractions = null;
     }

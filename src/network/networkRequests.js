@@ -24,11 +24,11 @@ export const submitGetRequest = (url, headers, send_token = false) => {
         })
             .then(response => {
                 if (!response.ok) {
-                    reject({
-                        error: new Error(`Error response. (${response.status}) ${response.statusText}`),
-                        statusCode: response.status,
-                        statusText: response.statusText
-                    });
+                    const error = new Error(`Error response. (${response.status}) ${response.statusText}`);
+                    error.statusCode = response.status;
+                    error.statusText = response.statusText;
+
+                    reject(error);
                 } else {
                     const json = response.json();
                     if (json.then) {

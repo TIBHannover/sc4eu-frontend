@@ -15,10 +15,6 @@ class ProjectIndexCards extends Component {
         };
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     emailSent = () => {
         this.setState({ showEmailModal: false });
     };
@@ -74,7 +70,6 @@ class ProjectIndexCards extends Component {
 
 ProjectIndexCards.propTypes = {
     inputData: PropTypes.object.isRequired,
-    callback: PropTypes.func.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
 };
 

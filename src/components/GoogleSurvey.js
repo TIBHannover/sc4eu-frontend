@@ -63,7 +63,7 @@ const GoogleSurvey = () => {
             >
                 <Box sx={style}>
                     <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Survey</h2>
-                    <button style={closeBtnStyle} onClick={handleModalToggle} onKeyDown={() => {}}>
+                    <button type="button" style={closeBtnStyle} onClick={handleModalToggle} onKeyDown={() => {}}>
                         X
                     </button>
                     {isLoading ? (
@@ -100,5 +100,3 @@ const GoogleSurvey = () => {
 };
 
 export default GoogleSurvey;
-
-

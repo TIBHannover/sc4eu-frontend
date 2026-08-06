@@ -1,4 +1,4 @@
-module.exports = function(req, res, next) {
+ function tokenVerification(req, res, next) {
     const bearerHeader = req.headers['authorization'];
     if (bearerHeader) {
         console.log('>>> WE HAVE A TOKEN  ');
@@ -11,3 +11,5 @@ module.exports = function(req, res, next) {
         res.send(JSON.stringify({ error: 'No Token Provided' }));
     }
 };
+
+module.exports = tokenVerification;

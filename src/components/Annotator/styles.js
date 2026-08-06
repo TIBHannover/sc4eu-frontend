@@ -18,10 +18,10 @@ export const ContentContainer = styled('div')(({ theme }) => ({
     '.MuiTableContainer-root': {
         overflowX: 'auto'
     },
-    
+
     [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
-      width: '90vw',    
-      maxWidth: '90vw'
+        width: '90vw',
+        maxWidth: '90vw'
     }
 }));
 
@@ -73,7 +73,7 @@ export const ButtonContainer = styled('div')(({ theme }) => ({
 export const ErrorText = styled('div')(({ theme }) => ({
     color: theme.palette.error.main,
     marginRight: '8px'
-}))
+}));
 
 export const lightSelectStyles = styled('div')(({ theme }) => ({
     control: (base, state) => ({
@@ -82,49 +82,54 @@ export const lightSelectStyles = styled('div')(({ theme }) => ({
         borderColor: state.isFocused ? theme.palette.primary.light : theme.palette.secondary.light,
         boxShadow: state.isFocused ? `0 0 0 1px ${theme.palette.primary.light}` : 'none',
         '&:hover': {
-            borderColor: theme.palette.primary.light,
+            borderColor: theme.palette.primary.light
         },
         minHeight: '28px',
-        fontSize: '12px',
+        fontSize: '12px'
     }),
-    valueContainer: (base) => ({
+    valueContainer: base => ({
         ...base,
         padding: '0 6px',
-        height: '28px',
+        height: '28px'
     }),
-    input: (base) => ({
+    input: base => ({
         ...base,
         margin: 0,
-        padding: 0,
+        padding: 0
     }),
-    dropdownIndicator: (base) => ({
+    dropdownIndicator: base => ({
         ...base,
-        padding: '2px',
+        padding: '2px'
     }),
-    indicatorsContainer: (base) => ({
+    indicatorsContainer: base => ({
         ...base,
-        height: '28px',
+        height: '28px'
     }),
-    option: (base, state) => ({
-        ...base,
-        fontSize: '12px',
-        padding: '4px 8px',
-        backgroundColor: state.isSelected
-            ? theme.palette.primary.light
-            : state.isFocused
-                ? `${theme.palette.secondary.light}`
-                : theme.palette.background.default,
-        color: state.isSelected
-            ? theme.palette.primary.contrastText
-            : theme.palette.text.primary,
-        '&:active': {
-            backgroundColor: theme.palette.primary.light,
-        },
-    }),
-    menu: (base) => ({
+    option: (base, state) => {
+        let backgroundColor = theme.palette.background.default;
+
+        if (state.isSelected) {
+            backgroundColor = theme.palette.primary.light;
+        } else if (state.isFocused) {
+            backgroundColor = theme.palette.secondary.light;
+        }
+
+        const color = state.isSelected ? theme.palette.primary.contrastText : theme.palette.text.primary;
+
+        return {
+            ...base,
+            fontSize: '12px',
+            padding: '4px 8px',
+            backgroundColor,
+            color,
+            '&:active': {
+                backgroundColor: theme.palette.primary.light
+            }
+        };
+    },
+    menu: base => ({
         ...base,
         backgroundColor: theme.palette.background.paper,
-        zIndex: 9999,
-    }),
+        zIndex: 9999
+    })
 }));
-

@@ -54,7 +54,7 @@ header
     padding: 0px 4px;
 }
 
-tt, code, kbd, samp {
+pre, code, kbd, samp {
     font-family: Consolas, Monaco, 'Andale Mono', monospace;
 }
 
