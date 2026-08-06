@@ -51,7 +51,7 @@ export default class BasePrimitive {
             return this.__renderingConfig;
         }
         // using deepCopy
-        this.__renderingConfig = JSON.parse(JSON.stringify(cfgObj));
+        this.__renderingConfig = structuredClone(cfgObj);
         // this will allow a primitive to overwrite the global definitions;
     };
 

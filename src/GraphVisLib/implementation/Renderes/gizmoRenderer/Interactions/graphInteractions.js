@@ -22,7 +22,7 @@
 //   container[0].scrollTop    → container.node().scrollTop
 
 import * as d3 from 'd3';
-import { getGraphCoordinates, getSelectedElements, parseTranslate, parseScale, buildZoomTransform } from '../utils/GraphUtils';
+import { getGraphCoordinates, getSelectedElements, buildZoomTransform } from '../utils/GraphUtils';
 export default class GraphInteractions {
     constructor(graph) {
         this.graphObject = graph;
@@ -78,7 +78,7 @@ export default class GraphInteractions {
                 }
 
                 const container = d3.select('#resourceRendererContainer');
-                if (container && container.node()) {
+                if (container?.node()) {
                     this.scrollValue = container.node().scrollTop;
                 }
             })

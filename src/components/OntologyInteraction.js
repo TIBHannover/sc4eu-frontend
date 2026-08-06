@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { FormGroup, Input, Label } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { getOntologyBy } from '../network/GetOntologyData';
-import { getJSON_ModelForOntology } from '../network/GetOntologyData';
+import { getOntologyBy, getJSON_ModelForOntology } from '../network/GetOntologyData';
 
 import { initializeResourceRelationModel } from 'redux/actions/rrm_actions';
 
@@ -21,8 +20,6 @@ class OntologyViewRoot extends Component {
         // on mount we fetch all Ontologies
         this.getOntologyFromBackend();
     }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
 
     getOntologyFromBackend = () => {
         // console.log('fetching ontologies from backend');

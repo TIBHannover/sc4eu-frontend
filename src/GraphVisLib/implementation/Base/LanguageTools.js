@@ -1,7 +1,7 @@
 import { validIRI } from './globalHelper';
 export default class LanguageTools {
     static textInLanguage = (textObject, preferredLanguage) => {
-        if (typeof textObject === 'undefined') {
+        if (textObject === undefined) {
             return undefined;
         }
 
@@ -10,7 +10,7 @@ export default class LanguageTools {
                 let suffix = textObject.split('#')[1];
                 if (!suffix) {
                     const tokens = textObject.split('/');
-                    suffix = tokens[tokens.length - 1];
+                    suffix = tokens.at(-1);
                 }
                 return suffix;
             }

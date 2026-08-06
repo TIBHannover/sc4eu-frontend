@@ -1,4 +1,3 @@
-import * as d3 from 'd3';
 import { parseTranslate } from '../utils/GraphUtils';
 
 export const collapsePropertyNodesAnimations = (n1, n2, linksArray, callback) => {
@@ -92,7 +91,7 @@ export const expandPropertyNodesAnimations = (link, parentPos, callback) => {
         const dirX = link.sourceNode.x - link.targetNode.x;
         const dirY = link.sourceNode.y - link.targetNode.y;
         // norm and make orthogonal;
-        const length = Math.sqrt(dirX * dirX + dirY * dirY);
+        const length = Math.hypot(dirX * dirX + dirY * dirY);
         // orthogonal applied;
         const normedX = -dirY / length;
         const normedY = dirX / length;

@@ -37,14 +37,6 @@ class OntologyIndexInteractions extends Component {
         }
     }
 
-    toggle = tab => {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    };
-
     render() {
         const projectName = this.props.project_name.length > 50 ? this.props.project_name.substring(0, 50) + ' ...' : this.props.project_name;
         const { theme } = this.props;

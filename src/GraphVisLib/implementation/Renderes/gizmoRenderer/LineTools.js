@@ -57,8 +57,6 @@ export default class LineTools {
             const startAngle = labelAngle - loopAngle / 2;
             const endAngle = labelAngle + loopAngle / 2;
 
-            // TODO UPDATE BASED ON SHAPE DEFINITIONS (rect, circle[x], ellipse )
-
             const radius = this.shapeTools.getShapeRadius(domain.renderingShape) + distOffset;
             const width = this.shapeTools.getShapeWidth(domain.renderingShape) + distOffset;
             const height = this.shapeTools.getShapeHeight(domain.renderingShape) + distOffset;
@@ -123,7 +121,7 @@ export default class LineTools {
         const x = target.x - source.x;
         const y = target.y - source.y;
 
-        const len = Math.sqrt(x * x + y * y);
+        const len = Math.hypot(x * x + y * y);
         return { x: x / len, y: y / len };
     }
 

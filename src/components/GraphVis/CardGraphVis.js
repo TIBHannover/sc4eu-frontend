@@ -26,7 +26,6 @@ class CardGraphVis extends Component {
         if (this.graphRenderingIdentifier.includes('#')) {
             this.graphRenderingIdentifier = this.graphRenderingIdentifier.split('#')[1];
         }
-        //TODO: identifiers which are not prefixed have problem with forwardslashes
         if (this.graphRenderingIdentifier.includes('/')) {
             this.graphRenderingIdentifier = this.graphRenderingIdentifier.replaceAll('/', '');
         }
@@ -86,22 +85,16 @@ class CardGraphVis extends Component {
                     }
 
                     resources.forEach(resource => {
-                        // check if the itemOf Interest identifier is somewhere else;
-                        // TODO : make this better, now just looking in axioms;
-
                         for (const name in resource.axioms) {
                             if (resource.axioms.hasOwnProperty(name)) {
                                 const subAxioms = resource.axioms[name];
-                                if (subAxioms.indexOf(this.props.itemIdentifier) !== -1) {
+                                if (subAxioms.includes(this.props.itemIdentifier)) {
                                     sub_resources.push(resource);
                                 }
                             }
                         }
                     });
                     relations.forEach(relation => {
-                        // check if the itemOf Interest identifier is somewhere else;
-                        // TODO : make this better, now just looking in axioms;
-
                         relation.domainRangePairs.forEach(pair => {
                             if (pair.domain === this.props.itemIdentifier) {
                                 sub_relations.push(relation);
@@ -168,7 +161,7 @@ class CardGraphVis extends Component {
                 const resources = this.props.rrModel.resources;
                 const relations = this.props.rrModel.relations;
 
-                const itemOfInterest = relations.find(item => item.identifier === this.props.itemIdentifier);
+                const itemOfInterest = relations.some(item => item.identifier === this.props.itemIdentifier);
 
                 if (itemOfInterest) {
                     const sub_resources = [];
@@ -233,12 +226,11 @@ class CardGraphVis extends Component {
                     });
                 }
             }
-        } else {
-            // mostlikely we need to redraw the full graph since there is no div items;
-            if (this.props.isExpanded) {
-                this.updateDimensions();
-                this.graph.fullRedrawGraph();
-            }
+        }
+        // mostlikely we need to redraw the full graph since there is no div items;
+        else if (this.props.isExpanded) {
+            this.updateDimensions();
+            this.graph.fullRedrawGraph();
         }
 
         // we initialize the card based on the target item id for rendering
@@ -289,12 +281,10 @@ class CardGraphVis extends Component {
     }
 }
 CardGraphVis.propTypes = {
-    height: PropTypes.number,
     itemIdentifier: PropTypes.string.isRequired,
     itemType: PropTypes.string.isRequired,
     rrModel: PropTypes.object.isRequired,
-    isExpanded: PropTypes.bool.isRequired,
-    callback: PropTypes.func.isRequired
+    isExpanded: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => {

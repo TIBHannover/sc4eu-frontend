@@ -21,7 +21,7 @@ export default class Resource {
     }
 
     addSemanticType(t) {
-        if (this._semanticType.indexOf(t) === -1) {
+        if (!this._semanticType.includes(t)) {
             this._semanticType.push(t);
         }
     }
@@ -97,7 +97,7 @@ export default class Resource {
                             tm[langType] = []; // array of strings for given language
                         }
                         value.forEach(str => {
-                            if (tm[langType].indexOf(str) === -1) {
+                            if (!tm[langType].includes(str)) {
                                 tm[langType].push(str);
                             }
                         });
@@ -116,7 +116,7 @@ export default class Resource {
                 const axAr = src._axioms[name];
                 axAr.forEach(ax => {
                     // check if exists;
-                    if (this._axioms[name].indexOf(ax) === -1) {
+                    if (!this._axioms[name].includes(ax)) {
                         this._axioms[name].push(ax);
                     }
                 });

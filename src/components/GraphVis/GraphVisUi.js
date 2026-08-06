@@ -57,7 +57,6 @@ class GraphVisUi extends Component {
             freeformQuery: this.defaultSparqlQuery,
             visualBuilderQuery: ''
         };
-        this.queryGraphRef = React.createRef();
         this.componentRef = React.createRef();
     }
 
@@ -83,7 +82,7 @@ class GraphVisUi extends Component {
                 node_mouseSingleClick: true,
                 node_mouseDoubleClick: true,
                 node_hasNodeSelection: true,
-                graphBgColor: theme.palette.background.default, 
+                graphBgColor: theme.palette.background.default,
                 configSelected: 'Default',
                 link_mouseDrag: true,
                 link_mouseHover: true
@@ -140,7 +139,6 @@ class GraphVisUi extends Component {
 
     // helper:
     getPrefixOfURI = uri => {
-        //TODO this needs to be fixed properly, check why the uir is empty
         if (!uri) {
             return;
         }
@@ -163,7 +161,7 @@ class GraphVisUi extends Component {
         const usedPrefixesOProps = [];
         this.props.resources.forEach(resource => {
             const res = this.getPrefixOfURI(resource.resourceURI);
-            if (usedPrefixesNodes.indexOf(res) === -1) {
+            if (!usedPrefixesNodes.includes(res)) {
                 usedPrefixesNodes.push(res);
             }
         });
@@ -171,11 +169,10 @@ class GraphVisUi extends Component {
             .filter(item => item.type[0] === 'owl:ObjectProperty')
             .forEach(relation => {
                 const res = this.getPrefixOfURI(relation.resourceURI);
-                if (usedPrefixesOProps.indexOf(res) === -1) {
+                if (!usedPrefixesOProps.includes(res)) {
                     usedPrefixesOProps.push(res);
                 }
             });
-        // TODO: improve the default colors based on types:
         const confNodes = this.graph.renderingConfig.getNodeConfigFromType('owl:class');
         let defaultValue = '#000';
         if (confNodes) {
@@ -261,40 +258,6 @@ class GraphVisUi extends Component {
         );
     };
 
-    createDropDownForNotations = () => {
-        const { theme } = this.props;
-        return (
-            <div>
-                <Dropdown
-                    color="secondary"
-                    size="sm"
-                    isOpen={this.state.visSelectionOpen}
-                    style={{ paddingTop: '2px' }}
-                    toggle={() => {
-                        this.setState(prevState => ({
-                            visSelectionOpen: !prevState.visSelectionOpen
-                        }));
-                    }}
-                >
-                    <DropdownToggle caret style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText, height: '35px' }}>
-                        Notation: {this.props.visualNotation}
-                    </DropdownToggle>
-                    <DropdownMenu>
-                        {this.possibleNotations.map((item, id) => {
-                            return (
-                                <DropdownItem
-                                    key={'graphNotationDropDown_' + id}
-                                    onClick={() => this.props.selectVisualNotation({ ui_visual_notation_selector: item })}
-                                >
-                                    {item}
-                                </DropdownItem>
-                            );
-                        })}
-                    </DropdownMenu>
-                </Dropdown>
-            </div>
-        );
-    };
     renderCustomizationOptions = () => {
         const fontsize = this.state.selectedItem.renderingConfig().fontStyle.fontSize.split('px')[0];
         const overwriteOffset = this.state.selectedItem.renderingConfig().options.overwriteOffset;
@@ -375,7 +338,7 @@ class GraphVisUi extends Component {
             link.download = 'screenshot.png';
             document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
+            link.remove();
         });
     };
 
@@ -413,7 +376,7 @@ class GraphVisUi extends Component {
         const query = { sparql_query: sparqlQuery };
         if (query) {
             const result = await getJSON_ModelForOntologyWithQuery(query);
-            if (result && result.resources && result.relations) {
+            if (result?.resources && result.relations) {
                 this.setState({
                     showQueryPopup: true,
                     queryGraphData: result
@@ -434,15 +397,19 @@ class GraphVisUi extends Component {
             return <div>This should never be visible</div>;
         }
 
+        let ontologyName = 'N/A';
+
+        if (this.props.selectedOntology) {
+            if (this.props.selectedOntology.name.length > 42) {
+                ontologyName = `${this.props.selectedOntology.name.substring(0, 40)}...`;
+            } else {
+                ontologyName = this.props.selectedOntology.name;
+            }
+        }
+
         return (
             <div>
-                <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
-                    {this.props.selectedOntology
-                        ? this.props.selectedOntology.name.length > 42
-                            ? `${this.props.selectedOntology.name.substring(0, 40)}...`
-                            : this.props.selectedOntology.name
-                        : 'N/A'}
-                </div>
+                <div style={{ textAlign: 'center', fontSize: '1.5em' }}>{ontologyName}</div>
                 <div
                     style={{
                         display: 'flex',
@@ -471,12 +438,7 @@ class GraphVisUi extends Component {
                     >
                         <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
-                    {/*TODO: Enable UML Notation view once the error has been resolved*/}
-                    {/*/ As of Now we disabled the VOWl TO UML view in Graph Visualization because when we are switching from VOWL to
-                    UML it is throwing error The Problem could be in all-services\frontend\src\GraphVisLib\implementation\Renderes\gizmoRenderer\LineTools.js
-                     it has function computeIntersectionPointsWithProperty has domain and range Parameter so sometimes domain.x has value,
-                      but it is returning 0 same as the range so that could be problem but still further investigation needed  */}
-                    {/*{this.createDropDownForNotations()}*/}
+
                     <Button
                         onClick={() => {
                             this.graph.zoomToExtent();
@@ -659,5 +621,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(GraphVisUi));
-
-

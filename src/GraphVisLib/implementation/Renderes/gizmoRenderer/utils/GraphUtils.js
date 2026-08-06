@@ -15,11 +15,11 @@ export const getSelectedElements = (startPoint, endPoint, graphObject) => {
     console.log(links);
     // create bounding box;
 
-    const xLeft = startPoint.x < endPoint.x ? startPoint.x : endPoint.x;
-    const xRight = startPoint.x < endPoint.x ? endPoint.x : startPoint.x;
+    const xLeft = Math.min(startPoint.x, endPoint.x);
+    const xRight = Math.max(startPoint.x, endPoint.x);
 
-    const yTop = startPoint.y < endPoint.y ? startPoint.y : endPoint.y;
-    const yBot = startPoint.y < endPoint.y ? endPoint.y : startPoint.y;
+    const yTop = Math.min(startPoint.y, endPoint.y);
+    const yBot = Math.max(startPoint.y, endPoint.y);
 
     // QUICK and DIRTY
     const selectedNodes = nodes.filter(item => item.x > xLeft && item.x < xRight && item.y > yTop && item.y < yBot);

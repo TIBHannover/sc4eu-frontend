@@ -24,7 +24,7 @@ class App extends Component {
             showBrowserWarning: false
         };
 
-        if (browser && browser.name === 'ie') {
+        if (browser?.name === 'ie') {
             this.state.showBrowserWarning = true;
         }
     }

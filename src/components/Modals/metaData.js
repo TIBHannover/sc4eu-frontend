@@ -49,8 +49,6 @@ class MetaDataModal extends React.Component {
             if (license.license) {
                 licenseName = license.license.name;
                 licenseURL = license.license_url;
-            } else {
-                licenseName = 'No Licence Available';
             }
         }
 

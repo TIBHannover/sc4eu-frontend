@@ -13,10 +13,10 @@ const session = require('express-session');
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
-const url = require('url');
+const url = require('node:url');
 const verifyToken = require('./veryfyToken');
 const oauthConfig = require('./config/oauth.config');
-const { access } = require('fs');
+const { access } = require('node:fs');
 
 /**
  * Find or create a user in the backend.
@@ -403,7 +403,7 @@ module.exports = {
                         }
                     };
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 if (result.result === true) {
@@ -428,6 +428,7 @@ module.exports = {
                                     );
                                 }
                             } catch (e) {
+                                console.error(e);
                                 res.redirect(
                                     url.format({
                                         pathname: pathname,
@@ -472,7 +473,7 @@ module.exports = {
                 }
             };
             request(options, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     const result = JSON.parse(response.body);
                     // while login, we are checking the user is verified or not if it  is not verified than send again verification Email
                     if (result.is_email_valid === false) {
@@ -539,7 +540,7 @@ module.exports = {
                             body: data
                         };
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result) {
                                     res.json(response);
@@ -552,6 +553,7 @@ module.exports = {
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.send(JSON.stringify({ error: 'Could not update ' }));
                 }
             }
@@ -576,7 +578,7 @@ module.exports = {
                             body: data
                         };
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result) {
                                     res.json(result);
@@ -589,6 +591,7 @@ module.exports = {
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.send(JSON.stringify({ error: 'Could not update ' }));
                 }
             }
@@ -613,7 +616,7 @@ module.exports = {
                             body: data
                         };
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result.success) {
                                     res.json(response);
@@ -626,6 +629,7 @@ module.exports = {
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.send(JSON.stringify({ error: 'Could not update user projects ' }));
                 }
             }
@@ -649,7 +653,7 @@ module.exports = {
                         };
 
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result) {
                                     res.json(response);
@@ -664,6 +668,7 @@ module.exports = {
                         res.json({ error: 'Invalid  Token' });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Invalid Token' });
                 }
             }
@@ -807,7 +812,7 @@ module.exports = {
                 };
 
                 request(options, function(error, response) {
-                    if (response && response.body) {
+                    if (response?.body) {
                         const result = JSON.parse(response.body);
                         if (result) {
                             res.json(result);

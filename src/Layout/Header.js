@@ -7,10 +7,9 @@ import { Link, Redirect, withRouter } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth, toggleAuthDialog } from '../redux/actions/auth';
+import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth } from '../redux/actions/auth';
 import greetingTime from 'greeting-time';
 import SignInModal from '../components/Signin/SignInModal';
-import { StyledAuthTooltip, StyledGravatar } from '../styledComponents/styledComponents';
 import '../assets/scss/DefaultLayout.scss';
 import { SettingsOutlined, LogoutOutlined, AccountCircleOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
 import { NotificationToggle } from '../components/ReusableComponents/NotificationToggle';
@@ -22,7 +21,9 @@ import {
     StyledRightSideDiv,
     StyledHeaderReactStrapButton,
     ButtonIcon,
-    ButtonText
+    ButtonText,
+    StyledAuthTooltip,
+    StyledGravatar
 } from '../styledComponents/styledComponents';
 class Header extends Component {
     constructor(props) {
@@ -46,12 +47,11 @@ class Header extends Component {
             // make a call to redux to look into the cookie jar
             // console.log('User is NULL, >> FIRST LOAD');
             this.props.firstLoad();
-        } else {
-            // console.log('we do have some user');
-            if (!this.props.user.displayName || !this.props.user.gravatarId) {
-                // console.log('This should fetch some data');
-                this.props.firstLoad();
-            }
+        }
+        // console.log('we do have some user');
+        else if (!this.props.user.displayName || !this.props.user.gravatarId) {
+            // console.log('This should fetch some data');
+            this.props.firstLoad();
         }
     }
 
@@ -75,12 +75,6 @@ class Header extends Component {
         }
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
-
-    preventDraggingOfItem = event => {
-        // event.stopPropagation();
-        event.preventDefault();
-        return false;
-    };
 
     toggleUserTooltip = () => {
         this.setState(prevState => ({
@@ -125,10 +119,6 @@ class Header extends Component {
 
     render() {
         if (this.state.redirectOnAuthAction === true) {
-            // TODO redirect to current page
-            // const path = this.props.location.pathname;
-            // return <Redirect to={this.props.location.pathname} />;
-            // return <Redirect to={ROUTES.USER_SETTINGS} />;
             return <Redirect to="/" />;
         }
 
@@ -141,7 +131,7 @@ class Header extends Component {
                 <StyledHeaderDiv>
                     <StyledRightSideDiv>
                         <ThemeToggle />
-                        {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
+                        {this.props.user.gravatarId ? (
                             <>
                                 <NotificationToggle user={this.props.user.displayName} />
                                 <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
@@ -231,7 +221,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     openAuthDialog: payload => dispatch(openAuthDialog(payload)),
-    toggleAuthDialog: () => dispatch(toggleAuthDialog()),
     closeAuthDialog: () => dispatch(closeAuthDialog()),
 
     firstLoad: () => dispatch(firstLoad()),
@@ -241,7 +230,6 @@ const mapDispatchToProps = dispatch => ({
 Header.propTypes = {
     location: PropTypes.object.isRequired,
     openAuthDialog: PropTypes.func.isRequired,
-    toggleAuthDialog: PropTypes.func.isRequired,
     closeAuthDialog: PropTypes.func.isRequired,
     firstLoad: PropTypes.func.isRequired,
     resetAuth: PropTypes.func.isRequired,

@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 const express = require('express');
 require('dotenv').config();
 
@@ -13,7 +13,7 @@ const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
 
 const app = express(); // create express app
-const url = require('url');
+const url = require('node:url');
 const proxy = require('http-proxy-middleware').createProxyMiddleware;
 
 //const API_SERVICE_URL = 'http://localhost:9000';

@@ -202,13 +202,11 @@ class OntoComparisonModal extends React.Component {
 OntoComparisonModal.propTypes = {
     isModalOpen: PropTypes.bool.isRequired,
     toggle: PropTypes.func.isRequired,
-    selectedProject: PropTypes.object.isRequired,
     selectedOntology: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
     return {
-        selectedProject: state.ResourceRelationModelReducer.project,
         selectedOntology: state.ResourceRelationModelReducer.ontology
     };
 };

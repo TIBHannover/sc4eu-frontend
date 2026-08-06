@@ -9,8 +9,8 @@ import NodeInteractions from './Interactions/nodeInteractions';
 import LinkInteractions from './Interactions/linkInteractions';
 import BasicRenderingHandler from './renderingConfigs/BasicRenderingHandler';
 export default class GraphRenderer {
+    GRAPH_TYPE = 'ABSTRACT_RENDERING_TYPE';
     constructor() {
-        this.GRAPH_TYPE = 'ABSTRACT_RENDERING_TYPE';
         this.graphIsInitialized = false;
         this.model = null;
         this.originalModel = null;
@@ -168,14 +168,12 @@ export default class GraphRenderer {
         // create the primitives;
         this.model.nodes.forEach(node => {
             if (node) {
-                //TODO this is not a fix, check why node is undefined
                 this.createNodePrimitive(node);
             }
         });
 
         this.model.links.forEach(link => {
             if (link) {
-                //TODO this is nto a fix, check why node is undefined
                 const targetNode = this.semanticNodeMap[link.__target.__nodeLinkIdentifier];
                 const sourceNode = this.semanticNodeMap[link.__source.__nodeLinkIdentifier];
                 if (targetNode && sourceNode) {
@@ -245,7 +243,6 @@ export default class GraphRenderer {
 
     _updateSVG_Size = () => {
         if (this.svgRoot) {
-            // TODO
             const divNode = d3.select('#' + this.divRoot);
             const divBoundingBox = divNode.node().getBoundingClientRect();
             this.svgRoot.style('width', divBoundingBox.width + 'px');
@@ -331,26 +328,25 @@ export default class GraphRenderer {
             // fix duration to be max 2.5 sec
             lenAnimation = 2500;
         }
-        const that = this;
         // apply the interpolation
-        that.graphRoot
-            .attr('transform', that.transform(sP, cx, cy, this))
+        this.graphRoot
+            .attr('transform', this.transform(sP, cx, cy, this))
             .transition()
             .duration(lenAnimation)
             .attrTween('transform', function() {
                 return function(t) {
-                    return that.transform(pos_interpolation(t), cx, cy, that);
+                    return this.transform(pos_interpolation(t), cx, cy, this);
                 };
             })
             .on('end', function() {
-                const gi = that.interactionHandler.graphInteractions;
+                const gi = this.interactionHandler.graphInteractions;
 
                 if (gi.zoom) {
-                    that.graphRoot.attr('transform', `translate(${gi.graphTranslation})scale(${gi.zoomFactor})`);
+                    this.graphRoot.attr('transform', `translate(${gi.graphTranslation})scale(${gi.zoomFactor})`);
 
                     const newTransform = d3.zoomIdentity.translate(gi.graphTranslation[0], gi.graphTranslation[1]).scale(gi.zoomFactor);
 
-                    that.svgRoot.call(gi.zoom.transform, newTransform);
+                    this.svgRoot.call(gi.zoom.transform, newTransform);
                 }
             });
     };
@@ -519,8 +515,8 @@ export default class GraphRenderer {
 
     createMultiLinkPrimitive = (n1, n2, links) => {
         // sort them to create only one;
-        const left = n1.id() < n2.id() ? n1.id() : n2.id();
-        const right = n1.id() > n2.id() ? n1.id() : n2.id();
+        const left = Math.min(n1.id(), n2.id());
+        const right = Math.max(n1.id(), n2.id());
         const mlLinkId = left + '__' + right;
 
         if (this.linkMap[mlLinkId] === undefined) {
@@ -687,9 +683,9 @@ export default class GraphRenderer {
     };
     updateColorOfObjectPropsWithPrefix = (uriPrefix, color) => {
         this.links.forEach(link => {
-            if (link.__semanticReference && link.__semanticReference.__nodeLinkIdentifier) {
+            if (link.__semanticReference?.__nodeLinkIdentifier) {
                 const nlId = link.__semanticReference.__nodeLinkIdentifier;
-                if (link.__semanticReference.__linkType && link.__semanticReference.__linkType[0] === 'owl:ObjectProperty') {
+                if (link.__semanticReference.__linkType?.[0] === 'owl:ObjectProperty') {
                     if (nlId.startsWith(uriPrefix)) {
                         link.renderingConfig().style.propertyNode.style.bgColor = color;
                         link.redraw();

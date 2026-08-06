@@ -3,6 +3,22 @@ import { differenceInCalendarDays } from 'date-fns';
 import { Typography, Button, Box, Slide, Link, Dialog } from '@mui/material';
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
 
+const ActionButtons = ({ onConfirm, confirmLabel, onClose }) => (
+    <Box display="flex" justifyContent="flex-end" gap={1} pt={1}>
+        <Button variant="text" onClick={onClose}>
+            <Box display="flex" flexDirection="column" alignItems="center">
+                <span>Maybe Later</span>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.85rem', textTransform: 'none' }}>
+                    will be shown in 14 days
+                </Typography>
+            </Box>
+        </Button>
+        <Button variant="contained" onClick={onConfirm}>
+            {confirmLabel}
+        </Button>
+    </Box>
+);
+
 export function VocabularySurveyBanner() {
     const [isDismissed, setIsDismissed] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
@@ -48,22 +64,6 @@ export function VocabularySurveyBanner() {
         handleEscape();
         localStorage.setItem(VOCAB_SURVEY_STORAGE_KEY, Date.now().toString());
     };
-
-    const ActionButtons = ({ onConfirm, confirmLabel }) => (
-        <Box display="flex" justifyContent="flex-end" gap={1} pt={1}>
-            <Button variant="text" onClick={handleDismiss}>
-                <Box display="flex" flexDirection="column" alignItems="center">
-                    <span>Maybe Later</span>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.85rem', textTransform: 'none' }}>
-                        will be shown in 14 days
-                    </Typography>
-                </Box>
-            </Button>
-            <Button variant="contained" onClick={onConfirm}>
-                {confirmLabel}
-            </Button>
-        </Box>
-    );
 
     return (
         <Dialog
@@ -127,7 +127,7 @@ export function VocabularySurveyBanner() {
                             </Link>
                         </Typography>
                     </Box>
-                    <ActionButtons onConfirm={handleStartSurvey} confirmLabel="Continue to Survey" />
+                    <ActionButtons onConfirm={handleStartSurvey} confirmLabel="Continue to Survey" onClose={handleDismiss} />
                 </Box>
             )}
 
@@ -142,7 +142,7 @@ export function VocabularySurveyBanner() {
                     <Typography variant="body1" color="text.secondary">
                         We'd love your feedback! It only has 10 questions and takes about a few minutes.
                     </Typography>
-                    <ActionButtons onConfirm={handleAgree} confirmLabel="Start Survey" />
+                    <ActionButtons onConfirm={handleAgree} confirmLabel="Start Survey" onClose={handleDismiss} />
                 </Box>
             )}
         </Dialog>

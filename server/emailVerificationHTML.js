@@ -1,5 +1,4 @@
-
-module.exports = (callbackURL, displayName) => {
+function createLoginPage (callbackURL, displayName) {
     return {
         body: `<head>
 
@@ -169,3 +168,5 @@ module.exports = (callbackURL, displayName) => {
   </table> </body>`
     };
 };
+
+module.exports = createLoginPage;

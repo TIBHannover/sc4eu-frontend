@@ -21,9 +21,7 @@ class CreateProject extends Component {
         };
     }
 
-    componentDidMount() {
-        // TODO Check the user if allowed to Create
-    }
+    componentDidMount() {}
 
     componentDidUpdate = async prevProps => {
         if (prevProps.showDialog === false && this.props.showDialog === true) {
@@ -105,7 +103,7 @@ class CreateProject extends Component {
 
     render() {
         const { theme } = this.props;
-        
+
         return (
             <Modal
                 style={{ width: '80%', maxWidth: '50%', fontFamily: fontStyled.fontFamily }}

@@ -27,10 +27,6 @@ class ResourceHeader extends Component {
         };
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     toggleEditButton = () => {
         this.props.toggleEditButton(!this.props.isEditing);
     };

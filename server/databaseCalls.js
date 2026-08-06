@@ -15,11 +15,12 @@ module.exports = {
             };
 
             request(project_indexOptions, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -50,11 +51,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -85,11 +87,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -118,12 +121,13 @@ module.exports = {
 
             try {
                 request(delete_options, function(error, response) {
-                    if (response && response.body) {
+                    if (response?.body) {
                         try {
                             const result = JSON.parse(response.body);
 
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Something went wrong' });
                         }
                     } else {
@@ -149,11 +153,12 @@ module.exports = {
             };
 
             request(ontology_indexOptions, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -176,11 +181,12 @@ module.exports = {
             };
 
             request(ontology_indexOptions, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -203,11 +209,12 @@ module.exports = {
             };
 
             request(ontology_indexOptions, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -234,12 +241,13 @@ module.exports = {
 
             try {
                 request(delete_options, function(error, response) {
-                    if (response && response.body) {
+                    if (response?.body) {
                         try {
                             const result = JSON.parse(response.body);
 
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Something went wrong' });
                         }
                     } else {
@@ -274,11 +282,12 @@ module.exports = {
                     };
 
                     request(upload_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -309,11 +318,12 @@ module.exports = {
                     };
 
                     request(update_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -342,7 +352,7 @@ module.exports = {
                     };
 
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             const result = JSON.parse(response.body);
                             if (result) {
                                 res.json(response);
@@ -354,6 +364,7 @@ module.exports = {
                         }
                     });
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Network Error' });
                 }
             }
@@ -372,16 +383,18 @@ module.exports = {
                 };
 
                 request(options, function(error, response) {
-                    if (response && response.body) {
+                    if (response?.body) {
                         try {
                             const result = JSON.parse(response.body);
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Network error occurred' });
                         }
                     }
                 });
             } catch (e) {
+                console.error(e);
                 res.json({ error: 'You dont have access to view this page' });
             }
         });
@@ -402,11 +415,12 @@ module.exports = {
 
             try {
                 request(options, function(error, response) {
-                    if (response && response.body) {
+                    if (response?.body) {
                         try {
                             const result = JSON.parse(response.body);
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Something went wrong in response' });
                         }
                     } else {
@@ -435,11 +449,12 @@ module.exports = {
 
             try {
                 request(options, function(error, response) {
-                    if (response && response.body) {
+                    if (response.body) {
                         try {
                             const result = JSON.parse(response.body);
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Something went wrong in response' });
                         }
                     } else {
@@ -460,7 +475,6 @@ module.exports = {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
 
                 if (token) {
-                    const userId = token.userId;
                     const data = JSON.stringify(req.body);
 
                     const project_options = {
@@ -473,11 +487,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -505,11 +520,12 @@ module.exports = {
             };
 
             request(vote_Options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     let result;
                     try {
                         result = JSON.parse(response.body);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                     res.json(result);
@@ -536,11 +552,12 @@ module.exports = {
             };
 
             request(vote_Options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     let result;
                     try {
                         result = JSON.parse(response.body);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                     res.json(result);
@@ -564,11 +581,12 @@ module.exports = {
             };
 
             request(vote_Options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -586,7 +604,6 @@ module.exports = {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
 
                 if (token) {
-                    const userId = token.userId;
 
                     const data = JSON.stringify(req.body);
 
@@ -602,11 +619,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -639,11 +657,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -674,11 +693,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -692,7 +712,6 @@ module.exports = {
 
     getTermOfTheWeek: function(app) {
         app.get('/getTermOfTheWeek', (req, res) => {
-            const query = req.query;
             let uri = `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/ofTheWeek`;
             const vote_Options = {
                 uri: uri,
@@ -703,12 +722,13 @@ module.exports = {
             };
 
             request(vote_Options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
 
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -731,11 +751,12 @@ module.exports = {
             };
 
             request(project_options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -758,11 +779,12 @@ module.exports = {
             };
 
             request(project_options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -786,11 +808,12 @@ module.exports = {
             };
 
             request(project_options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -814,11 +837,12 @@ module.exports = {
             };
 
             request(project_options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
