@@ -25,8 +25,6 @@ class ResourceRenderer extends Component {
         };
     }
 
-    componentDidMount() {}
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.resourcesExpanded !== prevProps.resourcesExpanded) {
             this.expandAllBodies(this.props.resourcesExpanded);

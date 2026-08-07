@@ -12,12 +12,6 @@ class CardWidgetVis extends Component {
         this.prefixList = this.props.rrModel.metaInformation.prefixList.longToShort;
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate = (prevProps, prevState) => {};
-
-    componentWillUnmount() {}
-
     renderWidget = () => {
         if (this.props.itemType === 'Relation') {
             return this.renderRelationWidget();

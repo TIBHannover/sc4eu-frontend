@@ -34,8 +34,6 @@ class SingleResource extends Component {
         this.props.registerToParent(this);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     updateSiblings = () => {
         this.setState(prevState => ({ updateSiblings: !prevState.updateSiblings }));
     };

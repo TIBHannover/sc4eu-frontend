@@ -20,10 +20,6 @@ class OntologyContentViewer extends Component {
         };
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     copyUrlToClipboard = () => {
         const url = window.location.href;
         navigator.clipboard.writeText(url).then(() => {

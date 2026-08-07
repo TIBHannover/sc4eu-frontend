@@ -87,9 +87,7 @@ class OntologyViewAsTTL extends Component {
             objectPropertyDefinitions;
 
         this.setState({ ontologyAsTTL: fullData });
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    }   
 
     render() {
         return (

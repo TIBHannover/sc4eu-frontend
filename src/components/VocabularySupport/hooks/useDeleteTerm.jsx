@@ -2,9 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 export function useDeleteTerm() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async () => {
-            return Promise.resolve();
-        },
+        mutationFn: async () => {},
         //client side optimistic update
         onMutate: termId => {
             console.log(' in the onMutate: ', termId);

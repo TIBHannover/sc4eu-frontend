@@ -23,8 +23,6 @@ class RelationRenderer extends Component {
         };
     }
 
-    componentDidMount() {}
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.relationsExpanded !== prevProps.relationsExpanded) {
             this.expandAllBodies(this.props.relationsExpanded);

@@ -9,10 +9,6 @@ export default class PreInitMessages extends Component {
         super(props);
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     render() {
         console.log(this.props.inputData);
         return (
