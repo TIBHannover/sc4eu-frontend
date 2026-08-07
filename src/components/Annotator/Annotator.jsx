@@ -424,22 +424,31 @@ export const Annotator = () => {
                 <ButtonContainer>
                     <Button
                         variant="contained"
-                        style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                         onClick={handleAnnotate}
                         disabled={isAnnotateDisabled}
                         aria-label="Annotate text"
+                        sx={{
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText,
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                        }}
                     >
                         Annotate
                     </Button>
-                    <Button
-                        variant="contained"
-                        style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
-                        onClick={handleReset}
-                        disabled={isResetDisabled}
-                        aria-label="Reset form"
-                    >
-                        Reset
-                    </Button>
+                    {!isResetDisabled && (
+                        <Button
+                            variant="contained"
+                            onClick={handleReset}
+                            aria-label="Reset form"
+                            sx={{
+                                backgroundColor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                            }}
+                        >
+                            Reset
+                        </Button>
+                    )}
                 </ButtonContainer>
 
                 <Backdrop open={isLoading} sx={{ color: theme.palette.background.default, zIndex: theme => theme.zIndex.drawer + 1 }}>

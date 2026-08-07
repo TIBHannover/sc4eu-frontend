@@ -91,8 +91,7 @@ StyledChip.propTypes = {
 
 export const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
-        backgroundColor: 'transparent',
-        color: theme.palette.error.contrastText,
+        color: theme.palette.mode === 'dark' ? theme.palette.error.main : theme.palette.error.contrastText,
         fontSize: '1rem'
     }
 }));

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Col, Container, FormGroup, Input, Label, Button } from 'reactstrap';
+import { Col, Container, FormGroup, Input, Label } from 'reactstrap';
+import { Button } from '@mui/material';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyledGravatar } from '../styledComponents/styledComponents';
@@ -55,7 +56,12 @@ class UserViewDetails extends Component {
                             newState[selector] = obj[selector];
                             this.setState(newState);
                         }}
-                        style={{ marginLeft: '10px', backgroundColor: theme.palette.secondary.main }}
+                        sx={{
+                            marginLeft: '10px',
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText,
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                        }}
                     >
                         Reset
                     </Button>
@@ -69,7 +75,12 @@ class UserViewDetails extends Component {
                             this.props.redux_updateUserSettings({ user: { displayName: obj[selector] } });
                             this.setState(newState);
                         }}
-                        style={{ marginLeft: '10px', backgroundColor: theme.palette.secondary.main }}
+                        sx={{
+                            marginLeft: '10px',
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText,
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                        }}
                     >
                         Save
                     </Button>

@@ -82,13 +82,17 @@ export const EurostatPortal = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `${process.env.REACT_APP_TIVA_BACKEND_URL
-                    }/api/tiva/eurostat/euroYearRange?reporters=${reporter}&start=${startYear.getFullYear()}-01-01&end=${endYear.getFullYear()}-12-31&partners=${partner}&flow=${flow.value
+                    `${
+                        process.env.REACT_APP_TIVA_BACKEND_URL
+                    }/api/tiva/eurostat/euroYearRange?reporters=${reporter}&start=${startYear.getFullYear()}-01-01&end=${endYear.getFullYear()}-12-31&partners=${partner}&flow=${
+                        flow.value
                     }&products=${product.map(i => i.value)}`
                 );
                 const responseProduct = await fetch(
-                    `${process.env.REACT_APP_TIVA_BACKEND_URL
-                    }/api/tiva/eurostat/euroRepParProd?reporters=${reporter}&start=${startYear.getFullYear()}-01-01&end=${endYear.getFullYear()}-12-31&partners=${partner}&flow=${flow.value
+                    `${
+                        process.env.REACT_APP_TIVA_BACKEND_URL
+                    }/api/tiva/eurostat/euroRepParProd?reporters=${reporter}&start=${startYear.getFullYear()}-01-01&end=${endYear.getFullYear()}-12-31&partners=${partner}&flow=${
+                        flow.value
                     }&products=${product.map(i => i.value)}`
                 );
 
@@ -250,8 +254,8 @@ export const EurostatPortal = () => {
 
     CustomInput.propTypes = {
         value: PropTypes.number,
-        onClick: PropTypes.func,
-    }
+        onClick: PropTypes.func
+    };
 
     const theme = useTheme();
 
@@ -291,8 +295,8 @@ export const EurostatPortal = () => {
                                     electricity
                                 </Link>
                                 . ‘European’ means that the statistics are compiled on the basis of the concepts and definitions set out in EU
-                                legislation. ‘National’ statistics, i.e. statistics published at national level by the Member States, are compiled on the
-                                basis of national rules which may differ from EU rules. European ITGS are the official harmonised{' '}
+                                legislation. ‘National’ statistics, i.e. statistics published at national level by the Member States, are compiled on
+                                the basis of national rules which may differ from EU rules. European ITGS are the official harmonised{' '}
                                 <Link href={wordLinks.source} style={{ color: theme.palette.primary.main }}>
                                     source
                                 </Link>{' '}
@@ -323,7 +327,10 @@ export const EurostatPortal = () => {
                         <br />
                         <Typography style={{ color: theme.palette.text.primary }}>
                             In next steps we will enrich these data by further databases as like the{' '}
-                            <Link href="https://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html" style={{ color: theme.palette.primary.main }}>
+                            <Link
+                                href="https://www.cepii.fr/DATA_DOWNLOAD/baci/doc/DescriptionBACI.html"
+                                style={{ color: theme.palette.primary.main }}
+                            >
                                 BACI
                             </Link>
                             .
@@ -336,9 +343,7 @@ export const EurostatPortal = () => {
                         <Autocomplete
                             id="reporter"
                             options={reporters}
-                            renderInput={params => (
-                                <TextField {...params} label="Reporter*" error={!!errors.reporter} helperText={errors.reporter} />
-                            )}
+                            renderInput={params => <TextField {...params} label="Reporter*" error={!!errors.reporter} helperText={errors.reporter} />}
                             onFocus={event => fieldOpened(event)}
                             onChange={(event, value) => {
                                 setReporter(value);
@@ -350,9 +355,7 @@ export const EurostatPortal = () => {
                         <Autocomplete
                             id="partner"
                             options={partners}
-                            renderInput={params => (
-                                <TextField {...params} label="Partner*" error={!!errors.partner} helperText={errors.partner} />
-                            )}
+                            renderInput={params => <TextField {...params} label="Partner*" error={!!errors.partner} helperText={errors.partner} />}
                             onFocus={event => fieldOpened(event)}
                             onChange={(event, value) => {
                                 setPartner(value);
@@ -367,9 +370,7 @@ export const EurostatPortal = () => {
                         <Autocomplete
                             id="flow"
                             options={flows}
-                            renderInput={params => (
-                                <TextField {...params} label="Select flow*" error={!!errors.flow} helperText={errors.flow} />
-                            )}
+                            renderInput={params => <TextField {...params} label="Select flow*" error={!!errors.flow} helperText={errors.flow} />}
                             onFocus={event => fieldOpened(event)}
                             onChange={(event, value) => {
                                 setFlow(value);
@@ -402,17 +403,10 @@ export const EurostatPortal = () => {
                             limitTags={1}
                             renderTags={(value, getTagProps) =>
                                 value.map((option, index) => (
-                                    <Chip
-                                        label={option.label.slice(0, 40)}
-                                        title={option.label}
-                                        {...getTagProps({ index })}
-                                    />
+                                    <Chip label={option.label.slice(0, 40)} title={option.label} {...getTagProps({ index })} />
                                 ))
                             }
-                            renderInput={params => (
-                                <TextField {...params} label="Product*" error={!!errors.product} helperText={errors.product}
-                                />
-                            )}
+                            renderInput={params => <TextField {...params} label="Product*" error={!!errors.product} helperText={errors.product} />}
                             onFocus={event => fieldOpened(event)}
                             onChange={(event, value) => {
                                 setProduct(value);
@@ -426,8 +420,12 @@ export const EurostatPortal = () => {
                     <Grid item xs={12} sm={3} md={2}>
                         <Button
                             variant="contained"
-                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                             onClick={handleSubmit}
+                            sx={{
+                                backgroundColor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                            }}
                         >
                             Submit
                         </Button>
@@ -446,7 +444,6 @@ export const EurostatPortal = () => {
                         </Box>
                     </Grid>
                 )}
-
             </Grid>
         </Grid>
     );

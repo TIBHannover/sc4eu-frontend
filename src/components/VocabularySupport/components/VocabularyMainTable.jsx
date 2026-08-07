@@ -799,7 +799,7 @@ const VocabularyMainTable = ({
                             backgroundColor: theme.palette.secondary.main,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                         }}
                     >
                         {isMobileScreen ? 'New Term' : 'Create New Term'}
@@ -815,7 +815,7 @@ const VocabularyMainTable = ({
                             backgroundColor: theme.palette.secondary.main,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                         }}
                     >
                         Timeline
@@ -834,7 +834,7 @@ const VocabularyMainTable = ({
                                 backgroundColor: theme.palette.secondary.main,
                                 whiteSpace: 'nowrap',
                                 minWidth: 50,
-                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                             }}
                         >
                             {isMobileScreen ? 'Hub' : 'Information Hub'}
@@ -845,19 +845,26 @@ const VocabularyMainTable = ({
         ),
         renderBottomToolbarCustomActions: () => (
             <>
-                <StyledTooltip title="You have made changes, Please don't forget to save your changes" disableHoverListener={!hasUncommittedChanges}>
-                    <Button
-                        variant="contained"
-                        disabled={!hasUncommittedChanges}
-                        onClick={() => setOpenCommit(true)}
-                        style={{
-                            backgroundColor: hasUncommittedChanges ? theme.palette.secondary.main : 'gray',
-                            border: hasUncommittedChanges ? '2px' + ' solid red' : ''
-                        }}
+                {hasUncommittedChanges && (
+                    <StyledTooltip
+                        title="You have made changes. Please don't forget to save your changes."
+                        disableHoverListener={!hasUncommittedChanges}
                     >
-                        Save Changes
-                    </Button>
-                </StyledTooltip>
+                        <Button
+                            variant="contained"
+                            onClick={() => setOpenCommit(true)}
+                            sx={{
+                                backgroundColor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
+                                border: hasUncommittedChanges ? '2px' + ' solid red' : '',
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                            }}
+                        >
+                            Save Changes
+                        </Button>
+                    </StyledTooltip>
+                )}
+
                 {openCommit && (
                     <CommitChanges
                         refetch={refetch}

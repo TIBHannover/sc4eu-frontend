@@ -268,7 +268,9 @@ export const BullWhipEffect = () => {
 
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>Annual enterprise parameters</Typography>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>
+                            Annual enterprise parameters
+                        </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Autocomplete
@@ -293,7 +295,9 @@ export const BullWhipEffect = () => {
                         ></Autocomplete>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>Sold production parameters</Typography>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>
+                            Sold production parameters
+                        </Typography>
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
@@ -318,7 +322,9 @@ export const BullWhipEffect = () => {
                         ></Autocomplete>
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>Real GDP growth rate parameters</Typography>
+                        <Typography variant="h6" style={{ color: theme.palette.text.primary }}>
+                            Real GDP growth rate parameters
+                        </Typography>
                     </Grid>
 
                     <Grid item xs={12} sm={6}>
@@ -346,8 +352,12 @@ export const BullWhipEffect = () => {
                     <Grid item xs={12}>
                         <Button
                             variant="contained"
-                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                             onClick={handleSubmit}
+                            sx={{
+                                backgroundColor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                            }}
                         >
                             Submit
                         </Button>
