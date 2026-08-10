@@ -25,7 +25,15 @@ import VoteView from './VoteView';
 import CloseIcon from '@mui/icons-material/Close';
 import { differenceInDays } from 'date-fns';
 
-/* eslint-disable react/prop-types */
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
 const VocabularyMainTable = ({
     terms,
     refetch,
@@ -57,7 +65,6 @@ const VocabularyMainTable = ({
             : 'rgba(84, 90, 95, 1)'; // light gray
 
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
-    const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
     const isMobileScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
@@ -193,15 +200,6 @@ const VocabularyMainTable = ({
         setOpenPopup(false);
         setSelectedTerm(null);
     };
-
-    function isValidUrl(string) {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
 
     const columnVisibility = useMemo(() => {
         return isMobileScreen

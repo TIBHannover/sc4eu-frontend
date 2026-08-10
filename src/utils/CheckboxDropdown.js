@@ -59,7 +59,7 @@ const CheckboxDropdown = ({ options, defaultOptions = [], title, onChange }) => 
             {isOpen && (
                 <StyledCheckdropdownDropdownMenu>
                     {options.map((option, index) => (
-                        <StyledDropdownItem key={index}>
+                        <StyledDropdownItem key={option}>
                             <Checkbox
                                 type="checkbox"
                                 id={`option-${index}`}

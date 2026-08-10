@@ -133,7 +133,12 @@ function assignRoles(nodeMap, subclassParentsByChild, rootIds = DEFAULT_ROOT_IDS
       return;
     }
     const depth = resolveDepth(nodeId);
-    nodeData.role = depth === 1 ? "tier" : depth === 2 ? "class" : "sub";
+    nodeData.role = 'sub';
+    if (depth === 1) {
+      nodeData.role = 'tier';
+    } else if (depth === 2) {
+      nodeData.role = 'class';
+    }
   });
 }
 
@@ -667,7 +672,7 @@ export async function parseTtlSchema(ttlText) {
     "TechNode_55_to_180nm", "TechNode_gte_180nm",
   ]);
 
-  const SURVEY_IDS = ["OEM_Survey", "Semiconductor_Survey", "Tier1_Survey"];
+  const SURVEY_IDS = new Set(["OEM_Survey", "Semiconductor_Survey", "Tier1_Survey"]);
   const tierSchemas = {};
 
   for (const surveyId of SURVEY_IDS) {
@@ -721,7 +726,7 @@ export async function parseTtlSchema(ttlText) {
   };
 
   const overviewNodes = allNodes.map((n) =>
-    SURVEY_IDS.includes(n.id)
+    SURVEY_IDS.has(n.id)
       ? { ...n, tierKey: ONTOLOGY_ID_TO_SURVEY_KEY[n.id] ?? n.id }
       : n
   );

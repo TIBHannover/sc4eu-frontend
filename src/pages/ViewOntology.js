@@ -26,7 +26,6 @@ class ViewOntology extends Component {
         };
 
         this.DonatelloGraph = new DonatelloGraph();
-        this.headerValue = 'This is the View of the Ontology Data ';
         this.leftSideExpanded = true;
         this.rightSideExpanded = true;
     }

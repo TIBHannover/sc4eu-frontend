@@ -15,10 +15,9 @@ class OntologyIndexCards extends Component {
         }
 
         const sortedOntologies = ontologies.slice().sort((a, b) => a.name.localeCompare(b.name));
-
-        return sortedOntologies.map((ontology, index) => (
+        return sortedOntologies.map(ontology => (
             <OntologyCard
-                key={`OntologyCard_${index}`}
+                key={ontology.uuid}
                 ontology={ontology}
                 currentUser={currentUser}
                 inputData={ontology}
@@ -51,4 +50,3 @@ OntologyIndexCards.propTypes = {
 };
 
 export default withCookies(OntologyIndexCards);
-

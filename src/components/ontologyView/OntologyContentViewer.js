@@ -30,6 +30,19 @@ class OntologyContentViewer extends Component {
         });
     };
 
+    renderSelectedOntology = () => {
+        const selectedOntology = this.props.selectedOntology;
+        if (selectedOntology) {
+            if (selectedOntology.name.length > 42) {
+                return `${selectedOntology.name.substring(0, 40)}...`;
+            } else {
+                return selectedOntology.name;
+            }
+        } else {
+            return 'N/A';
+        }
+    };
+
     render() {
         return (
             <div style={{ height: '100%' }}>
@@ -48,13 +61,7 @@ class OntologyContentViewer extends Component {
                     ) : (
                         <></>
                     )}
-                    <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
-                        {this.props.selectedOntology
-                            ? this.props.selectedOntology.name.length > 42
-                                ? `${this.props.selectedOntology.name.substring(0, 40)}...`
-                                : this.props.selectedOntology.name
-                            : 'N/A'}
-                    </div>
+                    <div style={{ textAlign: 'center', fontSize: '1.5em' }}>{this.renderSelectedOntology()}</div>
                     <div>
                         <ControlButton onClick={this.copyUrlToClipboard}>Copy URL</ControlButton>
                         <ControlButton
@@ -106,4 +113,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyContentViewer);
-

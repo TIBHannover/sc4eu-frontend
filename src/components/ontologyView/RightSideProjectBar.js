@@ -102,9 +102,10 @@ class RightSideProjectBar extends Component {
         return [...sideBarProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
     };
 
-    getProjectsForUser = async admin => {
-        return await getUserProjects(admin.uuid);
-    };
+    //Personalized project view
+    // getProjectsForUser = async admin => {
+    //     return await getUserProjects(admin.uuid);
+    // };
 
     render() {
         return (

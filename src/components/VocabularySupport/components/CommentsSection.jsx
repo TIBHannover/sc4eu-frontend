@@ -377,6 +377,13 @@ function ReactionChip({ code, users, currentUser, onRemove }) {
 }
 
 function VoteColumn({ votes, userVote, onVote }) {
+    let voteColor = 'text.secondary';
+
+    if (userVote === 'up') {
+        voteColor = 'primary.main';
+    } else if (userVote === 'down') {
+        voteColor = 'error.main';
+    }
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 0.25, minWidth: 28 }}>
             <IconButton size="small" onClick={() => onVote('up')} sx={{ p: 0.25, color: userVote === 'up' ? 'primary.main' : 'text.disabled' }}>
@@ -387,7 +394,7 @@ function VoteColumn({ votes, userVote, onVote }) {
                 sx={{
                     fontWeight: 600,
                     lineHeight: 1,
-                    color: userVote === 'up' ? 'primary.main' : userVote === 'down' ? 'error.main' : 'text.secondary'
+                    color: voteColor
                 }}
             >
                 {votes ?? 0}
@@ -465,6 +472,13 @@ function CommentNode({
 
     const hasStatus = node.status && node.status !== 'none';
 
+    let commentBackgroundColor = theme.palette.background.paper;
+    if (node.status === 'open') {
+        commentBackgroundColor = alpha(theme.palette.info.main, 0.08);
+    } else if (hovered) {
+        commentBackgroundColor = theme.palette.surface.container;
+    }
+
     return (
         <Box
             sx={{
@@ -472,12 +486,7 @@ function CommentNode({
                 borderLeft: depth > 0 ? theme.palette.divider : 'none',
                 ml: depth > 0 ? 1 : 0,
                 borderRadius: 2,
-                backgroundColor:
-                    node.status === 'open'
-                        ? alpha(theme.palette.info.main, 0.08)
-                        : hovered
-                        ? theme.palette.surface.container
-                        : theme.palette.background.paper,
+                backgroundColor: commentBackgroundColor,
                 transition: 'background-color 0.2s ease'
             }}
         >

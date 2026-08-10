@@ -142,18 +142,23 @@ function ShortageAlert({ survey }) {
     const shortageData = survey.shortageData;
     if (!shortageData) return null;
     const hasShortage = shortageData.yes > 0;
+
+    let shortageText = 'No respondents reported shortage data';
+    if (shortageText.total > 0) {
+        if (hasShortage) {
+            shortageText = `${shortageData.yes} of ${shortageData.total} respondents report active shortage`;
+        } else {
+            shortageText = `${shortageData.no} of ${shortageData.total} respondents report no shortage`;
+        }
+    }
+
     return (
         <Alert
             severity={hasShortage ? 'warning' : 'success'}
             icon={hasShortage ? <WarningAmberIcon /> : <CheckCircleIcon />}
             sx={{ mb: 2, fontSize: 12 }}
         >
-            <strong>Semiconductor Shortage:</strong>{' '}
-            {shortageData.total === 0
-                ? 'No respondents reported shortage data'
-                : hasShortage
-                ? `${shortageData.yes} of ${shortageData.total} respondents report active shortage`
-                : `${shortageData.no} of ${shortageData.total} respondents report no shortage`}
+            <strong>Semiconductor Shortage:</strong> {shortageText}
         </Alert>
     );
 }
@@ -641,6 +646,19 @@ function TargetChip({ value }) {
     const normalised = value.toLowerCase();
     const isAbove = normalised.includes('above');
     const isBelow = normalised.includes('below');
+    let chipBgColor = graphAccents.demand?.fill ?? chartColors.series1 + '30';
+    if (isAbove) {
+        chipBgColor = theme.palette.error.mainContainer;
+    } else if (isBelow) {
+        chipBgColor = theme.palette.primary.mainContainer;
+    }
+
+    let chipColor = sentimentColors.positive;
+    if (isAbove) {
+        chipColor = sentimentColors.negative;
+    } else if (isBelow) {
+        chipColor = theme.palette.primary.main;
+    }
 
     return (
         <Chip
@@ -649,12 +667,8 @@ function TargetChip({ value }) {
             sx={{
                 fontSize: 9,
                 fontWeight: 600,
-                bgcolor: isAbove
-                    ? theme.palette.error.mainContainer
-                    : isBelow
-                    ? theme.palette.primary.mainContainer
-                    : graphAccents.demand?.fill ?? chartColors.series1 + '30',
-                color: isAbove ? sentimentColors.negative : isBelow ? theme.palette.primary.main : sentimentColors.positive
+                bgcolor: chipBgColor,
+                color: chipColor
             }}
         />
     );

@@ -52,11 +52,7 @@ class ItemController extends Component {
 
     getFontColor = () => {
         if (this.props.itemType === 'Relation') {
-            if (this.props.itemContext.isHighlighted) {
-                return 'black';
-            } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return 'black';
-            } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
+            if (this.props.itemContext.isHighlighted || this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
                 return 'black';
             }
             return 'white';
@@ -135,4 +131,3 @@ ItemController.propTypes = {
 const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(ItemController));
-

@@ -119,10 +119,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         setEditMode(false);
     };
 
-    const handleClose = () => {
-        handleClosePopup();
-    };
-
     const renderSeeAlso = () => {
         if (!updatedTerm.seeAlso) {
             return '';

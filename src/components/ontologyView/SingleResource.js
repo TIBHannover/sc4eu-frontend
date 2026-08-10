@@ -38,15 +38,10 @@ class SingleResource extends Component {
         this.setState(prevState => ({ updateSiblings: !prevState.updateSiblings }));
     };
 
-    forceRerendering = () => {
-        this.setState(prevState => ({ forcedUpdate: !prevState.forcedUpdate }));
-    };
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
-    setShowBody = val => {
-        this.setState({ showBody: val, bodyInitialRendering: false });
-    };
+
     showBody = () => {
         this.setState(prevState => ({ showBody: !prevState.showBody, bodyInitialRendering: false }));
     };

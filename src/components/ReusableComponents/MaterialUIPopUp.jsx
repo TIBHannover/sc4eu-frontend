@@ -4,7 +4,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 
 const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
-    const theme = useTheme();
     return (
         <Dialog
             open={open}

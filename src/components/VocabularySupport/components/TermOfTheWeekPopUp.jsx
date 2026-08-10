@@ -16,7 +16,6 @@ const TermOfWeekPopup = ({ term, username, open, onLoading, onClose, onVote }) =
 
     const approvedCount = term.decisions.filter(e => e.choice === 'approved').length;
     const rejectedCount = term.decisions.filter(e => e.choice === 'rejected').length;
-    const votedUsers = term.decisions.filter(expert => expert.choice !== null);
     const totalVotes = term.decisions.filter(e => e.choice !== null).length;
 
     const [comment, setComment] = useState(null);
