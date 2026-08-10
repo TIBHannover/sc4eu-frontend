@@ -153,11 +153,13 @@ class LoginViaEmail extends Component {
         const { theme } = this.props;
         return (
             <div>
-                {this.state.openPopUp ? (
+                {this.state.openPopUp && (
                     <PopUp open={this.state.openPopUp} onClose={this.popUpClose} image={this.state.image} message={this.state.popUpMessage} />
-                ) : (
+                )}
+                {!this.state.openPopUp && (
                     <div style={{ fontFamily: fontStyled.fontFamily }}>
-                        {!this.state.loading ? (
+                        {this.state.loading && <div>Processing...</div>}
+                        {!this.state.loading && (
                             <Form onSubmit={this.handleSubmit}>
                                 {this.state.signInModal ? (
                                     <div style={{ margin: '20px 20px 30px 20px' }}>
@@ -473,8 +475,6 @@ class LoginViaEmail extends Component {
                                     </Modal>
                                 )}
                             </Form>
-                        ) : (
-                            <div>Processing...</div>
                         )}
                     </div>
                 )}

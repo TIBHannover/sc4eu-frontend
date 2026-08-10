@@ -17,7 +17,6 @@ class SearchAutocomplete extends Component {
         this.count = 0;
         this.value = '';
     }
-    componentDidMount() {}
 
     render() {
         return (

@@ -49,6 +49,30 @@ const SORT_BY_OPTIONS = Object.freeze({
     MOST_COMMENTS: 'most_comments'
 });
 
+const DecisionBadgeAvatar = ({ decision }) => {
+    const theme = useTheme();
+
+    return (
+        <Badge
+            overlap="circular"
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
+            sx={{
+                '.MuiBadge-badge': {
+                    backgroundColor: decision.choice === 'approved' ? theme.palette.secondary.main : theme.palette.error.main,
+                    color: decision.choice === 'approved' ? theme.palette.secondary.contrastText : theme.palette.error.contrastText,
+                    width: 16,
+                    height: 16,
+                    fontSize: 12,
+                    border: `1px solid ${theme.palette.divider}`
+                }
+            }}
+        >
+            <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
+        </Badge>
+    );
+};
+
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const theme = useTheme();
 
@@ -120,28 +144,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         } finally {
             setWeekTermLoading(false);
         }
-    };
-
-    const DecisionBadgeAvatar = ({ decision }) => {
-        return (
-            <Badge
-                overlap="circular"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
-                sx={{
-                    '.MuiBadge-badge': {
-                        backgroundColor: decision.choice === 'approved' ? theme.palette.secondary.main : theme.palette.error.main,
-                        color: decision.choice === 'approved' ? theme.palette.secondary.contrastText : theme.palette.error.contrastText,
-                        width: 16,
-                        height: 16,
-                        fontSize: 12,
-                        border: `1px solid ${theme.palette.divider}`
-                    }
-                }}
-            >
-                <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
-            </Badge>
-        );
     };
 
     const discussionsMap = useMemo(() => {
@@ -412,6 +414,34 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         }
     };
 
+    const renderContent = () => {
+        if (loading) {
+            return (
+                <Box>
+                    <CircularProgress size={24} />
+                    <Typography variant="body2" sx={{ ml: 2 }}>
+                        Loading data...
+                    </Typography>
+                </Box>
+            );
+        }
+
+        if (filteredTerms.length === 0) {
+            return (
+                <Typography variant="body2" sx={{ mt: 10 }}>
+                    {activeTab === 0 ? 'No discussions found matching your criteria' : 'No active reviews found'}
+                </Typography>
+            );
+        }
+
+        return filteredTerms.map((term, index) => (
+            <Box key={term.identifier}>
+                {renderTermItem(term)}
+                {index < filteredTerms.length - 1 && <Divider sx={{ mx: 2 }} />}
+            </Box>
+        ));
+    };
+
     return (
         <Grid container spacing={1}>
             {termOfWeek && showWeekTerm && (
@@ -545,27 +575,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
             <Grid item xs={12} sx={{ overflowY: 'auto', flexGrow: 1 }}>
                 <Paper elevation={0}>
-                    <List disablePadding>
-                        {loading ? (
-                            <Box>
-                                <CircularProgress size={24} />
-                                <Typography variant="body2" sx={{ ml: 2 }}>
-                                    Loading data...
-                                </Typography>
-                            </Box>
-                        ) : filteredTerms.length > 0 ? (
-                            filteredTerms.map((term, index) => (
-                                <Box key={term.identifier}>
-                                    {renderTermItem(term)}
-                                    {index < filteredTerms.length - 1 && <Divider sx={{ mx: 2 }} />}
-                                </Box>
-                            ))
-                        ) : (
-                            <Typography variant="body2" sx={{ mt: 10 }}>
-                                {activeTab === 0 ? 'No discussions found matching your criteria' : 'No active reviews found'}
-                            </Typography>
-                        )}
-                    </List>
+                    <List disablePadding>{renderContent()}</List>
                 </Paper>
             </Grid>
         </Grid>

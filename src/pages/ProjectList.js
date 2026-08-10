@@ -10,10 +10,6 @@ export default class ProjectList extends Component {
         };
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate = (prevProps, prevState) => {};
-
     reloadAfterUpdate = () => {
         console.log('reloadAfterUpdate');
         //this.forceUpdate();

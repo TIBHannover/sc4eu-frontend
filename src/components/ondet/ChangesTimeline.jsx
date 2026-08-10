@@ -41,7 +41,17 @@ const renderer = {
         return `<a href="${href}" style="font-size: 14px;">${text}</a>`;
     },
     heading(text, level) {
-        const fontSize = level === 1 ? '24px' : level === 2 ? '20px' : '16px';
+        let fontSize = '16px';
+        switch (level) {
+            case 1:
+                fontSize = '24px';
+                break;
+            case 2:
+                fontSize = '20px';
+            default:
+                fontSize = '16px';
+                break;
+        }
         return `<h${level} style="font-size: ${fontSize}; font-weight: bold">${text}</h${level}>`;
     }
 };
@@ -224,6 +234,16 @@ const ChangesTimeline = ({ id }) => {
         setOpen(false);
     };
 
+    const renderDiffCommit = (index, arr, diff) => {
+        const item = arr[index - 1];
+
+        if (diff.hasOwnProperty('commit')) {
+            return item?.commit?.message ?? '';
+        }
+
+        return item?.message ?? '';
+    };
+    
     return (
         <Grid container spacing={2}>
             {error && (
@@ -243,7 +263,7 @@ const ChangesTimeline = ({ id }) => {
                                     }
 
                                     return (
-                                        <StyledTimelineItem key={index} onClick={() => handleItemClick(arr[index - 1], index)}>
+                                        <StyledTimelineItem key={diff.sha} onClick={() => handleItemClick(arr[index - 1], index)}>
                                             <TimelineOppositeContent>
                                                 <Typography variant="body2" color="textSecondary">
                                                     {diff.hasOwnProperty('commit')
@@ -267,15 +287,7 @@ const ChangesTimeline = ({ id }) => {
                                                     }}
                                                 >
                                                     <StyledCommitMessage variant="h6" component="h6">
-                                                        {arr[index - 1] !== undefined
-                                                            ? `${
-                                                                  diff.hasOwnProperty('commit')
-                                                                      ? arr[index - 1].commit.message
-                                                                      : arr[index - 1].message
-                                                              }`
-                                                            : diff.hasOwnProperty('commit')
-                                                            ? arr[index - 1].commit.message
-                                                            : arr[index - 1].message}
+                                                        {renderDiffCommit(index, arr, diff)}
                                                     </StyledCommitMessage>
                                                 </Paper>
                                             </StyledTimelineContent>

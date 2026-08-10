@@ -13,7 +13,15 @@ import { getAllProjects, deleteProject } from '../network/projectIndexing';
 import { getUserProjects } from '../network/UserProfileCalls';
 import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
-import { StyledProjectsViewRootDiv, StyledSubHeadingDiv, StyledInfoSpan, StyledButtonProjectAndOntologyUpload, StyledIcon, StyledScrollbarDiv, StyledProjectsGrid } from 'styledComponents/styledComponents';
+import {
+    StyledProjectsViewRootDiv,
+    StyledSubHeadingDiv,
+    StyledInfoSpan,
+    StyledButtonProjectAndOntologyUpload,
+    StyledIcon,
+    StyledScrollbarDiv,
+    StyledProjectsGrid
+} from 'styledComponents/styledComponents';
 
 class ProjectView extends Component {
     constructor(props) {
@@ -117,7 +125,7 @@ class ProjectView extends Component {
             }
 
             // Sort projects by name case-insensitive
-            const sortedProjects = processedProjects.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            const sortedProjects = processedProjects.toSorted((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
             const unlockedProjects = sortedProjects.filter(item => item.unlock);
 
             this.setState({
@@ -164,9 +172,6 @@ class ProjectView extends Component {
     };
 
     handleEdit = project => {
-        console.log('Edit project:', project);
-        // Implement the logic to edit the project here
-        // For example, you can open a modal to edit the project details
         this.setState({ showEditProjectModal: true, selectedProject: project });
     };
 
@@ -349,12 +354,12 @@ class ProjectView extends Component {
                         userName={this.props.user ? this.props.user.displayName : 'terminology-service@tib.eu'}
                     />
                     <div style={{ float: 'left', width: '70%', marginLeft: '15px' }}>
-                        {this.props.user?.role === 'System Admin' || this.props.user?.role === 'Project Admin' ? (
-                            <></>
-                        ) : this.props.user ? (
+                        {!this.props.user && <StyledInfoSpan>Please sign in to request for change a role</StyledInfoSpan>}
+
+                        {this.props.user && !['System Admin', 'Project Admin'].includes(this.props.user.role) && (
                             <>
                                 <StyledInfoSpan>
-                                    You are "{this.props.user?.role}" and you have limited access to SC3 portal, become project admin please send mail
+                                    You are "{this.props.user.role}" and you have limited access to SC3 portal, become project admin please send mail
                                 </StyledInfoSpan>
                                 <span style={{ marginLeft: '10px' }}>
                                     <StyledIcon
@@ -365,8 +370,6 @@ class ProjectView extends Component {
                                     />
                                 </span>
                             </>
-                        ) : (
-                            <StyledInfoSpan>Please sign in to request for change a role</StyledInfoSpan>
                         )}
                     </div>
                 </StyledSubHeadingDiv>
@@ -376,7 +379,7 @@ class ProjectView extends Component {
                             {this.state.allProjects ? (
                                 this.state.unlockedProjects.length > 0 ? (
                                     this.projectsInSelectedCollections().map((project, index) => (
-                                        <ProjectCard key={index} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
+                                        <ProjectCard key={project.uuid} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
                                     ))
                                 ) : (
                                     <div style={{ paddingLeft: '3.5%' }}>
@@ -426,4 +429,3 @@ ProjectView.propTypes = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);
-

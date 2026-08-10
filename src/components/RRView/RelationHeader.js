@@ -29,8 +29,6 @@ class RelationHeader extends Component {
         };
     }
 
-    componentDidMount() {}
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         // console.log('HEADER >>>>> I got updated');
         if (prevProps.relationContext.type !== this.props.relationContext.type) {

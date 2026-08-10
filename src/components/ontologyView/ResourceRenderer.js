@@ -25,8 +25,6 @@ class ResourceRenderer extends Component {
         };
     }
 
-    componentDidMount() {}
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.resourcesExpanded !== prevProps.resourcesExpanded) {
             this.expandAllBodies(this.props.resourcesExpanded);
@@ -68,7 +66,7 @@ class ResourceRenderer extends Component {
     };
 
     unRegisterFromParent = itemToRemove => {
-        const index = this.arrayOfChildObjects.findIndex(item => item === itemToRemove);
+        const index = this.arrayOfChildObjects.indexOf(itemToRemove);
         if (index > -1) {
             this.arrayOfChildObjects.splice(index, 1);
         }
@@ -81,7 +79,7 @@ class ResourceRenderer extends Component {
             .split('#')
             .pop();
 
-        const index = this.lookupList.findIndex(item => item === itemToRemove);
+        const index = this.lookupList.indexOf(itemToRemove);
         if (index > -1) {
             this.lookupList.splice(index, 1);
         }

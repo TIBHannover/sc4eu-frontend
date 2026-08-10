@@ -18,10 +18,6 @@ class RelationBody extends Component {
         this.bodyRef = createRef();
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     render() {
         const resDef = this.props.relationContext;
         const prefixList = this.props.metaInformation.prefixList.longToShort;

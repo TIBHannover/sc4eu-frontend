@@ -270,7 +270,12 @@ function extractTier1InventoryTrends(schema) {
 
         if (dominant) {
             const suffix = dominant.id.replace(prefix, '');
-            const displayKey = comp === 'non_EV' ? 'non-EV' : comp === 'both' ? 'EV + non-EV' : comp;
+            let displayKey = comp;
+            if (comp === 'non_EV') {
+                displayKey = 'non-EV';
+            } else if (comp === 'both') {
+                displayKey = 'EV + non-EV';
+            }
             result[displayKey] = suffix; // Increase | Decrease | Stable
         }
     });

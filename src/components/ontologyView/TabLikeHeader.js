@@ -9,13 +9,13 @@ const TabLikeHeader = props => {
     const toggle = () => setExpand(!expand);
     return (
         <div style={{ paddingRight: '10px' }}>
-            {createHeader(props.position, props.title, props.collapsable, expand, toggle)}
+            {createHeader(props.position, props.title, expand, toggle, props.collapsable)}
             {createBody(props.title, props.position, props.children, props.collapsable, expand, props.minHeight, props.maxHeight)}
         </div>
     );
 };
 
-const createHeader = (pos, title, collapse = false, expand, toggleFunction) => {
+const createHeader = (pos, title, expand, toggleFunction, collapse = false) => {
     return (
         <div
             style={{

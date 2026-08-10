@@ -27,7 +27,6 @@ import { getAutoCompleteResult, getJumpToResult } from '../VocabularySearch/api/
 
 const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm, handleCancelCreateTerm }) => {
     const theme = useTheme();
-    const [searchQuery, setSearchQuery] = useState('');
     const [autoCompleteResults, setAutoCompleteResults] = useState([]);
     const [jumpToResults, setJumpToResults] = useState([]);
     const [altLabelsList, setAltLabelsList] = useState(Array.isArray(row?.original?.altLabel) ? row.original.altLabel : ['']);
@@ -36,7 +35,6 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
     const [errors, setErrors] = useState({ label: '', description: '' });
 
     const handleSearch = async value => {
-        setSearchQuery(value);
         if (value.length > 2) {
             const [autoCompleteResult, jumpToResult] = await Promise.all([
                 getAutoCompleteResult({ searchQuery: value }, 5),
@@ -51,15 +49,19 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
     };
 
     const handleAddTermFromTerminology = async value => {
+        let termDescription = 'Not Available';
+        if (value.definition?.[0]) {
+            if (typeof value.definition[0] === 'object') {
+                termDescription = value.definition[0].value;
+            } else {
+                termDescription = value.definition[0];
+            }
+        }
         const url = `${process.env.REACT_APP_TS_ONTOLOGIES_URL}${encodeURIComponent(value.ontologyId)}/terms?iri=${encodeURIComponent(value.iri)}`;
         const termFromTerminology = {
             label: value.label[0],
             id: value.iri,
-            description: value.definition?.[0]
-                ? typeof value.definition[0] === 'object'
-                    ? value.definition[0].value
-                    : value.definition[0]
-                : 'Not Available',
+            description: termDescription,
             seeAlso: `url:${url}`,
             status: 'draft',
             created: new Date().toLocaleDateString('en-CA'),
@@ -154,6 +156,13 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
         setActiveTab(newValue);
     };
 
+    let saveButtonText = 'Save';
+    if (activeTab === 0 && selectedTerm) {
+        saveButtonText = 'Add Selected Term';
+    } else if (displayType === 'create') {
+        saveButtonText = 'Create';
+    }
+
     return (
         <Dialog
             open={true}
@@ -215,7 +224,6 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                                 />
                             )}
                             onInputChange={(_, value) => handleSearch(value)}
-                            onChange={(_, value) => setSearchQuery(value)}
                         />
 
                         {jumpToResults.length > 0 && (
@@ -224,9 +232,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                                     Suggested Terms
                                 </Typography>
                                 <List>
-                                    {jumpToResults.map((result, index) => (
+                                    {jumpToResults.map(result => (
                                         <ListItemButton
-                                            key={index}
+                                            key={result.ori}
                                             selected={selectedTerm && selectedTerm.iri === result.iri}
                                             onClick={() => handleSelectTerm(result)}
                                         >
@@ -257,6 +265,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                             Fill in the details below for the new term
                         </Typography>
                         <hr />
+                        {console.log('internalEditComponents: ', internalEditComponents)}
                         {internalEditComponents.map((component, index) => {
                             if (component.key.split('_').pop() === 'altLabel') {
                                 return (
@@ -325,7 +334,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                         '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                     }}
                 >
-                    {activeTab === 0 && selectedTerm ? 'Add Selected Term' : displayType === 'create' ? 'Create' : 'Save'}
+                    {saveButtonText}
                 </Button>
             </DialogActions>
         </Dialog>

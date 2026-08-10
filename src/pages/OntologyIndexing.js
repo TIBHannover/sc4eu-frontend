@@ -58,13 +58,14 @@ class OntologyIndexing extends Component {
                     let commitStatus;
                     switch (singleOntology.lookup_type) {
                         case 'online':
-                            lastCommit = await getOntologyGitData(singleOntology.uuid);                            
+                            lastCommit = await getOntologyGitData(singleOntology.uuid);
                             commitStatus = await checkFileUpdated(singleOntology.lookup_path, lastCommit);
                             break;
-                        case 'online-gitlab':
+                        case 'online-gitlab': {
                             const lastFetchedFileSha = await getOntologyGitData(singleOntology.uuid);
                             commitStatus = await checkGitlabFileUpdated(singleOntology.lookup_path, lastFetchedFileSha);
                             break;
+                        }
                         default:
                             break;
                     }

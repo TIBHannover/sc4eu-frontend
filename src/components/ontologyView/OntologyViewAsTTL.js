@@ -48,9 +48,9 @@ class OntologyViewAsTTL extends Component {
 
         resources.forEach(resource => {
             if (resource.resourceURI === 'http://www.w3.org/2000/01/rdf-schema#Literal') {
-            } else {
-                classDefinitions += transformResourceToTTL_TextView(resource, this.props.metaInformation.prefixList.longToShort) + '\n\n';
+                return;
             }
+            classDefinitions += transformResourceToTTL_TextView(resource, this.props.metaInformation.prefixList.longToShort) + '\n\n';
         });
 
         //extract datatypeProperties
@@ -89,17 +89,24 @@ class OntologyViewAsTTL extends Component {
         this.setState({ ontologyAsTTL: fullData });
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
+    renderSelectedOntology = () => {
+        const selectedOntology = this.props.selectedOntology;
+        if (selectedOntology) {
+            if (selectedOntology.name.length > 42) {
+                return `${selectedOntology.name.substring(0, 40)}...`;
+            } else {
+                return selectedOntology.name;
+            }
+        } else {
+            return 'N/A';
+        }
+    };
 
     render() {
         return (
             <Container>
                 <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
-                    {this.props.selectedOntology
-                        ? this.props.selectedOntology.name.length > 42
-                            ? `${this.props.selectedOntology.name.substring(0, 40)}...`
-                            : this.props.selectedOntology.name
-                        : 'N/A'}
+                    {this.renderSelectedOntology()}
                 </div>
                 <Input
                     style={{ height: 'calc(100vh - 120px)', resize: 'none', paddingTop: '20px' }}

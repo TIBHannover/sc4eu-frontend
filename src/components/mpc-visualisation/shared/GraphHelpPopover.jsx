@@ -1,7 +1,5 @@
 import { memo } from 'react';
-import {
-    Box, Typography, Popover, List, ListItem, ListItemIcon, ListItemText,
-} from '@mui/material';
+import { Box, Typography, Popover, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { useThemePalette } from '../config/theme';
 
 // ─── GraphHelpPopover ─────────────────────────────────────────────────────────
@@ -10,17 +8,12 @@ import { useThemePalette } from '../config/theme';
 // (Popover, List structure, footer) is shared.
 //
 // Item shape:
-//   { icon: ReactNode, primary: string, secondary: string, highlight?: bool }
+//   { key: unique string, icon: ReactNode, primary: string, secondary: string, highlight?: bool }
 //
 // highlight: true → left accent border + tinted background (use for the
 // most important / non-obvious interaction).
 
-export const GraphHelpPopover = memo(function GraphHelpPopover({
-    anchor,
-    onClose,
-    title,
-    items,
-}) {
+export const GraphHelpPopover = memo(function GraphHelpPopover({ anchor, onClose, title, items }) {
     const { colorStyled: c } = useThemePalette();
     const open = Boolean(anchor);
 
@@ -33,61 +26,70 @@ export const GraphHelpPopover = memo(function GraphHelpPopover({
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             PaperProps={{
                 sx: {
-                    mt:           1,
-                    width:        300,
-                    bgcolor:      c.surfaceContainerLow,
-                    border:       `1px solid ${c.outlineVariant}`,
+                    mt: 1,
+                    width: 300,
+                    bgcolor: c.surfaceContainerLow,
+                    border: `1px solid ${c.outlineVariant}`,
                     borderRadius: 2,
-                    boxShadow:    '0 4px 20px rgba(0,0,0,0.12)',
-                },
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.12)'
+                }
             }}
         >
             <Box sx={{ px: 2, pt: 1.5, pb: 0.5 }}>
-                <Typography sx={{
-                    fontSize: 11, fontWeight: 700, color: c.onSurface,
-                    letterSpacing: 0.5, textTransform: 'uppercase',
-                }}>
+                <Typography
+                    sx={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: c.onSurface,
+                        letterSpacing: 0.5,
+                        textTransform: 'uppercase'
+                    }}
+                >
                     {title}
                 </Typography>
             </Box>
 
             <List dense disablePadding>
-                {items.map((item, i) => (
+                {items.map(item => (
                     <ListItem
-                        key={i}
+                        key={item.key}
                         alignItems="flex-start"
                         sx={{
                             px: 2,
                             py: 0.75,
-                            bgcolor:    item.highlight ? `${c.primary}18` : 'transparent',
-                            borderLeft: item.highlight
-                                ? `3px solid ${c.primary}`
-                                : '3px solid transparent',
+                            bgcolor: item.highlight ? `${c.primary}18` : 'transparent',
+                            borderLeft: item.highlight ? `3px solid ${c.primary}` : '3px solid transparent'
                         }}
                     >
-                        <ListItemIcon sx={{
-                            minWidth: 32,
-                            mt:       0.25,
-                            color:    item.highlight ? c.primary : c.onSurfaceVariant,
-                        }}>
+                        <ListItemIcon
+                            sx={{
+                                minWidth: 32,
+                                mt: 0.25,
+                                color: item.highlight ? c.primary : c.onSurfaceVariant
+                            }}
+                        >
                             {item.icon}
                         </ListItemIcon>
                         <ListItemText
                             primary={
-                                <Typography sx={{
-                                    fontSize:   11,
-                                    fontWeight: 700,
-                                    color:      item.highlight ? c.primary : c.onSurface,
-                                }}>
+                                <Typography
+                                    sx={{
+                                        fontSize: 11,
+                                        fontWeight: 700,
+                                        color: item.highlight ? c.primary : c.onSurface
+                                    }}
+                                >
                                     {item.primary}
                                 </Typography>
                             }
                             secondary={
-                                <Typography sx={{
-                                    fontSize: 10,
-                                    color:    c.onSurfaceVariant,
-                                    mt:       0.25,
-                                }}>
+                                <Typography
+                                    sx={{
+                                        fontSize: 10,
+                                        color: c.onSurfaceVariant,
+                                        mt: 0.25
+                                    }}
+                                >
                                     {item.secondary}
                                 </Typography>
                             }
@@ -97,9 +99,7 @@ export const GraphHelpPopover = memo(function GraphHelpPopover({
             </List>
 
             <Box sx={{ px: 2, py: 1 }}>
-                <Typography sx={{ fontSize: 9, color: c.outline }}>
-                    Click anywhere outside to close
-                </Typography>
+                <Typography sx={{ fontSize: 9, color: c.outline }}>Click anywhere outside to close</Typography>
             </Box>
         </Popover>
     );

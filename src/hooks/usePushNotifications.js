@@ -79,7 +79,7 @@ export function usePushNotifications(user) {
         });
         setSubscription(sub);
 
-        const response = await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}subscriber`, {
+        await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}subscriber`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

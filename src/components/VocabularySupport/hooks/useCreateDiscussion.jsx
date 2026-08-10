@@ -4,7 +4,7 @@ export function useCreateDiscussion() {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (newDiscussion) => {
-            return Promise.resolve(newDiscussion);
+            return newDiscussion;
         },
         onMutate: async newDiscussion => {
             queryClient.setQueryData(['discussions'], prevDiscussion => [
@@ -17,7 +17,7 @@ export function useCreateDiscussion() {
         onSettled: async () => {
             console.log('onSuccess: New discussion created');
             //queryClient.invalidateQueries({ queryKey: ['terms'] });
-            return Promise.resolve(queryClient.getQueryData(['discussions']));
+            return queryClient.getQueryData(['discussions']);
         }
     });
 }
