@@ -231,7 +231,7 @@ module.exports = {
                 if (response.body === true) {
                     res.json({ success: true });
                 } else {
-                    res.send(response.body);
+                    res.json(response.body);
                 }
             });
         });
