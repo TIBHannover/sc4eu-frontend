@@ -799,7 +799,7 @@ const VocabularyMainTable = ({
                             backgroundColor: theme.palette.secondary.main,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                         }}
                     >
                         {isMobileScreen ? 'New Term' : 'Create New Term'}
@@ -815,7 +815,7 @@ const VocabularyMainTable = ({
                             backgroundColor: theme.palette.secondary.main,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                         }}
                     >
                         Timeline
@@ -834,7 +834,7 @@ const VocabularyMainTable = ({
                                 backgroundColor: theme.palette.secondary.main,
                                 whiteSpace: 'nowrap',
                                 minWidth: 50,
-                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                             }}
                         >
                             {isMobileScreen ? 'Hub' : 'Information Hub'}
@@ -857,7 +857,7 @@ const VocabularyMainTable = ({
                                 backgroundColor: theme.palette.secondary.main,
                                 color: theme.palette.secondary.contrastText,
                                 border: hasUncommittedChanges ? '2px' + ' solid red' : '',
-                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                             }}
                         >
                             Save Changes
