@@ -235,7 +235,6 @@ const mapStateToProps = state => {
 
 RelationRenderer.propTypes = {
     relations: PropTypes.array.isRequired,
-    redux_addRelation: PropTypes.func.isRequired,
     experimentalLayout: PropTypes.bool.isRequired,
     relationsExpanded: PropTypes.bool.isRequired,
     globalUIReducer: PropTypes.object.isRequired,

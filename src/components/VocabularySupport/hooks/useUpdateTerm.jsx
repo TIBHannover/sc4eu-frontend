@@ -9,7 +9,6 @@ export function useUpdateTerm() {
             );
         },
         onSettled: () => {
-            console.log('useUpdateTerm: onSettled');
             //queryClient.invalidateQueries({ queryKey: ['terms'] }) //refetch terms after mutation, disabled for demo
         }
     });

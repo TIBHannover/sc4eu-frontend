@@ -32,26 +32,15 @@ import 'diff2html/bundles/css/diff2html.min.css';
 import { LARGE_SCREEN_SIZE } from '../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
 
-const MARKDOWN_FILE_START_REGEX = new RegExp(
-    '# Ontology comparison\\n\\n## Left\\n- Ontology IRI: .+\\n- Version IRI: .+\\n- Loaded from: .+\\n\\n## Right\\n- Ontology IRI: .+\\n- Version IRI: .+\\n- Loaded from: .+\\n\\n'
-);
+const MARKDOWN_FILE_START_REGEX = /# Ontology comparison\n\n## Left\n- Ontology IRI: .+\n- Version IRI: .+\n- Loaded from: .+\n\n## Right\n- Ontology IRI: .+\n- Version IRI: .+\n- Loaded from: .+\n\n/;
 
 const renderer = {
     link(href, title, text) {
         return `<a href="${href}" style="font-size: 14px;">${text}</a>`;
     },
     heading(text, level) {
-        let fontSize = '16px';
-        switch (level) {
-            case 1:
-                fontSize = '24px';
-                break;
-            case 2:
-                fontSize = '20px';
-            default:
-                fontSize = '16px';
-                break;
-        }
+        const FONT_SIZES = { 1: '24px', 2: '20px' };
+        const fontSize = FONT_SIZES[level] ?? '16px';
         return `<h${level} style="font-size: ${fontSize}; font-weight: bold">${text}</h${level}>`;
     }
 };
@@ -243,7 +232,7 @@ const ChangesTimeline = ({ id }) => {
 
         return item?.message ?? '';
     };
-    
+
     return (
         <Grid container spacing={2}>
             {error && (

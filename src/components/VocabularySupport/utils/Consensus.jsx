@@ -28,10 +28,12 @@ export const ConsensusProgress = ({ term }) => {
             );
         }
         if (leadingCount >= THRESHOLD_COUNT && majority >= 75) {
-            <Typography variant="caption" color="text.secondary">
-                {majority === 100 ? 'Unanimous' : 'Majority'} consensus reached{' '}
-                <CelebrationOutlinedIcon sx={{ color: theme.palette.secondary.main }} />
-            </Typography>;
+            return (
+                <Typography variant="caption" color="text.secondary">
+                    {majority === 100 ? 'Unanimous' : 'Majority'} consensus reached{' '}
+                    <CelebrationOutlinedIcon sx={{ color: theme.palette.secondary.main }} />
+                </Typography>
+            );
         }
 
         return (

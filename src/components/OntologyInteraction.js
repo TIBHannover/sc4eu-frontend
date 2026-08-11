@@ -22,14 +22,8 @@ class OntologyViewRoot extends Component {
     }
 
     getOntologyFromBackend = () => {
-        // console.log('fetching ontologies from backend');
-        // console.log(this.props.match.params.ontologyId);
-        // TODO DEPRECATED
         getOntologyBy(this.props.match.params.ontologyId).then(res => {
-            // console.log('we have the data!!!!!!', res);
             getJSON_ModelForOntology({ ontologyData: res.ontology_data }).then(jsModel => {
-                console.log('>>> should call that redux function');
-                // create json obj from the string
                 const parsedModel = JSON.parse(jsModel);
                 this.props.initializeResourceRelationModel(parsedModel);
                 this.setState({ isLoading: false, ontologyFileContent: jsModel });
@@ -38,7 +32,6 @@ class OntologyViewRoot extends Component {
     };
 
     render() {
-        // console.log(this.state);
         return (
             <div>
                 <h1
@@ -51,7 +44,6 @@ class OntologyViewRoot extends Component {
                 <div className="pl-1 pr-1">
                     {this.state.isLoading ? (
                         <div className="text-center text-primary mt-4 mb-4">
-                            {/*using a manual fixed scale value for the spinner scale! */}
 
                             <h2 className="h5">
                                 <span>
@@ -76,7 +68,6 @@ class OntologyViewRoot extends Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state);
     return {
         user: state.auth.user,
         rrModel: state.ResourceRelationModelReducer

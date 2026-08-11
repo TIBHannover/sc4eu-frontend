@@ -72,8 +72,6 @@ export const EurostatPortal = () => {
                     default:
                         console.error('Unkown param sent {}', fieldVal);
                 }
-            } else {
-                console.log('Empty data returned ');
             }
         };
 

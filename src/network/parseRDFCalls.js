@@ -19,7 +19,6 @@ export const parseRDF = async rdfGitHubURL => {
 
     await new Promise((resolve, reject) => {
         parser.parse(rdfDecodedDataGithub, (error, quad, prefixes) => {
-            //console.log('parseRDF quad', quad);
             if (error) {
                 reject(error);
             } else if (quad) {
@@ -54,7 +53,6 @@ export const parseRDF = async rdfGitHubURL => {
             result[quad.subject][quad.predicate] = quad.object;
         }
     });
-    console.log('parseRDF result', result);
     return Object.entries(result).map(([identifier, value]) => ({ identifier, ...value }));
 };
 

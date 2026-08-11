@@ -4,10 +4,8 @@ import LinkInteractions from './linkInteractions';
 
 export default class Interactions {
     graphInteractions = null;
-    constructor() {
-        this.nodeInteractions = null;
-        this.linkInteractions = null;
-    }
+    nodeInteractions = null;
+    linkInteractions = null;
 
     applyInteractions(graph, redrawCall) {
         /** GRAPH INTERACTION **/

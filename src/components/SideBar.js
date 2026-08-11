@@ -1,58 +1,58 @@
 import React, { useState } from 'react';
-import 'react-modern-drawer/dist/index.css';
-import { useTheme } from '@mui/material';
-import ROUTES from 'constants/routes';
-import { reverse } from 'named-urls';
-import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import { StyledBadge } from '../styledComponents/styledComponents';
-import Cookies from 'js-cookie';
+import { compose } from 'redux';
 import { connect, useSelector } from 'react-redux';
-import { fontStyled } from '../styledComponents/styledFont';
-import List from '@mui/material/List';
-import { ListItem, Tooltip } from '@mui/material';
-import Divider from '@mui/material/Divider';
+import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
-import MetaDataModal from './Modals/metaData';
+import { reverse } from 'named-urls';
+
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import { ListItem, Tooltip, useTheme } from '@mui/material';
 import {
-    HomeOutlined,
-    LiveHelpOutlined,
-    LibraryBooksOutlined,
-    PrivacyTipOutlined,
-    ApprovalOutlined,
-    FormatAlignJustifyOutlined,
     AccountTreeOutlined,
+    AnalyticsOutlined,
+    ApprovalOutlined,
+    ArticleOutlined,
+    BarChartOutlined,
+    BorderAllOutlined,
+    BorderColorOutlined,
+    CollectionsOutlined,
+    DifferenceOutlined,
+    DiscountOutlined,
+    FormatAlignJustifyOutlined,
+    HandshakeOutlined,
+    HomeOutlined,
     HubOutlined,
     LegendToggleOutlined,
-    BorderColorOutlined,
+    LibraryBooksOutlined,
+    LiveHelpOutlined,
     MenuBookOutlined,
-    CollectionsOutlined,
-    DiscountOutlined,
-    ArticleOutlined,
-    DifferenceOutlined,
     NoteAddOutlined,
-    AnalyticsOutlined,
-    BarChartOutlined,
-    TimelineOutlined,
-    BorderAllOutlined,
-    HandshakeOutlined,
-    StackedBarChartOutlined
+    PrivacyTipOutlined,
+    StackedBarChartOutlined,
+    TimelineOutlined
 } from '@mui/icons-material';
 
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
+import ROUTES from 'constants/routes';
+import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
+import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { getOntologyById } from '../network/ontologyIndexing';
 import { getWidocoDocumentation } from '../network/GetOntologyData';
-import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
-import AlertPopUp from './ReusableComponents/AlertPopUp';
-import MaterialUIPopUp from './ReusableComponents/MaterialUIPopUp';
-import ChangesTimeline from './ondet/ChangesTimeline';
-import { useGetDiscussion } from './VocabularySupport/hooks/useGetDiscussion';
 import { getMentionedCommentsLength } from './VocabularySupport/utils/Discussions';
-import { compose } from 'redux';
-import { StyledLink, StyledText, StyledSideBarButton } from '../styledComponents/styledComponents';
+import { useGetDiscussion } from './VocabularySupport/hooks/useGetDiscussion';
+import AlertPopUp from './ReusableComponents/AlertPopUp';
+import ChangesTimeline from './ondet/ChangesTimeline';
+import MaterialUIPopUp from './ReusableComponents/MaterialUIPopUp';
+import MetaDataModal from './Modals/metaData';
+import { fontStyled } from '../styledComponents/styledFont';
+import { StyledBadge, StyledLink, StyledText, StyledSideBarButton } from '../styledComponents/styledComponents';
+
+import 'react-modern-drawer/dist/index.css';
 
 const SideBar = ({ isOpen, onNavigate, user }) => {
-    const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
     const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: user !== 0 });
     let allTermsDiscussion = fetchedDiscussion || [];
@@ -60,7 +60,7 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
 
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
     const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
-    const [isActiveTab, setIsActiveTab] = useState(modeOfOperations ? modeOfOperations : 'hybrid');
+    const [isActiveTab, setIsActiveTab] = useState('hybrid');
     const [isMetaDataModalOpen, setMetaDataModalOpen] = useState(false);
     const [isLoadingForWidoco, setIsLoadingForWidoco] = useState(false);
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);

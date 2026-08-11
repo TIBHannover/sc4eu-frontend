@@ -54,20 +54,15 @@ class CardGraphVis extends Component {
         }
 
         if (!this.state.createdGraph && this.props.isExpanded) {
-            // crateGraph and update the state;
-            // console.log('create sub resource relation model for the identifier', this.props.itemType);
             const graphContainer = document.getElementById(this.graphRenderingIdentifier);
             if (graphContainer) {
                 this.parentDivObserver.observe(graphContainer, { subtree: false, childList: true });
             }
             if (this.props.itemType === 'Resource') {
-                // console.log('>>> CREATE THE SUB GRAPH FROM A RESOURCE');
-
                 const resources = this.props.rrModel.resources;
                 const relations = this.props.rrModel.relations;
 
                 const itemOfInterest = resources.find(item => item.identifier === this.props.itemIdentifier);
-                // console.log('itemOfInterest ', itemOfInterest);
 
                 if (itemOfInterest) {
                     const sub_resources = [];
@@ -156,8 +151,6 @@ class CardGraphVis extends Component {
             }
 
             if (this.props.itemType === 'Relation') {
-                // console.log('>>> CREATE THE SUB GRAPH FROM A RESOURCE');
-
                 const resources = this.props.rrModel.resources;
                 const relations = this.props.rrModel.relations;
 

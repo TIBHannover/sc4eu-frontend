@@ -62,9 +62,7 @@ const mapStateToProps = state => {
 
 RelationBody.propTypes = {
     relationContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired,
     isBodyExpanded: PropTypes.bool.isRequired,
-    initialRendering: PropTypes.bool.isRequired,
     metaInformation: PropTypes.object.isRequired
 };
 

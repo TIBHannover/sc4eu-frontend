@@ -227,12 +227,10 @@ const mapStateToProps = state => {
 
 ResourceRenderer.propTypes = {
     resources: PropTypes.array.isRequired,
-    redux_addResource: PropTypes.func.isRequired,
     experimentalLayout: PropTypes.bool.isRequired,
     resourcesExpanded: PropTypes.bool.isRequired,
     globalUIReducer: PropTypes.object.isRequired,
-    redux_preserveFilterSearch: PropTypes.func.isRequired,
-    metaInformation: PropTypes.object.isRequired
+    redux_preserveFilterSearch: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({

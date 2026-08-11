@@ -37,10 +37,7 @@ class AnnotationsDropDown extends Component {
         const mappedAnnotations = allAnnotations.map(item => {
             return (
                 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-                <div
-                    key={'itemId_' + item.prefix + item.type}
-                    style={{ display: 'block', overflow: 'hidden' }}
-                >
+                <div key={'itemId_' + item.prefix + item.type} style={{ display: 'block', overflow: 'hidden' }}>
                     <StyledAnnotationsDropdownSpan>{item.prefix}</StyledAnnotationsDropdownSpan>
                     <div style={{ marginLeft: '1rem' }}>
                         <StyledAnnotationsDropdownSpan>{item.type}</StyledAnnotationsDropdownSpan>
@@ -68,10 +65,8 @@ class AnnotationsDropDown extends Component {
 }
 
 AnnotationsDropDown.propTypes = {
-    itemType: PropTypes.string.isRequired,
     itemIdentifier: PropTypes.string.isRequired,
-    itemOfInterest: PropTypes.object.isRequired,
-    callback: PropTypes.func.isRequired
+    itemOfInterest: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
@@ -83,4 +78,3 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnnotationsDropDown);
-

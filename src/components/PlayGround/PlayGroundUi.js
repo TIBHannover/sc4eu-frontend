@@ -68,12 +68,10 @@ class PlayGroundUI extends Component {
         }
 
         if (this.clickOrigin === 'TTL' && !file.name.endsWith('.ttl')) {
-            console.log('ERROR: not a ttl file');
             return;
         }
 
         if (this.clickOrigin === 'VOWLJSON' && !file.name.endsWith('.json')) {
-            console.log('ERROR: not a JSON file');
             return;
         }
 

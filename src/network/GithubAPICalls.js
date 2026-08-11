@@ -145,6 +145,7 @@ export const getLicense = async githubapiurl => {
             return lic;
         })
         .catch(err => {
+            console.error(err)
             return null;
         });
     return license;
@@ -183,7 +184,6 @@ export const parseGitHubRawUrl = githubRawUrl => {
 
 export const getGitHubFileContent = async githubapiurl => {
     try {
-        console.log('Fetching file content from GitHub:', githubapiurl);
         const { owner, repo, branch, filePath } = parseGitHubRawUrl(githubapiurl);
         const branchName = branch || 'main';
 

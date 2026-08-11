@@ -16,7 +16,7 @@ import { ConsensusProgress } from '../utils/Consensus';
 
 const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => {
     const theme = useTheme();
-    
+
     const [decision, setDecision] = useState('');
     const [comment, setComment] = useState(null);
     const [decisions, setDecisions] = useState(vote.decisions);
@@ -99,7 +99,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     };
 
     const handleExpertDecision = async () => {
-        console.log('expert decision updated: ', vote);
         await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
         setDecisionMade(true);
         setUserHasVoted(true);
@@ -262,7 +261,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             <Typography variant="subtitle1" gutterBottom>
                                 Recent Votes
                             </Typography>
-                            {console.log(votedUsers)}
                             <Box sx={styles.recentVotesContainer}>
                                 {votedUsers.length > 0 ? (
                                     votedUsers
@@ -303,13 +301,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                                 mt: 0.5
                                                             }}
                                                         >
-                                                            "
-                                                            {expandedComments.has(index)
-                                                                ? user.comment
-                                                                : user.comment.length > 100
-                                                                ? user.comment.substring(0, 100)
-                                                                : user.comment}
-                                                            "
+                                                            "{user.comment.length > 100 ? user.comment.substring(0, 100) : user.comment}"
                                                             {user.comment.length > 100 && (
                                                                 <Typography
                                                                     component="span"

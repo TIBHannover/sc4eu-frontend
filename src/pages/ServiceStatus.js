@@ -49,7 +49,7 @@ export default class ServiceStatus extends Component {
         if (this.state.oauthConfigured || this.state.backendService || this.state.ontologyProcessingService) {
             return <p style={{ color: 'green', marginBottom: 0 }}>True </p>;
         } else {
-            <p style={{ color: 'red', marginBottom: 0 }}>False </p>;
+            return <p style={{ color: 'red', marginBottom: 0 }}>False </p>;
         }
     };
 

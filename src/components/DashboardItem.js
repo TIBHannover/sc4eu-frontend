@@ -373,8 +373,7 @@ DashboardItem.propTypes = {
     projects: PropTypes.array.isRequired,
     userData: PropTypes.object.isRequired,
     roleOptions: PropTypes.array.isRequired,
-    callback: PropTypes.func.isRequired,
-    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+    callback: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

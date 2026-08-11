@@ -93,7 +93,6 @@ class ViewOntology extends Component {
 
             // Fetch ontology data
             const response = await getOntologyBy(this.state.ontologyID);
-            console.log('Ontology response:', response);
 
             // Validate response
             if (!response) {
@@ -132,33 +131,31 @@ class ViewOntology extends Component {
 
     render() {
         return (
-            <>
-                <StyledViewOntologyRootDiv>
-                    {this.state.isLoading === true && (
-                        <div className="text-center text-primary mt-4 mb-4">
-                            <h2 className="h5">
-                                <span>
-                                    <Icon icon={faSpinner} spin />
-                                </span>{' '}
-                                Loading
-                            </h2>
-                        </div>
-                    )}
-                    {this.state.isLoading === false && this.state.error === true && <StyledH1> {this.state.errorMsg}</StyledH1>}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'hybrid' && (
-                        <OntologyViewRoot
-                            leftSideExpanded={this.leftSideExpanded}
-                            rightSideExpanded={this.rightSideExpanded}
-                            toggleLeftSideExpanded={this.setLeftSideExpanded}
-                            toggleRightSideExpanded={this.setRightSideExpanded}
-                        />
-                    )}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'text' && <OntologyViewAsTTL />}
-                    {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'graph' && (
-                        <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperations === 'graph'} />
-                    )}
-                </StyledViewOntologyRootDiv>
-            </>
+            <StyledViewOntologyRootDiv>
+                {this.state.isLoading === true && (
+                    <div className="text-center text-primary mt-4 mb-4">
+                        <h2 className="h5">
+                            <span>
+                                <Icon icon={faSpinner} spin />
+                            </span>{' '}
+                            Loading
+                        </h2>
+                    </div>
+                )}
+                {this.state.isLoading === false && this.state.error === true && <StyledH1> {this.state.errorMsg}</StyledH1>}
+                {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'hybrid' && (
+                    <OntologyViewRoot
+                        leftSideExpanded={this.leftSideExpanded}
+                        rightSideExpanded={this.rightSideExpanded}
+                        toggleLeftSideExpanded={this.setLeftSideExpanded}
+                        toggleRightSideExpanded={this.setRightSideExpanded}
+                    />
+                )}
+                {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'text' && <OntologyViewAsTTL />}
+                {this.state.isLoading === false && this.state.error === false && this.state.modeOfOperations === 'graph' && (
+                    <GraphVisUi DonatelloGraph={this.DonatelloGraph} visualizationTabIsActive={this.state.modeOfOperations === 'graph'} />
+                )}
+            </StyledViewOntologyRootDiv>
         );
     }
 }
@@ -175,7 +172,6 @@ const mapStateToProps = state => {
 ViewOntology.propTypes = {
     location: PropTypes.object.isRequired,
     initializeResourceRelationModel: PropTypes.func.isRequired,
-    ui_tab_selectorChanges: PropTypes.bool.isRequired,
     redux_getAlreadyLoadedOntology: PropTypes.object,
     redux_alreadyLoadedOntology: PropTypes.func.isRequired
 };
@@ -186,5 +182,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ViewOntology);
-
-

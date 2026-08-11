@@ -11,24 +11,15 @@ export default class ProjectList extends Component {
     }
 
     reloadAfterUpdate = () => {
-        console.log('reloadAfterUpdate');
         //this.forceUpdate();
         this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
     };
 
     render() {
         return (
-            <>
-                <StyledProjectListDiv>
-                    <ProjectView
-                        title="Current Projects"
-                        reloadAfterUpdate={() => this.reloadAfterUpdate()}
-                        updateFlipFlop={this.state.updateFlipFlop}
-                    />
-                </StyledProjectListDiv>
-            </>
+            <StyledProjectListDiv>
+                <ProjectView title="Current Projects" reloadAfterUpdate={() => this.reloadAfterUpdate()} updateFlipFlop={this.state.updateFlipFlop} />
+            </StyledProjectListDiv>
         );
     }
 }
-
-

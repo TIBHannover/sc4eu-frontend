@@ -32,12 +32,7 @@ class SingleRelation extends Component {
     }
 
     componentDidMount() {
-        // console.log('Mount');
         this.props.registerToParent(this);
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('am I Updated?');
     }
 
     updateSiblings = () => {

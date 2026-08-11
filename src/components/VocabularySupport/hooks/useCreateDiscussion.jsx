@@ -15,7 +15,6 @@ export function useCreateDiscussion() {
             ]);
         },
         onSettled: async () => {
-            console.log('onSuccess: New discussion created');
             //queryClient.invalidateQueries({ queryKey: ['terms'] });
             return queryClient.getQueryData(['discussions']);
         }

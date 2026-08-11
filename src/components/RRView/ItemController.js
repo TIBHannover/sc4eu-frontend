@@ -113,19 +113,11 @@ const mapStateToProps = state => {
 ItemController.propTypes = {
     itemType: PropTypes.string.isRequired,
     itemContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired,
-    toggleEditButton: PropTypes.func.isRequired,
-    deleteResource: PropTypes.func.isRequired,
-    editResource: PropTypes.func.isRequired,
     showBody: PropTypes.func.isRequired,
     showGraphVis: PropTypes.func.isRequired,
     showWidget: PropTypes.func.isRequired,
-    isBodyExpanded: PropTypes.bool.isRequired,
     showingBody: PropTypes.bool.isRequired,
     showingGraph: PropTypes.bool.isRequired,
-    showingWidget: PropTypes.bool.isRequired,
-    showWidgetAnnotation: PropTypes.func.isRequired,
-    showingWidgetAnnotation: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});

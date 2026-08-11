@@ -7,7 +7,7 @@ async function fetchAllTermsFromGitHubJSON() {
     try {
         return await parseJSON(gitHubJsonFileUrl);
     } catch (e) {
-        console.log('Error in fetching data from GitHub ' + e);
+        console.error('Error in fetching data from GitHub ' + e);
         return null;
     }
 }

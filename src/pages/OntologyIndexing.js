@@ -40,7 +40,6 @@ class OntologyIndexing extends Component {
             //There is a chance that the project do not have any ontologies.
             if (res.ontologyIndex === 'Undefined') {
                 this.setState({ isLoading: false, ontologyList: false });
-                return;
             } else {
                 this.setState({ isLoading: false, ontologyList: res }, async () => {
                     await this.getCommitHistory();
@@ -97,39 +96,36 @@ class OntologyIndexing extends Component {
 
     render() {
         return (
-            <>
-                <StyledContainer>
-                    {this.state.isLoading ? (
-                        <div className="text-center text-primary mt-4 mb-4">
-                            {/*using a manual fixed scale value for the spinner scale! */}
-                            <h2 className="h5">
-                                <span>
-                                    <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                                </span>{' '}
-                                Loading
-                            </h2>
-                        </div>
-                    ) : (
-                        <div style={{ height: '100%' }}>
-                            <OntologyIndexInteractions
-                                project_id={this.state.selectedProject.uuid}
-                                project_name={this.state.selectedProject.name}
-                                access_type={this.state.selectedProject.access_type}
-                                reloadAfterUpdate={() => {
-                                    this.reloadAfterUpdate();
-                                }}
-                                listOfOntology={this.state.ontologyList}
-                            />
-                        </div>
-                    )}
-                </StyledContainer>
-            </>
+            <StyledContainer>
+                {this.state.isLoading ? (
+                    <div className="text-center text-primary mt-4 mb-4">
+                        {/*using a manual fixed scale value for the spinner scale! */}
+                        <h2 className="h5">
+                            <span>
+                                <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                            </span>{' '}
+                            Loading
+                        </h2>
+                    </div>
+                ) : (
+                    <div style={{ height: '100%' }}>
+                        <OntologyIndexInteractions
+                            project_id={this.state.selectedProject.uuid}
+                            project_name={this.state.selectedProject.name}
+                            access_type={this.state.selectedProject.access_type}
+                            reloadAfterUpdate={() => {
+                                this.reloadAfterUpdate();
+                            }}
+                            listOfOntology={this.state.ontologyList}
+                        />
+                    </div>
+                )}
+            </StyledContainer>
         );
     }
 }
 
 OntologyIndexing.propTypes = {
-    location: PropTypes.object.isRequired,
     selectedProject: PropTypes.object.isRequired
 };
 

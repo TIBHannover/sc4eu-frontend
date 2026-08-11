@@ -159,7 +159,6 @@ export const Annotator = () => {
         enableExpanding: true,
         renderDetailPanel: ({ row }) => (
             <Box sx={{ p: 2 }}>
-                {console.log(row.original)}
                 <Typography variant="body2">Ontology ID: {row.original.ontologyId}</Typography>
                 <Typography variant="body2">Ancestor Term: {row.original.ancestor_term}</Typography>
                 <Typography variant="body2">Synonyms: {row.original.synonyms}</Typography>

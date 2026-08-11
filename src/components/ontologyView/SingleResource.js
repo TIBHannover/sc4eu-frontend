@@ -58,7 +58,6 @@ class SingleResource extends Component {
     };
 
     editResource = inputHeaderString => {
-        console.log(inputHeaderString);
         const inputArray = inputHeaderString.split(' ');
         const typeArray = inputArray.slice(2, inputArray.length);
         if (typeArray[typeArray.length - 1] === '.' || typeArray[typeArray.length - 1] === ';') {

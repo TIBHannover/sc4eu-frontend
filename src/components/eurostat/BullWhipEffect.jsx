@@ -287,7 +287,6 @@ export const BullWhipEffect = () => {
                             options={indicators}
                             renderInput={params => <TextField {...params} label="Unit of measure*" />}
                             onChange={(event, value) => {
-                                console.log(value);
                                 setAnnualIndicator(value);
                             }}
                         ></Autocomplete>
@@ -312,7 +311,6 @@ export const BullWhipEffect = () => {
                             options={soldUnits}
                             renderInput={params => <TextField {...params} label="Indicator of measure*" />}
                             onChange={(event, value) => {
-                                console.log(value);
                                 setSoldUnit(value);
                             }}
                         ></Autocomplete>
@@ -337,7 +335,6 @@ export const BullWhipEffect = () => {
                             options={gdpUnits}
                             renderInput={params => <TextField {...params} label="Unit of measure*" />}
                             onChange={(event, value) => {
-                                console.log(value);
                                 setGdpIndicator(value);
                             }}
                         ></Autocomplete>

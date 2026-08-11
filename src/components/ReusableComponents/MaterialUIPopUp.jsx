@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, DialogTitle, IconButton, useTheme } from '@mui/material';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
 import PropTypes from 'prop-types';
 import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
@@ -33,7 +33,6 @@ MaterialUIPopUp.propTypes = {
     onClose: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     message: PropTypes.element.isRequired,
-    paperSizeStyles: PropTypes.object,
     type: PropTypes.string.isRequired
 };
 

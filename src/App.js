@@ -30,8 +30,6 @@ class App extends Component {
     }
 
     render() {
-        // console.log(this.props.history);
-        // return <div> Hello2 </div>;
 
         return (
             <ConnectedRouter history={this.props.history}>

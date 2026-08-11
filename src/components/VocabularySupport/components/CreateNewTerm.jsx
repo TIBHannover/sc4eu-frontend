@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import {
+    Autocomplete,
     Box,
-    TextField,
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    List,
-    ListItemText,
-    Button,
-    Typography,
     IconButton,
+    List,
     ListItemButton,
-    Tabs,
-    Tab,
+    ListItemText,
     Paper,
-    useTheme
+    Tab,
+    Tabs,
+    TextField,
+    Typography,
+    useTheme,
 } from '@mui/material';
-import PropTypes from 'prop-types';
-import { Autocomplete } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
 import RemoveIcon from '@mui/icons-material/Remove';
+import SearchIcon from '@mui/icons-material/Search';
+
 import { getAutoCompleteResult, getJumpToResult } from '../VocabularySearch/api/search';
 
 const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm, handleCancelCreateTerm }) => {
@@ -68,7 +70,6 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             modified: new Date().toISOString()
         };
         await handleCreateTerm({ values: termFromTerminology, table: table });
-        console.log('Adding term from terminology: ', termFromTerminology);
     };
 
     const handleSelectTerm = term => {
@@ -101,7 +102,6 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             // Creating/editing a new term
             if (validateForm()) {
                 const allCells = row.getAllCells();
-                console.log('allCells: ', allCells);
                 const tableCells = allCells.filter(cell => cell.column.id !== 'mrt-row-expand' && cell.column.id !== 'mrt-row-actions');
 
                 const newTerm = tableCells.reduce((acc, cell) => {
@@ -265,7 +265,6 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                             Fill in the details below for the new term
                         </Typography>
                         <hr />
-                        {console.log('internalEditComponents: ', internalEditComponents)}
                         {internalEditComponents.map((component, index) => {
                             if (component.key.split('_').pop() === 'altLabel') {
                                 return (
@@ -355,7 +354,6 @@ export default CreateNewTerm;
 
 const validateRequired = value => !!value.length;
 function validateTerm(term) {
-    console.log('validating term', term);
     return {
         label: !validateRequired(term.label) ? 'Label is Required' : '',
         description: !validateRequired(term.description) ? 'Description is Required' : ''
