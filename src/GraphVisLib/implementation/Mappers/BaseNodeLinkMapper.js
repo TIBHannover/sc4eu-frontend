@@ -153,11 +153,8 @@ export default class NodeLinkMapper extends BaseComponent {
             const links = model.modelAsJsonObject.links;
 
             links.forEach(link => {
-                // console.log(link.__linkType);
                 const auxDef = this._auxApplies(link, def);
-                // console.log("AUX NODES applies? " + link.__linkType);
-                // console.log(auxDef);
-                if (auxDef !== false) {
+                if (auxDef !== null) {
                     link.__SHADOWLINK = true;
 
                     // create a link for the property using the auxDef.auxiliaryNodeDefinition;
@@ -170,7 +167,6 @@ export default class NodeLinkMapper extends BaseComponent {
                     auxNode.__nodeType = [auxDef.auxNode[1]];
                     auxNode.resourceReference = link;
                     // create the links;
-                    //   console.log(auxDef);
                     const auxLink1 = new Link();
                     const link1Def = auxDef.auxLinks.source;
                     auxLink1.__displayName = link1Def[0];
@@ -371,7 +367,6 @@ export default class NodeLinkMapper extends BaseComponent {
                     langRep = LanguageTools.IRI2Label(this.prefixMapperL2S, item.__vertexEdgeIdentifier);
                 } else {
                     console.error('COULD NOT FIND A LABEL FOR VERTEX: ' + item.__vertexEdgeIdentifier);
-                    console.log('using workaround');
                     const remainder = item.__vertexEdgeIdentifier.split('#')[1];
                     langRep = remainder;
                 }

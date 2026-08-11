@@ -24,7 +24,6 @@ export function usePushNotifications(user) {
 
     useEffect(() => {
         const supported = isPushSupported();
-        console.log(`supported from usePushNotifications: ${supported}`);
         setIsSupported(supported);
 
         if (supported) {
@@ -68,6 +67,7 @@ export function usePushNotifications(user) {
                 }
             } catch (err) {
                 setError('Could not request notification permission.');
+                console.error(err);
                 return;
             }
         }

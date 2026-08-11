@@ -15,7 +15,6 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('push', event => {
-    console.log('Push event received:', event);
     if (Notification.permission !== 'granted') {
         console.error('Notification permission not granted');
         return;
@@ -31,7 +30,6 @@ self.addEventListener('push', event => {
     try {
         if (event.data) {
             const payload = event.data.json();
-            console.log('Payload:', payload);
 
             notificationData = {
                 title: payload.title || notificationData.title,

@@ -10,7 +10,6 @@ export default class PreInitMessages extends Component {
     }
 
     render() {
-        console.log(this.props.inputData);
         return (
             <div>
                 <StyledPreInitMessagesCard className="pl-1 pr-1" onDragStart={this.preventDraggingOfItem}>

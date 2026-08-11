@@ -88,7 +88,10 @@ class CardWidgetVis extends Component {
                                     {Object.keys(itemOfInterest.axioms[axiom]).map((item, subIndex) => {
                                         return (
                                             <div key={itemOfInterest.itemIdentifier + axiom + item + subIndex} style={{ marginLeft: '1rem' }}>
-                                                <StyledCardWidgetVisSpan> {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}</StyledCardWidgetVisSpan>
+                                                <StyledCardWidgetVisSpan>
+                                                    {' '}
+                                                    {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}
+                                                </StyledCardWidgetVisSpan>
                                             </div>
                                         );
                                     })}
@@ -159,13 +162,10 @@ class CardWidgetVis extends Component {
     }
 }
 CardWidgetVis.propTypes = {
-    height: PropTypes.number,
-    itemIdentifier: PropTypes.string,
     itemType: PropTypes.string.isRequired,
     rrModel: PropTypes.object.isRequired,
     itemContext: PropTypes.object.isRequired,
     isExpanded: PropTypes.bool.isRequired,
-    callback: PropTypes.func,
     metaInformation: PropTypes.object.isRequired
 };
 

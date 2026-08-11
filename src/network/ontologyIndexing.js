@@ -12,7 +12,6 @@ import { URL_GET_ONTOLOGY_GIT_DATA, URL_ONTOLOGYBYID } from '../constants/servic
 
 export const getAllOntologies = project_id => {
     // we use parameters from env.
-    console.log('IN network we want this page', URL_ONTOLOGYINDEXING + '?project_id=' + project_id);
 
     // todo: make flexible based on the env.file
     return plainGetRequest(URL_ONTOLOGYINDEXING + '?project_id=' + project_id, {
@@ -74,7 +73,7 @@ export const preInitializeOntologyUpload = data => {
         fetch(URL_PRE_INIT, { method: 'POST', headers: postHeader, body: JSON.stringify(data) })
             .then(response => {
                 if (!response.ok) {
-                    console.log(' something is wrong here, ', !response.ok);
+                    console.error(' something is wrong here, ', !response.ok);
                     // reject(new Error(`Error response. (${response.status}) ${response.statusText}`));
                     // const json = response.json();
                     // if (json.then) {

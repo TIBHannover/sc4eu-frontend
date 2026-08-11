@@ -24,7 +24,6 @@ class EditProjectModal extends Component {
             description: this.state.projectDescription,
             access_type: this.state.accessType
         };
-        console.log(updatedProject);
         const projectItems = {
             uuid: updatedProject.uuid,
             projectName: updatedProject.name,

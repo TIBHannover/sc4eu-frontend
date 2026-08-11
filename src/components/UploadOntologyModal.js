@@ -84,8 +84,6 @@ class UploadOntology extends Component {
         });
 
         reader.onloadend = async e => {
-            // console.log(reader.result);
-
             // throw this into the pit
 
             // we send the content to the simple flask proxy and await some result
@@ -123,6 +121,7 @@ class UploadOntology extends Component {
                     preInitResult: {},
                     errorInitialization: true
                 });
+                console.error(e);
             }
         };
 
@@ -218,6 +217,7 @@ class UploadOntology extends Component {
                 preInitResult: {},
                 errorInitialization: true
             });
+            console.error(e);
         }
     };
     handleGitlabUrl = async () => {
@@ -251,6 +251,7 @@ class UploadOntology extends Component {
                 preInitResult: {},
                 errorInitialization: true
             });
+            console.error(e);
         }
     };
 

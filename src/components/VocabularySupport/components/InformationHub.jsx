@@ -1,44 +1,45 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useMediaQuery } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import DatePicker from 'react-datepicker';
+
 import {
-    Box,
-    Typography,
     Avatar,
-    List,
-    ListItem,
-    ListItemText,
-    Paper,
-    TextField,
-    InputAdornment,
-    Tooltip,
-    Checkbox,
-    FormControlLabel,
-    Grid,
-    ListItemAvatar,
-    Tab,
-    CircularProgress,
     AvatarGroup,
     Badge,
+    Box,
+    Button,
+    Checkbox,
+    CircularProgress,
+    Divider,
+    FormControlLabel,
+    Grid,
+    InputAdornment,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    MenuItem,
+    Paper,
     Popover,
     Select,
-    MenuItem,
-    Button,
-    useTheme
+    Tab,
+    Tabs,
+    TextField,
+    Tooltip,
+    Typography,
+    useTheme,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import DatePicker from 'react-datepicker';
-import { stringAvatar } from './CommentsSection';
-import Divider from '@mui/material/Divider';
-import { Tabs } from '@mui/material/';
-import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
-import { StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
-import PropTypes from 'prop-types';
 import CheckIcon from '@mui/icons-material/Check';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
-import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
-import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
-import { useMediaQuery } from '@material-ui/core';
+import SearchIcon from '@mui/icons-material/Search';
+
+import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
+import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import { ConsensusProgress } from '../utils/Consensus';
+import { stringAvatar } from './CommentsSection';
+import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -120,7 +121,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             const termUuid = weeklyTerm?.term_uuid;
 
             if (!termUuid) {
-                console.log('No term UUID found');
                 return;
             }
 

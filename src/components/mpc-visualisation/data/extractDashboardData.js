@@ -163,7 +163,7 @@ function extractTier1FutureDemand(schema) {
     const sorted = [...nodes].sort((a, b) => a.id.localeCompare(b.id));
     return {
         Automotive: sorted.map(node => ({
-            label: prop(node, "forTimePeriod") ?? prop(node, "periodLabel") ?? node.label,
+            label: prop(node, 'forTimePeriod') ?? prop(node, 'periodLabel') ?? node.label,
             value: prop(node, 'percentageChange')
         }))
     };
@@ -310,7 +310,7 @@ function extractComponentActivity(schema) {
         if (!node) return;
         const rawValue = prop(node, 'isActiveInCategory');
         if (rawValue == null) return;
-        const yesMatch = String(rawValue).match(/'Yes':\s*([\d.]+)/);
+        const yesMatch = /'Yes':\s*([\d.]+)/.exec(String(rawValue));
         result[displayName] = yesMatch ? Number.parseFloat(yesMatch[1]) > 0 : false;
     });
     return Object.keys(result).length > 0 ? result : null;

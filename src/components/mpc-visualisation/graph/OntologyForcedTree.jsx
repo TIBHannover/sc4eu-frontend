@@ -680,6 +680,13 @@ const OntologyForceTree = memo(function OntologyForceTree({ schema, selectedGrou
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [expandedNodeIds]);
 
+    // Selected nodes get a thick outline; instance nodes get a slightly
+    // thinner default outline than aggregate nodes.
+    function getStrokeWidth(simNode, selectedGroup) {
+        if (simNode.label === selectedGroup) return 3;
+        return simNode.isInstance ? 1 : 1.5;
+    }
+
     // ── Effect: update selection visuals without touching simulation ───────────
     // Runs when selectedGroup changes. Patches D3 attributes directly.
     useEffect(() => {
@@ -691,7 +698,7 @@ const OntologyForceTree = memo(function OntologyForceTree({ schema, selectedGrou
                 const isSelected = simNode.label === selectedGroup;
                 return isSelected ? simNode.domainColor.stroke : simNode.domainColor.fill;
             })
-            .attr('stroke-width', simNode => (simNode.label === selectedGroup ? 3 : simNode.isInstance ? 1 : 1.5));
+            .attr('stroke-width', simNode => getStrokeWidth(simNode, selectedGroup));
 
         nodeElementsRef.current.select('.selection-ring').attr('display', simNode => (simNode.label === selectedGroup ? null : 'none'));
     }, [selectedGroup]);

@@ -61,7 +61,6 @@ const mapStateToProps = state => {
 
 ResourceBody.propTypes = {
     resourceContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired,
     metaInformation: PropTypes.object.isRequired,
     isBodyExpanded: PropTypes.bool.isRequired
 };

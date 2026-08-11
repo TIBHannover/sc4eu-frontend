@@ -158,9 +158,17 @@ export const OntologyNode = memo(function OntologyNode({ data }) {
     // using the selection highlight colour rather than full inversion.
     const effectiveBorderColor = isClassSelected ? colorStyled.primary : borderColor;
 
-    const borderRadius = isCircle ? CIRCLE_BORDER_RADIUS : isPill ? PILL_BORDER_RADIUS : RECT_BORDER_RADIUS;
+    let borderRadius = RECT_BORDER_RADIUS;
+    let glowRingRadius = GLOW_RING_RECT_RADIUS;
+    if (isCircle) {
+        borderRadius = CIRCLE_BORDER_RADIUS;
+        glowRingRadius = CIRCLE_BORDER_RADIUS;
+    }
+    if (isPill) {
+        borderRadius = PILL_BORDER_RADIUS;
+        glowRingRadius = PILL_BORDER_RADIUS;
+    }
     const borderStyle = isDashed ? 'dashed' : 'solid';
-    const glowRingRadius = isCircle ? CIRCLE_BORDER_RADIUS : isPill ? PILL_BORDER_RADIUS : GLOW_RING_RECT_RADIUS;
     const borderWidth = isSelected ? '2.5px' : '2px';
 
     let boxShadow = shadows.nodeDefault;

@@ -35,7 +35,6 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
 
     useEffect(() => {
         if (autoRefresh && ontology.lookup_type !== 'local' && ontology.commitsBehind > 0) {
-            console.log('Auto-refresh is enabled. Updating ontology data...');
             handleUpdateConfirm();
         }
     }, [autoRefresh]);

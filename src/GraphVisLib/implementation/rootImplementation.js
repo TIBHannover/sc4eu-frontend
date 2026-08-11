@@ -25,7 +25,6 @@ export default class RootImplementation {
     };
 
     createRRM_fromVOWL = async () => {
-        console.log('EXECUTING THE PARSER');
         if (!this.currentData) {
             console.error('ERROR, no DATA PROVIDED');
         } else {

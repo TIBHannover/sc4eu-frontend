@@ -249,8 +249,6 @@ export default class ForceLayout extends BaseLayoutComponent {
     computeChargeStrength(item) {
         const value = CHARGE_STRENGTH_BY_TYPE[item.__internalObjectType] ?? CHARGE_STRENGTH_FALLBACK;
 
-        console.log('charge:', item.__internalObjectType, value);
-
         return value;
     }
 }

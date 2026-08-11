@@ -69,7 +69,7 @@ const reduceCommentsMentioned = (discussions, mentionedUser) => {
 };
 
 const groupMentionedByCommentInstant = mentioned => {
-    const grouped = [];
+    const grouped = {};
 
     mentioned.forEach(i => {
         i.comments.forEach(comment => {

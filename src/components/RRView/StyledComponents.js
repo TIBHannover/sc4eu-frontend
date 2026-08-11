@@ -8,7 +8,7 @@ export const StyledResourceBody = styled('div')(({ theme }) => ({
     color: 'black',
     width: '100%',
     background: 'white',
-    
+
     '&:focus': {
         outline: 'none'
     },
@@ -43,17 +43,29 @@ export const StyledBodyInput = styled(Input)(({ theme }) => ({
     }
 }));
 
-export const StyledResourceAndRelationHeader = styled('div')(({ theme }) => ({
-    padding: '5px',
-    color: theme.palette.text.primary,
-    backgroundColor: `${props => (props.experimentalLayout ? theme.palette.primary.main : props.isHighlighted === true ? theme.palette.text.primary : theme.palette.secondary.light)}`,
-    '&:focus': {
-        outline: 'none'
-    },
-    '&::-moz-focus-inner': {
-        border: 0
+export const StyledResourceAndRelationHeader = styled('div')(({ theme, ...props }) => {
+    let backgroundColor = theme.palette.secondary.light;
+
+    if (props.experimentalLayout) {
+        backgroundColor = theme.palette.primary.main;
+    } else if (props.isHighlighted === true) {
+        backgroundColor = theme.palette.text.primary;
     }
-}));
+
+    return {
+        padding: '5px',
+        color: theme.palette.text.primary,
+        backgroundColor,
+
+        '&:focus': {
+            outline: 'none'
+        },
+
+        '&::-moz-focus-inner': {
+            border: 0
+        }
+    };
+});
 
 export const StyledContentView = styled('div')(({ theme }) => ({
     overflow: 'hidden',
@@ -97,5 +109,5 @@ export const StyledHeaderDiv = styled('div')(({ theme }) => ({
     height: '50px',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
 }));

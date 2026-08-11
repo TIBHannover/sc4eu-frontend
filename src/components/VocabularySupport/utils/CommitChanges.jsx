@@ -18,7 +18,6 @@ export async function commitDiscussionOnly(queryClient) {
     const commitMessage = 'Update discussion'; // Hardcoded for now
     const jsonDataToCommit = queryClient.getQueryData(['discussions']);
     const saveDiscussionResponse = await saveAllDiscussion(jsonDataToCommit, commitMessage);
-    console.log('Discussion response: ' + saveDiscussionResponse);
 
     let attempts = 0;
     const maxAttempts = 10;
@@ -30,15 +29,12 @@ export async function commitDiscussionOnly(queryClient) {
     const poll = () => {
         getFileDataFromGitHub(gitHubDiscussionUrl).then(latestData => {
             if (currentSha && currentSha === latestData.sha) {
-                queryClient.invalidateQueries({ queryKey: ['discussions'] }).then(r => console.log('discussion data invalidated successfully'));
+                queryClient.invalidateQueries({ queryKey: ['discussions'] });
                 return;
             }
             if (attempts < maxAttempts) {
-                console.log('polling for the latest discussion data');
                 attempts++;
                 setTimeout(poll, pollInterval);
-            } else {
-                console.log('Discussion data has not changed after maximum attempts');
             }
         });
     };
@@ -57,15 +53,12 @@ export async function commitChanges(queryClient, commitMessage) {
     const poll = () => {
         getFileDataFromGitHub(gitHubFileUrl).then(latestData => {
             if (currentSha === latestData.sha) {
-                queryClient.invalidateQueries({ queryKey: ['terms'] }).then(r => console.log('data invalidated' + ' successfully: '));
+                queryClient.invalidateQueries({ queryKey: ['terms'] });
                 return;
             }
             if (attempts < maxAttempts) {
-                console.log('polling for the latest data');
                 attempts++;
                 setTimeout(poll, pollInterval);
-            } else {
-                console.log('Data has not changed after maximum attempts');
             }
         });
     };

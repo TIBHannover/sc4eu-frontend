@@ -303,6 +303,23 @@ class ProjectView extends Component {
         return [...filteredProjects].reverse();
     };
 
+    renderAvailableProjects = () => {
+        if (!this.state.allProjects) {
+            return 'Still loading';
+        }
+        if (this.state.unlockedProjects.length > 0) {
+            return this.projectsInSelectedCollections().map((project, index) => (
+                <ProjectCard key={project.uuid} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
+            ));
+        } else {
+            return (
+                <div style={{ paddingLeft: '3.5%' }}>
+                    <StyledInfoSpan>{this.props.user ? 'You do not have project' : 'Please log in to see your own projects'}</StyledInfoSpan>
+                </div>
+            );
+        }
+    };
+
     render() {
         const collectionOptions = ['Digital Reference Collection', 'Sandbox Collection', 'SC4EU Collection', 'Public Collection', 'My Collection'];
         const defaultOptions = ['Digital Reference Collection', 'Sandbox Collection'];
@@ -376,21 +393,7 @@ class ProjectView extends Component {
                 <StyledScrollbarDiv>
                     <Scrollbars>
                         <StyledProjectsGrid>
-                            {this.state.allProjects ? (
-                                this.state.unlockedProjects.length > 0 ? (
-                                    this.projectsInSelectedCollections().map((project, index) => (
-                                        <ProjectCard key={project.uuid} project={project} onEdit={this.handleEdit} onDelete={this.handleDelete} />
-                                    ))
-                                ) : (
-                                    <div style={{ paddingLeft: '3.5%' }}>
-                                        <StyledInfoSpan>
-                                            {this.props.user ? 'You do not have project' : 'Please log in to see your own projects'}
-                                        </StyledInfoSpan>
-                                    </div>
-                                )
-                            ) : (
-                                'Still Loading'
-                            )}
+                            {this.renderAvailableProjects()}
                         </StyledProjectsGrid>
                     </Scrollbars>
                 </StyledScrollbarDiv>
@@ -423,9 +426,6 @@ ProjectView.propTypes = {
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     updateFlipFlop: PropTypes.bool.isRequired,
     redux_addProject: PropTypes.func.isRequired,
-    redux_removeProject: PropTypes.func.isRequired,
-    redux_removeOntology: PropTypes.func.isRequired,
-    redux_removeAlreadyLoadedOntology: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectView);

@@ -164,7 +164,7 @@ function useMentionInput(users) {
                 setMentionSearch(searchTerm);
 
                 const filtered = users
-                    .filter(u => u && u.display_name)
+                    .filter(u => u?.display_name)
                     .filter(u => u.display_name.toLowerCase().includes(searchTerm))
                     .slice(0, 5);
 
@@ -180,7 +180,7 @@ function useMentionInput(users) {
 
     const handleMentionSelect = useCallback(
         selectedUser => {
-            if (!selectedUser || !selectedUser.display_name) {
+            if (!selectedUser?.display_name) {
                 console.error('Invalid user selected:', selectedUser);
                 return;
             }
@@ -747,7 +747,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const handleReact = (commentId, code) => {
         const updatedComments = comments.map(c => {
             if (c.id !== commentId) return c;
-            const reactions = { ...(c.reactions ?? {}) };
+            const reactions = { ...c.reactions };
             // remove user from all codes first (one reaction per user per comment)
             for (const key of Object.keys(reactions)) {
                 reactions[key] = reactions[key].filter(u => u !== userDisplayName);

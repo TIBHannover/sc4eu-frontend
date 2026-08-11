@@ -55,10 +55,6 @@ export default class BasePrimitive {
         // this will allow a primitive to overwrite the global definitions;
     };
 
-    render() {
-        console.log('This is abstract function!');
-    }
-
     resetRenderingData = () => {
         // clear all the data; which is required for rendering elements;
         // ABSTRACT FUNCTION

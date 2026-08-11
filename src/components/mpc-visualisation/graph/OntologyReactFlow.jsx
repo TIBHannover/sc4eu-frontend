@@ -6,7 +6,7 @@ import TouchAppIcon from '@mui/icons-material/TouchApp';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { OntologyNode, buildGraphNodes, buildGraphEdges } from './OntologyNode';
+import { OntologyNode, buildGraphNodes, buildGraphEdges, resolveNodePalette } from './OntologyNode';
 import { layoutGraph } from '../utils/elk_layout';
 import { DOMAIN_ID_TO_SURVEY_KEY } from '../data/surveys';
 import { GlassPanel, LegendDot, NavChip } from '../shared';
@@ -14,7 +14,6 @@ import { GraphHelpPopover } from '../shared/GraphHelpPopover';
 import { useThemePalette, chartColors } from '../config/theme';
 import 'reactflow/dist/style.css';
 import { extractSurveyDomains, filterSchemaByDomain } from '../data/parseTtl';
-import { resolveNodePalette } from './OntologyNode';
 
 const SURVEY_DOMAIN_LABELS = {
     OEM_Survey: 'OEM Survey',

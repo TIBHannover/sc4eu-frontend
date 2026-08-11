@@ -35,6 +35,7 @@ export async function olsSearch({
         }
         return await (await fetch(searchUrl, getCallSetting)).json();
     } catch (e) {
+        console.error(e);
         return [];
     }
 }
@@ -48,11 +49,10 @@ export async function getJumpToResult(inputData, count = 10) {
         result = result['elements'];
         return result;
     } catch (e) {
-        // throw e
+        console.error(e);
         return [];
     }
 }
-
 
 export async function getAutoCompleteResult(inputData, count = 5) {
     try {
@@ -65,6 +65,7 @@ export async function getAutoCompleteResult(inputData, count = 5) {
         searchResult = (await searchResult.json())['response']['docs'];
         return searchResult;
     } catch (e) {
+        console.error(e);
         return [];
     }
 }
