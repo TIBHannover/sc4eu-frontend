@@ -60,7 +60,7 @@ class UserViewDetails extends Component {
                             marginLeft: '10px',
                             backgroundColor: theme.palette.secondary.main,
                             color: theme.palette.secondary.contrastText,
-                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                         }}
                     >
                         Reset
@@ -79,7 +79,7 @@ class UserViewDetails extends Component {
                             marginLeft: '10px',
                             backgroundColor: theme.palette.secondary.main,
                             color: theme.palette.secondary.contrastText,
-                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                         }}
                     >
                         Save

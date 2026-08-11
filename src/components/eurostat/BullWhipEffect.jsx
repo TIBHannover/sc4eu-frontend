@@ -356,7 +356,7 @@ export const BullWhipEffect = () => {
                             sx={{
                                 backgroundColor: theme.palette.secondary.main,
                                 color: theme.palette.secondary.contrastText,
-                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                             }}
                         >
                             Submit
