@@ -386,8 +386,12 @@ export const EurostatPortal = () => {
                     <Grid item xs={12} sm={3} md={2}>
                         <Button
                             variant="contained"
-                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                             onClick={handleSubmit}
+                            sx={{
+                                backgroundColor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                            }}
                         >
                             Submit
                         </Button>
