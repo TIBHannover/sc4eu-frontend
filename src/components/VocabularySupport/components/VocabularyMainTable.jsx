@@ -1,31 +1,53 @@
-import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { Chip, styled, Typography } from '@mui/material';
-import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import Cookies from 'js-cookie';
+import { differenceInDays } from 'date-fns';
 import PropTypes from 'prop-types';
-import ExpandedRow from './ExpandedRow';
-import CreateNewTerm from './CreateNewTerm';
-import CommitChanges from './CommitChanges';
-import { useCreateTerm } from '../hooks/useCreateTerm';
-import { useUpdateTerm } from '../hooks/useUpdateTerm';
-import { useDeleteTerm } from '../hooks/useDeleteTerm';
-import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useHistory } from 'react-router-dom';
+
+import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import {
+    Box,
+    Button,
+    Chip,
+    darken,
+    IconButton,
+    lighten,
+    Modal,
+    styled,
+    Tooltip,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
+import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { getMentionedCommentsLength } from '../utils/Discussions';
+import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
+import { useCreateTerm } from '../hooks/useCreateTerm';
+import { useDeleteTerm } from '../hooks/useDeleteTerm';
+import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
-import Cookies from 'js-cookie';
-import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength } from '../utils/Discussions';
-import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
-import InformationHub from './InformationHub';
-import { useMediaQuery } from '@mui/material';
 import { CardActivityWidget } from './CardActivityWidget';
-import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
+import CommitChanges from './CommitChanges';
+import CreateNewTerm from './CreateNewTerm';
+import ExpandedRow from './ExpandedRow';
+import InformationHub from './InformationHub';
 import VoteView from './VoteView';
-import CloseIcon from '@mui/icons-material/Close';
-import { differenceInDays } from 'date-fns';
 
-/* eslint-disable react/prop-types */
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        console.info('Non-valid URL');
+        return false;
+    }
+}
+
 const VocabularyMainTable = ({
     terms,
     refetch,
@@ -57,7 +79,6 @@ const VocabularyMainTable = ({
             : 'rgba(84, 90, 95, 1)'; // light gray
 
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
-    const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
     const isMobileScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
@@ -80,7 +101,7 @@ const VocabularyMainTable = ({
             discussion =>
                 discussion.comments.length !== 0 &&
                 term.identifier === discussion.resourceId &&
-                discussion.comments.some(comment => comment.mentionedUsers && comment.mentionedUsers.includes(currentUser.displayName))
+                discussion.comments.some(comment => comment.mentionedUsers?.includes(currentUser.displayName))
         )
     );
 
@@ -176,7 +197,6 @@ const VocabularyMainTable = ({
         const resourceId = row.original.identifier;
         const currentResourceDiscussion = discussions.find(d => d.resourceId === resourceId);
         setTermComments(currentResourceDiscussion?.comments || []);
-        // console.log('rowComments: ', rowComments);
         setSelectedTerm(row.original);
         setOpenPopup(true);
     };
@@ -193,15 +213,6 @@ const VocabularyMainTable = ({
         setOpenPopup(false);
         setSelectedTerm(null);
     };
-
-    function isValidUrl(string) {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
 
     const columnVisibility = useMemo(() => {
         return isMobileScreen
@@ -244,7 +255,7 @@ const VocabularyMainTable = ({
                     </a>
                 );
             }
-            return <span>{seeAlso ? seeAlso : ''}</span>;
+            return <span>{seeAlso}</span>;
         }
     };
     TerminologyCellComponent.propTypes = {
@@ -378,7 +389,7 @@ const VocabularyMainTable = ({
                     return row.getValue(columnId) === filterValue;
                 },
                 Cell: ({ row }) => {
-                    const inConsensus = votesMap.find(consensus => consensus.term_uuid === row.original.identifier);
+                    const inConsensus = votesMap.some(consensus => consensus.term_uuid === row.original.identifier);
                     return inConsensus ? (
                         <Tooltip title="Check consensus">
                             <StyledChip
@@ -494,11 +505,9 @@ const VocabularyMainTable = ({
                 Header: ({ column }) => (
                     <Tooltip
                         title={
-                            <>
-                                <span style={{ fontSize: '1.2em' }}>
-                                    Shows the last date time, when the term was edited: term metadata updated or a new comment in a discussion.
-                                </span>
-                            </>
+                            <span style={{ fontSize: '1.2em' }}>
+                                Shows the last date time, when the term was edited: term metadata updated or a new comment in a discussion.
+                            </span>
                         }
                     >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -603,7 +612,7 @@ const VocabularyMainTable = ({
     const handleCreateTerm = async ({ values, table }) => {
         const uuid = crypto.randomUUID();
         const newValidationErrors = validateTerm(values);
-        if (Object.values(newValidationErrors).some(error => error)) {
+        if (Object.values(newValidationErrors).some(Boolean)) {
             setValidationErrors(newValidationErrors);
             return;
         }
@@ -627,9 +636,8 @@ const VocabularyMainTable = ({
     };
 
     const handleSaveTerm = async ({ values, table }) => {
-        console.log('values: ', values);
         const newValidationErrors = validateTerm(values);
-        if (Object.values(newValidationErrors).some(error => error)) {
+        if (Object.values(newValidationErrors).some(Boolean)) {
             setValidationErrors(newValidationErrors);
             return;
         }
@@ -667,7 +675,6 @@ const VocabularyMainTable = ({
     };
     // Function to handle setting a creating row
     const handleCreateRow = (row = {}) => {
-        console.log('row: ', row);
         table.setCreatingRow(
             createRow(table, {
                 ...defaultValues, // Apply defaults

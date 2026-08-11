@@ -6,7 +6,7 @@ import TouchAppIcon from '@mui/icons-material/TouchApp';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { OntologyNode, buildGraphNodes, buildGraphEdges } from './OntologyNode';
+import { OntologyNode, buildGraphNodes, buildGraphEdges, resolveNodePalette } from './OntologyNode';
 import { layoutGraph } from '../utils/elk_layout';
 import { DOMAIN_ID_TO_SURVEY_KEY } from '../data/surveys';
 import { GlassPanel, LegendDot, NavChip } from '../shared';
@@ -14,7 +14,6 @@ import { GraphHelpPopover } from '../shared/GraphHelpPopover';
 import { useThemePalette, chartColors } from '../config/theme';
 import 'reactflow/dist/style.css';
 import { extractSurveyDomains, filterSchemaByDomain } from '../data/parseTtl';
-import { resolveNodePalette } from './OntologyNode';
 
 const SURVEY_DOMAIN_LABELS = {
     OEM_Survey: 'OEM Survey',
@@ -93,7 +92,14 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
     const { overview: ttlOverview, tierSchemas: ttlTierSchemas } = useTtlSchemas(overrideSchema, domainSchema);
 
     // const predefinedSchema = activeTier ? TIER_SCHEMA[activeTier] : OVERVIEW_SCHEMA;
-    const ttlSchema = overrideSchema ? (activeTier ? ttlTierSchemas[activeTier] : ttlOverview) : null;
+    let ttlSchema = null;
+    if (overrideSchema) {
+        if (activeTier) {
+            ttlSchema = ttlTierSchemas[activeTier];
+        } else {
+            ttlSchema = ttlOverview;
+        }
+    }
     const schema = ttlSchema;
 
     const [flowNodes, setFlowNodes] = useNodesState([]);
@@ -119,7 +125,7 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
     // ── Layout — reruns only when schema or tier changes ─────────────────────────
     useEffect(() => {
         if (!schema) return;
-        setSelectedNodeMetadata(null);  // clear node selection when schema changes
+        setSelectedNodeMetadata(null); // clear node selection when schema changes
         const rawNodes = buildGraphNodes(schema, null);
         const rawEdges = buildGraphEdges(schema, edgeColors);
         const isTier = Boolean(activeTier);
@@ -179,26 +185,21 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
             const targetNode = flowNodes.find(node => node.id === edge.target);
 
             // groupKey match — only fire when selectedGroup is a non-null string
-            const groupMatch = n =>
-                selectedGroup != null &&
-                (n?.data.groupKey === selectedGroup || n?.data.label === selectedGroup);
+            const groupMatch = n => selectedGroup != null && (n?.data.groupKey === selectedGroup || n?.data.label === selectedGroup);
 
             // id match — direct connection to the clicked node only
-            const idMatch = n =>
-                selectedNodeId != null && n?.id === selectedNodeId;
+            const idMatch = n => selectedNodeId != null && n?.id === selectedNodeId;
 
-            const isAttached =
-                groupMatch(sourceNode) || groupMatch(targetNode) ||
-                idMatch(sourceNode)    || idMatch(targetNode);
+            const isAttached = groupMatch(sourceNode) || groupMatch(targetNode) || idMatch(sourceNode) || idMatch(targetNode);
 
             const highlightedStyle = { ...edge.style, stroke: edgeColors.highlight, strokeWidth: 3, opacity: 1 };
-            const dimmedStyle      = { ...edge.style, stroke: edgeColors.muted, opacity: 0.3 };
+            const dimmedStyle = { ...edge.style, stroke: edgeColors.muted, opacity: 0.3 };
 
             return {
                 ...edge,
                 animated: isAttached,
-                zIndex:   isAttached ? 10 : 1,
-                style:    isAttached ? highlightedStyle : dimmedStyle,
+                zIndex: isAttached ? 10 : 1,
+                style: isAttached ? highlightedStyle : dimmedStyle
             };
         });
     }, [flowEdges, flowNodes, selectedGroup, selectedNodeMetadata]);
@@ -238,14 +239,14 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
                     size="small"
                     onClick={e => setHelpAnchor(e.currentTarget)}
                     sx={{
-                        fontSize:  9,
+                        fontSize: 9,
                         fontWeight: 600,
-                        height:    22,
-                        cursor:    'pointer',
-                        bgcolor:   'transparent',
-                        color:     colorStyled.onSurfaceVariant,
-                        border:    `1px solid ${colorStyled.outlineVariant}`,
-                        '&:hover': { bgcolor: colorStyled.surfaceContainerHigh },
+                        height: 22,
+                        cursor: 'pointer',
+                        bgcolor: 'transparent',
+                        color: colorStyled.onSurfaceVariant,
+                        border: `1px solid ${colorStyled.outlineVariant}`,
+                        '&:hover': { bgcolor: colorStyled.surfaceContainerHigh }
                     }}
                 />
                 <GraphHelpPopover
@@ -254,29 +255,33 @@ const OntologyReactFlow = memo(function OntologyReactFlow({
                     title="Hierarchy Graph — How to use"
                     items={[
                         {
+                            key: 'click-tier-node',
                             icon: <AccountTreeIcon fontSize="small" />,
                             primary: activeTier ? 'Click a tier node to return to overview' : 'Click a tier node to drill in',
                             secondary: activeTier
                                 ? 'Click "Overview" in the navigation bar below to go back to the full schema.'
-                                : 'Each survey tier (OEM Survey, Semiconductor, Tier 1) shows a detailed sub-schema when clicked.',
-                            highlight: true,
+                                : 'Each survey tier (OEM Survey, Semiconductor, Tier 1) shows a detailed sub-schema when clicked.'
                         },
                         {
+                            key: 'click-pill-node',
                             icon: <FilterAltIcon fontSize="small" />,
                             primary: 'Click a pill node to filter the dashboard',
-                            secondary: 'Pill-shaped nodes (BEHV, BEV, ICE, nm-node buckets) are selectable. Clicking one highlights it in the dashboard charts.',
-                            highlight: true,
+                            secondary:
+                                'Pill-shaped nodes (BEHV, BEV, ICE, nm-node buckets) are selectable. Clicking one highlights it in the dashboard charts.'
                         },
                         {
+                            key: 'click-any-node',
                             icon: <TouchAppIcon fontSize="small" />,
                             primary: 'Click any node to highlight its connections',
-                            secondary: 'Clicking any node highlights all edges directly connected to it. Click the canvas background to clear.',
+                            secondary: 'Clicking any node highlights all edges directly connected to it. Click the canvas background to clear.'
                         },
                         {
+                            key: 'zoom-and-pan',
                             icon: <ZoomInIcon fontSize="small" />,
                             primary: 'Zoom and pan',
-                            secondary: 'Use the scroll wheel to zoom. Drag the background to pan. The minimap in the bottom-right shows your viewport.',
-                        },
+                            secondary:
+                                'Use the scroll wheel to zoom. Drag the background to pan. The minimap in the bottom-right shows your viewport.'
+                        }
                     ]}
                 />
             </GlassPanel>

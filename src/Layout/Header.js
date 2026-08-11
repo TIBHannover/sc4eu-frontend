@@ -10,7 +10,6 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth } from '../redux/actions/auth';
 import greetingTime from 'greeting-time';
 import SignInModal from '../components/Signin/SignInModal';
-import '../assets/scss/DefaultLayout.scss';
 import { SettingsOutlined, LogoutOutlined, AccountCircleOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
 import { NotificationToggle } from '../components/ReusableComponents/NotificationToggle';
 import { NotificationManager } from '../utils/NotificationManager';
@@ -36,21 +35,12 @@ class Header extends Component {
         };
 
         this.userPopup = React.createRef();
-        this.logoutTimeoutId = null; // timeout for auto-logout
+        this.logoutTimeoutId = null;
     }
 
     componentDidMount() {
-        // headers component mounts, so lets try to see if we have a user;
-        //console.log('USER: ', this.props.user);
         document.addEventListener('mousedown', this.handleClickOutside);
-        if (this.props.user === 0) {
-            // make a call to redux to look into the cookie jar
-            // console.log('User is NULL, >> FIRST LOAD');
-            this.props.firstLoad();
-        }
-        // console.log('we do have some user');
-        else if (!this.props.user.displayName || !this.props.user.gravatarId) {
-            // console.log('This should fetch some data');
+        if (this.props.user === 0 || !this.props.user.displayName || !this.props.user.gravatarId) {
             this.props.firstLoad();
         }
     }

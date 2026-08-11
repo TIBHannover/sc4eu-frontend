@@ -12,8 +12,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
     const theme = useTheme();
 
     const approvalPercentage = (consensus.approved_decisions / consensus.rejected_decisions) * 100;
-    const consensusPassed = consensus.status === "accept";
-
+    const consensusPassed = consensus.status === 'accept';
     return (
         <MaterialUIPopUp
             open={open}
@@ -52,29 +51,18 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                             <Typography
                                 variant="body1"
                                 sx={{
-                                    color:
-                                        consensus.type === 'accept'
-                                            ? 'success.dark'
-                                            : 'error.dark',
+                                    color: consensus.type === 'accept' ? 'success.dark' : 'error.dark',
                                     fontWeight: 500,
                                     textTransform: 'uppercase',
                                     letterSpacing: 0.5
                                 }}
                             >
-                                {consensus.type === 'accept'
-                                    ? '→ Accept Proposal'
-                                    : '→ Not Accept Proposal'}
+                                {consensus.type === 'accept' ? '→ Accept Proposal' : '→ Not Accept Proposal'}
                             </Typography>
 
                             <Chip
-                                icon={
-                                    consensusPassed ? <CheckCircleIcon /> : <CancelIcon />
-                                }
-                                label={
-                                    consensusPassed
-                                        ? 'Consensus Accepted'
-                                        : 'Consensus Not Accepted'
-                                }
+                                icon={consensusPassed ? <CheckCircleIcon /> : <CancelIcon />}
+                                label={consensusPassed ? 'Consensus Accepted' : 'Consensus Not Accepted'}
                                 color={consensusPassed ? 'success' : 'error'}
                                 size="small"
                                 sx={{ fontWeight: 600 }}
@@ -103,9 +91,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                 bgcolor: 'grey.300',
                                 mb: 1,
                                 '.MuiLinearProgress-bar': {
-                                    bgcolor: consensus.total_decisions === 0
-                                        ? 'grey.500'
-                                        : 'success.main',
+                                    bgcolor: consensus.total_decisions === 0 ? 'grey.500' : 'success.main'
                                 }
                             }}
                         />
@@ -129,18 +115,11 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                         </Typography>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                            <Avatar
-                                {...stringAvatar(consensus.assignee)}
-                                sx={{ mr: 2, width: 32, height: 32 }}
-                            />
+                            <Avatar {...stringAvatar(consensus.assignee)} sx={{ mr: 2, width: 32, height: 32 }} />
                             <Typography variant="body2" fontWeight={500}>
                                 {consensus.assignee}
                             </Typography>
-                            <Typography
-                                variant="caption"
-                                color="text.secondary"
-                                sx={{ ml: 'auto' }}
-                            >
+                            <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
                                 {new Date(consensus.created_at).toLocaleString()}
                             </Typography>
                         </Box>
@@ -177,16 +156,13 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                         {consensus.decisions?.length > 0 ? (
                             consensus.decisions.map((decision, idx) => (
                                 <Box
-                                    key={idx}
+                                    key={`${decision.vote_id}-${decision.user_id}`}
                                     sx={{
                                         display: 'flex',
                                         flexDirection: 'column',
                                         gap: 1,
                                         p: 1.5,
-                                        borderBottom:
-                                            idx < consensus.decisions.length - 1
-                                                ? '1px solid'
-                                                : 'none',
+                                        borderBottom: idx < consensus.decisions.length - 1 ? '1px solid' : 'none',
                                         borderColor: 'divider',
                                         '&:hover': {
                                             backgroundColor: 'action.hover'
@@ -197,33 +173,22 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                     }}
                                 >
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                        <Avatar
-                                            {...stringAvatar(decision.user_name)}
-                                            sx={{ width: 28, height: 28 }}
-                                        />
+                                        <Avatar {...stringAvatar(decision.user_name)} sx={{ width: 28, height: 28 }} />
                                         <Typography variant="body2" fontWeight={500}>
                                             {decision.user_name}
                                         </Typography>
                                         {decision.choice === 'approved' ? (
                                             <>
-                                                <CheckCircleIcon
-                                                    sx={{ fontSize: 16, color: 'success.main' }}
-                                                />
+                                                <CheckCircleIcon sx={{ fontSize: 16, color: 'success.main' }} />
                                                 <Typography variant="body2">agree</Typography>
                                             </>
                                         ) : (
                                             <>
-                                                <CancelIcon
-                                                    sx={{ fontSize: 16, color: 'error.main' }}
-                                                />
+                                                <CancelIcon sx={{ fontSize: 16, color: 'error.main' }} />
                                                 <Typography variant="body2">not agree</Typography>
                                             </>
                                         )}
-                                        <Typography
-                                            variant="caption"
-                                            color="text.secondary"
-                                            sx={{ ml: 'auto' }}
-                                        >
+                                        <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto' }}>
                                             {new Date(decision.updated_at).toLocaleString()}
                                         </Typography>
                                     </Box>
@@ -252,11 +217,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                 </Box>
                             ))
                         ) : (
-                            <Typography
-                                variant="body2"
-                                color="text.disabled"
-                                sx={{ p: 1 }}
-                            >
+                            <Typography variant="body2" color="text.disabled" sx={{ p: 1 }}>
                                 No votes submitted
                             </Typography>
                         )}

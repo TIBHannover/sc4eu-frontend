@@ -13,12 +13,6 @@ class UserViewDetails extends Component {
         this.state = { loading: false };
     }
 
-    componentDidMount = () => {
-        // request information of that user
-    };
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     createEditableEntryFor = (label, selector, obj) => {
         const { theme } = this.props;
         return (

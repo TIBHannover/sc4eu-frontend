@@ -46,7 +46,6 @@ const BreadcrumbBar = ({ setViewMode, isOntologyView = false, currentViewMode })
                     color="textPrimary"
                     onClick={event => {
                         event.preventDefault();
-                        console.log('I am clicked');
                         if (currentViewMode !== 'projects') {
                             setViewMode('projects');
                         }

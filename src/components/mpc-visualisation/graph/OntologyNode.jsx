@@ -6,12 +6,12 @@ import { useThemePalette, graphAccents, shadows } from '../config/theme';
 // ─── Ontology role constants ──────────────────────────────────────────────────
 
 const ONTOLOGY_ROLE = {
-    abstract:      'abstract',
-    tier:          'tier',
-    class:         'class',
-    sub:           'sub',
+    abstract: 'abstract',
+    tier: 'tier',
+    class: 'class',
+    sub: 'sub',
     sub_clickable: 'sub_clickable',
-    instance:      'instance',
+    instance: 'instance'
 };
 
 // ─── Role palette factory ─────────────────────────────────────────────────────
@@ -21,35 +21,35 @@ const ONTOLOGY_ROLE = {
 function makeRolePalette(c) {
     return {
         [ONTOLOGY_ROLE.abstract]: {
-            fill:   c.surfaceContainerLow,
+            fill: c.surfaceContainerLow,
             stroke: c.outline,
-            text:   c.onSurface,
+            text: c.onSurface
         },
         [ONTOLOGY_ROLE.tier]: {
-            fill:   c.primaryContainer,
+            fill: c.primaryContainer,
             stroke: c.primary,
-            text:   c.onPrimaryContainer,
+            text: c.onPrimaryContainer
         },
         [ONTOLOGY_ROLE.class]: {
-            fill:   c.secondaryContainer,
+            fill: c.secondaryContainer,
             stroke: c.secondary,
-            text:   c.onSecondaryContainer,
+            text: c.onSecondaryContainer
         },
         [ONTOLOGY_ROLE.sub]: {
-            fill:   c.tertiaryContainer,
+            fill: c.tertiaryContainer,
             stroke: c.tertiary,
-            text:   c.onTertiaryContainer,
+            text: c.onTertiaryContainer
         },
         [ONTOLOGY_ROLE.sub_clickable]: {
-            fill:   c.secondary,
+            fill: c.secondary,
             stroke: c.secondary,
-            text:   c.onSecondary,
+            text: c.onSecondary
         },
         [ONTOLOGY_ROLE.instance]: {
-            fill:   c.surfaceContainerHigh,
+            fill: c.surfaceContainerHigh,
             stroke: c.outline,
-            text:   c.onSurfaceVariant,
-        },
+            text: c.onSurfaceVariant
+        }
     };
 }
 
@@ -68,21 +68,21 @@ export function resolveNodePalette({ role }, colorStyled) {
 
 // ─── Node geometry constants ──────────────────────────────────────────────────
 
-const CIRCLE_SIZE             = 100;
-const DEFAULT_NODE_HEIGHT     = 50;
-const SUB_NODE_HEIGHT         = 40;
-const SELECTABLE_NODE_HEIGHT  = 36;
-const MIN_LABEL_WIDTH         = 140;
-const LABEL_WIDTH_PER_CHAR    = 8;
-const LABEL_WIDTH_PADDING     = 40;
-const HANDLE_SIZE             = 7;
-const HANDLE_BORDER_WIDTH     = 2;
-const GLOW_RING_INSET         = -3;
-const GLOW_RING_OPACITY       = 0.35;
-const CIRCLE_BORDER_RADIUS    = '50%';
-const PILL_BORDER_RADIUS      = '50px';
-const RECT_BORDER_RADIUS      = 10;
-const GLOW_RING_RECT_RADIUS   = 14;
+const CIRCLE_SIZE = 100;
+const DEFAULT_NODE_HEIGHT = 50;
+const SUB_NODE_HEIGHT = 40;
+const SELECTABLE_NODE_HEIGHT = 36;
+const MIN_LABEL_WIDTH = 140;
+const LABEL_WIDTH_PER_CHAR = 8;
+const LABEL_WIDTH_PADDING = 40;
+const HANDLE_SIZE = 7;
+const HANDLE_BORDER_WIDTH = 2;
+const GLOW_RING_INSET = -3;
+const GLOW_RING_OPACITY = 0.35;
+const CIRCLE_BORDER_RADIUS = '50%';
+const PILL_BORDER_RADIUS = '50px';
+const RECT_BORDER_RADIUS = 10;
+const GLOW_RING_RECT_RADIUS = 14;
 
 function isCircleRole(role) {
     return role === ONTOLOGY_ROLE.abstract;
@@ -95,14 +95,16 @@ function resolveNodeDimensions({ role, label, groupKey, overrideWidth, overrideH
     const labelWidth = Math.max(MIN_LABEL_WIDTH, label.length * LABEL_WIDTH_PER_CHAR + LABEL_WIDTH_PADDING);
     // Only sub_clickable nodes get the compact pill height.
     // Class-role nodes with a groupKey keep standard class height.
-    const defaultHeight = role === ONTOLOGY_ROLE.sub_clickable
-        ? SELECTABLE_NODE_HEIGHT
-        : role === ONTOLOGY_ROLE.sub
-            ? SUB_NODE_HEIGHT
-            : DEFAULT_NODE_HEIGHT;
+    let defaultHeight = DEFAULT_NODE_HEIGHT;
+    if (role === ONTOLOGY_ROLE.sub_clickable) {
+        defaultHeight = SELECTABLE_NODE_HEIGHT;
+    }
+    if (role === ONTOLOGY_ROLE.sub) {
+        defaultHeight = SUB_NODE_HEIGHT;
+    }
     return {
-        width:  overrideWidth  ?? labelWidth,
-        height: overrideHeight ?? defaultHeight,
+        width: overrideWidth ?? labelWidth,
+        height: overrideHeight ?? defaultHeight
     };
 }
 
@@ -110,27 +112,16 @@ function resolveActiveNodeStyle(palette, c) {
     // Full inversion: stroke becomes background. Used for sub_clickable nodes.
     return {
         backgroundColor: palette.stroke,
-        textColor:       c.onPrimary,
-        borderColor:     c.primary,
-    };
-}
-
-// Lighter selection style for class-role nodes that are clickable.
-// Keeps the normal fill but adds a stronger border so the selection is visible
-// without mimicking sub_clickable's full inversion.
-function resolveActiveClassStyle(palette) {
-    return {
-        backgroundColor: palette.fill,
-        textColor:       palette.text,
-        borderColor:     palette.stroke,
+        textColor: c.onPrimary,
+        borderColor: c.primary
     };
 }
 
 function resolveDefaultNodeStyle(palette) {
     return {
         backgroundColor: palette.fill,
-        textColor:       palette.text,
-        borderColor:     palette.stroke,
+        textColor: palette.text,
+        borderColor: palette.stroke
     };
 }
 
@@ -139,55 +130,61 @@ function resolveDefaultNodeStyle(palette) {
 export const OntologyNode = memo(function OntologyNode({ data }) {
     const { colorStyled } = useThemePalette();
 
-    const palette         = resolveNodePalette({ role: data.role }, colorStyled);
-    const isCircle        = isCircleRole(data.role);
-    const isDashed        = data.role === ONTOLOGY_ROLE.instance;
-    const isSub           = data.role === ONTOLOGY_ROLE.sub || data.role === ONTOLOGY_ROLE.sub_clickable;
-    const isPill          = data.role === ONTOLOGY_ROLE.sub_clickable;   // shape only for sub_clickable
-    const isSelectable    = Boolean(data.groupKey);                       // interactivity for any groupKey
-    const isSelected      = isSelectable && data.active;
-    const isClassSelected = isSelected && !isPill;                        // class-role node selected
+    const palette = resolveNodePalette({ role: data.role }, colorStyled);
+    const isCircle = isCircleRole(data.role);
+    const isDashed = data.role === ONTOLOGY_ROLE.instance;
+    const isSub = data.role === ONTOLOGY_ROLE.sub || data.role === ONTOLOGY_ROLE.sub_clickable;
+    const isPill = data.role === ONTOLOGY_ROLE.sub_clickable; // shape only for sub_clickable
+    const isSelectable = Boolean(data.groupKey); // interactivity for any groupKey
+    const isSelected = isSelectable && data.active;
+    const isClassSelected = isSelected && !isPill; // class-role node selected
 
     const { width, height } = resolveNodeDimensions({
-        role:          data.role,
-        label:         data.label,
-        groupKey:      data.groupKey,
+        role: data.role,
+        label: data.label,
+        groupKey: data.groupKey,
         overrideWidth: data.w,
-        overrideHeight: data.h,
+        overrideHeight: data.h
     });
 
     // Style resolution:
     //  - sub_clickable selected → full inversion (pill, strong contrast)
     //  - class-role selected    → tinted border highlight (keeps class fill)
     //  - default                → normal palette
-    const { backgroundColor, textColor, borderColor } = isSelected && isPill
-        ? resolveActiveNodeStyle(palette, colorStyled)
-        : resolveDefaultNodeStyle(palette);
+    const { backgroundColor, textColor, borderColor } =
+        isSelected && isPill ? resolveActiveNodeStyle(palette, colorStyled) : resolveDefaultNodeStyle(palette);
 
     // Class-role selected nodes get a thicker, more prominent border
     // using the selection highlight colour rather than full inversion.
-    const effectiveBorderColor = isClassSelected
-        ? colorStyled.primary
-        : borderColor;
+    const effectiveBorderColor = isClassSelected ? colorStyled.primary : borderColor;
 
-    const borderRadius   = isCircle ? CIRCLE_BORDER_RADIUS : isPill ? PILL_BORDER_RADIUS : RECT_BORDER_RADIUS;
-    const borderStyle    = isDashed ? 'dashed' : 'solid';
-    const glowRingRadius = isCircle ? CIRCLE_BORDER_RADIUS : isPill ? PILL_BORDER_RADIUS : GLOW_RING_RECT_RADIUS;
-    const borderWidth    = isSelected ? '2.5px' : '2px';
+    let borderRadius = RECT_BORDER_RADIUS;
+    let glowRingRadius = GLOW_RING_RECT_RADIUS;
+    if (isCircle) {
+        borderRadius = CIRCLE_BORDER_RADIUS;
+        glowRingRadius = CIRCLE_BORDER_RADIUS;
+    }
+    if (isPill) {
+        borderRadius = PILL_BORDER_RADIUS;
+        glowRingRadius = PILL_BORDER_RADIUS;
+    }
+    const borderStyle = isDashed ? 'dashed' : 'solid';
+    const borderWidth = isSelected ? '2.5px' : '2px';
 
-    const boxShadow = (isSelected && isPill)
-        ? shadows.nodeSelected(palette.stroke)
-        : isClassSelected
-            ? shadows.nodeSelected(colorStyled.primary)
-            : isSelectable
-                ? shadows.nodeSelectable(palette.stroke)
-                : shadows.nodeDefault;
+    let boxShadow = shadows.nodeDefault;
+    if (isSelected && isPill) {
+        boxShadow = shadows.nodeSelected(palette.stroke);
+    } else if (isClassSelected) {
+        boxShadow = shadows.nodeSelected(colorStyled.primary);
+    } else if (isSelectable) {
+        boxShadow = shadows.nodeSelectable(palette.stroke);
+    }
 
     const handleStyle = {
         background: palette.stroke,
-        width:      HANDLE_SIZE,
-        height:     HANDLE_SIZE,
-        border:     `${HANDLE_BORDER_WIDTH}px solid ${colorStyled.surfaceContainerLowest}`,
+        width: HANDLE_SIZE,
+        height: HANDLE_SIZE,
+        border: `${HANDLE_BORDER_WIDTH}px solid ${colorStyled.surfaceContainerLowest}`
     };
 
     return (
@@ -196,49 +193,49 @@ export const OntologyNode = memo(function OntologyNode({ data }) {
                 width,
                 height,
                 borderRadius,
-                background:     backgroundColor,
-                border:         `${borderWidth} ${borderStyle} ${effectiveBorderColor}`,
+                background: backgroundColor,
+                border: `${borderWidth} ${borderStyle} ${effectiveBorderColor}`,
                 boxShadow,
-                color:          textColor,
-                cursor:         isSelectable ? 'pointer' : 'default',
-                display:        'flex',
-                flexDirection:  'column',
-                alignItems:     'center',
+                color: textColor,
+                cursor: isSelectable ? 'pointer' : 'default',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 justifyContent: 'center',
-                textAlign:      'center',
-                padding:        isPill ? '4px 16px' : '6px 10px',
-                userSelect:     'none',
-                position:       'relative',
-                transition:     'all 0.2s ease',
+                textAlign: 'center',
+                padding: isPill ? '4px 16px' : '6px 10px',
+                userSelect: 'none',
+                position: 'relative',
+                transition: 'all 0.2s ease'
             }}
         >
             <Handle type="target" position={Position.Top} style={handleStyle} />
 
-            <Typography
-                style={{ color: textColor }}
-                sx={{ fontSize: 8, fontWeight: 600, opacity: 0.6, letterSpacing: 0.6, lineHeight: 1 }}
-            >
+            <Typography style={{ color: textColor }} sx={{ fontSize: 8, fontWeight: 600, opacity: 0.6, letterSpacing: 0.6, lineHeight: 1 }}>
                 {data.stereotype}
             </Typography>
 
             <Typography
                 style={{ color: textColor }}
                 sx={{
-                    fontSize:   isSub || isSelectable ? 16 : 18,
-                    fontWeight: isSelected ? 800 : isSub || isSelectable ? 600 : 700,
+                    fontSize: isSub || isSelectable ? 16 : 18,
+                    fontWeight: () => {
+                        if (isSelected) {
+                            return 800;
+                        } else if (isSub || isSelectable) {
+                            return 600;
+                        } else {
+                            return 700;
+                        }
+                    },
                     lineHeight: 1.25,
-                    mt:         '2px',
+                    mt: '2px'
                 }}
             >
                 {data.label}
             </Typography>
 
-            {(data.active || isSelected) && (
-                <GlowRing
-                    borderRadius={glowRingRadius}
-                    color={isClassSelected ? colorStyled.primary : palette.stroke}
-                />
-            )}
+            {(data.active || isSelected) && <GlowRing borderRadius={glowRingRadius} color={isClassSelected ? colorStyled.primary : palette.stroke} />}
 
             <Handle type="source" position={Position.Bottom} style={handleStyle} />
         </div>
@@ -249,12 +246,12 @@ function GlowRing({ borderRadius, color }) {
     return (
         <div
             style={{
-                position:      'absolute',
-                inset:         GLOW_RING_INSET,
+                position: 'absolute',
+                inset: GLOW_RING_INSET,
                 borderRadius,
-                border:        `1px solid ${color}`,
-                opacity:       GLOW_RING_OPACITY,
-                pointerEvents: 'none',
+                border: `1px solid ${color}`,
+                opacity: GLOW_RING_OPACITY,
+                pointerEvents: 'none'
             }}
         />
     );
@@ -265,24 +262,24 @@ function GlowRing({ borderRadius, color }) {
 export function buildGraphNodes(schema, selectedGroup) {
     return schema.nodes.map(schemaNode => {
         const { width, height } = resolveNodeDimensions({
-            role:  schemaNode.role,
-            label: schemaNode.label,
+            role: schemaNode.role,
+            label: schemaNode.label
         });
 
         const isGroupSelected = selectedGroup && schemaNode.groupKey === selectedGroup;
 
         return {
-            id:       schemaNode.id,
-            type:     'ontologyNode',
+            id: schemaNode.id,
+            type: 'ontologyNode',
             position: { x: 0, y: 0 },
             data: {
                 ...schemaNode,
                 colorKey: schemaNode.ck,
                 groupKey: schemaNode.groupKey ?? null,
-                active:   schemaNode.active ?? isGroupSelected ?? false,
+                active: schemaNode.active ?? isGroupSelected ?? false
             },
             width,
-            height,
+            height
         };
     });
 }
@@ -296,9 +293,7 @@ export function buildGraphEdges(schema, edgeColors) {
         const isSubclassEdge = schemaEdge.style === 'sub';
         const isInstanceEdge = schemaEdge.style === 'inst';
 
-        const edgeStrokeColor = isSubclassEdge
-            ? edgeColors.subclass
-            : (graphAccents[schemaEdge.ck]?.stroke ?? edgeColors.property);
+        const edgeStrokeColor = isSubclassEdge ? edgeColors.subclass : graphAccents[schemaEdge.ck]?.stroke ?? edgeColors.property;
 
         const arrowMarkerType = isSubclassEdge ? MarkerType.Arrow : MarkerType.ArrowClosed;
         const strokeDashPattern = isInstanceEdge ? '5,5' : '0';
@@ -307,30 +302,30 @@ export function buildGraphEdges(schema, edgeColors) {
         const target = isSubclassEdge ? schemaEdge.s : schemaEdge.t;
 
         return {
-            id:     `edge-${index}`,
+            id: `edge-${index}`,
             source,
             target,
-            label:  schemaEdge.label,
-            type:   'default',
+            label: schemaEdge.label,
+            type: 'default',
             style: {
-                stroke:          edgeStrokeColor,
-                strokeWidth:     isSubclassEdge ? 2 : 1.5,
-                strokeDasharray: strokeDashPattern,
+                stroke: edgeStrokeColor,
+                strokeWidth: isSubclassEdge ? 2 : 1.5,
+                strokeDasharray: strokeDashPattern
             },
             labelBgStyle: {
-                fill:        edgeColors.labelBg,
-                fillOpacity: 0.9,
+                fill: edgeColors.labelBg,
+                fillOpacity: 0.9
             },
             labelBgPadding: [6, 3],
             labelStyle: {
-                fontSize:   9,
-                fill:       edgeColors.labelText,
-                fontWeight: 500,
+                fontSize: 9,
+                fill: edgeColors.labelText,
+                fontWeight: 500
             },
             markerEnd: {
-                type:  arrowMarkerType,
-                color: edgeStrokeColor,
-            },
+                type: arrowMarkerType,
+                color: edgeStrokeColor
+            }
         };
     });
 }

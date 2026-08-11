@@ -1,6 +1,5 @@
-import { styled } from '@mui/material';
 import Gravatar from 'react-gravatar';
-import { Badge, Chip, Button, Tooltip, Card, IconButton } from '@mui/material';
+import { Badge, Chip, Button, Tooltip, Card, IconButton, styled } from '@mui/material';
 import MuiSwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { tooltipClasses } from '@mui/material/Tooltip';
 import PropTypes from 'prop-types';

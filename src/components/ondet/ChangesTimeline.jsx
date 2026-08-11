@@ -32,16 +32,15 @@ import 'diff2html/bundles/css/diff2html.min.css';
 import { LARGE_SCREEN_SIZE } from '../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
 
-const MARKDOWN_FILE_START_REGEX = new RegExp(
-    '# Ontology comparison\\n\\n## Left\\n- Ontology IRI: .+\\n- Version IRI: .+\\n- Loaded from: .+\\n\\n## Right\\n- Ontology IRI: .+\\n- Version IRI: .+\\n- Loaded from: .+\\n\\n'
-);
+const MARKDOWN_FILE_START_REGEX = /# Ontology comparison\n\n## Left\n- Ontology IRI: .+\n- Version IRI: .+\n- Loaded from: .+\n\n## Right\n- Ontology IRI: .+\n- Version IRI: .+\n- Loaded from: .+\n\n/;
 
 const renderer = {
     link(href, title, text) {
         return `<a href="${href}" style="font-size: 14px;">${text}</a>`;
     },
     heading(text, level) {
-        const fontSize = level === 1 ? '24px' : level === 2 ? '20px' : '16px';
+        const FONT_SIZES = { 1: '24px', 2: '20px' };
+        const fontSize = FONT_SIZES[level] ?? '16px';
         return `<h${level} style="font-size: ${fontSize}; font-weight: bold">${text}</h${level}>`;
     }
 };
@@ -224,6 +223,16 @@ const ChangesTimeline = ({ id }) => {
         setOpen(false);
     };
 
+    const renderDiffCommit = (index, arr, diff) => {
+        const item = arr[index - 1];
+
+        if (diff.hasOwnProperty('commit')) {
+            return item?.commit?.message ?? '';
+        }
+
+        return item?.message ?? '';
+    };
+
     return (
         <Grid container spacing={2}>
             {error && (
@@ -243,7 +252,7 @@ const ChangesTimeline = ({ id }) => {
                                     }
 
                                     return (
-                                        <StyledTimelineItem key={index} onClick={() => handleItemClick(arr[index - 1], index)}>
+                                        <StyledTimelineItem key={diff.sha} onClick={() => handleItemClick(arr[index - 1], index)}>
                                             <TimelineOppositeContent>
                                                 <Typography variant="body2" color="textSecondary">
                                                     {diff.hasOwnProperty('commit')
@@ -267,15 +276,7 @@ const ChangesTimeline = ({ id }) => {
                                                     }}
                                                 >
                                                     <StyledCommitMessage variant="h6" component="h6">
-                                                        {arr[index - 1] !== undefined
-                                                            ? `${
-                                                                  diff.hasOwnProperty('commit')
-                                                                      ? arr[index - 1].commit.message
-                                                                      : arr[index - 1].message
-                                                              }`
-                                                            : diff.hasOwnProperty('commit')
-                                                            ? arr[index - 1].commit.message
-                                                            : arr[index - 1].message}
+                                                        {renderDiffCommit(index, arr, diff)}
                                                     </StyledCommitMessage>
                                                 </Paper>
                                             </StyledTimelineContent>

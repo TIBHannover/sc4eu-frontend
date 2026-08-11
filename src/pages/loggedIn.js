@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
 import { updateCookies } from '../redux/actions/auth';
 
@@ -10,7 +9,6 @@ class LoggedIn extends Component {
     componentDidMount() {
         const urlParams = new URLSearchParams(this.props.location.search);
         const response = Object.fromEntries(urlParams);
-        console.log(response.token);
         if (this.props.user === 0) {
             const token = response.token;
             this.props.updateCookies({ token });

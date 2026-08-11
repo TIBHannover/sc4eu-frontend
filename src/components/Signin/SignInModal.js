@@ -11,19 +11,17 @@ class SignInModal extends Component {
     render() {
         const { theme } = this.props;
         return (
-            <>
-                <Modal isOpen={this.props.dialogIsOpen} toggle={this.props.toggleAuthDialog}>
-                    <div style={{ backgroundColor: theme.palette.background.paper}}>
-                        <TransitionGroup exit={false}>
-                            {this.props.action === 'signin' && (
-                                <AnimationContainer key={1} classNames="fadeIn" timeout={{ enter: 700, exit: 0 }}>
-                                    <LoginViaEmail callback={this.props.callback} />
-                                </AnimationContainer>
-                            )}
-                        </TransitionGroup>
-                    </div>
-                </Modal>
-            </>
+            <Modal isOpen={this.props.dialogIsOpen} toggle={this.props.toggleAuthDialog}>
+                <div style={{ backgroundColor: theme.palette.background.paper }}>
+                    <TransitionGroup exit={false}>
+                        {this.props.action === 'signin' && (
+                            <AnimationContainer key={1} classNames="fadeIn" timeout={{ enter: 700, exit: 0 }}>
+                                <LoginViaEmail callback={this.props.callback} />
+                            </AnimationContainer>
+                        )}
+                    </TransitionGroup>
+                </div>
+            </Modal>
         );
     }
 }

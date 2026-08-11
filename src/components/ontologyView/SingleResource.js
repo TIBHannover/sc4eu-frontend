@@ -34,21 +34,14 @@ class SingleResource extends Component {
         this.props.registerToParent(this);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     updateSiblings = () => {
         this.setState(prevState => ({ updateSiblings: !prevState.updateSiblings }));
     };
 
-    forceRerendering = () => {
-        this.setState(prevState => ({ forcedUpdate: !prevState.forcedUpdate }));
-    };
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
-    setShowBody = val => {
-        this.setState({ showBody: val, bodyInitialRendering: false });
-    };
+
     showBody = () => {
         this.setState(prevState => ({ showBody: !prevState.showBody, bodyInitialRendering: false }));
     };
@@ -65,7 +58,6 @@ class SingleResource extends Component {
     };
 
     editResource = inputHeaderString => {
-        console.log(inputHeaderString);
         const inputArray = inputHeaderString.split(' ');
         const typeArray = inputArray.slice(2, inputArray.length);
         if (typeArray[typeArray.length - 1] === '.' || typeArray[typeArray.length - 1] === ';') {

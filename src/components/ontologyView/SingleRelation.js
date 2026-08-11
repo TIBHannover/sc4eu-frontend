@@ -32,29 +32,17 @@ class SingleRelation extends Component {
     }
 
     componentDidMount() {
-        // console.log('Mount');
         this.props.registerToParent(this);
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('am I Updated?');
     }
 
     updateSiblings = () => {
         this.setState(prevState => ({ updateSiblings: !prevState.updateSiblings }));
     };
 
-    forceRerendering = () => {
-        this.setState(prevState => ({ forcedUpdate: !prevState.forcedUpdate }));
-    };
-
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
 
-    setShowBody = val => {
-        this.setState({ showBody: val, bodyInitialRendering: false });
-    };
     showBody = () => {
         this.setState(prevState => ({ showBody: !prevState.showBody, bodyInitialRendering: false }));
     };
@@ -119,6 +107,14 @@ class SingleRelation extends Component {
             callback: this.updateSiblings
         };
         const { theme } = this.props;
+
+        let backgroundColor = theme.palette.background.default;
+        if (this.props.relationContext.type[0].toLowerCase() === 'owl:DatatypeProperty'.toLowerCase()) {
+            backgroundColor = theme.palette.background.paper;
+        } else if (this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
+            backgroundColor = theme.palette.primary.light;
+        }
+
         return (
             <div
                 ref={this.ref}
@@ -127,12 +123,7 @@ class SingleRelation extends Component {
                     marginLeft: '10px',
                     overflow: 'none',
                     display: isVisible,
-                    backgroundColor:
-                        this.props.relationContext.type[0].toLowerCase() === 'owl:DatatypeProperty'.toLowerCase()
-                            ? theme.palette.background.paper
-                            : this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()
-                            ? theme.palette.primary.light
-                            : theme.palette.background.default,
+                    backgroundColor: backgroundColor,
                     borderRadius: '10px 10px 0px 0px',
                     marginBottom: '5px'
                 }}

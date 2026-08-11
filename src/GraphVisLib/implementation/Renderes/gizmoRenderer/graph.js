@@ -10,35 +10,33 @@ import LinkInteractions from './Interactions/linkInteractions';
 import BasicRenderingHandler from './renderingConfigs/BasicRenderingHandler';
 export default class GraphRenderer {
     GRAPH_TYPE = 'ABSTRACT_RENDERING_TYPE';
-    constructor() {
-        this.graphIsInitialized = false;
-        this.model = null;
-        this.originalModel = null;
-        this.layoutHandler = null;
-        this.renderingConfig = null;
-        this.interactionHandler = null;
-        this.drawTools = null;
+    graphIsInitialized = false;
+    model = null;
+    originalModel = null;
+    layoutHandler = null;
+    renderingConfig = null;
+    interactionHandler = null;
+    drawTools = null;
 
-        this.nodes = [];
-        this.links = [];
+    nodes = [];
+    links = [];
 
-        this.nodeMap = {};
-        this.semanticNodeMap = {};
-        this.linkMap = {};
-        this.semanticLinkMap = {};
+    nodeMap = {};
+    semanticNodeMap = {};
+    linkMap = {};
+    semanticLinkMap = {};
 
-        this.divRoot = null;
-        this.svgRoot = null;
-        this.graphRoot = null;
+    divRoot = null;
+    svgRoot = null;
+    graphRoot = null;
 
-        // this can be overwritten (but it gives a proper ordering of the layers)
-        this.layerObject = ['arrows', 'links', 'properties', 'nodes', 'forceNodes'];
+    // this can be overwritten (but it gives a proper ordering of the layers)
+    layerObject = ['arrows', 'links', 'properties', 'nodes', 'forceNodes'];
 
-        this.graphBgColor = '#ECF0F1';
-        this.showSubclassRelations = true;
-        this.linkCounter = 0;
-        this.nodeCounter = 0;
-    }
+    graphBgColor = '#ECF0F1';
+    showSubclassRelations = true;
+    linkCounter = 0;
+    nodeCounter = 0;
 
     setGraphInitialized = val => {
         this.graphIsInitialized = val;
@@ -51,8 +49,6 @@ export default class GraphRenderer {
         this.redrawRenderingPrimitives(true);
         if (this.interactionHandler) {
             this.interactionHandler.applyInteractions(this);
-        } else {
-            console.log('No Interaction Handler set, the graph will be static!');
         }
         this.resetUserNavigation(backupTranslation, backupZoom);
         this.layoutHandler.initializeLayoutEngine();
@@ -545,8 +541,8 @@ export default class GraphRenderer {
         const n1 = groupRepresentative.sourceNode;
         const n2 = groupRepresentative.targetNode;
 
-        const left = n1.id() < n2.id() ? n1.id() : n2.id();
-        const right = n1.id() > n2.id() ? n1.id() : n2.id();
+        const left = Math.min(n1.id(), n2.id());
+        const right = Math.max(n1.id(), n2.id());
         const mlLinkId = left + '__' + right;
         if (this.linkMap[mlLinkId]) {
             this.linkMap[mlLinkId].visible(true);
@@ -565,8 +561,6 @@ export default class GraphRenderer {
         // applyInteractions
         if (this.interactionHandler) {
             this.interactionHandler.applyInteractions(this);
-        } else {
-            console.log('No Interaction Handler set, the graph will be static!');
         }
 
         if (this.layoutHandler) {
@@ -574,8 +568,6 @@ export default class GraphRenderer {
             if (paused === undefined || paused === false) {
                 this.layoutHandler.resumeForce();
             }
-        } else {
-            console.log('No Layout Handler set, the graph will be static!');
         }
     };
 

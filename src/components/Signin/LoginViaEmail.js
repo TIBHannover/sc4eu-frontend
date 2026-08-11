@@ -60,7 +60,7 @@ class LoginViaEmail extends Component {
                 this.setState({ openPopUp: true, popUpMessage: registerToken.message, image: success });
                 // this.props.callback();
             }
-            if (registerToken && registerToken.jwt) {
+            if (registerToken?.jwt) {
                 this.props.updateCookies({ token: registerToken.jwt });
             }
             this.setState({ loading: false });
@@ -79,7 +79,7 @@ class LoginViaEmail extends Component {
         } else {
             this.props.callback();
         }
-        if (token && token.jwt) {
+        if (token?.jwt) {
             this.props.updateCookies({ token: token.jwt });
         }
         this.setState({ loading: false });
@@ -116,7 +116,7 @@ class LoginViaEmail extends Component {
     isfieldValid = () => {
         const regexEmailValidation = /^(([^<>()\\[\]\\.,;:\s@"]+(\.[^<>()\\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        if (!this.state.displayName || !this.state.displayName.trim()) {
+        if (!this.state.displayName?.trim()) {
             this.setState({
                 nameError: 'Name can not be empty'
             });
@@ -153,13 +153,15 @@ class LoginViaEmail extends Component {
         const { theme } = this.props;
         return (
             <div>
-                {this.state.openPopUp ? (
+                {this.state.openPopUp && (
                     <PopUp open={this.state.openPopUp} onClose={this.popUpClose} image={this.state.image} message={this.state.popUpMessage} />
-                ) : (
+                )}
+                {!this.state.openPopUp && (
                     <div style={{ fontFamily: fontStyled.fontFamily }}>
-                        {!this.state.loading ? (
+                        {this.state.loading && <div>Processing...</div>}
+                        {!this.state.loading && (
                             <Form onSubmit={this.handleSubmit}>
-                                {this.state.signInModal ? (
+                                {this.state.signInModal && (
                                     <div style={{ margin: '20px 20px 30px 20px' }}>
                                         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                                             <h2 style={{ marginBottom: '20px' }}>Sign In</h2>
@@ -330,7 +332,8 @@ class LoginViaEmail extends Component {
                                             </Link>
                                         </p>
                                     </div>
-                                ) : this.state.signupModal ? (
+                                )}
+                                {this.state.signupModal && (
                                     // sign up model start from here
                                     <Modal
                                         style={{ maxWidth: '700px', width: '100%', fontFamily: fontStyled.fontFamily }}
@@ -419,62 +422,58 @@ class LoginViaEmail extends Component {
                                             </Button>
                                         </ModalFooter>
                                     </Modal>
-                                ) : (
-                                    // forgot password model start from here
-                                    <Modal
-                                        style={{ fontFamily: fontStyled.fontFamily }}
-                                        isOpen={this.state.resetPasswordModel}
-                                        toggle={this.props.toggleAuthDialog}
-                                    >
-                                        <ModalHeader
-                                            toggle={this.props.toggleAuthDialog}
-                                            style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
-                                        >
-                                            Reset Password
-                                        </ModalHeader>
-                                        <ModalBody style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
-                                            <div className="container">
-                                                <Form onSubmit={this.handleSubmit}>
-                                                    <FormGroup row>
-                                                        <Label for="exampleEmail" sm={2} style={{ color: theme.palette.text.primary }}>
-                                                            Email
-                                                        </Label>
-                                                        <Col sm={10}>
-                                                            <Input
-                                                                type="email"
-                                                                name="email"
-                                                                placeholder="Enter Email Address"
-                                                                value={this.state.email}
-                                                                onChange={event => this.setState({ email: event.target.value })}
-                                                                style={{
-                                                                    backgroundColor: theme.palette.background.paper,
-                                                                    color: theme.palette.text.primary
-                                                                }}
-                                                            />
-                                                        </Col>
-                                                    </FormGroup>
-                                                </Form>
-                                            </div>
-                                        </ModalBody>
-                                        <ModalFooter style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
-                                            <Button
-                                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
-                                                onClick={this.handleForgotPassword}
-                                            >
-                                                Reset
-                                            </Button>
-                                            <Button
-                                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
-                                                onClick={this.props.toggleAuthDialog}
-                                            >
-                                                Cancel
-                                            </Button>
-                                        </ModalFooter>
-                                    </Modal>
                                 )}
+                                <Modal
+                                    style={{ fontFamily: fontStyled.fontFamily }}
+                                    isOpen={this.state.resetPasswordModel}
+                                    toggle={this.props.toggleAuthDialog}
+                                >
+                                    <ModalHeader
+                                        toggle={this.props.toggleAuthDialog}
+                                        style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
+                                    >
+                                        Reset Password
+                                    </ModalHeader>
+                                    <ModalBody style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
+                                        <div className="container">
+                                            <Form onSubmit={this.handleSubmit}>
+                                                <FormGroup row>
+                                                    <Label for="exampleEmail" sm={2} style={{ color: theme.palette.text.primary }}>
+                                                        Email
+                                                    </Label>
+                                                    <Col sm={10}>
+                                                        <Input
+                                                            type="email"
+                                                            name="email"
+                                                            placeholder="Enter Email Address"
+                                                            value={this.state.email}
+                                                            onChange={event => this.setState({ email: event.target.value })}
+                                                            style={{
+                                                                backgroundColor: theme.palette.background.paper,
+                                                                color: theme.palette.text.primary
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                </FormGroup>
+                                            </Form>
+                                        </div>
+                                    </ModalBody>
+                                    <ModalFooter style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
+                                        <Button
+                                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                                            onClick={this.handleForgotPassword}
+                                        >
+                                            Reset
+                                        </Button>
+                                        <Button
+                                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                                            onClick={this.props.toggleAuthDialog}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </ModalFooter>
+                                </Modal>
                             </Form>
-                        ) : (
-                            <div>Processing...</div>
                         )}
                     </div>
                 )}
@@ -485,13 +484,9 @@ class LoginViaEmail extends Component {
 
 LoginViaEmail.propTypes = {
     openAuthDialog: PropTypes.func.isRequired,
-    updateAuth: PropTypes.func.isRequired,
     updateCookies: PropTypes.func.isRequired,
     toggleAuthDialog: PropTypes.func.isRequired,
     callback: PropTypes.func.isRequired,
-    signInRequired: PropTypes.bool.isRequired,
-    // history: PropTypes.object.isRequired,
-    redirectRoute: PropTypes.string
 };
 
 const mapStateToProps = state => ({

@@ -21,8 +21,6 @@ class CreateProject extends Component {
         };
     }
 
-    componentDidMount() {}
-
     componentDidUpdate = async prevProps => {
         if (prevProps.showDialog === false && this.props.showDialog === true) {
             // check if user is allowed to do uploads

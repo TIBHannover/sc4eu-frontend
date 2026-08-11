@@ -21,17 +21,22 @@ const wordLinks = {
     ontology: 'https://terminology.tib.eu/ts/ontologies/dr/terms?iri=http%3A%2F%2Fwww.w3id.org%2Fecsel-dr-AT%23Ontology&obsoletes=false&lang=en'
 };
 
+const CustomInput = ({ value, onClick }) => <TextField value={value} onClick={onClick} label="Select Year*" readOnly />;
+
+CustomInput.propTypes = {
+    value: PropTypes.number,
+    onClick: PropTypes.func
+};
+
 export const EurostatPortal = () => {
     const [reporters, setReporters] = useState([]);
     const [partners, setPartners] = useState([]);
     const [products, setProducts] = useState([]);
     const [flows, setFlows] = useState([]);
-    const [years, setYears] = useState([]);
 
     const [reporter, setReporter] = useState(null);
     const [partner, setPartner] = useState(null);
     const [flow, setFlow] = useState(null);
-    const [year, setYear] = useState(`1`);
     const [startYear, setStartYear] = useState(null);
     const [endYear, setEndYear] = useState(null);
     const [product, setProduct] = useState(null);
@@ -64,14 +69,9 @@ export const EurostatPortal = () => {
                     case 'flow':
                         setFlows(transformFlows(data));
                         break;
-                    case 'year':
-                        setYears(data);
-                        break;
                     default:
                         console.error('Unkown param sent {}', fieldVal);
                 }
-            } else {
-                console.log('Empty data returned ');
             }
         };
 
@@ -164,70 +164,44 @@ export const EurostatPortal = () => {
 
     const transformProducts = products => {
         return products.map(product => {
-            switch (product.split('/').pop()) {
+            const value = product.split('/').pop();
+            switch (value) {
                 case '85414099':
                     return {
-                        value: product.split('/').pop(),
-                        label:
-                            product.split('/').pop() +
-                            ' - Photosensitive semiconductor devices (excl. photodiodes, phototransistors, photothyristors, photocouples and solar cells)'
+                        value: value,
+                        label: `${value}
+                             - Photosensitive semiconductor devices (excl. photodiodes, phototransistors, photothyristors, photocouples and solar cells)`
                     };
                 case '854149':
-                    return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' -  Photosensitive semiconductor devices (excl. photovoltaic generators and cells)'
-                    };
                 case '85415900':
                     return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Photosensitive semiconductor devices (excl. photovoltaic generators and cells)'
+                        value: value,
+                        label: `${value} -  Photosensitive semiconductor devices (excl. photovoltaic generators and cells)`
                     };
                 case '854150':
-                    return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Semiconductor devices, n.e.s.'
-                    };
                 case '85415000':
+                case '85415090':
+                case '854159':
+                case '85414900':
                     return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Semiconductor devices, n.e.s.'
+                        value: value,
+                        label: `${value} - Semiconductor devices, n.e.s.`
                     };
                 case '85415010':
                     return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Semiconductor devices n.e.s., in wafers not yet cut into chips'
-                    };
-                case '85415090':
-                    return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Semiconductor devices n.e.s.'
+                        value: value,
+                        label: `${value} - Semiconductor devices n.e.s., in wafers not yet cut into chips`
                     };
                 case '854151':
-                    return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Semiconductor-based transducers (excl. photosensitive)'
-                    };
                 case '85415100':
                     return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Semiconductor-based transducers (excl. photosensitive)'
+                        value: value,
+                        label: `${value} - Semiconductor-based transducers (excl. photosensitive)`
                     };
-                case '854159':
-                    return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Semiconductor devices, n.e.s.'
-                    };
-
-                case '85414900':
-                    return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop() + ' - Semiconductor devices, n.e.s.'
-                    };
-
                 default:
                     return {
-                        value: product.split('/').pop(),
-                        label: product.split('/').pop()
+                        value: value,
+                        label: value
                     };
             }
         });
@@ -247,14 +221,6 @@ export const EurostatPortal = () => {
     const handleYearSelect = ([newStartYear, newEndYear]) => {
         setStartYear(newStartYear);
         setEndYear(newEndYear);
-        setYear(newStartYear.getFullYear());
-    };
-
-    const CustomInput = ({ value, onClick }) => <TextField value={value} onClick={onClick} label="Select Year*" readOnly />;
-
-    CustomInput.propTypes = {
-        value: PropTypes.number,
-        onClick: PropTypes.func
     };
 
     const theme = useTheme();

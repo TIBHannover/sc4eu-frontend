@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import success from '../assets/images/success.png';
 import error from '../assets/images/error.png';
 import PopUp from '../components/PopUp';
-import { Redirect } from 'react-router-dom';
 import { withTheme } from '@emotion/react';
 import { StyledEmailVerifyDiv } from 'styledComponents/styledComponents';
 

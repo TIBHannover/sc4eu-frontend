@@ -1,37 +1,38 @@
+import React, { useEffect, useState } from 'react';
+import { useMediaQuery } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { useQueryClient } from '@tanstack/react-query';
+
 import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
     Box,
-    Typography,
-    TextField,
     Button,
-    Tooltip,
+    Chip,
+    FormControlLabel,
     IconButton,
     Link,
-    FormControlLabel,
-    RadioGroup,
-    Radio,
     Paper,
-    Chip,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-    useTheme
+    Radio,
+    RadioGroup,
+    TextField,
+    Tooltip,
+    Typography,
+    useTheme,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import PropTypes from 'prop-types';
-import CommentsSection from './CommentsSection';
-import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
-import VoteView from './VoteView';
-import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
-import FadingNotification from '../../ReusableComponents/FadingNotification';
-import InfoIcon from '@mui/icons-material/Info';
-import { StyledTooltip } from '../../../styledComponents/styledComponents';
-import LastConsensusView from './LastConsensusView';
-import { commitChanges } from '../utils/CommitChanges';
-import { useQueryClient } from '@tanstack/react-query';
-import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
-import { useMediaQuery } from '@material-ui/core';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import InfoIcon from '@mui/icons-material/Info';
+
+import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
+import { SMALL_SCREEN_WIDTH, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { commitChanges } from '../utils/CommitChanges';
+import CommentsSection from './CommentsSection';
+import FadingNotification from '../../ReusableComponents/FadingNotification';
+import LastConsensusView from './LastConsensusView';
+import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
+import VoteView from './VoteView';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const theme = useTheme();
@@ -117,10 +118,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         updateTerm(updatedTerm);
         setHasUncommittedChanges(true);
         setEditMode(false);
-    };
-
-    const handleClose = () => {
-        handleClosePopup();
     };
 
     const renderSeeAlso = () => {
@@ -358,7 +355,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 </AccordionDetails>
                             </Accordion>
                             <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px', flexWrap: 'wrap' }}>
-                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile ? true : false}>
+                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
                                     Edit Term
                                 </Button>
                                 {!activeAgreement && (
@@ -369,7 +366,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
                                             sx={buttonStyle}
-                                            fullWidth={isMobile ? true : false}
+                                            fullWidth={isMobile}
                                         >
                                             Start consensus
                                         </Button>
@@ -381,7 +378,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             onClick={() => setViewAgreementMode(true)}
                                             variant="contained"
                                             sx={buttonStyle}
-                                            fullWidth={isMobile ? true : false}
+                                            fullWidth={isMobile}
                                         >
                                             View ongoing consensus
                                         </Button>

@@ -12,7 +12,6 @@ export const getSelectedElements = (startPoint, endPoint, graphObject) => {
     const elements = graphObject.getRenderedElements();
     const nodes = elements.nodes.filter(item => item.__visible === true);
     const links = elements.links.filter(item => item.__visible === true);
-    console.log(links);
     // create bounding box;
 
     const xLeft = Math.min(startPoint.x, endPoint.x);
@@ -30,9 +29,6 @@ export const getSelectedElements = (startPoint, endPoint, graphObject) => {
             item.propertyNodePostion.y > yTop &&
             item.propertyNodePostion.y < yBot
     );
-
-    console.log('selected Nodes', selectedNodes);
-    console.log('selected Links', selectedLinks);
     // seems okay;
 
     return [...selectedNodes, ...selectedLinks];

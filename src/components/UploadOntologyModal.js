@@ -84,8 +84,6 @@ class UploadOntology extends Component {
         });
 
         reader.onloadend = async e => {
-            // console.log(reader.result);
-
             // throw this into the pit
 
             // we send the content to the simple flask proxy and await some result
@@ -123,6 +121,7 @@ class UploadOntology extends Component {
                     preInitResult: {},
                     errorInitialization: true
                 });
+                console.error(e);
             }
         };
 
@@ -218,6 +217,7 @@ class UploadOntology extends Component {
                 preInitResult: {},
                 errorInitialization: true
             });
+            console.error(e);
         }
     };
     handleGitlabUrl = async () => {
@@ -251,8 +251,86 @@ class UploadOntology extends Component {
                 preInitResult: {},
                 errorInitialization: true
             });
+            console.error(e);
         }
     };
+
+    renderUploadSource() {
+        const { theme } = this.props;
+        switch (this.state.uploadSource) {
+            case 'localFile':
+                return (
+                    <>
+                        <div>Please lookup the ontology file you want to upload. Supported formats (ttl, owl)</div>
+                        <br />
+                        <Label for="fileSystem">File System </Label>
+                        <Input
+                            id="fileSystem"
+                            type="file"
+                            name="file"
+                            style={{ border: 'lightgray 1px solid', width: '50%' }}
+                            onChange={this.handlePreview}
+                            disabled={this.state.waitingForResult}
+                        />
+                    </>
+                );
+            case 'github':
+                return (
+                    <>
+                        <div>Please enter github raw file url for the ontology file. Supported formats (ttl, owl)</div>
+                        <br />
+                        <Label for="exampleUrl" style={{ flexDirection: 'column' }}>
+                            GitHub
+                        </Label>
+                        <div style={{ display: 'flex' }}>
+                            <Input
+                                id="exampleUrl"
+                                type="url"
+                                name="url"
+                                placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
+                                onChange={this.handleUrlChange}
+                                style={{
+                                    border: 'lightgray 1px solid',
+                                    width: '50%',
+                                    flexDirection: 'column'
+                                }}
+                            />
+                            <Button style={{ backgroundColor: theme.palette.secondary.main, marginLeft: '1%' }} onClick={this.handleGitHubUrl}>
+                                Upload
+                            </Button>
+                        </div>
+                    </>
+                );
+            case 'gitlab':
+                return (
+                    <>
+                        <div>Please enter gitlab raw file url for the ontology file. Supported formats (ttl, owl)</div>
+                        <br />
+                        <Label for="exampleUrl" style={{ flexDirection: 'column' }}>
+                            Gitlab
+                        </Label>
+                        <div style={{ display: 'flex' }}>
+                            <Input
+                                id="exampleUrl"
+                                type="url"
+                                name="url"
+                                placeholder="e.g., https://gitlab.com/tib-ts/ontology/-/blob/main/advanceExample.ttl"
+                                onChange={this.handleUrlChange2}
+                                style={{
+                                    border: 'lightgray 1px solid',
+                                    width: '50%'
+                                }}
+                            />
+                            <Button style={{ backgroundColor: theme.palette.secondary.main, marginLeft: '1%' }} onClick={this.handleGitlabUrl}>
+                                Upload
+                            </Button>
+                        </div>
+                    </>
+                );
+            default:
+                return null;
+        }
+    }
 
     render() {
         const { theme } = this.props;
@@ -321,80 +399,7 @@ class UploadOntology extends Component {
                                             </Col>
                                         </FormGroup>
                                     </Form>
-                                    <div>
-                                        {this.state.uploadSource === 'localFile' ? (
-                                            <>
-                                                <div>Please lookup the ontology file you want to upload. Supported formats (ttl, owl)</div>
-                                                <br />
-                                                <Label for="fileSystem">File System </Label>
-                                                <Input
-                                                    id="fileSystem"
-                                                    type="file"
-                                                    name="file"
-                                                    style={{ border: 'lightgray 1px solid', width: '50%' }}
-                                                    onChange={this.handlePreview}
-                                                    disabled={this.state.waitingForResult}
-                                                />
-                                            </>
-                                        ) : this.state.uploadSource === 'github' ? (
-                                            <>
-                                                <div>Please enter github raw file url for the ontology file. Supported formats (ttl, owl)</div>
-                                                <br />
-                                                <Label for="exampleUrl" style={{ flexDirection: 'column' }}>
-                                                    GitHub
-                                                </Label>
-                                                <div style={{ display: 'flex' }}>
-                                                    <Input
-                                                        id="exampleUrl"
-                                                        type="url"
-                                                        name="url"
-                                                        placeholder="e.g., https://raw.githubusercontent.com/tibonto/dr/master/DigitalReference.ttl"
-                                                        onChange={this.handleUrlChange}
-                                                        style={{
-                                                            border: 'lightgray 1px solid',
-                                                            width: '50%',
-                                                            flexDirection: 'column'
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        style={{ backgroundColor: theme.palette.secondary.main, marginLeft: '1%' }}
-                                                        onClick={this.handleGitHubUrl}
-                                                    >
-                                                        Upload
-                                                    </Button>
-                                                </div>
-                                            </>
-                                        ) : this.state.uploadSource === 'gitlab' ? (
-                                            <>
-                                                <div>Please enter gitlab raw file url for the ontology file. Supported formats (ttl, owl)</div>
-                                                <br />
-                                                <Label for="exampleUrl" style={{ flexDirection: 'column' }}>
-                                                    Gitlab
-                                                </Label>
-                                                <div style={{ display: 'flex' }}>
-                                                    <Input
-                                                        id="exampleUrl"
-                                                        type="url"
-                                                        name="url"
-                                                        placeholder="e.g., https://gitlab.com/tib-ts/ontology/-/blob/main/advanceExample.ttl"
-                                                        onChange={this.handleUrlChange2}
-                                                        style={{
-                                                            border: 'lightgray 1px solid',
-                                                            width: '50%'
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        style={{ backgroundColor: theme.palette.secondary.main, marginLeft: '1%' }}
-                                                        onClick={this.handleGitlabUrl}
-                                                    >
-                                                        Upload
-                                                    </Button>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div />
-                                        )}
-                                    </div>
+                                    <div>{this.renderUploadSource()}</div>
                                 </div>
                             )}
                             {/*parser not successful*/}

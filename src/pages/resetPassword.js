@@ -23,8 +23,6 @@ class ResetPassword extends Component {
         };
     }
 
-    componentDidMount() {}
-
     isfieldValid = () => {
         if (this.state.password.length < minLengthPassword) {
             this.setState({ passwordError: 'Password cannot be less than 5 characters' });

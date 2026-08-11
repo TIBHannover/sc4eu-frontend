@@ -52,11 +52,7 @@ class ItemController extends Component {
 
     getFontColor = () => {
         if (this.props.itemType === 'Relation') {
-            if (this.props.itemContext.isHighlighted) {
-                return 'black';
-            } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
-                return 'black';
-            } else if (this.props.itemContext.type[0].toLowerCase() === 'owl:datatypeProperty'.toLowerCase()) {
+            if (this.props.itemContext.isHighlighted || this.props.itemContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
                 return 'black';
             }
             return 'white';
@@ -117,22 +113,13 @@ const mapStateToProps = state => {
 ItemController.propTypes = {
     itemType: PropTypes.string.isRequired,
     itemContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired,
-    toggleEditButton: PropTypes.func.isRequired,
-    deleteResource: PropTypes.func.isRequired,
-    editResource: PropTypes.func.isRequired,
     showBody: PropTypes.func.isRequired,
     showGraphVis: PropTypes.func.isRequired,
     showWidget: PropTypes.func.isRequired,
-    isBodyExpanded: PropTypes.bool.isRequired,
     showingBody: PropTypes.bool.isRequired,
     showingGraph: PropTypes.bool.isRequired,
-    showingWidget: PropTypes.bool.isRequired,
-    showWidgetAnnotation: PropTypes.func.isRequired,
-    showingWidgetAnnotation: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(ItemController));
-

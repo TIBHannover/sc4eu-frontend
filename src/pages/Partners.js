@@ -80,8 +80,8 @@ const Partners = () => (
     <div>
         <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '1%' }}>Our Project Partners </h3>
         <PartnersGrid>
-            {partners.map((partner, idx) => (
-                <PartnerCard key={idx} href={partner.url} target="_blank" rel="noopener noreferrer" title={partner.name}>
+            {partners.map(partner => (
+                <PartnerCard key={partner.name} href={partner.url} target="_blank" rel="noopener noreferrer" title={partner.name}>
                     <PartnerLogo src={partner.logo} alt={partner.name + ' logo'} />
                     {/* <PartnerName>{partner.name}</PartnerName> */}
                 </PartnerCard>

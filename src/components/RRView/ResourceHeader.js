@@ -27,10 +27,6 @@ class ResourceHeader extends Component {
         };
     }
 
-    toggleEditButton = () => {
-        this.props.toggleEditButton(!this.props.isEditing);
-    };
-
     render() {
         return (
             <StyledResourceAndRelationHeader
@@ -49,15 +45,6 @@ class ResourceHeader extends Component {
                                 <Icon icon={faCaretSquareUp} color="white" />
                             )}
                         </Button>
-                        {/*<Button
-                            color="white"
-                            size="sm"
-                            title="Edit Resource"
-                            style={{ float: 'right', padding: '0px', paddingRight: '5px' }}
-                            onClick={this.toggleEditButton}
-                        >
-                            <Icon icon={faPen} color={this.state.isEditing ? 'red' : 'white'} />
-                        </Button>*/}
                     </>
                 )}
 
@@ -106,8 +93,6 @@ const mapStateToProps = state => {
 ResourceHeader.propTypes = {
     resourceContext: PropTypes.object.isRequired,
     isEditing: PropTypes.bool.isRequired,
-    toggleEditButton: PropTypes.func.isRequired,
-    deleteResource: PropTypes.func.isRequired,
     editResource: PropTypes.func.isRequired,
     showBody: PropTypes.func.isRequired,
     isBodyExpanded: PropTypes.bool.isRequired,

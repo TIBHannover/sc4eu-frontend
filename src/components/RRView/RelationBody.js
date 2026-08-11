@@ -18,10 +18,6 @@ class RelationBody extends Component {
         this.bodyRef = createRef();
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     render() {
         const resDef = this.props.relationContext;
         const prefixList = this.props.metaInformation.prefixList.longToShort;
@@ -66,9 +62,7 @@ const mapStateToProps = state => {
 
 RelationBody.propTypes = {
     relationContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired,
     isBodyExpanded: PropTypes.bool.isRequired,
-    initialRendering: PropTypes.bool.isRequired,
     metaInformation: PropTypes.object.isRequired
 };
 

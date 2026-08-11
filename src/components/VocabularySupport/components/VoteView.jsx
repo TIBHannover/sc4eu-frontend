@@ -16,16 +16,13 @@ import { ConsensusProgress } from '../utils/Consensus';
 
 const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => {
     const theme = useTheme();
-    
+
     const [decision, setDecision] = useState('');
     const [comment, setComment] = useState(null);
     const [decisions, setDecisions] = useState(vote.decisions);
     const [decisionMade, setDecisionMade] = useState(false);
     const [userHasVoted, setUserHasVoted] = useState(decisions.some(e => e.user_name === username && e.choice !== null));
-    const approvedCount = decisions.filter(e => e.choice === 'approved').length;
-    const rejectedCount = decisions.filter(e => e.choice === 'rejected').length;
     const votedUsers = decisions.filter(expert => expert.choice !== null);
-    const totalVotes = decisions.filter(e => e.choice !== null).length;
     const [expandedComments, setExpandedComments] = useState(new Set());
 
     useEffect(() => {
@@ -102,7 +99,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     };
 
     const handleExpertDecision = async () => {
-        console.log('expert decision updated: ', vote);
         await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
         setDecisionMade(true);
         setUserHasVoted(true);
@@ -265,14 +261,13 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             <Typography variant="subtitle1" gutterBottom>
                                 Recent Votes
                             </Typography>
-
                             <Box sx={styles.recentVotesContainer}>
                                 {votedUsers.length > 0 ? (
                                     votedUsers
                                         .sort((a, b) => new Date(b.voted_at) - new Date(a.voted_at))
                                         .slice(0, 5)
                                         .map((user, index) => (
-                                            <Box key={index} sx={styles.voteItem}>
+                                            <Box key={`${user.voted_id}-${user.user_id}`} sx={styles.voteItem}>
                                                 <Box sx={styles.userInfoRow}>
                                                     <Avatar {...stringAvatar(vote.assignee)} sx={{ width: 32, height: 32 }} />
                                                     <Typography variant="body2" fontWeight="medium">
@@ -306,13 +301,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                                 mt: 0.5
                                                             }}
                                                         >
-                                                            "
-                                                            {expandedComments.has(index)
-                                                                ? user.comment
-                                                                : user.comment.length > 100
-                                                                ? user.comment.substring(0, 100)
-                                                                : user.comment}
-                                                            "
+                                                            "{user.comment.length > 100 ? user.comment.substring(0, 100) : user.comment}"
                                                             {user.comment.length > 100 && (
                                                                 <Typography
                                                                     component="span"

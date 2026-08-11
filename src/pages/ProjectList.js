@@ -10,29 +10,16 @@ export default class ProjectList extends Component {
         };
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate = (prevProps, prevState) => {};
-
     reloadAfterUpdate = () => {
-        console.log('reloadAfterUpdate');
         //this.forceUpdate();
         this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
     };
 
     render() {
         return (
-            <>
-                <StyledProjectListDiv>
-                    <ProjectView
-                        title="Current Projects"
-                        reloadAfterUpdate={() => this.reloadAfterUpdate()}
-                        updateFlipFlop={this.state.updateFlipFlop}
-                    />
-                </StyledProjectListDiv>
-            </>
+            <StyledProjectListDiv>
+                <ProjectView title="Current Projects" reloadAfterUpdate={() => this.reloadAfterUpdate()} updateFlipFlop={this.state.updateFlipFlop} />
+            </StyledProjectListDiv>
         );
     }
 }
-
-

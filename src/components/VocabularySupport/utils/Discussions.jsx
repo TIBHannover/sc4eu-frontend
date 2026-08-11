@@ -69,14 +69,14 @@ const reduceCommentsMentioned = (discussions, mentionedUser) => {
 };
 
 const groupMentionedByCommentInstant = mentioned => {
-    const grouped = [];
+    const grouped = {};
 
     mentioned.forEach(i => {
         i.comments.forEach(comment => {
             const dateKey = new Date(comment.timestamp).toLocaleDateString();
             const labelKey = i.label;
             if (!grouped[dateKey]) {
-                grouped[dateKey] = [];
+                grouped[dateKey] = {};
             }
 
             if (!grouped[dateKey][labelKey]) {
@@ -255,8 +255,8 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                                                 </Tooltip>
                                             </Box>
                                             <List sx={{ pl: 2 }}>
-                                                {group.comments.map((comment, i) => (
-                                                    <ListItem key={i} disableGutters>
+                                                {group.comments.map(comment => (
+                                                    <ListItem key={comment.id} disableGutters>
                                                         <ListItemAvatar
                                                             onClick={() => handleFilterByAuthor(comment.author)}
                                                             sx={{ cursor: 'pointer' }}

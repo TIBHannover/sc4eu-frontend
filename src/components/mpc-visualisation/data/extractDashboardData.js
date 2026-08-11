@@ -163,7 +163,7 @@ function extractTier1FutureDemand(schema) {
     const sorted = [...nodes].sort((a, b) => a.id.localeCompare(b.id));
     return {
         Automotive: sorted.map(node => ({
-            label: prop(node, "forTimePeriod") ?? prop(node, "periodLabel") ?? node.label,
+            label: prop(node, 'forTimePeriod') ?? prop(node, 'periodLabel') ?? node.label,
             value: prop(node, 'percentageChange')
         }))
     };
@@ -270,7 +270,12 @@ function extractTier1InventoryTrends(schema) {
 
         if (dominant) {
             const suffix = dominant.id.replace(prefix, '');
-            const displayKey = comp === 'non_EV' ? 'non-EV' : comp === 'both' ? 'EV + non-EV' : comp;
+            let displayKey = comp;
+            if (comp === 'non_EV') {
+                displayKey = 'non-EV';
+            } else if (comp === 'both') {
+                displayKey = 'EV + non-EV';
+            }
             result[displayKey] = suffix; // Increase | Decrease | Stable
         }
     });
@@ -305,7 +310,7 @@ function extractComponentActivity(schema) {
         if (!node) return;
         const rawValue = prop(node, 'isActiveInCategory');
         if (rawValue == null) return;
-        const yesMatch = String(rawValue).match(/'Yes':\s*([\d.]+)/);
+        const yesMatch = /'Yes':\s*([\d.]+)/.exec(String(rawValue));
         result[displayName] = yesMatch ? Number.parseFloat(yesMatch[1]) > 0 : false;
     });
     return Object.keys(result).length > 0 ? result : null;

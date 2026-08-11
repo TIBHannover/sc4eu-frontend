@@ -5,7 +5,13 @@ import { getAllProjects } from '../../network/projectIndexing';
 import { getAllUsers, getUserProjects } from '../../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import ProjectSideBarCard from '../ProjectSideBarCard';
-import { StyledRightSideProjectBarRootDiv, StyledHeadingDiv, StyledInfoDiv, StyledScrollbarDiv, StyledInfoSpan } from 'styledComponents/styledComponents';
+import {
+    StyledRightSideProjectBarRootDiv,
+    StyledHeadingDiv,
+    StyledInfoDiv,
+    StyledScrollbarDiv,
+    StyledInfoSpan
+} from 'styledComponents/styledComponents';
 class RightSideProjectBar extends Component {
     constructor(props) {
         super(props);
@@ -31,7 +37,7 @@ class RightSideProjectBar extends Component {
                     project.projectAdmins = [];
                     onlyProjectAdmins.forEach(projectAdmin => {
                         getUserProjects(projectAdmin.uuid).then(thisAdminProjects => {
-                            if (thisAdminProjects.some(adminProject => adminProject === project.uuid)) {
+                            if (thisAdminProjects.includes(project.uuid)) {
                                 project.projectAdmins.push({
                                     name: projectAdmin.display_name,
                                     email: projectAdmin.email_address
@@ -42,7 +48,7 @@ class RightSideProjectBar extends Component {
                 });
             });
         } catch (error) {
-            console.log('Error in componentDidMount: ', error);
+            console.error('Error in componentDidMount: ', error);
         }
     };
 
@@ -56,7 +62,7 @@ class RightSideProjectBar extends Component {
                 await this.getProjectsFromBackend();
             }
         } catch (error) {
-            console.log('Error in componentDidUpdate: ', error);
+            console.error('Error in componentDidUpdate: ', error);
         }
     };
 
@@ -87,7 +93,7 @@ class RightSideProjectBar extends Component {
                 // this.setState({ results: sortProjects });
             });
         } catch (e) {
-            console.log('Failed to load projects from backend. Error: ', e);
+            console.error('Failed to load projects from backend. Error: ', e);
         }
     };
 
@@ -102,9 +108,10 @@ class RightSideProjectBar extends Component {
         return [...sideBarProjects].sort((p1, p2) => (p1.name.toLowerCase() > p2.name.toLowerCase() ? 1 : -1));
     };
 
-    getProjectsForUser = async admin => {
-        return await getUserProjects(admin.uuid);
-    };
+    //Personalized project view
+    // getProjectsForUser = async admin => {
+    //     return await getUserProjects(admin.uuid);
+    // };
 
     render() {
         return (
@@ -153,7 +160,6 @@ class RightSideProjectBar extends Component {
 
 RightSideProjectBar.propTypes = {
     title: PropTypes.string,
-    reloadAfterUpdate: PropTypes.func.isRequired,
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     updateFlipFlop: PropTypes.bool.isRequired
 };
@@ -163,4 +169,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps)(RightSideProjectBar);
-

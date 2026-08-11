@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input } from 'reactstrap';
+import { Container, Button, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MapperModule from '../../GraphVisLib/implementation/MapperModule';
@@ -612,7 +612,6 @@ GraphVisUi.propTypes = {
     prefixList: PropTypes.object.isRequired,
     DonatelloGraph: PropTypes.object.isRequired,
     visualNotation: PropTypes.string.isRequired,
-    selectVisualNotation: PropTypes.func.isRequired,
     selectedOntology: PropTypes.object.isRequired
 };
 
