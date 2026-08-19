@@ -48,10 +48,10 @@ class IntroductoryPopUp extends Component {
             const timeSinceDismissed = differenceInCalendarDays(new Date(Date.now()), new Date(Number(value)));
             if (timeSinceDismissed >= 30) {
                 localStorage.setItem(VOCAB_SURVEY_STORAGE_KEY, Date.now().toString());
-                this.setState({ firstModal: false });
+                this.setState({ firstModal: true });
                 return;
             }
-            this.setState({ firstModal: true });
+            this.setState({ firstModal: false });
             return;
         } else {
             localStorage.setItem(VOCAB_SURVEY_STORAGE_KEY, Date.now().toString());
@@ -79,83 +79,90 @@ class IntroductoryPopUp extends Component {
     render() {
         const { theme } = this.props;
         return (
-            <StyledRootDiv>
-                <StyledModal isOpen={this.state.firstModal}>
-                    <ModalBody style={{ backgroundColor: theme.palette.background.paper }}>
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <h4 style={{ marginLeft: 'auto' }}>
-                                <p>Thank you for visiting our portal</p>
-                            </h4>
-                            <Button
-                                onClick={() => this.setState(prevState => ({ firstModal: !prevState.firstModal }))}
-                                style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: theme.palette.secondary.contrastText,
-                                    fontWeight: 600,
-                                    marginLeft: 'auto',
-                                    marginRight: '10px',
-                                    fontSize: '18px',
-                                    outline: 'none'
-                                }}
-                            >
-                                X
-                            </Button>
-                        </div>
-                        <br />
-                        <span
+            <StyledModal
+                isOpen={this.state.firstModal}
+                toggle={() => {
+                    localStorage.setItem(VOCAB_SURVEY_STORAGE_KEY, Date.now().toString());
+                    this.setState({ firstModal: false });
+                }}
+            >
+                <ModalBody style={{ backgroundColor: theme.palette.background.paper }}>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <h4 style={{ marginLeft: 'auto', color: theme.palette.text.primary }}>
+                            <p>Thank you for visiting our portal</p>
+                        </h4>
+                        <Button
+                            onClick={() => {
+                                localStorage.setItem(VOCAB_SURVEY_STORAGE_KEY, Date.now().toString());
+                                this.setState(prevState => ({ firstModal: !prevState.firstModal }));
+                            }}
                             style={{
+                                background: 'none',
+                                border: 'none',
+                                color: theme.palette.text.primary,
+                                fontWeight: 600,
+                                marginLeft: 'auto',
+                                marginRight: '10px',
                                 fontSize: '18px',
-                                color: theme.palette.text.secondary
+                                outline: 'none'
                             }}
                         >
-                            {SliderText[this.state.sliderIndex].value}
-                        </span>
-                        <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-                            <Button
-                                onClick={this.goToNextSlide}
-                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
-                            >
-                                {this.state.buttonText}
-                            </Button>
-                        </div>
-                        <div
-                            style={{
-                                position: 'absolute',
-                                bottom: '10px',
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                display: 'flex'
-                            }}
+                            X
+                        </Button>
+                    </div>
+                    <br />
+                    <span
+                        style={{
+                            fontSize: '18px',
+                            color: theme.palette.text.secondary
+                        }}
+                    >
+                        {SliderText[this.state.sliderIndex].value}
+                    </span>
+                    <div style={{ marginTop: '15px', marginBottom: '15px' }}>
+                        <Button
+                            onClick={this.goToNextSlide}
+                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                         >
-                            {Array.from({ length: 3 }).map((item, index) => (
-                                <div
-                                    key={index}
-                                    style={
-                                        this.state.sliderIndex === index
-                                            ? {
-                                                  width: '15px',
-                                                  height: '15px',
-                                                  borderRadius: '50%',
-                                                  border: `3px solid ${theme.palette.secondary.main}`,
-                                                  margin: '0 5px',
-                                                  backgroundColor: theme.palette.background.paper
-                                              }
-                                            : {
-                                                  width: '15px',
-                                                  height: '15px',
-                                                  borderRadius: '50%',
-                                                  border: `3px solid ${theme.palette.secondary.main}`,
-                                                  margin: '0 5px',
-                                                  backgroundColor: theme.palette.secondary.main
-                                              }
-                                    }
-                                />
-                            ))}
-                        </div>
-                    </ModalBody>
-                </StyledModal>
-            </StyledRootDiv>
+                            {this.state.buttonText}
+                        </Button>
+                    </div>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            bottom: '10px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            display: 'flex'
+                        }}
+                    >
+                        {Array.from({ length: 3 }).map((item, index) => (
+                            <div
+                                key={index}
+                                style={
+                                    this.state.sliderIndex === index
+                                        ? {
+                                              width: '15px',
+                                              height: '15px',
+                                              borderRadius: '50%',
+                                              border: `3px solid ${theme.palette.secondary.main}`,
+                                              margin: '0 5px',
+                                              backgroundColor: theme.palette.background.paper
+                                          }
+                                        : {
+                                              width: '15px',
+                                              height: '15px',
+                                              borderRadius: '50%',
+                                              border: `3px solid ${theme.palette.secondary.main}`,
+                                              margin: '0 5px',
+                                              backgroundColor: theme.palette.secondary.main
+                                          }
+                                }
+                            />
+                        ))}
+                    </div>
+                </ModalBody>
+            </StyledModal>
         );
     }
 }
