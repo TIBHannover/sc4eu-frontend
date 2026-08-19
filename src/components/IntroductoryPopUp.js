@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { ModalBody, Button } from 'reactstrap';
-import Cookies from 'js-cookie';
 import { withTheme } from '@emotion/react';
 import { StyledRootDiv, StyledModal } from 'styledComponents/styledComponents';
+import { differenceInCalendarDays } from 'date-fns';
+
 const SliderText = [
     {
         id: 0,
@@ -29,6 +30,8 @@ const SliderText = [
     }
 ];
 
+const VOCAB_SURVEY_STORAGE_KEY = 'vocab-introduction-popup-dismissed-datetime';
+
 class IntroductoryPopUp extends Component {
     constructor(props) {
         super(props);
@@ -40,13 +43,18 @@ class IntroductoryPopUp extends Component {
     }
 
     componentDidMount() {
-        const value = Cookies.get('alreadyVisited');
+        const value = localStorage.getItem(VOCAB_SURVEY_STORAGE_KEY);
         if (value) {
-            this.setState({ firstModal: false });
-            //do not view Popup
+            const timeSinceDismissed = differenceInCalendarDays(new Date(Date.now()), new Date(Number(value)));
+            if (timeSinceDismissed >= 30) {
+                localStorage.setItem(VOCAB_SURVEY_STORAGE_KEY, Date.now().toString());
+                this.setState({ firstModal: false });
+                return;
+            }
+            this.setState({ firstModal: true });
+            return;
         } else {
-            //this is the first time
-            Cookies.set('alreadyVisited', true);
+            localStorage.setItem(VOCAB_SURVEY_STORAGE_KEY, Date.now().toString());
             this.setState({ firstModal: true });
         }
     }
@@ -104,7 +112,10 @@ class IntroductoryPopUp extends Component {
                             {SliderText[this.state.sliderIndex].value}
                         </span>
                         <div style={{ marginTop: '15px', marginBottom: '15px' }}>
-                            <Button onClick={this.goToNextSlide} style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}>
+                            <Button
+                                onClick={this.goToNextSlide}
+                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                            >
                                 {this.state.buttonText}
                             </Button>
                         </div>
@@ -150,5 +161,3 @@ class IntroductoryPopUp extends Component {
 }
 
 export default withTheme(IntroductoryPopUp);
-
-
