@@ -3,8 +3,24 @@ import Footer from '../Layout/Footer';
 import visualisation from '../assets/images/visulization.png';
 import IntroductoryPopUp from '../components/IntroductoryPopUp';
 import Logo from '../assets/images/logo.png';
-import { StyledHomeRootDiv, StyledHomeHeadingDiv, StyledHeading, StyledHomeLogo, StyledHomeBody, StyledHomeBodyDiv, StyledBodyLogo, StyledBodyLinkBiger, StyledBodyTextBigger, StyledDivPopUp } from 'styledComponents/styledComponents';
+import {
+    StyledHomeRootDiv,
+    StyledHomeHeadingDiv,
+    StyledHeading,
+    StyledHomeLogo,
+    StyledHomeBody,
+    StyledHomeBodyDiv,
+    StyledBodyLogo,
+    StyledBodyLinkBiger,
+    StyledBodyTextBigger,
+    StyledDivPopUp
+} from 'styledComponents/styledComponents';
+import { connect } from 'react-redux';
+import { openAuthDialog } from '../redux/actions/auth';
+import { selectIsAuthenticated } from '../redux/reducers/auth';
+
 const digitalReferenceURL = process.env.REACT_APP_DIGITAL_REFERENCE_ONTOLOGY_URL;
+const VOCABULARY_URL = 'https://service.tib.eu/vocab/nfdi4ing/vocabulary_support';
 
 const DigitalReferenceTxt = (
     <>
@@ -81,3 +97,13 @@ class Home extends Component {
         );
     }
 }
+
+const mapStateToProps = state => ({
+    isAuthenticated: selectIsAuthenticated(state)
+});
+
+const mapDispatchToProps = {
+    openAuthDialog
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
