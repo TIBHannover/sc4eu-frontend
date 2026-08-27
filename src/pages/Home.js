@@ -77,7 +77,7 @@ class Home extends Component {
                     </StyledHomeBody>
                 </StyledHomeRootDiv>
                 <Footer />
-            </Box>
+            </>
         );
     }
 }
