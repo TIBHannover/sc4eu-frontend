@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Card, CardBody } from 'reactstrap';
-import styled from 'styled-components';
-import { fontStyled } from '../../styledComponents/styledFont';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
-
+import { StyledAnnotationsDropdownSpan } from 'styledComponents/styledComponents';
 class AnnotationsDropDown extends Component {
     constructor(props) {
         super(props);
@@ -35,18 +32,15 @@ class AnnotationsDropDown extends Component {
             }
         }
         if (allAnnotations.length === 0) {
-            return <StyledSpan>No Annotations Available</StyledSpan>;
+            return <StyledAnnotationsDropdownSpan>No Annotations Available</StyledAnnotationsDropdownSpan>;
         }
         const mappedAnnotations = allAnnotations.map(item => {
             return (
                 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-                <div
-                    key={'itemId_' + item.prefix + item.type}
-                    style={{ display: 'block', overflow: 'hidden' }}
-                >
-                    <StyledSpan>{item.prefix}</StyledSpan>
+                <div key={'itemId_' + item.prefix + item.type} style={{ display: 'block', overflow: 'hidden' }}>
+                    <StyledAnnotationsDropdownSpan>{item.prefix}</StyledAnnotationsDropdownSpan>
                     <div style={{ marginLeft: '1rem' }}>
-                        <StyledSpan>{item.type}</StyledSpan>
+                        <StyledAnnotationsDropdownSpan>{item.type}</StyledAnnotationsDropdownSpan>
                     </div>
                 </div>
                 /* eslint-enable jsx-a11y/no-noninteractive-element-interactions */
@@ -60,7 +54,7 @@ class AnnotationsDropDown extends Component {
         return (
             <div key={'annotaions_' + this.props.itemIdentifier} className="root" style={{ padding: '2px 5px' }}>
                 <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, paddingLeft: '1%', width: '100%' }}>
-                    <StyledSpan style={{ fontWeight: 'bold' }}>Annotation :</StyledSpan>
+                    <StyledAnnotationsDropdownSpan style={{ fontWeight: 'bold' }}>Annotation :</StyledAnnotationsDropdownSpan>
                     <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
                         {this.renderAnnotations(this.props.itemOfInterest)}
                     </CardBody>
@@ -71,10 +65,8 @@ class AnnotationsDropDown extends Component {
 }
 
 AnnotationsDropDown.propTypes = {
-    itemType: PropTypes.string.isRequired,
     itemIdentifier: PropTypes.string.isRequired,
-    itemOfInterest: PropTypes.object.isRequired,
-    callback: PropTypes.func.isRequired
+    itemOfInterest: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
@@ -86,11 +78,3 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnnotationsDropDown);
-
-const StyledSpan = styled.span`
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;

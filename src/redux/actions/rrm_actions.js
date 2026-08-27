@@ -1,10 +1,8 @@
-import * as type from './types';
-// import { getUserInformation } from "services/backend/users";
-// import { Cookies } from 'react-cookie';
+import * as type from './types';    
 
 export const initializeResourceRelationModel = payload => dispatch => {
     const wrappedPayload = {
-        originalModel: JSON.parse(JSON.stringify(payload)), // TODO make deep copy using lodash copy
+        originalModel: structuredClone(payload),
         ...payload
     };
     const thing = {
@@ -15,7 +13,6 @@ export const initializeResourceRelationModel = payload => dispatch => {
         type: ['owl:Class']
     };
     wrappedPayload.resources.push(thing);
-    console.log(wrappedPayload);
     dispatch({
         type: type.INITIALIZE_RESOURCE_RELATION_MODEL,
         payload: wrappedPayload

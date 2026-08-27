@@ -3,11 +3,9 @@ import NodeInteractions from './nodeInteractions';
 import LinkInteractions from './linkInteractions';
 
 export default class Interactions {
-    constructor() {
-        this.graphInteractions = null;
-        this.nodeInteractions = null;
-        this.linkInteractions = null;
-    }
+    graphInteractions = null;
+    nodeInteractions = null;
+    linkInteractions = null;
 
     applyInteractions(graph, redrawCall) {
         /** GRAPH INTERACTION **/

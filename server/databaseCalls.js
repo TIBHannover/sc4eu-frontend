@@ -7,7 +7,7 @@ module.exports = {
     getProjectIndex: function(app) {
         app.get('/projectIndex', (req, res) => {
             const project_indexOptions = {
-                uri: `${process.env.BACKEND_SERVER_URL}/projectIndex`,
+                uri: `${process.env.BACKEND_SERVER_URL}/projectIndex/`,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -15,11 +15,12 @@ module.exports = {
             };
 
             request(project_indexOptions, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -31,16 +32,15 @@ module.exports = {
 
     createProject: function(app) {
         app.post('/createProject', verifyToken, (req, res) => {
-            console.log('Wants to create the Project');
             if (req.token === null) {
                 res.json({ result: false });
             } else {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                console.log(token);
+
                 if (token) {
                     const userId = token.userId;
                     const projectData = JSON.stringify(req.body);
-                    console.log(projectData);
+
                     const project_options = {
                         uri: `${process.env.BACKEND_SERVER_URL}/create_new_project/?userId=${userId}&token=${token.bToken}`,
                         method: 'POST',
@@ -51,11 +51,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -86,11 +87,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -104,12 +106,10 @@ module.exports = {
 
     deleteProject: function(app) {
         app.post('/deleteProject', verifyToken, (req, res) => {
-            console.log('Deleting Project as POST ');
             const token = jwt.verify(req.token, process.env.JWT_SECRET);
             const userId = token.userId;
             const data = JSON.stringify(req.body);
-            console.log(userId);
-            console.log(data);
+
             const delete_options = {
                 uri: `${process.env.BACKEND_SERVER_URL}/delete_project/?userId=${userId}&token=${token.bToken}`,
                 method: 'POST',
@@ -119,16 +119,15 @@ module.exports = {
                 body: data
             };
 
-            console.log('about to send request to the backend to delete', delete_options);
             try {
                 request(delete_options, function(error, response) {
-                    if (response && response.body) {
-                        console.log('has response', response.body);
+                    if (response?.body) {
                         try {
                             const result = JSON.parse(response.body);
-                            console.log('result', result);
+
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Something went wrong' });
                         }
                     } else {
@@ -136,7 +135,7 @@ module.exports = {
                     }
                 });
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
         });
     },
@@ -144,7 +143,7 @@ module.exports = {
     getOntologyIndex: function(app) {
         app.get('/ontologyIndex', (req, res) => {
             const query = req.query;
-            console.log('Requesting Ontology Index', `${process.env.BACKEND_SERVER_URL}/ontologyIndex?project_id=${query['project_id']}`);
+
             const ontology_indexOptions = {
                 uri: `${process.env.BACKEND_SERVER_URL}/ontologyIndex/?project_id=${query['project_id']}`,
                 method: 'GET',
@@ -154,11 +153,12 @@ module.exports = {
             };
 
             request(ontology_indexOptions, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -181,11 +181,12 @@ module.exports = {
             };
 
             request(ontology_indexOptions, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -208,11 +209,12 @@ module.exports = {
             };
 
             request(ontology_indexOptions, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -224,12 +226,10 @@ module.exports = {
 
     deleteOntology: function(app) {
         app.post('/deleteOntology', verifyToken, (req, res) => {
-            console.log('Deleting Ontology as POST ');
             const token = jwt.verify(req.token, process.env.JWT_SECRET);
             const userId = token.userId;
             const data = JSON.stringify(req.body);
-            console.log(userId);
-            console.log(data);
+
             const delete_options = {
                 uri: `${process.env.BACKEND_SERVER_URL}/delete_ontology/?userId=${userId}&token=${token.bToken}`,
                 method: 'POST',
@@ -239,29 +239,26 @@ module.exports = {
                 body: data
             };
 
-            console.log('about to send request to the backend to delete', delete_options);
             try {
                 request(delete_options, function(error, response) {
-                    if (response && response.body) {
-                        console.log('has response', response.body);
+                    if (response?.body) {
                         try {
                             const result = JSON.parse(response.body);
-                            console.log('result', result);
+
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Something went wrong' });
                         }
                     } else {
                         res.json({ error: 'Something went wrong' });
                     }
                 });
-            } catch (e) {
-                console.log(e);
-            }
+            } catch (e) {}
             // 1) send to backend url
             // 2) backedn impletementation
             // 3) return the result of it
-            // console.log('DOE WE BREAK HERE????');
+            //
             // res.json({ delete_successful: 'unknown' });
         });
     },
@@ -285,11 +282,12 @@ module.exports = {
                     };
 
                     request(upload_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -303,7 +301,6 @@ module.exports = {
 
     updateOntology: function(app) {
         app.post('/updateOntology', verifyToken, (req, res) => {
-            console.log('Processing ontology update request');
             if (req.token === null) {
                 res.json({ result: false });
             } else {
@@ -321,11 +318,12 @@ module.exports = {
                     };
 
                     request(update_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -354,7 +352,7 @@ module.exports = {
                     };
 
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             const result = JSON.parse(response.body);
                             if (result) {
                                 res.json(response);
@@ -366,6 +364,7 @@ module.exports = {
                         }
                     });
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Network Error' });
                 }
             }
@@ -384,16 +383,18 @@ module.exports = {
                 };
 
                 request(options, function(error, response) {
-                    if (response && response.body) {
+                    if (response?.body) {
                         try {
                             const result = JSON.parse(response.body);
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Network error occurred' });
                         }
                     }
                 });
             } catch (e) {
+                console.error(e);
                 res.json({ error: 'You dont have access to view this page' });
             }
         });
@@ -414,11 +415,12 @@ module.exports = {
 
             try {
                 request(options, function(error, response) {
-                    if (response && response.body) {
+                    if (response?.body) {
                         try {
                             const result = JSON.parse(response.body);
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Something went wrong in response' });
                         }
                     } else {
@@ -426,7 +428,7 @@ module.exports = {
                     }
                 });
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
         });
     },
@@ -447,11 +449,12 @@ module.exports = {
 
             try {
                 request(options, function(error, response) {
-                    if (response && response.body) {
+                    if (response.body) {
                         try {
                             const result = JSON.parse(response.body);
                             res.json(result);
                         } catch (e) {
+                            console.error(e);
                             res.json({ error: 'Something went wrong in response' });
                         }
                     } else {
@@ -459,7 +462,7 @@ module.exports = {
                     }
                 });
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
         });
     },
@@ -470,11 +473,10 @@ module.exports = {
                 res.json({ result: false });
             } else {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                console.log(token);
+
                 if (token) {
-                    const userId = token.userId;
                     const data = JSON.stringify(req.body);
-                    console.log(data);
+
                     const project_options = {
                         uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes`,
                         method: 'POST',
@@ -485,11 +487,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -517,11 +520,12 @@ module.exports = {
             };
 
             request(vote_Options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     let result;
                     try {
                         result = JSON.parse(response.body);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                     res.json(result);
@@ -548,11 +552,12 @@ module.exports = {
             };
 
             request(vote_Options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     let result;
                     try {
                         result = JSON.parse(response.body);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                     res.json(result);
@@ -576,11 +581,12 @@ module.exports = {
             };
 
             request(vote_Options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -596,12 +602,11 @@ module.exports = {
                 res.json({ result: false });
             } else {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                console.log(token);
+
                 if (token) {
-                    const userId = token.userId;
-                    console.log(userId);
+
                     const data = JSON.stringify(req.body);
-                    console.log(data);
+
                     const project_options = {
                         uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/${encodeURIComponent(req.body.term_uuid)}/votes/${encodeURIComponent(
                             req.body.vote_uuid
@@ -613,13 +618,13 @@ module.exports = {
                         body: data
                     };
 
-                    console.log('project_options.body: ', project_options.body);
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -637,7 +642,7 @@ module.exports = {
                 res.json({ result: false });
             } else {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                console.log(token);
+
                 if (token) {
                     const data = JSON.stringify(req.body);
                     const project_options = {
@@ -652,11 +657,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -674,7 +680,7 @@ module.exports = {
                 res.json({ result: false });
             } else {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
-                console.log(token);
+
                 if (token) {
                     const data = JSON.stringify(req.body.term_uuids);
                     const project_options = {
@@ -687,11 +693,12 @@ module.exports = {
                     };
 
                     request(project_options, function(error, response) {
-                        if (response && response.body) {
+                        if (response.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 res.json(result);
                             } catch (e) {
+                                console.error(e);
                                 res.json({ error: 'Something went wrong' });
                             }
                         } else {
@@ -705,7 +712,6 @@ module.exports = {
 
     getTermOfTheWeek: function(app) {
         app.get('/getTermOfTheWeek', (req, res) => {
-            const query = req.query;
             let uri = `${process.env.BACKEND_FASTAPI_SERVER_URL}/terms/ofTheWeek`;
             const vote_Options = {
                 uri: uri,
@@ -716,12 +722,13 @@ module.exports = {
             };
 
             request(vote_Options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
-                        console.log(result);
+
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -732,9 +739,8 @@ module.exports = {
     },
     subscribePush: function(app) {
         app.post('/subscriber', (req, res) => {
-            console.log('Proxy received subscribe request, sending to server');
             const data = JSON.stringify(req.body);
-            console.log(data);
+
             const project_options = {
                 uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/subscribe`,
                 method: 'POST',
@@ -745,11 +751,12 @@ module.exports = {
             };
 
             request(project_options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -760,9 +767,8 @@ module.exports = {
     },
     unsubscribePush: function(app) {
         app.post('/unsubscriber', (req, res) => {
-            console.log('Proxy received unsubscribe request, sending to server');
             const data = JSON.stringify(req.body);
-            console.log(data);
+
             const project_options = {
                 uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/unsubscribe`,
                 method: 'POST',
@@ -773,11 +779,12 @@ module.exports = {
             };
 
             request(project_options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -789,9 +796,8 @@ module.exports = {
 
     notifyAddRemoveTerm: function(app) {
         app.post('/notifyAddRemoveTerm', (req, res) => {
-            console.log('Proxy received about new/removed term, sending to server');
             const data = JSON.stringify(req.body);
-            console.log(data);
+
             const project_options = {
                 uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/notifyTerms`,
                 method: 'POST',
@@ -802,11 +808,12 @@ module.exports = {
             };
 
             request(project_options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -818,9 +825,8 @@ module.exports = {
 
     notifyNewComment: function(app) {
         app.post('/notifyNewComment', (req, res) => {
-            console.log('Proxy received about new discussion, sending to server');
             const data = JSON.stringify(req.body);
-            console.log(data);
+
             const project_options = {
                 uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/notifyComments`,
                 method: 'POST',
@@ -831,11 +837,12 @@ module.exports = {
             };
 
             request(project_options, function(error, response) {
-                if (response && response.body) {
+                if (response.body) {
                     try {
                         const result = JSON.parse(response.body);
                         res.json(result);
                     } catch (e) {
+                        console.error(e);
                         res.json({ error: 'Something went wrong' });
                     }
                 } else {
@@ -845,4 +852,3 @@ module.exports = {
         });
     }
 };
-

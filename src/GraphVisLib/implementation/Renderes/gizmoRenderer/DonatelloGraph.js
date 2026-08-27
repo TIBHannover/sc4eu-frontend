@@ -4,15 +4,26 @@ import Animations from './Animations/Animations';
 import NodePrimitive from './renderingElements/NodePrimitive';
 import LinkPrimitive from './renderingElements/LinkPrimitive';
 import * as d3 from 'd3';
+
+function createForceRenderingPrimitives(container, data, typeClass) {
+    return container
+        .selectAll('.' + typeClass)
+        .data(data)
+        .enter()
+        .append('g')
+        .classed(typeClass, true)
+        .attr('id', function(d) {
+            return d.id();
+        });
+}
 export default class DonatelloGraph extends GraphRenderer {
     constructor() {
         super();
         this.GRAPH_TYPE = 'DONATELLO_RENDERING_TYPE';
-        const that = this;
         this.layoutHandler = null;
         this.renderingConfig = null;
         this.interactionHandler = new Interactions();
-        this.animationsHandler = new Animations(that);
+        this.animationsHandler = new Animations(this);
         this.layoutPaused = false;
         this.itemOfInterest = null;
         this.emitItemSelection = null;
@@ -62,14 +73,14 @@ export default class DonatelloGraph extends GraphRenderer {
         });
 
         this.nodes.forEach(node => {
-            const found = nodeLinkModel.nodes.find(item => item.__nodeLinkIdentifier === node.semanticReference().__nodeLinkIdentifier);
+            const found = nodeLinkModel.nodes.some(item => item.__nodeLinkIdentifier === node.semanticReference().__nodeLinkIdentifier);
             if (!found) {
                 delNodes.push(node);
             }
         });
 
         this.links.forEach(link => {
-            const found = nodeLinkModel.links.find(item => item.__nodeLinkIdentifier === link.semanticReference().__nodeLinkIdentifier);
+            const found = nodeLinkModel.links.some(item => item.__nodeLinkIdentifier === link.semanticReference().__nodeLinkIdentifier);
             if (!found && !link.__isHiddenML) {
                 delLinks.push(link);
             }
@@ -171,15 +182,12 @@ export default class DonatelloGraph extends GraphRenderer {
         const lengthOfLinks = this.links.length;
         const lastItem = lengthOfNodes - 1;
 
-        // create a propmise
-        const that = this;
-
         const nodeMorphing = new Promise((resolve, reject) => {
-            that.nodes.forEach((item, id) => {
-                that.animationsHandler.morphNode(null, item, id === lastItem, () => {
-                    that.nodes.forEach(renderingItem => {
+            this.nodes.forEach((item, id) => {
+                this.animationsHandler.morphNode(null, item, id === lastItem, () => {
+                    this.nodes.forEach(renderingItem => {
                         renderingItem.redraw();
-                        that.interactionHandler.nodeInteractions.reapplyNodeInteractions(renderingItem);
+                        this.interactionHandler.nodeInteractions.reapplyNodeInteractions(renderingItem);
                         resolve();
                     });
                 });
@@ -188,14 +196,8 @@ export default class DonatelloGraph extends GraphRenderer {
         await nodeMorphing;
         const lastLinkItem = lengthOfLinks - 1;
         const linkMorphing = new Promise((resolve, reject) => {
-            that.links.forEach((item, id) => {
+            this.links.forEach((item, id) => {
                 this.animationsHandler.morphLink(item, lastLinkItem === id, () => {
-                    // that.links.forEach(renderingItem => {
-                    //     renderingItem.redraw();
-                    //
-                    //     // TODO: check with links
-                    //     // this.interactionHandler.linkInteractions.reapplyLinkInteractions(renderingItem);
-                    // });
                     resolve();
                 });
             });
@@ -238,18 +240,6 @@ export default class DonatelloGraph extends GraphRenderer {
     };
 
     drawForceNodes = nodes => {
-        function createForceRenderingPrimitives(container, data, typeClass) {
-            return container
-                .selectAll('.' + typeClass)
-                .data(data)
-                .enter()
-                .append('g')
-                .classed(typeClass, true)
-                .attr('id', function(d) {
-                    return d.id();
-                });
-        }
-
         const f_nodeContainer = d3.select('#' + this.divRoot + '_forceNodes');
         f_nodeContainer.selectAll('g').remove();
         this.f_renderedNodes = createForceRenderingPrimitives(f_nodeContainer, nodes, 'FORCE_NODES');
@@ -270,12 +260,10 @@ export default class DonatelloGraph extends GraphRenderer {
         if (this.itemOfInterest === null) {
             item.isSelected(true);
             this.itemOfInterest = item;
-        } else {
-            if (item === this.itemOfInterest) {
-                item.isSelected(!item.isSelected());
-                if (!item.isSelected()) {
-                    this.itemOfInterest = null;
-                }
+        } else if (item === this.itemOfInterest) {
+            item.isSelected(!item.isSelected());
+            if (!item.isSelected()) {
+                this.itemOfInterest = null;
             } else {
                 this.itemOfInterest.isSelected(false);
                 item.isSelected(true);

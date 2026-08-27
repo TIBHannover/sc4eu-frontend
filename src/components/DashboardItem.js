@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
-import { deleteUser, getUserProjects, getUserRole, unregisterUserFromProject, updateUserRole } from '../network/UserProfileCalls';
+import { deleteUser, getUserProjects, getUserRole, unregisterUserFromProject, updateUserRole, addUserToProject } from '../network/UserProfileCalls';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon, FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
-import { addUserToProject } from '../network/UserProfileCalls';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { colorStyled } from '../styledComponents/styledColor';
 import AlertPopUp from './ReusableComponents/AlertPopUp';
-import styled from 'styled-components';
+import { withTheme } from '@emotion/react';
+import { CustomDropdownItem } from 'styledComponents/styledComponents';
 
 class DashboardItem extends Component {
     constructor(props) {
@@ -199,6 +198,7 @@ class DashboardItem extends Component {
         const availableProjects = this.props.projects.filter(
             project => !this.state.selectedProjectOptions.some(selectedProject => selectedProject?.value === project.value)
         );
+        const { theme } = this.props;
         return (
             <>
                 <td>{user.display_name}</td>
@@ -208,134 +208,130 @@ class DashboardItem extends Component {
                     {user.role === 'System Admin' ? (
                         user.role
                     ) : (
-                        <>
-                            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-                                <DropdownToggle caret style={{ width: '100%' }}>
-                                    {this.state.roleValue?.value}
-                                </DropdownToggle>
-                                <DropdownMenu style={{ width: '100%' }}>
-                                    <CustomDropdownItem className="custom-dropdown-item" header>
-                                        <p style={{ fontSize: '14px' }}> Select and change the role</p>
-                                    </CustomDropdownItem>
-                                    {this.props.roleOptions.map(option => (
-                                        <div key={option.value}>
-                                            <hr style={{ margin: '0px 0px 0px 0px' }} />
-                                            <DropdownItem
-                                                key={option.value}
-                                                onClick={() => this.updateUserRole(user, option)}
-                                                style={{ padding: '10px 0px 10px 15px' }}
-                                                disabled={this.state.roleValue?.value === option.value}
-                                            >
-                                                <div style={{ marginLeft: '3%', float: 'left' }}>{option.value}</div>
-                                                <FontAwesomeIcon
-                                                    hidden={this.state.roleValue?.value === option.value}
-                                                    icon={faPlus}
-                                                    size={'1x'}
-                                                    color={colorStyled.onSecondaryContainer}
-                                                    title={'Click to change user role'}
-                                                    style={{ float: 'right', marginRight: '3%' }}
-                                                />
-                                            </DropdownItem>
-                                        </div>
-                                    ))}
-                                </DropdownMenu>
-                            </Dropdown>
-                        </>
+                        <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+                            <DropdownToggle caret style={{ width: '100%' }}>
+                                {this.state.roleValue?.value}
+                            </DropdownToggle>
+                            <DropdownMenu style={{ width: '100%' }}>
+                                <CustomDropdownItem className="custom-dropdown-item" header>
+                                    <p style={{ fontSize: '14px' }}> Select and change the role</p>
+                                </CustomDropdownItem>
+                                {this.props.roleOptions.map(option => (
+                                    <div key={option.value}>
+                                        <hr style={{ margin: '0px 0px 0px 0px' }} />
+                                        <DropdownItem
+                                            key={option.value}
+                                            onClick={() => this.updateUserRole(user, option)}
+                                            style={{ padding: '10px 0px 10px 15px' }}
+                                            disabled={this.state.roleValue?.value === option.value}
+                                        >
+                                            <div style={{ marginLeft: '3%', float: 'left' }}>{option.value}</div>
+                                            <FontAwesomeIcon
+                                                hidden={this.state.roleValue?.value === option.value}
+                                                icon={faPlus}
+                                                size={'1x'}
+                                                color={theme.palette.text.primary}
+                                                title={'Click to change user role'}
+                                                style={{ float: 'right', marginRight: '3%' }}
+                                            />
+                                        </DropdownItem>
+                                    </div>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
                     )}
                 </td>
                 <td>
                     {user.role === 'System Admin' ? (
                         'All projects Access'
                     ) : (
-                        <>
-                            <Dropdown isOpen={this.state.userProjectDropDown} toggle={this.userProjectToggle}>
-                                <DropdownToggle caret style={{ width: '100%' }}>
-                                    List of Projects
-                                </DropdownToggle>
-                                <DropdownMenu style={{ width: '100%' }}>
-                                    <Scrollbars style={{ height: '50vh' }}>
-                                        <DropdownItem header>Add new project</DropdownItem>
-                                        {availableProjects.length > 0 ? (
-                                            availableProjects.map((project, index) => (
-                                                <div key={`project-${index}`}>
-                                                    <hr style={{ margin: '0px 0px 0px 0px' }} />
-                                                    <DropdownItem key={`project-${index}`} style={{ padding: '10px 0px 10px 15px' }}>
-                                                        <div
-                                                            style={{
-                                                                marginLeft: '3%',
-                                                                float: 'left',
-                                                                width: '80%',
-                                                                whiteSpace: 'normal',
-                                                                wordBreak: 'break-all'
-                                                            }}
-                                                        >
-                                                            {project.value}
-                                                        </div>
-                                                        <FontAwesomeIcon
-                                                            icon={faPlus}
-                                                            size={'1x'}
-                                                            color={colorStyled.onSecondaryContainer}
-                                                            title={'Click to add new project to this user'}
-                                                            style={{ float: 'right', marginRight: '3%' }}
-                                                            onClick={() => this.addNewProjectFromUser(user, project)}
-                                                        />
-                                                    </DropdownItem>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <div style={{ padding: '10px 0px 10px 0px' }}>
+                        <Dropdown isOpen={this.state.userProjectDropDown} toggle={this.userProjectToggle}>
+                            <DropdownToggle caret style={{ width: '100%' }}>
+                                List of Projects
+                            </DropdownToggle>
+                            <DropdownMenu style={{ width: '100%' }}>
+                                <Scrollbars style={{ height: '50vh' }}>
+                                    <DropdownItem header>Add new project</DropdownItem>
+                                    {availableProjects.length > 0 ? (
+                                        availableProjects.map((project, index) => (
+                                            <div key={`project-${index}`}>
                                                 <hr style={{ margin: '0px 0px 0px 0px' }} />
-                                                <DropdownItem header> User have all projects access</DropdownItem>
-                                            </div>
-                                        )}
-                                        <hr style={{ margin: '0px 0px 0px 0px' }} />
-                                        <DropdownItem header>List of Projects Access</DropdownItem>
-                                        {this.state.selectedProjectOptions?.length > 0 ? (
-                                            this.state.selectedProjectOptions.map((item, index) => (
-                                                <div key={'key' + index}>
-                                                    <hr style={{ margin: '0px 0px 0px 0px' }} />
-                                                    <DropdownItem key={'key' + index} style={{ padding: '10px 0px 10px 15px' }}>
-                                                        <div
-                                                            style={{
-                                                                marginLeft: '3%',
-                                                                float: 'left',
-                                                                width: '80%',
-                                                                whiteSpace: 'normal',
-                                                                wordBreak: 'break-all'
-                                                            }}
-                                                        >
-                                                            {item?.value}
-                                                        </div>
-                                                        <FontAwesomeIcon
-                                                            icon={faTrash}
-                                                            size={'1x'}
-                                                            color={colorStyled.onSecondaryContainer}
-                                                            title={'Click to unregister this user from this Project'}
-                                                            style={{ float: 'right', marginRight: '3%' }}
-                                                            onClick={() => this.deleteProjectFromUser(item, user)}
-                                                        />
-                                                    </DropdownItem>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <div style={{ padding: '10px 0px 10px 0px' }}>
-                                                <hr style={{ margin: '0px 0px 0px 0px' }} />
-                                                <DropdownItem
-                                                    style={{
-                                                        width: '80%',
-                                                        whiteSpace: 'normal',
-                                                        wordBreak: 'break-all'
-                                                    }}
-                                                    header
-                                                >
-                                                    User does not have any projects access
+                                                <DropdownItem key={`project-${index}`} style={{ padding: '10px 0px 10px 15px' }}>
+                                                    <div
+                                                        style={{
+                                                            marginLeft: '3%',
+                                                            float: 'left',
+                                                            width: '80%',
+                                                            whiteSpace: 'normal',
+                                                            wordBreak: 'break-all'
+                                                        }}
+                                                    >
+                                                        {project.value}
+                                                    </div>
+                                                    <FontAwesomeIcon
+                                                        icon={faPlus}
+                                                        size={'1x'}
+                                                        color={theme.palette.text.primary}
+                                                        title={'Click to add new project to this user'}
+                                                        style={{ float: 'right', marginRight: '3%' }}
+                                                        onClick={() => this.addNewProjectFromUser(user, project)}
+                                                    />
                                                 </DropdownItem>
                                             </div>
-                                        )}
-                                    </Scrollbars>
-                                </DropdownMenu>
-                            </Dropdown>
-                        </>
+                                        ))
+                                    ) : (
+                                        <div style={{ padding: '10px 0px 10px 0px' }}>
+                                            <hr style={{ margin: '0px 0px 0px 0px' }} />
+                                            <DropdownItem header> User have all projects access</DropdownItem>
+                                        </div>
+                                    )}
+                                    <hr style={{ margin: '0px 0px 0px 0px' }} />
+                                    <DropdownItem header>List of Projects Access</DropdownItem>
+                                    {this.state.selectedProjectOptions?.length > 0 ? (
+                                        this.state.selectedProjectOptions.map((item, index) => (
+                                            <div key={'key' + index}>
+                                                <hr style={{ margin: '0px 0px 0px 0px' }} />
+                                                <DropdownItem key={'key' + index} style={{ padding: '10px 0px 10px 15px' }}>
+                                                    <div
+                                                        style={{
+                                                            marginLeft: '3%',
+                                                            float: 'left',
+                                                            width: '80%',
+                                                            whiteSpace: 'normal',
+                                                            wordBreak: 'break-all'
+                                                        }}
+                                                    >
+                                                        {item?.value}
+                                                    </div>
+                                                    <FontAwesomeIcon
+                                                        icon={faTrash}
+                                                        size={'1x'}
+                                                        color={theme.palette.text.primary}
+                                                        title={'Click to unregister this user from this Project'}
+                                                        style={{ float: 'right', marginRight: '3%' }}
+                                                        onClick={() => this.deleteProjectFromUser(item, user)}
+                                                    />
+                                                </DropdownItem>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div style={{ padding: '10px 0px 10px 0px' }}>
+                                            <hr style={{ margin: '0px 0px 0px 0px' }} />
+                                            <DropdownItem
+                                                style={{
+                                                    width: '80%',
+                                                    whiteSpace: 'normal',
+                                                    wordBreak: 'break-all'
+                                                }}
+                                                header
+                                            >
+                                                User does not have any projects access
+                                            </DropdownItem>
+                                        </div>
+                                    )}
+                                </Scrollbars>
+                            </DropdownMenu>
+                        </Dropdown>
                     )}
                 </td>
                 <td>
@@ -377,22 +373,11 @@ DashboardItem.propTypes = {
     projects: PropTypes.array.isRequired,
     userData: PropTypes.object.isRequired,
     roleOptions: PropTypes.array.isRequired,
-    callback: PropTypes.func.isRequired,
-    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+    callback: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
     user: state.auth.user
 });
 
-export default compose(connect(mapStateToProps))(DashboardItem);
-
-const CustomDropdownItem = styled(DropdownItem)`
-    &&& {
-        padding-left: 0;
-        padding-right: 0;
-        margin-left: 0;
-        margin-right: 0;
-        text-align: center;
-    }
-`;
+export default compose(connect(mapStateToProps))(withTheme(DashboardItem));

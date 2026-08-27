@@ -18,7 +18,6 @@ export default class BaseComponent {
 
     execute = async () => {
         if (!this.inputDataAsJsonObject) {
-            console.log('No JSON object given as data input ');
             return;
         }
 

@@ -1,175 +1,226 @@
+// linkInteractions.js
+//
+// Migrated from D3 v3 to D3 v7.
+//
+// Breaking changes addressed:
+//
+//   d3.behavior.drag()       → d3.drag()
+//   .origin(fn)              → removed; D3 v7 uses event.subject which defaults
+//                              to the datum — equivalent behaviour for nodes
+//                              that already carry x and y properties
+//   'dragstart' / 'dragend'  → 'start' / 'end' event names
+//   d3.event                 → event parameter in every handler
+//   d3.event.x / .y          → dragEvent.x / dragEvent.y
+//   d3.event.sourceEvent     → dragEvent.sourceEvent
+//   d3.event.stopPropagation → clickEvent.stopPropagation() / dragEvent.sourceEvent.stopPropagation()
+//   d3.event.preventDefault  → clickEvent.preventDefault()
+//
+// Handler signature change (affects all drag and click handlers):
+//   D3 v3: handler(datum)
+//   D3 v7: handler(event, datum)  — event is always the first parameter
+
 import * as d3 from 'd3';
 
 export default class LinkInteractions {
-    constructor(graph) {
-        this.graphObject = graph;
-        this.dragBehaviour = null;
-        this.hasNodeClick = true; //TODO
-        this.hasNodeDobleClick = true; // TODO
-        this.hasLinkHover = true;
-        this.hasPropertyHover = true;
+  constructor(graph) {
+    this.graphObject        = graph;
+    this.dragBehaviour      = null;
+    this.hasNodeClick       = true;
+    this.hasNodeDobleClick  = true;
+    this.hasLinkHover       = true;
+    this.hasPropertyHover   = true;
+  }
+
+  setHoverEnabled = (value) => {
+    this.hasLinkHover       = value;
+    this.hasPropertyHover   = value;
+  };
+
+  setNodeClickEnabled = (value) => {
+    this.hasNodeClick = value;
+  };
+
+  setNodeDoubleClickEnabled = (value) => {
+    this.hasNodeDobleClick = value;
+  };
+
+  setDragEnabled = (value) => {
+    this.hasNodeDragEnabeld = value;
+  };
+
+  // ─── applyLinkInteractions ────────────────────────────────────────────────
+  // Sets up drag, hover, click and double-click behaviours on all links.
+  // D3 v7: d3.drag() replaces d3.behavior.drag().
+  // .origin() is removed — the datum's x/y properties serve as the drag origin
+  // automatically via the default subject resolution.
+
+  applyLinkInteractions = () => {
+    if (!this.graphObject) {
+      console.error('NO GRAPH OBJECT FOUND');
+      return;
     }
 
-    setHoverEnabled = val => {
-        this.hasLinkHover = val;
-        this.hasPropertyHover = val;
-    };
-    setNodeClickEnabled = val => {
-        this.hasNodeClick = val;
-    };
-    setNodeDoubleClickEnabled = val => {
-        this.hasNodeDobleClick = val;
-    };
-    setDragEnabled = val => {
-        this.hasNodeDragEnabeld = val;
-    };
+    // D3 v7: drag event names are 'start' and 'end' (not 'dragstart'/'dragend').
+    // Handlers now receive (dragEvent, datum) instead of (datum).
+    this.dragBehaviour = d3
+      .drag()
+      .on('start', this.dragStart)
+      .on('drag',  this.drag)
+      .on('end',   this.dragEnd);
 
-    applyLinkInteractions = () => {
-        if (!this.graphObject) {
-            console.error('NO GRAPH OBJECT FOUND');
-            return;
-        }
-
-        // Drag,
-        this.dragBehaviour = d3.behavior
-            .drag()
-            .origin(function(d) {
-                return d;
-            })
-            .on('dragstart', this.dragStart)
-            .on('drag', this.drag)
-            .on('dragend', this.dragEnd);
-
-        /** DEFINING OWN INTERNAL HOVER BEHAVIOR -- DO NOT OVERWRITE **/
-        const that = this;
-        this.hoverBehaviour = function(d) {
-            if (that.hasLinkHover) {
-                d.on('mouseover', that.linkHoverIn);
-                d.on('mouseout', that.linkHoverOut);
-            }
-        };
-        this.propertyHoverBehaviour = function(d) {
-            if (that.hasPropertyHover) {
-                d.on('mouseover', that.propertyHoverIn);
-                d.on('mouseout', that.propertyHoverOut);
-            }
-        };
-
-        this.doubleClickBehavoir = function(d) {
-            d.fixed = !d.fixed;
-        };
-        const links = this.graphObject.links;
-        if (links.length > 0) {
-            links.forEach(l => {
-                if (l.groupRoot) {
-                    l.groupRoot.call(this.hoverBehaviour);
-                    // try to get the parentOf shape;
-                    if (l.renderingShape) {
-                        const parentNode = l.renderingShape.node().parentNode;
-                        if (parentNode) {
-                            const shapeRoot = d3.select(parentNode);
-                            if (shapeRoot) {
-                                shapeRoot.call(this.propertyHoverBehaviour);
-                                if (this.hasNodeClick) {
-                                    shapeRoot.call(this.propertyClick);
-                                }
-                                if (this.hasNodeDobleClick) {
-                                    shapeRoot.call(this.propertyDoubleClick);
-                                }
-                                shapeRoot.call(this.dragBehaviour);
-                            }
-                        }
-                    }
-                }
-            });
-        }
+    this.hoverBehaviour = (selection) => {
+      if (this.hasLinkHover) {
+        selection.on('mouseover', this.linkHoverIn);
+        selection.on('mouseout',  this.linkHoverOut);
+      }
     };
 
-    linkHoverIn(d) {
-        const shape = d.renderingLine;
-        shape.style('stroke', 'red');
+    this.propertyHoverBehaviour = (selection) => {
+      if (this.hasPropertyHover) {
+        selection.on('mouseover', this.propertyHoverIn);
+        selection.on('mouseout',  this.propertyHoverOut);
+      }
+    };
+
+    const links = this.graphObject.links;
+
+    links.forEach((link) => {
+      if (!link.groupRoot) {
+        return;
+      }
+
+      link.groupRoot.call(this.hoverBehaviour);
+
+      if (!link.renderingShape) {
+        return;
+      }
+
+      const parentNode = link.renderingShape.node().parentNode;
+      if (!parentNode) {
+        return;
+      }
+
+      const shapeRoot = d3.select(parentNode);
+      if (!shapeRoot) {
+        return;
+      }
+
+      shapeRoot.call(this.propertyHoverBehaviour);
+
+      if (this.hasNodeClick) {
+        shapeRoot.call(this.propertyClick);
+      }
+
+      if (this.hasNodeDobleClick) {
+        shapeRoot.call(this.propertyDoubleClick);
+      }
+
+      shapeRoot.call(this.dragBehaviour);
+    });
+  };
+
+  // ─── Hover handlers ───────────────────────────────────────────────────────
+  // D3 v7: mouseover/mouseout handlers receive (mouseEvent, datum).
+  // The datum is the second parameter — renamed from d to linkDatum/propertyDatum
+  // to make the type of object being received explicit.
+
+  linkHoverIn = (mouseEvent, linkDatum) => {
+    linkDatum.renderingLine.style('stroke', 'red');
+  };
+
+  linkHoverOut = (mouseEvent, linkDatum) => {
+    linkDatum.renderingLine.style(
+      'stroke',
+      linkDatum.renderingConfig().style.link.lineColor
+    );
+  };
+
+  propertyHoverIn = (mouseEvent, propertyDatum) => {
+    propertyDatum.ref.renderingShape.style('fill', 'red');
+
+    if (propertyDatum.mouseEntered === true) {
+      return;
     }
 
-    linkHoverOut(d) {
-        const shape = d.renderingLine;
-        shape.style('stroke', d.renderingConfig().style.link.lineColor);
+    propertyDatum.mouseEntered  = true;
+    propertyDatum.keepRendering = true;
+
+    if (propertyDatum.unblockRendering) {
+      propertyDatum.keepRendering    = false;
+      propertyDatum.unblockRendering = false;
+    }
+  };
+
+  propertyHoverOut = (mouseEvent, propertyDatum) => {
+    propertyDatum.ref.renderingShape.style(
+      'fill',
+      propertyDatum.ref.renderingConfig().style.propertyNode.bgColor
+    );
+
+    if (propertyDatum.ref.__internalType === 'multiLink') {
+      d3.selectAll('.MultiLinkHoverButton').remove();
     }
 
-    propertyHoverIn = d => {
-        const shape = d.ref.renderingShape;
-        shape.style('fill', 'red');
-        // const that = this;
-        if (d.mouseEntered === true) {
-            return;
-        }
-        d.mouseEntered = true;
-        d.keepRendering = true;
+    propertyDatum.mouseEntered = false;
+  };
 
-        if (d.unblockRendering) {
-            d.keepRendering = false;
-            d.unblockRendering = false;
-        }
-    };
+  // ─── Click handlers ───────────────────────────────────────────────────────
+  // D3 v7: click handlers inside .on() receive (clickEvent, datum).
+  // d3.event no longer exists — use the clickEvent parameter directly.
 
-    propertyHoverOut(d) {
-        const shape = d.ref.renderingShape;
-        shape.style('fill', d.ref.renderingConfig().style.propertyNode.bgColor);
-        if (d.ref.__internalType === 'multiLink') {
-            d3.selectAll('.MultiLinkHoverButton').remove();
-        }
-        d.mouseEntered = false;
+  propertyDoubleClick = (selection) => {
+    selection.on('dblclick', (clickEvent, propertyDatum) => {
+      clickEvent.stopPropagation();
+      clickEvent.preventDefault();
+      this.graphObject.animationsHandler.collapseExpandMultiLinks(
+        propertyDatum.ref
+      );
+    });
+  };
+
+  propertyClick = (selection) => {
+    selection.on('click', (clickEvent) => {
+      clickEvent.stopPropagation();
+      clickEvent.preventDefault();
+    });
+  };
+
+  // ─── Drag handlers ────────────────────────────────────────────────────────
+  // D3 v7: drag handlers receive (dragEvent, datum) — event first, datum second.
+  // dragEvent.x / dragEvent.y replace d3.event.x / d3.event.y.
+  // dragEvent.sourceEvent replaces d3.event.sourceEvent.
+
+  dragStart = (dragEvent, nodeDatum) => {
+    if (!this.hasNodeDragEnabeld) {
+      return;
     }
 
-    propertyDoubleClick = d => {
-        // add Handlers
-        const that = this;
-        d.on('dblclick', function(item) {
-            d3.event.stopPropagation();
-            d3.event.preventDefault();
-            that.graphObject.animationsHandler.collapseExpandMultiLinks(item.ref);
-        });
-    };
-    propertyClick(d) {
-        d.on('click', function(item) {
-            d3.event.stopPropagation();
-            d3.event.preventDefault();
-        });
+    dragEvent.sourceEvent.stopPropagation();
+    nodeDatum.fixed = true;
+    nodeDatum.groupRoot.style('cursor', 'pointer');
+  };
+
+  drag = (dragEvent, nodeDatum) => {
+    dragEvent.sourceEvent.stopPropagation();
+
+    nodeDatum.setPosition(dragEvent.x, dragEvent.y);
+    nodeDatum.px = dragEvent.x;
+    nodeDatum.py = dragEvent.y;
+    nodeDatum.ref.updateRenderingPosition();
+
+    const layoutHandler = nodeDatum.layoutHandlerReference;
+    if (layoutHandler?.force && layoutHandler.forceLayoutPaused === false) {
+      layoutHandler.resumeForce();
     }
+  };
 
-    // split the dragger functions for better reuse;
-    dragStart = d => {
-        if (this.hasNodeDragEnabeld) {
-            d3.event.sourceEvent.stopPropagation(); // Prevent panning
-            d.fixed = true;
-            d.groupRoot.style('cursor', 'pointer');
-            // console.log('[', d.x, ',', d.y, ']');
-        }
-    };
+  dragEnd = (dragEvent, nodeDatum) => {
+    nodeDatum.fixed = false;
+    nodeDatum.groupRoot.style('cursor', 'auto');
 
-    drag = d => {
-        // if (this.hasNodeDragEnabeld) {
-        d3.event.sourceEvent.stopPropagation(); // Prevent panning
-        d.setPosition(d3.event.x, d3.event.y);
-        d.px = d3.event.x;
-        d.py = d3.event.y;
-        d.ref.updateRenderingPosition();
-        if (d.layoutHandlerReference && d.layoutHandlerReference.force) {
-            if (d.layoutHandlerReference.forceLayoutPaused === false) {
-                d.layoutHandlerReference.resumeForce();
-            }
-        }
-        // }
-    };
-
-    dragEnd = d => {
-        // if (this.hasNodeDragEnabeld) {
-        d.fixed = false;
-        d.groupRoot.style('cursor', 'auto');
-        if (d.layoutHandlerReference && d.layoutHandlerReference.force) {
-            if (d.layoutHandlerReference.forceLayoutPaused === false) {
-                d.layoutHandlerReference.resumeForce();
-            }
-        }
-        // }
-    };
+    const layoutHandler = nodeDatum.layoutHandlerReference;
+    if (layoutHandler?.force && layoutHandler.forceLayoutPaused === false) {
+      layoutHandler.resumeForce();
+    }
+  };
 }

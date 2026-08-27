@@ -5,7 +5,7 @@ export function useDeleteDiscussion() {
     return useMutation({
         mutationFn: async (resourceId) => {
             // Replace with actual delete logic, e.g., API call
-            return Promise.resolve(resourceId);
+            return resourceId;
         },
         onMutate: async (resourceId) => {
             await queryClient.setQueryData(['discussions'], (prevDiscussions) =>

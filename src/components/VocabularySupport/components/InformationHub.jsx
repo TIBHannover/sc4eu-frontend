@@ -1,44 +1,45 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useMediaQuery } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import DatePicker from 'react-datepicker';
+
 import {
-    Box,
-    Typography,
     Avatar,
-    List,
-    ListItem,
-    ListItemText,
-    Paper,
-    TextField,
-    InputAdornment,
-    Tooltip,
-    Checkbox,
-    FormControlLabel,
-    Grid,
-    ListItemAvatar,
-    Tab,
-    CircularProgress,
     AvatarGroup,
     Badge,
+    Box,
+    Button,
+    Checkbox,
+    CircularProgress,
+    Divider,
+    FormControlLabel,
+    Grid,
+    InputAdornment,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    MenuItem,
+    Paper,
     Popover,
     Select,
-    MenuItem,
-    Button
+    Tab,
+    Tabs,
+    TextField,
+    Tooltip,
+    Typography,
+    useTheme,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import DatePicker from 'react-datepicker';
-import { stringAvatar } from './CommentsSection';
-import Divider from '@mui/material/Divider';
-import { Tabs } from '@mui/material/';
-import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
-import { StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
-import PropTypes from 'prop-types';
 import CheckIcon from '@mui/icons-material/Check';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
-import { colorStyled } from '../../../styledComponents/styledColor';
-import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
-import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
-import { useMediaQuery } from '@material-ui/core';
+import SearchIcon from '@mui/icons-material/Search';
+
+import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
+import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import { ConsensusProgress } from '../utils/Consensus';
+import { stringAvatar } from './CommentsSection';
+import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -49,7 +50,33 @@ const SORT_BY_OPTIONS = Object.freeze({
     MOST_COMMENTS: 'most_comments'
 });
 
+const DecisionBadgeAvatar = ({ decision }) => {
+    const theme = useTheme();
+
+    return (
+        <Badge
+            overlap="circular"
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
+            sx={{
+                '.MuiBadge-badge': {
+                    backgroundColor: decision.choice === 'approved' ? theme.palette.secondary.main : theme.palette.error.main,
+                    color: decision.choice === 'approved' ? theme.palette.secondary.contrastText : theme.palette.error.contrastText,
+                    width: 16,
+                    height: 16,
+                    fontSize: 12,
+                    border: `1px solid ${theme.palette.divider}`
+                }
+            }}
+        >
+            <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
+        </Badge>
+    );
+};
+
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
+    const theme = useTheme();
+
     const [searchText, setSearchText] = useState('');
     const [showOnlyMentions, setShowOnlyMentions] = useState(false);
     const [dateFrom, setDateFrom] = useState(null);
@@ -94,7 +121,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             const termUuid = weeklyTerm?.term_uuid;
 
             if (!termUuid) {
-                console.log('No term UUID found');
                 return;
             }
 
@@ -118,28 +144,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         } finally {
             setWeekTermLoading(false);
         }
-    };
-
-    const DecisionBadgeAvatar = ({ decision }) => {
-        return (
-            <Badge
-                overlap="circular"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
-                sx={{
-                    '& .MuiBadge-badge': {
-                        backgroundColor: decision.choice === 'approved' ? colorStyled.primary : colorStyled.error,
-                        color: decision.choice === 'approved' ? colorStyled.onPrimary : colorStyled.onError,
-                        width: 16,
-                        height: 16,
-                        fontSize: 12,
-                        border: `1px solid ${colorStyled.outlineVariant}`
-                    }
-                }}
-            >
-                <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
-            </Badge>
-        );
     };
 
     const discussionsMap = useMemo(() => {
@@ -303,7 +307,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                         fontSize: '0.75rem'
                                     }}
                                 >
-                                    {new Date(term.modified).toLocaleDateString() + ' ' + new Date(term.modified).toLocaleTimeString()}
+                                    {new Date(term.modified).toLocaleDateString() + ', ' + new Date(term.modified).toLocaleTimeString()}
                                 </Typography>
 
                                 {term.hasVote && (
@@ -318,7 +322,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                             sx={{
                                                 gap: 0.5,
                                                 marginLeft: 2,
-                                                '& .MuiAvatar-root': {
+                                                '.MuiAvatar-root': {
                                                     width: 24,
                                                     height: 24,
                                                     fontSize: 12
@@ -410,6 +414,34 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         }
     };
 
+    const renderContent = () => {
+        if (loading) {
+            return (
+                <Box>
+                    <CircularProgress size={24} />
+                    <Typography variant="body2" sx={{ ml: 2 }}>
+                        Loading data...
+                    </Typography>
+                </Box>
+            );
+        }
+
+        if (filteredTerms.length === 0) {
+            return (
+                <Typography variant="body2" sx={{ mt: 10 }}>
+                    {activeTab === 0 ? 'No discussions found matching your criteria' : 'No active reviews found'}
+                </Typography>
+            );
+        }
+
+        return filteredTerms.map((term, index) => (
+            <Box key={term.identifier}>
+                {renderTermItem(term)}
+                {index < filteredTerms.length - 1 && <Divider sx={{ mx: 2 }} />}
+            </Box>
+        ));
+    };
+
     return (
         <Grid container spacing={1}>
             {termOfWeek && showWeekTerm && (
@@ -432,7 +464,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     top: 0,
                     zIndex: 1000,
                     backgroundColor: 'background.paper',
-                    borderBottom: `1px solid ${colorStyled.outlineVariant}`,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
                     pb: 1
                 }}
             >
@@ -443,11 +475,11 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                             variant="outlined"
                             size="small"
                             sx={{
-                                bgcolor: colorStyled.tertiary,
-                                color: colorStyled.onTertiary,
+                                bgcolor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
                                 '&:hover': {
-                                    bgcolor: colorStyled.tertiaryContainer,
-                                    color: colorStyled.onTertiaryContainer
+                                    bgcolor: `${theme.palette.secondary.main}BF`,
+                                    color: theme.palette.secondary.contrastText
                                 }
                             }}
                         >
@@ -543,27 +575,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
             <Grid item xs={12} sx={{ overflowY: 'auto', flexGrow: 1 }}>
                 <Paper elevation={0}>
-                    <List disablePadding>
-                        {loading ? (
-                            <Box>
-                                <CircularProgress size={24} />
-                                <Typography variant="body2" sx={{ ml: 2 }}>
-                                    Loading data...
-                                </Typography>
-                            </Box>
-                        ) : filteredTerms.length > 0 ? (
-                            filteredTerms.map((term, index) => (
-                                <Box key={term.identifier}>
-                                    {renderTermItem(term)}
-                                    {index < filteredTerms.length - 1 && <Divider sx={{ mx: 2 }} />}
-                                </Box>
-                            ))
-                        ) : (
-                            <Typography variant="body2" sx={{ mt: 10 }}>
-                                {activeTab === 0 ? 'No discussions found matching your criteria' : 'No active reviews found'}
-                            </Typography>
-                        )}
-                    </List>
+                    <List disablePadding>{renderContent()}</List>
                 </Paper>
             </Grid>
         </Grid>

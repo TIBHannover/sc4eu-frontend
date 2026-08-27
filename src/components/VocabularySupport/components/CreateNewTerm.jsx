@@ -1,33 +1,34 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import {
+    Autocomplete,
     Box,
-    TextField,
+    Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    List,
-    ListItemText,
-    Button,
-    Chip,
-    Typography,
     IconButton,
+    List,
     ListItemButton,
-    Tabs,
+    ListItemText,
+    Paper,
     Tab,
-    Paper
+    Tabs,
+    TextField,
+    Typography,
+    useTheme,
 } from '@mui/material';
-import PropTypes from 'prop-types';
-import { Autocomplete } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
 import RemoveIcon from '@mui/icons-material/Remove';
+import SearchIcon from '@mui/icons-material/Search';
+
 import { getAutoCompleteResult, getJumpToResult } from '../VocabularySearch/api/search';
-import { colorStyled } from '../../../styledComponents/styledColor';
 
 const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handleCreateTerm, handleCancelCreateTerm }) => {
-    const [searchQuery, setSearchQuery] = useState('');
+    const theme = useTheme();
     const [autoCompleteResults, setAutoCompleteResults] = useState([]);
     const [jumpToResults, setJumpToResults] = useState([]);
     const [altLabelsList, setAltLabelsList] = useState(Array.isArray(row?.original?.altLabel) ? row.original.altLabel : ['']);
@@ -36,7 +37,6 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
     const [errors, setErrors] = useState({ label: '', description: '' });
 
     const handleSearch = async value => {
-        setSearchQuery(value);
         if (value.length > 2) {
             const [autoCompleteResult, jumpToResult] = await Promise.all([
                 getAutoCompleteResult({ searchQuery: value }, 5),
@@ -51,22 +51,25 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
     };
 
     const handleAddTermFromTerminology = async value => {
+        let termDescription = 'Not Available';
+        if (value.definition?.[0]) {
+            if (typeof value.definition[0] === 'object') {
+                termDescription = value.definition[0].value;
+            } else {
+                termDescription = value.definition[0];
+            }
+        }
         const url = `${process.env.REACT_APP_TS_ONTOLOGIES_URL}${encodeURIComponent(value.ontologyId)}/terms?iri=${encodeURIComponent(value.iri)}`;
         const termFromTerminology = {
             label: value.label[0],
             id: value.iri,
-            description: value.definition?.[0]
-                ? typeof value.definition[0] === 'object'
-                    ? value.definition[0].value
-                    : value.definition[0]
-                : 'Not Available',
+            description: termDescription,
             seeAlso: `url:${url}`,
             status: 'draft',
             created: new Date().toLocaleDateString('en-CA'),
             modified: new Date().toISOString()
         };
         await handleCreateTerm({ values: termFromTerminology, table: table });
-        console.log('Adding term from terminology: ', termFromTerminology);
     };
 
     const handleSelectTerm = term => {
@@ -99,7 +102,6 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
             // Creating/editing a new term
             if (validateForm()) {
                 const allCells = row.getAllCells();
-                console.log('allCells: ', allCells);
                 const tableCells = allCells.filter(cell => cell.column.id !== 'mrt-row-expand' && cell.column.id !== 'mrt-row-actions');
 
                 const newTerm = tableCells.reduce((acc, cell) => {
@@ -154,6 +156,13 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
         setActiveTab(newValue);
     };
 
+    let saveButtonText = 'Save';
+    if (activeTab === 0 && selectedTerm) {
+        saveButtonText = 'Add Selected Term';
+    } else if (displayType === 'create') {
+        saveButtonText = 'Create';
+    }
+
     return (
         <Dialog
             open={true}
@@ -192,7 +201,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                         <Autocomplete
                             freeSolo
                             options={autoCompleteResults.map(result => result.autosuggest)}
-                            PaperComponent={props => <Paper {...props} style={{ backgroundColor: '#f5f5f5' }} />}
+                            PaperComponent={props => <Paper {...props} style={{ backgroundColor: theme.palette.background.paper }} />}
                             renderInput={params => (
                                 <TextField
                                     {...params}
@@ -208,10 +217,13 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                                             </React.Fragment>
                                         )
                                     }}
+                                    sx={{
+                                        backgroundColor: theme.palette.background.paper,
+                                        color: theme.palette.text.primary
+                                    }}
                                 />
                             )}
                             onInputChange={(_, value) => handleSearch(value)}
-                            onChange={(_, value) => setSearchQuery(value)}
                         />
 
                         {jumpToResults.length > 0 && (
@@ -220,9 +232,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                                     Suggested Terms
                                 </Typography>
                                 <List>
-                                    {jumpToResults.map((result, index) => (
+                                    {jumpToResults.map(result => (
                                         <ListItemButton
-                                            key={index}
+                                            key={result.ori}
                                             selected={selectedTerm && selectedTerm.iri === result.iri}
                                             onClick={() => handleSelectTerm(result)}
                                         >
@@ -305,9 +317,9 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                 <Button
                     onClick={handleCancel}
                     sx={{
-                        backgroundColor: colorStyled.primary,
-                        color: colorStyled.onPrimary,
-                        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                        backgroundColor: theme.palette.secondary.main,
+                        color: theme.palette.secondary.contrastText,
+                        '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                     }}
                 >
                     Cancel
@@ -316,12 +328,12 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
                     onClick={handleSave}
                     variant="contained"
                     sx={{
-                        backgroundColor: colorStyled.primary,
-                        color: colorStyled.onPrimary,
-                        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                        backgroundColor: theme.palette.secondary.main,
+                        color: theme.palette.secondary.contrastText,
+                        '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.contrastText }
                     }}
                 >
-                    {activeTab === 0 && selectedTerm ? 'Add Selected Term' : displayType === 'create' ? 'Create' : 'Save'}
+                    {saveButtonText}
                 </Button>
             </DialogActions>
         </Dialog>
@@ -342,7 +354,6 @@ export default CreateNewTerm;
 
 const validateRequired = value => !!value.length;
 function validateTerm(term) {
-    console.log('validating term', term);
     return {
         label: !validateRequired(term.label) ? 'Label is Required' : '',
         description: !validateRequired(term.description) ? 'Description is Required' : ''

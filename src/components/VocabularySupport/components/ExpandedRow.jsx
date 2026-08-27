@@ -1,22 +1,42 @@
-import { Box, Typography, TextField, Button, Tooltip, IconButton, Link, FormControlLabel, RadioGroup, Radio, Paper, Chip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import PropTypes from 'prop-types';
-import CommentsSection from './CommentsSection';
-import { colorStyled } from '../../../styledComponents/styledColor';
-import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
-import VoteView from './VoteView';
-import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
-import FadingNotification from '../../ReusableComponents/FadingNotification';
-import InfoIcon from '@mui/icons-material/Info';
-import { StyledTooltip } from '../../../styledComponents/styledComponents';
-import LastConsensusView from './LastConsensusView';
-import { commitChanges } from '../utils/CommitChanges';
-import { useQueryClient } from '@tanstack/react-query';
-import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { useQueryClient } from '@tanstack/react-query';
+
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Button,
+    Chip,
+    FormControlLabel,
+    IconButton,
+    Link,
+    Paper,
+    Radio,
+    RadioGroup,
+    TextField,
+    Tooltip,
+    Typography,
+    useTheme,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import InfoIcon from '@mui/icons-material/Info';
+
+import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
+import { SMALL_SCREEN_WIDTH, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { commitChanges } from '../utils/CommitChanges';
+import CommentsSection from './CommentsSection';
+import FadingNotification from '../../ReusableComponents/FadingNotification';
+import LastConsensusView from './LastConsensusView';
+import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
+import VoteView from './VoteView';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
+    const theme = useTheme();
+
     const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
     const [activeAgreement, setActiveAgreement] = useState(false);
@@ -59,6 +79,13 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         getLastConsensus();
     }, [isConsensusSubmitted, isConsensusClosed, term.identifier]);
 
+    const buttonStyle = {
+        padding: '10px 20px',
+        backgroundColor: theme.palette.secondary.main,
+        color: theme.palette.secondary.contrastText,
+        '&:hover': { backgroundColor: `${theme.palette.secondary.main}99`, color: theme.palette.secondary.contrastText }
+    };
+
     const splitAltLabels = altLabel => {
         return altLabel ? altLabel.split(',') : [''];
     };
@@ -91,10 +118,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         updateTerm(updatedTerm);
         setHasUncommittedChanges(true);
         setEditMode(false);
-    };
-
-    const handleClose = () => {
-        handleClosePopup();
     };
 
     const renderSeeAlso = () => {
@@ -228,76 +251,42 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     </StyledTooltip>
                                 )}
                             </Typography>
-                            <Typography>
-                                <Tooltip title="Unique identifier for the term">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>Identifier:</strong> {updatedTerm.identifier}
-                            </Typography>
-                            <Typography>
-                                <Tooltip title="Provides Human-readable version of a resource's name. In the final agreed Term only one preferred and many alternative labels exist">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
+                            <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
                                 <strong>Label:</strong> {updatedTerm.label}
                             </Typography>
-                            {/* Alternative labels */}
                             {updatedTerm.altLabel &&
                                 splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                                    <Typography key={'altLabel' + index}>
-                                        <Tooltip title="Provides an alternative Label">
-                                            <IconButton style={{ marginBottom: '4px' }} size="small">
-                                                <HelpOutlineIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
+                                    <Typography key={'altLabel' + index} sx={{ marginLeft: 4, marginBottom: 1 }}>
                                         <strong>Alternative Label {index + 1}:</strong> {label}
                                     </Typography>
                                 ))}
                             {/* Description */}
-                            <Typography>
-                                <Tooltip title="Provides a human-readable description of a Term">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
+                            <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
                                 <strong>Description:</strong> {updatedTerm.description}
                             </Typography>
                             {/* See also */}
-                            <Typography>
-                                <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>See Also:</strong> {renderSeeAlso()}
-                            </Typography>
-                            <Typography>
-                                <Tooltip title="Provides the creation date of the term">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>Created at:</strong> {updatedTerm.created}
-                            </Typography>
-                            <Typography>
-                                <Tooltip title="Provides the last modified date of the term">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>Last modified:</strong> {updatedTerm.modified}
-                            </Typography>
+
                             {/* Status */}
                             <Typography>
-                                <Tooltip title="Status: Draft, Reject, Accept">
-                                    <IconButton style={{ marginBottom: '4px' }} size="small">
+                                <Tooltip title="Term readiness status: Draft, Reject, Accept">
+                                    <IconButton size="small">
                                         <HelpOutlineIcon fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
-                                <strong>Status:</strong> {updatedTerm.status}
+                                <strong>Status:</strong>{' '}
+                                <Typography
+                                    component="span"
+                                    sx={{
+                                        color: theme =>
+                                            ({
+                                                reject: theme.palette.error.main,
+                                                draft: theme.palette.primary.main,
+                                                accept: theme.palette.success.main
+                                            }[updatedTerm.status?.toLowerCase()] || theme.palette.text.primary)
+                                    }}
+                                >
+                                    {updatedTerm.status}
+                                </Typography>
                                 {lastConsensus && (
                                     <Chip
                                         label="Check last consensus"
@@ -307,19 +296,77 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     />
                                 )}
                             </Typography>
+                            <Accordion
+                                disableGutters
+                                elevation={0}
+                                sx={{
+                                    mt: 2,
+                                    backgroundColor: 'transparent',
+                                    border: theme => `1px solid ${theme.palette.divider}`,
+                                    borderRadius: 1,
+                                    '&:before': { display: 'none' },
+                                    '&.Mui-expanded': { margin: 0 }
+                                }}
+                            >
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon fontSize="small" />}
+                                    sx={{
+                                        minHeight: 36,
+                                        '& .MuiAccordionSummary-content': { margin: '8px 0' }
+                                    }}
+                                >
+                                    <Typography variant="body1">
+                                        More technical details{' '}
+                                        <Typography variant="caption" fontSize="0.85rem" fontStyle="italic">
+                                            (id, created and modifed dates, see Also)
+                                        </Typography>
+                                    </Typography>
+                                </AccordionSummary>
 
+                                <AccordionDetails sx={{ pt: 0 }}>
+                                    <Typography>
+                                        <Tooltip title="Unique identifier for the term">
+                                            <IconButton size="small">
+                                                <HelpOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <strong>Identifier:</strong> {updatedTerm.identifier}
+                                    </Typography>
+
+                                    <Typography>
+                                        <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
+                                            <IconButton size="small">
+                                                <HelpOutlineIcon fontSize="small" />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <strong>See Also:</strong> {renderSeeAlso()}
+                                    </Typography>
+
+                                    <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
+                                        <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
+                                    </Typography>
+
+                                    <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
+                                        <strong>Last modified:</strong>{' '}
+                                        {new Date(updatedTerm.modified).toLocaleDateString() +
+                                            ', ' +
+                                            new Date(updatedTerm.modified).toLocaleTimeString()}
+                                    </Typography>
+                                </AccordionDetails>
+                            </Accordion>
                             <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px', flexWrap: 'wrap' }}>
-                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile ? true : false}>
+                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
                                     Edit Term
                                 </Button>
                                 {!activeAgreement && (
                                     <Tooltip title="Decide if the term's status is ready to be changed">
                                         <Button
                                             disabled={activeAgreement}
+                                            hidden={currentUser.role !== "System Admin"}
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
                                             sx={buttonStyle}
-                                            fullWidth={isMobile ? true : false}
+                                            fullWidth={isMobile}
                                         >
                                             Start consensus
                                         </Button>
@@ -331,7 +378,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                             onClick={() => setViewAgreementMode(true)}
                                             variant="contained"
                                             sx={buttonStyle}
-                                            fullWidth={isMobile ? true : false}
+                                            fullWidth={isMobile}
                                         >
                                             View ongoing consensus
                                         </Button>
@@ -365,7 +412,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             sx={{
                                 width: { xs: '100%', xl: '50%' },
                                 padding: '10px',
-                                backgroundColor: '#f4f4f4',
+                                backgroundColor: theme.palette.background.paper,
                                 borderRadius: '8px',
                                 overflowY: 'auto',
                                 maxHeight: 'calc(100vh - 100px)'
@@ -398,7 +445,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         }}
                     >
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                            <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
+                            <Typography variant="subtitle2" sx={{ marginBottom: '5px', color: theme.palette.text.primary }}>
                                 <strong>Label:</strong>
                             </Typography>
                             <TextField
@@ -413,7 +460,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         </Box>
                         {splitAltLabels(updatedTerm.altLabel).map((label, index) => (
                             <Box key={'altLabel_' + index} sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <Typography variant="subtitle2" sx={{ marginTop: '10px' }}>
+                                <Typography variant="subtitle2" sx={{ marginTop: '10px', color: theme.palette.text.primary }}>
                                     <strong>Alternative Label {index + 1}:</strong>
                                 </Typography>
                                 <TextField
@@ -433,7 +480,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                         )}
                         {/* Other fields */}
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                            <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
+                            <Typography variant="subtitle2" sx={{ marginBottom: '5px', color: theme.palette.text.primary }}>
                                 <strong>Description:</strong>
                             </Typography>
                             <TextField
@@ -447,7 +494,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                             />
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
-                            <Typography variant="subtitle2" sx={{ marginBottom: '5px' }}>
+                            <Typography variant="subtitle2" sx={{ marginBottom: '5px', color: theme.palette.text.primary }}>
                                 <strong>See Also:</strong>
                             </Typography>
                             <TextField
@@ -471,31 +518,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                     </Box>
                 </Box>
             )}
-
-            <Typography
-                variant="body2"
-                sx={{
-                    mt: 2,
-                    textAlign: 'center',
-                    color: 'text.secondary',
-                    fontSize: { xs: '0.85rem', sm: '0.9rem', md: '0.95rem' }
-                }}
-            >
-                Press <strong>Esc</strong> to go back to the table or{' '}
-                <Typography
-                    component="span"
-                    onClick={handleClose}
-                    sx={{
-                        cursor: 'pointer',
-                        textDecoration: 'underline',
-                        color: colorStyled.primary,
-                        fontWeight: 500,
-                        '&:hover': { color: `${colorStyled.primary}B3` }
-                    }}
-                >
-                    click here to close
-                </Typography>
-            </Typography>
         </Box>
     );
 };
@@ -511,10 +533,3 @@ ExpandedRow.propTypes = {
 };
 
 export default ExpandedRow;
-
-const buttonStyle = {
-    padding: '10px 20px',
-    backgroundColor: colorStyled.primary,
-    color: colorStyled.onPrimary,
-    '&:hover': { backgroundColor: `${colorStyled.primary}99`, color: colorStyled.onPrimary }
-};

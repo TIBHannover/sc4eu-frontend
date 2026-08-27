@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Modal, Button, Backdrop, CircularProgress } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Box, Modal, Button, Backdrop, CircularProgress, useTheme } from '@mui/material';
 import { ThumbUp } from '@mui/icons-material';
-import { colorStyled } from '../styledComponents/styledColor';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
-
+import { StyledButton, StyledSpan } from 'styledComponents/styledComponents';
 const style = {
     position: 'fixed',
     top: '50%',
@@ -29,7 +26,7 @@ const closeBtnStyle = {
 const GoogleSurvey = () => {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-
+    const theme = useTheme();
     const handleModalToggle = () => {
         setOpen(!open);
     };
@@ -66,7 +63,7 @@ const GoogleSurvey = () => {
             >
                 <Box sx={style}>
                     <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Survey</h2>
-                    <button style={closeBtnStyle} onClick={handleModalToggle} onKeyDown={() => {}}>
+                    <button type="button" style={closeBtnStyle} onClick={handleModalToggle} onKeyDown={() => {}}>
                         X
                     </button>
                     {isLoading ? (
@@ -89,8 +86,8 @@ const GoogleSurvey = () => {
                         style={{
                             marginTop: '10px',
                             marginLeft: '10px',
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText
                         }}
                         onClick={handleModalToggle}
                     >
@@ -103,32 +100,3 @@ const GoogleSurvey = () => {
 };
 
 export default GoogleSurvey;
-
-const StyledButton = styled(Button)`
-    display: flex;
-    justify-content: space-around;
-    right: 60px;
-    min-width: 150px;
-    background-color: ${colorStyled.primary};
-    color: ${colorStyled.onPrimary};
-    color: white;
-    border-radius: 4px;
-
-    @media (max-width: 1300px) {
-        right: 50px;
-        min-width: 50px;
-    }
-
-    :hover {
-        background-color: ${colorStyled.primaryContainer};
-        color: ${colorStyled.onPrimaryContainer};
-    }
-`;
-
-const StyledSpan = styled('span')`
-    display: block;
-
-    @media (max-width: 1300px) {
-        display: none;
-    }
-`;

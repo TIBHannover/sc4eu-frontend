@@ -12,7 +12,8 @@ import {
     MenuItem,
     Menu,
     TextField,
-    Tooltip
+    Tooltip,
+    useTheme
 } from '@mui/material';
 import { IconButton, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
@@ -24,13 +25,19 @@ import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { colorStyled } from '../../../styledComponents/styledColor';
 
 const menuFilterTypes = {
     comment: 'Filter by comment text...',
     term: 'Filter by term label...',
     author: 'Filter by author...'
 };
+
+export const COMMENT_EMOJI_SET = [
+    { code: 'thumbs_up', emoji: '👍', label: 'Like' },
+    { code: 'thumbs_down', emoji: '👎', label: 'Dislike' },
+    { code: 'smile', emoji: '😊', label: 'Smile' },
+    { code: 'celebration', emoji: '🎉', label: 'Celebration' }
+];
 
 export const getGroupedMentionsByCommentInstant = (terms, discussions, mentionedUser) => {
     let merged = [];
@@ -62,14 +69,14 @@ const reduceCommentsMentioned = (discussions, mentionedUser) => {
 };
 
 const groupMentionedByCommentInstant = mentioned => {
-    const grouped = [];
+    const grouped = {};
 
     mentioned.forEach(i => {
         i.comments.forEach(comment => {
             const dateKey = new Date(comment.timestamp).toLocaleDateString();
             const labelKey = i.label;
             if (!grouped[dateKey]) {
-                grouped[dateKey] = [];
+                grouped[dateKey] = {};
             }
 
             if (!grouped[dateKey][labelKey]) {
@@ -101,6 +108,7 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
     const [filterAnchorEl, setFilterAnchorEl] = useState(null);
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
+    const theme = useTheme();
 
     const isWithinRange = dateParam => {
         const date = new Date(dateParam);
@@ -236,7 +244,7 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                                                     <Typography
                                                         variant="body2"
                                                         sx={{
-                                                            color: colorStyled.onBackground,
+                                                            color: theme.palette.secondary.contrastText,
                                                             cursor: 'pointer',
                                                             display: 'inline-block'
                                                         }}
@@ -247,8 +255,8 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                                                 </Tooltip>
                                             </Box>
                                             <List sx={{ pl: 2 }}>
-                                                {group.comments.map((comment, i) => (
-                                                    <ListItem key={i} disableGutters>
+                                                {group.comments.map(comment => (
+                                                    <ListItem key={comment.id} disableGutters>
                                                         <ListItemAvatar
                                                             onClick={() => handleFilterByAuthor(comment.author)}
                                                             sx={{ cursor: 'pointer' }}

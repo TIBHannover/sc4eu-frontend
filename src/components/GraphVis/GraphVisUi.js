@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { Container, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Button, Input } from 'reactstrap';
+import { Container, Button, Input } from 'reactstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MapperModule from '../../GraphVisLib/implementation/MapperModule';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle, faPauseCircle } from '@fortawesome/free-solid-svg-icons';
 import { selectVisualNotation } from 'redux/actions/globalUI_actions';
-import styled, { keyframes } from 'styled-components';
-import { colorStyled } from 'styledComponents/styledColor';
 import html2canvas from 'html2canvas';
 import ScreenCapture from '../ScreenCapture';
 import ScreenCaptureModal from '../Modals/ScreenCaptureModal';
@@ -15,6 +13,8 @@ import FadingNotification from '../ReusableComponents/FadingNotification';
 import { getJSON_ModelForOntologyWithQuery } from '../../network/GetOntologyData';
 import GraphVisUiQueryPopup from './GraphVisUiQueryPopup';
 import SparqlQueryInputModal from './SparqlQueryInputModal';
+import { withTheme } from '@emotion/react';
+import { StyledHeaderButton, SelectionSideBar, SelectionRightSidebar } from 'styledComponents/styledComponents';
 
 class GraphVisUi extends Component {
     constructor(props) {
@@ -57,11 +57,11 @@ class GraphVisUi extends Component {
             freeformQuery: this.defaultSparqlQuery,
             visualBuilderQuery: ''
         };
-        this.queryGraphRef = React.createRef();
         this.componentRef = React.createRef();
     }
 
     componentDidMount() {
+        const { theme } = this.props;
         // add a flag to check if the tab is actually active
         if (this.props.visualizationTabIsActive === false) {
             return;
@@ -82,7 +82,7 @@ class GraphVisUi extends Component {
                 node_mouseSingleClick: true,
                 node_mouseDoubleClick: true,
                 node_hasNodeSelection: true,
-                graphBgColor: colorStyled.secondaryContainer, // could be customizable
+                graphBgColor: theme.palette.background.default,
                 configSelected: 'Default',
                 link_mouseDrag: true,
                 link_mouseHover: true
@@ -139,7 +139,6 @@ class GraphVisUi extends Component {
 
     // helper:
     getPrefixOfURI = uri => {
-        //TODO this needs to be fixed properly, check why the uir is empty
         if (!uri) {
             return;
         }
@@ -162,7 +161,7 @@ class GraphVisUi extends Component {
         const usedPrefixesOProps = [];
         this.props.resources.forEach(resource => {
             const res = this.getPrefixOfURI(resource.resourceURI);
-            if (usedPrefixesNodes.indexOf(res) === -1) {
+            if (!usedPrefixesNodes.includes(res)) {
                 usedPrefixesNodes.push(res);
             }
         });
@@ -170,11 +169,10 @@ class GraphVisUi extends Component {
             .filter(item => item.type[0] === 'owl:ObjectProperty')
             .forEach(relation => {
                 const res = this.getPrefixOfURI(relation.resourceURI);
-                if (usedPrefixesOProps.indexOf(res) === -1) {
+                if (!usedPrefixesOProps.includes(res)) {
                     usedPrefixesOProps.push(res);
                 }
             });
-        // TODO: improve the default colors based on types:
         const confNodes = this.graph.renderingConfig.getNodeConfigFromType('owl:class');
         let defaultValue = '#000';
         if (confNodes) {
@@ -260,39 +258,6 @@ class GraphVisUi extends Component {
         );
     };
 
-    createDropDownForNotations = () => {
-        return (
-            <div>
-                <Dropdown
-                    color="secondary"
-                    size="sm"
-                    isOpen={this.state.visSelectionOpen}
-                    style={{ paddingTop: '2px' }}
-                    toggle={() => {
-                        this.setState(prevState => ({
-                            visSelectionOpen: !prevState.visSelectionOpen
-                        }));
-                    }}
-                >
-                    <DropdownToggle caret style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary, height: '35px' }}>
-                        Notation: {this.props.visualNotation}
-                    </DropdownToggle>
-                    <DropdownMenu>
-                        {this.possibleNotations.map((item, id) => {
-                            return (
-                                <DropdownItem
-                                    key={'graphNotationDropDown_' + id}
-                                    onClick={() => this.props.selectVisualNotation({ ui_visual_notation_selector: item })}
-                                >
-                                    {item}
-                                </DropdownItem>
-                            );
-                        })}
-                    </DropdownMenu>
-                </Dropdown>
-            </div>
-        );
-    };
     renderCustomizationOptions = () => {
         const fontsize = this.state.selectedItem.renderingConfig().fontStyle.fontSize.split('px')[0];
         const overwriteOffset = this.state.selectedItem.renderingConfig().options.overwriteOffset;
@@ -373,7 +338,7 @@ class GraphVisUi extends Component {
             link.download = 'screenshot.png';
             document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
+            link.remove();
         });
     };
 
@@ -411,7 +376,7 @@ class GraphVisUi extends Component {
         const query = { sparql_query: sparqlQuery };
         if (query) {
             const result = await getJSON_ModelForOntologyWithQuery(query);
-            if (result && result.resources && result.relations) {
+            if (result?.resources && result.relations) {
                 this.setState({
                     showQueryPopup: true,
                     queryGraphData: result
@@ -427,18 +392,24 @@ class GraphVisUi extends Component {
     };
 
     render() {
+        const { theme } = this.props;
         if (this.props.visualizationTabIsActive === false) {
             return <div>This should never be visible</div>;
         }
+
+        let ontologyName = 'N/A';
+
+        if (this.props.selectedOntology) {
+            if (this.props.selectedOntology.name.length > 42) {
+                ontologyName = `${this.props.selectedOntology.name.substring(0, 40)}...`;
+            } else {
+                ontologyName = this.props.selectedOntology.name;
+            }
+        }
+
         return (
             <div>
-                <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
-                    {this.props.selectedOntology
-                        ? this.props.selectedOntology.name.length > 42
-                            ? `${this.props.selectedOntology.name.substring(0, 40)}...`
-                            : this.props.selectedOntology.name
-                        : 'N/A'}
-                </div>
+                <div style={{ textAlign: 'center', fontSize: '1.5em' }}>{ontologyName}</div>
                 <div
                     style={{
                         display: 'flex',
@@ -447,8 +418,8 @@ class GraphVisUi extends Component {
                         marginBottom: '10px',
                         paddingLeft: '10px',
                         paddingRight: '10px',
-                        background: colorStyled.secondaryContainer,
-                        color: colorStyled.onPrimary,
+                        background: theme.palette.background.default,
+                        color: theme.palette.text.primary,
                         position: 'relative',
                         borderTopLeftRadius: '10px',
                         borderTopRightRadius: '10px',
@@ -467,19 +438,14 @@ class GraphVisUi extends Component {
                     >
                         <Icon style={{ fontSize: '2.0em', verticalAlign: '0.825em' }} icon={this.state.layoutPlay ? faPauseCircle : faPlayCircle} />
                     </Button>
-                    {/*TODO: Enable UML Notation view once the error has been resolved*/}
-                    {/*/ As of Now we disabled the VOWl TO UML view in Graph Visualization because when we are switching from VOWL to
-                    UML it is throwing error The Problem could be in all-services\frontend\src\GraphVisLib\implementation\Renderes\gizmoRenderer\LineTools.js
-                     it has function computeIntersectionPointsWithProperty has domain and range Parameter so sometimes domain.x has value,
-                      but it is returning 0 same as the range so that could be problem but still further investigation needed  */}
-                    {/*{this.createDropDownForNotations()}*/}
+
                     <Button
                         onClick={() => {
                             this.graph.zoomToExtent();
                         }}
                         style={{
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -490,8 +456,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: theme.palette.secondary.main,
+                            color: theme.palette.secondary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -503,8 +469,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.primary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -516,8 +482,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.primary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -529,8 +495,8 @@ class GraphVisUi extends Component {
                     </Button>
                     <Button
                         style={{
-                            backgroundColor: colorStyled.primary,
-                            color: colorStyled.onPrimary,
+                            backgroundColor: theme.palette.primary.main,
+                            color: theme.palette.primary.contrastText,
                             textAlign: 'center',
                             marginLeft: '5px',
                             marginTop: '2px',
@@ -544,15 +510,15 @@ class GraphVisUi extends Component {
 
                 <div id="MainRenderingContainer" ref={this.componentRef}>
                     <SelectionSideBar expanded={this.state.leftSideBarExpanded}>
-                        <StyledButton
+                        <StyledHeaderButton
                             expanded={this.state.leftSideBarExpanded}
                             onClick={() => {
                                 this.setState(prevState => ({ leftSideBarExpanded: !prevState.leftSideBarExpanded }));
                             }}
-                            style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                         >
                             {this.state.leftSideBarExpanded ? '<' : '>'}
-                        </StyledButton>
+                        </StyledHeaderButton>
                         {this.state.leftSideBarExpanded && (
                             <div>
                                 <h3>Customization Options</h3>
@@ -572,7 +538,7 @@ class GraphVisUi extends Component {
                                 onClick={() => {
                                     this.setState(prevState => ({ rightSideBarExpanded: !prevState.rightSideBarExpanded }));
                                 }}
-                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                             >
                                 {this.state.rightSideBarExpanded ? '>' : '<'}
                             </Button>
@@ -646,7 +612,6 @@ GraphVisUi.propTypes = {
     prefixList: PropTypes.object.isRequired,
     DonatelloGraph: PropTypes.object.isRequired,
     visualNotation: PropTypes.string.isRequired,
-    selectVisualNotation: PropTypes.func.isRequired,
     selectedOntology: PropTypes.object.isRequired
 };
 
@@ -654,69 +619,4 @@ const mapDispatchToProps = dispatch => ({
     selectVisualNotation: payload => dispatch(selectVisualNotation(payload))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GraphVisUi);
-
-const expandContentContainerAnimationRight = ({ expanded, width }) => {
-    return keyframes`
-        from {
-            right: ${expanded ? -width : 0}px;
-        }
-        to {
-            right: ${expanded ? 0 : -width}px;
-
-        }
-    `;
-};
-export const SelectionSideBar = styled.div`
-    position: absolute;
-    width: ${props => (props.expanded ? '350px' : '0')};
-    height: calc(100% - 140px);
-    transition: width 0.3s ease;
-    background-color: white;
-    border: ${props => (props.expanded ? '1px solid black' : 'none')};
-
-    :focus {
-        outline: none;
-    }
-
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    word-break: none;
-    white-space: nowrap;
-`;
-
-const StyledButton = styled(Button)`
-    position: absolute;
-    left: ${props => (props.expanded ? '350px' : '0px')};
-    transition: left 0.3s ease;
-`;
-
-export const SelectionRightSidebar = styled.div`
-    background-color: red;
-    border: 1px solid black;
-    color: black;
-    width: 350px;
-    height: calc(100% - 140px);
-    background: white;
-
-    :focus {
-        outline: none;
-    }
-
-    ::-moz-focus-inner {
-        border: 0;
-    }
-
-    word-break: none;
-    white-space: nowrap;
-
-    border-bottom: 1px solid black;
-    padding: 2px;
-    position: relative;
-    animation-name: ${expandContentContainerAnimationRight};
-    animation-duration: 400ms;
-    // opacity: 0.5;
-    right: ${props => (props.expanded ? 0 : -props.width)}px;
-`;
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(GraphVisUi));

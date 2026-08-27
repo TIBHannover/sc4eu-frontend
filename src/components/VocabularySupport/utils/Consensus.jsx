@@ -1,55 +1,66 @@
-import { Box, Tooltip, Typography, LinearProgress } from '@mui/material';
-import { colorStyled } from '../../../styledComponents/styledColor';
+import { Box, Tooltip, Typography, LinearProgress, useTheme } from '@mui/material';
 import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
 import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
+import React from 'react';
 
 export const ConsensusProgress = ({ term }) => {
+    const theme = useTheme();
+
     const THRESHOLD_COUNT = 4;
     const approvedCount = term.decisions.filter(e => e.choice === 'approved').length;
     const rejectedCount = term.decisions.filter(e => e.choice === 'rejected').length;
     const totalVotes = approvedCount + rejectedCount;
     const leadingCount = Math.max(approvedCount, rejectedCount);
-    const progressColour = approvedCount >= rejectedCount ? colorStyled.secondaryFixed : colorStyled.error;
+    const progressColour = approvedCount >= rejectedCount ? theme.palette.secondary.main : theme.palette.error.main;
     const barValue = Math.min((leadingCount / THRESHOLD_COUNT) * 100, 100);
     const majority = totalVotes > 0 ? Math.round((leadingCount / totalVotes) * 100) : 0;
     const isOneVoteShort = THRESHOLD_COUNT - leadingCount === 1;
     const isMobile = useMediaQuery(`(max-width: ${SMALL_SCREEN_WIDTH})`);
 
+    const renderContent = () => {
+        if (totalVotes === 0) {
+            return (
+                <Typography variant="caption" color="text.secondary">
+                    No votes yet
+                </Typography>
+            );
+        }
+        if (leadingCount >= THRESHOLD_COUNT && majority >= 75) {
+            return (
+                <Typography variant="caption" color="text.secondary">
+                    {majority === 100 ? 'Unanimous' : 'Majority'} consensus reached{' '}
+                    <CelebrationOutlinedIcon sx={{ color: theme.palette.secondary.main }} />
+                </Typography>
+            );
+        }
+
+        return (
+            <>
+                <Typography variant="caption" color="text.secondary">
+                    Consensus progress:
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                    {leadingCount}/{THRESHOLD_COUNT} votes · {majority}% majority{' '}
+                    {isOneVoteShort && (
+                        <Tooltip title="Just one vote left to reach consensus">
+                            <LocalFireDepartmentOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+                        </Tooltip>
+                    )}
+                </Typography>
+            </>
+        );
+    };
+
     return (
         <Box sx={{ mx: 1 }}>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'space-between' }}>
-                {totalVotes === 0 ? (
-                    <Typography variant="caption" color="text.secondary">
-                        No votes yet
-                    </Typography>
-                ) : leadingCount >= THRESHOLD_COUNT && majority >= 75 ? (
-                    <Typography variant="caption" color="text.secondary">
-                        {majority === 100 ? 'Unanimous' : 'Majority'} consensus reached{' '}
-                        <CelebrationOutlinedIcon sx={{ color: colorStyled.secondaryFixed }} />
-                    </Typography>
-                ) : (
-                    <>
-                        <Typography variant="caption" color="text.secondary">
-                            Consensus progress:
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                            {leadingCount}/{THRESHOLD_COUNT} votes · {majority}% majority{' '}
-                            {isOneVoteShort && (
-                                <Tooltip title="Just one vote left to reach consensus">
-                                    <LocalFireDepartmentOutlinedIcon sx={{ color: colorStyled.primaryFixed }} />
-                                </Tooltip>
-                            )}
-                        </Typography>
-                    </>
-                )}
-            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: isMobile ? 'flex-start' : 'space-between' }}>{renderContent()}</Box>
             <LinearProgress
                 variant="determinate"
                 value={barValue}
                 sx={{
-                    '& .MuiLinearProgress-bar': {
+                    '.MuiLinearProgress-bar': {
                         backgroundColor: progressColour
                     }
                 }}

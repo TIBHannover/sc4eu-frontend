@@ -1,7 +1,5 @@
 import React from 'react';
-import { Card, CardActionArea, CardActions, CardContent, CardMedia, Tooltip } from '@mui/material';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
+import { CardActionArea, CardActions, CardContent, CardMedia, useTheme } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { Edit, Delete } from '@mui/icons-material';
@@ -15,26 +13,11 @@ import public_collection from '../assets/images/public_collection.png';
 import sc4eu_collection from '../assets/images/logo.png';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
 import PropTypes from 'prop-types';
-
-const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
-    & .MuiTooltip-tooltip {
-        background-color: ${colorStyled.inverseSurface};
-        color: ${colorStyled.inverseOnSurface};
-        font-size: 14px;
-        padding: 12px 16px;
-        border-radius: 8px;
-        max-width: 300px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
-        margin: 8px;
-    }
-    & .MuiTooltip-arrow {
-        color: ${colorStyled.inverseSurface};
-    }
-`;
+import { StyledOntologyTooltip, StyledCard } from 'styledComponents/styledComponents';
 
 function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology }) {
     const history = useHistory();
-
+    const theme = useTheme();
     const getCollectionImage = (projectName, accessType) => {
         const isSC3 =
             projectName.toLowerCase().includes('sc3') ||
@@ -81,7 +64,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
     };
 
     return (
-        <StyledTooltip
+        <StyledOntologyTooltip
             title={
                 <React.Fragment>
                     <Typography component="div" style={{ fontWeight: 'bold', marginBottom: '8px' }}>
@@ -133,7 +116,7 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                                 variant="subtitle2"
                                 fontWeight={'bold'}
                                 style={{
-                                    color: `${colorStyled.onTertiary}D9`,
+                                    color: `${theme.palette.secondary.contrastText}`,
                                     marginLeft: '8px',
                                     fontSize: '1rem',
                                     pointerEvents: 'auto'
@@ -157,16 +140,16 @@ function ProjectCard({ project, onEdit, onDelete, redux_addProject, redux_remove
                             padding: '8px'
                         }}
                     >
-                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete} sx={{ color: colorStyled.onTertiary }}>
+                        <IconButton aria-label="edit" onClick={handleEdit} disabled={!project.canDelete}>
                             <Edit />
                         </IconButton>
-                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete} sx={{ color: colorStyled.onTertiary }}>
+                        <IconButton aria-label="delete" onClick={handleDelete} disabled={!project.canDelete}>
                             <Delete />
                         </IconButton>
                     </CardActions>
                 </div>
             </StyledCard>
-        </StyledTooltip>
+        </StyledOntologyTooltip>
     );
 }
 
@@ -178,22 +161,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(null, mapDispatchToProps)(ProjectCard);
-
-const StyledCard = styled(Card)`
-    && {
-        background-color: ${colorStyled.tertiary};
-        color: ${colorStyled.onTertiary};
-        padding: 3px;
-        border-radius: 20px;
-        transition: transform 0.2s;
-        width: 300px;
-        height: 300px;
-        &:hover {
-            transform: scale(1.05);
-            background-color: ${colorStyled.tertiary}CC;
-        }
-    }
-`;
 
 ProjectCard.propTypes = {
     project: PropTypes.shape({

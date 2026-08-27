@@ -24,7 +24,8 @@ const routes = {
     LOGIN_FAILED: '/loginFailedRedirect',
     RESET_PASSWORD: '/resetPassword',
     ANNOTATOR: '/AnnotatorPage',
-    PARTNERS: '/partners'
+    PARTNERS: '/partners',
+    MPC: '/mpc-survey'
 };
 
 export default routes;
