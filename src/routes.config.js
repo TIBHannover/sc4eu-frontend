@@ -26,6 +26,7 @@ import resetPassword from './pages/resetPassword';
 import { EurostatPortal } from './components/eurostat/EutostatPortal';
 import { BullWhipEffect } from './components/eurostat/BullWhipEffect';
 import AnnotatorPage from './pages/AnnotatorPage';
+import { MpcSurvey } from 'components/mpc-visualisation/MpcSurvey';
 
 const routes = [
     {
@@ -49,6 +50,12 @@ const routes = [
         path: ROUTES.WEBPROTEGE,
         exact: true,
         component: WebProtege
+    },
+
+    {
+        path: ROUTES.MPC,
+        exact: true,
+        component: MpcSurvey
     },
 
     {

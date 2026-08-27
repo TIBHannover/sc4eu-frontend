@@ -1,7 +1,7 @@
 #!/bin/bash
 
-npm install &&
+npm install --ignore-scripts &&
 cd server 
-npm install && 
+npm install --ignore-scripts && 
 echo "Done" 
 echo "Use npm start command to start the server" 

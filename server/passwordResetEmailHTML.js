@@ -1,4 +1,4 @@
-module.exports = (callbackURL, displayName) => {
+function passwordResetEmailPage (callbackURL, displayName) {
     return {
         body: `<head>
 
@@ -179,3 +179,5 @@ module.exports = (callbackURL, displayName) => {
 </body>`
     };
 };
+
+module.exports = passwordResetEmailPage;

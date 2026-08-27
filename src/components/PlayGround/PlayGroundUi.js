@@ -59,34 +59,31 @@ class PlayGroundUI extends Component {
         fileInput.click();
     };
 
-    handleFileUpload = event => {
+    handleFileUpload = async event => {
         // handling file UPLOAD
         const file = event.target.files[0];
+
+        if (event.target.files.length === 0) {
+            return;
+        }
+
         if (this.clickOrigin === 'TTL' && !file.name.endsWith('.ttl')) {
-            console.log('ERROR: not a ttl file');
             return;
         }
 
         if (this.clickOrigin === 'VOWLJSON' && !file.name.endsWith('.json')) {
-            console.log('ERROR: not a JSON file');
             return;
         }
 
-        const reader = new FileReader();
-        if (event.target.files.length === 0) {
-            return;
-        }
-        reader.onloadend = async e => {
-            if (this.clickOrigin === 'VOWLJSON') {
-                this.setState({ isLoadingJSON: true, hasUploadJSON: true, datatype: 'VOWLJSON', dataToTransform: reader.result });
-            }
-            if (this.clickOrigin === 'TTL') {
-                this.setState({ isLoadingTTL: true, hasUploadTTL: true, datatype: 'TTL', dataToTransform: reader.result });
-            }
-        };
+        const text = await file.text();
 
-        reader.readAsText(file);
-    };
+        if (this.clickOrigin === 'VOWLJSON') {
+            this.setState({ isLoadingJSON: true, hasUploadJSON: true, datatype: 'VOWLJSON', dataToTransform: text });
+        }
+        if (this.clickOrigin === 'TTL') {
+            this.setState({ isLoadingTTL: true, hasUploadTTL: true, datatype: 'TTL', dataToTransform: text });
+        }
+    };  
 
     render() {
         return (

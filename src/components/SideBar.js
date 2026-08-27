@@ -1,107 +1,58 @@
 import React, { useState } from 'react';
-import 'react-modern-drawer/dist/index.css';
-import styled from 'styled-components';
-import ROUTES from 'constants/routes';
-import { NavLink } from 'react-router-dom';
-import { reverse } from 'named-urls';
-import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import { MAX_WIDTH, StyledBadge } from '../styledComponents/styledComponents';
-import Cookies from 'js-cookie';
+import { compose } from 'redux';
 import { connect, useSelector } from 'react-redux';
-import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
-import List from '@mui/material/List';
-import { ListItem, Tooltip } from '@mui/material';
-import Divider from '@mui/material/Divider';
+import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
-import MetaDataModal from './Modals/metaData';
+import { reverse } from 'named-urls';
+
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import { ListItem, Tooltip, useTheme } from '@mui/material';
 import {
-    HomeOutlined,
-    LiveHelpOutlined,
-    LibraryBooksOutlined,
-    PrivacyTipOutlined,
-    ApprovalOutlined,
-    FormatAlignJustifyOutlined,
     AccountTreeOutlined,
+    AnalyticsOutlined,
+    ApprovalOutlined,
+    ArticleOutlined,
+    BarChartOutlined,
+    BorderAllOutlined,
+    BorderColorOutlined,
+    CollectionsOutlined,
+    DifferenceOutlined,
+    DiscountOutlined,
+    FormatAlignJustifyOutlined,
+    HandshakeOutlined,
+    HomeOutlined,
     HubOutlined,
     LegendToggleOutlined,
-    BorderColorOutlined,
+    LibraryBooksOutlined,
+    LiveHelpOutlined,
     MenuBookOutlined,
-    CollectionsOutlined,
-    DiscountOutlined,
-    ArticleOutlined,
-    DifferenceOutlined,
     NoteAddOutlined,
-    AnalyticsOutlined,
-    BarChartOutlined,
-    TimelineOutlined,
-    BorderAllOutlined,
-    HandshakeOutlined
+    PrivacyTipOutlined,
+    StackedBarChartOutlined,
+    TimelineOutlined
 } from '@mui/icons-material';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
+import ROUTES from 'constants/routes';
+import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
+import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
 import { getOntologyById } from '../network/ontologyIndexing';
 import { getWidocoDocumentation } from '../network/GetOntologyData';
-import { URL_GET_HTML_FILE_WIDOCO } from '../constants/services';
-import AlertPopUp from './ReusableComponents/AlertPopUp';
-import MaterialUIPopUp from './ReusableComponents/MaterialUIPopUp';
-import ChangesTimeline from './ondet/ChangesTimeline';
-import { useGetDiscussion } from './VocabularySupport/hooks/useGetDiscussion';
 import { getMentionedCommentsLength } from './VocabularySupport/utils/Discussions';
-import { compose } from 'redux';
+import { useGetDiscussion } from './VocabularySupport/hooks/useGetDiscussion';
+import AlertPopUp from './ReusableComponents/AlertPopUp';
+import ChangesTimeline from './ondet/ChangesTimeline';
+import MaterialUIPopUp from './ReusableComponents/MaterialUIPopUp';
+import MetaDataModal from './Modals/metaData';
+import { fontStyled } from '../styledComponents/styledFont';
+import { StyledBadge, StyledLink, StyledText, StyledSideBarButton } from '../styledComponents/styledComponents';
 
-const StyledText = styled.span`
-    margin-left: 20px;
-    white-space: nowrap;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        margin-left: 20px;
-    }
-`;
-
-const StyledLink = styled(NavLink)`
-    width: 100%;
-    height: 40px;
-    display: inline-block;
-    border-radius: 4px;
-    padding: 7px 10px 7px 11px;
-    background: transparent;
-    color: ${colorStyled.onSurface};
-    text-decoration: none !important;
-    font-size: 14px;
-    transition: background-color 0.15s ease;
-
-    :hover {
-        background-color: ${colorStyled.primary}1A;
-        color: ${colorStyled.onSurface};
-    }
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: 30px;
-        padding: 3px 10px 10px 5px;
-    }
-`;
-
-const StyledButton = styled.button`
-    width: 100%;
-    height: 40px;
-    display: inline-block;
-    padding: 7px 100px 7px 11px;
-    background: transparent;
-    color: ${colorStyled.onSurface};
-    border-radius: 4px;
-    border: none;
-    font-size: 14px;
-    transition: background-color 0.15s ease;
-
-    :hover {
-        background-color: ${colorStyled.primary}1A;
-        color: ${colorStyled.onSurface};
-    }
-`;
+import 'react-modern-drawer/dist/index.css';
 
 const SideBar = ({ isOpen, onNavigate, user }) => {
-    const modeOfOperations = Cookies.get(MODE_OF_OPERATIONS);
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
     const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: user !== 0 });
     let allTermsDiscussion = fetchedDiscussion || [];
@@ -109,7 +60,7 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
 
     const selectedProject = useSelector(state => state.ResourceRelationModelReducer.project);
     const selectedOntology = useSelector(state => state.ResourceRelationModelReducer.ontology);
-    const [isActiveTab, setIsActiveTab] = useState(modeOfOperations ? modeOfOperations : 'hybrid');
+    const [isActiveTab, setIsActiveTab] = useState('hybrid');
     const [isMetaDataModalOpen, setMetaDataModalOpen] = useState(false);
     const [isLoadingForWidoco, setIsLoadingForWidoco] = useState(false);
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
@@ -120,10 +71,11 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
         Cookies.set(MODE_OF_OPERATIONS, val);
         setIsActiveTab(val);
     };
-    
+
+    const theme = useTheme();
     const ActiveStyle = {
-        backgroundColor: colorStyled.secondaryContainer,
-        color: colorStyled.onSecondaryContainer
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.text.primary
     };
 
     const getOntologyFileForDocumentation = async () => {
@@ -261,7 +213,7 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                             <FormatAlignJustifyOutlined color="action" />
                                             <StyledText>Text</StyledText>
                                         </StyledLink>
-                                        <StyledButton
+                                        <StyledSideBarButton
                                             title="metaData"
                                             onClick={() => {
                                                 setMetaDataModalOpen(true);
@@ -270,7 +222,7 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                         >
                                             <DiscountOutlined color="action" />
                                             <StyledText>Meta Data</StyledText>
-                                        </StyledButton>
+                                        </StyledSideBarButton>
                                         {isMetaDataModalOpen && (
                                             <MetaDataModal
                                                 toggle={() => {
@@ -279,10 +231,10 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                                 isModalOpen={isMetaDataModalOpen}
                                             />
                                         )}
-                                        <StyledButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
+                                        <StyledSideBarButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
                                             <ArticleOutlined color="action" />
                                             <StyledText>Onto Document</StyledText>
-                                        </StyledButton>
+                                        </StyledSideBarButton>
                                         {isLoadingForWidoco && (
                                             <div className="text-center text-primary" style={{ marginTop: '10px' }}>
                                                 <h6 className="h6">
@@ -295,13 +247,13 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                         )}
                                         {selectedOntology.lookup_type === 'online' || selectedOntology.lookup_type === 'online-gitlab' ? (
                                             <>
-                                                <StyledButton
+                                                <StyledSideBarButton
                                                     title="Ontology Git commit Comparison"
                                                     onClick={() => setIsOntoComparisonModalOpen(true)}
                                                 >
                                                     <DifferenceOutlined color="action" />
                                                     <StyledText>Version Compare</StyledText>
-                                                </StyledButton>
+                                                </StyledSideBarButton>
                                                 {isOntoComparisonModalOpen && (
                                                     <MaterialUIPopUp
                                                         open={isOntoComparisonModalOpen}
@@ -368,8 +320,12 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         {/* <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR} onClick={onNavigate}>
                             <BorderAllOutlined color="action" />
                             <StyledText>Annotator</StyledText>
-                        </StyledLink> */}
-                        {/* <StyledLink
+                        </StyledLink>
+                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.MPC} onClick={onNavigate}>
+                            <StackedBarChartOutlined color="action" />
+                            <StyledText>MPC</StyledText>
+                        </StyledLink>
+                        <StyledLink
                             title="Open Eurostat Visualisation"
                             activeStyle={ActiveStyle}
                             to={ROUTES.EUROSTAT}

@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Alert, useTheme } from '@mui/material';
 import TextField from '@material-ui/core/TextField';
 import React, { useState } from 'react';
 import { commitChanges } from '../utils/CommitChanges';
@@ -28,6 +28,8 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
         }
     };
 
+    const theme = useTheme();
+
     return (
         <Dialog open={openCommit} onClose={() => setOpenCommit(false)} maxWidth="xl">
             <DialogTitle>Save Changes</DialogTitle>
@@ -38,10 +40,10 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
                         severity="error"
                         sx={{
                             mb: 1,
-                            backgroundColor: colorStyled.errorContainer,
-                            color: colorStyled.error,
-                            '& .MuiAlert-icon': {
-                                color: colorStyled.error
+                            backgroundColor: theme.palette.error.main,
+                            color: theme.palette.error.contrastText,
+                            '.MuiAlert-icon': {
+                                color: theme.palette.error.contrastText
                             }
                         }}
                     >

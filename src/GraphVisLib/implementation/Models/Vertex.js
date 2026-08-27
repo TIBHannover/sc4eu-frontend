@@ -1,6 +1,6 @@
 export default class Vertex {
+    resourceReference = null;
     constructor() {
-        this.resourceReference = null;
         this.__outgoingEdges = [];
         this.__incomingEdges = [];
     }

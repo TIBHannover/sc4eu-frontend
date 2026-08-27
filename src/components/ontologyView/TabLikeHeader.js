@@ -2,105 +2,20 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
-import styled, { keyframes } from 'styled-components';
-
-const expandButtonAnimation = ({ expanded, initialRendering }) => {
-    if (!initialRendering) {
-        return keyframes`
-  from {
-    transform: rotate(${expanded ? -90 : 90}deg);
-  }
-  to {
-    transform: rotate(${expanded ? 90 : 270}deg);
-   
-  }
-`;
-    }
-    if (initialRendering) {
-        return keyframes`
-  from {
-    transform: rotate(90deg);
-  }
-  to {
-    transform: rotate(90deg);
-   
-  }
-`;
-    }
-};
-
-const collapsableBodyContainerAnimation = ({ expand, collapsable, minHeight, maxHeight }) => {
-    if (collapsable) {
-        return keyframes`
-  from {
-    height: ${expand ? minHeight : maxHeight}px;
-  }
-  to {
-    height: ${expand ? maxHeight : minHeight}px;
-   
-  }
-`;
-    }
-    if (!collapsable) {
-        return keyframes`
-  from {
-    height: ${minHeight}px;
-  }
-  to {
-    height: ${minHeight}px;
-   
-  }
-`;
-    }
-};
-
-const indicatorItemAnimation = ({ expanded, initialRendering }) => {
-    if (!initialRendering) {
-        return keyframes`
-  0% {
-    opacity: ${expanded ? 1 : 0};
-  }
-  50% {
-    opacity: ${expanded ? 1 : 0};
-  }
-  100% {
-    opacity: ${expanded ? 0 : 1};
-  }
- 
-`;
-    }
-};
-
-const IndicatorItem = styled.div`
-    animation-name: ${indicatorItemAnimation};
-    animation-duration: 500ms;
-    opacity: ${props => (props.collapsable ? (props.expand ? 0 : 1) : 1)};
-`;
-
-const CollapsableBodyContainer = styled.div`
-    animation-name: ${collapsableBodyContainerAnimation};
-    animation-duration: 400ms;
-    height: ${props => (props.collapsable ? (props.expand ? props.maxHeight : props.minHeight) : props.minHeight)}px;
-`;
-
-const ButtonContainer = styled.div`
-    animation-name: ${expandButtonAnimation};
-    animation-duration: 400ms;
-    transform: rotate(${props => (props.expanded ? 90 : 270)}deg);
-`;
+import { ButtonContainer, IndicatorItem, CollapsableBodyContainer } from 'styledComponents/styledComponents';
 
 const TabLikeHeader = props => {
     const [expand, setExpand] = useState(true);
     const toggle = () => setExpand(!expand);
     return (
         <div style={{ paddingRight: '10px' }}>
-            {createHeader(props.position, props.title, props.collapsable, expand, toggle)}
+            {createHeader(props.position, props.title, expand, toggle, props.collapsable)}
             {createBody(props.title, props.position, props.children, props.collapsable, expand, props.minHeight, props.maxHeight)}
         </div>
     );
 };
 
-const createHeader = (pos, title, collapse = false, expand, toggleFunction) => {
+const createHeader = (pos, title, expand, toggleFunction, collapse = false) => {
     return (
         <div
             style={{

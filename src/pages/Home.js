@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import Footer from '../Layout/Footer';
-import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
+import visualisation from '../assets/images/visulization.png';
 import IntroductoryPopUp from '../components/IntroductoryPopUp';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
-import Logo from '../assets/images/sandbox_orange_logo.svg';
-import GoogleSurvey from '../components/GoogleSurvey';
-import Typography from "@mui/material/Typography";
+import Logo from '../assets/images/logo.png';
+import { StyledHomeRootDiv, StyledHomeHeadingDiv, StyledHeading, StyledHomeLogo, StyledHomeBody, StyledHomeBodyDiv, StyledBodyLogo, StyledBodyLinkBiger, StyledBodyTextBigger, StyledDivPopUp } from 'styledComponents/styledComponents';
+const digitalReferenceURL = process.env.REACT_APP_DIGITAL_REFERENCE_ONTOLOGY_URL;
 
-const VocabularyReferenceTxt = (
+const DigitalReferenceTxt = (
     <>
         <p>
-            You could find more information about the tool in about Portal and FAQ sections in a menu on the left side.
+            The digital reference ontology, developed as part of the SC4EU project, provides a framework for creating, integrating and applying
+            ontologies to the semiconductor supply chain.
         </p>
+        <p>The Ontology Curation Portal supports the creation, collection and visualisation of these ontologies. Core features:</p>
+        <ul>
+            <li>Consolidated access to distributed ontologies via projects.</li>
+            <li>Visualising ontologies.</li>
+            <li>Creating new vocabularies to extend or create ontologies.</li>
+        </ul>
     </>
 );
 
@@ -29,285 +32,42 @@ export default class Home extends Component {
     render() {
         return (
             <>
-                <StyledRootDiv>
+                <StyledHomeRootDiv>
                     <StyledDivPopUp>
                         <IntroductoryPopUp />
                     </StyledDivPopUp>
-                    <StyledBody>
-                        <StyledBodyDiv style={{ maxWidth: 700, alignSelf: 'center', marginBottom: 20 }}>
-                            <StyledBodyLogo src={Logo} alt="Welcome to the testing Vocabulary platform" />
-                            <Typography variant="h4">
-                                Welcome to the Sandbox Vocabulary Development Support Tool (VDST) server
-                            </Typography>
-                            <StyledBodyTextBigger>{VocabularyReferenceTxt}</StyledBodyTextBigger>
-                        </StyledBodyDiv>
-                    </StyledBody>
-                </StyledRootDiv>
+                    <StyledHomeHeadingDiv>
+                        <StyledHomeLogo src={Logo} alt="SC4EU Logo" />
+                        <StyledHeading>True Demand-Driven Semiconductor Supply Chains for Europe</StyledHeading>
+                    </StyledHomeHeadingDiv>
+                    <StyledHomeBody>
+                        <StyledHomeBodyDiv style={{ maxWidth: 700, alignSelf: 'center', marginBottom: 20 }}>
+                            <StyledBodyLogo src={visualisation} alt="Digital Reference Ontology" />
+                            <StyledBodyLinkBiger
+                                as="a"
+                                href={digitalReferenceURL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ marginTop: 16, display: 'block', cursor: 'pointer' }}
+                            >
+                                Digital Reference Ontology
+                            </StyledBodyLinkBiger>
+                            <StyledBodyTextBigger>{DigitalReferenceTxt}</StyledBodyTextBigger>
+                        </StyledHomeBodyDiv>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                gap: 40,
+                                flexWrap: 'wrap',
+                                width: '100%',
+                                alignSelf: 'center'
+                            }}
+                        ></div>
+                    </StyledHomeBody>
+                </StyledHomeRootDiv>
                 <Footer />
             </>
         );
     }
 }
-
-const StyledRootDiv = styled.div`
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-`;
-
-const StyledHeadingDiv = styled.div`
-    display: flex;
-    justify-content: center;
-    height: 10%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
-`;
-
-const StyledHeading = styled.div`
-    font-size: ${fontStyled.fontSize.subHeading};
-    margin-top: 4%;
-    color: black;
-    font-weight: 600;
-    font-family: sans-serif;
-    text-align-last: center;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: 12px;
-        margin-top: 3%;
-        text-align: center;
-        color: black;
-        font-weight: 600;
-        font-family: sans-serif;
-        margin-right: 25px;
-    }
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.mainHeading};
-    }
-`;
-
-const StyledLogo = styled.img`
-    height: 70px;
-    width: 70px;
-    margin-right: 10px;
-    float: left;
-    margin-top: 3%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: 25px;
-        width: 45px;
-    }
-    overflow: auto;
-`;
-
-const StyledBody = styled.div`
-    height: auto;
-    margin: auto;
-    text-align: center;
-    padding-top: 50px;
-    margin-left: 10%;
-    margin-right: 10%;
-    display: flex;
-    flex-direction: column;
-    color: black;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: auto;
-        flex-direction: column;
-        text-align: center;
-        margin-left: 2%;
-        padding-top: 5%;
-        margin-right: 2%;
-        display: flex;
-        color: black;
-        margin-bottom: 0px;
-        overflow: auto;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        margin-left: 15%;
-        margin-right: 15%;
-    }
-`;
-
-const StyledBodyDiv = styled.div`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding-left: 1%;
-    padding-right: 3%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding-left: 2.5%;
-        padding-right: 2.5%;
-    }
-`;
-
-const StyledBodyLogo = styled.img`
-    width: 200px;
-    height: 170px;
-    align-self: center;
-    margin-top: -20px;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        width: 110px;
-        height: 90px;
-        align-self: center;
-        margin-bottom: 10px;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 240px;
-        height: 210px;
-    }
-`;
-
-const StyledBodyLinkBiger = styled(Link)`
-    font-size: ${fontStyled.fontSize.mainHeading};
-    font-weight: 600;
-    color: black;
-    padding-bottom: 3%;
-    font-family: ${fontStyled.fontFamily};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewHeading};
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.DesktopViewSubHeading};
-    }
-`;
-
-const StyledBodyLink = styled(Link)`
-    font-size: ${fontStyled.fontSize.subHeading};
-    font-weight: 600;
-    color: black;
-    padding-bottom: 3%;
-    font-family: ${fontStyled.fontFamily};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: ${fontStyled.fontSize.MobileViewHeading};
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.DesktopViewSubHeading};
-    }
-`;
-
-const StyledBodyTextBigger = styled.div`
-    font-size: calc(${fontStyled.fontSize.NormalText} * 1.3);
-    font-family: ${fontStyled.fontFamily};
-    line-height: 1.6;
-    color: ${colorStyled.TEXTCOLOR};
-    text-align: left;
-    margin-top: 1rem;
-
-    p {
-        margin-bottom: 1rem;
-        text-align: justify;
-    }
-
-    ul {
-        margin-top: 0.5rem;
-        list-style-type: disc;
-    }
-
-    li {
-        margin-bottom: 0.5rem;
-    }
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: calc(${fontStyled.fontSize.MobileViewNormalText} * 1.3);
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: calc(${fontStyled.fontSize.DesktopViewNormalText} * 1.3);
-    }
-`;
-
-
-const StyledBodyText = styled.p`
-    font-size: calc(${fontStyled.fontSize.NormalText} * 1.15);
-    font-family: ${fontStyled.fontFamily};
-    text-align: justify;
-    text-align-last: center;
-    color: ${colorStyled.TEXTCOLOR};
-
-    @media (max-width: ${MAX_WIDTH}) {
-        font-size: calc(${fontStyled.fontSize.MobileViewNormalText} * 1.15);
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: calc(${fontStyled.fontSize.DesktopViewNormalText} * 1.15);
-    }
-`;
-
-const StyledVisLogo = styled.img`
-    width: 200px;
-    height: 120px;
-    align-self: center;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        width: 90px;
-        height: 80px;
-        align-self: center;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 240px;
-        height: 160px;
-    }
-`;
-
-const StyledEditLogo = styled.img`
-    width: 180px;
-    height: 120px;
-    align-self: center;
-    margin-right: 20%;
-    padding-right: 8%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        width: 100px;
-        height: 75px;
-        align-self: center;
-        margin-right: 1%;
-        margin-top: 4%;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        width: 220px;
-        height: 160px;
-    }
-`;
-
-const StyledDivPopUp = styled.div`
-    display: block;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        display: none;
-    }
-`;
-
-const SmallLogoLeft = styled.img`
-    width: 105px;
-    height: 105px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translate(-60%, -40%);
-    z-index: 2;
-`;
-
-const SmallLogoRight = styled.img`
-    width: 80px;
-    height: 80px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    transform: translate(15%, -50%);
-    z-index: 2;
-`;

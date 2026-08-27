@@ -19,8 +19,6 @@ export default class DrawTools {
         const displayName = this.drawDisplayName(groupContainer, node.__displayName, renderingConfig);
 
         this.applyAdditionalOptions(groupContainer, renderingShape, displayName, renderingConfig, node);
-        // handle options;
-        // 3 Additional Icons provided by extensions [TODO];
         return { renderingShape: renderingShape, renderingText: displayName };
     }
 
@@ -35,7 +33,6 @@ export default class DrawTools {
         // text label adjustments
         const textParameters = this.textMorphParameters(baseShapeParameters, renderingConfig, node);
 
-        // TODO get some other style PARAMETERS FOR MORPHING
         return { baseShapeParameters, shapeStyleParameters, textParameters };
     }
 
@@ -50,8 +47,7 @@ export default class DrawTools {
         const displayName = this.drawDisplayName(groupContainer, node.displayName(), renderingConfig);
 
         this.applyAdditionalOptions(groupContainer, renderingShape, displayName, renderingConfig, node);
-        // handle options;
-        // 3 Additional Icons provided by extensions [TODO];
+
         return { renderingShape: renderingShape, renderingText: displayName };
     }
 
@@ -269,12 +265,9 @@ export default class DrawTools {
         }
     }
 
-    __directLineFunction = d3.svg.line();
-    __curveLineFunction = d3.svg.line().interpolate('cardinal');
-    __loopLineFunction = d3.svg
-        .line()
-        .interpolate('cardinal')
-        .tension(-1);
+    __directLineFunction = d3.line();
+    __curveLineFunction = d3.line().curve(d3.curveCardinal);
+    __loopLineFunction = d3.line().curve(d3.curveCardinal.tension(0));
 
     drawDisplayName = (group, text, cfg) => {
         // 2) Label
@@ -315,12 +308,7 @@ export default class DrawTools {
         // try to adjust the position of the elements;
         const labelBBHeight = this.measureTextHeight(node.displayName(), config.fontStyle.fontFamily, config.fontStyle.fontSize);
 
-        if (
-            config.options.drawNestedAttributes === true &&
-            node.semanticReference() &&
-            node.semanticReference().__aggregatedLink &&
-            node.semanticReference().__aggregatedLink.length > 0
-        ) {
+        if (config.options.drawNestedAttributes === true && node.semanticReference()?.__aggregatedLink?.length > 0) {
             // fetch aggregated links from resource;
             const height = shape['height'];
 
@@ -329,15 +317,14 @@ export default class DrawTools {
             const offset = -0.5 * height + labelBBHeight;
             textMorphParameters['dx'] = node.renderingText.attr('dx');
             textMorphParameters['dy'] = offset + 'px';
-        } else {
-            if (node.renderingText) {
-                textMorphParameters['dx'] = node.renderingText.attr('dx');
-                textMorphParameters['dy'] = node.renderingText.attr('dy');
-                // it sets the center of the labelBB into the center (0,0) of the rendering group;
-                const offset = 0.25 * labelBBHeight;
-                textMorphParameters['dy'] = offset + 'px';
-            }
+        } else if (node.renderingText) {
+            textMorphParameters['dx'] = node.renderingText.attr('dx');
+            textMorphParameters['dy'] = node.renderingText.attr('dy');
+            // it sets the center of the labelBB into the center (0,0) of the rendering group;
+            const offset = 0.25 * labelBBHeight;
+            textMorphParameters['dy'] = offset + 'px';
         }
+
         return textMorphParameters;
     };
 
@@ -348,12 +335,7 @@ export default class DrawTools {
             shape['x'] = -0.5 * (labelBBWidth + options.overwriteOffset);
             shape['width'] = labelBBWidth + options.overwriteOffset;
         }
-        if (
-            options.drawNestedAttributes === true &&
-            node.semanticReference() &&
-            node.semanticReference().__aggregatedLink &&
-            node.semanticReference().__aggregatedLink.length > 0
-        ) {
+        if (options.drawNestedAttributes === true && node.semanticReference()?.__aggregatedLink?.length > 0) {
             // fetch aggregated links from resource;
             const nestedLinks = node.semanticReference().__aggregatedLink;
 
@@ -366,15 +348,6 @@ export default class DrawTools {
             shape['height'] = height;
             // pre-compute the shape size based on the ty
         }
-
-        // TODO, THIS HAS TO APPLY FOR THE TEXT RENDERING ELEMENT;
-        // if (options.cropLongText) {
-        //   if (this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize) > Number.parseFloat(shape.attr('width'))) {
-        //     // crop that thing;
-        //     const croppedText = this.cropText(label.text(), config.fontStyle, Number.parseFloat(shape.attr('width')));
-        //     label.text(croppedText);
-        //   }
-        // }
     };
 
     applyAdditionalOptions = (group, shape, label, config, node) => {
@@ -412,19 +385,16 @@ export default class DrawTools {
         }
 
         if (options.cropLongText) {
-            if (this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize) > Number.parseFloat(shape.attr('width'))) {
+            if (
+                this.measureTextWidth(label.text(), config.fontStyle.fontFamily, config.fontStyle.fontSize) > Number.parseFloat(shape.attr('width'))
+            ) {
                 // crop that thing;
                 const croppedText = this.cropText(label.text(), config.fontStyle, Number.parseFloat(shape.attr('width')));
                 label.text(croppedText);
             }
         }
 
-        if (
-            options.drawNestedAttributes === true &&
-            node.semanticReference() &&
-            node.semanticReference().__aggregatedLink &&
-            node.semanticReference().__aggregatedLink.length > 0
-        ) {
+        if (options.drawNestedAttributes === true && node.semanticReference()?.__aggregatedLink?.length > 0) {
             // fetch aggregated links from resource;
             const nestedLinks = node.semanticReference().__aggregatedLink;
 
@@ -465,7 +435,6 @@ export default class DrawTools {
 
             let offsetVal = 0;
 
-            // TODO: proper computation of element distances and uml styled height
             const shift = 24 - nestedLinks.length * 15;
 
             nestedLinks.forEach(link => {
@@ -492,8 +461,7 @@ export default class DrawTools {
         }
 
         if (
-            (!options.drawNestedAttributes ||
-                (node.semanticReference() && node.semanticReference().__aggregatedLink && node.semanticReference().__aggregatedLink.length === 0)) &&
+            (!options.drawNestedAttributes || node?.semanticReference()?.__aggregatedLink?.length === 0) &&
             options.fontPositionV &&
             options.fontPositionV === 'center'
         ) {
@@ -617,8 +585,6 @@ export default class DrawTools {
         const width = Number.parseInt(renderingConfig.width);
         const height = Number.parseInt(renderingConfig.height);
 
-        // check if is uml style << TODO;
-        /**  render a pure circle **/
         if (renderingConfig.renderingType === 'circle') {
             targetPrimitive.attr('x', -radius);
             targetPrimitive.attr('y', -radius);

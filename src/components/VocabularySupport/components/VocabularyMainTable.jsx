@@ -1,30 +1,53 @@
-import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
-import styled from 'styled-components';
-import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
-import { colorStyled } from '../../../styledComponents/styledColor';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import Cookies from 'js-cookie';
+import { differenceInDays } from 'date-fns';
 import PropTypes from 'prop-types';
-import ExpandedRow from './ExpandedRow';
-import CreateNewTerm from './CreateNewTerm';
-import CommitChanges from './CommitChanges';
-import { useCreateTerm } from '../hooks/useCreateTerm';
-import { useUpdateTerm } from '../hooks/useUpdateTerm';
-import { useDeleteTerm } from '../hooks/useDeleteTerm';
-import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useHistory } from 'react-router-dom';
+
+import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import {
+    Box,
+    Button,
+    Chip,
+    darken,
+    IconButton,
+    lighten,
+    Modal,
+    styled,
+    Tooltip,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
+import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { getMentionedCommentsLength } from '../utils/Discussions';
+import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
+import { useCreateTerm } from '../hooks/useCreateTerm';
+import { useDeleteTerm } from '../hooks/useDeleteTerm';
+import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
-import Cookies from 'js-cookie';
-import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength } from '../utils/Discussions';
-import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
-import InformationHub from './InformationHub';
-import { useMediaQuery } from '@mui/material';
 import { CardActivityWidget } from './CardActivityWidget';
-import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
+import CommitChanges from './CommitChanges';
+import CreateNewTerm from './CreateNewTerm';
+import ExpandedRow from './ExpandedRow';
+import InformationHub from './InformationHub';
 import VoteView from './VoteView';
 
-/* eslint-disable react/prop-types */
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        console.info('Non-valid URL');
+        return false;
+    }
+}
+
 const VocabularyMainTable = ({
     terms,
     refetch,
@@ -41,7 +64,6 @@ const VocabularyMainTable = ({
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
     const { mutateAsync: deleteTerm, isPending: isDeletingTerm } = useDeleteTerm();
     const { mutateAsync: createDiscussion } = useCreateDiscussion();
-    //const [openNewTerm, setNewTermOpen] = useState(false);
     const [openCommit, setOpenCommit] = useState(false);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedTerm, setSelectedTerm] = useState(null);
@@ -57,7 +79,6 @@ const VocabularyMainTable = ({
             : 'rgba(84, 90, 95, 1)'; // light gray
 
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
-    const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
     const isMobileScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
@@ -80,10 +101,15 @@ const VocabularyMainTable = ({
             discussion =>
                 discussion.comments.length !== 0 &&
                 term.identifier === discussion.resourceId &&
-                discussion.comments.some(comment => comment.mentionedUsers && comment.mentionedUsers.includes(currentUser.displayName))
+                discussion.comments.some(comment => comment.mentionedUsers?.includes(currentUser.displayName))
         )
     );
-    const newTerms = terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)));
+
+    const NEW_TERMS_INTERVAL = 180;
+    const newTerms = terms.filter(term => {
+        const daysSinceCreated = differenceInDays(new Date(), new Date(term.created));
+        return !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
+    });
 
     const pendingDeletedTermIds = useRef([]);
 
@@ -171,7 +197,6 @@ const VocabularyMainTable = ({
         const resourceId = row.original.identifier;
         const currentResourceDiscussion = discussions.find(d => d.resourceId === resourceId);
         setTermComments(currentResourceDiscussion?.comments || []);
-        // console.log('rowComments: ', rowComments);
         setSelectedTerm(row.original);
         setOpenPopup(true);
     };
@@ -188,15 +213,6 @@ const VocabularyMainTable = ({
         setOpenPopup(false);
         setSelectedTerm(null);
     };
-
-    function isValidUrl(string) {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
 
     const columnVisibility = useMemo(() => {
         return isMobileScreen
@@ -239,7 +255,7 @@ const VocabularyMainTable = ({
                     </a>
                 );
             }
-            return <span>{seeAlso ? seeAlso : ''}</span>;
+            return <span>{seeAlso}</span>;
         }
     };
     TerminologyCellComponent.propTypes = {
@@ -290,8 +306,19 @@ const VocabularyMainTable = ({
                         maxWidth: 150
                     }
                 },
+                Cell: ({ row }) => {
+                    const daysSinceCreated = differenceInDays(new Date(), new Date(row.original.created));
+                    const isNew = !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
 
-                Cell: ({ cell }) => <EllipsisTextCell value={cell.getValue()} />
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <span>{row.original.label}</span>
+                            {isNew && (
+                                <Chip label="Recently added" size="small" color="primary" variant="filled" sx={{ height: 20, fontSize: '0.7rem' }} />
+                            )}
+                        </Box>
+                    );
+                }
             },
             {
                 accessorKey: 'altLabel',
@@ -362,19 +389,25 @@ const VocabularyMainTable = ({
                     return row.getValue(columnId) === filterValue;
                 },
                 Cell: ({ row }) => {
-                    const inConsensus = votesMap.find(consensus => consensus.term_uuid === row.original.identifier);
+                    const inConsensus = votesMap.some(consensus => consensus.term_uuid === row.original.identifier);
                     return inConsensus ? (
-                        <StyledChip
-                            label="In Consensus"
-                            size="small"
-                            customVariant="agreement"
-                            sx={{ cursor: 'pointer' }}
-                            onClick={async event => {
-                                event.stopPropagation();
-                                await handleWidgetUrgentTermClick(row.original);
-                            }}
-                        />
-                    ) : null;
+                        <Tooltip title="Check consensus">
+                            <StyledChip
+                                label="In Consensus"
+                                size="small"
+                                customVariant="agreement"
+                                sx={{ cursor: 'pointer' }}
+                                onClick={async event => {
+                                    event.stopPropagation();
+                                    await handleWidgetUrgentTermClick(row.original);
+                                }}
+                            />
+                        </Tooltip>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                            Not in Consensus
+                        </Typography>
+                    );
                 },
                 muiTableBodyCellProps: {
                     sx: { maxWidth: 100 }
@@ -412,6 +445,9 @@ const VocabularyMainTable = ({
                         <span>{column.columnDef.header}</span>
                     </Tooltip>
                 ),
+                Cell: ({ cell }) => {
+                    return new Date(cell.getValue()).toLocaleDateString();
+                },
                 size: 90,
                 enableEditing: false,
                 filterVariant: 'select',
@@ -469,11 +505,9 @@ const VocabularyMainTable = ({
                 Header: ({ column }) => (
                     <Tooltip
                         title={
-                            <>
-                                <span style={{ fontSize: '1.2em' }}>
-                                    Shows the last date time, when the term was edited: term metadata updated or a new comment in a discussion.
-                                </span>
-                            </>
+                            <span style={{ fontSize: '1.2em' }}>
+                                Shows the last date time, when the term was edited: term metadata updated or a new comment in a discussion.
+                            </span>
                         }
                     >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -578,7 +612,7 @@ const VocabularyMainTable = ({
     const handleCreateTerm = async ({ values, table }) => {
         const uuid = crypto.randomUUID();
         const newValidationErrors = validateTerm(values);
-        if (Object.values(newValidationErrors).some(error => error)) {
+        if (Object.values(newValidationErrors).some(Boolean)) {
             setValidationErrors(newValidationErrors);
             return;
         }
@@ -602,9 +636,8 @@ const VocabularyMainTable = ({
     };
 
     const handleSaveTerm = async ({ values, table }) => {
-        console.log('values: ', values);
         const newValidationErrors = validateTerm(values);
-        if (Object.values(newValidationErrors).some(error => error)) {
+        if (Object.values(newValidationErrors).some(Boolean)) {
             setValidationErrors(newValidationErrors);
             return;
         }
@@ -642,7 +675,6 @@ const VocabularyMainTable = ({
     };
     // Function to handle setting a creating row
     const handleCreateRow = (row = {}) => {
-        console.log('row: ', row);
         table.setCreatingRow(
             createRow(table, {
                 ...defaultValues, // Apply defaults
@@ -680,24 +712,31 @@ const VocabularyMainTable = ({
             rowsPerPageOptions: [],
             showRowsPerPage: false
         },
-        muiTableBodyRowProps: ({ row }) => ({
-            onClick: event => handleRowClick(row, event, discussions),
-            sx: {
-                cursor: 'pointer' //you might want to change the cursor too when adding an onClick
-            }
-        }),
+        muiTableBodyRowProps: ({ row }) => {
+            const daysSinceCreated = differenceInDays(new Date(), new Date(row.original.created));
+            const isNew = !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
+
+            return {
+                onClick: event => handleRowClick(row, event, discussions),
+                'data-new': isNew ? 'true' : undefined,
+                sx: {
+                    cursor: 'pointer',
+                    backgroundColor: isNew ? `${theme.palette.primary.main}66` : 'transparent'
+                }
+            };
+        },
         muiTableBodyProps: {
             sx: theme => ({
-                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]) > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.1)
                 },
-                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]):hover > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.2)
                 },
-                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]) > td': {
                     backgroundColor: lighten(baseBackgroundColor, 0.1)
                 },
-                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]):hover > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.2)
                 }
             })
@@ -764,10 +803,10 @@ const VocabularyMainTable = ({
                             handleCreateRow(row);
                         }}
                         sx={{
-                            backgroundColor: colorStyled.primary,
+                            backgroundColor: theme.palette.secondary.main,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                         }}
                     >
                         {isMobileScreen ? 'New Term' : 'Create New Term'}
@@ -780,10 +819,10 @@ const VocabularyMainTable = ({
                             setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
                         }}
                         sx={{
-                            backgroundColor: colorStyled.primary,
+                            backgroundColor: theme.palette.secondary.main,
                             whiteSpace: 'nowrap',
                             minWidth: 50,
-                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                         }}
                     >
                         Timeline
@@ -799,10 +838,10 @@ const VocabularyMainTable = ({
                                 Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
                             }}
                             sx={{
-                                backgroundColor: colorStyled.primary,
+                                backgroundColor: theme.palette.secondary.main,
                                 whiteSpace: 'nowrap',
                                 minWidth: 50,
-                                '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
                             }}
                         >
                             {isMobileScreen ? 'Hub' : 'Information Hub'}
@@ -813,19 +852,26 @@ const VocabularyMainTable = ({
         ),
         renderBottomToolbarCustomActions: () => (
             <>
-                <StyledTooltip title="You have made changes, Please don't forget to save your changes" disableHoverListener={!hasUncommittedChanges}>
-                    <Button
-                        variant="contained"
-                        disabled={!hasUncommittedChanges}
-                        onClick={() => setOpenCommit(true)}
-                        style={{
-                            backgroundColor: hasUncommittedChanges ? colorStyled.primary : 'gray',
-                            border: hasUncommittedChanges ? '2px' + ' solid red' : ''
-                        }}
+                {hasUncommittedChanges && (
+                    <StyledTooltip
+                        title="You have made changes. Please don't forget to save your changes."
+                        disableHoverListener={!hasUncommittedChanges}
                     >
-                        Save Changes
-                    </Button>
-                </StyledTooltip>
+                        <Button
+                            variant="contained"
+                            onClick={() => setOpenCommit(true)}
+                            sx={{
+                                backgroundColor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
+                                border: hasUncommittedChanges ? '2px' + ' solid red' : '',
+                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                            }}
+                        >
+                            Save Changes
+                        </Button>
+                    </StyledTooltip>
+                )}
+
                 {openCommit && (
                     <CommitChanges
                         refetch={refetch}
@@ -857,7 +903,7 @@ const VocabularyMainTable = ({
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: colorStyled.secondary }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" style={{ color: theme.palette.secondary.main }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -865,8 +911,10 @@ const VocabularyMainTable = ({
         )
     });
 
+    const isNewTermsCardActive = table.getState().columnFilters.some(filter => filter.id === 'created' && filter.value === 'last3months');
+
     const handleWidgetNewTermsClick = () => {
-        table.setColumnFilters([{ id: 'created', value: 'last3months' }]);
+        table.setColumnFilters(isNewTermsCardActive ? [] : [{ id: 'created', value: 'last3months' }]);
     };
 
     const handleWidgetDiscussionReplyClick = term => {
@@ -897,6 +945,7 @@ const VocabularyMainTable = ({
                 newTerms={newTerms}
                 onUrgentClick={handleWidgetUrgentTermClick}
                 onNewTermsClick={handleWidgetNewTermsClick}
+                isNewTermsActive={isNewTermsCardActive}
                 onDiscussionClick={handleWidgetDiscussionReplyClick}
                 isMobileScreen={isMobileScreen}
             />
@@ -914,29 +963,48 @@ const VocabularyMainTable = ({
                 <Box
                     sx={{
                         position: 'fixed',
-                        top: { xs: '50%', xl: '25%' },
+                        top: { xs: '50%', xl: '30%' },
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        backgroundColor: 'white',
-                        width: { xs: '95%', xl: '70vw' },
-                        height: { xs: '95%', xl: '53%' },
-                        overflowY: 'auto',
-                        padding: 2,
-                        outline: 'none',
-                        borderRadius: 1
+                        width: { xs: '95%', xl: '70%' },
+                        height: { xs: '95%', xl: '60%' },
+                        outline: 'none'
                     }}
                 >
-                    {selectedTerm && (
-                        <ExpandedRow
-                            term={selectedTerm}
-                            currentUser={currentUser}
-                            updateTerm={updateTerm}
-                            termComments={termComments || []}
-                            handleSaveDiscussion={handleSaveDiscussion}
-                            setHasUncommittedChanges={setHasUncommittedChanges}
-                            handleClosePopup={handleClosePopup}
-                        />
-                    )}
+                    <Box
+                        sx={{
+                            backgroundColor: theme.palette.background.default,
+                            width: '100%',
+                            height: '100%',
+                            overflowY: 'auto',
+                            padding: 4,
+                            borderRadius: 1
+                        }}
+                    >
+                        {selectedTerm && (
+                            <ExpandedRow
+                                term={selectedTerm}
+                                currentUser={currentUser}
+                                updateTerm={updateTerm}
+                                termComments={termComments || []}
+                                handleSaveDiscussion={handleSaveDiscussion}
+                                setHasUncommittedChanges={setHasUncommittedChanges}
+                                handleClosePopup={handleClosePopup}
+                            />
+                        )}
+                    </Box>
+
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleClosePopup}
+                        sx={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
                 </Box>
             </Modal>
             <MaterialUIPopUp
@@ -1012,24 +1080,24 @@ function validateTerm(term) {
     };
 }
 
-const ScrollableDiv = styled.div`
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    padding-bottom: 5px;
-    max-height: 90vh;
+const ScrollableDiv = styled('div')(({ theme }) => ({
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
+    paddingBottom: '5px',
+    maxHeight: '90vh',
 
-    @media (max-width: ${LARGE_SCREEN_SIZE}) {
-        padding: 5px;
+    [`@media (max-width: ${LARGE_SCREEN_SIZE})`]: {
+        padding: '5px'
     }
-`;
+}));
 
-const CellContent = styled.div`
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-`;
+const CellContent = styled('div')(({ theme }) => ({
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    cursor: 'pointer'
+}));
 
 const EllipsisTextCell = ({ value }) => {
     const displayValue = value && value.length > 30 ? `${value.slice(0, 30)}...` : value;

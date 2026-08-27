@@ -1,4 +1,4 @@
-module.exports = (projectName, emailContent, ProjectAdminName, SenderName, SenderEmail) => {
+function accessEmailHtml(projectName, emailContent, ProjectAdminName, SenderName, SenderEmail) {
     return {
         body: `
        <!DOCTYPE html>
@@ -173,4 +173,6 @@ module.exports = (projectName, emailContent, ProjectAdminName, SenderName, Sende
 </html>
         `
     };
-};
+}
+
+module.exports = accessEmailHtml;

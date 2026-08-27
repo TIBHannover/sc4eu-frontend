@@ -5,13 +5,13 @@ const VAPID_PUBLIC_KEY = process.env.REACT_APP_VAPID_PUBLIC_KEY;
 
 function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const base64 = (base64String + padding).replaceAll('-', '+').replaceAll('_', '/');
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
 
     for (let i = 0; i < rawData.length; ++i) {
-        outputArray[i] = rawData.charCodeAt(i);
+        outputArray[i] = rawData.codePointAt(i);
     }
     return outputArray;
 }
@@ -24,7 +24,6 @@ export function usePushNotifications(user) {
 
     useEffect(() => {
         const supported = isPushSupported();
-        console.log(`supported from usePushNotifications: ${supported}`);
         setIsSupported(supported);
 
         if (supported) {
@@ -68,6 +67,7 @@ export function usePushNotifications(user) {
                 }
             } catch (err) {
                 setError('Could not request notification permission.');
+                console.error(err);
                 return;
             }
         }
@@ -79,7 +79,7 @@ export function usePushNotifications(user) {
         });
         setSubscription(sub);
 
-        const response = await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}subscriber`, {
+        await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}subscriber`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

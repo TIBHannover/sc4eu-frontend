@@ -14,23 +14,17 @@ export default class RootImplementation {
         }
     };
 
-    readFile = (e, __callback) => {
+    readFile = async (e, __callback) => {
         e.preventDefault();
-        const file = e.target.files[0];
-        const reader = new FileReader();
         if (e.target.files.length === 0) {
             return;
         }
-        reader.onloadend = async e => {
-            this.currentData = reader.result;
-            await this.createRRM_fromVOWL();
-            __callback(this.rrmModel);
-        };
-        reader.readAsText(file);
+        const file = e.target.files[0];
+        const text = await file.text();
+        __callback(text);
     };
 
     createRRM_fromVOWL = async () => {
-        console.log('EXECUTING THE PARSER');
         if (!this.currentData) {
             console.error('ERROR, no DATA PROVIDED');
         } else {

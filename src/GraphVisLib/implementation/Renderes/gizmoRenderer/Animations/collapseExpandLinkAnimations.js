@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { parseTranslate } from '../utils/GraphUtils';
 
 export const collapsePropertyNodesAnimations = (n1, n2, linksArray, callback) => {
     // compute the center position for the animation;
@@ -25,14 +25,15 @@ export const expandPropertyNodeAnimation = (property, target, last, callback) =>
     }
     propertyNode.groupRoot
         .transition()
-        .tween('attr.translate', function() {
-            return function(t) {
-                const tr = d3.transform(propertyNode.groupRoot.attr('transform'));
-                propertyNode.x = tr.translate[0];
-                propertyNode.y = tr.translate[1];
+        .attrTween('transform', function() {
+            return function() {
+                const currentPosition = parseTranslate(propertyNode.groupRoot.attr('transform'));
+                propertyNode.x = currentPosition.x;
+                propertyNode.y = currentPosition.y;
                 propertyNode.px = propertyNode.x;
                 propertyNode.py = propertyNode.y;
                 property.updateRenderingPosition();
+                return null;
             };
         })
         .duration(animationDuration)
@@ -58,14 +59,15 @@ export const collapsePropertyAnimation = (property, targetPosition, last, callba
     }
     propertyNode.groupRoot
         .transition()
-        .tween('attr.translate', function() {
-            return function(t) {
-                const tr = d3.transform(propertyNode.groupRoot.attr('transform'));
-                propertyNode.x = tr.translate[0];
-                propertyNode.y = tr.translate[1];
+        .attrTween('transform', function() {
+            return function() {
+                const currentPosition = parseTranslate(propertyNode.groupRoot.attr('transform'));
+                propertyNode.x = currentPosition.x;
+                propertyNode.y = currentPosition.y;
                 propertyNode.px = propertyNode.x;
                 propertyNode.py = propertyNode.y;
                 property.updateRenderingPosition();
+                return null;
             };
         })
         .duration(animationDuration)
@@ -89,7 +91,7 @@ export const expandPropertyNodesAnimations = (link, parentPos, callback) => {
         const dirX = link.sourceNode.x - link.targetNode.x;
         const dirY = link.sourceNode.y - link.targetNode.y;
         // norm and make orthogonal;
-        const length = Math.sqrt(dirX * dirX + dirY * dirY);
+        const length = Math.hypot(dirX * dirX + dirY * dirY);
         // orthogonal applied;
         const normedX = -dirY / length;
         const normedY = dirX / length;

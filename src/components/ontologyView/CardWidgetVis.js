@@ -4,21 +4,13 @@ import { connect } from 'react-redux';
 import { getPrefixedVersion } from '../../mappers/helperFunctions';
 import { transformIdentifierToPrefixed } from '../../mappers/RelationToTTL';
 import { Card, CardBody } from 'reactstrap';
-import styled from 'styled-components';
-import { fontStyled } from '../../styledComponents/styledFont';
-import { MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
-import { colorStyled } from 'styledComponents/styledColor';
+import { withTheme } from '@emotion/react';
+import { StyledCardWidgetVisSpan } from 'styledComponents/styledComponents';
 class CardWidgetVis extends Component {
     constructor(props) {
         super(props);
         this.prefixList = this.props.rrModel.metaInformation.prefixList.longToShort;
     }
-
-    componentDidMount() {}
-
-    componentDidUpdate = (prevProps, prevState) => {};
-
-    componentWillUnmount() {}
 
     renderWidget = () => {
         if (this.props.itemType === 'Relation') {
@@ -30,11 +22,19 @@ class CardWidgetVis extends Component {
 
     renderResourceWidget = () => {
         const itemOfInterest = this.props.itemContext;
-
+        const { theme } = this.props;
         return (
             <div>
-                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', backgroundColor: colorStyled.secondaryContainer, color: colorStyled.onSecondaryContainer }}>
-                    <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
+                <Card
+                    style={{
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                        width: '100%',
+                        backgroundColor: theme.palette.background.default,
+                        color: theme.palette.text.primary
+                    }}
+                >
+                    <StyledCardWidgetVisSpan style={{ fontWeight: 'bold' }}>Description :</StyledCardWidgetVisSpan>
                     <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>
                         {this.renderResourceDescription(itemOfInterest)}
                     </CardBody>
@@ -46,12 +46,20 @@ class CardWidgetVis extends Component {
     renderRelationWidget = () => {
         //const itemIdentifier = this.props.itemIdentifier;
         const itemOfInterest = this.props.itemContext;
-
+        const { theme } = this.props;
         return (
             <div>
                 {/*<div key={'description' + itemIdentifier} className="root" style={{ padding: '2px 5px' }}>*/}
-                <Card style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0, width: '100%', backgroundColor: colorStyled.secondaryContainer, color: colorStyled.onSecondaryContainer }}>
-                    <StyledSpan style={{ fontWeight: 'bold' }}>Description :</StyledSpan>
+                <Card
+                    style={{
+                        borderTopLeftRadius: 0,
+                        borderTopRightRadius: 0,
+                        width: '100%',
+                        backgroundColor: theme.palette.background.default,
+                        color: theme.palette.text.primary
+                    }}
+                >
+                    <StyledCardWidgetVisSpan style={{ fontWeight: 'bold' }}>Description :</StyledCardWidgetVisSpan>
                     <CardBody style={{ padding: '5px', width: '100%', overflow: 'hidden' }}>{this.renderDescription(itemOfInterest)}</CardBody>
                 </Card>
                 {/*</div>*/}
@@ -64,9 +72,9 @@ class CardWidgetVis extends Component {
         const iri = transformIdentifierToPrefixed(this.props.itemContext.identifier, prefixList);
         return (
             <div>
-                <StyledSpan>IRI:</StyledSpan>
+                <StyledCardWidgetVisSpan>IRI:</StyledCardWidgetVisSpan>
                 <div style={{ marginLeft: '25px' }}>
-                    <StyledSpan>{iri}</StyledSpan>
+                    <StyledCardWidgetVisSpan>{iri}</StyledCardWidgetVisSpan>
                     <hr style={{ marginTop: 0 }} />
                 </div>
                 {Object.keys(itemOfInterest.axioms).length > 0 || iri.length > 0 ? (
@@ -74,13 +82,16 @@ class CardWidgetVis extends Component {
                         return (
                             <div key={itemOfInterest.itemIdentifier + axiom + index}>
                                 <div>
-                                    <StyledSpan>{axiom.split(':')[1]}</StyledSpan>
+                                    <StyledCardWidgetVisSpan>{axiom.split(':')[1]}</StyledCardWidgetVisSpan>
                                 </div>
                                 <div>
                                     {Object.keys(itemOfInterest.axioms[axiom]).map((item, subIndex) => {
                                         return (
                                             <div key={itemOfInterest.itemIdentifier + axiom + item + subIndex} style={{ marginLeft: '1rem' }}>
-                                                <StyledSpan> {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}</StyledSpan>
+                                                <StyledCardWidgetVisSpan>
+                                                    {' '}
+                                                    {getPrefixedVersion(itemOfInterest.axioms[axiom][item], this.prefixList)}
+                                                </StyledCardWidgetVisSpan>
                                             </div>
                                         );
                                     })}
@@ -89,7 +100,7 @@ class CardWidgetVis extends Component {
                         );
                     })
                 ) : (
-                    <StyledSpan>No Description Available</StyledSpan>
+                    <StyledCardWidgetVisSpan>No Description Available</StyledCardWidgetVisSpan>
                 )}
             </div>
         );
@@ -114,23 +125,23 @@ class CardWidgetVis extends Component {
         return (
             <div style={{ overflow: 'hidden' }}>
                 <div>
-                    <StyledSpan>IRI:</StyledSpan>
+                    <StyledCardWidgetVisSpan>IRI:</StyledCardWidgetVisSpan>
                     <div style={{ marginLeft: '25px' }}>
-                        <StyledSpan>{iri}</StyledSpan>
+                        <StyledCardWidgetVisSpan>{iri}</StyledCardWidgetVisSpan>
                         <hr style={{ marginTop: 0 }} />
                     </div>
-                    <StyledSpan>Domains</StyledSpan>
+                    <StyledCardWidgetVisSpan>Domains</StyledCardWidgetVisSpan>
                 </div>
-                {domains.map((domain,index) => (
+                {domains.map((domain, index) => (
                     <div key={'domainKey_' + domain + index} style={{ marginLeft: '1rem' }}>
-                        <StyledSpan>{domain}</StyledSpan>
+                        <StyledCardWidgetVisSpan>{domain}</StyledCardWidgetVisSpan>
                         <hr style={{ marginTop: 0 }} />
                     </div>
                 ))}
                 <div>
-                    <StyledSpan>Ranges</StyledSpan>
+                    <StyledCardWidgetVisSpan>Ranges</StyledCardWidgetVisSpan>
                 </div>
-                {ranges.map((range,index) => (
+                {ranges.map((range, index) => (
                     <div key={'domainKey_' + range + index} style={{ marginLeft: '1rem' }}>
                         {range}
                     </div>
@@ -140,21 +151,21 @@ class CardWidgetVis extends Component {
     };
 
     render() {
+        const { theme } = this.props;
         return (
-            <div style={{ backgroundColor: colorStyled.surfaceContainer, color: colorStyled.onSurface, borderTop: 'none', overflow: 'auto' }}>
+            <div
+                style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary, borderTop: 'none', overflow: 'auto' }}
+            >
                 {this.props.isExpanded && <div style={{ display: 'block' }}>{this.renderWidget()}</div>}
             </div>
         );
     }
 }
 CardWidgetVis.propTypes = {
-    height: PropTypes.number,
-    itemIdentifier: PropTypes.string,
     itemType: PropTypes.string.isRequired,
     rrModel: PropTypes.object.isRequired,
     itemContext: PropTypes.object.isRequired,
     isExpanded: PropTypes.bool.isRequired,
-    callback: PropTypes.func,
     metaInformation: PropTypes.object.isRequired
 };
 
@@ -167,12 +178,4 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(CardWidgetVis);
-
-const StyledSpan = styled.span`
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(CardWidgetVis));

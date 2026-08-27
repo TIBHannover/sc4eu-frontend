@@ -1,21 +1,17 @@
 import React from 'react';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import styled from 'styled-components';
-import { fontStyled } from '../styledComponents/styledFont';
-import { colorStyled } from '../styledComponents/styledColor';
 import AddVocabulary from '../components/VocabularySupport/AddVocabularyModal';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import { StyledVocabularySupportDiv } from '../styledComponents/styledComponents';
 const Vocabulary_support = props => {
     return (
-        <StyledDiv>
+        <StyledVocabularySupportDiv>
             {props.user ? (
-                <AddVocabulary currentUser={props.user}/>
+                <AddVocabulary currentUser={props.user} />
             ) : (
                 <h3 style={{ textAlign: 'center', marginTop: '30px' }}> Please Login to use the Vocabulary Development Support Service </h3>
             )}
-        </StyledDiv>
+        </StyledVocabularySupportDiv>
     );
 };
 
@@ -29,16 +25,3 @@ Vocabulary_support.propTypes = {
 
 export default connect(mapStateToProps)(Vocabulary_support);
 
-const StyledDiv = styled.div`
-    padding-top: 10px;
-    padding-left: 5%;
-    padding-right: 5%;
-    padding-bottom: 2%;
-    font-family: ${fontStyled.fontFamily};
-    overflow-y: auto;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        padding-left: 0%;
-        padding-right: 0%;
-    }
-`;

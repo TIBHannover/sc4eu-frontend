@@ -6,7 +6,6 @@ export const getOntologyBy = id => {
     // we use parameters from env.
 
     const reqURL = URL_VIEWONTOLOGY + '?ontology_id=' + id;
-    console.log('IN network we want this page', reqURL);
     // todo: make flexible based on the env.file
     return plainGetRequest(reqURL, {
         'Content-Type': 'application/json'
@@ -15,7 +14,6 @@ export const getOntologyBy = id => {
 
 export const getJSON_ModelForId = id => {
     const reqURL = URL_GET_JSON_MODEL + '?ontology_id=' + id;
-    console.log('IN network we want this page', reqURL);
     // todo: make flexible based on the env.file
     return plainGetRequest(reqURL, {
         'Content-Type': 'application/json'
@@ -34,7 +32,7 @@ export const getOntologyComparison = (first, second) => {
         fetch(URL_COMPARE_ONTOLOGY, { method: 'POST', headers: postHeader, body: JSON.stringify(twoCommits) })
             .then(response => {
                 if (!response.ok) {
-                    console.log('ERROR WHILE CREATING RESOURCE-RELATION MODEL, ', !response.ok);
+                    console.error('ERROR WHILE CREATING RESOURCE-RELATION MODEL, ', !response.ok);
                 } else {
                     const json = response.json();
                     if (json.then) {
@@ -74,14 +72,11 @@ export const getJSON_ModelForOntology = ontologyData => {
 
     const postHeader = { 'Content-Type': 'application/json' };
 
-    console.log('this is the data', ontologyData);
-
     return new Promise((resolve, reject) => {
         fetch(URL_GET_JSON_MODEL, { method: 'POST', headers: postHeader, body: JSON.stringify(ontologyData) })
             .then(response => {
-                console.log('response', response);
                 if (!response.ok) {
-                    console.log('ERROR WHILE CREATEING RESOURCE-RELATION MODEL, ', !response.ok);
+                    console.error('ERROR WHILE CREATEING RESOURCE-RELATION MODEL, ', !response.ok);
                 } else {
                     const json = response.json();
                     if (json.then) {
@@ -100,14 +95,11 @@ export const getJSON_ModelForOntologyWithQuery = sparqlQuery => {
 
     const postHeader = { 'Content-Type': 'application/json' };
 
-    console.log('this is the data', sparqlQuery);
-
     return new Promise((resolve, reject) => {
         fetch(URL_GET_JSON_MODEL_WITH_QUERY, { method: 'POST', headers: postHeader, body: JSON.stringify(sparqlQuery) })
             .then(response => {
-                console.log('response', response);
                 if (!response.ok) {
-                    console.log('ERROR WHILE CREATEING RESOURCE-RELATION MODEL, ', !response.ok);
+                    console.error('ERROR WHILE CREATEING RESOURCE-RELATION MODEL, ', !response.ok);
                 } else {
                     const json = response.json();
                     if (json.then) {

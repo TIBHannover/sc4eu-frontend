@@ -52,6 +52,8 @@ export const getFileDataFromGitHub = async GitHubAPIUrl => {
     return data;
 };
 
+const shaCache = new Map();
+
 export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
     const owner = getUserFromUrl(GitHubAPIUrl);
     const repo = getRepoFromUrl(GitHubAPIUrl); // the name of the repository
@@ -64,8 +66,14 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
     };
 
     const newContent = Buffer.from(newData).toString('base64');
-    const result = await getFileDataFromGitHub(GitHubAPIUrl);
-    const my_sha = result.sha;
+
+    let sha;
+    if (shaCache.has(GitHubAPIUrl)) {
+        sha = shaCache.get(GitHubAPIUrl);
+    } else {
+        const result = await getFileDataFromGitHub(GitHubAPIUrl);
+        sha = result.sha;
+    }
 
     try {
         // update the file content on GitHub
@@ -75,13 +83,21 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
             path,
             message: commitMessage, // the commit message
             content: newContent, // the new content
-            sha: my_sha,
+            sha: sha,
             committer: { ...user_info },
             author: { ...user_info },
             branch: branch
         });
+        shaCache.set(GitHubAPIUrl, response.data.content?.sha);
         return response.data;
     } catch (e) {
+        if (e.status === 409) {
+            shaCache.delete(GitHubAPIUrl);
+            const freshFileData = await getFileDataFromGitHub(GitHubAPIUrl);
+            shaCache.set(GitHubAPIUrl, freshFileData.sha);
+            e.remoteContent = Buffer.from(freshFileData.content, 'base64').toString('utf8');
+            e.remoteSha = freshFileData.sha;
+        }
         throw e;
     }
 };

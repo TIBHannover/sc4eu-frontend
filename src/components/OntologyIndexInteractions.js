@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from 'reactstrap';
 import UploadOntologyModal from './UploadOntologyModal';
-import { MIN_WIDTH_FOR_MONITOR } from '../styledComponents/styledComponents';
 import OntologyIndexCards from './OntologyIndexCards';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -10,9 +8,9 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { UncontrolledTooltip } from 'reactstrap';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
 import { fontStyled } from '../styledComponents/styledFont';
+import { withTheme } from '@emotion/react';
+import { StyledSubHeadingDiv, StyledInfoSpan, StyledButtonProjectAndOntologyUpload, StyledContentDiv } from 'styledComponents/styledComponents';
 
 class OntologyIndexInteractions extends Component {
     constructor(props) {
@@ -39,24 +37,17 @@ class OntologyIndexInteractions extends Component {
         }
     }
 
-    toggle = tab => {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    };
-
     render() {
         const projectName = this.props.project_name.length > 50 ? this.props.project_name.substring(0, 50) + ' ...' : this.props.project_name;
+        const { theme } = this.props;
         return (
             <div style={{ height: '100%', fontFamily: fontStyled.fontFamily }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginLeft: '1%', color: colorStyled.primary }}>
+                    <Link title="Projects List" to={ROUTES.PROJECT} style={{ marginLeft: '1%', color: theme.palette.primary.main }}>
                         <Icon icon={faAngleLeft} style={{ marginRight: '5px' }} />
                         <span>Back</span>
                     </Link>
-                    <h4 style={{ padding: '10px', margin: '0 auto', color: colorStyled.onSurface }}>
+                    <h4 style={{ padding: '10px', margin: '0 auto', color: theme.palette.secondary.main }}>
                         <u id="tootlipTarget">{projectName}</u> Project
                     </h4>
                     <UncontrolledTooltip style={{ maxWidth: '100%' }} target="tootlipTarget">
@@ -67,7 +58,7 @@ class OntologyIndexInteractions extends Component {
                     <StyledInfoSpan style={{ margin: '15px 15px 15px 15px', float: 'left' }}>
                         Click on one of the ontology below to view
                     </StyledInfoSpan>
-                    <StyledButtonToUploadOntology
+                    <StyledButtonProjectAndOntologyUpload
                         disabled={this.state.canNotUploadOntology}
                         title={'Please login to upload ontology'}
                         active={true}
@@ -76,7 +67,7 @@ class OntologyIndexInteractions extends Component {
                         }}
                     >
                         Upload Ontology
-                    </StyledButtonToUploadOntology>
+                    </StyledButtonProjectAndOntologyUpload>
                     <hr className="mt-0 mb-2 ml-2 mr-2" />
                     <UploadOntologyModal
                         project_id={this.props.project_id}
@@ -124,44 +115,5 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(OntologyIndexInteractions);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(OntologyIndexInteractions));
 
-const StyledSubHeadingDiv = styled.div`
-    height: 70px; /* Absolute height for all screen sizes */
-`;
-
-const StyledContentDiv = styled.div`
-    height: calc(100% - 10px); /* Percentage height for different screen sizes */
-`;
-
-const StyledButtonToUploadOntology = styled(Button)`
-    float: right;
-    margin: 10px 15px 15px 0px;
-    background-color: ${colorStyled.secondary};
-    color: ${colorStyled.onSecondary};
-    margin-left: 1%;
-    font-size: ${fontStyled.fontSize.NormalText};
-    border: none;
-
-    &:hover {
-        background-color: ${colorStyled.secondary}CC;
-        color: ${colorStyled.onSecondary};
-    }
-
-    &:disabled {
-        background-color: ${colorStyled.secondary}4D;
-        color: ${colorStyled.onSecondary}4D;
-    }
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;
-
-const StyledInfoSpan = styled.span`
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-`;

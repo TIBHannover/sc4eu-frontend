@@ -7,19 +7,23 @@ import { Link, Redirect, withRouter } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth, toggleAuthDialog } from '../redux/actions/auth';
+import { closeAuthDialog, firstLoad, openAuthDialog, resetAuth } from '../redux/actions/auth';
 import greetingTime from 'greeting-time';
-import { Button } from 'reactstrap';
 import SignInModal from '../components/Signin/SignInModal';
-import { StyledAuthTooltip, StyledGravatar } from '../styledComponents/styledComponents';
-import '../assets/scss/DefaultLayout.scss';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
-import background from '../assets/images/Curve_Line.svg';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
 import { SettingsOutlined, LogoutOutlined, AccountCircleOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
 import { NotificationToggle } from '../components/ReusableComponents/NotificationToggle';
 import { NotificationManager } from '../utils/NotificationManager';
+import { ThemeToggle } from 'components/ReusableComponents/ThemeToggle';
+import {
+    StyledHeaderRootDiv,
+    StyledHeaderDiv,
+    StyledRightSideDiv,
+    StyledHeaderReactStrapButton,
+    ButtonIcon,
+    ButtonText,
+    StyledAuthTooltip,
+    StyledGravatar
+} from '../styledComponents/styledComponents';
 class Header extends Component {
     constructor(props) {
         super(props);
@@ -31,23 +35,13 @@ class Header extends Component {
         };
 
         this.userPopup = React.createRef();
-        this.logoutTimeoutId = null; // timeout for auto-logout
+        this.logoutTimeoutId = null;
     }
 
     componentDidMount() {
-        // headers component mounts, so lets try to see if we have a user;
-        //console.log('USER: ', this.props.user);
         document.addEventListener('mousedown', this.handleClickOutside);
-        if (this.props.user === 0) {
-            // make a call to redux to look into the cookie jar
-            // console.log('User is NULL, >> FIRST LOAD');
+        if (this.props.user === 0 || !this.props.user.displayName || !this.props.user.gravatarId) {
             this.props.firstLoad();
-        } else {
-            // console.log('we do have some user');
-            if (!this.props.user.displayName || !this.props.user.gravatarId) {
-                // console.log('This should fetch some data');
-                this.props.firstLoad();
-            }
         }
     }
 
@@ -72,12 +66,6 @@ class Header extends Component {
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
-    preventDraggingOfItem = event => {
-        // event.stopPropagation();
-        event.preventDefault();
-        return false;
-    };
-
     toggleUserTooltip = () => {
         this.setState(prevState => ({
             userTooltipOpen: !prevState.userTooltipOpen
@@ -90,12 +78,12 @@ class Header extends Component {
             this.props.user.role.toLowerCase() === 'Project Admin'.toLowerCase()
         ) {
             return (
-                <StyledButton onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.ADMIN_DASHBOARD}>
+                <StyledHeaderReactStrapButton onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.ADMIN_DASHBOARD}>
                     <ButtonIcon>
                         <DashboardCustomizeOutlined />
                     </ButtonIcon>
                     <ButtonText>Dashboard</ButtonText>
-                </StyledButton>
+                </StyledHeaderReactStrapButton>
             );
         }
     };
@@ -121,10 +109,6 @@ class Header extends Component {
 
     render() {
         if (this.state.redirectOnAuthAction === true) {
-            // TODO redirect to current page
-            // const path = this.props.location.pathname;
-            // return <Redirect to={this.props.location.pathname} />;
-            // return <Redirect to={ROUTES.USER_SETTINGS} />;
             return <Redirect to="/" />;
         }
 
@@ -132,12 +116,13 @@ class Header extends Component {
         const greeting = greetingTime(new Date());
 
         return (
-            <StyledRootDiv>
-                {this.props.user?.displayName && (<NotificationManager user={this.props.user.displayName} />)}
+            <StyledHeaderRootDiv>
+                {this.props.user?.displayName && <NotificationManager user={this.props.user.displayName} />}
                 <StyledHeaderDiv>
                     <StyledRightSideDiv>
-                        {this.props.user && this.props.user.displayName && this.props.user.gravatarId ? (
-                            <div style={{ display: 'flex'}}>
+                        <ThemeToggle />
+                        {this.props.user.gravatarId ? (
+                            <>
                                 <NotificationToggle user={this.props.user.displayName} />
                                 <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
                                 <StyledAuthTooltip
@@ -170,8 +155,7 @@ class Header extends Component {
                                     </span>
                                     <div className="user-details">
                                         {this.showDashboard()}
-                                        <StyledButton
-                                            color="secondary"
+                                        <StyledHeaderReactStrapButton
                                             onClick={this.toggleUserTooltip}
                                             tag={Link}
                                             to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
@@ -180,27 +164,26 @@ class Header extends Component {
                                                 <AccountCircleOutlined />
                                             </ButtonIcon>
                                             <ButtonText>Profile</ButtonText>
-                                        </StyledButton>
+                                        </StyledHeaderReactStrapButton>
 
-                                        <StyledButton color="secondary" onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.USER_SETTINGS}>
+                                        <StyledHeaderReactStrapButton onClick={this.toggleUserTooltip} tag={Link} to={ROUTES.USER_SETTINGS}>
                                             <ButtonIcon>
                                                 <SettingsOutlined />
                                             </ButtonIcon>
                                             <ButtonText>Settings</ButtonText>
-                                        </StyledButton>
+                                        </StyledHeaderReactStrapButton>
 
-                                        <StyledButton onClick={this.handleSignOut}>
+                                        <StyledHeaderReactStrapButton onClick={this.handleSignOut}>
                                             <ButtonIcon>
                                                 <LogoutOutlined />
                                             </ButtonIcon>
                                             <ButtonText>Sign out</ButtonText>
-                                        </StyledButton>
+                                        </StyledHeaderReactStrapButton>
                                     </div>
                                 </StyledAuthTooltip>
-                            </div>
+                            </>
                         ) : (
-                            <Button
-                                style={{ backgroundColor: colorStyled.primary }}
+                            <StyledHeaderReactStrapButton
                                 className="clearfix"
                                 onClick={() => {
                                     // push that to the redux state so that the user is rederected to its prev location;
@@ -211,12 +194,12 @@ class Header extends Component {
                                 }}
                             >
                                 <Icon className="mr-1" icon={faUser} /> Login
-                            </Button>
+                            </StyledHeaderReactStrapButton>
                         )}
                     </StyledRightSideDiv>
                     <SignInModal callback={this.loginCallback} />
                 </StyledHeaderDiv>
-            </StyledRootDiv>
+            </StyledHeaderRootDiv>
         );
     }
 }
@@ -228,7 +211,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     openAuthDialog: payload => dispatch(openAuthDialog(payload)),
-    toggleAuthDialog: () => dispatch(toggleAuthDialog()),
     closeAuthDialog: () => dispatch(closeAuthDialog()),
 
     firstLoad: () => dispatch(firstLoad()),
@@ -238,7 +220,6 @@ const mapDispatchToProps = dispatch => ({
 Header.propTypes = {
     location: PropTypes.object.isRequired,
     openAuthDialog: PropTypes.func.isRequired,
-    toggleAuthDialog: PropTypes.func.isRequired,
     closeAuthDialog: PropTypes.func.isRequired,
     firstLoad: PropTypes.func.isRequired,
     resetAuth: PropTypes.func.isRequired,
@@ -247,71 +228,3 @@ Header.propTypes = {
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(Header);
-
-const StyledRootDiv = styled.div`
-    height: 50px;
-    overflow: auto;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: 50px;
-        overflow: hidden;
-    }
-`;
-
-const StyledHeaderDiv = styled.div`
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-        //background-image: url("${background}");
-
-    @media (max-width: ${MAX_WIDTH}) {
-        height: 50px;
-        overflow: hidden;
-        background-image: none;
-    }
-`;
-
-const StyledRightSideDiv = styled.div`
-    margin-left: auto;
-    margin-right: 1%;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        margin-right: 0;
-        z-index: 1000;
-    }
-`;
-
-const StyledButton = styled(Button)`
-    backgroundColor: ${colorStyled.secondary};
-    color: ${colorStyled.onSecondary};
-    font-size: 14px;
-    border-radius: 14px;
-    border: none !important;
-    display: flex;
-    align-items: center;
-    // justify-content: center;
-    width: 100%;
-    margin: 10px 0;
-    margin-bottom: 8px;
-    text-align: center;
-    transition: background-color 0.3s, color 0.3s;
-
-    &:hover {
-        background-color: ${colorStyled.secondary}1A;
-        color: ${colorStyled.onSecondaryContainer};
-        border: none !important;
-    }
-`;
-
-const ButtonIcon = styled.span`
-    margin-right: 20px;
-`;
-
-const ButtonText = styled.span`
-    text-align: left;
-`;

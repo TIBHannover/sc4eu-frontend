@@ -20,12 +20,6 @@ export default class LinkPrimitive extends BasePrimitive {
         // type can be loop, singleLink, multiLink ;
     }
 
-    collapseExpandMultiLinks = () => {
-        if (this.__internalType === 'multiLink') {
-            console.log('DO SOME OPERATIONS ON THAT');
-        }
-    };
-
     setTargetNode(node) {
         this.targetNode = node;
         node.addIncomingLink(this);
@@ -162,8 +156,6 @@ export default class LinkPrimitive extends BasePrimitive {
         this.fixed = false;
     };
 
-    resetPropertyPosition() {}
-
     initializePropertyNodePosition() {
         const pos = this.drawTools().lineTools.computeShapeBasedCenterPoint(this.sourceNode, this.targetNode, 1);
 
@@ -214,10 +206,8 @@ export default class LinkPrimitive extends BasePrimitive {
             // CHECK THE CURVE ATTRIBUTE
             if (this.renderingConfig().options.link_renderingType === 'line') {
                 this.setInternalType('singleLink');
-            } else {
-                if (this.renderingConfig().options.link_renderingType === 'curve' && this.__internalType !== 'loop') {
-                    this.setInternalType('multiLink');
-                }
+            } else if (this.renderingConfig().options.link_renderingType === 'curve' && this.__internalType !== 'loop') {
+                this.setInternalType('multiLink');
             }
         }
 
@@ -254,8 +244,6 @@ export default class LinkPrimitive extends BasePrimitive {
         this.removeAllRenderedElementsFromParent();
         if (this.groupRoot && this.propertyContainer && this.arrowContainer) {
             this.render(this.groupRoot, this.propertyContainer, this.arrowContainer);
-        } else {
-            console.log('FAILED IN REDRAWING THE LINK ', this.displayName());
-        }
+        } 
     };
 }

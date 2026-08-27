@@ -1,5 +1,28 @@
+// graphInteractions.js
+//
+// Migrated from D3 v3 to D3 v7.
+//
+// Breaking changes addressed:
+//
+//   d3.behavior.zoom()        → d3.zoom()
+//   zoom.duration()           → removed; no equivalent in v4+
+//   'zoomstart' / 'zoomend'   → 'start' / 'end' event names
+//   zoom.event(selection)     → selection.call(zoom)
+//   zoom.translate(arr)       → selection.call(zoom.transform, newTransform)
+//   zoom.scale(k)             → selection.call(zoom.transform, newTransform)
+//   d3.event                  → event parameter in every handler
+//   d3.event.scale            → zoomEvent.transform.k
+//   d3.event.translate        → [zoomEvent.transform.x, zoomEvent.transform.y]
+//   d3.transform(str).scale   → parseScale(str) from d3Utils
+//   d3.transform(str).translate → parseTranslate(str) from d3Utils
+//   .tween('attr.*', fn)      → .attrTween('transform', fn)
+//   .each('end', fn)          → .on('end', fn)
+//   .ease('linear')           → .ease(d3.easeLinear)
+//   d3.mouse(element)         → d3.pointer(event, element)
+//   container[0].scrollTop    → container.node().scrollTop
+
 import * as d3 from 'd3';
-import { getGraphCoordinates, getSelectedElements } from '../utils/GraphUtils';
+import { getGraphCoordinates, getSelectedElements, buildZoomTransform } from '../utils/GraphUtils';
 export default class GraphInteractions {
     constructor(graph) {
         this.graphObject = graph;
@@ -14,236 +37,193 @@ export default class GraphInteractions {
         this.scrollValue = 0;
     }
 
-    enableMouseZoom = val => {
-        this.zoomEnabled = val;
+    enableMouseZoom = value => {
+        this.zoomEnabled = value;
     };
-    enableCtrlMouseZoom = val => {
-        this.ctrlZoomEnabled = val;
+
+    enableCtrlMouseZoom = value => {
+        this.ctrlZoomEnabled = value;
     };
-    enableMouseDrag = val => {
-        this.dragEnabled = val;
+
+    enableMouseDrag = value => {
+        this.dragEnabled = value;
     };
+
+    // ─── applyGraphInteractions ───────────────────────────────────────────────
+    // Sets up zoom and drag on the SVG root.
+    // D3 v7: d3.zoom() replaces d3.behavior.zoom().
+    // Event names 'start' and 'end' replace 'zoomstart' and 'zoomend'.
+    // Each handler receives the zoom event as its first parameter.
 
     applyGraphInteractions = () => {
         if (!this.graphObject) {
             console.error('NO GRAPH OBJECT FOUND');
             return;
         }
-        // graph interactions are zoom and drag operations
-        const that = this;
+
         this.selectionBoxFeature(true);
 
-        // Apply the zooming factor.
-        this.zoom = d3.behavior
+        this.zoom = d3
             .zoom()
-            .duration(150)
             .scaleExtent([0.02, 5])
-            .on('zoom', this.zoomed)
-            .on('zoomstart', function() {
-                if (that.zoomEnabled) {
-                    if (d3.event.sourceEvent && d3.event.sourceEvent.buttons && d3.event.sourceEvent.buttons === 1) {
-                        that.graphObject.svgRoot.style('cursor', 'all-scroll');
-                    }
+            // D3 v7: 'start' replaces 'zoomstart'
+            .on('start', zoomEvent => {
+                if (!this.zoomEnabled) {
+                    return;
                 }
+                const hasLeftMouseButton = zoomEvent.sourceEvent?.buttons === 1;
+
+                if (hasLeftMouseButton) {
+                    this.graphObject.svgRoot.style('cursor', 'all-scroll');
+                }
+
                 const container = d3.select('#resourceRendererContainer');
-                if (container && container.node()) {
-                    that.scrollValue = container.node().scrollTop;
+                if (container?.node()) {
+                    this.scrollValue = container.node().scrollTop;
                 }
             })
-            .on('zoomend', function() {
-                if (that.zoomEnabled) {
-                    that.graphObject.svgRoot.style('cursor', 'auto');
-                    that.b_graphTranslation = that.graphTranslation;
-                    that.b_zoomFactor = that.zoomFactor;
+            // D3 v7: zoom handler receives zoomEvent as first parameter
+            .on('zoom', zoomEvent => {
+                this.zoomed(zoomEvent);
+            })
+            // D3 v7: 'end' replaces 'zoomend'
+            .on('end', () => {
+                if (!this.zoomEnabled) {
+                    return;
                 }
+                this.graphObject.svgRoot.style('cursor', 'auto');
+                this.b_graphTranslation = this.graphTranslation;
+                this.b_zoomFactor = this.zoomFactor;
             });
 
         this.graphObject.svgRoot.call(this.zoom);
-        this.zoom = this.zoom.scaleExtent([0.02, 5]);
-        if (this.graphObject.graphRoot) {
-            this.zoom.event(this.graphObject.graphRoot);
-        }
     };
 
-    resetUserLayout = (translation, zoomfactor) => {
+    resetUserLayout = (translation, zoomFactor) => {
         const graph = this.graphObject;
+
         if (translation) {
-            // todo could have some validation here
-            this.graphTranslation[0] = translation[0];
-            this.graphTranslation[1] = translation[1];
-        }
-        if (zoomfactor) {
-            this.zoomFactor = zoomfactor;
+            this.graphTranslation = [...translation];
         }
 
-        const graphContainer = graph.graphRoot;
-        graphContainer.attr('transform', 'translate(' + this.graphTranslation + ')scale(' + this.zoomFactor + ')');
-        this.zoom.translate(this.graphTranslation);
-        this.zoom.scale(this.zoomFactor);
+        if (zoomFactor) {
+            this.zoomFactor = zoomFactor;
+        }
+
+        const transform = d3.zoomIdentity.translate(this.graphTranslation[0], this.graphTranslation[1]).scale(this.zoomFactor);
+
+        // Apply to both the container and update zoom state
+        graph.graphRoot.attr('transform', transform);
+        this.graphObject.svgRoot.call(this.zoom.transform, transform);
     };
 
-    zoomed = () => {
-        if (!this.zoomEnabled) {
-            if (d3.event.sourceEvent) {
-                const delta = d3.event.sourceEvent.deltaY;
-
-                if (this.ctrlZoomEnabled && delta && d3.event.sourceEvent.ctrlKey) {
-                    // continue;
-                } else {
-                    if (delta) {
-                        // apply delta to rendererRoot;
-                        // hardCoded stuff;
-                        const container = d3.select('#resourceRendererContainer');
-                        if (delta > 0) {
-                            this.scrollValue += 50;
-                            container[0].scrollTop = this.scrollValue;
-                            container.node().scrollTop = this.scrollValue;
-                            if (this.scrollValue > container.node().scrollTopMax) {
-                                this.scrollValue = container.node().scrollTopMax;
-                            }
-                        } else {
-                            this.scrollValue -= 50;
-                            container[0].scrollTop = this.scrollValue - 10;
-                            container.node().scrollTop = this.scrollValue;
-                            if (this.scrollValue < 0) {
-                                this.scrollValue = 0;
-                            }
-                        }
-                        this.zoom.translate(this.graphTranslation);
-                        this.zoom.scale(this.zoomFactor);
-                        return;
-                    }
-                }
-            }
-        }
-
-        if (this.disableGraphTranslation) {
-            return;
-        }
-        if (d3.event.sourceEvent) {
-            d3.event.sourceEvent.preventDefault();
-            d3.event.sourceEvent.stopPropagation();
-        }
-
-        const that = this;
+    zoomed = zoomEvent => {
         const graph = this.graphObject;
         const graphContainer = graph.graphRoot;
-        let zoomEventByMWheel = false;
-        if (d3.event.sourceEvent) {
-            if (d3.event.sourceEvent.deltaY) {
-                zoomEventByMWheel = true;
-            }
-        }
-        if (zoomEventByMWheel === false) {
-            if (this.transformAnimation === true) {
+
+        if (!this.zoomEnabled) {
+            // Handle scroll events without zoom
+            if (zoomEvent.sourceEvent?.type === 'wheel') {
+                const container = d3.select('#resourceRendererContainer');
+                if (container.node()) {
+                    container.node().scrollTop += zoomEvent.sourceEvent.deltaY;
+                }
+                // Prevent zoom but allow scroll
                 return;
             }
-            this.zoomFactor = d3.event.scale;
-            if (!that.disableGraphTranslation) {
-                this.graphTranslation = d3.event.translate;
-            }
-            graphContainer.attr('transform', 'translate(' + this.graphTranslation + ')scale(' + this.zoomFactor + ')');
-            return;
         }
-        /** animate the transition **/
-        this.zoomFactor = d3.event.scale;
-        this.graphTranslation = d3.event.translate;
-        graphContainer
-            .transition()
-            .tween('attr.translate', function() {
-                return function() {
-                    that.transformAnimation = true;
-                    const tr = d3.transform(graphContainer.attr('transform'));
-                    if (!that.disableGraphTranslation) {
-                        that.graphTranslation[0] = tr.translate[0];
-                        that.graphTranslation[1] = tr.translate[1];
-                    }
-                    that.zoomFactor = tr.scale[0];
-                };
-            })
-            .each('end', function() {
-                that.transformAnimation = false;
-            })
-            .attr('transform', 'translate(' + that.graphTranslation + ')scale(' + that.zoomFactor + ')')
-            .ease('linear')
-            .duration(250);
+
+        if (this.disableGraphTranslation) return;
+
+        zoomEvent.sourceEvent?.preventDefault();
+        zoomEvent.sourceEvent?.stopPropagation();
+
+        // Simply apply the transform from the zoom event
+        graphContainer.attr('transform', zoomEvent.transform);
+        this.graphTranslation = [zoomEvent.transform.x, zoomEvent.transform.y];
+        this.zoomFactor = zoomEvent.transform.k;
     };
 
-    // add selection box feature
     selectionBoxFeature = (active = true) => {
-        if (active) {
-            function rect(x, y, w, h) {
-                return 'M' + [x, y] + ' l' + [w, 0] + ' l' + [0, h] + ' l' + [-w, 0] + 'z';
-            }
+        if (!active || !this.graphObject?.svgRoot) return;
 
-            // const layoutSize = this.graphObject.layoutHandler.layoutSize;
-            // const width = layoutSize[0],
-            //     height = layoutSize[1];
+        const svg = this.graphObject.svgRoot;
+        const zoomBehavior = this.zoom;
 
-            const svg = this.graphObject.svgRoot;
-            const that = this;
+        // Helper function to build the rectangle path
+        const buildRectPath = (x, y, width, height) => {
+            return `M${x},${y} l${width},0 l0,${height} l${-width},0 z`;
+        };
 
-            const selection = svg.append('path').attr('visibility', 'hidden');
-            selection.style('opacity', '0.5');
-            selection.style('fill', '#ADD8E6');
-            selection.style('stroke', '#ADD8E6');
-            selection.style('fill-opacity', '0.3');
-            selection.style('stroke-opacity', '0.7');
-            selection.style('stroke-width', '2');
-            selection.style('stroke-dasharray', '5, 5');
+        // Create and style the selection rectangle
+        const selectionRect = svg
+            .append('path')
+            .attr('visibility', 'hidden')
+            .style('opacity', '0.5')
+            .style('fill', '#ADD8E6')
+            .style('stroke', '#ADD8E6')
+            .style('fill-opacity', '0.3')
+            .style('stroke-opacity', '0.7')
+            .style('stroke-width', '2')
+            .style('stroke-dasharray', '5, 5');
 
-            const startSelection = function(start) {
-                selection.attr('d', rect(start[0], start[0], 0, 0)).attr('visibility', 'visible');
-                that.disableGraphTranslation = true;
-            };
+        // Selection handlers
+        const startSelection = startPoint => {
+            selectionRect.attr('d', buildRectPath(startPoint[0], startPoint[1], 0, 0)).attr('visibility', 'visible');
+            this.disableGraphTranslation = true;
+        };
 
-            const moveSelection = function(start, moved) {
-                selection.attr('d', rect(start[0], start[1], moved[0] - start[0], moved[1] - start[1]));
-            };
+        const moveSelection = (startPoint, currentPoint) => {
+            const width = currentPoint[0] - startPoint[0];
+            const height = currentPoint[1] - startPoint[1];
+            selectionRect.attr('d', buildRectPath(startPoint[0], startPoint[1], width, height));
+        };
 
-            const endSelection = function(start, end) {
-                selection.attr('visibility', 'hidden');
-                that.disableGraphTranslation = false;
-                that.zoom.translate(that.graphTranslation);
-                that.zoom.scale(that.zoomFactor);
+        const endSelection = (startPoint, endPoint) => {
+            selectionRect.attr('visibility', 'hidden');
+            this.disableGraphTranslation = false;
 
-                // start and end are in pixel space;
-                const startInGraphSpace = getGraphCoordinates(start[0], start[1], that.graphTranslation, that.zoomFactor);
-                const endInGraphSpace = getGraphCoordinates(end[0], end[1], that.graphTranslation, that.zoomFactor);
+            // Reset zoom state to match current graph position
+            const resetTransform = buildZoomTransform(this.graphTranslation, this.zoomFactor);
+            this.graphObject.svgRoot.call(zoomBehavior.transform, resetTransform);
 
-                // we need to transform them into graph space and then find the nodes that are falling into it;
+            // Convert screen coordinates to graph coordinates
+            const startInGraphSpace = getGraphCoordinates(startPoint[0], startPoint[1], this.graphTranslation, this.zoomFactor);
+            const endInGraphSpace = getGraphCoordinates(endPoint[0], endPoint[1], this.graphTranslation, this.zoomFactor);
 
-                // find the nodes; under area
-                // we only allow to drag items;
-                const selectedElements = getSelectedElements(startInGraphSpace, endInGraphSpace, that.graphObject);
-                // could also apply while moving
+            // Get and process selected elements
+            const selectedElements = getSelectedElements(startInGraphSpace, endInGraphSpace, this.graphObject);
 
-                selectedElements.forEach(item => {
-                    if (item.groupRoot.nodeHoverIn) {
-                        item.nodeHoverIn(item);
-                    }
-                });
-
-                // now highlight nodes for moving;
-            };
-
-            // add the event to the graph.svg element
-            svg.on('mousedown', function() {
-                if (d3.event.ctrlKey) {
-                    const subject = d3.select(window),
-                        parent = this.parentNode,
-                        start = d3.mouse(parent);
-                    startSelection(start);
-                    subject
-                        .on('mousemove.selection', function() {
-                            moveSelection(start, d3.mouse(parent));
-                        })
-                        .on('mouseup.selection', function() {
-                            endSelection(start, d3.mouse(parent));
-                            subject.on('mousemove.selection', null).on('mouseup.selection', null);
-                        });
+            selectedElements.forEach(item => {
+                if (item.groupRoot?.nodeHoverIn) {
+                    item.nodeHoverIn(item);
                 }
             });
-        }
+        };
+
+        // Set up the mouse event handlers
+        svg.on('mousedown', mouseEvent => {
+            if (!mouseEvent.ctrlKey) return;
+
+            // Temporarily disable zoom to prevent interference
+            svg.on('.zoom', null);
+
+            const parent = svg.node().parentNode;
+            const startPoint = d3.pointer(mouseEvent, parent);
+
+            startSelection(startPoint);
+
+            const windowSelection = d3.select(window);
+            windowSelection
+                .on('mousemove.selection', moveEvent => {
+                    moveSelection(startPoint, d3.pointer(moveEvent, parent));
+                })
+                .on('mouseup.selection', upEvent => {
+                    endSelection(startPoint, d3.pointer(upEvent, parent));
+                    // Re-enable zoom
+                    svg.call(zoomBehavior);
+                    windowSelection.on('mousemove.selection', null).on('mouseup.selection', null);
+                });
+        });
     };
 }
