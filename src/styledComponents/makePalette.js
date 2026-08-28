@@ -26,7 +26,7 @@ function makePalette(scheme, mode) {
         },
         background: {
             default: scheme.background,
-            paper: scheme.surfaceContainerLowest,
+            paper: scheme.surfaceContainerLow,
         },
         text: {
             primary: scheme.onSurface,
