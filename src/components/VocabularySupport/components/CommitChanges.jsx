@@ -18,6 +18,17 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
     const handleCommit = async () => {
         try {
             await commitChanges(queryClient, commitMessage);
+            const res = await fetch(
+                `${process.env.REACT_APP_DIFF_BACKEND_URL}/api/ondet/sdiffs/latestVersion?uri=${process.env.REACT_APP_VOCABULARY_SERVICE_URL}`
+            );
+            const datetime = await res.text();
+            await fetch(
+                `${process.env.REACT_APP_DIFF_BACKEND_URL}/api/ondet/sdiffs/update?uri=${process.env.REACT_APP_VOCABULARY_SERVICE_URL}&datetime=${datetime}`,
+                {
+                    method: 'POST'
+                }
+            );
+
             await notifyAddRemoveTerm();
             onSuccess?.();
             setHasUncommittedChanges(false);
