@@ -105,7 +105,7 @@ const VocabularyMainTable = ({
         )
     );
 
-    const NEW_TERMS_INTERVAL = 180;
+    const NEW_TERMS_INTERVAL = 7;
     const newTerms = terms.filter(term => {
         const daysSinceCreated = differenceInDays(new Date(), new Date(term.created));
         return !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
@@ -721,7 +721,7 @@ const VocabularyMainTable = ({
                 'data-new': isNew ? 'true' : undefined,
                 sx: {
                     cursor: 'pointer',
-                    backgroundColor: isNew ? `${theme.palette.primary.main}66` : 'transparent'
+                    backgroundColor: isNew ? `${theme.palette.primary.main}33` : 'transparent'
                 }
             };
         },
