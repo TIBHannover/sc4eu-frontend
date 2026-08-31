@@ -920,7 +920,7 @@ const VocabularyMainTable = ({
     const handleWidgetDiscussionReplyClick = term => {
         setSelectedTerm(term);
         const currentResourceDiscussion = discussions.find(d => d.resourceId === term.identifier);
-        setTermComments(currentResourceDiscussion.comments);
+        setTermComments(currentResourceDiscussion?.comments || []);
         setOpenPopup(true);
     };
 
