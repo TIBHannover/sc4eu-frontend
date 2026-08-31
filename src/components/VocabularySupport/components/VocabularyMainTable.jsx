@@ -1013,7 +1013,7 @@ const VocabularyMainTable = ({
                     setActiveMUIPopUp(null);
                 }}
                 title="Timeline"
-                message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development_ver_1/refs/heads/main/terms.ttl" />}
+                message={<ChangesTimeline id={process.env.REACT_APP_VOCABULARY_SERVICE_URL} />}
                 type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             <MaterialUIPopUp
