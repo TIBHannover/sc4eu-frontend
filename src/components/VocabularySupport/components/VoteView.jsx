@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Typography, Avatar, TextField, Button, Box, RadioGroup, FormControlLabel, Radio, Tooltip, useTheme } from '@mui/material';
+import {
+    Grid,
+    Typography,
+    Avatar,
+    TextField,
+    Button,
+    Box,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+    Tooltip,
+    useTheme,
+    GlobalStyles
+} from '@mui/material';
 import {
     CheckCircle as ApprovedIcon,
     Cancel as RejectedIcon,
@@ -13,6 +26,7 @@ import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCal
 import Divider from '@mui/material/Divider';
 import { stringAvatar } from './CommentsSection';
 import { ConsensusProgress } from '../utils/Consensus';
+import ClampLines from 'react-clamp-lines';
 
 const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => {
     const theme = useTheme();
@@ -115,6 +129,19 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
                             {term.label}
                         </Typography>
+
+                        <GlobalStyles
+                            styles={{
+                                '.clamp-lines__button': {
+                                    color: theme.palette.primary.main,
+                                    background: 'none',
+                                    border: 'none',
+                                    padding: 0,
+                                    cursor: 'pointer'
+                                }
+                            }}
+                        />
+                        <ClampLines text={term.description} id="custom" lines={1} />
 
                         <Divider
                             sx={{
