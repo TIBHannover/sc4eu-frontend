@@ -721,7 +721,7 @@ const VocabularyMainTable = ({
                 'data-new': isNew ? 'true' : undefined,
                 sx: {
                     cursor: 'pointer',
-                    backgroundColor: isNew ? `${theme.palette.primary.main}33` : 'transparent'
+                    backgroundColor: 'transparent'
                 }
             };
         },
