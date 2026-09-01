@@ -967,7 +967,7 @@ const VocabularyMainTable = ({
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
                         width: { xs: '95%', xl: '70%' },
-                        height: { xs: '95%', xl: '60%' },
+                        height: { xs: '95%', xl: '65%' },
                         outline: 'none'
                     }}
                 >
