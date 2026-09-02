@@ -390,10 +390,10 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         )} */}
                     </div>
                     <Divider />
-                    {/* <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations} onClick={onNavigate}>
+                    <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations} onClick={onNavigate}>
                         <LibraryBooksOutlined color="action" />
                         <StyledText>About Portal</StyledText>
-                    </StyledLink> */}
+                    </StyledLink>
                     {/* <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ} onClick={onNavigate}>
                         <LiveHelpOutlined color="action" />
                         <StyledText>FAQ</StyledText>

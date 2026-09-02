@@ -105,7 +105,7 @@ const VocabularyMainTable = ({
         )
     );
 
-    const NEW_TERMS_INTERVAL = 7;
+    const NEW_TERMS_INTERVAL = 1;
     const newTerms = terms.filter(term => {
         const daysSinceCreated = differenceInDays(new Date(), new Date(term.created));
         return !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
