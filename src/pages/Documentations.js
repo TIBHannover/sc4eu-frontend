@@ -1,197 +1,235 @@
 import React, { Component } from 'react';
-import UserRole from '../assets/images/UserRole.jpg';
 import { withTheme } from '@emotion/react';
 import { StyledDataProtectionText, StyledDocumentationsDiv } from 'styledComponents/styledComponents';
-class Documentations extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isreadmore: false,
-            isreadmoreFrameworkText: false,
-            isreadmoreUserGuidance: false
-        };
+
+const INTRO_TEXT =
+    'The Vocabulary Development Support Service helps communities develop and maintain a shared terminology ' +
+    'collaboratively. Users can propose terms, discuss and refine their meaning, reach consensus, and integrate ' +
+    'agreed terms into a shared vocabulary.';
+
+// Shared inline styles, parameterized by theme where needed
+const styles = {
+    paragraph: (theme) => ({
+        whiteSpace: 'pre-wrap',
+        cursor: 'text',
+        textAlign: 'justify',
+        color: theme.palette.text.primary,
+        margin: '0 0 0.75em 0'
+    }),
+    list: (theme) => ({
+        margin: '0 0 0.75em 0',
+        paddingLeft: '1.75em',
+        color: theme.palette.text.primary
+    }),
+    listItem: {
+        marginBottom: '0.35em'
+    },
+    callout: (theme) => ({
+        margin: '0 0 0.75em 0',
+        paddingLeft: '1em',
+        marginLeft: '0.25em',
+        borderLeft: `3px solid ${theme.palette.primary.main}`,
+        color: theme.palette.text.primary,
+        fontStyle: 'italic'
+    })
+};
+
+// Each section owns a `body(theme)` render function so different sections
+// can mix paragraphs, lists, bold/italic emphasis and indented callouts
+// as appropriate to their content, rather than forcing everything into
+// a single plain-text shape.
+const SECTIONS = [
+    {
+        id: 'buildVocabulary',
+        title: 'Build the Vocabulary',
+        body: (theme) => (
+            <>
+                <p style={styles.paragraph(theme)}>
+                    A commonly agreed terminology is essential for efficient communication between everyone
+                    contributing to a shared domain or community.
+                </p>
+                <p style={styles.paragraph(theme)}>
+                    The Vocabulary Development Support Service lets users collect the terms required for consistent
+                    internal and external information exchange.
+                </p>
+                <p style={styles.paragraph(theme)}>
+                    Users can propose a new term by providing a <strong>label</strong>, a <strong>definition</strong>{' '}
+                    and additional metadata. While a term is being entered, an <em>auto-suggest</em> feature uses the
+                    TIB Terminology Service to check for existing labels and propose them for reuse. This supports
+                    the best practice of reusing established terms instead of creating duplicate or conflicting
+                    entries.
+                </p>
+                <p style={styles.callout(theme)}>
+                    <strong>Best practice:</strong> Check the suggested terms before creating a new entry and reuse
+                    an established term whenever it matches the intended meaning.
+                </p>
+            </>
+        )
+    },
+    {
+        id: 'discussAlign',
+        title: 'Discuss & Align',
+        body: (theme) => (
+            <>
+                <p style={styles.paragraph(theme)}>
+                    Every term collected in the portal has its own discussion thread. Users can comment on a term,
+                    reply to existing comments to keep related points together, and react with emojis for a quick,
+                    lightweight response.
+                </p>
+                <p style={styles.paragraph(theme)}>
+                    Type <strong>@</strong> followed by a name to mention a colleague directly in a comment. This can
+                    be used to draw someone&apos;s attention to an open question or request their input. Mentioned
+                    users are tracked so they can see which terms they were mentioned in and jump directly to the
+                    relevant reply.
+                </p>
+                <p style={styles.paragraph(theme)}>
+                    Comments and mentions are also aggregated in an <em>activity widget</em> located above and to the
+                    left of the term collection. The widget surfaces urgent terms, terms with new discussion
+                    replies, and newly added terms, helping reviewers quickly identify items that require their
+                    attention.
+                </p>
+                <p style={styles.paragraph(theme)}>
+                    The discussion process allows participants to compare definitions, clarify meanings and
+                    harmonize diverging views into a shared understanding.
+                </p>
+            </>
+        )
+    },
+    {
+        id: 'agreeOnTerms',
+        title: 'Agree on Terms',
+        body: (theme) => (
+            <>
+                <p style={styles.paragraph(theme)}>
+                    Once a term has been thoroughly discussed and refined, an administrator can start a formal
+                    consensus vote. Participants can cast one of two votes:
+                </p>
+                <ul style={styles.list(theme)}>
+                    <li style={styles.listItem}>
+                        <strong>Accept</strong> — the term should be used in the vocabulary.
+                    </li>
+                    <li style={styles.listItem}>
+                        <strong>Reject</strong> — the term should be removed from the vocabulary.
+                    </li>
+                </ul>
+                <p style={styles.paragraph(theme)}>
+                    A decision is reached once the minimum participation threshold has been met and one of the two
+                    options has received a majority of <strong>75%</strong>.
+                </p>
+                <p style={styles.paragraph(theme)}>
+                    To keep the vocabulary active and encourage participation, a <em>&quot;Term of the Week&quot;</em>{' '}
+                    can be highlighted. This draws attention to a term that is currently being discussed or has
+                    recently reached consensus.
+                </p>
+            </>
+        )
+    },
+    {
+        id: 'turnAgreementIntoKnowledge',
+        title: 'Turn Agreement into Knowledge',
+        body: (theme) => (
+            <>
+                <p style={styles.paragraph(theme)}>
+                    Once a term reaches consensus, its agreed <strong>label</strong>, <strong>definition</strong> and{' '}
+                    <strong>metadata</strong> are committed back into the shared vocabulary. The history of how the
+                    term evolved remains traceable throughout this process.
+                </p>
+                <p style={styles.paragraph(theme)}>
+                    This closes the loop between collaborative terminology development and the formal ontology.
+                    Approved terms become part of the common terminology on which the ontology is built and can
+                    subsequently be picked up by knowledge engineers for further formalization.
+                </p>
+            </>
+        )
+    },
+    {
+        id: 'keepTrackOfProgress',
+        title: 'Keep Track of Progress',
+        body: (theme) => (
+            <>
+                <p style={styles.paragraph(theme)}>
+                    The <strong>Information Hub</strong> provides an overview of activity across the vocabulary. It
+                    lists ongoing discussions and active reviews in separate tabs and can be searched by comment,
+                    author or term label.
+                </p>
+                <p style={styles.paragraph(theme)}>Search results can be filtered and sorted by:</p>
+                <ul style={styles.list(theme)}>
+                    <li style={styles.listItem}>Items mentioning a specific user</li>
+                    <li style={styles.listItem}>A specific date range</li>
+                    <li style={styles.listItem}>
+                        <em>Recency</em>, <em>alphabet</em>, <em>number of votes</em> or{' '}
+                        <em>number of comments</em>
+                    </li>
+                </ul>
+                <p style={styles.paragraph(theme)}>
+                    The <strong>Timeline</strong> complements the Information Hub by showing the chronological
+                    history of changes committed to the vocabulary. It makes it possible to trace when a term was
+                    added, edited, discussed or brought to consensus.
+                </p>
+                <p style={styles.paragraph(theme)}>
+                    Together, the Information Hub and Timeline provide an overview of current activity as well as
+                    the history of how the vocabulary has evolved.
+                </p>
+            </>
+        )
+    },
+    {
+        id: 'installAsAnApp',
+        title: 'Install as an App',
+        body: (theme) => (
+            <>
+                <p style={styles.paragraph(theme)}>
+                    The portal is also available as an installable app (<em>Progressive Web App</em>), allowing it
+                    to be used like a native application without going through an app store.
+                </p>
+                <ul style={styles.list(theme)}>
+                    <li style={styles.listItem}>
+                        <strong>Desktop (Chrome, Edge):</strong> click the install icon in the address bar, or open
+                        the browser menu and choose <strong>&quot;Install&quot;</strong>, then confirm in the dialog
+                        that appears. The app is added to your desktop or start menu and opens in its own window.
+                    </li>
+                    <li style={styles.listItem}>
+                        <strong>Android:</strong> open the site in Chrome, tap the menu (⋮) and choose{' '}
+                        <strong>&quot;Install app&quot;</strong> or <strong>&quot;Add to Home screen&quot;</strong>.
+                    </li>
+                    <li style={styles.listItem}>
+                        <strong>iOS:</strong> open the site in Safari, tap the Share icon and choose{' '}
+                        <strong>&quot;Add to Home Screen&quot;</strong>.
+                    </li>
+                </ul>
+                <p style={styles.paragraph(theme)}>
+                    Once installed, a banner may also appear directly in the portal, offering to install the app
+                    with a single tap.
+                </p>
+            </>
+        )
     }
+];
 
-    toggleReadmore = () => {
-        this.setState({ isreadmore: !this.state.isreadmore });
-    };
+class Documentations extends Component {
+    renderSection = (section) => {
+        const { theme } = this.props;
 
-    toggleReadmoreFrameworkText = () => {
-        this.setState({ isreadmoreFrameworkText: !this.state.isreadmoreFrameworkText });
-    };
-
-    toggleReadmoreUserGuidance = () => {
-        this.setState({ isreadmoreUserGuidance: !this.state.isreadmoreUserGuidance });
+        return (
+            <React.Fragment key={section.id}>
+                <h5 style={{ color: theme.palette.text.primary }}>{section.title}</h5>
+                {section.body(theme)}
+            </React.Fragment>
+        );
     };
 
     render() {
         const { theme } = this.props;
 
-        const HybridTEXT =
-            "We identified that the most crucial requirement for the approach is to serve user's needs from various audiences with " +
-            'diverse backgrounds and in different contexts. Because web-based approaches are ready-to-use without the need to install ' +
-            'additional software, they reduce entrance barriers and engage different user groups more directly.\n' +
-            'Having defined the above-mentioned domain experts (non-experts as to ontology modelling) and the knowledge engineers (expert users) as the two ' +
-            'relevant user groups in the project, we describes the individual requirements as follows:\n' +
-            '“For domain experts the approach should be easy-to-learn/easy-to-use with a least complex OWL modelling, providing guidance and best-practice ' +
-            'suggestions during the modelling. The approach should support all modelling features of the commonly used open source ontology editor Protégé for ' +
-            'expert users. Additionally, visual modelling paradigms in the form of node-link diagrams can address the requirements of easy-to-use and low complexity.\n' +
-            'However, they have to provide additional customizations for the visual representation to facilitate understanding. ' +
-            'The requirements guidance and best practices can be addressed using auto-complete functionalities to align the created nodes and ' +
-            'links with existing terms of ontologies, reducing manual labor to transform high-level conceptualizations to OWL elements.\n' +
-            'To support all OWL modelling features, we envision the use and extension of the OWL-API (Java Application Programming Interface), the backbone of Protégé. ' +
-            'Additionally, to engage diverse groups in the modelling process, we envision three modes of modelling operation: textual (for expert users), ' +
-            'widget-based (for intermediate users) and visual or Graph (for novel users).\n' +
-            'For a successful adoption and broad use, we define additional requirements for a collaborative ontology development framework ' +
-            'which allows to create and to share different views, thus enabling and fostering communication on all abstraction levels and between various stakeholders.\n' +
-            'Since the created ontologies and their conceptualizations thrive from discussions and joint agreement upon their definitions and their usage, block chain ' +
-            'technologies providing the means for versioning and history of changes should be part of the solution. Integrating them with ontology ' +
-            'development will foster trust and validation of ontologies and enable long term support for downward compatible systems using old ontology versions”.';
-
-        const FrameworkText =
-            'A machine-readable conceptualization of the semiconductor domain and related supply chains requires standardize ontologies of high quality and a common ' +
-            'set of conceptualizations in order to apply Semantic Web technologies widely to the semiconductor domain. Knowledge engineers and domain experts usually work ' +
-            'together on ontology development. ' +
-            'The latter have less expertise in a specific domain, whereas domain experts often struggle to understand logical notations used in OWL (Web Ontology Language). ' +
-            'It is necessary to reduce the complexity of OWL formalization for domain experts in order to more directly involve them in ontology modelling and foster ' +
-            'communication with knowledge engineers. ' +
-            'However, they must maintain full OWL modelling capabilities for knowledge engineers. Because of this, we are developing a user-centered approach to ' +
-            'collaborative ontology development, addressing the needs and backgrounds of different user groups.';
-
-        const UserGuidance =
-            'A commonly agreed terminology is essential for efficient communication in a project involving various stakeholders. ' +
-            'In SC4EU, all project partners are therefore invited to collect relevant terms, required for consistent in- and external information exchange.';
-
         return (
             <div style={{ width: '100%', height: '100%', overflowY: 'auto', paddingBottom: '3%' }}>
                 <StyledDocumentationsDiv>
                     <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '2%', color: theme.palette.text.primary }}>
-                        What the Portal will do for you
+                        Vocabulary Development Support Service
                     </h3>
-                    <h5 style={{ color: theme.palette.text.primary }}>Connecting Domain Experts with Knowledge Engineers</h5>
-                    <StyledDataProtectionText>
-                        {this.state.isreadmoreUserGuidance ? (
-                            <>
-                                {UserGuidance}
-                                <div style={{ textAlign: 'center' }}>
-                                    <img src={UserRole} alt="UserRole" style={{ maxWidth: '100%' }} />
-                                    <StyledDataProtectionText>
-                                        We identified that the most crucial requirement for ontology development is to serve users' needs from various
-                                        audiences with diverse backgrounds and in different contexts. We have therefore introduced several modes of
-                                        operations.
-                                    </StyledDataProtectionText>
-                                </div>
-                            </>
-                        ) : (
-                            UserGuidance.substring(0, 300)
-                        )}
-                        <button
-                            type="button"
-                            style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }}
-                            onClick={this.toggleReadmoreUserGuidance}
-                        >
-                            {this.state.isreadmoreUserGuidance ? 'Read Less' : ' ...Read More'}
-                        </button>
-                    </StyledDataProtectionText>
-                    <h5 style={{ color: theme.palette.text.primary }}>About SC4EU Ontology Curation Portal</h5>
-                    <StyledDataProtectionText>
-                        <span>
-                            SC4EU Ontology Curation Portal establishes a standard language for comprehensive collaboration between humans and
-                            machines, as machines, as well as all other partners.The key objective of this platform is to implement data documentation
-                            of an actionable ontology-based ecosystem that consists of a top-level ontology, adapted from existing domain ontologies,
-                            and complemented by new ones for other subdomains to ensure interoperability of data. "Further information about the
-                            project you can find on our
-                        </span>
-                        <a
-                            style={{ color: theme.palette.primary.main }}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href="https://sc3-project.automotive.oth-aw.de/"
-                        >
-                            SC4EU webpage
-                        </a>
-                        <span>, on our </span>
-                        <a
-                            style={{ color: theme.palette.primary.main }}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href="https://www.youtube.com/channel/UCkP7Qi9G9uHDLdyATT7tKow/featured?view_as=subscriber"
-                        >
-                            YouTube chanel
-                        </a>
-                        <span>, or </span>
-                        <a
-                            style={{ color: theme.palette.primary.main }}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href="https://www.linkedin.com/in/sc3-project-886b56209/?originalSubdomain=de"
-                        >
-                            via LinkedIn.
-                        </a>
-                    </StyledDataProtectionText>
-                    <h5 style={{ color: theme.palette.text.primary }}>Framework for Collaborative Ontology Development</h5>
-                    <p
-                        style={{
-                            whiteSpace: 'pre-wrap',
-                            cursor: 'text',
-                            textAlign: 'justify',
-                            color: theme.palette.text.primary
-                        }}
-                    >
-                        {this.state.isreadmoreFrameworkText ? FrameworkText : FrameworkText.substring(0, 200)}
-                        <button
-                            type="button"
-                            style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }}
-                            onClick={this.toggleReadmoreFrameworkText}
-                        >
-                            {this.state.isreadmoreFrameworkText ? ' Read Less' : ' ...Read More'}
-                        </button>
-                    </p>
+                    <StyledDataProtectionText>{INTRO_TEXT}</StyledDataProtectionText>
 
-                    <h5 style={{ color: theme.palette.text.primary }}>Be part of the SC4EU Community and Collaborate with us </h5>
-                    <StyledDataProtectionText>
-                        SC4EU is a{' '}
-                        <a
-                            style={{ color: theme.palette.primary.main }}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href="https://www.kdt-ju.europa.eu/"
-                        >
-                            KDT JU
-                        </a>{' '}
-                        funded project to build a community and to foster the take up of the Digital Reference Ontology. Everyone is invited to
-                        participate in the project development.
-                        <br />
-                        If you would like to setup your own SC4EU Portal or if you would like to contribute to our codebase, please visit:&nbsp;
-                        <a
-                            style={{ color: theme.palette.primary.main }}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href="https://gitlab.com/TIBHannover/sc3-project/"
-                        >
-                            SC4EU Project GitLab
-                        </a>
-                        <br />
-                        You will find all our code under MIT licence, instructions. Check it out!
-                    </StyledDataProtectionText>
-                    <h5 style={{ color: theme.palette.text.primary }}>Hybrid Modes of Operation</h5>
-                    <p
-                        style={{
-                            whiteSpace: 'pre-wrap',
-                            cursor: 'text',
-                            textAlign: 'justify',
-                            color: theme.palette.text.primary
-                        }}
-                    >
-                        {this.state.isreadmore ? HybridTEXT : HybridTEXT.substring(0, 200)}
-                        <button
-                            type="button"
-                            style={{ color: theme.palette.text.primary, backgroundColor: theme.palette.background.paper, cursor: 'pointer' }}
-                            onClick={this.toggleReadmore}
-                        >
-                            {this.state.isreadmore ? ' Read Less' : ' ...Read More'}
-                        </button>
-                    </p>
+                    {SECTIONS.map(this.renderSection)}
                 </StyledDocumentationsDiv>
             </div>
         );
