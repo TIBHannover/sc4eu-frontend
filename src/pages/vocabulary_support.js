@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyledVocabularySupportDiv } from '../styledComponents/styledComponents';
 const Vocabulary_support = props => {
+    const { termUuid, voteUuid } = props.match?.params || {};
+
     return (
         <StyledVocabularySupportDiv>
             {props.user ? (
-                <AddVocabulary currentUser={props.user} />
+                <AddVocabulary currentUser={props.user} termUuid={termUuid} voteUuid={voteUuid} />
             ) : (
                 <h3 style={{ textAlign: 'center', marginTop: '30px' }}> Please Login to use the Vocabulary Development Support Service </h3>
             )}
@@ -20,7 +22,13 @@ const mapStateToProps = state => ({
 });
 
 Vocabulary_support.propTypes = {
-    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number])
+    user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    match: PropTypes.shape({
+        params: PropTypes.shape({
+            termUuid: PropTypes.string,
+            voteUuid: PropTypes.string
+        })
+    })
 };
 
 export default connect(mapStateToProps)(Vocabulary_support);
