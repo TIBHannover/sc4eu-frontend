@@ -987,6 +987,7 @@ const VocabularyMainTable = ({
         const currentResourceDiscussion = discussions.find(d => d.resourceId === term.identifier);
         setTermComments(currentResourceDiscussion?.comments || []);
         setOpenPopup(true);
+        history.push(`/vocabulary_support/terms/${term.identifier}`);
     };
 
     const handleWidgetUrgentTermClick = async term => {
