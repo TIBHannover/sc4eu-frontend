@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+    Alert,
     Grid,
     Typography,
     Avatar,
@@ -9,6 +10,7 @@ import {
     RadioGroup,
     FormControlLabel,
     Radio,
+    Snackbar,
     Tooltip,
     useTheme,
     GlobalStyles
@@ -21,6 +23,7 @@ import {
     ThumbDownAltOutlined,
     ThumbDownAlt
 } from '@mui/icons-material';
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import PropTypes from 'prop-types';
 import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
@@ -38,6 +41,14 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     const [userHasVoted, setUserHasVoted] = useState(decisions.some(e => e.user_name === username && e.choice !== null));
     const votedUsers = decisions.filter(expert => expert.choice !== null);
     const [expandedComments, setExpandedComments] = useState(new Set());
+    const [showCopyNotification, setShowCopyNotification] = useState(false);
+
+    const handleCopyLink = event => {
+        event.stopPropagation();
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            setShowCopyNotification(true);
+        });
+    };
 
     useEffect(() => {
         const getVote = async () => {
@@ -126,9 +137,26 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Box sx={{ mb: 2 }}>
-                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-                            {term.label}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                                {term.label}
+                            </Typography>
+                            <Tooltip title="Copy URL of this consensus into a clipboard for easy sharing">
+                                <Button size="small" variant="outlined" startIcon={<FileCopyOutlinedIcon fontSize="small" />} onClick={handleCopyLink}>
+                                    Copy consensus URL
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                        <Snackbar
+                            open={showCopyNotification}
+                            autoHideDuration={3000}
+                            onClose={() => setShowCopyNotification(false)}
+                            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                        >
+                            <Alert severity="success" variant="standard">
+                                Link copied to clipboard
+                            </Alert>
+                        </Snackbar>
 
                         <GlobalStyles
                             styles={{
