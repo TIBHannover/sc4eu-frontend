@@ -8,6 +8,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    Alert,
     Box,
     Button,
     Chip,
@@ -17,12 +18,14 @@ import {
     Paper,
     Radio,
     RadioGroup,
+    Snackbar,
     TextField,
     Tooltip,
     Typography,
     useTheme,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import InfoIcon from '@mui/icons-material/Info';
 
@@ -50,6 +53,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     const [lastConsensus, setLastConsensus] = useState(null);
     const [isConsensusSubmitted, setIsConsensusSubmitted] = useState(false);
     const [isConsensusClosed, setIsConsensusClosed] = useState(false);
+    const [showCopyNotification, setShowCopyNotification] = useState(false);
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
@@ -60,6 +64,13 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         } else {
             history.push(`/vocabulary_support/terms/${term.identifier}`);
         }
+    };
+
+    const handleCopyLink = event => {
+        event.stopPropagation();
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            setShowCopyNotification(true);
+        });
     };
 
     const [updatedTerm, setUpdatedTerm] = useState({
@@ -254,14 +265,37 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 overflowY: 'auto'
                             }}
                         >
-                            <Typography variant="h6" sx={{ textAlign: 'center' }}>
-                                Term's Detail
-                                {activeAgreement && (
-                                    <StyledTooltip title="There is an ongoing consensus - new consensus could not be started.">
-                                        <InfoIcon />
-                                    </StyledTooltip>
-                                )}
-                            </Typography>
+                            <Box sx={{ position: 'relative' }}>
+                                <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                                    Term's Detail
+                                    {activeAgreement && (
+                                        <StyledTooltip title="There is an ongoing consensus - new consensus could not be started.">
+                                            <InfoIcon />
+                                        </StyledTooltip>
+                                    )}
+                                </Typography>
+                                <Tooltip title="Copy URL of this term into a clipboard for easy sharing">
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<FileCopyOutlinedIcon fontSize="small" />}
+                                        onClick={handleCopyLink}
+                                        sx={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+                                    >
+                                        Copy term URL
+                                    </Button>
+                                </Tooltip>
+                            </Box>
+                            <Snackbar
+                                open={showCopyNotification}
+                                autoHideDuration={3000}
+                                onClose={() => setShowCopyNotification(false)}
+                                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                            >
+                                <Alert severity="success" variant="standard">
+                                    Link copied to clipboard
+                                </Alert>
+                            </Snackbar>
                             <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
                                 <strong>Label:</strong> {updatedTerm.label}
                             </Typography>
