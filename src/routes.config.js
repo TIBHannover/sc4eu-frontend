@@ -138,6 +138,23 @@ const routes = [
         component: Partners
     },
     {
+        // Shares an explicit `key` with the other vocabulary_support routes below so that
+        // react-router-config's renderRoutes() (which otherwise keys Routes by array index)
+        // treats these as the SAME component instance across navigations instead of
+        // unmounting/remounting it every time the URL moves between these 3 patterns.
+        key: 'vocabulary_support',
+        path: ROUTES.VOCABULARY_CONSENSUS,
+        exact: true,
+        component: vocabulary_support
+    },
+    {
+        key: 'vocabulary_support',
+        path: ROUTES.VOCABULARY_TERM,
+        exact: true,
+        component: vocabulary_support
+    },
+    {
+        key: 'vocabulary_support',
         path: ROUTES.VOCABULARY_SUPPORT,
         exact: true,
         component: vocabulary_support

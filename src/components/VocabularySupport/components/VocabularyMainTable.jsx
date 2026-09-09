@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import {
+    Alert,
     Box,
     Button,
     Chip,
@@ -13,11 +14,12 @@ import {
     IconButton,
     lighten,
     Modal,
+    Snackbar,
     styled,
     Tooltip,
     Typography,
     useMediaQuery,
-    useTheme,
+    useTheme
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -57,7 +59,9 @@ const VocabularyMainTable = ({
     discussions,
     handleSaveDiscussion,
     handleDeleteDiscussion,
-    currentUser
+    currentUser,
+    termUuid,
+    voteUuid
 }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
@@ -87,6 +91,8 @@ const VocabularyMainTable = ({
     const [urgentVoteTerm, setUrgentVoteTerm] = useState(null);
     const [urgentVoteData, setUrgentVoteData] = useState(null);
     const [votesMap, setVotesMap] = useState([]);
+    const [isLoadingVotes, setIsLoadingVotes] = useState(true);
+    const [deepLinkNotification, setDeepLinkNotification] = useState(null);
 
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -115,8 +121,10 @@ const VocabularyMainTable = ({
 
     useEffect(() => {
         const fetchVotes = async () => {
+            setIsLoadingVotes(true);
             const votesData = await getVotes();
             setVotesMap(votesData);
+            setIsLoadingVotes(false);
         };
 
         fetchVotes();
@@ -190,6 +198,60 @@ const VocabularyMainTable = ({
         setDensity(isMobileScreen ? 'comfortable' : 'compact');
     }, [isMobileScreen, terms.length]);
 
+    const handledTermLinkRef = useRef(null);
+    const handledConsensusLinkRef = useRef(null);
+
+    useEffect(() => {
+        if (voteUuid) {
+            return;
+        }
+        if (!termUuid) {
+            handledTermLinkRef.current = null;
+            return;
+        }
+        if (isLoadingTerms || handledTermLinkRef.current === termUuid) {
+            return;
+        }
+        handledTermLinkRef.current = termUuid;
+        const term = terms.find(t => t.identifier === termUuid);
+        if (term) {
+            const currentResourceDiscussion = discussions.find(d => d.resourceId === term.identifier);
+            setTermComments(currentResourceDiscussion?.comments || []);
+            setSelectedTerm(term);
+            setOpenPopup(true);
+        } else {
+            setDeepLinkNotification(`Term ${termUuid} not found`);
+            history.replace('/vocabulary_support');
+        }
+    }, [termUuid, voteUuid, terms, isLoadingTerms, discussions, history]);
+
+    useEffect(() => {
+        if (!termUuid || !voteUuid) {
+            handledConsensusLinkRef.current = null;
+            return;
+        }
+        const linkKey = `${termUuid}:${voteUuid}`;
+        if (isLoadingTerms || isLoadingVotes || handledConsensusLinkRef.current === linkKey) {
+            return;
+        }
+        handledConsensusLinkRef.current = linkKey;
+
+        if (openPopup && selectedTerm?.identifier === termUuid) {
+            return;
+        }
+
+        const vote = votesMap.find(v => v.uuid === voteUuid && v.term_uuid === termUuid);
+        const term = terms.find(t => t.identifier === termUuid);
+        if (vote && term) {
+            setUrgentVoteTerm(term);
+            setUrgentVoteData(vote);
+            setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
+        } else {
+            setDeepLinkNotification('Consensus not found or has already been closed');
+            history.replace('/vocabulary_support');
+        }
+    }, [termUuid, voteUuid, terms, votesMap, isLoadingTerms, isLoadingVotes, history, openPopup, selectedTerm]);
+
     const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
             return;
@@ -199,6 +261,7 @@ const VocabularyMainTable = ({
         setTermComments(currentResourceDiscussion?.comments || []);
         setSelectedTerm(row.original);
         setOpenPopup(true);
+        history.push(`/vocabulary_support/terms/${resourceId}`);
     };
 
     const handleNavigateToMentionedTerm = resourceId => {
@@ -207,11 +270,13 @@ const VocabularyMainTable = ({
         setSelectedTerm(term);
         setTermComments(discussion?.comments || []);
         setOpenPopup(true);
+        history.push(`/vocabulary_support/terms/${resourceId}`);
     };
 
     const handleClosePopup = () => {
         setOpenPopup(false);
         setSelectedTerm(null);
+        history.push('/vocabulary_support');
     };
 
     const columnVisibility = useMemo(() => {
@@ -926,9 +991,12 @@ const VocabularyMainTable = ({
 
     const handleWidgetUrgentTermClick = async term => {
         const data = await getTermVotes(term.identifier);
-        setUrgentVoteTerm(term);
-        setUrgentVoteData(data[0]);
-        setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
+        if (data && data[0]) {
+            setUrgentVoteTerm(term);
+            setUrgentVoteData(data[0]);
+            setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
+            history.push(`/vocabulary_support/terms/${term.identifier}/consensuses/${data[0].uuid}`);
+        }
     };
 
     const handleConsensusDecisionMade = async () => {
@@ -938,6 +1006,18 @@ const VocabularyMainTable = ({
 
     return (
         <ScrollableDiv>
+            {deepLinkNotification && (
+                <Snackbar
+                    open={deepLinkNotification}
+                    autoHideDuration={3000}
+                    onClose={() => setDeepLinkNotification(null)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert severity="warning" variant="standard">
+                        {deepLinkNotification}
+                    </Alert>
+                </Snackbar>
+            )}
             <CardActivityWidget
                 urgentTerms={urgentTerms}
                 votes={votesMap}
@@ -1035,6 +1115,7 @@ const VocabularyMainTable = ({
                     open={activeMUIPopUp === MaterialUIPopUpTypes.ACTIVE_CONSENSUS}
                     onClose={() => {
                         setActiveMUIPopUp(null);
+                        history.push('/vocabulary_support');
                     }}
                     title="Active consensus"
                     message={
@@ -1045,6 +1126,7 @@ const VocabularyMainTable = ({
                             setVoteViewMode={() => {
                                 setUrgentVoteTerm(null);
                                 setUrgentVoteData(null);
+                                history.push('/vocabulary_support');
                             }}
                             onDecisionMade={handleConsensusDecisionMade}
                         />
@@ -1065,7 +1147,9 @@ VocabularyMainTable.propTypes = {
     discussions: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,
     handleDeleteDiscussion: PropTypes.func.isRequired,
-    currentUser: PropTypes.string.isRequired
+    currentUser: PropTypes.string.isRequired,
+    termUuid: PropTypes.string,
+    voteUuid: PropTypes.string
 };
 
 export default VocabularyMainTable;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -36,6 +37,7 @@ import VoteView from './VoteView';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
     const theme = useTheme();
+    const history = useHistory();
 
     const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
@@ -50,6 +52,15 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     const [isConsensusClosed, setIsConsensusClosed] = useState(false);
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
+
+    const handleSetVoteViewMode = (isOpen) => {
+        setViewAgreementMode(isOpen);
+        if (isOpen && activeAgreement) {
+            history.push(`/vocabulary_support/terms/${term.identifier}/consensuses/${activeAgreement.uuid}`);
+        } else {
+            history.push(`/vocabulary_support/terms/${term.identifier}`);
+        }
+    };
 
     const [updatedTerm, setUpdatedTerm] = useState({
         ...term,
@@ -227,7 +238,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                 <LastConsensusView consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)} />
             )}
             {viewAgreementMode && (
-                <VoteView term={term} vote={activeAgreement} username={currentUser.displayName} setVoteViewMode={setViewAgreementMode} />
+                <VoteView term={term} vote={activeAgreement} username={currentUser.displayName} setVoteViewMode={handleSetVoteViewMode} />
             )}
             {!editMode && !viewAgreementMode && (
                 <Box>
@@ -375,7 +386,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 {activeAgreement && (
                                     <>
                                         <Button
-                                            onClick={() => setViewAgreementMode(true)}
+                                            onClick={() => handleSetVoteViewMode(true)}
                                             variant="contained"
                                             sx={buttonStyle}
                                             fullWidth={isMobile}

@@ -11,9 +11,13 @@ import PropTypes from 'prop-types';
  * It utilizes the `useGetTerms` custom hook to fetch terms from an external source.
  * The fetched terms, along with loading and error states, are passed as props to the `VocabularyMainTable` component.
  *
+ * @param {Object} props
+ * @param {Object} props.currentUser - Current user object
+ * @param {string} [props.termUuid] - Optional term identifier from the URL, used to auto-open the term detail modal
+ * @param {string} [props.voteUuid] - Optional vote identifier from the URL, used to auto-open the active consensus modal
  * @returns {JSX.Element} The `VocabularyMainTable` component populated with the fetched terms and states.
  */
-export default function AddVocabulary({ currentUser }) {
+export default function AddVocabulary({ currentUser, termUuid, voteUuid }) {
     // Destructuring the object returned by useGetTerms to extract data and states.
     const { data: fetchedTerms = [], refetch, isError: isLoadingTermsError, isFetching: isFetchingTerms, isLoading: isLoadingTerms } = useGetTerms();
     const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: true });
@@ -41,10 +45,14 @@ export default function AddVocabulary({ currentUser }) {
             handleSaveDiscussion={handleSaveDiscussion}
             handleDeleteDiscussion={handleDeleteDiscussion}
             currentUser={currentUser}
+            termUuid={termUuid}
+            voteUuid={voteUuid}
         />
     );
 }
 
 AddVocabulary.propTypes = {
-    currentUser: PropTypes.object.isRequired
+    currentUser: PropTypes.object.isRequired,
+    termUuid: PropTypes.string,
+    voteUuid: PropTypes.string
 };
