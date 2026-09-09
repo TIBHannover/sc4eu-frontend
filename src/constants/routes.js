@@ -15,6 +15,8 @@ const routes = {
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
     VOCABULARY_SUPPORT: '/vocabulary_support',
+    VOCABULARY_TERM: '/vocabulary_support/terms/:termUuid',
+    VOCABULARY_CONSENSUS: '/vocabulary_support/terms/:termUuid/consensuses/:voteUuid',
     FAQ: '/FAQ',
     TRAINING: '/Training',
     WEBPROTEGE: '/WEBPROTEGE',
