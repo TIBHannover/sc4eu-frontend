@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useMediaQuery } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
+import { useQuery } from '@tanstack/react-query';
 
 import {
     Avatar,
     AvatarGroup,
-    Badge,
     Box,
     Button,
     Checkbox,
@@ -35,7 +35,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 
-import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
+import { getVotes, getWeeklyTerm, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import { ConsensusProgress } from '../utils/Consensus';
 import UserAvatar from '../../ReusableComponents/UserAvatar';
@@ -82,7 +82,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
-    const [votesMap, setVotesMap] = useState([]);
+    const { data: votesMap = [] } = useQuery(VOTES_QUERY_KEY, getVotes);
     const [loading, setLoading] = useState(false);
 
     const [termOfWeek, setTermOfWeek] = useState(null);
@@ -114,8 +114,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const fetchTermOfWeek = async () => {
         try {
             setWeekTermLoading(true);
-            const votesData = await getVotes();
-            setVotesMap(votesData);
 
             const weeklyTerm = await getWeeklyTerm();
             const termUuid = weeklyTerm?.term_uuid;
@@ -124,6 +122,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                 return;
             }
 
+            const votesData = await getVotes();
             const termVoteData = votesData.find(vote => vote.term_uuid === termUuid);
 
             const decisions = termVoteData?.decisions || [];

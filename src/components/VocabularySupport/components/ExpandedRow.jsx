@@ -29,7 +29,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
+import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { SMALL_SCREEN_WIDTH, StyledChip } from '../../../styledComponents/styledComponents';
 import { commitChanges } from '../utils/CommitChanges';
 import CommentsSection from './CommentsSection';
@@ -159,6 +159,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
 
     const handleAgreementSubmit = async () => {
         await initiateNewVote(term.identifier, currentUser.displayName, agreementType, reason);
+        await queryClient.invalidateQueries(VOTES_QUERY_KEY);
         setInitiateTermAgreement(false);
         setAgreementType(null);
         setReason(null);
@@ -249,7 +250,13 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                 <LastConsensusView consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)} />
             )}
             {viewAgreementMode && (
-                <VoteView term={term} vote={activeAgreement} username={currentUser.displayName} setVoteViewMode={handleSetVoteViewMode} />
+                <VoteView
+                    term={term}
+                    vote={activeAgreement}
+                    username={currentUser.displayName}
+                    setVoteViewMode={handleSetVoteViewMode}
+                    onDecisionMade={() => queryClient.invalidateQueries(VOTES_QUERY_KEY)}
+                />
             )}
             {!editMode && !viewAgreementMode && (
                 <Box
@@ -494,6 +501,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                                         await updateTerm(newTerm);
                                                         await commitChanges(queryClient, `Update ${term.label} status after consensus`);
                                                     }
+                                                    await queryClient.invalidateQueries(VOTES_QUERY_KEY);
                                                     setIsConsensusClosed(true);
                                                 }}
                                                 variant="contained"

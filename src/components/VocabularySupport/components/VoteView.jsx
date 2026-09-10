@@ -128,7 +128,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
         setUserHasVoted(true);
         setComment(null);
         setDecision('');
-        onDecisionMade();
+        onDecisionMade?.();
     };
 
     return (
@@ -411,7 +411,7 @@ VoteView.propTypes = {
     term: PropTypes.object.isRequired,
     vote: PropTypes.object.isRequired,
     username: PropTypes.string.isRequired,
-    setVoteViewMode: PropTypes.object.isRequired,
+    setVoteViewMode: PropTypes.func.isRequired,
     onDecisionMade: PropTypes.func
 };
 
