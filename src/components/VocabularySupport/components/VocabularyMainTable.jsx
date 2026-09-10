@@ -21,7 +21,6 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
@@ -1044,21 +1043,21 @@ const VocabularyMainTable = ({
                 <Box
                     sx={{
                         position: 'fixed',
-                        top: { xs: '50%', xl: '30%' },
+                        top: { xs: '50%', xl: '50%' },
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        width: { xs: '95%', xl: '70%' },
-                        height: { xs: '95%', xl: '65%' },
+                        width: { xs: '95%', xl: '80%' },
+                        height: { xs: '95%', xl: '80%' },
                         outline: 'none'
                     }}
                 >
                     <Box
                         sx={{
-                            backgroundColor: theme.palette.background.default,
+                            backgroundColor: theme.palette.background.paper,
                             width: '100%',
                             height: '100%',
-                            overflowY: 'auto',
-                            padding: 4,
+                            display: 'flex',
+                            flexDirection: 'column',
                             borderRadius: 1
                         }}
                     >
@@ -1074,18 +1073,6 @@ const VocabularyMainTable = ({
                             />
                         )}
                     </Box>
-
-                    <IconButton
-                        aria-label="close"
-                        onClick={handleClosePopup}
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            right: 0
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
                 </Box>
             </Modal>
             <MaterialUIPopUp

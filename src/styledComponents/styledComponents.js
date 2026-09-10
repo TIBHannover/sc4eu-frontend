@@ -72,6 +72,10 @@ StyledBadge.propTypes = {
 };
 
 export const StyledChip = styled(Chip)(({ customVariant, theme }) => ({
+    fontSize: '0.9375rem',
+    '.MuiChip-label': {
+        fontSize: 'inherit'
+    },
     '.MuiChip-root': {
         ...(customVariant === 'mention' && {
             backgroundColor: theme.palette.primary.main,
@@ -81,11 +85,28 @@ export const StyledChip = styled(Chip)(({ customVariant, theme }) => ({
             backgroundColor: theme.palette.secondary.light,
             color: theme.palette.secondary.contrastText
         })
-    }
+    },
+    ...(customVariant === 'pendingConsensus' && {
+        backgroundColor: theme.palette.warning.light,
+        color: theme.palette.warning.contrastText,
+        border: `1px solid ${theme.palette.warning.main}`
+    }),
+    ...(customVariant === 'draft' && {
+        backgroundColor: theme.palette.surface.containerHigh,
+        color: theme.palette.text.primary
+    }),
+    ...(customVariant === 'accepted' && {
+        backgroundColor: theme.palette.success.light,
+        color: theme.palette.success.contrastText
+    }),
+    ...(customVariant === 'rejected' && {
+        backgroundColor: theme.palette.error.light,
+        color: theme.palette.error.contrastText
+    })
 }));
 
 StyledChip.propTypes = {
-    customVariant: PropTypes.oneOf(['mention', 'agreement'])
+    customVariant: PropTypes.oneOf(['mention', 'agreement', 'pendingConsensus', 'draft', 'accepted', 'rejected'])
 };
 
 export const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({

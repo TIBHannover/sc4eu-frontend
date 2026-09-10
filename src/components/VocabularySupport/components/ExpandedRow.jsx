@@ -27,10 +27,10 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import InfoIcon from '@mui/icons-material/Info';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus } from '../../../network/TermVoteCalls';
-import { SMALL_SCREEN_WIDTH, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { SMALL_SCREEN_WIDTH, StyledChip } from '../../../styledComponents/styledComponents';
 import { commitChanges } from '../utils/CommitChanges';
 import CommentsSection from './CommentsSection';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
@@ -167,7 +167,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     };
 
     return (
-        <Box>
+        <Box sx={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             {notification && <FadingNotification message="Vote successfully submitted" timeout={3000} />}
             {initiateTermAgreement && (
                 <MaterialUIPopUp
@@ -252,162 +252,216 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                 <VoteView term={term} vote={activeAgreement} username={currentUser.displayName} setVoteViewMode={handleSetVoteViewMode} />
             )}
             {!editMode && !viewAgreementMode && (
-                <Box>
-                    <Box sx={{ display: 'flex', width: '100%', flexGrow: 1, flexDirection: { xs: 'column', xl: 'row' }, gap: 2 }}>
-                        <Paper
-                            elevation={2}
+                <Box
+                    sx={{
+                        backgroundColor: 'background.paper',
+                        borderRadius: 2,
+                        flex: '1 1 auto',
+                        minHeight: 0,
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}
+                >
+                    {/* Header bar shared by both panels */}
+                    <Box
+                        sx={{
+                            px: 3,
+                            py: 1.5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: 1,
+                            borderBottom: theme => `1px solid ${theme.palette.divider}`
+                        }}
+                    >
+                        <Typography variant="body2" color="text.secondary">
+                            <strong>Modified:</strong>{' '}
+                            {new Date(updatedTerm.modified).toLocaleDateString() + ', ' + new Date(updatedTerm.modified).toLocaleTimeString()}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Tooltip title="Copy URL of this term into a clipboard for easy sharing">
+                                <Button size="small" startIcon={<FileCopyOutlinedIcon fontSize="small" />} onClick={handleCopyLink}>
+                                    Copy term URL
+                                </Button>
+                            </Tooltip>
+                            <Tooltip title="Close">
+                                <IconButton aria-label="close" size="small" onClick={handleClosePopup} sx={{ ml: 2 }}>
+                                    <CloseIcon fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                        </Box>
+                    </Box>
+                    <Snackbar
+                        open={showCopyNotification}
+                        autoHideDuration={3000}
+                        onClose={() => setShowCopyNotification(false)}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    >
+                        <Alert severity="success" variant="standard">
+                            Link copied to clipboard
+                        </Alert>
+                    </Snackbar>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            width: '100%',
+                            flex: '1 1 auto',
+                            minHeight: 0,
+                            flexDirection: { xs: 'column', xl: 'row' }
+                        }}
+                    >
+                        {/* LEFT: Term's Detail */}
+                        <Box
                             sx={{
                                 width: { xs: '100%', xl: '50%' },
-                                maxHeight: 'calc(90vh - 100px)',
                                 flex: '1',
                                 display: 'flex',
                                 flexDirection: 'column',
-                                overflowY: 'auto'
+                                justifyContent: 'space-between',
+                                gap: 3,
+                                p: 3,
+                                overflowY: 'auto',
+                                borderRight: theme => ({ xl: `1px solid ${theme.palette.divider}` })
                             }}
                         >
-                            <Box sx={{ position: 'relative' }}>
-                                <Typography variant="h6" sx={{ textAlign: 'center' }}>
-                                    Term's Detail
-                                    {activeAgreement && (
-                                        <StyledTooltip title="There is an ongoing consensus - new consensus could not be started.">
-                                            <InfoIcon />
-                                        </StyledTooltip>
-                                    )}
-                                </Typography>
-                                <Tooltip title="Copy URL of this term into a clipboard for easy sharing">
-                                    <Button
-                                        size="small"
-                                        variant="outlined"
-                                        startIcon={<FileCopyOutlinedIcon fontSize="small" />}
-                                        onClick={handleCopyLink}
-                                        sx={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)' }}
-                                    >
-                                        Copy term URL
-                                    </Button>
-                                </Tooltip>
-                            </Box>
-                            <Snackbar
-                                open={showCopyNotification}
-                                autoHideDuration={3000}
-                                onClose={() => setShowCopyNotification(false)}
-                                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                            >
-                                <Alert severity="success" variant="standard">
-                                    Link copied to clipboard
-                                </Alert>
-                            </Snackbar>
-                            <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
-                                <strong>Label:</strong> {updatedTerm.label}
-                            </Typography>
-                            {updatedTerm.altLabel &&
-                                splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                                    <Typography key={'altLabel' + index} sx={{ marginLeft: 4, marginBottom: 1 }}>
-                                        <strong>Alternative Label {index + 1}:</strong> {label}
-                                    </Typography>
-                                ))}
-                            {/* Description */}
-                            <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
-                                <strong>Description:</strong> {updatedTerm.description}
-                            </Typography>
-                            {/* See also */}
-
-                            {/* Status */}
-                            <Typography>
-                                <Tooltip title="Term readiness status: Draft, Reject, Accept">
-                                    <IconButton size="small">
-                                        <HelpOutlineIcon fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                                <strong>Status:</strong>{' '}
-                                <Typography
-                                    component="span"
-                                    sx={{
-                                        color: theme =>
-                                            ({
-                                                reject: theme.palette.error.main,
-                                                draft: theme.palette.primary.main,
-                                                accept: theme.palette.success.main
-                                            }[updatedTerm.status?.toLowerCase()] || theme.palette.text.primary)
-                                    }}
-                                >
-                                    {updatedTerm.status}
-                                </Typography>
-                                {lastConsensus && (
-                                    <Chip
-                                        label="Check last consensus"
-                                        size="small"
-                                        sx={buttonStyle}
-                                        onClick={() => setOpenLastConsensusDialog(true)}
-                                    />
-                                )}
-                            </Typography>
-                            <Accordion
-                                disableGutters
-                                elevation={0}
+                            <Box
                                 sx={{
-                                    mt: 2,
-                                    backgroundColor: 'transparent',
-                                    border: theme => `1px solid ${theme.palette.divider}`,
-                                    borderRadius: 1,
-                                    '&:before': { display: 'none' },
-                                    '&.Mui-expanded': { margin: 0 }
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2
                                 }}
                             >
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon fontSize="small" />}
+                                {/* Title & badges */}
+                                <Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+                                        {activeAgreement && <StyledChip label="Pending Consensus" size="small" customVariant="pendingConsensus" />}
+                                        <StyledChip
+                                            label={updatedTerm.status || 'Unknown'}
+                                            size="small"
+                                            customVariant={
+                                                {
+                                                    reject: 'rejected',
+                                                    draft: 'draft',
+                                                    accept: 'accepted'
+                                                }[updatedTerm.status?.toLowerCase()] || 'draft'
+                                            }
+                                        />
+                                        {lastConsensus && (
+                                            <Chip
+                                                label="Check last consensus"
+                                                size="small"
+                                                variant="outlined"
+                                                onClick={() => setOpenLastConsensusDialog(true)}
+                                            />
+                                        )}
+                                    </Box>
+                                    <Typography variant="h4" fontWeight={800} color="text.primary">
+                                        {updatedTerm.label}
+                                    </Typography>
+                                </Box>
+
+                                {/* Alternative labels */}
+                                {updatedTerm.altLabel &&
+                                    splitAltLabels(updatedTerm.altLabel).map((label, index) => (
+                                        <Box key={'altLabel' + index} sx={{ fontSize: '1rem' }}>
+                                            <Typography component="span" variant="body2" color="text.secondary" fontWeight={600} sx={{ fontSize: 'inherit' }}>
+                                                Alternative Label {index + 1}:
+                                            </Typography>
+                                            <Typography
+                                                component="span"
+                                                variant="body2"
+                                                fontWeight={600}
+                                                sx={{
+                                                    fontSize: 'inherit',
+                                                    ml: 1,
+                                                    px: 1,
+                                                    py: 0.5,
+                                                    borderRadius: 1,
+                                                    backgroundColor: 'action.hover'
+                                                }}
+                                            >
+                                                {label}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+
+                                {/* Description */}
+                                <Box
                                     sx={{
-                                        minHeight: 36,
-                                        '& .MuiAccordionSummary-content': { margin: '8px 0' }
+                                        borderLeft: theme => `3px solid ${theme.palette.primary.main}`,
+                                        pl: 2
                                     }}
                                 >
-                                    <Typography variant="body1">
-                                        More technical details{' '}
-                                        <Typography variant="caption" fontSize="0.85rem" fontStyle="italic">
-                                            (id, created and modifed dates, see Also)
+                                    <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.125rem' }}>
+                                        {updatedTerm.description}
+                                    </Typography>
+                                </Box>
+
+                                <Accordion
+                                    disableGutters
+                                    elevation={0}
+                                    sx={{
+                                        backgroundColor: 'transparent',
+                                        '&:before': { display: 'none' },
+                                        '&.Mui-expanded': { margin: 0 }
+                                    }}
+                                >
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon fontSize="small" />}
+                                        sx={{
+                                            minHeight: 36,
+                                            px: 0,
+                                            '& .MuiAccordionSummary-content': { margin: '8px 0' }
+                                        }}
+                                    >
+                                        <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
+                                            More technical details{' '}
+                                            <Typography variant="body2" fontStyle="italic" component="span" sx={{ fontSize: '1rem' }}>
+                                                (see Also)
+                                            </Typography>
                                         </Typography>
-                                    </Typography>
-                                </AccordionSummary>
+                                    </AccordionSummary>
 
-                                <AccordionDetails sx={{ pt: 0 }}>
-                                    <Typography>
-                                        <Tooltip title="Unique identifier for the term">
-                                            <IconButton size="small">
-                                                <HelpOutlineIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <strong>Identifier:</strong> {updatedTerm.identifier}
-                                    </Typography>
+                                    <AccordionDetails sx={{ pt: 0, px: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                        <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
+                                            <Tooltip title="Unique identifier for the term">
+                                                <IconButton size="small">
+                                                    <HelpOutlineIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <strong>Identifier:</strong> {updatedTerm.identifier}
+                                        </Typography>
+                                        <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
+                                            <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
+                                                <IconButton size="small">
+                                                    <HelpOutlineIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <strong>See Also:</strong> {renderSeeAlso()}
+                                        </Typography>
+                                        <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
+                                            <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
+                                        </Typography>
+                                    </AccordionDetails>
+                                </Accordion>
+                            </Box>
 
-                                    <Typography>
-                                        <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
-                                            <IconButton size="small">
-                                                <HelpOutlineIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <strong>See Also:</strong> {renderSeeAlso()}
-                                    </Typography>
-
-                                    <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
-                                        <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
-                                    </Typography>
-
-                                    <Typography sx={{ marginLeft: 4, marginBottom: 1 }}>
-                                        <strong>Last modified:</strong>{' '}
-                                        {new Date(updatedTerm.modified).toLocaleDateString() +
-                                            ', ' +
-                                            new Date(updatedTerm.modified).toLocaleTimeString()}
-                                    </Typography>
-                                </AccordionDetails>
-                            </Accordion>
-                            <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px', flexWrap: 'wrap' }}>
-                                <Button onClick={() => setEditMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
-                                    Edit Term
-                                </Button>
+                            {/* Actions */}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'center',
+                                    gap: 1.5,
+                                    flexWrap: 'wrap'
+                                }}
+                            >
                                 {!activeAgreement && (
                                     <Tooltip title="Decide if the term's status is ready to be changed">
                                         <Button
                                             disabled={activeAgreement}
-                                            hidden={currentUser.role !== "System Admin"}
+                                            hidden={currentUser.role !== 'System Admin'}
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
                                             sx={buttonStyle}
@@ -444,35 +498,46 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                                 }}
                                                 variant="contained"
                                                 sx={buttonStyle}
-                                                fullWidth
+                                                fullWidth={isMobile}
                                             >
                                                 Close consensus
                                             </Button>
                                         )}
                                     </>
                                 )}
+                                <Button
+                                    onClick={() => setEditMode(true)}
+                                    variant="outlined"
+                                    sx={{ ...buttonStyle, backgroundColor: 'transparent', color: theme.palette.secondary.main }}
+                                    fullWidth={isMobile}
+                                >
+                                    Edit Term
+                                </Button>
                             </Box>
-                        </Paper>
+                        </Box>
+
+                        {/* RIGHT: Discussion */}
                         <Box
                             sx={{
                                 width: { xs: '100%', xl: '50%' },
-                                padding: '10px',
-                                backgroundColor: theme.palette.background.paper,
-                                borderRadius: '8px',
-                                overflowY: 'auto',
-                                maxHeight: 'calc(100vh - 100px)'
+                                p: 3,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                minHeight: 0
                             }}
                         >
-                            <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                            <Typography variant="subtitle1" fontWeight={700} color="text.primary" sx={{ mb: 2 }}>
                                 Discussion
                             </Typography>
-                            <CommentsSection
-                                resourceId={term.identifier}
-                                comments={termComments || []}
-                                mentionedUsers={[]}
-                                handleSaveDiscussion={handleSaveDiscussion}
-                                setHasUncommittedChanges={setHasUncommittedChanges}
-                            />
+                            <Box sx={{ flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+                                <CommentsSection
+                                    resourceId={term.identifier}
+                                    comments={termComments || []}
+                                    mentionedUsers={[]}
+                                    handleSaveDiscussion={handleSaveDiscussion}
+                                    setHasUncommittedChanges={setHasUncommittedChanges}
+                                />
+                            </Box>
                         </Box>
                     </Box>
                 </Box>
