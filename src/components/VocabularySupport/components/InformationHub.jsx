@@ -38,7 +38,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
 import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import { ConsensusProgress } from '../utils/Consensus';
-import { stringAvatar } from './CommentsSection';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 
 const SORT_BY_OPTIONS = Object.freeze({
@@ -69,7 +69,7 @@ const DecisionBadgeAvatar = ({ decision }) => {
                 }
             }}
         >
-            <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
+            <UserAvatar identifier={decision.user_id || decision.user_name} />
         </Badge>
     );
 };
@@ -262,19 +262,19 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     alignItems: 'flex-start'
                 }}
             >
-                <ListItemAvatar sx={{ minWidth: 40, marginTop: '4px' }}>
+                <ListItemAvatar sx={{ minWidth: 40, marginTop: '4px', marginRight: 1 }}>
                     {lastComment ? (
                         <Tooltip title={`Comment by ${lastComment.author}`}>
-                            <Avatar
-                                {...stringAvatar(lastComment.author)}
+                            <Box
                                 sx={{
-                                    width: 32,
-                                    height: 32,
-                                    fontSize: '0.875rem',
+                                    display: 'inline-flex',
+                                    borderRadius: '50%',
                                     border: term.hasMention ? '2px solid' : 'none',
-                                    borderColor: term.hasMention ? 'warning.dark' : 'transparent'
+                                    borderColor: term.hasMention ? 'warning.dark' : 'transparent',
                                 }}
-                            />
+                            >
+                                <UserAvatar identifier={lastComment.author} />
+                            </Box>
                         </Tooltip>
                     ) : (
                         <Tooltip title="No comments">

@@ -28,6 +28,7 @@
     "axios": "^1.6.7",
     "babel-eslint": "^10.1.0",
     "bootstrap": "^4.6.2",
+    "boring-avatars": "1.7.0",
     "buffer": "^6.0.3",
     "classnames": "^2.5.1",
     "connected-react-router": "^6.9.3",

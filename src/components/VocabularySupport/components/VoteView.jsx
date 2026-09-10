@@ -3,7 +3,6 @@ import {
     Alert,
     Grid,
     Typography,
-    Avatar,
     TextField,
     Button,
     Box,
@@ -27,7 +26,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import PropTypes from 'prop-types';
 import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
-import { stringAvatar } from './CommentsSection';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
 import { ConsensusProgress } from '../utils/Consensus';
 import ClampLines from 'react-clamp-lines';
 
@@ -279,10 +278,11 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 sx={{
                                     display: 'flex',
                                     flexDirection: 'row',
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+                                    gap: 1
                                 }}
                             >
-                                <Avatar {...stringAvatar(vote.assignee)} sx={{ mr: 2, width: 32, height: 32 }} />
+                                <UserAvatar identifier={vote.assignee} />
                                 <Typography variant="subtitle1" gutterBottom>
                                     Created by {vote.assignee}
                                 </Typography>
@@ -324,7 +324,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                         .map((user, index) => (
                                             <Box key={`${user.voted_id}-${user.user_id}`} sx={styles.voteItem}>
                                                 <Box sx={styles.userInfoRow}>
-                                                    <Avatar {...stringAvatar(vote.assignee)} sx={{ width: 32, height: 32 }} />
+                                                    <UserAvatar identifier={user.user_id || user.user_name} />
                                                     <Typography variant="body2" fontWeight="medium">
                                                         {user.user_name}
                                                     </Typography>

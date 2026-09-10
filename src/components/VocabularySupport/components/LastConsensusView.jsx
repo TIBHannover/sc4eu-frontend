@@ -3,8 +3,7 @@ import { Box, Chip, LinearProgress, Paper, Typography, useTheme } from '@mui/mat
 import Divider from '@mui/material/Divider';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-import Avatar from '@mui/material/Avatar';
-import { stringAvatar } from './CommentsSection';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -114,8 +113,8 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                             Created By
                         </Typography>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                            <Avatar {...stringAvatar(consensus.assignee)} sx={{ mr: 2, width: 32, height: 32 }} />
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, gap: 1 }}>
+                            <UserAvatar identifier={consensus.assignee}/>
                             <Typography variant="body2" fontWeight={500}>
                                 {consensus.assignee}
                             </Typography>
@@ -172,8 +171,8 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                         }
                                     }}
                                 >
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                        <Avatar {...stringAvatar(decision.user_name)} sx={{ width: 28, height: 28 }} />
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <UserAvatar identifier={decision.user_id || decision.user_name} />
                                         <Typography variant="body2" fontWeight={500}>
                                             {decision.user_name}
                                         </Typography>
