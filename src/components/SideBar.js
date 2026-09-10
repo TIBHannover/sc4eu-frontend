@@ -260,7 +260,6 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                                                         onClose={() => {
                                                             setIsOntoComparisonModalOpen(false);
                                                         }}
-                                                        title="Timeline"
                                                         message={<ChangesTimeline id={selectedOntology.lookup_path} />}
                                                     />
                                                 )}

@@ -6,6 +6,7 @@ import {
     TextField,
     Button,
     Box,
+    IconButton,
     RadioGroup,
     FormControlLabel,
     Radio,
@@ -23,6 +24,7 @@ import {
     ThumbDownAlt
 } from '@mui/icons-material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
 import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
@@ -132,19 +134,31 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     };
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 1.5, flex: '1 1 auto', display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Box sx={{ mb: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}>
                             <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
                                 {term.label}
                             </Typography>
-                            <Tooltip title="Copy URL of this consensus into a clipboard for easy sharing">
-                                <Button size="small" variant="outlined" startIcon={<FileCopyOutlinedIcon fontSize="small" />} onClick={handleCopyLink}>
-                                    Copy consensus URL
-                                </Button>
-                            </Tooltip>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+                                <Tooltip title="Copy URL of this consensus into a clipboard for easy sharing">
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<FileCopyOutlinedIcon fontSize="small" />}
+                                        onClick={handleCopyLink}
+                                    >
+                                        Copy consensus URL
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Close">
+                                    <IconButton aria-label="close" size="small" onClick={() => setVoteViewMode(false)}>
+                                        <CloseIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
                         </Box>
                         <Snackbar
                             open={showCopyNotification}
@@ -395,12 +409,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             </Box>
                         </Box>
                     </Box>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Button variant="contained" sx={styles.button} onClick={() => setVoteViewMode(false)}>
-                        Close
-                    </Button>
                 </Grid>
             </Grid>
         </Box>

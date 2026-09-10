@@ -14,7 +14,6 @@ import {
     darken,
     IconButton,
     lighten,
-    Modal,
     Snackbar,
     styled,
     Tooltip,
@@ -1029,55 +1028,36 @@ const VocabularyMainTable = ({
                     }
                 }}
             />
-            <Modal open={openPopup} onClose={handleClosePopup}>
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        top: { xs: '50%', xl: '50%' },
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: { xs: '95%', xl: '80%' },
-                        height: { xs: '95%', xl: '80%' },
-                        outline: 'none'
-                    }}
-                >
-                    <Box
-                        sx={{
-                            backgroundColor: theme.palette.background.paper,
-                            width: '100%',
-                            height: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            borderRadius: 1
-                        }}
-                    >
-                        {selectedTerm && (
-                            <ExpandedRow
-                                term={selectedTerm}
-                                currentUser={currentUser}
-                                updateTerm={updateTerm}
-                                termComments={termComments || []}
-                                handleSaveDiscussion={handleSaveDiscussion}
-                                setHasUncommittedChanges={setHasUncommittedChanges}
-                                handleClosePopup={handleClosePopup}
-                            />
-                        )}
-                    </Box>
-                </Box>
-            </Modal>
+            {selectedTerm && (
+                <MaterialUIPopUp
+                    open={openPopup}
+                    onClose={handleClosePopup}
+                    fullHeight
+                    message={
+                        <ExpandedRow
+                            term={selectedTerm}
+                            currentUser={currentUser}
+                            updateTerm={updateTerm}
+                            termComments={termComments || []}
+                            handleSaveDiscussion={handleSaveDiscussion}
+                            setHasUncommittedChanges={setHasUncommittedChanges}
+                            handleClosePopup={handleClosePopup}
+                        />
+                    }
+                    type={MaterialUIPopUpTypes.TERM_DETAILS}
+                />
+            )}
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.HISTORY}
                 onClose={() => {
                     setActiveMUIPopUp(null);
                 }}
-                title="Timeline"
                 message={<ChangesTimeline id={process.env.REACT_APP_VOCABULARY_SERVICE_URL} />}
                 type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
                 onClose={() => setActiveMUIPopUp(null)}
-                title="Information Hub"
                 message={
                     <InformationHub
                         terms={terms}
@@ -1095,7 +1075,7 @@ const VocabularyMainTable = ({
                         setActiveMUIPopUp(null);
                         history.push('/vocabulary_support');
                     }}
-                    title="Active consensus"
+                    fullHeight
                     message={
                         <VoteView
                             term={urgentVoteTerm}
