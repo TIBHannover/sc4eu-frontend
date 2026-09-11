@@ -40,6 +40,7 @@ import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComp
 import { ConsensusProgress } from '../utils/Consensus';
 import UserAvatar from '../../ReusableComponents/UserAvatar';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
+import { getAllUsers } from 'network/UserProfileCalls';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -89,6 +90,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const [showWeekTerm, setShowWeekTerm] = useState(false);
     const [weekTermLoading, setWeekTermLoading] = useState(false);
 
+    const [users, setUsers] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -101,6 +103,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             setLoading(true);
             try {
                 await fetchTermOfWeek();
+                const allUsers = await getAllUsers();
+                setUsers(allUsers);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -243,6 +247,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
     const renderTermItem = term => {
         const lastComment = getLastComment(term);
+        const authorId = users.find(u => u.display_name === lastComment.author)?.uuid || lastComment.author;
         const commentCount = term.comments.length;
 
         return (
@@ -272,7 +277,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                     borderColor: term.hasMention ? 'warning.dark' : 'transparent',
                                 }}
                             >
-                                <UserAvatar identifier={lastComment.author} />
+                                <UserAvatar identifier={authorId} />
                             </Box>
                         </Tooltip>
                     ) : (
