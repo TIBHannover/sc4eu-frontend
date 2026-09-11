@@ -43,7 +43,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     const votedUsers = decisions.filter(expert => expert.choice !== null);
     const [expandedComments, setExpandedComments] = useState(new Set());
     const [showCopyNotification, setShowCopyNotification] = useState(false);
-
+    
     const handleCopyLink = event => {
         event.stopPropagation();
         navigator.clipboard.writeText(window.location.href).then(() => {
@@ -338,7 +338,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                         .map((user, index) => (
                                             <Box key={`${user.voted_id}-${user.user_id}`} sx={styles.voteItem}>
                                                 <Box sx={styles.userInfoRow}>
-                                                    <UserAvatar identifier={user.user_id || user.user_name} />
+                                                    <UserAvatar identifier={user.user_uuid || user.user_name} />
                                                     <Typography variant="body2" fontWeight="medium">
                                                         {user.user_name}
                                                     </Typography>
