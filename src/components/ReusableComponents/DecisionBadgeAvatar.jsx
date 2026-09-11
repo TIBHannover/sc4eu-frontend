@@ -24,14 +24,14 @@ const DecisionBadgeAvatar = ({ decision }) => {
                 }
             }}
         >
-            <UserAvatar identifier={decision.user_id || decision.user_name} />
+            <UserAvatar identifier={decision.user_uuid || decision.user_name} />
         </Badge>
     );
 };
 
 DecisionBadgeAvatar.propTypes = {
     decision: PropTypes.shape({
-        user_id: PropTypes.string,
+        user_uuid: PropTypes.string,
         user_name: PropTypes.string,
         choice: PropTypes.string
     }).isRequired
