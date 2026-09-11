@@ -30,15 +30,14 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { getVotes, getWeeklyTerm, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import { ConsensusProgress } from '../utils/Consensus';
 import UserAvatar from '../../ReusableComponents/UserAvatar';
+import DecisionBadgeAvatar from '../../ReusableComponents/DecisionBadgeAvatar';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 import { getAllUsers } from 'network/UserProfileCalls';
 
@@ -50,30 +49,6 @@ const SORT_BY_OPTIONS = Object.freeze({
     MOST_VOTES: 'most_votes',
     MOST_COMMENTS: 'most_comments'
 });
-
-const DecisionBadgeAvatar = ({ decision }) => {
-    const theme = useTheme();
-
-    return (
-        <Badge
-            overlap="circular"
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
-            sx={{
-                '.MuiBadge-badge': {
-                    backgroundColor: decision.choice === 'approved' ? theme.palette.secondary.main : theme.palette.error.main,
-                    color: decision.choice === 'approved' ? theme.palette.secondary.contrastText : theme.palette.error.contrastText,
-                    width: 16,
-                    height: 16,
-                    fontSize: 12,
-                    border: `1px solid ${theme.palette.divider}`
-                }
-            }}
-        >
-            <UserAvatar identifier={decision.user_id || decision.user_name} />
-        </Badge>
-    );
-};
 
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const theme = useTheme();
@@ -249,7 +224,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         const lastComment = getLastComment(term);
         const authorId = users.find(u => u.display_name === lastComment.author)?.uuid || lastComment.author;
         const commentCount = term.comments.length;
-
         return (
             <ListItem
                 key={term.identifier}
