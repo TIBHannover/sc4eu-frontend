@@ -3,6 +3,7 @@ import Cookies from 'js-cookie';
 import { differenceInDays } from 'date-fns';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
 import {
@@ -13,7 +14,6 @@ import {
     darken,
     IconButton,
     lighten,
-    Modal,
     Snackbar,
     styled,
     Tooltip,
@@ -21,10 +21,9 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
+import { getTermVotes, getVotes, deleteTermVotes, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
 import { getMentionedCommentsLength } from '../utils/Discussions';
 import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
@@ -63,6 +62,7 @@ const VocabularyMainTable = ({
     termUuid,
     voteUuid
 }) => {
+    const queryClient = useQueryClient();
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
@@ -90,8 +90,7 @@ const VocabularyMainTable = ({
 
     const [urgentVoteTerm, setUrgentVoteTerm] = useState(null);
     const [urgentVoteData, setUrgentVoteData] = useState(null);
-    const [votesMap, setVotesMap] = useState([]);
-    const [isLoadingVotes, setIsLoadingVotes] = useState(true);
+    const { data: votesMap = [], isLoading: isLoadingVotes } = useQuery(VOTES_QUERY_KEY, getVotes);
     const [deepLinkNotification, setDeepLinkNotification] = useState(null);
 
     const [pagination, setPagination] = useState({
@@ -118,17 +117,6 @@ const VocabularyMainTable = ({
     });
 
     const pendingDeletedTermIds = useRef([]);
-
-    useEffect(() => {
-        const fetchVotes = async () => {
-            setIsLoadingVotes(true);
-            const votesData = await getVotes();
-            setVotesMap(votesData);
-            setIsLoadingVotes(false);
-        };
-
-        fetchVotes();
-    }, []);
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -947,6 +935,7 @@ const VocabularyMainTable = ({
                         onSuccess={async () => {
                             await deleteTermVotes(pendingDeletedTermIds.current);
                             pendingDeletedTermIds.current = [];
+                            await queryClient.invalidateQueries(VOTES_QUERY_KEY);
                         }}
                         onFail={() => {
                             console.error(`Error while commiting changes with ${pendingDeletedTermIds.current} terms`);
@@ -1001,8 +990,7 @@ const VocabularyMainTable = ({
     };
 
     const handleConsensusDecisionMade = async () => {
-        const updatedVotes = await getVotes();
-        setVotesMap(updatedVotes);
+        await queryClient.invalidateQueries(VOTES_QUERY_KEY);
     };
 
     return (
@@ -1040,67 +1028,36 @@ const VocabularyMainTable = ({
                     }
                 }}
             />
-            <Modal open={openPopup} onClose={handleClosePopup}>
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        top: { xs: '50%', xl: '30%' },
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: { xs: '95%', xl: '70%' },
-                        height: { xs: '95%', xl: '65%' },
-                        outline: 'none'
-                    }}
-                >
-                    <Box
-                        sx={{
-                            backgroundColor: theme.palette.background.default,
-                            width: '100%',
-                            height: '100%',
-                            overflowY: 'auto',
-                            padding: 4,
-                            borderRadius: 1
-                        }}
-                    >
-                        {selectedTerm && (
-                            <ExpandedRow
-                                term={selectedTerm}
-                                currentUser={currentUser}
-                                updateTerm={updateTerm}
-                                termComments={termComments || []}
-                                handleSaveDiscussion={handleSaveDiscussion}
-                                setHasUncommittedChanges={setHasUncommittedChanges}
-                                handleClosePopup={handleClosePopup}
-                            />
-                        )}
-                    </Box>
-
-                    <IconButton
-                        aria-label="close"
-                        onClick={handleClosePopup}
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            right: 0
-                        }}
-                    >
-                        <CloseIcon />
-                    </IconButton>
-                </Box>
-            </Modal>
+            {selectedTerm && (
+                <MaterialUIPopUp
+                    open={openPopup}
+                    onClose={handleClosePopup}
+                    fullHeight
+                    message={
+                        <ExpandedRow
+                            term={selectedTerm}
+                            currentUser={currentUser}
+                            updateTerm={updateTerm}
+                            termComments={termComments || []}
+                            handleSaveDiscussion={handleSaveDiscussion}
+                            setHasUncommittedChanges={setHasUncommittedChanges}
+                            handleClosePopup={handleClosePopup}
+                        />
+                    }
+                    type={MaterialUIPopUpTypes.TERM_DETAILS}
+                />
+            )}
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.HISTORY}
                 onClose={() => {
                     setActiveMUIPopUp(null);
                 }}
-                title="Timeline"
                 message={<ChangesTimeline id={process.env.REACT_APP_VOCABULARY_SERVICE_URL} />}
                 type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
                 onClose={() => setActiveMUIPopUp(null)}
-                title="Information Hub"
                 message={
                     <InformationHub
                         terms={terms}
@@ -1118,7 +1075,7 @@ const VocabularyMainTable = ({
                         setActiveMUIPopUp(null);
                         history.push('/vocabulary_support');
                     }}
-                    title="Active consensus"
+                    fullHeight
                     message={
                         <VoteView
                             term={urgentVoteTerm}

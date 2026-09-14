@@ -3,10 +3,10 @@ import {
     Alert,
     Grid,
     Typography,
-    Avatar,
     TextField,
     Button,
     Box,
+    IconButton,
     RadioGroup,
     FormControlLabel,
     Radio,
@@ -18,16 +18,20 @@ import {
 import {
     CheckCircle as ApprovedIcon,
     Cancel as RejectedIcon,
-    ThumbUpAltOutlined,
-    ThumbUpAlt,
-    ThumbDownAltOutlined,
-    ThumbDownAlt
+    DoNotDisturbOnOutlined as AbstainIcon,
+    ThumbUpOutlined,
+    ThumbUp,
+    ThumbDownOutlined,
+    ThumbDown,
+    BackHandOutlined,
+    BackHand
 } from '@mui/icons-material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
 import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
 import Divider from '@mui/material/Divider';
-import { stringAvatar } from './CommentsSection';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
 import { ConsensusProgress } from '../utils/Consensus';
 import ClampLines from 'react-clamp-lines';
 
@@ -42,7 +46,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     const votedUsers = decisions.filter(expert => expert.choice !== null);
     const [expandedComments, setExpandedComments] = useState(new Set());
     const [showCopyNotification, setShowCopyNotification] = useState(false);
-
+    
     const handleCopyLink = event => {
         event.stopPropagation();
         navigator.clipboard.writeText(window.location.href).then(() => {
@@ -129,23 +133,35 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
         setUserHasVoted(true);
         setComment(null);
         setDecision('');
-        onDecisionMade();
+        onDecisionMade?.();
     };
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 1.5, flex: '1 1 auto', display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Box sx={{ mb: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}>
                             <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
                                 {term.label}
                             </Typography>
-                            <Tooltip title="Copy URL of this consensus into a clipboard for easy sharing">
-                                <Button size="small" variant="outlined" startIcon={<FileCopyOutlinedIcon fontSize="small" />} onClick={handleCopyLink}>
-                                    Copy consensus URL
-                                </Button>
-                            </Tooltip>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+                                <Tooltip title="Copy URL of this consensus into a clipboard for easy sharing">
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<FileCopyOutlinedIcon fontSize="small" />}
+                                        onClick={handleCopyLink}
+                                    >
+                                        Copy consensus URL
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Close">
+                                    <IconButton aria-label="close" size="small" onClick={() => setVoteViewMode(false)}>
+                                        <CloseIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
                         </Box>
                         <Snackbar
                             open={showCopyNotification}
@@ -173,7 +189,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
 
                         <Divider
                             sx={{
-                                bgcolor: vote.type === 'accept' ? theme.palette.secondary.main : theme.palette.error.main,
+                                bgcolor: theme.palette.secondary.main,
                                 height: 2,
                                 mb: 1
                             }}
@@ -182,17 +198,17 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                         <Typography
                             variant="body1"
                             sx={{
-                                color: vote.type === 'accept' ? theme.palette.secondary.main : theme.palette.error.main,
+                                color: theme.palette.secondary.main,
                                 fontWeight: 500,
                                 textTransform: 'uppercase',
                                 letterSpacing: 0.5
                             }}
                         >
-                            {vote.type === 'accept' ? '→ Accept Proposal' : '→ Not Accept Proposal'}
+                            → Accept Proposal
                         </Typography>
 
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                            {vote.type === 'accept' ? 'Change term status to accept' : 'Change term status to not accepted'}
+                            Change term status to accept
                         </Typography>
                     </Box>
 
@@ -223,34 +239,25 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             </Typography>
 
                             <RadioGroup value={decision} onChange={e => setDecision(e.target.value)} sx={{ gap: 2, mb: 2 }} row>
-                                <Tooltip
-                                    title={
-                                        vote.type === 'accept'
-                                            ? 'You agree to all term details. With a majority of this vote the general term status will change to Accepted'
-                                            : 'You agree that term should be removed. With a majority of this vote the general term status will change to Not Accepted (Term should be removed from vocabulary)'
-                                    }
-                                >
+                                <Tooltip title="You agree to all term details. With a majority of this vote the general term status will change to Accepted">
                                     <FormControlLabel
                                         value="approved"
-                                        control={
-                                            <Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color={theme.palette.secondary.main} />} />
-                                        }
+                                        control={<Radio icon={<ThumbUpOutlined />} checkedIcon={<ThumbUp color="secondary" />} />}
                                         label="Agree"
                                     />
                                 </Tooltip>
-                                <Tooltip
-                                    title={
-                                        vote.type === 'accept'
-                                            ? 'You are not satisfied with the current term details. With a majority of this vote the general term status will stay the same as Draft'
-                                            : 'You want to keep this Term for now. With a majority of this vote the general term status will stay the same as Draft'
-                                    }
-                                >
+                                <Tooltip title="You are not satisfied with the current term details. With a majority of this vote the general term status will stay the same as Draft">
                                     <FormControlLabel
                                         value="rejected"
-                                        control={
-                                            <Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color={theme.palette.error.main} />} />
-                                        }
+                                        control={<Radio icon={<ThumbDownOutlined />} checkedIcon={<ThumbDown color="error" />} />}
                                         label="Not Agree"
+                                    />
+                                </Tooltip>
+                                <Tooltip title="You want to abstain from this vote. Your decision will be recorded but will not count towards the majority, minimum threshold or consensus calculation">
+                                    <FormControlLabel
+                                        value="abstain"
+                                        control={<Radio icon={<BackHandOutlined />} checkedIcon={<BackHand color="disabled" />} />}
+                                        label="Undecided"
                                     />
                                 </Tooltip>
                             </RadioGroup>
@@ -279,10 +286,11 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 sx={{
                                     display: 'flex',
                                     flexDirection: 'row',
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+                                    gap: 1
                                 }}
                             >
-                                <Avatar {...stringAvatar(vote.assignee)} sx={{ mr: 2, width: 32, height: 32 }} />
+                                <UserAvatar identifier={vote.assignee} />
                                 <Typography variant="subtitle1" gutterBottom>
                                     Created by {vote.assignee}
                                 </Typography>
@@ -324,7 +332,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                         .map((user, index) => (
                                             <Box key={`${user.voted_id}-${user.user_id}`} sx={styles.voteItem}>
                                                 <Box sx={styles.userInfoRow}>
-                                                    <Avatar {...stringAvatar(vote.assignee)} sx={{ width: 32, height: 32 }} />
+                                                    <UserAvatar identifier={user.user_uuid || user.user_name} />
                                                     <Typography variant="body2" fontWeight="medium">
                                                         {user.user_name}
                                                     </Typography>
@@ -332,6 +340,13 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                         <>
                                                             <ApprovedIcon color="success" fontSize="small" />
                                                             <Typography variant="body2">agree</Typography>
+                                                        </>
+                                                    ) : user.choice === 'abstain' ? (
+                                                        <>
+                                                            <AbstainIcon color="disabled" fontSize="small" />
+                                                            <Typography variant="body2">
+                                                                undecided
+                                                            </Typography>
                                                         </>
                                                     ) : (
                                                         <>
@@ -396,12 +411,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                         </Box>
                     </Box>
                 </Grid>
-
-                <Grid item xs={12}>
-                    <Button variant="contained" sx={styles.button} onClick={() => setVoteViewMode(false)}>
-                        Close
-                    </Button>
-                </Grid>
             </Grid>
         </Box>
     );
@@ -411,7 +420,7 @@ VoteView.propTypes = {
     term: PropTypes.object.isRequired,
     vote: PropTypes.object.isRequired,
     username: PropTypes.string.isRequired,
-    setVoteViewMode: PropTypes.object.isRequired,
+    setVoteViewMode: PropTypes.func.isRequired,
     onDecisionMade: PropTypes.func
 };
 

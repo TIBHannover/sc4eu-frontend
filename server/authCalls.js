@@ -181,7 +181,7 @@ module.exports = {
 
                         // Find or create user in the backend
                         const user = await findOrCreateUser({
-                            displayName: profile.displayName,
+                            displayName: profile.displayName?.trim() || profile.username,
                             email: userMail,
                             auth_type: 'AUTH_GITLAB',
                             token: 'undefined'
@@ -215,7 +215,7 @@ module.exports = {
 
                             // Find or create user in the backend
                             const user = await findOrCreateUser({
-                                displayName: profile.displayName,
+                                displayName: profile.displayName?.trim() || profile.username,
                                 email: userMail,
                                 auth_type: 'AUTH_GITHUB',
                                 token: 'undefined'
@@ -249,7 +249,7 @@ module.exports = {
 
                             // Find or create user in the backend
                             const user = await findOrCreateUser({
-                                displayName: profile.displayName,
+                                displayName: profile.displayName?.trim() || profile.username,
                                 email: userMail,
                                 auth_type: 'AUTH_GOOGLE',
                                 token: 'undefined'

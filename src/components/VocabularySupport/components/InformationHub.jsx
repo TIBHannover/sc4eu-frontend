@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useMediaQuery } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
+import { useQuery } from '@tanstack/react-query';
 
 import {
     Avatar,
     AvatarGroup,
-    Badge,
     Box,
     Button,
     Checkbox,
@@ -30,16 +30,16 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
 
-import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
+import { getVotes, getWeeklyTerm, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import { ConsensusProgress } from '../utils/Consensus';
-import { stringAvatar } from './CommentsSection';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
+import DecisionBadgeAvatar from '../../ReusableComponents/DecisionBadgeAvatar';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
+import { getAllUsers } from 'network/UserProfileCalls';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -50,30 +50,6 @@ const SORT_BY_OPTIONS = Object.freeze({
     MOST_COMMENTS: 'most_comments'
 });
 
-const DecisionBadgeAvatar = ({ decision }) => {
-    const theme = useTheme();
-
-    return (
-        <Badge
-            overlap="circular"
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
-            sx={{
-                '.MuiBadge-badge': {
-                    backgroundColor: decision.choice === 'approved' ? theme.palette.secondary.main : theme.palette.error.main,
-                    color: decision.choice === 'approved' ? theme.palette.secondary.contrastText : theme.palette.error.contrastText,
-                    width: 16,
-                    height: 16,
-                    fontSize: 12,
-                    border: `1px solid ${theme.palette.divider}`
-                }
-            }}
-        >
-            <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
-        </Badge>
-    );
-};
-
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const theme = useTheme();
 
@@ -82,13 +58,14 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
-    const [votesMap, setVotesMap] = useState([]);
+    const { data: votesMap = [] } = useQuery(VOTES_QUERY_KEY, getVotes);
     const [loading, setLoading] = useState(false);
 
     const [termOfWeek, setTermOfWeek] = useState(null);
     const [showWeekTerm, setShowWeekTerm] = useState(false);
     const [weekTermLoading, setWeekTermLoading] = useState(false);
 
+    const [users, setUsers] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -101,6 +78,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             setLoading(true);
             try {
                 await fetchTermOfWeek();
+                const allUsers = await getAllUsers();
+                setUsers(allUsers);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -114,8 +93,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const fetchTermOfWeek = async () => {
         try {
             setWeekTermLoading(true);
-            const votesData = await getVotes();
-            setVotesMap(votesData);
 
             const weeklyTerm = await getWeeklyTerm();
             const termUuid = weeklyTerm?.term_uuid;
@@ -124,6 +101,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                 return;
             }
 
+            const votesData = await getVotes();
             const termVoteData = votesData.find(vote => vote.term_uuid === termUuid);
 
             const decisions = termVoteData?.decisions || [];
@@ -244,8 +222,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
     const renderTermItem = term => {
         const lastComment = getLastComment(term);
+        const authorId = users.find(u => u.display_name === lastComment.author)?.uuid || lastComment.author;
         const commentCount = term.comments.length;
-
         return (
             <ListItem
                 key={term.identifier}
@@ -262,19 +240,19 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     alignItems: 'flex-start'
                 }}
             >
-                <ListItemAvatar sx={{ minWidth: 40, marginTop: '4px' }}>
+                <ListItemAvatar sx={{ minWidth: 40, marginTop: '4px', marginRight: 1 }}>
                     {lastComment ? (
                         <Tooltip title={`Comment by ${lastComment.author}`}>
-                            <Avatar
-                                {...stringAvatar(lastComment.author)}
+                            <Box
                                 sx={{
-                                    width: 32,
-                                    height: 32,
-                                    fontSize: '0.875rem',
+                                    display: 'inline-flex',
+                                    borderRadius: '50%',
                                     border: term.hasMention ? '2px solid' : 'none',
-                                    borderColor: term.hasMention ? 'warning.dark' : 'transparent'
+                                    borderColor: term.hasMention ? 'warning.dark' : 'transparent',
                                 }}
-                            />
+                            >
+                                <UserAvatar identifier={authorId} />
+                            </Box>
                         </Tooltip>
                     ) : (
                         <Tooltip title="No comments">

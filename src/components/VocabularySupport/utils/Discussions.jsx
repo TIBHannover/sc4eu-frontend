@@ -18,8 +18,7 @@ import {
 import { IconButton, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import Divider from '@mui/material/Divider';
-import Avatar from '@mui/material/Avatar';
-import { stringAvatar } from '../components/CommentsSection';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
@@ -262,7 +261,7 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                                                             sx={{ cursor: 'pointer' }}
                                                         >
                                                             <Tooltip title={`Filter by ${comment.author}`} arrow>
-                                                                <Avatar {...stringAvatar(comment.author)} />
+                                                                <UserAvatar identifier={comment.author} />
                                                             </Tooltip>
                                                         </ListItemAvatar>
                                                         <ListItemText
