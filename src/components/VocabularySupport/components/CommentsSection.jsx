@@ -6,7 +6,6 @@ import {
     Paper,
     Collapse,
     Button,
-    Avatar,
     Typography,
     TextField,
     IconButton,
@@ -35,8 +34,10 @@ import { useMediaQuery } from '@material-ui/core';
 import { COMMENT_EMOJI_SET } from '../utils/Discussions';
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
 
-const INDENT_PX = 20;
+const INDENT_PX = 14;
 
 const STATUS_OPTIONS = [
     { value: 'none', label: 'None', icon: <FlagOutlinedIcon fontSize="small" /> },
@@ -55,47 +56,6 @@ const STATUS_TOOLTIP = {
     open: 'Marked as open — requires help',
     resolved: 'Marked as resolved — question answered'
 };
-
-function stringToColor(string) {
-    let hash = 0;
-    let i;
-
-    for (i = 0; i < string.length; i += 1) {
-        hash = string.codePointAt(i) + ((hash << 5) - hash);
-    }
-
-    let color = '#';
-
-    for (i = 0; i < 3; i += 1) {
-        const value = (hash >> (i * 8)) & 0xff;
-        color += `00${value.toString(16)}`.slice(-2);
-    }
-
-    return color;
-}
-
-export function stringAvatar(name) {
-    const nameParts = name.split(' ');
-    let initials;
-
-    if (nameParts.length === 1) {
-        initials = `${nameParts[0][0]}${nameParts[0][1] || ''}`;
-    } else {
-        initials = `${nameParts[0][0]}${nameParts[1][0]}`;
-    }
-
-    return {
-        sx: {
-            backgroundColor: stringToColor(name),
-
-            [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
-                height: 24,
-                width: 24
-            }
-        },
-        children: initials
-    };
-}
 
 function getTimeDifferenceString(isoDateString) {
     const date = new Date(isoDateString);
@@ -234,7 +194,7 @@ function MentionPopper({ anchorEl, filteredUsers, onSelect }) {
                 <MenuList>
                     {filteredUsers.map(user => (
                         <MenuItem key={user.uuid} onClick={() => onSelect(user)}>
-                            <Avatar {...stringAvatar(user.display_name)} style={{ width: 24, height: 24, marginRight: 8 }} />
+                            <UserAvatar identifier={user.uuid}/>
                             {user.display_name}
                         </MenuItem>
                     ))}
@@ -445,6 +405,7 @@ function ReplyComposer({ users, isMobile, onSubmit, onCancel }) {
 function CommentNode({
     node,
     depth,
+    isLastChild,
     users,
     isMobile,
     onReply,
@@ -467,8 +428,9 @@ function CommentNode({
     const [pickerOpen, setPickerOpen] = useState(false);
     const [statusPickerOpen, setStatusPickerOpen] = useState(false);
 
-    const avatarStyle = { marginRight: '10px' };
     const authorDateStyle = { display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' };
+
+    const authorId = users.find(u => u.display_name === node.author)?.uuid || node.author;
 
     const hasStatus = node.status && node.status !== 'none';
 
@@ -479,20 +441,45 @@ function CommentNode({
         commentBackgroundColor = theme.palette.surface.container;
     }
 
+    const THREAD_ELBOW_Y = '40px';
+
     return (
         <Box
             sx={{
-                pl: depth > 0 ? `${INDENT_PX}px` : 0,
-                borderLeft: depth > 0 ? theme.palette.divider : 'none',
-                ml: depth > 0 ? 1 : 0,
-                borderRadius: 2,
-                backgroundColor: commentBackgroundColor,
-                transition: 'background-color 0.2s ease'
+                position: 'relative',
+                pl: 1,
+                ml: depth > 0 ? 2 : 0,
+                ...(depth > 0 && {
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        width: '1px',
+                        backgroundColor: theme.palette.divider,
+                        height: isLastChild ? THREAD_ELBOW_Y : '100%'
+                    },
+                    '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        left: 0,
+                        top: THREAD_ELBOW_Y,
+                        width: `${INDENT_PX}px`,
+                        height: '1px',
+                        backgroundColor: theme.palette.divider
+                    }
+                })
             }}
         >
             <ListItem
                 alignItems="flex-start"
-                style={{ paddingBottom: '1px', paddingLeft: depth > 0 ? 8 : 16 }}
+                style={{ paddingBottom: 5, paddingLeft: 0 }}
+                sx={{
+                    position: 'relative',
+                    borderRadius: 2,
+                    backgroundColor: commentBackgroundColor,
+                    transition: 'background-color 0.2s ease'
+                }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             >
@@ -501,7 +488,7 @@ function CommentNode({
 
                     {!isMobile && (
                         <ListItemAvatar sx={{ minWidth: 'auto' }}>
-                            <Avatar {...stringAvatar(node.author)} style={avatarStyle} />
+                            <UserAvatar identifier={authorId} />
                         </ListItemAvatar>
                     )}
 
@@ -510,14 +497,14 @@ function CommentNode({
                             <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
                                 {node.author}
                             </Typography>
-                            {isMobile && <Avatar {...stringAvatar(node.author)} style={avatarStyle} />}
-                            <Typography variant="body2" color="textSecondary">
+                            {isMobile && <UserAvatar identifier={authorId} />}
+                            <Typography variant="body1" color="textSecondary">
                                 {getTimeDifferenceString(node.timestamp)}
                             </Typography>
                             {hasStatus && <Tooltip title={STATUS_TOOLTIP[node.status]}>{STATUS_ICON[node.status]}</Tooltip>}
                         </div>
 
-                        <Typography variant="body1" gutterBottom style={{ wordBreak: 'break-word' }}>
+                        <Typography variant="body1" gutterBottom sx={{ fontSize: '1.05rem', wordBreak: 'break-word' }}>
                             {node.content}
                         </Typography>
 
@@ -557,6 +544,10 @@ function CommentNode({
                 </Box>
                 <Box
                     sx={{
+                        position: 'absolute',
+                        top: '20%',
+                        right: 8,
+                        transform: 'translateY(-50%)',
                         display: 'flex',
                         flexDirection: 'row',
                         borderRadius: 2,
@@ -598,11 +589,12 @@ function CommentNode({
             {hasChildren && (
                 <Collapse in={!isCollapsed} unmountOnExit>
                     <Box>
-                        {node.children.map(child => (
+                        {node.children.map((child, index) => (
                             <CommentNode
                                 key={child.id}
                                 node={child}
                                 depth={depth + 1}
+                                isLastChild={index === node.children.length - 1}
                                 users={users}
                                 isMobile={isMobile}
                                 onReply={onReply}
@@ -774,12 +766,38 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     };
 
     return (
-        <Paper elevation={0} style={{ paddingLeft: '1px', background: 'inherit' }}>
+        <Paper
+            elevation={0}
+            style={{ paddingLeft: '1px', background: 'inherit', display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}
+        >
             <Box style={{ display: 'flex', alignItems: 'center' }}>
                 <hr style={dividerStyle} />
             </Box>
 
-            <List sx={{ maxHeight: '25vh', overflow: 'auto' }}>
+            <List sx={{ flex: '1 1 auto', minHeight: 0, overflow: 'auto' }}>
+                {tree.length === 0 && (
+                    <Box
+                        sx={{
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                            color: 'text.secondary',
+                            gap: 1,
+                            py: 4
+                        }}
+                    >
+                        <ForumOutlinedIcon sx={{ fontSize: 32, opacity: 0.5 }} />
+                        <Typography variant="body1" color="text.secondary">
+                            No comments yet
+                        </Typography>
+                        <Typography variant="body2" color="text.disabled">
+                            Be the first to start the discussion
+                        </Typography>
+                    </Box>
+                )}
                 {tree.map(node => (
                     <CommentNode
                         key={node.id}
@@ -800,7 +818,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                 ))}
             </List>
 
-            <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: 'auto' }}>
+            <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: 'auto', flexShrink: 0 }}>
                 <TextField
                     inputRef={textFieldRef}
                     multiline

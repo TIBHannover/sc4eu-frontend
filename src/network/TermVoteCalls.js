@@ -10,6 +10,8 @@ import {
     URL_DELETE_TERM_VOTES
 } from '../constants/services';
 
+export const VOTES_QUERY_KEY = ['votes', 'under_agreement'];
+
 export const getTermLastConsensus = term_uuid => {
     return submitGetRequest(`${URL_GET_TERM_LAST_CONSENSUS}/?term_uuid=${term_uuid}`, {}, false);
 };
