@@ -18,10 +18,13 @@ import {
 import {
     CheckCircle as ApprovedIcon,
     Cancel as RejectedIcon,
-    ThumbUpAltOutlined,
-    ThumbUpAlt,
-    ThumbDownAltOutlined,
-    ThumbDownAlt
+    DoNotDisturbOnOutlined as AbstainIcon,
+    ThumbUpOutlined,
+    ThumbUp,
+    ThumbDownOutlined,
+    ThumbDown,
+    BackHandOutlined,
+    BackHand
 } from '@mui/icons-material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import CloseIcon from '@mui/icons-material/Close';
@@ -245,9 +248,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 >
                                     <FormControlLabel
                                         value="approved"
-                                        control={
-                                            <Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color={theme.palette.secondary.main} />} />
-                                        }
+                                        control={<Radio icon={<ThumbUpOutlined />} checkedIcon={<ThumbUp color="secondary" />} />}
                                         label="Agree"
                                     />
                                 </Tooltip>
@@ -260,10 +261,15 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 >
                                     <FormControlLabel
                                         value="rejected"
-                                        control={
-                                            <Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color={theme.palette.error.main} />} />
-                                        }
+                                        control={<Radio icon={<ThumbDownOutlined />} checkedIcon={<ThumbDown color="error" />} />}
                                         label="Not Agree"
+                                    />
+                                </Tooltip>
+                                <Tooltip title="You want to abstain from this vote. Your decision will be recorded but will not count towards the majority, minimum threshold or consensus calculation">
+                                    <FormControlLabel
+                                        value="abstain"
+                                        control={<Radio icon={<BackHandOutlined />} checkedIcon={<BackHand color="disabled" />} />}
+                                        label="Undecided"
                                     />
                                 </Tooltip>
                             </RadioGroup>
@@ -346,6 +352,13 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                         <>
                                                             <ApprovedIcon color="success" fontSize="small" />
                                                             <Typography variant="body2">agree</Typography>
+                                                        </>
+                                                    ) : user.choice === 'abstain' ? (
+                                                        <>
+                                                            <AbstainIcon color="disabled" fontSize="small" />
+                                                            <Typography variant="body2">
+                                                                undecided
+                                                            </Typography>
                                                         </>
                                                     ) : (
                                                         <>
