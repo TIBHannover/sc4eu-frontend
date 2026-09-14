@@ -12,17 +12,14 @@ import {
     Box,
     Button,
     Chip,
-    FormControlLabel,
     IconButton,
     Link,
     Paper,
-    Radio,
-    RadioGroup,
     Snackbar,
     TextField,
     Tooltip,
     Typography,
-    useTheme,
+    useTheme
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
@@ -47,7 +44,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     const [activeAgreement, setActiveAgreement] = useState(false);
     const [notification, setNotification] = useState(false);
     const [initiateTermAgreement, setInitiateTermAgreement] = useState(false);
-    const [agreementType, setAgreementType] = useState(null);
     const [reason, setReason] = useState(null);
     const [openLastConsensusDialog, setOpenLastConsensusDialog] = useState(false);
     const [lastConsensus, setLastConsensus] = useState(null);
@@ -57,7 +53,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
-    const handleSetVoteViewMode = (isOpen) => {
+    const handleSetVoteViewMode = isOpen => {
         setViewAgreementMode(isOpen);
         if (isOpen && activeAgreement) {
             history.push(`/vocabulary_support/terms/${term.identifier}/consensuses/${activeAgreement.uuid}`);
@@ -158,10 +154,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     };
 
     const handleAgreementSubmit = async () => {
-        await initiateNewVote(term.identifier, currentUser.displayName, agreementType, reason);
+        await initiateNewVote(term.identifier, currentUser.displayName, 'ACCEPT', reason);
         await queryClient.invalidateQueries(VOTES_QUERY_KEY);
         setInitiateTermAgreement(false);
-        setAgreementType(null);
         setReason(null);
         setNotification(true);
         setIsConsensusSubmitted(true);
@@ -175,10 +170,8 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                     open={initiateTermAgreement}
                     onClose={() => {
                         setInitiateTermAgreement(false);
-                        setAgreementType(null);
                         setReason(null);
                     }}
-                    title="Start Term Consensus"
                     message={
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                             <Paper sx={{ p: 2 }}>
@@ -187,43 +180,6 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     Once enough people have voted, the decision is made by a two-thirds majority, ensuring that changes reflect broad
                                     agreement in a community.
                                 </Typography>
-                            </Paper>
-                            <Paper sx={{ p: 2 }}>
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Select consensus type:
-                                </Typography>
-                                <RadioGroup value={agreementType} onChange={e => setAgreementType(e.target.value)}>
-                                    <Box sx={{ mb: 2 }}>
-                                        <FormControlLabel
-                                            value="ACCEPT"
-                                            control={<Radio />}
-                                            label={
-                                                <Box>
-                                                    <Typography>Accept</Typography>
-                                                    <Typography variant="body2" color="text.secondary" sx={{ ml: 0 }}>
-                                                        Term's status will be changed to the accepted if consensus succeeds.
-                                                    </Typography>
-                                                </Box>
-                                            }
-                                            sx={{ alignItems: 'flex-start' }}
-                                        />
-                                    </Box>
-                                    <Box>
-                                        <FormControlLabel
-                                            value="REJECT"
-                                            control={<Radio />}
-                                            label={
-                                                <Box>
-                                                    <Typography>Not Accept</Typography>
-                                                    <Typography variant="body2" color="text.secondary" sx={{ ml: 0 }}>
-                                                        Term's status will be changed to not accepted if consensus succeeds.
-                                                    </Typography>
-                                                </Box>
-                                            }
-                                            sx={{ alignItems: 'flex-start' }}
-                                        />
-                                    </Box>
-                                </RadioGroup>
                             </Paper>
                             <Paper>
                                 <TextField
@@ -235,13 +191,11 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     fullWidth
                                 />
                             </Paper>
-                            <Tooltip title="Select at least one vote type" disableHoverListener={!!agreementType}>
-                                <Box sx={{ width: 'fit-content' }}>
-                                    <Button onClick={() => handleAgreementSubmit()} variant="contained" sx={buttonStyle} disabled={!agreementType}>
-                                        Initiate Consensus
-                                    </Button>
-                                </Box>
-                            </Tooltip>
+                            <Box sx={{ width: 'fit-content' }}>
+                                <Button onClick={() => handleAgreementSubmit()} variant="contained" sx={buttonStyle}>
+                                    Initiate Consensus
+                                </Button>
+                            </Box>
                         </Box>
                     }
                 />
@@ -372,7 +326,13 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 {updatedTerm.altLabel &&
                                     splitAltLabels(updatedTerm.altLabel).map((label, index) => (
                                         <Box key={'altLabel' + index} sx={{ fontSize: '1rem' }}>
-                                            <Typography component="span" variant="body2" color="text.secondary" fontWeight={600} sx={{ fontSize: 'inherit' }}>
+                                            <Typography
+                                                component="span"
+                                                variant="body2"
+                                                color="text.secondary"
+                                                fontWeight={600}
+                                                sx={{ fontSize: 'inherit' }}
+                                            >
                                                 Alternative Label {index + 1}:
                                             </Typography>
                                             <Typography
@@ -480,19 +440,14 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 )}
                                 {activeAgreement && (
                                     <>
-                                        <Button
-                                            onClick={() => handleSetVoteViewMode(true)}
-                                            variant="contained"
-                                            sx={buttonStyle}
-                                            fullWidth={isMobile}
-                                        >
+                                        <Button onClick={() => handleSetVoteViewMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
                                             View ongoing consensus
                                         </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
                                             <Button
                                                 onClick={async () => {
                                                     const data = await manualCloseConsensus(term.identifier, activeAgreement.uuid);
-                                                    if (data.status === 'accept' || data.status === 'not accept') {
+                                                    if (data.status === 'accept') {
                                                         const newTerm = {
                                                             ...term,
                                                             status: data.status,
@@ -513,6 +468,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         )}
                                     </>
                                 )}
+
                                 <Button
                                     hidden={activeAgreement}
                                     onClick={() => setEditMode(true)}

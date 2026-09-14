@@ -189,7 +189,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
 
                         <Divider
                             sx={{
-                                bgcolor: vote.type === 'accept' ? theme.palette.secondary.main : theme.palette.error.main,
+                                bgcolor: theme.palette.secondary.main,
                                 height: 2,
                                 mb: 1
                             }}
@@ -198,17 +198,17 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                         <Typography
                             variant="body1"
                             sx={{
-                                color: vote.type === 'accept' ? theme.palette.secondary.main : theme.palette.error.main,
+                                color: theme.palette.secondary.main,
                                 fontWeight: 500,
                                 textTransform: 'uppercase',
                                 letterSpacing: 0.5
                             }}
                         >
-                            {vote.type === 'accept' ? '→ Accept Proposal' : '→ Not Accept Proposal'}
+                            → Accept Proposal
                         </Typography>
 
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                            {vote.type === 'accept' ? 'Change term status to accept' : 'Change term status to not accepted'}
+                            Change term status to accept
                         </Typography>
                     </Box>
 
@@ -239,26 +239,14 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             </Typography>
 
                             <RadioGroup value={decision} onChange={e => setDecision(e.target.value)} sx={{ gap: 2, mb: 2 }} row>
-                                <Tooltip
-                                    title={
-                                        vote.type === 'accept'
-                                            ? 'You agree to all term details. With a majority of this vote the general term status will change to Accepted'
-                                            : 'You agree that term should be removed. With a majority of this vote the general term status will change to Not Accepted (Term should be removed from vocabulary)'
-                                    }
-                                >
+                                <Tooltip title="You agree to all term details. With a majority of this vote the general term status will change to Accepted">
                                     <FormControlLabel
                                         value="approved"
                                         control={<Radio icon={<ThumbUpOutlined />} checkedIcon={<ThumbUp color="secondary" />} />}
                                         label="Agree"
                                     />
                                 </Tooltip>
-                                <Tooltip
-                                    title={
-                                        vote.type === 'accept'
-                                            ? 'You are not satisfied with the current term details. With a majority of this vote the general term status will stay the same as Draft'
-                                            : 'You want to keep this Term for now. With a majority of this vote the general term status will stay the same as Draft'
-                                    }
-                                >
+                                <Tooltip title="You are not satisfied with the current term details. With a majority of this vote the general term status will stay the same as Draft">
                                     <FormControlLabel
                                         value="rejected"
                                         control={<Radio icon={<ThumbDownOutlined />} checkedIcon={<ThumbDown color="error" />} />}

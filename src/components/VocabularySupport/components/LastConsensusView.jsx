@@ -34,7 +34,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
 
                         <Divider
                             sx={{
-                                bgcolor: consensus.type === 'accept' ? 'success.main' : 'error.main',
+                                bgcolor: 'success.main',
                                 height: 2,
                                 mb: 1
                             }}
@@ -50,13 +50,13 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                             <Typography
                                 variant="body1"
                                 sx={{
-                                    color: consensus.type === 'accept' ? 'success.dark' : 'error.dark',
+                                    color: 'success.dark',
                                     fontWeight: 500,
                                     textTransform: 'uppercase',
                                     letterSpacing: 0.5
                                 }}
                             >
-                                {consensus.type === 'accept' ? '→ Accept Proposal' : '→ Not Accept Proposal'}
+                                → Accept Proposal
                             </Typography>
 
                             <Chip
