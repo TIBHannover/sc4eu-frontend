@@ -514,6 +514,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                     </>
                                 )}
                                 <Button
+                                    hidden={activeAgreement}
                                     onClick={() => setEditMode(true)}
                                     variant="outlined"
                                     sx={{ ...buttonStyle, backgroundColor: 'transparent', color: theme.palette.secondary.main }}
