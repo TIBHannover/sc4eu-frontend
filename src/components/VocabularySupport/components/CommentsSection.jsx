@@ -20,8 +20,8 @@ import {
 import { getAllUsers } from '../../../network/UserProfileCalls';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ThumbUpOutlined from '@mui/icons-material/ThumbUpOutlined';
+import ThumbDownOutlined from '@mui/icons-material/ThumbDownOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
@@ -347,7 +347,7 @@ function VoteColumn({ votes, userVote, onVote }) {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 0.25, minWidth: 28 }}>
             <IconButton size="small" onClick={() => onVote('up')} sx={{ p: 0.25, color: userVote === 'up' ? 'primary.main' : 'text.disabled' }}>
-                <KeyboardArrowUpIcon fontSize="small" />
+                <ThumbUpOutlined fontSize="small" />
             </IconButton>
             <Typography
                 variant="caption"
@@ -360,7 +360,7 @@ function VoteColumn({ votes, userVote, onVote }) {
                 {votes ?? 0}
             </Typography>
             <IconButton size="small" onClick={() => onVote('down')} sx={{ p: 0.25, color: userVote === 'down' ? 'error.main' : 'text.disabled' }}>
-                <KeyboardArrowDownIcon fontSize="small" />
+                <ThumbDownOutlined fontSize="small" />
             </IconButton>
         </Box>
     );
