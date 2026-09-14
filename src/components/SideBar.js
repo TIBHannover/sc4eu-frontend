@@ -389,17 +389,9 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         )}
                     </div>
                     <Divider />
-                    <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentations} onClick={onNavigate}>
+                    <StyledLink title="Open Documentation" activeStyle={ActiveStyle} to={ROUTES.Documentation} onClick={onNavigate}>
                         <LibraryBooksOutlined color="action" />
-                        <StyledText>About Portal</StyledText>
-                    </StyledLink>
-                    <StyledLink title="Open FAQ" activeStyle={ActiveStyle} to={ROUTES.FAQ} onClick={onNavigate}>
-                        <LiveHelpOutlined color="action" />
-                        <StyledText>FAQ</StyledText>
-                    </StyledLink>
-                    <StyledLink title="Open Training" activeStyle={ActiveStyle} to={ROUTES.TRAINING} onClick={onNavigate}>
-                        <MenuBookOutlined color="action" />
-                        <StyledText>Training</StyledText>
+                        <StyledText>Documentation</StyledText>
                     </StyledLink>
                     <Divider />
                     <StyledLink title="Open Data Policy" activeStyle={ActiveStyle} to={ROUTES.Dataprotections} onClick={onNavigate}>

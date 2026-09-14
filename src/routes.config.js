@@ -11,13 +11,11 @@ import UserSettings from './pages/UserSettings';
 import ROUTES from './constants/routes';
 import OntologyIndexing from './pages/OntologyIndexing';
 import ViewOntology from './pages/ViewOntology';
-import Documentations from './pages/Documentations';
+import Documentation from './pages/Documentation';
 import Dataprotections from './pages/Dataprotections';
 import Imprint from './pages/Imprint';
 import Partners from './pages/Partners';
 import vocabulary_support from './pages/vocabulary_support';
-import FAQ from './pages/FAQ';
-import Training from './pages/Training';
 import WebProtege from './pages/WebProtege';
 import ProjectList from './pages/ProjectList';
 import EmailVerify from './pages/EmailVerify';
@@ -118,9 +116,9 @@ const routes = [
         component: ProjectList
     },
     {
-        path: ROUTES.Documentations,
+        path: ROUTES.Documentation,
         exact: true,
-        component: Documentations
+        component: Documentation
     },
     {
         path: ROUTES.Dataprotections,
@@ -163,16 +161,6 @@ const routes = [
         path: ROUTES.ANNOTATOR,
         exact: true,
         component: AnnotatorPage
-    },
-    {
-        path: ROUTES.FAQ,
-        exact: true,
-        component: FAQ
-    },
-    {
-        path: ROUTES.TRAINING,
-        exact: true,
-        component: Training
     },
     {
         path: ROUTES.EMAIL_VERIFY,
