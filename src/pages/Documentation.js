@@ -7,19 +7,38 @@ import EstablishMaintainOnto from '../assets/images/Establish&MaintainOnto.png';
 import SemanticWeb from '../assets/images/SemanticWeb.png';
 import SpoSemantic from '../assets/images/SPOSemanticWeb.png';
 import WEBPROTEGEIMAGE from '../assets/images/WEBPROTEGEImage.png';
+import VocabMainTable from '../assets/images/Vocabulary/Main Table (About Service).jpg';
+import VocabActivityWidgets from '../assets/images/Vocabulary/Activity Widgets.jpg';
+import VocabAdminConsensus from '../assets/images/Vocabulary/Admin - initiate consensus.jpg';
+import VocabInfoHub from '../assets/images/Vocabulary/Information Hub.jpg';
+import VocabTermDetails from '../assets/images/Vocabulary/Term Details and Discussions.jpg';
+import VocabTermEdit from '../assets/images/Vocabulary/Term Edit.jpg';
+import VocabTermOfTheWeek from '../assets/images/Vocabulary/Term of the Week.jpg';
+import VocabTimeline from '../assets/images/Vocabulary/Timeline.jpg';
+import VocabVoteView from '../assets/images/Vocabulary/Vote View.jpg';
 import { Page, PageTitle, PageContent, StyledTrainingLink, MobileTOC, LeftSidebar, RightSidebar, RootDiv } from 'styledComponents/styledComponents';
+import mediumZoom from 'medium-zoom';
 import { withTheme } from '@emotion/react';
 
-// ---------------------------------------------------------------------------
-// Table of Contents grouping
-// ---------------------------------------------------------------------------
-// The flat `documentData` list above stays untouched (ids are used as anchors
-// and lookup keys everywhere). For the sidebar/mobile navigation we instead
-// describe *how the ids should be grouped* into collapsible sections, so
-// users can close the topics ("OCP" / "Vocabulary") - or the "For All Users"
-// and "For Administrators" sub-topics - they are not interested in.
-const OCP_IDS = ['OCP - Using the Portal', 'OCP - Collect Ontologies', 'OCP - Import Ontology', 'OCP - Ontology Overview', 'OCP - Ontology Details', 'OCP - WebProtege', 'OCP - Ontology Documentation', 'OCP - Ontology Differences'];
-const VOCAB_INTRO_IDS = ['Vocabulary - Service', 'Vocabulary - Start', 'Vocabulary - Roles', 'Vocabulary - Term Status', 'Vocabulary - Agreement', 'Vocabulary - App', 'Vocabulary - Best Practices'];
+const OCP_IDS = [
+    'OCP - Using the Portal',
+    'OCP - Collect Ontologies',
+    'OCP - Import Ontology',
+    'OCP - Ontology Overview',
+    'OCP - Ontology Details',
+    'OCP - WebProtege',
+    'OCP - Ontology Documentation',
+    'OCP - Ontology Differences'
+];
+const VOCAB_INTRO_IDS = [
+    'Vocabulary - Service',
+    'Vocabulary - Start',
+    'Vocabulary - Roles',
+    'Vocabulary - Term Status',
+    'Vocabulary - Agreement',
+    'Vocabulary - App',
+    'Vocabulary - Best Practices'
+];
 const FOR_ALL_USERS_IDS = [
     'Vocabulary (Users) - New Term',
     'Vocabulary (Users) - Term Edit',
@@ -28,8 +47,22 @@ const FOR_ALL_USERS_IDS = [
     'Vocabulary (Users) - Consensus Activity',
     'Vocabulary (Users) - Notification'
 ];
-const FOR_ADMINISTRATORS_IDS = ['Vocabulary (Admin) - Start Consensus', 'Vocabulary (Admin) - Threshold', 'Vocabulary (Admin) - Stop Vote', 'Vocabulary (Admin) - Week Term'];
-const INTRO_IDS = ['Welcome', 'SC4EU Motivation', 'Ontology', 'Digital Reference', 'Semantic Web', 'Bosch Demonstrator', 'Portal Use Case', 'Establish Ontology'];
+const FOR_ADMINISTRATORS_IDS = [
+    'Vocabulary (Admin) - Start Consensus',
+    'Vocabulary (Admin) - Threshold',
+    'Vocabulary (Admin) - Stop Vote',
+    'Vocabulary (Admin) - Week Term'
+];
+const INTRO_IDS = [
+    'Welcome',
+    'SC4EU Motivation',
+    'Ontology',
+    'Digital Reference',
+    'Semantic Web',
+    'Bosch Demonstrator',
+    'Portal Use Case',
+    'Establish Ontology'
+];
 const OUTRO_IDS = ['Presentation Material', 'Scientific Publication'];
 
 const documentData = [
@@ -340,7 +373,10 @@ const documentData = [
             'A key benefit of the service is that it supports a shared understanding of concepts. A term label and its definition should be understood consistently by the community using them. By discussing, refining, and voting on terms, differences in interpretation become visible and can be resolved.<br><br>' +
             'This is especially important when building formal knowledge structures such as ontologies. Ontologies often rely on clearly defined concepts, labels, definitions, and relationships. The service helps connect community knowledge with formal knowledge representation by allowing domain experts to review, validate, and refine terminology before or after it is used in an ontology.<br><br>' +
             '<b>Build the Vocabulary</b><br>' +
-            'A shared terminology helps a community communicate more clearly and consistently. The service allows users to collect, define, discuss, and agree on terms needed for internal and external communication.'
+            'A shared terminology helps a community communicate more clearly and consistently. The service allows users to collect, define, discuss, and agree on terms needed for internal and external communication.<br><br>' +
+            '<img src="' +
+            VocabMainTable +
+            '" alt="Vocabulary Main Table" style="width: 100%; height: auto; margin-top: 15px; margin-bottom: 15px; border: 1px solid black;"/>'
     },
     {
         id: 'Vocabulary - Start',
@@ -461,7 +497,10 @@ const documentData = [
             '<li>Save the changes.</li>' +
             '</ol>' +
             '<b>Result:</b> The updated version is stored. The change is recorded in the Timeline, so users can review how the term has evolved over time.<br><br>' +
-            '<i><b>Important Note:</b> Terms cannot be edited while an active consensus vote is running. This ensures that all participants vote on the same version of the label, definition, and metadata. If changes are needed during a vote, an administrator must close or stop the active vote before the term can be revised.</i>'
+            '<i><b>Important Note:</b> Terms cannot be edited while an active consensus vote is running. This ensures that all participants vote on the same version of the label, definition, and metadata. If changes are needed during a vote, an administrator must close or stop the active vote before the term can be revised.</i><br><br>' +
+            '<img src="' +
+            VocabTermEdit +
+            '" alt="Term Edit Screenshot" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/>'
     },
     {
         id: 'Vocabulary (Users) - Align Terms',
@@ -500,7 +539,10 @@ const documentData = [
             'You can mention another user when their input is needed.<br><br>' +
             '<b>How to Mention a User:</b> Type @ followed by the user’s name.<br><br>' +
             '<i>Example: @Maria Could you review this definition?</i><br><br>' +
-            '<b>Result:</b> Mentioned users are tracked by the service and can navigate directly to the relevant term or comment. Depending on their notification settings, they may also receive a notification.'
+            '<b>Result:</b> Mentioned users are tracked by the service and can navigate directly to the relevant term or comment. Depending on their notification settings, they may also receive a notification.<br><br>' +
+            '<img src="' +
+            VocabTermDetails +
+            '" alt="Term Details and Discussions" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/>'
     },
     {
         id: 'Vocabulary (Users) - Term Vote',
@@ -542,7 +584,10 @@ const documentData = [
             'There is no fixed deadline for consensus votes. A vote remains active until the required participation threshold and majority condition are met, or until an administrator takes further action.<br><br>' +
             '<b>Editing During a Vote</b><br>' +
             'Terms cannot be edited while an active consensus vote is running. This ensures that all participants vote on the same version of the term.<br><br>' +
-            'If changes are needed, an administrator must close or stop the active vote before the term can be revised.'
+            'If changes are needed, an administrator must close or stop the active vote before the term can be revised.<br><br>' +
+            '<img src="' +
+            VocabVoteView +
+            '" alt="Vote View" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/>'
     },
     {
         id: 'Vocabulary (Users) - Consensus Activity',
@@ -567,6 +612,9 @@ const documentData = [
             '<li>active consensus votes</li>' +
             '</ul>' +
             'Use the Activity Widget to quickly identify where input, review, or action is needed.<br><br>' +
+            '<img src="' +
+            VocabActivityWidgets +
+            '" alt="Activity Widget" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/><br><br>' +
             '<b>Information Hub</b><br>' +
             'The Information Hub provides an overview of activity across the vocabulary. It lists ongoing discussions and related activity around terms.<br><br>' +
             'Users can search and filter activity by:<br>' +
@@ -585,6 +633,9 @@ const documentData = [
             '<li>number of comments</li>' +
             '</ul>' +
             'Use the Information Hub to find active discussions, review previous contributions, or identify terms that require attention.<br><br>' +
+            '<img src="' +
+            VocabInfoHub +
+            '" alt="Information Hub" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/><br><br>' +
             '<b>Timeline</b><br>' +
             'The Timeline shows the chronological history of changes made to the vocabulary. It allows users to trace when a term was:<br>' +
             '<ul>' +
@@ -595,7 +646,10 @@ const documentData = [
             '<li>accepted through consensus</li>' +
             '</ul>' +
             'Because all term edits are recorded in the Timeline, users can review how a term has changed over time.<br><br>' +
-            'Use the Timeline to understand how a term developed and how agreement was reached.'
+            'Use the Timeline to understand how a term developed and how agreement was reached.<br><br>' +
+            '<img src="' +
+            VocabTimeline +
+            '" alt="Timeline" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/>'
     },
     {
         id: 'Vocabulary (Users) - Notification',
@@ -625,7 +679,10 @@ const documentData = [
             '<li>Define the minimum participation threshold.</li>' +
             '<li>Start the vote.</li>' +
             '</ol>' +
-            '<b>Result:</b> The vote becomes active. All users can vote Accept or Reject. The term is locked for editing while the vote is active.'
+            '<b>Result:</b> The vote becomes active. All users can vote Accept or Reject. The term is locked for editing while the vote is active.<br><br>' +
+            '<img src="' +
+            VocabAdminConsensus +
+            '" alt="Admin - initiate consensus" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/>'
     },
     {
         id: 'Vocabulary (Admin) - Threshold',
@@ -675,7 +732,10 @@ const documentData = [
             '<li>Choose the option to highlight it as Term of the Week.</li>' +
             '<li>Confirm the selection.</li>' +
             '</ol>' +
-            '<b>Result:</b> The selected term becomes more visible to users. Highlighting a term does not change its status. It only increases visibility and encourages participation.'
+            '<b>Result:</b> The selected term becomes more visible to users. Highlighting a term does not change its status. It only increases visibility and encourages participation.<br><br>' +
+            '<img src="' +
+            VocabTermOfTheWeek +
+            '" alt="Term of the Week" style="width: 80%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/>'
     },
     {
         id: 'Vocabulary - Term Status',
@@ -821,6 +881,35 @@ class Training extends Component {
             selectedSection: initialSection
         };
     }
+    
+    componentDidMount() {
+        this.initZoom();
+    }
+
+    componentDidUpdate(prevState) {
+        if (prevState.selectedSection !== this.state.selectedSection) {
+            this.initZoom();
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.zoom) {
+            this.zoom.detach();
+        }
+    }
+
+    initZoom = () => {
+        if (this.zoom) {
+            this.zoom.detach();
+        }
+        setTimeout(() => {
+            this.zoom = mediumZoom('.training-page-content img', {
+                margin: 24,
+                background: 'rgba(0, 0, 0, 0.9)',
+                scrollOffset: 40
+            });
+        }, 0);
+    };
 
     SelectedSection = value => {
         this.setState({ selectedSection: value });
@@ -843,7 +932,7 @@ class Training extends Component {
             return (
                 <Page>
                     <PageTitle>{selectedSection.heading}</PageTitle>
-                    <PageContent dangerouslySetInnerHTML={{ __html: selectedSection.content }} />
+                    <PageContent className="training-page-content" dangerouslySetInnerHTML={{ __html: selectedSection.content }} />
                     {/*{selectedSection.image && <StyledImage src={selectedSection.image} alt={'ScreenShot'} />}*/}
                 </Page>
             );
@@ -897,10 +986,7 @@ class Training extends Component {
                         '.MuiAccordionSummary-content': { margin: '6px 0' }
                     }}
                 >
-                    <Typography
-                        variant={nested ? 'body2' : 'subtitle1'}
-                        sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-                    >
+                    <Typography variant={nested ? 'body2' : 'subtitle1'} sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
                         {title}
                     </Typography>
                 </AccordionSummary>
