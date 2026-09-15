@@ -1246,7 +1246,7 @@ export const StyledDataProtectionText = styled('p')(({ theme }) => ({
 }));
 //
 
-//Documentations.js
+//Documentation.js
 export const StyledDocumentationsDiv = styled('div')(({ theme }) => ({
     paddingLeft: '20%',
     paddingRight: '20%',
@@ -1579,12 +1579,31 @@ export const PageTitle = styled('h3')(({ theme }) => ({
     color: theme.palette.text.primary
 }));
 
-export const PageContent = styled('p')(({ theme }) => ({
-    Textalign: 'justify',
+export const PageContent = styled('div')(({ theme }) => ({
+    textAlign: 'justify',
     color: theme.palette.text.primary,
+    lineHeight: 1.6,
 
-    '&a': {
+    '& a': {
         color: theme.palette.primary.main
+    },
+
+    '& ul, & ol': {
+        margin: '0 0 0.9em 0',
+        paddingLeft: '1.75em'
+    },
+
+    '& li': {
+        marginBottom: '0.35em'
+    },
+
+    '& b, & strong': {
+        color: theme.palette.text.primary
+    },
+
+    '& table': {
+        width: '100%',
+        borderCollapse: 'collapse'
     }
 }));
 

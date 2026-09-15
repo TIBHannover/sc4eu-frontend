@@ -48,6 +48,7 @@
     "lodash": "^4.17.21",
     "marked": "^9.1.6",
     "material-react-table": "^2.13.0",
+    "medium-zoom": "^1.1.0",
     "n3": "^1.20.4",
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",
