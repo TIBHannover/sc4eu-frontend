@@ -11,7 +11,7 @@ const routes = {
     SERVICE_STATUS: '/servicesStatus',
     ADMIN_DASHBOARD: '/admin_Dashboard',
     LOGGED_IN: '/loggedIn',
-    Documentations: '/Documentations',
+    Documentation: '/Documentation',
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
     VOCABULARY_SUPPORT: '/vocabulary_support',
