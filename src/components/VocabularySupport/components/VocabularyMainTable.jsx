@@ -22,6 +22,7 @@ import {
     useTheme
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 import { getTermVotes, getVotes, deleteTermVotes, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
@@ -38,6 +39,7 @@ import CreateNewTerm from './CreateNewTerm';
 import ExpandedRow from './ExpandedRow';
 import InformationHub from './InformationHub';
 import VoteView from './VoteView';
+import { Info } from '@mui/icons-material';
 
 function isValidUrl(string) {
     try {
@@ -74,6 +76,7 @@ const VocabularyMainTable = ({
     const [termComments, setTermComments] = useState([]);
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [hasUncommittedChanges, setHasUncommittedChanges] = useState(false);
+    const [editMode, setEditMode] = useState(false);
     const [activeMUIPopUp, setActiveMUIPopUp] = useState(null);
     const history = useHistory();
     const theme = useTheme();
@@ -247,8 +250,7 @@ const VocabularyMainTable = ({
         const resourceId = row.original.identifier;
         const currentResourceDiscussion = discussions.find(d => d.resourceId === resourceId);
         setTermComments(currentResourceDiscussion?.comments || []);
-        setSelectedTerm(row.original);
-        setOpenPopup(true);
+        handleOpenPopup(row.original);
         history.push(`/vocabulary_support/terms/${resourceId}`);
     };
 
@@ -261,10 +263,16 @@ const VocabularyMainTable = ({
         history.push(`/vocabulary_support/terms/${resourceId}`);
     };
 
+    const handleOpenPopup = term => {
+        setSelectedTerm(term);
+        setOpenPopup(true);
+    };
+
     const handleClosePopup = () => {
         setOpenPopup(false);
         setSelectedTerm(null);
         history.push('/vocabulary_support');
+        setEditMode(false);
     };
 
     const columnVisibility = useMemo(() => {
@@ -954,11 +962,32 @@ const VocabularyMainTable = ({
             showProgressBars: isFetchingTerms
         },
         onPaginationChange: setPagination,
-        renderRowActions: ({ row, table }) => (
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
+        renderRowActions: ({ row }) => (
+            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+                <Tooltip title="Edit">
+                    <IconButton
+                        className="action-button"
+                        sx={{ color: theme.palette.secondary.main }}
+                        onClick={() => {
+                            setEditMode(true);
+                            handleOpenPopup(row.original);
+                        }}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: theme.palette.secondary.main }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" sx={{ color: theme.palette.secondary.main }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="To open details, click on the line.">
+                    <IconButton
+                        className="action-button"
+                        sx={{ color: theme.palette.secondary.main }}
+                        onClick={() => handleWidgetDiscussionReplyClick(row.original)}
+                    >
+                        <Info />
                     </IconButton>
                 </Tooltip>
             </Box>
@@ -1038,9 +1067,11 @@ const VocabularyMainTable = ({
                             term={selectedTerm}
                             currentUser={currentUser}
                             updateTerm={updateTerm}
+                            editMode={editMode}
                             termComments={termComments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
                             setHasUncommittedChanges={setHasUncommittedChanges}
+                            setEditMode={setEditMode}
                             handleClosePopup={handleClosePopup}
                         />
                     }

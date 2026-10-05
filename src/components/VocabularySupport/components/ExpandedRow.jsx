@@ -35,11 +35,20 @@ import LastConsensusView from './LastConsensusView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import VoteView from './VoteView';
 
-const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
+const ExpandedRow = ({
+    term,
+    currentUser,
+    updateTerm,
+    editMode,
+    termComments,
+    handleSaveDiscussion,
+    setHasUncommittedChanges,
+    setEditMode,
+    handleClosePopup
+}) => {
     const theme = useTheme();
     const history = useHistory();
 
-    const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
     const [activeAgreement, setActiveAgreement] = useState(false);
     const [notification, setNotification] = useState(false);
@@ -429,6 +438,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <Button
                                             disabled={activeAgreement}
                                             hidden={currentUser.role !== 'System Admin'}
+                                            hidden={currentUser.role !== 'System Admin'}
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
                                             sx={buttonStyle}
@@ -440,7 +450,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 )}
                                 {activeAgreement && (
                                     <>
-                                        <Button onClick={() => handleSetVoteViewMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
+                                        <Button onClick={() => setViewAgreementMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
                                             View ongoing consensus
                                         </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
@@ -601,9 +611,11 @@ ExpandedRow.propTypes = {
     term: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
     updateTerm: PropTypes.func.isRequired,
+    editMode: PropTypes.bool.isRequired,
     termComments: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,
     setHasUncommittedChanges: PropTypes.func.isRequired,
+    setEditMode: PropTypes.func.isRequired,
     handleClosePopup: PropTypes.func.isRequired
 };
 
