@@ -33,12 +33,13 @@ const getDecisionStyle = (choice, theme) => {
     }
 };
 
-const DecisionBadgeAvatar = ({ decision }) => {
+const DecisionBadgeAvatar = React.forwardRef(({ decision, ...props }, ref) => {
     const theme = useTheme();
     const style = getDecisionStyle(decision.choice, theme);
 
     return (
         <Badge
+            ref={ref}
             overlap="circular"
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             badgeContent={style.icon}
@@ -52,11 +53,14 @@ const DecisionBadgeAvatar = ({ decision }) => {
                     border: `1px solid ${theme.palette.divider}`
                 }
             }}
+            {...props}
         >
             <UserAvatar identifier={decision.user_uuid || decision.user_name} />
         </Badge>
     );
-};
+});
+
+DecisionBadgeAvatar.displayName = 'DecisionBadgeAvatar';
 
 DecisionBadgeAvatar.propTypes = {
     decision: PropTypes.shape({

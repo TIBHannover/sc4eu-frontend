@@ -28,7 +28,7 @@ import {
     TextField,
     Tooltip,
     Typography,
-    useTheme,
+    useTheme
 } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import SearchIcon from '@mui/icons-material/Search';
@@ -50,6 +50,8 @@ const SORT_BY_OPTIONS = Object.freeze({
     MOST_COMMENTS: 'most_comments'
 });
 
+const MAX_VISIBLE_VOTE_AVATARS = 10;
+
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const theme = useTheme();
 
@@ -67,6 +69,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
     const [users, setUsers] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedTermId, setSelectedTermId] = useState(null);
     const open = Boolean(anchorEl);
 
     const [sortBy, setSortBy] = useState(SORT_BY_OPTIONS.RECENT_UPDATE);
@@ -248,7 +251,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                     display: 'inline-flex',
                                     borderRadius: '50%',
                                     border: term.hasMention ? '2px solid' : 'none',
-                                    borderColor: term.hasMention ? 'warning.dark' : 'transparent',
+                                    borderColor: term.hasMention ? 'warning.dark' : 'transparent'
                                 }}
                             >
                                 <UserAvatar identifier={authorId} />
@@ -268,109 +271,113 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                         </Tooltip>
                     )}
                 </ListItemAvatar>
-                <Tooltip title={term.description}>
-                    <ListItemText
-                        primary={
-                            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                <ListItemText
+                    primary={
+                        <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <Tooltip title={term.description}>
                                 <Typography variant="subtitle1" fontWeight="bold" sx={{ mr: 1 }}>
                                     {term.label}
                                 </Typography>
-                                {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
-                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
+                            </Tooltip>
+                            {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
+                            {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
 
-                                <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                    sx={{
-                                        fontSize: '0.75rem'
-                                    }}
-                                >
-                                    {new Date(term.modified).toLocaleDateString() + ', ' + new Date(term.modified).toLocaleTimeString()}
-                                </Typography>
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{
+                                    fontSize: '0.75rem'
+                                }}
+                            >
+                                {new Date(term.modified).toLocaleDateString() + ', ' + new Date(term.modified).toLocaleTimeString()}
+                            </Typography>
 
-                                {term.hasVote && (
-                                    <>
-                                        <ConsensusProgress term={term} />
-                                        <AvatarGroup
-                                            max={4}
-                                            onClick={event => {
-                                                event.stopPropagation();
-                                                setAnchorEl(event.currentTarget);
-                                            }}
-                                            sx={{
-                                                gap: 0.5,
-                                                marginLeft: 2,
-                                                '.MuiAvatar-root': {
-                                                    width: 24,
-                                                    height: 24,
-                                                    fontSize: 12
-                                                },
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            {term.decisions.map(decision => (
-                                                <Tooltip key={decision.user_name} title={decision.user_name}>
+                            {term.hasVote && (
+                                <>
+                                    <ConsensusProgress term={term} />
+                                    <AvatarGroup
+                                        max={MAX_VISIBLE_VOTE_AVATARS + 1}
+                                        onClick={event => {
+                                            event.stopPropagation();
+                                            setAnchorEl(event.currentTarget);
+                                            setSelectedTermId(term.identifier);
+                                        }}
+                                        sx={{
+                                            gap: 0.5,
+                                            marginLeft: 2,
+                                            '.MuiAvatar-root': {
+                                                width: 24,
+                                                height: 24,
+                                                fontSize: 12
+                                            },
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        {term.decisions.map(decision => (
+                                            <Tooltip key={decision.user_name} title={decision.user_name}>
+                                                <DecisionBadgeAvatar decision={decision} />
+                                            </Tooltip>
+                                        ))}
+                                    </AvatarGroup>
+                                </>
+                            )}
+
+                            <Popover
+                                open={open && selectedTermId === term.identifier}
+                                anchorEl={anchorEl}
+                                onClose={() => {
+                                    setAnchorEl(null);
+                                    setSelectedTermId(null);
+                                }}
+                                anchorOrigin={{
+                                    vertical: 'center',
+                                    horizontal: 'right'
+                                }}
+                                slotProps={{
+                                    paper: {
+                                        sx: {
+                                            maxHeight: 200
+                                        }
+                                    }
+                                }}
+                            >
+                                <List>
+                                    {term.decisions?.slice(MAX_VISIBLE_VOTE_AVATARS).map(decision => (
+                                        <ListItem key={decision.user_name}>
+                                            <ListItemAvatar>
+                                                <Tooltip title={decision.user_name}>
                                                     <DecisionBadgeAvatar decision={decision} />
                                                 </Tooltip>
-                                            ))}
-                                        </AvatarGroup>
-                                    </>
-                                )}
-
-                                <Popover
-                                    open={open}
-                                    anchorEl={anchorEl}
-                                    onClose={() => {
-                                        setAnchorEl(null);
-                                    }}
-                                    anchorOrigin={{
-                                        vertical: 'center',
-                                        horizontal: 'right'
-                                    }}
-                                    slotProps={{
-                                        paper: {
-                                            sx: {
-                                                maxHeight: 200
-                                            }
-                                        }
-                                    }}
-                                >
-                                    <List>
-                                        {term.decisions?.slice(3).map(decision => (
-                                            <ListItem key={decision.user_name}>
-                                                <ListItemAvatar>
-                                                    <DecisionBadgeAvatar decision={decision} />
-                                                </ListItemAvatar>
-                                                <ListItemText>
-                                                    <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
-                                                </ListItemText>
-                                                <Box sx={{ ml: 3 }}></Box>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </Popover>
+                                            </ListItemAvatar>
+                                            <ListItemText>
+                                                <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
+                                            </ListItemText>
+                                            <Box sx={{ ml: 3 }}></Box>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Popover>
+                        </Box>
+                    }
+                    secondary={
+                        <>
+                            <Box>
+                                <Typography variant="caption" color="text.secondary">
+                                    <ChatBubbleOutlineIcon fontSize="inherit" sx={{ mr: 0.5 }} />
+                                    {commentCount} {commentCount === 1 ? 'comment' : 'comments'}
+                                </Typography>
                             </Box>
-                        }
-                        secondary={
-                            <>
-                                <Box>
-                                    <Typography variant="caption" color="text.secondary">
-                                        <ChatBubbleOutlineIcon fontSize="inherit" sx={{ mr: 0.5 }} />
-                                        {commentCount} {commentCount === 1 ? 'comment' : 'comments'}
-                                    </Typography>
-                                </Box>
-                                {lastComment ? (
-                                    <Typography variant="body2">{lastComment.content}</Typography>
-                                ) : (
-                                    <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.disabled' }}>
-                                        No comments available
-                                    </Typography>
-                                )}
-                            </>
-                        }
-                        sx={{ my: 0 }}
-                    />
-                </Tooltip>
+                            {lastComment ? (
+                                <Typography variant="body2">{lastComment.content}</Typography>
+                            ) : (
+                                <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.disabled' }}>
+                                    No comments available
+                                </Typography>
+                            )}
+                        </>
+                    }
+                    sx={{ my: 0 }}
+                />
             </ListItem>
         );
     };
