@@ -46,7 +46,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     const votedUsers = decisions.filter(expert => expert.choice !== null);
     const [expandedComments, setExpandedComments] = useState(new Set());
     const [showCopyNotification, setShowCopyNotification] = useState(false);
-    
+
     const handleCopyLink = event => {
         event.stopPropagation();
         navigator.clipboard.writeText(window.location.href).then(() => {
@@ -344,9 +344,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                     ) : user.choice === 'abstain' ? (
                                                         <>
                                                             <AbstainIcon color="disabled" fontSize="small" />
-                                                            <Typography variant="body2">
-                                                                undecided
-                                                            </Typography>
+                                                            <Typography variant="body2">undecided</Typography>
                                                         </>
                                                     ) : (
                                                         <>
@@ -371,7 +369,11 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                                 mt: 0.5
                                                             }}
                                                         >
-                                                            "{user.comment.length > 100 ? user.comment.substring(0, 100) : user.comment}"
+                                                            "
+                                                            {user.comment.length > 100 && !expandedComments.has(index)
+                                                                ? user.comment.substring(0, 100)
+                                                                : user.comment}
+                                                            "
                                                             {user.comment.length > 100 && (
                                                                 <Typography
                                                                     component="span"
