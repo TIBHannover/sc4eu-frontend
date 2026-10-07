@@ -225,7 +225,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
     const renderTermItem = term => {
         const lastComment = getLastComment(term);
-        const authorId = users.find(u => u.display_name === lastComment.author)?.uuid || lastComment.author;
         const commentCount = term.comments.length;
         return (
             <ListItem
@@ -243,34 +242,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     alignItems: 'flex-start'
                 }}
             >
-                <ListItemAvatar sx={{ minWidth: 40, marginTop: '4px', marginRight: 1 }}>
-                    {lastComment ? (
-                        <Tooltip title={`Comment by ${lastComment.author}`}>
-                            <Box
-                                sx={{
-                                    display: 'inline-flex',
-                                    borderRadius: '50%',
-                                    border: term.hasMention ? '2px solid' : 'none',
-                                    borderColor: term.hasMention ? 'warning.dark' : 'transparent'
-                                }}
-                            >
-                                <UserAvatar identifier={authorId} />
-                            </Box>
-                        </Tooltip>
-                    ) : (
-                        <Tooltip title="No comments">
-                            <Avatar
-                                sx={{
-                                    width: 32,
-                                    height: 32,
-                                    bgcolor: 'grey.300'
-                                }}
-                            >
-                                <ChatBubbleOutlineIcon fontSize="small" />
-                            </Avatar>
-                        </Tooltip>
-                    )}
-                </ListItemAvatar>
                 <ListItemText
                     primary={
                         <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
