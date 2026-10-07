@@ -16,9 +16,6 @@ import {
     GlobalStyles
 } from '@mui/material';
 import {
-    CheckCircle as ApprovedIcon,
-    Cancel as RejectedIcon,
-    DoNotDisturbOnOutlined as AbstainIcon,
     ThumbUpOutlined,
     ThumbUp,
     ThumbDownOutlined,
@@ -338,17 +335,17 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                     </Typography>
                                                     {user.choice === 'approved' ? (
                                                         <>
-                                                            <ApprovedIcon color="success" fontSize="small" />
+                                                            <ThumbUpOutlined color="success" fontSize="small" />
                                                             <Typography variant="body2">agree</Typography>
                                                         </>
                                                     ) : user.choice === 'abstain' ? (
                                                         <>
-                                                            <AbstainIcon color="disabled" fontSize="small" />
+                                                            <BackHandOutlined color="disabled" fontSize="small" />
                                                             <Typography variant="body2">undecided</Typography>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <RejectedIcon color="error" fontSize="small" />
+                                                            <ThumbDownOutlined color="error" fontSize="small" />
                                                             <Typography variant="body2">not agree</Typography>
                                                         </>
                                                     )}
