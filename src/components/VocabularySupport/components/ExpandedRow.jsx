@@ -33,6 +33,7 @@ import CommentsSection from './CommentsSection';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
 import LastConsensusView from './LastConsensusView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
+import AcceptDeclineDialog from '../../ReusableComponents/AcceptDeclineDialog';
 import VoteView from './VoteView';
 
 const ExpandedRow = ({
@@ -59,6 +60,7 @@ const ExpandedRow = ({
     const [isConsensusSubmitted, setIsConsensusSubmitted] = useState(false);
     const [isConsensusClosed, setIsConsensusClosed] = useState(false);
     const [showCopyNotification, setShowCopyNotification] = useState(false);
+    const [confirmCloseConsensus, setConfirmCloseConsensus] = useState(false);
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
@@ -76,6 +78,22 @@ const ExpandedRow = ({
         navigator.clipboard.writeText(window.location.href).then(() => {
             setShowCopyNotification(true);
         });
+    };
+
+    const handleCloseConsensus = async () => {
+        setConfirmCloseConsensus(false);
+        const data = await manualCloseConsensus(term.identifier, activeAgreement.uuid);
+        if (data.status === 'accept') {
+            const newTerm = {
+                ...term,
+                status: data.status,
+                modified: new Date().toISOString()
+            };
+            await updateTerm(newTerm);
+            await commitChanges(queryClient, `Update ${term.label} status after consensus`);
+        }
+        await queryClient.invalidateQueries(VOTES_QUERY_KEY);
+        setIsConsensusClosed(true);
     };
 
     const [updatedTerm, setUpdatedTerm] = useState({
@@ -206,6 +224,19 @@ const ExpandedRow = ({
                                 </Button>
                             </Box>
                         </Box>
+                    }
+                />
+            )}
+            {confirmCloseConsensus && (
+                <AcceptDeclineDialog
+                    open={confirmCloseConsensus}
+                    onDecline={() => setConfirmCloseConsensus(false)}
+                    onAccept={handleCloseConsensus}
+                    title="Close consensus"
+                    message={
+                        <Typography variant="body2">
+                            Are you sure you want to close the consensus for <strong>{term.label}</strong>? This action cannot be undone.
+                        </Typography>
                     }
                 />
             )}
@@ -455,20 +486,7 @@ const ExpandedRow = ({
                                         </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
                                             <Button
-                                                onClick={async () => {
-                                                    const data = await manualCloseConsensus(term.identifier, activeAgreement.uuid);
-                                                    if (data.status === 'accept') {
-                                                        const newTerm = {
-                                                            ...term,
-                                                            status: data.status,
-                                                            modified: new Date().toISOString()
-                                                        };
-                                                        await updateTerm(newTerm);
-                                                        await commitChanges(queryClient, `Update ${term.label} status after consensus`);
-                                                    }
-                                                    await queryClient.invalidateQueries(VOTES_QUERY_KEY);
-                                                    setIsConsensusClosed(true);
-                                                }}
+                                                onClick={() => setConfirmCloseConsensus(true)}
                                                 variant="contained"
                                                 sx={buttonStyle}
                                                 fullWidth={isMobile}
