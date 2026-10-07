@@ -299,13 +299,13 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         </StyledLink>
 
                         <StyledLink
-                            title="Open Vocabulary Development Support"
+                            title="Open VDST"
                             activeStyle={ActiveStyle}
                             to={ROUTES.VOCABULARY_SUPPORT}
                             onClick={onNavigate}
                         >
                             <NoteAddOutlined color="action" />
-                            <StyledText>Vocabulary Dev</StyledText>
+                            <StyledText>VDST</StyledText>
                             <Tooltip title={`You have ${mentionedCommentsLength - cookieMentionedCommentsCount} new mentions`}>
                                 <StyledBadge
                                     style={{ marginLeft: 10, marginBottom: 20 }}
