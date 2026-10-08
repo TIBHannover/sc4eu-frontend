@@ -58,6 +58,8 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
     const owner = getUserFromUrl(GitHubAPIUrl);
     const repo = getRepoFromUrl(GitHubAPIUrl); // the name of the repository
     const path = getFilePath(GitHubAPIUrl); // the path of the file to fetch
+    const branch = getBranchFromUrl(GitHubAPIUrl);
+
     const user_info = {
         name: `tib-ts`,
         email: 'terminology-service@tib.eu'
@@ -79,6 +81,7 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
             owner,
             repo,
             path,
+            ...(branch && { branch }),
             message: commitMessage, // the commit message
             content: newContent, // the new content
             sha: sha,
