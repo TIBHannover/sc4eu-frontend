@@ -178,11 +178,28 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                     background: 'none',
                                     border: 'none',
                                     padding: 0,
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    fontWeight: 500
                                 }
                             }}
                         />
-                        <ClampLines text={term.description} id="custom" lines={1} />
+                        <Box
+                            sx={{
+                                backgroundColor: theme.palette.background.default,
+                                borderLeft: `4px solid ${theme.palette.secondary.main}`,
+                                borderRadius: 1,
+                                p: 1.5,
+                                mb: 1.5
+                            }}
+                        >
+                            <Typography
+                                variant="body1"
+                                component="div"
+                                sx={{ color: theme.palette.text.primary, lineHeight: 1.5 }}
+                            >
+                                <ClampLines text={term.description} id="custom" lines={3} />
+                            </Typography>
+                        </Box>
 
                         <Divider
                             sx={{
