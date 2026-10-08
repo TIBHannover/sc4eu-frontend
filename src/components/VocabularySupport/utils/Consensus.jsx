@@ -42,7 +42,7 @@ export const ConsensusProgress = ({ term }) => {
                     Consensus progress:
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                    {leadingCount}/{THRESHOLD_COUNT} votes · {majority}% majority{' '}
+                    {totalVotes}/{THRESHOLD_COUNT} votes · {majority}% majority{' '}
                     {isOneVoteShort && (
                         <Tooltip title="Just one vote left to reach consensus">
                             <LocalFireDepartmentOutlinedIcon sx={{ color: theme.palette.primary.main }} />
