@@ -67,6 +67,24 @@ const reduceCommentsMentioned = (discussions, mentionedUser) => {
         }));
 };
 
+export const hasPendingMentionReply = (discussion, mentionedUser) => {
+    const toTimestamp = comment => new Date(comment.timestamp).getTime();
+    const mentionsUser = comment => comment.mentionedUsers?.includes(mentionedUser);
+    const isAuthoredBy = comment => comment.author === mentionedUser;
+
+    const mentionTimestamps = discussion.comments.filter(mentionsUser).map(toTimestamp);
+    if (mentionTimestamps.length === 0) {
+        return false;
+    }
+
+    const lastMentionTimestamp = Math.max(...mentionTimestamps);
+    const hasRepliedSinceMention = discussion.comments.some(
+        comment => isAuthoredBy(comment) && toTimestamp(comment) > lastMentionTimestamp
+    );
+
+    return !hasRepliedSinceMention;
+};
+
 const groupMentionedByCommentInstant = mentioned => {
     const grouped = {};
 
