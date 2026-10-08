@@ -6,21 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import {
-    Alert,
-    Box,
-    Button,
-    Chip,
-    darken,
-    IconButton,
-    lighten,
-    Snackbar,
-    styled,
-    Tooltip,
-    Typography,
-    useMediaQuery,
-    useTheme
-} from '@mui/material';
+import { Alert, Box, Button, Chip, darken, IconButton, lighten, Snackbar, styled, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -35,11 +21,13 @@ import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import { CardActivityWidget } from './CardActivityWidget';
 import CommitChanges from './CommitChanges';
+import { commitDiscussionOnly } from '../utils/CommitChanges';
 import CreateNewTerm from './CreateNewTerm';
 import ExpandedRow from './ExpandedRow';
 import InformationHub from './InformationHub';
 import VoteView from './VoteView';
 import { Info } from '@mui/icons-material';
+import AcceptDeclineDialog from 'components/ReusableComponents/AcceptDeclineDialog';
 
 function isValidUrl(string) {
     try {
@@ -76,6 +64,7 @@ const VocabularyMainTable = ({
     const [termComments, setTermComments] = useState([]);
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [hasUncommittedChanges, setHasUncommittedChanges] = useState(false);
+    const [confirmDiscardChanges, setConfirmDiscardChanges] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [activeMUIPopUp, setActiveMUIPopUp] = useState(null);
     const history = useHistory();
@@ -120,6 +109,14 @@ const VocabularyMainTable = ({
     });
 
     const pendingDeletedTermIds = useRef([]);
+    const notSavedAddedTermsIdsRef = useRef([]);
+    const beforeEditsTermsRef = useRef(null);
+
+    useEffect(() => {
+        if (!isLoadingTerms && beforeEditsTermsRef.current === null) {
+            beforeEditsTermsRef.current = terms;
+        }
+    }, [isLoadingTerms, terms]);
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -683,6 +680,7 @@ const VocabularyMainTable = ({
         //We have to create a new discussion for this term
         const newDiscussion = { resourceId: uuid, comments: [] };
         await createDiscussion(newDiscussion);
+        notSavedAddedTermsIdsRef.current.push(uuid);
         table.setCreatingRow(null);
         //setNewTermOpen(false); // Close the create modal
         setOpenCreateModal(false); // Close the create modal
@@ -708,9 +706,19 @@ const VocabularyMainTable = ({
         setHasUncommittedChanges(true);
     };
 
-    // const handleSaveDiscussion = async ({ values }) => {
-    //     await updateDiscussion(values);
-    // };
+    const handleDiscardChanges = async () => {
+        setConfirmDiscardChanges(false);
+        if (notSavedAddedTermsIdsRef.current.length > 0) {
+            for (const id of notSavedAddedTermsIdsRef.current) {
+                await handleDeleteDiscussion(id);
+            }
+            await commitDiscussionOnly(queryClient);
+        }
+        notSavedAddedTermsIdsRef.current = [];
+        pendingDeletedTermIds.current = [];
+        queryClient.setQueryData(['terms'], beforeEditsTermsRef.current);
+        setHasUncommittedChanges(false);
+    };
 
     const openDeleteConfirmModal = async row => {
         if (window.confirm('Are you sure you want to delete this term?')) {
@@ -914,23 +922,41 @@ const VocabularyMainTable = ({
         renderBottomToolbarCustomActions: () => (
             <>
                 {hasUncommittedChanges && (
-                    <StyledTooltip
-                        title="You have made changes. Please don't forget to save your changes."
-                        disableHoverListener={!hasUncommittedChanges}
-                    >
-                        <Button
-                            variant="contained"
-                            onClick={() => setOpenCommit(true)}
-                            sx={{
-                                backgroundColor: theme.palette.secondary.main,
-                                color: theme.palette.secondary.contrastText,
-                                border: hasUncommittedChanges ? '2px' + ' solid red' : '',
-                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
-                            }}
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        <StyledTooltip
+                            title="You have made changes. Please don't forget to save your changes."
+                            disableHoverListener={!hasUncommittedChanges}
                         >
-                            Save Changes
-                        </Button>
-                    </StyledTooltip>
+                            <Button
+                                variant="contained"
+                                onClick={() => setOpenCommit(true)}
+                                sx={{
+                                    backgroundColor: theme.palette.secondary.main,
+                                    color: theme.palette.secondary.contrastText,
+                                    border: hasUncommittedChanges ? '2px' + ' solid red' : '',
+                                    '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                                }}
+                            >
+                                Save Changes
+                            </Button>
+                        </StyledTooltip>
+                        <StyledTooltip
+                            title="You can revert creation, deletion or edit of term/-s with a click of this button."
+                            disableHoverListener={!hasUncommittedChanges}
+                        >
+                            <Button
+                                variant="outlined"
+                                onClick={() => setConfirmDiscardChanges(true)}
+                                sx={{
+                                    backgroundColor: 'transparent',
+                                    color: theme.palette.secondary.main,
+                                    '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                                }}
+                            >
+                                Discard changes
+                            </Button>
+                        </StyledTooltip>
+                    </Box>
                 )}
 
                 {openCommit && (
@@ -942,12 +968,30 @@ const VocabularyMainTable = ({
                         user={currentUser.displayName}
                         onSuccess={async () => {
                             await deleteTermVotes(pendingDeletedTermIds.current);
+                            notSavedAddedTermsIdsRef.current = [];
                             pendingDeletedTermIds.current = [];
                             await queryClient.invalidateQueries(VOTES_QUERY_KEY);
+                            beforeEditsTermsRef.current = queryClient.getQueryData(['terms']);
                         }}
                         onFail={() => {
                             console.error(`Error while commiting changes with ${pendingDeletedTermIds.current} terms`);
                         }}
+                    />
+                )}
+                {confirmDiscardChanges && (
+                    <AcceptDeclineDialog
+                        open={confirmDiscardChanges}
+                        onDecline={() => setConfirmDiscardChanges(false)}
+                        onAccept={handleDiscardChanges}
+                        title="Discard changes"
+                        message={
+                            <Typography variant="body2" sx={{ fontSize: '1rem' }}>
+                                Are you sure you want to discard all local changes? Any created, updated or removed terms that haven't been saved will
+                                be lost.
+                                <br />
+                                <b>This action cannot be undone.</b>
+                            </Typography>
+                        }
                     />
                 )}
             </>
