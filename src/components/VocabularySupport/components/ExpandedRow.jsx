@@ -481,7 +481,7 @@ const ExpandedRow = ({
                                 )}
                                 {activeAgreement && (
                                     <>
-                                        <Button onClick={() => setViewAgreementMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
+                                        <Button onClick={() => handleSetVoteViewMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
                                             View ongoing consensus
                                         </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
