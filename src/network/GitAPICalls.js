@@ -81,6 +81,7 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
             owner,
             repo,
             path,
+            ...(branch && { branch }),
             message: commitMessage, // the commit message
             content: newContent, // the new content
             sha: sha,

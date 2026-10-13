@@ -22,22 +22,33 @@ import {
     useTheme
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import HowToVoteOutlinedIcon from '@mui/icons-material/HowToVoteOutlined';
+import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
+import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
 
 import { getTermVotes, getVotes, deleteTermVotes, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
-import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
-import { getMentionedCommentsLength } from '../utils/Discussions';
+import { LARGE_SCREEN_SIZE, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { getMentionedCommentsLength, hasPendingMentionReply } from '../utils/Discussions';
 import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useCreateTerm } from '../hooks/useCreateTerm';
 import { useDeleteTerm } from '../hooks/useDeleteTerm';
 import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
-import { CardActivityWidget } from './CardActivityWidget';
+import { ToolbarNavBar } from './ToolbarNavBar';
 import CommitChanges from './CommitChanges';
+import { commitDiscussionOnly } from '../utils/CommitChanges';
 import CreateNewTerm from './CreateNewTerm';
 import ExpandedRow from './ExpandedRow';
 import InformationHub from './InformationHub';
 import VoteView from './VoteView';
+import { Info } from '@mui/icons-material';
+import AcceptDeclineDialog from 'components/ReusableComponents/AcceptDeclineDialog';
 
 function isValidUrl(string) {
     try {
@@ -47,6 +58,26 @@ function isValidUrl(string) {
         console.info('Non-valid URL');
         return false;
     }
+}
+
+const CONSENSUS_VOTES_NEEDED_TO_CLOSE = 4;
+
+/** Term UUIDs of votes that are just one vote away from reaching consensus. */
+function getNearClosedConsensusTermIds(votes) {
+    return (votes || [])
+        .filter(vote => {
+            const approvedCount = vote.decisions.filter(decision => decision.choice === 'approved').length;
+            const rejectedCount = vote.decisions.filter(decision => decision.choice === 'rejected').length;
+            const leadingCount = Math.max(approvedCount, rejectedCount);
+            return CONSENSUS_VOTES_NEEDED_TO_CLOSE - leadingCount === 1;
+        })
+        .map(vote => vote.term_uuid);
+}
+
+function getUrgentVotesTooltip(urgentTermsCount, nearClosedCount) {
+    const subject = urgentTermsCount === 1 ? `${urgentTermsCount} term is` : `${urgentTermsCount} terms are`;
+    const nearClosedSuffix = nearClosedCount !== 0 ? ` · ${nearClosedCount} near closing` : '';
+    return `${subject} waiting for your vote${nearClosedSuffix}`;
 }
 
 const VocabularyMainTable = ({
@@ -74,6 +105,8 @@ const VocabularyMainTable = ({
     const [termComments, setTermComments] = useState([]);
     const [openCreateModal, setOpenCreateModal] = useState(false);
     const [hasUncommittedChanges, setHasUncommittedChanges] = useState(false);
+    const [confirmDiscardChanges, setConfirmDiscardChanges] = useState(false);
+    const [editMode, setEditMode] = useState(false);
     const [activeMUIPopUp, setActiveMUIPopUp] = useState(null);
     const history = useHistory();
     const theme = useTheme();
@@ -106,7 +139,7 @@ const VocabularyMainTable = ({
             discussion =>
                 discussion.comments.length !== 0 &&
                 term.identifier === discussion.resourceId &&
-                discussion.comments.some(comment => comment.mentionedUsers?.includes(currentUser.displayName))
+                hasPendingMentionReply(discussion, currentUser.displayName)
         )
     );
 
@@ -117,6 +150,14 @@ const VocabularyMainTable = ({
     });
 
     const pendingDeletedTermIds = useRef([]);
+    const notSavedAddedTermsIdsRef = useRef([]);
+    const beforeEditsTermsRef = useRef(null);
+
+    useEffect(() => {
+        if (!isLoadingTerms && beforeEditsTermsRef.current === null) {
+            beforeEditsTermsRef.current = terms;
+        }
+    }, [isLoadingTerms, terms]);
 
     useEffect(() => {
         const handleBeforeUnload = event => {
@@ -247,8 +288,7 @@ const VocabularyMainTable = ({
         const resourceId = row.original.identifier;
         const currentResourceDiscussion = discussions.find(d => d.resourceId === resourceId);
         setTermComments(currentResourceDiscussion?.comments || []);
-        setSelectedTerm(row.original);
-        setOpenPopup(true);
+        handleOpenPopup(row.original);
         history.push(`/vocabulary_support/terms/${resourceId}`);
     };
 
@@ -261,10 +301,16 @@ const VocabularyMainTable = ({
         history.push(`/vocabulary_support/terms/${resourceId}`);
     };
 
+    const handleOpenPopup = term => {
+        setSelectedTerm(term);
+        setOpenPopup(true);
+    };
+
     const handleClosePopup = () => {
         setOpenPopup(false);
         setSelectedTerm(null);
         history.push('/vocabulary_support');
+        setEditMode(false);
     };
 
     const columnVisibility = useMemo(() => {
@@ -675,6 +721,7 @@ const VocabularyMainTable = ({
         //We have to create a new discussion for this term
         const newDiscussion = { resourceId: uuid, comments: [] };
         await createDiscussion(newDiscussion);
+        notSavedAddedTermsIdsRef.current.push(uuid);
         table.setCreatingRow(null);
         //setNewTermOpen(false); // Close the create modal
         setOpenCreateModal(false); // Close the create modal
@@ -700,9 +747,19 @@ const VocabularyMainTable = ({
         setHasUncommittedChanges(true);
     };
 
-    // const handleSaveDiscussion = async ({ values }) => {
-    //     await updateDiscussion(values);
-    // };
+    const handleDiscardChanges = async () => {
+        setConfirmDiscardChanges(false);
+        if (notSavedAddedTermsIdsRef.current.length > 0) {
+            for (const id of notSavedAddedTermsIdsRef.current) {
+                await handleDeleteDiscussion(id);
+            }
+            await commitDiscussionOnly(queryClient);
+        }
+        notSavedAddedTermsIdsRef.current = [];
+        pendingDeletedTermIds.current = [];
+        queryClient.setQueryData(['terms'], beforeEditsTermsRef.current);
+        setHasUncommittedChanges(false);
+    };
 
     const openDeleteConfirmModal = async row => {
         if (window.confirm('Are you sure you want to delete this term?')) {
@@ -847,82 +904,54 @@ const VocabularyMainTable = ({
                 />
             );
         },
-        renderTopToolbarCustomActions: ({ table, row }) => (
-            <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-start', flexWrap: 'nowrap' }}>
-                <Tooltip title="Add new term">
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            handleCreateRow(row);
-                        }}
-                        sx={{
-                            backgroundColor: theme.palette.secondary.main,
-                            whiteSpace: 'nowrap',
-                            minWidth: 50,
-                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
-                        }}
-                    >
-                        {isMobileScreen ? 'New Term' : 'Create New Term'}
-                    </Button>
-                </Tooltip>
-                <Tooltip title="View this vocabulary history of changes">
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
-                        }}
-                        sx={{
-                            backgroundColor: theme.palette.secondary.main,
-                            whiteSpace: 'nowrap',
-                            minWidth: 50,
-                            '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
-                        }}
-                    >
-                        Timeline
-                    </Button>
-                </Tooltip>
+        renderTopToolbarCustomActions: ({ row }) => {
+            const nearClosedConsensusTermIds = getNearClosedConsensusTermIds(votesMap);
+            const toolbarItems = buildToolbarItems(row, nearClosedConsensusTermIds);
 
-                <Tooltip title="Review active discussions and view ongoing agreements">
-                    <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount} customVariant="orange">
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                                setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
-                                Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
-                            }}
-                            sx={{
-                                backgroundColor: theme.palette.secondary.main,
-                                whiteSpace: 'nowrap',
-                                minWidth: 50,
-                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
-                            }}
-                        >
-                            {isMobileScreen ? 'Hub' : 'Information Hub'}
-                        </Button>
-                    </StyledBadge>
-                </Tooltip>
-            </div>
-        ),
+            return (
+                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-start', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <ToolbarNavBar items={toolbarItems} isMobileScreen={isMobileScreen} />
+                </div>
+            );
+        },
         renderBottomToolbarCustomActions: () => (
             <>
                 {hasUncommittedChanges && (
-                    <StyledTooltip
-                        title="You have made changes. Please don't forget to save your changes."
-                        disableHoverListener={!hasUncommittedChanges}
-                    >
-                        <Button
-                            variant="contained"
-                            onClick={() => setOpenCommit(true)}
-                            sx={{
-                                backgroundColor: theme.palette.secondary.main,
-                                color: theme.palette.secondary.contrastText,
-                                border: hasUncommittedChanges ? '2px' + ' solid red' : '',
-                                '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
-                            }}
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        <StyledTooltip
+                            title="You have made changes. Please don't forget to save your changes."
+                            disableHoverListener={!hasUncommittedChanges}
                         >
-                            Save Changes
-                        </Button>
-                    </StyledTooltip>
+                            <Button
+                                variant="contained"
+                                onClick={() => setOpenCommit(true)}
+                                sx={{
+                                    backgroundColor: theme.palette.secondary.main,
+                                    color: theme.palette.secondary.contrastText,
+                                    border: hasUncommittedChanges ? '2px' + ' solid red' : '',
+                                    '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                                }}
+                            >
+                                Save Changes
+                            </Button>
+                        </StyledTooltip>
+                        <StyledTooltip
+                            title="You can revert creation, deletion or edit of term/-s with a click of this button."
+                            disableHoverListener={!hasUncommittedChanges}
+                        >
+                            <Button
+                                variant="outlined"
+                                onClick={() => setConfirmDiscardChanges(true)}
+                                sx={{
+                                    backgroundColor: 'transparent',
+                                    color: theme.palette.secondary.main,
+                                    '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
+                                }}
+                            >
+                                Discard changes
+                            </Button>
+                        </StyledTooltip>
+                    </Box>
                 )}
 
                 {openCommit && (
@@ -934,12 +963,30 @@ const VocabularyMainTable = ({
                         user={currentUser.displayName}
                         onSuccess={async () => {
                             await deleteTermVotes(pendingDeletedTermIds.current);
+                            notSavedAddedTermsIdsRef.current = [];
                             pendingDeletedTermIds.current = [];
                             await queryClient.invalidateQueries(VOTES_QUERY_KEY);
+                            beforeEditsTermsRef.current = queryClient.getQueryData(['terms']);
                         }}
                         onFail={() => {
                             console.error(`Error while commiting changes with ${pendingDeletedTermIds.current} terms`);
                         }}
+                    />
+                )}
+                {confirmDiscardChanges && (
+                    <AcceptDeclineDialog
+                        open={confirmDiscardChanges}
+                        onDecline={() => setConfirmDiscardChanges(false)}
+                        onAccept={handleDiscardChanges}
+                        title="Discard changes"
+                        message={
+                            <Typography variant="body2" sx={{ fontSize: '1rem' }}>
+                                Are you sure you want to discard all local changes? Any created, updated or removed terms that haven't been saved will
+                                be lost.
+                                <br />
+                                <b>This action cannot be undone.</b>
+                            </Typography>
+                        }
                     />
                 )}
             </>
@@ -954,11 +1001,32 @@ const VocabularyMainTable = ({
             showProgressBars: isFetchingTerms
         },
         onPaginationChange: setPagination,
-        renderRowActions: ({ row, table }) => (
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
+        renderRowActions: ({ row }) => (
+            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+                <Tooltip title="Edit">
+                    <IconButton
+                        className="action-button"
+                        sx={{ color: theme.palette.secondary.main }}
+                        onClick={() => {
+                            setEditMode(true);
+                            handleOpenPopup(row.original);
+                        }}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: theme.palette.secondary.main }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" sx={{ color: theme.palette.secondary.main }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="To open details, click on the line.">
+                    <IconButton
+                        className="action-button"
+                        sx={{ color: theme.palette.secondary.main }}
+                        onClick={() => handleWidgetDiscussionReplyClick(row.original)}
+                    >
+                        <Info />
                     </IconButton>
                 </Tooltip>
             </Box>
@@ -993,6 +1061,94 @@ const VocabularyMainTable = ({
         await queryClient.invalidateQueries(VOTES_QUERY_KEY);
     };
 
+    /**
+     * Config for every button in the table's toolbar, consumed by <ToolbarNavBar />: the
+     * "stable" actions (create/timeline/hub), a divider, then the "temporal" activity
+     * indicators (urgent votes/mentions/new terms).
+     */
+    const buildToolbarItems = (row, nearClosedConsensusTermIds) => [
+        {
+            key: 'createTerm',
+            icon: <AddCircleOutlineIcon fontSize="small" />,
+            label: isMobileScreen ? 'New Term' : 'Create New Term',
+            tooltip: 'Add new term',
+            colorRole: 'secondary',
+            onClick: () => handleCreateRow(row)
+        },
+        {
+            key: 'timeline',
+            icon: <HistoryOutlinedIcon fontSize="small" />,
+            label: 'Timeline',
+            tooltip: 'View this vocabulary history of changes',
+            colorRole: 'secondary',
+            onClick: () => setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY)
+        },
+        {
+            key: 'informationHub',
+            icon: <InfoOutlinedIcon fontSize="small" />,
+            label: isMobileScreen ? 'Hub' : 'Information Hub',
+            tooltip: 'Review active discussions and view ongoing agreements',
+            colorRole: 'secondary',
+            badgeContent: mentionedCommentsLength - cookieMentionedCommentsCount,
+            onClick: () => {
+                setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
+                Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
+            }
+        },
+        {
+            key: 'stableVsTemporalDivider',
+            divider: true,
+            hidden: isMobileScreen
+        },
+        {
+            key: 'urgentVotes',
+            icon: <HowToVoteOutlinedIcon fontSize="small" />,
+            label: isMobileScreen ? 'Urgent' : 'Urgent votes',
+            colorRole: 'error',
+            hidden: urgentTerms.length === 0,
+            badgeContent: urgentTerms.length,
+            tooltip: getUrgentVotesTooltip(urgentTerms.length, nearClosedConsensusTermIds.length),
+            listItems: urgentTerms,
+            getListItemKey: term => term.identifier,
+            getListItemLabel: term => term.label,
+            getListItemSecondary: term => `Status: ${term.status}`,
+            renderListItemExtra: term =>
+                nearClosedConsensusTermIds.includes(term.identifier) && (
+                    <Tooltip title="Just one vote left to reach consensus">
+                        <LocalFireDepartmentOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+                    </Tooltip>
+                ),
+            onSelectListItem: handleWidgetUrgentTermClick
+        },
+        {
+            key: 'mentions',
+            icon: <ForumOutlinedIcon fontSize="small" />,
+            label: 'Mentions',
+            colorRole: 'secondary',
+            hidden: discussionReplies.length === 0,
+            badgeContent: discussionReplies.length,
+            tooltip: `Someone replied to you in ${discussionReplies.length} terms · click to jump to the thread`,
+            listItems: discussionReplies,
+            getListItemKey: term => term.identifier,
+            getListItemLabel: term => term.label,
+            getListItemSecondary: term => `Status: ${term.status}`,
+            onSelectListItem: handleWidgetDiscussionReplyClick
+        },
+        {
+            key: 'newTerms',
+            icon: <AutoAwesomeOutlinedIcon fontSize="small" />,
+            label: isMobileScreen ? 'New' : 'New Terms',
+            colorRole: 'secondary',
+            hidden: newTerms.length === 0,
+            badgeContent: newTerms.length,
+            active: isNewTermsCardActive,
+            tooltip: isNewTermsCardActive
+                ? 'Showing only terms added in the last 3 months · click to clear filter'
+                : `${newTerms.length} terms added in the last 3 months · click to filter the table`,
+            onClick: handleWidgetNewTermsClick
+        }
+    ];
+
     return (
         <ScrollableDiv>
             {deepLinkNotification && (
@@ -1007,17 +1163,6 @@ const VocabularyMainTable = ({
                     </Alert>
                 </Snackbar>
             )}
-            <CardActivityWidget
-                urgentTerms={urgentTerms}
-                votes={votesMap}
-                discussionReplies={discussionReplies}
-                newTerms={newTerms}
-                onUrgentClick={handleWidgetUrgentTermClick}
-                onNewTermsClick={handleWidgetNewTermsClick}
-                isNewTermsActive={isNewTermsCardActive}
-                onDiscussionClick={handleWidgetDiscussionReplyClick}
-                isMobileScreen={isMobileScreen}
-            />
             <MaterialReactTable
                 table={table}
                 muiTableContainerProps={{
@@ -1038,9 +1183,11 @@ const VocabularyMainTable = ({
                             term={selectedTerm}
                             currentUser={currentUser}
                             updateTerm={updateTerm}
+                            editMode={editMode}
                             termComments={termComments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
                             setHasUncommittedChanges={setHasUncommittedChanges}
+                            setEditMode={setEditMode}
                             handleClosePopup={handleClosePopup}
                         />
                     }

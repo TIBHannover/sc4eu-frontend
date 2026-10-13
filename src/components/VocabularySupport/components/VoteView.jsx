@@ -15,17 +15,7 @@ import {
     useTheme,
     GlobalStyles
 } from '@mui/material';
-import {
-    CheckCircle as ApprovedIcon,
-    Cancel as RejectedIcon,
-    DoNotDisturbOnOutlined as AbstainIcon,
-    ThumbUpOutlined,
-    ThumbUp,
-    ThumbDownOutlined,
-    ThumbDown,
-    BackHandOutlined,
-    BackHand
-} from '@mui/icons-material';
+import { ThumbUpOutlined, ThumbUp, ThumbDownOutlined, ThumbDown, BackHandOutlined, BackHand } from '@mui/icons-material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
@@ -39,14 +29,14 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     const theme = useTheme();
 
     const [decision, setDecision] = useState('');
-    const [comment, setComment] = useState(null);
+    const [comment, setComment] = useState('');
     const [decisions, setDecisions] = useState(vote.decisions);
     const [decisionMade, setDecisionMade] = useState(false);
     const [userHasVoted, setUserHasVoted] = useState(decisions.some(e => e.user_name === username && e.choice !== null));
     const votedUsers = decisions.filter(expert => expert.choice !== null);
     const [expandedComments, setExpandedComments] = useState(new Set());
     const [showCopyNotification, setShowCopyNotification] = useState(false);
-    
+
     const handleCopyLink = event => {
         event.stopPropagation();
         navigator.clipboard.writeText(window.location.href).then(() => {
@@ -131,9 +121,15 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
         await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
         setDecisionMade(true);
         setUserHasVoted(true);
-        setComment(null);
+        setComment('');
         setDecision('');
         onDecisionMade?.();
+    };
+
+    const handleCancelDecision = () => {
+        setUserHasVoted(true);
+        setDecision('');
+        setComment('');
     };
 
     return (
@@ -181,11 +177,24 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                     background: 'none',
                                     border: 'none',
                                     padding: 0,
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    fontWeight: 500
                                 }
                             }}
                         />
-                        <ClampLines text={term.description} id="custom" lines={1} />
+                        <Box
+                            sx={{
+                                backgroundColor: theme.palette.background.default,
+                                borderLeft: `4px solid ${theme.palette.secondary.main}`,
+                                borderRadius: 1,
+                                p: 1.5,
+                                mb: 1.5
+                            }}
+                        >
+                            <Typography variant="body1" component="div" sx={{ color: theme.palette.text.primary, lineHeight: 1.5 }}>
+                                <ClampLines text={term.description} id="custom" lines={3} />
+                            </Typography>
+                        </Box>
 
                         <Divider
                             sx={{
@@ -219,7 +228,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                     {userHasVoted ? (
                         <Box sx={styles.voteCard}>
                             <Typography variant="body1" paragraph>
-                                You have already voted. Would you like to change your vote?
+                                Thank you for participating! You can update your choice at any time by clicking button below
                             </Typography>
                             <Button
                                 variant="contained"
@@ -272,9 +281,21 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 sx={{ mb: 2 }}
                             />
 
-                            <Button variant="contained" disabled={!decision} fullWidth size="large" onClick={handleExpertDecision} sx={styles.button}>
-                                Submit Decision
-                            </Button>
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <Button
+                                    variant="contained"
+                                    disabled={!decision}
+                                    fullWidth
+                                    size="large"
+                                    onClick={handleExpertDecision}
+                                    sx={styles.button}
+                                >
+                                    Submit Decision
+                                </Button>
+                                <Button variant="contained" fullWidth size="large" onClick={handleCancelDecision} sx={styles.button}>
+                                    Cancel
+                                </Button>
+                            </Box>
                         </Box>
                     )}
                 </Grid>
@@ -327,8 +348,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             <Box sx={styles.recentVotesContainer}>
                                 {votedUsers.length > 0 ? (
                                     votedUsers
-                                        .sort((a, b) => new Date(b.voted_at) - new Date(a.voted_at))
-                                        .slice(0, 5)
+                                        .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
                                         .map((user, index) => (
                                             <Box key={`${user.voted_id}-${user.user_id}`} sx={styles.voteItem}>
                                                 <Box sx={styles.userInfoRow}>
@@ -338,19 +358,17 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                     </Typography>
                                                     {user.choice === 'approved' ? (
                                                         <>
-                                                            <ApprovedIcon color="success" fontSize="small" />
+                                                            <ThumbUpOutlined color="success" fontSize="small" />
                                                             <Typography variant="body2">agree</Typography>
                                                         </>
                                                     ) : user.choice === 'abstain' ? (
                                                         <>
-                                                            <AbstainIcon color="disabled" fontSize="small" />
-                                                            <Typography variant="body2">
-                                                                undecided
-                                                            </Typography>
+                                                            <BackHandOutlined color="action" fontSize="small" />
+                                                            <Typography variant="body2">undecided</Typography>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <RejectedIcon color="error" fontSize="small" />
+                                                            <ThumbDownOutlined color="error" fontSize="small" />
                                                             <Typography variant="body2">not agree</Typography>
                                                         </>
                                                     )}
@@ -371,7 +389,11 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                                 mt: 0.5
                                                             }}
                                                         >
-                                                            "{user.comment.length > 100 ? user.comment.substring(0, 100) : user.comment}"
+                                                            "
+                                                            {user.comment.length > 100 && !expandedComments.has(index)
+                                                                ? user.comment.substring(0, 100)
+                                                                : user.comment}
+                                                            "
                                                             {user.comment.length > 100 && (
                                                                 <Typography
                                                                     component="span"
