@@ -36,7 +36,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import { getVotes, getWeeklyTerm, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import { ConsensusProgress } from '../utils/Consensus';
-import UserAvatar from '../../ReusableComponents/UserAvatar';
 import DecisionBadgeAvatar from '../../ReusableComponents/DecisionBadgeAvatar';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 import { getAllUsers } from 'network/UserProfileCalls';
@@ -50,7 +49,7 @@ const SORT_BY_OPTIONS = Object.freeze({
     MOST_COMMENTS: 'most_comments'
 });
 
-const MAX_VISIBLE_VOTE_AVATARS = 10;
+const MAX_VISIBLE_VOTE_AVATARS = 7;
 
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
     const theme = useTheme();
@@ -138,18 +137,23 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         return terms.map(term => {
             const comments = discussionsMap[term.identifier] || [];
             const hasMention = comments.some(c => c.mentionedUsers?.includes(mentionedUser));
-            const decisions = votesMap.filter(votes => votes.term_uuid === term.identifier).flatMap(votes => votes.decisions);
-            const votesIds = votesMap.map(votes => {
-                return votes.term_uuid;
-            });
-            const hasVote = votesIds.includes(term.identifier);
+            const votes = votesMap.filter(vote => vote.term_uuid === term.identifier);
+            const decisions = votes.flatMap(vote => vote.decisions);
+            const hasVote = votes.length > 0;
+            const userDecision = decisions.find(decision => decision.user_name === mentionedUser);
+            const hasUserVoted = Boolean(userDecision && userDecision.choice !== null);
+            const otherDecisions = decisions.filter(decision => decision.user_name !== mentionedUser);
 
             return {
                 ...term,
                 comments,
                 hasMention,
                 hasVote,
-                decisions
+                hasUserVoted,
+                userDecision,
+                decisions,
+                votes,
+                otherDecisions
             };
         });
     }, [terms, discussionsMap, mentionedUser, votesMap]);
@@ -265,7 +269,22 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
                             {term.hasVote && (
                                 <>
-                                    <ConsensusProgress term={term} />
+                                    <ConsensusProgress term={term} username={mentionedUser} />
+                                    {term.hasUserVoted && (
+                                        <Tooltip title="This is you">
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    marginLeft: 0.5,
+                                                    pr: 2,
+                                                    borderRight: `1px solid ${theme.palette.divider}`
+                                                }}
+                                            >
+                                                <DecisionBadgeAvatar decision={term.userDecision} />
+                                            </Box>
+                                        </Tooltip>
+                                    )}
                                     <AvatarGroup
                                         max={MAX_VISIBLE_VOTE_AVATARS + 1}
                                         onClick={event => {
@@ -284,7 +303,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                             cursor: 'pointer'
                                         }}
                                     >
-                                        {term.decisions.map(decision => (
+                                        {term.otherDecisions.map(decision => (
                                             <Tooltip key={decision.user_name} title={decision.user_name}>
                                                 <DecisionBadgeAvatar decision={decision} />
                                             </Tooltip>
@@ -313,7 +332,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 }}
                             >
                                 <List>
-                                    {term.decisions?.slice(MAX_VISIBLE_VOTE_AVATARS).map(decision => (
+                                    {term.otherDecisions?.slice(MAX_VISIBLE_VOTE_AVATARS).map(decision => (
                                         <ListItem key={decision.user_name}>
                                             <ListItemAvatar>
                                                 <Tooltip title={decision.user_name}>
