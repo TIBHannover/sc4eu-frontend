@@ -348,7 +348,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             <Box sx={styles.recentVotesContainer}>
                                 {votedUsers.length > 0 ? (
                                     votedUsers
-                                        .sort((a, b) => new Date(a.voted_at) - new Date(b.voted_at))
+                                        .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
                                         .map((user, index) => (
                                             <Box key={`${user.voted_id}-${user.user_id}`} sx={styles.voteItem}>
                                                 <Box sx={styles.userInfoRow}>

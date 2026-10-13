@@ -202,6 +202,23 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         return term.comments.reduce((latest, curr) => (new Date(curr.timestamp) > new Date(latest.timestamp) ? curr : latest));
     };
 
+    const getEffectiveModifiedDate = term => {
+        const termModified = new Date(term.modified);
+        const activeVote = term.votes?.[0];
+
+        if (!activeVote?.updated_at) {
+            return termModified;
+        }
+
+        const voteUpdated = new Date(activeVote.updated_at);
+
+        if (voteUpdated > termModified) {
+            return voteUpdated;
+        }
+
+        return termModified;
+    };
+
     const filteredTerms = useMemo(() => {
         let result = enhancedTerms;
         result = filterByTab(result);
@@ -211,9 +228,9 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
         switch (sortBy) {
             case SORT_BY_OPTIONS.RECENT_UPDATE:
-                return result.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+                return result.sort((a, b) => getEffectiveModifiedDate(b) - getEffectiveModifiedDate(a));
             case SORT_BY_OPTIONS.LATEST_UPDATE:
-                return result.sort((a, b) => new Date(a.modified) - new Date(b.modified));
+                return result.sort((a, b) => getEffectiveModifiedDate(a) - getEffectiveModifiedDate(b));
             case SORT_BY_OPTIONS.ALPHABETICAL:
                 return result.sort((a, b) => a.label.localeCompare(b.label));
             case SORT_BY_OPTIONS.ALPHABETICAL_REVERSE:
