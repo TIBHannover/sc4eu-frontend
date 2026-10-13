@@ -15,14 +15,7 @@ import {
     useTheme,
     GlobalStyles
 } from '@mui/material';
-import {
-    ThumbUpOutlined,
-    ThumbUp,
-    ThumbDownOutlined,
-    ThumbDown,
-    BackHandOutlined,
-    BackHand
-} from '@mui/icons-material';
+import { ThumbUpOutlined, ThumbUp, ThumbDownOutlined, ThumbDown, BackHandOutlined, BackHand } from '@mui/icons-material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
@@ -36,7 +29,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     const theme = useTheme();
 
     const [decision, setDecision] = useState('');
-    const [comment, setComment] = useState(null);
+    const [comment, setComment] = useState('');
     const [decisions, setDecisions] = useState(vote.decisions);
     const [decisionMade, setDecisionMade] = useState(false);
     const [userHasVoted, setUserHasVoted] = useState(decisions.some(e => e.user_name === username && e.choice !== null));
@@ -128,9 +121,15 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
         await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
         setDecisionMade(true);
         setUserHasVoted(true);
-        setComment(null);
+        setComment('');
         setDecision('');
         onDecisionMade?.();
+    };
+
+    const handleCancelDecision = () => {
+        setUserHasVoted(true);
+        setDecision('');
+        setComment('');
     };
 
     return (
@@ -192,11 +191,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 mb: 1.5
                             }}
                         >
-                            <Typography
-                                variant="body1"
-                                component="div"
-                                sx={{ color: theme.palette.text.primary, lineHeight: 1.5 }}
-                            >
+                            <Typography variant="body1" component="div" sx={{ color: theme.palette.text.primary, lineHeight: 1.5 }}>
                                 <ClampLines text={term.description} id="custom" lines={3} />
                             </Typography>
                         </Box>
@@ -233,7 +228,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                     {userHasVoted ? (
                         <Box sx={styles.voteCard}>
                             <Typography variant="body1" paragraph>
-                                You have already voted. Would you like to change your vote?
+                                Thank you for participating! You can update your choice at any time by clicking button below
                             </Typography>
                             <Button
                                 variant="contained"
@@ -286,9 +281,21 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 sx={{ mb: 2 }}
                             />
 
-                            <Button variant="contained" disabled={!decision} fullWidth size="large" onClick={handleExpertDecision} sx={styles.button}>
-                                Submit Decision
-                            </Button>
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <Button
+                                    variant="contained"
+                                    disabled={!decision}
+                                    fullWidth
+                                    size="large"
+                                    onClick={handleExpertDecision}
+                                    sx={styles.button}
+                                >
+                                    Submit Decision
+                                </Button>
+                                <Button variant="contained" fullWidth size="large" onClick={handleCancelDecision} sx={styles.button}>
+                                    Cancel
+                                </Button>
+                            </Box>
                         </Box>
                     )}
                 </Grid>
