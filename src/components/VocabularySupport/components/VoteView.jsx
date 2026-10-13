@@ -363,7 +363,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                         </>
                                                     ) : user.choice === 'abstain' ? (
                                                         <>
-                                                            <BackHandOutlined color="disabled" fontSize="small" />
+                                                            <BackHandOutlined color="action" fontSize="small" />
                                                             <Typography variant="body2">undecided</Typography>
                                                         </>
                                                     ) : (

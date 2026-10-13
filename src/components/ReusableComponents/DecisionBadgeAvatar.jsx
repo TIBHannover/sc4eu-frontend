@@ -8,27 +8,19 @@ const getDecisionStyle = (choice, theme) => {
     switch (choice) {
         case 'approved':
             return {
-                icon: <ThumbUp fontSize="inherit" />,
-                backgroundColor: theme.palette.secondary.main,
-                color: theme.palette.secondary.contrastText
+                icon: <ThumbUp color="success" fontSize="inherit" />
             };
         case 'abstain':
             return {
-                icon: <BackHand fontSize="inherit" />,
-                backgroundColor: theme.palette.tertiary.main,
-                color: theme.palette.tertiary.contrastText
+                icon: <BackHand color="action" fontSize="inherit" />
             };
         case 'rejected':
             return {
-                icon: <ThumbDown fontSize="inherit" />,
-                backgroundColor: theme.palette.error.main,
-                color: theme.palette.error.contrastText
+                icon: <ThumbDown color="error" fontSize="inherit" />
             };
         default:
             return {
-                icon: <Help fontSize="inherit" />,
-                backgroundColor: theme.palette.outline.variant,
-                color: theme.palette.text.secondary
+                icon: <Help color="disabled" fontSize="inherit" />
             };
     }
 };
@@ -45,12 +37,7 @@ const DecisionBadgeAvatar = React.forwardRef(({ decision, ...props }, ref) => {
             badgeContent={style.icon}
             sx={{
                 '.MuiBadge-badge': {
-                    backgroundColor: style.backgroundColor,
-                    color: style.color,
-                    width: 16,
-                    height: 16,
-                    fontSize: 12,
-                    border: `1px solid ${theme.palette.divider}`
+                    fontSize: 20
                 }
             }}
             {...props}
