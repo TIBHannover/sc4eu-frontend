@@ -1,33 +1,53 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Badge, useTheme } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import { ThumbUp, ThumbDown, BackHand, Help } from '@mui/icons-material';
 import UserAvatar from './UserAvatar';
 
-const DecisionBadgeAvatar = ({ decision }) => {
+const getDecisionStyle = (choice, theme) => {
+    switch (choice) {
+        case 'approved':
+            return {
+                icon: <ThumbUp color="success" fontSize="inherit" />
+            };
+        case 'abstain':
+            return {
+                icon: <BackHand color="action" fontSize="inherit" />
+            };
+        case 'rejected':
+            return {
+                icon: <ThumbDown color="error" fontSize="inherit" />
+            };
+        default:
+            return {
+                icon: <Help color="disabled" fontSize="inherit" />
+            };
+    }
+};
+
+const DecisionBadgeAvatar = React.forwardRef(({ decision, ...props }, ref) => {
     const theme = useTheme();
+    const style = getDecisionStyle(decision.choice, theme);
 
     return (
         <Badge
+            ref={ref}
             overlap="circular"
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
+            badgeContent={style.icon}
             sx={{
                 '.MuiBadge-badge': {
-                    backgroundColor: decision.choice === 'approved' ? theme.palette.secondary.main : theme.palette.error.main,
-                    color: decision.choice === 'approved' ? theme.palette.secondary.contrastText : theme.palette.error.contrastText,
-                    width: 16,
-                    height: 16,
-                    fontSize: 12,
-                    border: `1px solid ${theme.palette.divider}`
+                    fontSize: 20
                 }
             }}
+            {...props}
         >
             <UserAvatar identifier={decision.user_uuid || decision.user_name} />
         </Badge>
     );
-};
+});
+
+DecisionBadgeAvatar.displayName = 'DecisionBadgeAvatar';
 
 DecisionBadgeAvatar.propTypes = {
     decision: PropTypes.shape({

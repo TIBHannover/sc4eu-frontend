@@ -33,13 +33,23 @@ import CommentsSection from './CommentsSection';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
 import LastConsensusView from './LastConsensusView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
+import AcceptDeclineDialog from '../../ReusableComponents/AcceptDeclineDialog';
 import VoteView from './VoteView';
 
-const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDiscussion, setHasUncommittedChanges, handleClosePopup }) => {
+const ExpandedRow = ({
+    term,
+    currentUser,
+    updateTerm,
+    editMode,
+    termComments,
+    handleSaveDiscussion,
+    setHasUncommittedChanges,
+    setEditMode,
+    handleClosePopup
+}) => {
     const theme = useTheme();
     const history = useHistory();
 
-    const [editMode, setEditMode] = useState(false);
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
     const [activeAgreement, setActiveAgreement] = useState(false);
     const [notification, setNotification] = useState(false);
@@ -50,6 +60,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
     const [isConsensusSubmitted, setIsConsensusSubmitted] = useState(false);
     const [isConsensusClosed, setIsConsensusClosed] = useState(false);
     const [showCopyNotification, setShowCopyNotification] = useState(false);
+    const [confirmCloseConsensus, setConfirmCloseConsensus] = useState(false);
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
@@ -67,6 +78,22 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
         navigator.clipboard.writeText(window.location.href).then(() => {
             setShowCopyNotification(true);
         });
+    };
+
+    const handleCloseConsensus = async () => {
+        setConfirmCloseConsensus(false);
+        const data = await manualCloseConsensus(term.identifier, activeAgreement.uuid);
+        if (data.status === 'accept') {
+            const newTerm = {
+                ...term,
+                status: data.status,
+                modified: new Date().toISOString()
+            };
+            await updateTerm(newTerm);
+            await commitChanges(queryClient, `Update ${term.label} status after consensus`);
+        }
+        await queryClient.invalidateQueries(VOTES_QUERY_KEY);
+        setIsConsensusClosed(true);
     };
 
     const [updatedTerm, setUpdatedTerm] = useState({
@@ -197,6 +224,19 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                 </Button>
                             </Box>
                         </Box>
+                    }
+                />
+            )}
+            {confirmCloseConsensus && (
+                <AcceptDeclineDialog
+                    open={confirmCloseConsensus}
+                    onDecline={() => setConfirmCloseConsensus(false)}
+                    onAccept={handleCloseConsensus}
+                    title="Close consensus"
+                    message={
+                        <Typography variant="body2">
+                            Are you sure you want to close the consensus for <strong>{term.label}</strong>? This action cannot be undone.
+                        </Typography>
                     }
                 />
             )}
@@ -429,6 +469,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         <Button
                                             disabled={activeAgreement}
                                             hidden={currentUser.role !== 'System Admin'}
+                                            hidden={currentUser.role !== 'System Admin'}
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
                                             sx={buttonStyle}
@@ -445,20 +486,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, termComments, handleSaveDi
                                         </Button>
                                         {currentUser.role.toString().toLowerCase() === 'system admin' && (
                                             <Button
-                                                onClick={async () => {
-                                                    const data = await manualCloseConsensus(term.identifier, activeAgreement.uuid);
-                                                    if (data.status === 'accept') {
-                                                        const newTerm = {
-                                                            ...term,
-                                                            status: data.status,
-                                                            modified: new Date().toISOString()
-                                                        };
-                                                        await updateTerm(newTerm);
-                                                        await commitChanges(queryClient, `Update ${term.label} status after consensus`);
-                                                    }
-                                                    await queryClient.invalidateQueries(VOTES_QUERY_KEY);
-                                                    setIsConsensusClosed(true);
-                                                }}
+                                                onClick={() => setConfirmCloseConsensus(true)}
                                                 variant="contained"
                                                 sx={buttonStyle}
                                                 fullWidth={isMobile}
@@ -601,9 +629,11 @@ ExpandedRow.propTypes = {
     term: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
     updateTerm: PropTypes.func.isRequired,
+    editMode: PropTypes.bool.isRequired,
     termComments: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,
     setHasUncommittedChanges: PropTypes.func.isRequired,
+    setEditMode: PropTypes.func.isRequired,
     handleClosePopup: PropTypes.func.isRequired
 };
 
