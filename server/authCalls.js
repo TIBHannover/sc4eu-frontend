@@ -13,6 +13,7 @@ const session = require('express-session');
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
+const projectBasedCallbackURL = process.env.CALLBACK_URL + process.env.REACT_APP_PUBLIC_URL; 
 const url = require('node:url');
 const verifyToken = require('./veryfyToken');
 const oauthConfig = require('./config/oauth.config');
@@ -346,10 +347,10 @@ module.exports = {
                         process.env.JWT_SECRET,
                         { expiresIn: '1h' }
                     );
-                    const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
+                    const callbackURL = `${projectBasedCallbackURL}EmailVerify/${result.user_id}/${token}`;
                     const EmailFields = {
                         email: req.body.username,
-                        subject: 'SC3 Email Verification',
+                        subject: 'SC4EU Email Verification',
                         body: emailVerificationHtml(callbackURL, req.body.displayName).body
                     };
                     sendEmail(EmailFields).then(response => {
@@ -374,7 +375,7 @@ module.exports = {
     },
 
     verifyEmail: function(app) {
-        const pathname = `${process.env.CALLBACK_URL}/sc3/EmailVerify`;
+        const pathname = `${projectBasedCallbackURL}EmailVerify`;
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
@@ -484,10 +485,10 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '10h' }
                         );
-                        const callbackURL = `${process.env.CALLBACK_URL}/sc3/EmailVerify/${result.user_id}/${token}`;
+                        const callbackURL = `${projectBasedCallbackURL}EmailVerify/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.username,
-                            subject: 'SC3 Email Verification',
+                            subject: 'SC4EU Email Verification',
                             body: emailVerificationHtml(callbackURL, result.displayName).body
                         };
                         sendEmail(EmailFields).then(response => {
@@ -697,7 +698,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '1h' }
                         );
-                        const callbackURL = `${process.env.CALLBACK_URL}/ocp/verifResetPassword/${result.user_id}/${token}`;
+                        const callbackURL = `${projectBasedCallbackURL}verifResetPassword/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.email_address,
                             subject: 'SC3 Password Reset',
@@ -727,7 +728,7 @@ module.exports = {
     },
 
     verifResetPassword: function(app) {
-        const pathname = `${process.env.CALLBACK_URL}/ocp/ResetPassword`;
+        const pathname = `${projectBasedCallbackURL}/ResetPassword`;
         app.get(`/verifResetPassword/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             const { user_id } = req.params;

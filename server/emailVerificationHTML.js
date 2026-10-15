@@ -1,4 +1,5 @@
-function createLoginPage (callbackURL, displayName) {
+function createLoginPage(callbackURL, displayName) {
+    const projectBasedCallbackURL = callbackURL + process.env.REACT_APP_PUBLIC_URL;
     return {
         body: `<head>
 
@@ -122,8 +123,8 @@ function createLoginPage (callbackURL, displayName) {
 
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-              <p style="margin: 0;">Hello ${displayName}, Thank you for registering on SC3 platform.</p>
-              <p>Click the button below to confirm your email address. If you didn't create an account with <a href="https://service.tib.eu/sc3/">SC3</a>, you can safely delete this email.</p>
+              <p style="margin: 0;">Hello ${displayName}, Thank you for registering on SC4EU platform.</p>
+              <p>Click the button below to confirm your email address. If you didn't create an account with <a href="${projectBasedCallbackURL}">SC4</a>, you can safely delete this email.</p>
             </td>
           </tr>
           <tr>
@@ -145,7 +146,7 @@ function createLoginPage (callbackURL, displayName) {
           </tr>
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-              <p style="margin: 0;">Cheers,<br> SC3 Team</p>
+              <p style="margin: 0;">Cheers,<br> SC4 Team</p>
             </td>
           </tr>
 
@@ -158,7 +159,7 @@ function createLoginPage (callbackURL, displayName) {
 
           <tr>
             <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-              <p style="margin: 0;">You received this email because we received a request for registeration for your account. If you didn't request registeration you can safely delete this email.</p>
+              <p style="margin: 0;">You received this email because we received a request for registration for your account. If you didn't request registration you can safely delete this email.</p>
             </td>
           </tr>
 
@@ -167,6 +168,6 @@ function createLoginPage (callbackURL, displayName) {
     </tr>
   </table> </body>`
     };
-};
+}
 
 module.exports = createLoginPage;
