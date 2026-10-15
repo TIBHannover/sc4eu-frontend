@@ -12,12 +12,37 @@ async function saveAllDiscussion(newData, commitMessage) {
     return await writeJSON(gitHubDiscussionUrl, newData, commitMessage);
 }
 
+let discussionWritesInFlight = 0;
+let idleResolvers = [];
+
+/**
+ * Runs a discussion change (update of the local cache + commit) and remembers that it is in progress.
+ * Live updates must not replace the discussions cache meanwhile, or the not yet committed comment would be lost.
+ */
+export async function trackDiscussionWrite(write) {
+    discussionWritesInFlight++;
+    try {
+        return await write();
+    } finally {
+        discussionWritesInFlight--;
+        if (discussionWritesInFlight === 0) {
+            idleResolvers.forEach(resolve => resolve());
+            idleResolvers = [];
+        }
+    }
+}
+
+export const waitForDiscussionWritesIdle = () =>
+    discussionWritesInFlight === 0 ? Promise.resolve() : new Promise(resolve => idleResolvers.push(resolve));
+
 // Commits only the discussion data
 export async function commitDiscussionOnly(queryClient) {
-    const commitMessage = 'Update discussion'; // Hardcoded for now
-    const jsonDataToCommit = queryClient.getQueryData(['discussions']);
-    await saveAllDiscussion(jsonDataToCommit, commitMessage);
-    await queryClient.invalidateQueries({ queryKey: ['discussions'] });
+    await trackDiscussionWrite(async () => {
+        const commitMessage = 'Update discussion'; // Hardcoded for now
+        const jsonDataToCommit = queryClient.getQueryData(['discussions']);
+        await saveAllDiscussion(jsonDataToCommit, commitMessage);
+        await queryClient.invalidateQueries({ queryKey: ['discussions'] });
+    });
 }
 
 /**
