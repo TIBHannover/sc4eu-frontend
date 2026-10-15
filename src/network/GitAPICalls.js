@@ -2,9 +2,15 @@ import { Octokit } from '@octokit/rest';
 
 const Buffer = require('buffer/').Buffer;
 
+// Revalidate GitHub API responses carried with `Cache-Control: max-age=60`
+const revalidatingFetch = (url, options) => fetch(url, { ...options, cache: 'no-cache' });
+
 const octokit = new Octokit({
-    auth: process.env.REACT_APP_GITHUB_TOKEN2
+    auth: process.env.REACT_APP_GITHUB_TOKEN2,
+    request: { fetch: revalidatingFetch }
 });
+
+const shaCache = new Map();
 
 const getUserFromUrl = GitHubAPIUrl => {
     const url = new URL(GitHubAPIUrl);
@@ -49,10 +55,9 @@ export const getFileDataFromGitHub = async GitHubAPIUrl => {
         path,
         ...(ref && { ref })
     });
+    shaCache.set(GitHubAPIUrl, data.sha);
     return data;
 };
-
-const shaCache = new Map();
 
 export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
     const owner = getUserFromUrl(GitHubAPIUrl);

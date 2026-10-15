@@ -89,8 +89,9 @@ const ExpandedRow = ({
                 status: data.status,
                 modified: new Date().toISOString()
             };
+            const termsBeforeUpdate = queryClient.getQueryData(['terms']);
             await updateTerm(newTerm);
-            await commitChanges(queryClient, `Update ${term.label} status after consensus`);
+            await commitChanges(queryClient, `Update ${term.label} status after consensus`, termsBeforeUpdate);
         }
         await queryClient.invalidateQueries(VOTES_QUERY_KEY);
         setIsConsensusClosed(true);

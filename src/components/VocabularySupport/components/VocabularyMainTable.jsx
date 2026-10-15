@@ -957,6 +957,7 @@ const VocabularyMainTable = ({
                 {openCommit && (
                     <CommitChanges
                         refetch={refetch}
+                        baselineTerms={beforeEditsTermsRef.current}
                         openCommit={openCommit}
                         setOpenCommit={setOpenCommit}
                         setHasUncommittedChanges={setHasUncommittedChanges}
