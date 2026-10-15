@@ -43,6 +43,7 @@ import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/
 import { ToolbarNavBar } from './ToolbarNavBar';
 import CommitChanges from './CommitChanges';
 import { commitDiscussionOnly } from '../utils/CommitChanges';
+import { useLiveUpdates } from '../../../hooks/useLiveUpdates';
 import CreateNewTerm from './CreateNewTerm';
 import ExpandedRow from './ExpandedRow';
 import InformationHub from './InformationHub';
@@ -158,6 +159,23 @@ const VocabularyMainTable = ({
             beforeEditsTermsRef.current = terms;
         }
     }, [isLoadingTerms, terms]);
+
+    useLiveUpdates({
+        hasUncommittedTermChanges: hasUncommittedChanges,
+        onTermsRefreshed: freshTerms => {
+            beforeEditsTermsRef.current = freshTerms;
+        }
+    });
+
+    useEffect(() => {
+        if (!openPopup || !selectedTerm) {
+            return;
+        }
+        const latestComments = discussions.find(d => d.resourceId === selectedTerm.identifier)?.comments;
+        if (latestComments) {
+            setTermComments(latestComments);
+        }
+    }, [discussions, openPopup, selectedTerm]);
 
     useEffect(() => {
         const handleBeforeUnload = event => {

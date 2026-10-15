@@ -26,6 +26,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 const auth = require('./authCalls');
 const server = require('./serverCalls');
 const database = require('./databaseCalls');
+const events = require('./eventsCalls');
 const processing = require('./ontologyProcessingCalls');
 
 auth.initializeAuth(app, router, passport);
@@ -49,7 +50,10 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(bodyParser.json({ limit: '10mb' }));
+const keepRawBody = (req, res, buf) => {
+    req.rawBody = buf;
+};
+app.use(bodyParser.json({ limit: '10mb', verify: keepRawBody }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false, parameterLimit: 50000 }));
 
 router.use(express.urlencoded({ extended: false }));
@@ -58,6 +62,8 @@ router.use(cookieParser());
 // apply individual "endPoints"
 server.servicesStatus(router);
 server.testConnection(router);
+events.subscribe(router);
+events.githubWebhook(router);
 server.adminDashBoard(router);
 server.allRoles(router);
 server.userRole(router);
