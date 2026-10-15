@@ -26,7 +26,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import { commitDiscussionOnly } from '../utils/CommitChanges';
+import { commitDiscussionOnly, trackDiscussionWrite } from '../utils/CommitChanges';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePushNotifications } from '../../../hooks/usePushNotifications';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
@@ -621,6 +621,11 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const userDisplayName = user?.['displayName'];
     const [replyingId, setReplyingId] = useState(null);
     const [comments, setComments] = useState(termComments);
+
+    useEffect(() => {
+        setComments(termComments);
+    }, [termComments]);
+    
     const [users, setUsers] = useState([]);
     const [collapsedIds, setCollapsedIds] = useState(() => new Set());
 
@@ -667,11 +672,12 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
 
     const persist = useCallback(
         updatedComments => {
-            const run = async () => {
-                await handleSaveDiscussion({ resourceId, comments: updatedComments });
-                setComments(updatedComments);
-                await commitDiscussionOnly(queryClient);
-            };
+            const run = () =>
+                trackDiscussionWrite(async () => {
+                    await handleSaveDiscussion({ resourceId, comments: updatedComments });
+                    setComments(updatedComments);
+                    await commitDiscussionOnly(queryClient);
+                });
 
             const result = commitQueueRef.current.then(run, run);
             // Swallow so a failed commit doesn't permanently jam the queue for
