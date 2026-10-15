@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { usePushNotifications } from '../../../hooks/usePushNotifications';
 import { colorStyled } from 'styledComponents/styledColor';
 
-const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedChanges, user, onSuccess, onFail }) => {
+const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedChanges, user, onSuccess, onFail, baselineTerms }) => {
     const [commitMessage, setCommitMessage] = useState('');
     const [commitError, setCommitError] = useState('');
     const queryClient = useQueryClient();
@@ -17,7 +17,7 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
     };
     const handleCommit = async () => {
         try {
-            await commitChanges(queryClient, commitMessage);
+            await commitChanges(queryClient, commitMessage, baselineTerms);
             const res = await fetch(
                 `${process.env.REACT_APP_DIFF_BACKEND_URL}/api/ondet/sdiffs/latestVersion?uri=${process.env.REACT_APP_VOCABULARY_SERVICE_URL}`
             );
@@ -97,7 +97,8 @@ CommitChanges.propTypes = {
     setOpenCommit: PropTypes.func.isRequired,
     setHasUncommittedChanges: PropTypes.func.isRequired,
     onSuccess: PropTypes.func,
-    onFail: PropTypes.func
+    onFail: PropTypes.func,
+    baselineTerms: PropTypes.array
 };
 
 export default CommitChanges;
