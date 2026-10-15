@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGetTerms } from './hooks/useGetTerms';
 import VocabularyMainTable from './components/VocabularyMainTable';
 import { useGetDiscussion } from './hooks/useGetDiscussion';
@@ -20,7 +20,11 @@ import PropTypes from 'prop-types';
 export default function AddVocabulary({ currentUser, termUuid, voteUuid }) {
     // Destructuring the object returned by useGetTerms to extract data and states.
     const { data: fetchedTerms = [], refetch, isError: isLoadingTermsError, isFetching: isFetchingTerms, isLoading: isLoadingTerms } = useGetTerms();
-    const { data: fetchedDiscussion = [] } = useGetDiscussion({ enabled: true });
+    const { data: fetchedDiscussion = [], refetch: refetchDiscussion } = useGetDiscussion({ enabled: true });
+
+    useEffect(() => {
+        refetchDiscussion();
+    }, [refetchDiscussion]);
     const { mutateAsync: updateDiscussion } = useUpdateDiscussion();
     const { mutateAsync: deleteDiscussion } = useDeleteDiscussion();
     let allTermsDiscussion = fetchedDiscussion || [];
