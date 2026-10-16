@@ -51,7 +51,7 @@ const SORT_BY_OPTIONS = Object.freeze({
 
 const MAX_VISIBLE_VOTE_AVATARS = 7;
 
-const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
+const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onConsensusSelect }) => {
     const theme = useTheme();
 
     const [searchText, setSearchText] = useState('');
@@ -272,7 +272,20 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                                 </Typography>
                             </Tooltip>
                             {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
-                            {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
+                            {term.hasVote && (
+                                <Tooltip title="Check consensus">
+                                    <StyledChip
+                                        label="In Consensus"
+                                        size="small"
+                                        customVariant="agreement"
+                                        sx={{ mr: '1em', cursor: 'pointer' }}
+                                        onClick={event => {
+                                            event.stopPropagation();
+                                            onConsensusSelect(term);
+                                        }}
+                                    />
+                                </Tooltip>
+                            )}
 
                             <Typography
                                 variant="caption"
@@ -591,5 +604,6 @@ InformationHub.propTypes = {
         })
     ).isRequired,
     mentionedUser: PropTypes.string.isRequired,
-    onTermSelect: PropTypes.func.isRequired
+    onTermSelect: PropTypes.func.isRequired,
+    onConsensusSelect: PropTypes.func.isRequired
 };

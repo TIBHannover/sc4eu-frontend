@@ -168,7 +168,7 @@ class LoginViaEmail extends Component {
                                             <p className="mt-3" style={{ color: theme.palette.text.primary }}>
                                                 Don't have an account? &nbsp;
                                                 <Link to="" style={{ color: theme.palette.primary.main }} onClick={this.toggleSignupModel}>
-                                                    Sign Up
+                                                    Register
                                                 </Link>
                                             </p>
                                         </div>

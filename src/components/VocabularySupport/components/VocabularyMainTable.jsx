@@ -927,7 +927,7 @@ const VocabularyMainTable = ({
             const toolbarItems = buildToolbarItems(row, nearClosedConsensusTermIds);
 
             return (
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-start', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-start', alignItems: 'center', flexWrap: 'wrap' }}>
                     <ToolbarNavBar items={toolbarItems} isMobileScreen={isMobileScreen} />
                 </div>
             );
@@ -1230,6 +1230,7 @@ const VocabularyMainTable = ({
                         discussions={discussions}
                         mentionedUser={currentUser.displayName}
                         onTermSelect={handleNavigateToMentionedTerm}
+                        onConsensusSelect={handleWidgetUrgentTermClick}
                     />
                 }
                 type={MaterialUIPopUpTypes.DISCUSSIONS}

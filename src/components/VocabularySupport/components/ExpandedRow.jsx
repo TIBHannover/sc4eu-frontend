@@ -242,7 +242,7 @@ const ExpandedRow = ({
                 />
             )}
             {openLastConsensusDialog && (
-                <LastConsensusView consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)} />
+                <LastConsensusView term={term} consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)} />
             )}
             {viewAgreementMode && (
                 <VoteView

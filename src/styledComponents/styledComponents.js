@@ -11,11 +11,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { keyframes } from 'styled-components';
 import { CSSTransition } from 'react-transition-group';
 
-export const StyledGravatar = styled(Gravatar)(({ theme }) => ({
-    border: `3px solid ${theme.palette.divider}`,
-    cursor: 'pointer'
-}));
-
 export const StyledAuthTooltip = styled(ReactstrapTooltip)(({ theme }) => ({
     '.tooltip': {
         opacity: '1 !important',
@@ -76,16 +71,14 @@ export const StyledChip = styled(Chip)(({ customVariant, theme }) => ({
     '.MuiChip-label': {
         fontSize: 'inherit'
     },
-    '.MuiChip-root': {
-        ...(customVariant === 'mention' && {
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText
-        }),
-        ...(customVariant === 'agreement' && {
-            backgroundColor: theme.palette.secondary.light,
-            color: theme.palette.secondary.contrastText
-        })
-    },
+    ...(customVariant === 'mention' && {
+        backgroundColor: theme.palette.primaryFixed.main,
+        color: theme.palette.primaryFixed.onPrimaryFixed
+    }),
+    ...(customVariant === 'agreement' && {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.secondary.contrastText
+    }),
     ...(customVariant === 'pendingConsensus' && {
         backgroundColor: theme.palette.warning.light,
         color: theme.palette.warning.contrastText,

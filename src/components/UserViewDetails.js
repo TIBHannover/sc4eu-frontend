@@ -3,10 +3,10 @@ import { Col, Container, FormGroup, Input, Label } from 'reactstrap';
 import { Button } from '@mui/material';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { StyledGravatar } from '../styledComponents/styledComponents';
 import { updateUserSettings } from '../network/UserProfileCalls';
 import { redux_updateUserSettings } from '../redux/actions/auth';
 import { withTheme } from '@emotion/react';
+import UserAvatar from './ReusableComponents/UserAvatar';
 class UserViewDetails extends Component {
     constructor(props) {
         super(props);
@@ -94,7 +94,7 @@ class UserViewDetails extends Component {
                 {!this.props.info.error && (
                     <>
                         <div style={{ padding: '10px', display: 'flex' }}>
-                            <StyledGravatar className="rounded-circle" md5={this.props.info.user.gravatarId} size={80} id="TooltipExample" />
+                            <UserAvatar identifier={this.props.user.userId} className="rounded-circle" size={80} id="TooltipExample" />
                             <h1 style={{ paddingLeft: '20px', paddingTop: '15px' }}>{this.props.info.user.name}</h1>
                         </div>
                         <hr />
