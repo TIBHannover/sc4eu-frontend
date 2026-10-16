@@ -18,9 +18,9 @@ import {
 import { ThumbUpOutlined, ThumbUp, ThumbDownOutlined, ThumbDown, BackHandOutlined, BackHand } from '@mui/icons-material';
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
 import CloseIcon from '@mui/icons-material/Close';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import PropTypes from 'prop-types';
 import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
-import Divider from '@mui/material/Divider';
 import UserAvatar from '../../ReusableComponents/UserAvatar';
 import { ConsensusProgress } from '../utils/Consensus';
 import ClampLines from 'react-clamp-lines';
@@ -137,9 +137,14 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                 <Grid item xs={12}>
                     <Box sx={{ mb: 2 }}>
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}>
-                            <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-                                {term.label}
-                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 0 }}>
+                                    {term.label}
+                                </Typography>
+                                <Tooltip title={<Typography fontSize={14}>By agreeing, you confirm that the term's data, description and definition are well described and ready to be present in the vocabulary</Typography>}>
+                                    <InfoOutlinedIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
+                                </Tooltip>
+                            </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
                                 <Tooltip title="Copy URL of this consensus into a clipboard for easy sharing">
                                     <Button
@@ -194,30 +199,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 <ClampLines text={term.description} id="custom" lines={3} />
                             </Typography>
                         </Box>
-
-                        <Divider
-                            sx={{
-                                bgcolor: theme.palette.secondary.main,
-                                height: 2,
-                                mb: 1
-                            }}
-                        />
-
-                        <Typography
-                            variant="body1"
-                            sx={{
-                                color: theme.palette.secondary.main,
-                                fontWeight: 500,
-                                textTransform: 'uppercase',
-                                letterSpacing: 0.5
-                            }}
-                        >
-                            → Accept Proposal
-                        </Typography>
-
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                            Change term status to accept
-                        </Typography>
                     </Box>
 
                     <ConsensusProgress term={vote} />
