@@ -127,7 +127,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
     };
 
     const handleCancelDecision = () => {
-        setUserHasVoted(true);
         setDecision('');
         setComment('');
     };
@@ -282,19 +281,34 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             />
 
                             <Box sx={{ display: 'flex', gap: 2 }}>
-                                <Button
-                                    variant="contained"
-                                    disabled={!decision}
-                                    fullWidth
-                                    size="large"
-                                    onClick={handleExpertDecision}
-                                    sx={styles.button}
-                                >
-                                    Submit Decision
-                                </Button>
-                                <Button variant="contained" fullWidth size="large" onClick={handleCancelDecision} sx={styles.button}>
-                                    Cancel
-                                </Button>
+                                <Tooltip title={decision ? '' : "Select 'Agree', 'Not Agree' or 'Undecided' above to submit your decision"}>
+                                    <span style={{ width: '100%' }}>
+                                        <Button
+                                            variant="contained"
+                                            disabled={!decision}
+                                            fullWidth
+                                            size="large"
+                                            onClick={handleExpertDecision}
+                                            sx={styles.button}
+                                        >
+                                            Submit Decision
+                                        </Button>
+                                    </span>
+                                </Tooltip>
+                                <Tooltip title={decision || comment ? '' : 'Nothing to cancel yet'}>
+                                    <span style={{ width: '100%' }}>
+                                        <Button
+                                            variant="contained"
+                                            disabled={!decision && !comment}
+                                            fullWidth
+                                            size="large"
+                                            onClick={handleCancelDecision}
+                                            sx={styles.button}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </span>
+                                </Tooltip>
                             </Box>
                         </Box>
                     )}
