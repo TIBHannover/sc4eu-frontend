@@ -71,16 +71,14 @@ export const StyledChip = styled(Chip)(({ customVariant, theme }) => ({
     '.MuiChip-label': {
         fontSize: 'inherit'
     },
-    '.MuiChip-root': {
-        ...(customVariant === 'mention' && {
-            backgroundColor: theme.palette.primary.main,
-            color: theme.palette.primary.contrastText
-        }),
-        ...(customVariant === 'agreement' && {
-            backgroundColor: theme.palette.secondary.light,
-            color: theme.palette.secondary.contrastText
-        })
-    },
+    ...(customVariant === 'mention' && {
+        backgroundColor: theme.palette.primaryFixed.main,
+        color: theme.palette.primaryFixed.onPrimaryFixed
+    }),
+    ...(customVariant === 'agreement' && {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.secondary.contrastText
+    }),
     ...(customVariant === 'pendingConsensus' && {
         backgroundColor: theme.palette.warning.light,
         color: theme.palette.warning.contrastText,
