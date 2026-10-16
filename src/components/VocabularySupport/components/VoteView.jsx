@@ -325,7 +325,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                     gap: 1
                                 }}
                             >
-                                <UserAvatar identifier={vote.assignee} />
+                                <UserAvatar identifier={vote.assignee_uuid} />
                                 <Typography variant="subtitle1" gutterBottom>
                                     Created by {vote.assignee}
                                 </Typography>

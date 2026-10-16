@@ -11,11 +11,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { keyframes } from 'styled-components';
 import { CSSTransition } from 'react-transition-group';
 
-export const StyledGravatar = styled(Gravatar)(({ theme }) => ({
-    border: `3px solid ${theme.palette.divider}`,
-    cursor: 'pointer'
-}));
-
 export const StyledAuthTooltip = styled(ReactstrapTooltip)(({ theme }) => ({
     '.tooltip': {
         opacity: '1 !important',

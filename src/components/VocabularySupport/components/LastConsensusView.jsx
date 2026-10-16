@@ -114,7 +114,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                         </Typography>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1, gap: 1 }}>
-                            <UserAvatar identifier={consensus.assignee}/>
+                            <UserAvatar identifier={consensus.assignee_uuid}/>
                             <Typography variant="body2" fontWeight={500}>
                                 {consensus.assignee}
                             </Typography>
@@ -172,7 +172,7 @@ const LastConsensusView = ({ consensus, open, onClose }) => {
                                     }}
                                 >
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <UserAvatar identifier={decision.user_id || decision.user_name} />
+                                        <UserAvatar identifier={decision.user_uuid} />
                                         <Typography variant="body2" fontWeight={500}>
                                             {decision.user_name}
                                         </Typography>
