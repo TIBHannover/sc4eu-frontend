@@ -97,6 +97,27 @@ function buildTree(flatComments) {
     return roots;
 }
 
+// Votes are stored as lists of display names (`upvotes` / `downvotes`) so the
+// two counts stay separate and each user's own vote is tracked individually.
+// Legacy comments only have a net `votes` number; it is shown as extra
+// up (if positive) or down (if negative) counts since it can't be split.
+function getVoteState(comment, currentUser) {
+    const upvoters = comment.upvotes ?? [];
+    const downvoters = comment.downvotes ?? [];
+    const legacy = comment.votes ?? 0;
+    let userVote = null;
+    if (upvoters.includes(currentUser)) {
+        userVote = 'up';
+    } else if (downvoters.includes(currentUser)) {
+        userVote = 'down';
+    }
+    return {
+        up: upvoters.length + Math.max(legacy, 0),
+        down: downvoters.length + Math.max(-legacy, 0),
+        userVote
+    };
+}
+
 function countDescendants(node) {
     return node.children.reduce((sum, c) => sum + 1 + countDescendants(c), 0);
 }
@@ -336,32 +357,23 @@ function ReactionChip({ code, users, currentUser, onRemove }) {
     );
 }
 
-function VoteColumn({ votes, userVote, onVote }) {
-    let voteColor = 'text.secondary';
+function VoteColumn({ up, down, userVote, onVote }) {
+    const countSx = { fontWeight: 600, lineHeight: 1 };
 
-    if (userVote === 'up') {
-        voteColor = 'primary.main';
-    } else if (userVote === 'down') {
-        voteColor = 'error.main';
-    }
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 0.25, minWidth: 28 }}>
             <IconButton size="small" onClick={() => onVote('up')} sx={{ p: 0.25, color: userVote === 'up' ? 'primary.main' : 'text.disabled' }}>
                 <ThumbUpOutlined fontSize="small" />
             </IconButton>
-            <Typography
-                variant="caption"
-                sx={{
-                    fontWeight: 600,
-                    lineHeight: 1,
-                    color: voteColor
-                }}
-            >
-                {votes ?? 0}
+            <Typography variant="caption" sx={{ ...countSx, color: userVote === 'up' ? 'primary.main' : 'text.secondary' }}>
+                {up}
             </Typography>
-            <IconButton size="small" onClick={() => onVote('down')} sx={{ p: 0.25, color: userVote === 'down' ? 'error.main' : 'text.disabled' }}>
+            <IconButton size="small" onClick={() => onVote('down')} sx={{ p: 0.25, mt: 0.5, color: userVote === 'down' ? 'error.main' : 'text.disabled' }}>
                 <ThumbDownOutlined fontSize="small" />
             </IconButton>
+            <Typography variant="caption" sx={{ ...countSx, color: userVote === 'down' ? 'error.main' : 'text.secondary' }}>
+                {down}
+            </Typography>
         </Box>
     );
 }
@@ -432,6 +444,8 @@ function CommentNode({
 
     const authorId = users.find(u => u.display_name === node.author)?.uuid || node.author;
 
+    const voteState = getVoteState(node, currentUser);
+
     const hasStatus = node.status && node.status !== 'none';
 
     let commentBackgroundColor = theme.palette.background.paper;
@@ -484,7 +498,7 @@ function CommentNode({
                 onMouseLeave={() => setHovered(false)}
             >
                 <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
-                    <VoteColumn votes={node.votes} userVote={node.userVote} onVote={dir => onVote(node.id, dir)} />
+                    <VoteColumn up={voteState.up} down={voteState.down} userVote={voteState.userVote} onVote={dir => onVote(node.id, dir)} />
 
                     {!isMobile && (
                         <ListItemAvatar sx={{ minWidth: 'auto' }}>
@@ -698,8 +712,8 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             content,
             timestamp: new Date().toISOString(),
             mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined,
-            votes: 0,
-            userVote: null
+            upvotes: [],
+            downvotes: []
         };
 
         const updatedComments = [...comments, newComment];
@@ -721,23 +735,16 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         const updatedComments = comments.map(c => {
             if (c.id !== commentId) return c;
 
-            const wasSame = c.userVote === direction;
-            const hadOpposite = c.userVote !== null && !wasSame;
+            const upvotes = (c.upvotes ?? []).filter(u => u !== userDisplayName);
+            const downvotes = (c.downvotes ?? []).filter(u => u !== userDisplayName);
+            const previous = getVoteState(c, userDisplayName).userVote;
 
-            let delta;
-            if (wasSame) {
-                delta = direction === 'up' ? -1 : 1;
-            } else if (hadOpposite) {
-                delta = direction === 'up' ? 2 : -2;
-            } else {
-                delta = direction === 'up' ? 1 : -1;
+            // clicking the same direction again removes the vote
+            if (previous !== direction) {
+                (direction === 'up' ? upvotes : downvotes).push(userDisplayName);
             }
 
-            return {
-                ...c,
-                votes: (c.votes ?? 0) + delta,
-                userVote: wasSame ? null : direction
-            };
+            return { ...c, upvotes, downvotes };
         });
         await persist(updatedComments);
     };
