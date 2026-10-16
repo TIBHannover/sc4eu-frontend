@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material';
 import BoringAvatar from 'boring-avatars';
 
-const UserAvatar = ({ identifier, size, style, className }) => {
+const UserAvatar = ({ identifier, size, style, className, id }) => {
     const theme = useTheme();
 
     const beamColors = [
@@ -17,14 +17,9 @@ const UserAvatar = ({ identifier, size, style, className }) => {
     const mergedStyle = { marginRight: 8, ...style };
 
     return (
-        <BoringAvatar
-            size={size}
-            name={identifier || 'unknown-user'}
-            variant="beam"
-            colors={beamColors}
-            style={mergedStyle}
-            className={className}
-        />
+        <span id={id} className={className} style={mergedStyle}>
+            <BoringAvatar size={size} name={identifier || 'unknown-user'} variant="beam" colors={beamColors} />
+        </span>
     );
 };
 
@@ -32,14 +27,16 @@ UserAvatar.propTypes = {
     identifier: PropTypes.string,
     size: PropTypes.number,
     style: PropTypes.object,
-    className: PropTypes.string
+    className: PropTypes.string,
+    id: PropTypes.string
 };
 
 UserAvatar.defaultProps = {
     identifier: '',
     size: 40,
     style: undefined,
-    className: undefined
+    className: undefined,
+    id: undefined
 };
 
 export default UserAvatar;

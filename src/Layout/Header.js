@@ -21,9 +21,9 @@ import {
     StyledHeaderReactStrapButton,
     ButtonIcon,
     ButtonText,
-    StyledAuthTooltip,
-    StyledGravatar
+    StyledAuthTooltip
 } from '../styledComponents/styledComponents';
+import UserAvatar from 'components/ReusableComponents/UserAvatar';
 class Header extends Component {
     constructor(props) {
         super(props);
@@ -124,7 +124,8 @@ class Header extends Component {
                         {this.props.user.gravatarId ? (
                             <>
                                 <NotificationToggle user={this.props.user.displayName} />
-                                <StyledGravatar className="rounded-circle" md5={this.props.user.gravatarId} size={35} id="TooltipExample" />
+                                <UserAvatar identifier={this.props.user.userId} className="rounded-circle" size={35} id="TooltipExample" />
+
                                 <StyledAuthTooltip
                                     fade={false}
                                     trigger="click"
@@ -141,12 +142,11 @@ class Header extends Component {
                                             to={reverse(ROUTES.USER_PROFILE, { userId: this.props.user.userId })}
                                             className="user-profile-link"
                                         >
-                                            <StyledGravatar
+                                            <UserAvatar
+                                                identifier={this.props.user.userId}
                                                 className="rounded-circle"
+                                                size={35}
                                                 style={{ border: '3px solid #fff' }}
-                                                md5={this.props.user.gravatarId}
-                                                size={40}
-                                                id="TooltipExample"
                                             />
                                         </Link>
                                     </div>

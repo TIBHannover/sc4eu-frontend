@@ -6,7 +6,6 @@ function makePalette(scheme, mode) {
             light: scheme.primaryContainer,
             contrastText: scheme.onPrimary,
             onContainer: scheme.onPrimaryContainer,
-            fixed: scheme.primaryFixed
         },
         secondary: {
             main: scheme.secondary,
@@ -47,6 +46,10 @@ function makePalette(scheme, mode) {
         },
         // Inverse surface (used for accent chips in the overview nav)
         inverseSurface: scheme.inverseSurface,
+        primaryFixed: {
+            main: scheme.primaryFixed,
+            onPrimaryFixed: scheme.onPrimaryFixed
+        }
     };
 }
 
