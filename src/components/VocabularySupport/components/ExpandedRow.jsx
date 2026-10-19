@@ -242,7 +242,12 @@ const ExpandedRow = ({
                 />
             )}
             {openLastConsensusDialog && (
-                <LastConsensusView term={term} consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)} />
+                <LastConsensusView
+                    term={term}
+                    consensus={lastConsensus}
+                    open={openLastConsensusDialog}
+                    onClose={() => setOpenLastConsensusDialog(false)}
+                />
             )}
             {viewAgreementMode && (
                 <VoteView
@@ -310,25 +315,28 @@ const ExpandedRow = ({
                             width: '100%',
                             flex: '1 1 auto',
                             minHeight: 0,
-                            flexDirection: { xs: 'column', xl: 'row' }
+                            flexDirection: { xs: 'column', xl: 'row' },
+                            overflowY: { xs: 'auto', xl: 'hidden' }
                         }}
                     >
                         {/* LEFT: Term's Detail */}
                         <Box
                             sx={{
                                 width: { xs: '100%', xl: '50%' },
-                                flex: '1',
+                                flex: { xs: '0 0 auto', xl: '1 1 0' },
                                 display: 'flex',
                                 flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                gap: 3,
-                                p: 3,
-                                overflowY: 'auto',
+                                minHeight: 0,
                                 borderRight: theme => ({ xl: `1px solid ${theme.palette.divider}` })
                             }}
                         >
+                            {/* Scrollable details */}
                             <Box
                                 sx={{
+                                    flex: { xs: '0 0 auto', xl: '1 1 auto' },
+                                    minHeight: 0,
+                                    overflowY: { xl: 'auto' },
+                                    p: 3,
                                     display: 'flex',
                                     flexDirection: 'column',
                                     gap: 2
@@ -455,9 +463,12 @@ const ExpandedRow = ({
                                 </Accordion>
                             </Box>
 
-                            {/* Actions */}
                             <Box
                                 sx={{
+                                    flex: '0 0 auto',
+                                    px: 3,
+                                    py: 2,
+                                    borderTop: theme => `1px solid ${theme.palette.divider}`,
                                     display: 'flex',
                                     justifyContent: 'flex-start',
                                     alignItems: 'center',
@@ -469,7 +480,6 @@ const ExpandedRow = ({
                                     <Tooltip title="Decide if the term's status is ready to be changed">
                                         <Button
                                             disabled={activeAgreement}
-                                            hidden={currentUser.role !== 'System Admin'}
                                             hidden={currentUser.role !== 'System Admin'}
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
@@ -514,6 +524,8 @@ const ExpandedRow = ({
                         <Box
                             sx={{
                                 width: { xs: '100%', xl: '50%' },
+                                flex: { xs: '0 0 auto', xl: '1 1 0' },
+                                height: { xs: 480, xl: 'auto' },
                                 p: 3,
                                 display: 'flex',
                                 flexDirection: 'column',
