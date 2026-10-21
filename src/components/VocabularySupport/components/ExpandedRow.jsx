@@ -28,7 +28,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { SMALL_SCREEN_WIDTH, StyledChip } from '../../../styledComponents/styledComponents';
-import { commitChanges } from '../utils/CommitChanges';
+import { commitChanges, commitTermChanges, generateChangedValues } from '../utils/CommitChanges';
 import CommentsSection from './CommentsSection';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
 import LastConsensusView from './LastConsensusView';
@@ -36,17 +36,7 @@ import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import AcceptDeclineDialog from '../../ReusableComponents/AcceptDeclineDialog';
 import VoteView from './VoteView';
 
-const ExpandedRow = ({
-    term,
-    currentUser,
-    updateTerm,
-    editMode,
-    termComments,
-    handleSaveDiscussion,
-    setHasUncommittedChanges,
-    setEditMode,
-    handleClosePopup
-}) => {
+const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, handleSaveDiscussion, setEditMode, handleClosePopup }) => {
     const theme = useTheme();
     const history = useHistory();
 
@@ -160,9 +150,13 @@ const ExpandedRow = ({
         setUpdatedTerm({ ...updatedTerm, altLabel: altLabels.join(','), modified: new Date().toISOString() });
     };
 
-    const handleSave = () => {
-        updateTerm(updatedTerm);
-        setHasUncommittedChanges(true);
+    const handleSave = async () => {
+        const cachedTerms = queryClient.getQueryData(['terms']);
+        const termBeforeChange = cachedTerms.find(term => term.identifier === updatedTerm.identifier);
+        const changes = generateChangedValues(termBeforeChange, updatedTerm);
+        const payload = { header: `Update term ${updatedTerm.identifier}`, body: changes };
+        await updateTerm(updatedTerm);
+        await commitTermChanges(queryClient, payload);
         setEditMode(false);
     };
 
@@ -541,7 +535,6 @@ const ExpandedRow = ({
                                     comments={termComments || []}
                                     mentionedUsers={[]}
                                     handleSaveDiscussion={handleSaveDiscussion}
-                                    setHasUncommittedChanges={setHasUncommittedChanges}
                                 />
                             </Box>
                         </Box>
@@ -645,7 +638,6 @@ ExpandedRow.propTypes = {
     editMode: PropTypes.bool.isRequired,
     termComments: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,
-    setHasUncommittedChanges: PropTypes.func.isRequired,
     setEditMode: PropTypes.func.isRequired,
     handleClosePopup: PropTypes.func.isRequired
 };

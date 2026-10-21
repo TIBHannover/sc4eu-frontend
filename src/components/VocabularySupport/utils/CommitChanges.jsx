@@ -1,5 +1,6 @@
 import { parseRDF, writeRDF } from '../../../network/parseRDFCalls';
 import { writeJSON } from '../../../network/parseJSONCalls';
+import { isEmpty, isEqual, omit, union } from 'lodash';
 
 //const gitHubFileUrl = 'https://raw.githubusercontent.com/tib-ts/vocabulary_development/main/testexample.ttl';
 const gitHubFileUrl = process.env.REACT_APP_VOCABULARY_SERVICE_URL;
@@ -45,6 +46,13 @@ export async function commitDiscussionOnly(queryClient) {
     });
 }
 
+export const commitTermChanges = async (queryClient, payload) => {
+    const commitMessage = isEmpty(payload.body) ? `${payload.header}` : `${payload.header}\n\n${JSON.stringify(payload.body)}`;
+    const dataToCommit = queryClient.getQueryData(['terms']);
+    await saveAllTerms(dataToCommit, commitMessage);
+    await queryClient.invalidateQueries({ queryKey: ['terms'] });
+};
+
 /**
  * Returns the terms to push.
  * - Remote did not change since we loaded it: our local terms are the truth (edits and deletions included).
@@ -80,7 +88,7 @@ export async function commitChanges(queryClient, commitMessage, baselineTerms) {
         const localTerms = queryClient.getQueryData(['terms']);
         let termsToCommit = localTerms;
         if (baseline) {
-            const remoteTerms = await parseRDF(gitHubFileUrl); 
+            const remoteTerms = await parseRDF(gitHubFileUrl);
             termsToCommit = applyLocalChanges(remoteTerms, localTerms, baseline);
             queryClient.setQueryData(['terms'], termsToCommit);
             baseline = remoteTerms;
@@ -97,3 +105,21 @@ export async function commitChanges(queryClient, commitMessage, baselineTerms) {
     }
     await queryClient.invalidateQueries({ queryKey: ['terms'] });
 }
+
+export const generateChangedValues = (termBeforeChange, termAfterChange) => {
+    const IGNORED_KEYS = ['modified'];
+    const before = omit(termBeforeChange, IGNORED_KEYS);
+    const after = omit(termAfterChange, IGNORED_KEYS);
+
+    let result = {};
+    union(Object.keys(before), Object.keys(after)).forEach(key => {
+        console.log(key)
+        if (!isEqual(before[key], after[key])) {
+            result[key] = {
+                from: before[key] ?? null,
+                to: after[key] ?? null
+            };
+        }
+    });
+    return result;
+};

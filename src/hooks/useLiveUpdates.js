@@ -14,27 +14,19 @@ const RECONNECT_MAX_DELAY_MS = 30000;
  *   The refresh is done as soon as the changes are committed or discarded.
  * - Discussions are not refreshed while one of our own comments is being committed (see trackDiscussionWrite).
  *
- * @param {boolean} hasUncommittedTermChanges
  * @param {function} onTermsRefreshed - called with the new terms after a refresh, they are the new baseline for commits.
  */
-export function useLiveUpdates({ hasUncommittedTermChanges, onTermsRefreshed }) {
+export function useLiveUpdates({ onTermsRefreshed }) {
     const queryClient = useQueryClient();
-    const hasDraftRef = useRef(hasUncommittedTermChanges);
     const onTermsRefreshedRef = useRef(onTermsRefreshed);
     const termsRefreshPendingRef = useRef(false);
     const timersRef = useRef({});
-    hasDraftRef.current = hasUncommittedTermChanges;
     onTermsRefreshedRef.current = onTermsRefreshed;
 
     const refreshTerms = useCallback(async () => {
-        if (hasDraftRef.current) {
-            termsRefreshPendingRef.current = true;
-            return;
-        }
         await queryClient.invalidateQueries({ queryKey: ['terms'] });
-        if (!hasDraftRef.current) {
-            onTermsRefreshedRef.current?.(queryClient.getQueryData(['terms']));
-        }
+
+        onTermsRefreshedRef.current?.(queryClient.getQueryData(['terms']));
     }, [queryClient]);
 
     const refreshDiscussions = useCallback(async () => {
@@ -42,13 +34,10 @@ export function useLiveUpdates({ hasUncommittedTermChanges, onTermsRefreshed }) 
         await queryClient.invalidateQueries({ queryKey: ['discussions'] });
     }, [queryClient]);
 
-    const schedule = useCallback(
-        (name, refresh) => {
-            clearTimeout(timersRef.current[name]);
-            timersRef.current[name] = setTimeout(refresh, DEBOUNCE_MS);
-        },
-        []
-    );
+    const schedule = useCallback((name, refresh) => {
+        clearTimeout(timersRef.current[name]);
+        timersRef.current[name] = setTimeout(refresh, DEBOUNCE_MS);
+    }, []);
 
     useEffect(() => {
         let source;
@@ -93,9 +82,9 @@ export function useLiveUpdates({ hasUncommittedTermChanges, onTermsRefreshed }) 
     }, [schedule, refreshTerms, refreshDiscussions]);
 
     useEffect(() => {
-        if (!hasUncommittedTermChanges && termsRefreshPendingRef.current) {
+        if (termsRefreshPendingRef.current) {
             termsRefreshPendingRef.current = false;
             refreshTerms();
         }
-    }, [hasUncommittedTermChanges, refreshTerms]);
+    }, [refreshTerms]);
 }
