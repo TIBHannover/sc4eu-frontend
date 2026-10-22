@@ -629,7 +629,7 @@ function CommentNode({
     );
 }
 
-const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion, setHasUncommittedChanges }) => {
+const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion }) => {
     const theme = useTheme();
 
     const userDisplayName = user?.['displayName'];
@@ -876,8 +876,7 @@ CommentsSection.propTypes = {
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     resourceId: PropTypes.string.isRequired,
     comments: PropTypes.array.isRequired,
-    handleSaveDiscussion: PropTypes.func.isRequired,
-    setHasUncommittedChanges: PropTypes.func.isRequired
+    handleSaveDiscussion: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps)(CommentsSection);
