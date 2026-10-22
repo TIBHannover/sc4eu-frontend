@@ -6,21 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import {
-    Alert,
-    Box,
-    Button,
-    Chip,
-    darken,
-    IconButton,
-    lighten,
-    Snackbar,
-    styled,
-    Tooltip,
-    Typography,
-    useMediaQuery,
-    useTheme
-} from '@mui/material';
+import { Alert, Box, Button, Chip, darken, IconButton, lighten, Snackbar, styled, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -48,6 +34,8 @@ import CreateNewTerm from './CreateNewTerm';
 import ExpandedRow from './ExpandedRow';
 import InformationHub from './InformationHub';
 import VoteView from './VoteView';
+import AgreedTermsTable from './AgreedTermsTable';
+import ViewSwitcher, { VOCABULARY_VIEWS } from './ViewSwitcher';
 import { Info } from '@mui/icons-material';
 import AcceptDeclineDialog from 'components/ReusableComponents/AcceptDeclineDialog';
 
@@ -109,12 +97,10 @@ const VocabularyMainTable = ({
     const [confirmDiscardChanges, setConfirmDiscardChanges] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [activeMUIPopUp, setActiveMUIPopUp] = useState(null);
+    const [activeView, setActiveView] = useState(VOCABULARY_VIEWS.MAIN);
     const history = useHistory();
     const theme = useTheme();
-    const baseBackgroundColor =
-        theme.palette.mode === 'light'
-            ? 'rgba(245, 245, 245, 1)' // white
-            : 'rgba(84, 90, 95, 1)'; // light gray
+    const baseBackgroundColor = theme.palette.surface.containerLow;
 
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
@@ -131,6 +117,9 @@ const VocabularyMainTable = ({
         pageSize: 10,
         pageIndex: 0
     });
+
+    const mainTerms = useMemo(() => terms.filter(term => term.status !== 'accept'), [terms]);
+    const agreedTerms = useMemo(() => terms.filter(term => term.status === 'accept'), [terms]);
 
     const urgentTerms = terms.filter(term =>
         votesMap.some(vote => vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName))
@@ -687,40 +676,6 @@ const VocabularyMainTable = ({
                         maxWidth: '150px'
                     }
                 }
-            },
-            {
-                accessorKey: 'status',
-                header: 'Status',
-                Header: (
-                    { column } // Custom header with tooltip
-                ) => (
-                    <Tooltip title="The status of the term. It can be Draft, Reject or Accept">
-                        <span>{column.columnDef.header}</span>
-                    </Tooltip>
-                ),
-                size: 100,
-                enableEditing: false,
-                filterVariant: 'select',
-                filterFn: 'equals',
-                filterSelectOptions: [
-                    { text: 'Draft', value: 'draft' },
-                    { text: 'Reject', value: 'reject' },
-                    { text: 'Accept', value: 'accept' }
-                ],
-                muiFilterTextFieldProps: {
-                    placeholder: 'Filter',
-                    select: true
-                },
-                muiTableBodyCellProps: {
-                    sx: {
-                        maxWidth: 100
-                    }
-                },
-                muiTableHeadCellProps: {
-                    sx: {
-                        maxWidth: 100
-                    }
-                }
             }
         ],
         [validationErrors, votesMap]
@@ -816,7 +771,7 @@ const VocabularyMainTable = ({
 
     const table = useMaterialReactTable({
         columns,
-        data: terms,
+        data: mainTerms,
         initialState: {
             sorting: [{ id: 'label', desc: false }],
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
@@ -1182,16 +1137,36 @@ const VocabularyMainTable = ({
                     </Alert>
                 </Snackbar>
             )}
-            <MaterialReactTable
-                table={table}
-                muiTableContainerProps={{
-                    sx: {
-                        width: '50%',
-                        maxWidth: '50vw',
-                        overflowX: 'auto'
-                    }
-                }}
-            />
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <ViewSwitcher
+                    value={activeView}
+                    onChange={setActiveView}
+                    mainCount={mainTerms.length}
+                    agreedCount={agreedTerms.length}
+                    isMobileScreen={isMobileScreen}
+                />
+                <Box sx={{ minWidth: 0 }}>
+                    {activeView === VOCABULARY_VIEWS.MAIN ? (
+                        <MaterialReactTable
+                            table={table}
+                            muiTableContainerProps={{
+                                sx: {
+                                    width: '50%',
+                                    maxWidth: '50vw',
+                                    overflowX: 'auto'
+                                }
+                            }}
+                        />
+                    ) : (
+                        <AgreedTermsTable
+                            terms={agreedTerms}
+                            isLoading={isLoadingTerms}
+                            onTermSelect={handleNavigateToMentionedTerm}
+                            onOpenTimeline={() => setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY)}
+                        />
+                    )}
+                </Box>
+            </Box>
             {selectedTerm && (
                 <MaterialUIPopUp
                     open={openPopup}

@@ -48,6 +48,7 @@ const ExpandedRow = ({
     handleClosePopup
 }) => {
     const theme = useTheme();
+    const isAccepted = term.status === 'accept';
     const history = useHistory();
 
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
@@ -282,7 +283,7 @@ const ExpandedRow = ({
                         }}
                     >
                         <Typography variant="body2" color="text.secondary">
-                            <strong>Modified:</strong>{' '}
+                            <strong>{isAccepted ? 'Agreed:' : 'Modified:'}</strong>{' '}
                             {new Date(updatedTerm.modified).toLocaleDateString() + ', ' + new Date(updatedTerm.modified).toLocaleTimeString()}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -463,6 +464,7 @@ const ExpandedRow = ({
                                 </Accordion>
                             </Box>
 
+                            {!isAccepted && (
                             <Box
                                 sx={{
                                     flex: '0 0 auto',
@@ -518,6 +520,7 @@ const ExpandedRow = ({
                                     Edit Term
                                 </Button>
                             </Box>
+                            )}
                         </Box>
 
                         {/* RIGHT: Discussion */}
