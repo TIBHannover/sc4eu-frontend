@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { usePushNotifications } from '../../../hooks/usePushNotifications';
 import { colorStyled } from 'styledComponents/styledColor';
 
-const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedChanges, user, onSuccess, onFail, baselineTerms }) => {
+const CommitChanges = ({ refetch, openCommit, setOpenCommit, user, onSuccess, onFail, baselineTerms }) => {
     const [commitMessage, setCommitMessage] = useState('');
     const [commitError, setCommitError] = useState('');
     const queryClient = useQueryClient();
@@ -31,7 +31,6 @@ const CommitChanges = ({ refetch, openCommit, setOpenCommit, setHasUncommittedCh
 
             await notifyAddRemoveTerm();
             onSuccess?.();
-            setHasUncommittedChanges(false);
             setOpenCommit(false);
         } catch (e) {
             onFail?.(e);
@@ -95,7 +94,6 @@ CommitChanges.propTypes = {
     refetch: PropTypes.func.isRequired,
     openCommit: PropTypes.bool.isRequired,
     setOpenCommit: PropTypes.func.isRequired,
-    setHasUncommittedChanges: PropTypes.func.isRequired,
     onSuccess: PropTypes.func,
     onFail: PropTypes.func,
     baselineTerms: PropTypes.array

@@ -28,7 +28,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsensus, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { SMALL_SCREEN_WIDTH, StyledChip } from '../../../styledComponents/styledComponents';
-import { commitChanges } from '../utils/CommitChanges';
+import { commitChanges, commitTermChanges, generateChangedValues } from '../utils/CommitChanges';
 import CommentsSection from './CommentsSection';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
 import LastConsensusView from './LastConsensusView';
@@ -36,18 +36,9 @@ import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import AcceptDeclineDialog from '../../ReusableComponents/AcceptDeclineDialog';
 import VoteView from './VoteView';
 
-const ExpandedRow = ({
-    term,
-    currentUser,
-    updateTerm,
-    editMode,
-    termComments,
-    handleSaveDiscussion,
-    setHasUncommittedChanges,
-    setEditMode,
-    handleClosePopup
-}) => {
+const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, handleSaveDiscussion, setEditMode, handleClosePopup }) => {
     const theme = useTheme();
+    const isAccepted = term.status === 'accept';
     const history = useHistory();
 
     const [viewAgreementMode, setViewAgreementMode] = useState(false);
@@ -160,9 +151,13 @@ const ExpandedRow = ({
         setUpdatedTerm({ ...updatedTerm, altLabel: altLabels.join(','), modified: new Date().toISOString() });
     };
 
-    const handleSave = () => {
-        updateTerm(updatedTerm);
-        setHasUncommittedChanges(true);
+    const handleSave = async () => {
+        const cachedTerms = queryClient.getQueryData(['terms']);
+        const termBeforeChange = cachedTerms.find(term => term.identifier === updatedTerm.identifier);
+        const changes = generateChangedValues(termBeforeChange, updatedTerm);
+        const payload = { header: `Update term ${updatedTerm.identifier}`, body: changes };
+        await updateTerm(updatedTerm);
+        await commitTermChanges(queryClient, payload);
         setEditMode(false);
     };
 
@@ -242,7 +237,12 @@ const ExpandedRow = ({
                 />
             )}
             {openLastConsensusDialog && (
-                <LastConsensusView term={term} consensus={lastConsensus} open={openLastConsensusDialog} onClose={() => setOpenLastConsensusDialog(false)} />
+                <LastConsensusView
+                    term={term}
+                    consensus={lastConsensus}
+                    open={openLastConsensusDialog}
+                    onClose={() => setOpenLastConsensusDialog(false)}
+                />
             )}
             {viewAgreementMode && (
                 <VoteView
@@ -277,7 +277,7 @@ const ExpandedRow = ({
                         }}
                     >
                         <Typography variant="body2" color="text.secondary">
-                            <strong>Modified:</strong>{' '}
+                            <strong>{isAccepted ? 'Agreed:' : 'Modified:'}</strong>{' '}
                             {new Date(updatedTerm.modified).toLocaleDateString() + ', ' + new Date(updatedTerm.modified).toLocaleTimeString()}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -310,25 +310,28 @@ const ExpandedRow = ({
                             width: '100%',
                             flex: '1 1 auto',
                             minHeight: 0,
-                            flexDirection: { xs: 'column', xl: 'row' }
+                            flexDirection: { xs: 'column', xl: 'row' },
+                            overflowY: { xs: 'auto', xl: 'hidden' }
                         }}
                     >
                         {/* LEFT: Term's Detail */}
                         <Box
                             sx={{
                                 width: { xs: '100%', xl: '50%' },
-                                flex: '1',
+                                flex: { xs: '0 0 auto', xl: '1 1 0' },
                                 display: 'flex',
                                 flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                gap: 3,
-                                p: 3,
-                                overflowY: 'auto',
+                                minHeight: 0,
                                 borderRight: theme => ({ xl: `1px solid ${theme.palette.divider}` })
                             }}
                         >
+                            {/* Scrollable details */}
                             <Box
                                 sx={{
+                                    flex: { xs: '0 0 auto', xl: '1 1 auto' },
+                                    minHeight: 0,
+                                    overflowY: { xl: 'auto' },
+                                    p: 3,
                                     display: 'flex',
                                     flexDirection: 'column',
                                     gap: 2
@@ -455,9 +458,13 @@ const ExpandedRow = ({
                                 </Accordion>
                             </Box>
 
-                            {/* Actions */}
+                            {!isAccepted && (
                             <Box
                                 sx={{
+                                    flex: '0 0 auto',
+                                    px: 3,
+                                    py: 2,
+                                    borderTop: theme => `1px solid ${theme.palette.divider}`,
                                     display: 'flex',
                                     justifyContent: 'flex-start',
                                     alignItems: 'center',
@@ -469,7 +476,6 @@ const ExpandedRow = ({
                                     <Tooltip title="Decide if the term's status is ready to be changed">
                                         <Button
                                             disabled={activeAgreement}
-                                            hidden={currentUser.role !== 'System Admin'}
                                             hidden={currentUser.role !== 'System Admin'}
                                             onClick={() => setInitiateTermAgreement(true)}
                                             variant="contained"
@@ -508,12 +514,15 @@ const ExpandedRow = ({
                                     Edit Term
                                 </Button>
                             </Box>
+                            )}
                         </Box>
 
                         {/* RIGHT: Discussion */}
                         <Box
                             sx={{
                                 width: { xs: '100%', xl: '50%' },
+                                flex: { xs: '0 0 auto', xl: '1 1 0' },
+                                height: { xs: 480, xl: 'auto' },
                                 p: 3,
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -529,7 +538,6 @@ const ExpandedRow = ({
                                     comments={termComments || []}
                                     mentionedUsers={[]}
                                     handleSaveDiscussion={handleSaveDiscussion}
-                                    setHasUncommittedChanges={setHasUncommittedChanges}
                                 />
                             </Box>
                         </Box>
@@ -633,7 +641,6 @@ ExpandedRow.propTypes = {
     editMode: PropTypes.bool.isRequired,
     termComments: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,
-    setHasUncommittedChanges: PropTypes.func.isRequired,
     setEditMode: PropTypes.func.isRequired,
     handleClosePopup: PropTypes.func.isRequired
 };
