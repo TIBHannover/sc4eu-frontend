@@ -6,21 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import {
-    Alert,
-    Box,
-    Button,
-    Chip,
-    darken,
-    IconButton,
-    lighten,
-    Snackbar,
-    styled,
-    Tooltip,
-    Typography,
-    useMediaQuery,
-    useTheme
-} from '@mui/material';
+import { Alert, Box, Button, Chip, darken, IconButton, lighten, Snackbar, styled, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -42,12 +28,14 @@ import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import { ToolbarNavBar } from './ToolbarNavBar';
 import CommitChanges from './CommitChanges';
-import { commitDiscussionOnly } from '../utils/CommitChanges';
+import { commitDiscussionOnly, commitTermChanges } from '../utils/CommitChanges';
 import { useLiveUpdates } from '../../../hooks/useLiveUpdates';
 import CreateNewTerm from './CreateNewTerm';
 import ExpandedRow from './ExpandedRow';
 import InformationHub from './InformationHub';
 import VoteView from './VoteView';
+import AgreedTermsTable from './AgreedTermsTable';
+import ViewSwitcher, { VOCABULARY_VIEWS } from './ViewSwitcher';
 import { Info } from '@mui/icons-material';
 import AcceptDeclineDialog from 'components/ReusableComponents/AcceptDeclineDialog';
 
@@ -105,16 +93,12 @@ const VocabularyMainTable = ({
     const [selectedTerm, setSelectedTerm] = useState(null);
     const [termComments, setTermComments] = useState([]);
     const [openCreateModal, setOpenCreateModal] = useState(false);
-    const [hasUncommittedChanges, setHasUncommittedChanges] = useState(false);
-    const [confirmDiscardChanges, setConfirmDiscardChanges] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [activeMUIPopUp, setActiveMUIPopUp] = useState(null);
+    const [activeView, setActiveView] = useState(VOCABULARY_VIEWS.MAIN);
     const history = useHistory();
     const theme = useTheme();
-    const baseBackgroundColor =
-        theme.palette.mode === 'light'
-            ? 'rgba(245, 245, 245, 1)' // white
-            : 'rgba(84, 90, 95, 1)'; // light gray
+    const baseBackgroundColor = theme.palette.surface.containerLow;
 
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
@@ -131,6 +115,9 @@ const VocabularyMainTable = ({
         pageSize: 10,
         pageIndex: 0
     });
+
+    const mainTerms = useMemo(() => terms.filter(term => term.status !== 'accept'), [terms]);
+    const agreedTerms = useMemo(() => terms.filter(term => term.status === 'accept'), [terms]);
 
     const urgentTerms = terms.filter(term =>
         votesMap.some(vote => vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName))
@@ -161,7 +148,6 @@ const VocabularyMainTable = ({
     }, [isLoadingTerms, terms]);
 
     useLiveUpdates({
-        hasUncommittedTermChanges: hasUncommittedChanges,
         onTermsRefreshed: freshTerms => {
             beforeEditsTermsRef.current = freshTerms;
         }
@@ -176,33 +162,6 @@ const VocabularyMainTable = ({
             setTermComments(latestComments);
         }
     }, [discussions, openPopup, selectedTerm]);
-
-    useEffect(() => {
-        const handleBeforeUnload = event => {
-            if (hasUncommittedChanges) {
-                event.preventDefault();
-                event.returnValue = 'You have uncommitted changes. Do you really want to leave?';
-            }
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
-        const unblock = history.block((location, action) => {
-            if (hasUncommittedChanges) {
-                if (window.confirm('You have uncommitted changes. Do you really want to leave?')) {
-                    unblock();
-                    history.push(location.pathname);
-                } else {
-                    return false;
-                }
-            }
-        });
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-            unblock();
-        };
-    }, [hasUncommittedChanges, history]);
 
     useEffect(() => {
         refetch();
@@ -687,40 +646,6 @@ const VocabularyMainTable = ({
                         maxWidth: '150px'
                     }
                 }
-            },
-            {
-                accessorKey: 'status',
-                header: 'Status',
-                Header: (
-                    { column } // Custom header with tooltip
-                ) => (
-                    <Tooltip title="The status of the term. It can be Draft, Reject or Accept">
-                        <span>{column.columnDef.header}</span>
-                    </Tooltip>
-                ),
-                size: 100,
-                enableEditing: false,
-                filterVariant: 'select',
-                filterFn: 'equals',
-                filterSelectOptions: [
-                    { text: 'Draft', value: 'draft' },
-                    { text: 'Reject', value: 'reject' },
-                    { text: 'Accept', value: 'accept' }
-                ],
-                muiFilterTextFieldProps: {
-                    placeholder: 'Filter',
-                    select: true
-                },
-                muiTableBodyCellProps: {
-                    sx: {
-                        maxWidth: 100
-                    }
-                },
-                muiTableHeadCellProps: {
-                    sx: {
-                        maxWidth: 100
-                    }
-                }
             }
         ],
         [validationErrors, votesMap]
@@ -736,14 +661,13 @@ const VocabularyMainTable = ({
         setValidationErrors({});
         values.identifier = uuid;
         await createTerm(values);
-        //We have to create a new discussion for this term
         const newDiscussion = { resourceId: uuid, comments: [] };
         await createDiscussion(newDiscussion);
+        const payload = { header: `Create term ${uuid}` };
+        await commitTermChanges(queryClient, payload);
         notSavedAddedTermsIdsRef.current.push(uuid);
         table.setCreatingRow(null);
-        //setNewTermOpen(false); // Close the create modal
-        setOpenCreateModal(false); // Close the create modal
-        setHasUncommittedChanges(true);
+        setOpenCreateModal(false);
     };
 
     const handleCancelCreateTerm = () => {
@@ -762,30 +686,16 @@ const VocabularyMainTable = ({
         setValidationErrors({});
         await updateTerm(values);
         table.setEditingRow(null);
-        setHasUncommittedChanges(true);
-    };
-
-    const handleDiscardChanges = async () => {
-        setConfirmDiscardChanges(false);
-        if (notSavedAddedTermsIdsRef.current.length > 0) {
-            for (const id of notSavedAddedTermsIdsRef.current) {
-                await handleDeleteDiscussion(id);
-            }
-            await commitDiscussionOnly(queryClient);
-        }
-        notSavedAddedTermsIdsRef.current = [];
-        pendingDeletedTermIds.current = [];
-        queryClient.setQueryData(['terms'], beforeEditsTermsRef.current);
-        setHasUncommittedChanges(false);
     };
 
     const openDeleteConfirmModal = async row => {
         if (window.confirm('Are you sure you want to delete this term?')) {
             await deleteTerm(row.id);
             await handleDeleteDiscussion(row.id);
+            const payload = { header: `Delete term ${row.id}` };
+            await commitTermChanges(queryClient, payload);
             pendingDeletedTermIds.current.push(row.id);
             table.setEditingRow(null);
-            setHasUncommittedChanges(true);
         }
     };
 
@@ -816,7 +726,7 @@ const VocabularyMainTable = ({
 
     const table = useMaterialReactTable({
         columns,
-        data: terms,
+        data: mainTerms,
         initialState: {
             sorting: [{ id: 'label', desc: false }],
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
@@ -934,51 +844,12 @@ const VocabularyMainTable = ({
         },
         renderBottomToolbarCustomActions: () => (
             <>
-                {hasUncommittedChanges && (
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                        <StyledTooltip
-                            title="You have made changes. Please don't forget to save your changes."
-                            disableHoverListener={!hasUncommittedChanges}
-                        >
-                            <Button
-                                variant="contained"
-                                onClick={() => setOpenCommit(true)}
-                                sx={{
-                                    backgroundColor: theme.palette.secondary.main,
-                                    color: theme.palette.secondary.contrastText,
-                                    border: hasUncommittedChanges ? '2px' + ' solid red' : '',
-                                    '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
-                                }}
-                            >
-                                Save Changes
-                            </Button>
-                        </StyledTooltip>
-                        <StyledTooltip
-                            title="You can revert creation, deletion or edit of term/-s with a click of this button."
-                            disableHoverListener={!hasUncommittedChanges}
-                        >
-                            <Button
-                                variant="outlined"
-                                onClick={() => setConfirmDiscardChanges(true)}
-                                sx={{
-                                    backgroundColor: 'transparent',
-                                    color: theme.palette.secondary.main,
-                                    '&:hover': { backgroundColor: `${theme.palette.secondary.main}1A`, color: theme.palette.secondary.main }
-                                }}
-                            >
-                                Discard changes
-                            </Button>
-                        </StyledTooltip>
-                    </Box>
-                )}
-
                 {openCommit && (
                     <CommitChanges
                         refetch={refetch}
                         baselineTerms={beforeEditsTermsRef.current}
                         openCommit={openCommit}
                         setOpenCommit={setOpenCommit}
-                        setHasUncommittedChanges={setHasUncommittedChanges}
                         user={currentUser.displayName}
                         onSuccess={async () => {
                             await deleteTermVotes(pendingDeletedTermIds.current);
@@ -990,22 +861,6 @@ const VocabularyMainTable = ({
                         onFail={() => {
                             console.error(`Error while commiting changes with ${pendingDeletedTermIds.current} terms`);
                         }}
-                    />
-                )}
-                {confirmDiscardChanges && (
-                    <AcceptDeclineDialog
-                        open={confirmDiscardChanges}
-                        onDecline={() => setConfirmDiscardChanges(false)}
-                        onAccept={handleDiscardChanges}
-                        title="Discard changes"
-                        message={
-                            <Typography variant="body2" sx={{ fontSize: '1rem' }}>
-                                Are you sure you want to discard all local changes? Any created, updated or removed terms that haven't been saved will
-                                be lost.
-                                <br />
-                                <b>This action cannot be undone.</b>
-                            </Typography>
-                        }
                     />
                 )}
             </>
@@ -1182,16 +1037,36 @@ const VocabularyMainTable = ({
                     </Alert>
                 </Snackbar>
             )}
-            <MaterialReactTable
-                table={table}
-                muiTableContainerProps={{
-                    sx: {
-                        width: '50%',
-                        maxWidth: '50vw',
-                        overflowX: 'auto'
-                    }
-                }}
-            />
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <ViewSwitcher
+                    value={activeView}
+                    onChange={setActiveView}
+                    mainCount={mainTerms.length}
+                    agreedCount={agreedTerms.length}
+                    isMobileScreen={isMobileScreen}
+                />
+                <Box sx={{ minWidth: 0 }}>
+                    {activeView === VOCABULARY_VIEWS.MAIN ? (
+                        <MaterialReactTable
+                            table={table}
+                            muiTableContainerProps={{
+                                sx: {
+                                    width: '50%',
+                                    maxWidth: '50vw',
+                                    overflowX: 'auto'
+                                }
+                            }}
+                        />
+                    ) : (
+                        <AgreedTermsTable
+                            terms={agreedTerms}
+                            isLoading={isLoadingTerms}
+                            onTermSelect={handleNavigateToMentionedTerm}
+                            onOpenTimeline={() => setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY)}
+                        />
+                    )}
+                </Box>
+            </Box>
             {selectedTerm && (
                 <MaterialUIPopUp
                     open={openPopup}
@@ -1205,7 +1080,6 @@ const VocabularyMainTable = ({
                             editMode={editMode}
                             termComments={termComments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
-                            setHasUncommittedChanges={setHasUncommittedChanges}
                             setEditMode={setEditMode}
                             handleClosePopup={handleClosePopup}
                         />

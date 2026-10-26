@@ -30,6 +30,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
 
     const [decision, setDecision] = useState('');
     const [comment, setComment] = useState('');
+    const [activeVote, setActiveVote] = useState(vote);
     const [decisions, setDecisions] = useState(vote.decisions);
     const [decisionMade, setDecisionMade] = useState(false);
     const [userHasVoted, setUserHasVoted] = useState(decisions.some(e => e.user_name === username && e.choice !== null));
@@ -48,6 +49,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
         const getVote = async () => {
             const data = await getTermVotes(term.identifier);
             if (data.length !== 0) {
+                setActiveVote(data[0]);
                 setDecisions(data[0].decisions);
             }
         };
@@ -201,7 +203,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                         </Box>
                     </Box>
 
-                    <ConsensusProgress term={vote} />
+                    <ConsensusProgress term={activeVote} />
                 </Grid>
 
                 <Grid item xs={12} md={8}>
