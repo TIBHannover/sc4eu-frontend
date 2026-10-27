@@ -23,7 +23,7 @@ self.addEventListener('push', event => {
         title: 'New Notification',
         body: 'You have a new notification',
         data: {
-            url: '/ocp/'
+            url: process.env.REACT_APP_PUBLIC_URL
         }
     };
 
@@ -36,7 +36,7 @@ self.addEventListener('push', event => {
                 body: payload.body || notificationData.body,
                 icon: payload.icon || notificationData.icon,
                 badge: payload.badge || notificationData.badge,
-                tag: payload.type || 'default',
+                tag: payload.tag,
                 data: {
                     url: payload.url || notificationData.data.url,
                     vote_id: payload.vote_id,
@@ -57,6 +57,27 @@ self.addEventListener('push', event => {
             tag: notificationData.tag,
             data: notificationData.data,
             requireInteraction: notificationData.requireInteraction
+        })
+    );
+});
+
+self.addEventListener('notificationclick', event => {
+    event.notification.close();
+
+    const path = event.notification.data?.url || process.env.REACT_APP_PUBLIC_URL;
+    const url = new URL(path, self.location.origin);
+    const target = url.origin === self.location.origin ? url.pathname + url.search + url.hash : process.env.REACT_APP_PUBLIC_URL;
+
+    event.waitUntil(
+        self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async windows => {
+            const window = windows.find(w => new URL(w.url).origin === self.location.origin);
+            if (window) {
+                // App is already open: focus it and let React router navigate (no page reload).
+                await window.focus();
+                window.postMessage({ type: 'NOTIFICATION_CLICK', url: target });
+                return;
+            }
+            return self.clients.openWindow(target);
         })
     );
 });

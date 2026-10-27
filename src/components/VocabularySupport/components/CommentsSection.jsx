@@ -215,7 +215,7 @@ function MentionPopper({ anchorEl, filteredUsers, onSelect }) {
                 <MenuList>
                     {filteredUsers.map(user => (
                         <MenuItem key={user.uuid} onClick={() => onSelect(user)}>
-                            <UserAvatar identifier={user.uuid}/>
+                            <UserAvatar identifier={user.uuid} />
                             {user.display_name}
                         </MenuItem>
                     ))}
@@ -368,7 +368,11 @@ function VoteColumn({ up, down, userVote, onVote }) {
             <Typography variant="caption" sx={{ ...countSx, color: userVote === 'up' ? 'primary.main' : 'text.secondary' }}>
                 {up}
             </Typography>
-            <IconButton size="small" onClick={() => onVote('down')} sx={{ p: 0.25, mt: 0.5, color: userVote === 'down' ? 'error.main' : 'text.disabled' }}>
+            <IconButton
+                size="small"
+                onClick={() => onVote('down')}
+                sx={{ p: 0.25, mt: 0.5, color: userVote === 'down' ? 'error.main' : 'text.disabled' }}
+            >
                 <ThumbDownOutlined fontSize="small" />
             </IconButton>
             <Typography variant="caption" sx={{ ...countSx, color: userVote === 'down' ? 'error.main' : 'text.secondary' }}>
@@ -639,7 +643,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     useEffect(() => {
         setComments(termComments);
     }, [termComments]);
-    
+
     const [users, setUsers] = useState([]);
     const [collapsedIds, setCollapsedIds] = useState(() => new Set());
 
@@ -685,12 +689,12 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const commitQueueRef = useRef(Promise.resolve());
 
     const persist = useCallback(
-        updatedComments => {
+        (updatedComments, comment) => {
             const run = () =>
                 trackDiscussionWrite(async () => {
                     await handleSaveDiscussion({ resourceId, comments: updatedComments });
                     setComments(updatedComments);
-                    await commitDiscussionOnly(queryClient);
+                    await commitDiscussionOnly(queryClient, comment, resourceId);
                 });
 
             const result = commitQueueRef.current.then(run, run);
@@ -717,8 +721,10 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         };
 
         const updatedComments = [...comments, newComment];
-        await persist(updatedComments);
-        await notifyNewComment();
+        await persist(updatedComments, newComment);
+        if (newComment.mentionedUsers !== undefined) {
+            await notifyNewComment(resourceId, newComment.mentionedUsers);
+        }
     };
 
     const handleTopLevelSubmit = () => {

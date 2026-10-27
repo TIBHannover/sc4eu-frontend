@@ -112,7 +112,7 @@ database.getTermOfTheWeek(router);
 database.closeConsensus(router);
 database.subscribePush(router);
 database.unsubscribePush(router);
-database.notifyAddRemoveTerm(router);
+database.notifyTermUpdate(router);
 database.notifyNewComment(router);
 processing.getJSONModelForOntologyID(router);
 processing.getJSONModelForOntologyIDWithQuery(router);

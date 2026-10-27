@@ -604,7 +604,6 @@ module.exports = {
                 const token = jwt.verify(req.token, process.env.JWT_SECRET);
 
                 if (token) {
-
                     const data = JSON.stringify(req.body);
 
                     const project_options = {
@@ -794,12 +793,12 @@ module.exports = {
         });
     },
 
-    notifyAddRemoveTerm: function(app) {
-        app.post('/notifyAddRemoveTerm', (req, res) => {
+    notifyNewComment: function(app) {
+        app.post('/notifyNewComment', (req, res) => {
             const data = JSON.stringify(req.body);
 
             const project_options = {
-                uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/notifyTerms`,
+                uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/notifyComments`,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -823,12 +822,12 @@ module.exports = {
         });
     },
 
-    notifyNewComment: function(app) {
-        app.post('/notifyNewComment', (req, res) => {
+    notifyTermUpdate: function(app) {
+        app.post('/notifyTermUpdate', (req, res) => {
             const data = JSON.stringify(req.body);
 
             const project_options = {
-                uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/notifyComments`,
+                uri: `${process.env.BACKEND_FASTAPI_SERVER_URL}/api/push/notifyTerms`,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
