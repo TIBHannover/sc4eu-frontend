@@ -35,6 +35,7 @@ import LastConsensusView from './LastConsensusView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import AcceptDeclineDialog from '../../ReusableComponents/AcceptDeclineDialog';
 import VoteView from './VoteView';
+import { usePushNotifications } from 'hooks/usePushNotifications';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, handleSaveDiscussion, setEditMode, handleClosePopup }) => {
     const theme = useTheme();
@@ -54,6 +55,8 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
     const [confirmCloseConsensus, setConfirmCloseConsensus] = useState(false);
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
+
+    const { notifyTermUpdate } = usePushNotifications(currentUser.displayName);
 
     const handleSetVoteViewMode = isOpen => {
         setViewAgreementMode(isOpen);
@@ -90,13 +93,41 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
 
     const [updatedTerm, setUpdatedTerm] = useState({
         ...term,
-        altLabel: term.altLabel || '',
+        altLabel: term.altLabel,
         description: term.description || '',
         seeAlso: term.seeAlso || '',
         status: term.status || '',
         created: term.created || '',
         modified: term.modified || ''
     });
+
+    const fallbackAltLabels = updatedTerm.altLabel?.length ? updatedTerm.altLabel.split(',') : [''];
+
+    const normalizeAltLabels = altLabel => {
+        const labels = (altLabel || '').split(',');
+        const trimmedLabels = labels.map(label => label.trim());
+        const nonEmptyLabels = trimmedLabels.filter(label => label !== '');
+        return nonEmptyLabels.join(',');
+    };
+
+    // Returns true if the user changed at least one editable field compared to the original term.
+    const checkHasChanges = () => {
+        const editableFields = ['label', 'description', 'seeAlso', 'status'];
+
+        for (const field of editableFields) {
+            const newValue = updatedTerm[field] || '';
+            const oldValue = term[field] || '';
+            if (newValue !== oldValue) {
+                return true;
+            }
+        }
+
+        const newAltLabels = normalizeAltLabels(updatedTerm.altLabel);
+        const oldAltLabels = normalizeAltLabels(term.altLabel);
+        return newAltLabels !== oldAltLabels;
+    };
+
+    const hasChanges = checkHasChanges();
 
     useEffect(() => {
         const getVote = async () => {
@@ -123,15 +154,11 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
         '&:hover': { backgroundColor: `${theme.palette.secondary.main}99`, color: theme.palette.secondary.contrastText }
     };
 
-    const splitAltLabels = altLabel => {
-        return altLabel ? altLabel.split(',') : [''];
-    };
-
     const handleInputChange = e => {
         let { name, value } = e.target;
         if (name.startsWith('altLabel')) {
             const index = Number.parseInt(name.split('-')[1], 10);
-            const altLabels = splitAltLabels(updatedTerm.altLabel);
+            const altLabels = updatedTerm.altLabel ? updatedTerm.altLabel.split(',') : ['']
             altLabels[index] = value;
             value = altLabels.join(',');
             setUpdatedTerm({ ...updatedTerm, altLabel: value, modified: new Date().toISOString() });
@@ -142,22 +169,27 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
 
     const handleAddAlternativeLabel = () => {
         if (!updatedTerm.altLabel) {
-            setUpdatedTerm({ ...updatedTerm, altLabel: '' });
             return;
         }
 
-        const altLabels = splitAltLabels(updatedTerm.altLabel);
+        const altLabels = updatedTerm.altLabel.split(',');
         altLabels.push('');
         setUpdatedTerm({ ...updatedTerm, altLabel: altLabels.join(','), modified: new Date().toISOString() });
     };
 
     const handleSave = async () => {
+        if (!hasChanges) {
+            return;
+        }
+        const termToSave = { ...updatedTerm, altLabel: normalizeAltLabels(updatedTerm.altLabel) };
         const cachedTerms = queryClient.getQueryData(['terms']);
-        const termBeforeChange = cachedTerms.find(term => term.identifier === updatedTerm.identifier);
-        const changes = generateChangedValues(termBeforeChange, updatedTerm);
-        const payload = { header: `Update term ${updatedTerm.identifier}`, body: changes };
-        await updateTerm(updatedTerm);
+        const termBeforeChange = cachedTerms.find(term => term.identifier === termToSave.identifier);
+        const changes = generateChangedValues(termBeforeChange, termToSave);
+        const payload = { header: `Update term ${termToSave.identifier}`, body: changes };
+        
+        await updateTerm(termToSave);
         await commitTermChanges(queryClient, payload);
+        await notifyTermUpdate(termToSave.identifier, termBeforeChange.label, payload)
         setEditMode(false);
     };
 
@@ -367,35 +399,34 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                                 </Box>
 
                                 {/* Alternative labels */}
-                                {updatedTerm.altLabel &&
-                                    splitAltLabels(updatedTerm.altLabel).map((label, index) => (
-                                        <Box key={'altLabel' + index} sx={{ fontSize: '1rem' }}>
-                                            <Typography
-                                                component="span"
-                                                variant="body2"
-                                                color="text.secondary"
-                                                fontWeight={600}
-                                                sx={{ fontSize: 'inherit' }}
-                                            >
-                                                Alternative Label {index + 1}:
-                                            </Typography>
-                                            <Typography
-                                                component="span"
-                                                variant="body2"
-                                                fontWeight={600}
-                                                sx={{
-                                                    fontSize: 'inherit',
-                                                    ml: 1,
-                                                    px: 1,
-                                                    py: 0.5,
-                                                    borderRadius: 1,
-                                                    backgroundColor: 'action.hover'
-                                                }}
-                                            >
-                                                {label}
-                                            </Typography>
-                                        </Box>
-                                    ))}
+                                {fallbackAltLabels.map((label, index) => (
+                                    <Box key={'altLabel' + index} sx={{ fontSize: '1rem' }}>
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                            color="text.secondary"
+                                            fontWeight={600}
+                                            sx={{ fontSize: 'inherit' }}
+                                        >
+                                            Alternative Label {index + 1}:
+                                        </Typography>
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                            fontWeight={600}
+                                            sx={{
+                                                fontSize: 'inherit',
+                                                ml: 1,
+                                                px: 1,
+                                                py: 0.5,
+                                                borderRadius: 1,
+                                                backgroundColor: 'action.hover'
+                                            }}
+                                        >
+                                            {label}
+                                        </Typography>
+                                    </Box>
+                                ))}
 
                                 {/* Description */}
                                 <Box
@@ -459,61 +490,66 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                             </Box>
 
                             {!isAccepted && (
-                            <Box
-                                sx={{
-                                    flex: '0 0 auto',
-                                    px: 3,
-                                    py: 2,
-                                    borderTop: theme => `1px solid ${theme.palette.divider}`,
-                                    display: 'flex',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: 1.5,
-                                    flexWrap: 'wrap'
-                                }}
-                            >
-                                {!activeAgreement && (
-                                    <Tooltip title="Decide if the term's status is ready to be changed">
-                                        <Button
-                                            disabled={activeAgreement}
-                                            hidden={currentUser.role !== 'System Admin'}
-                                            onClick={() => setInitiateTermAgreement(true)}
-                                            variant="contained"
-                                            sx={buttonStyle}
-                                            fullWidth={isMobile}
-                                        >
-                                            Start consensus
-                                        </Button>
-                                    </Tooltip>
-                                )}
-                                {activeAgreement && (
-                                    <>
-                                        <Button onClick={() => handleSetVoteViewMode(true)} variant="contained" sx={buttonStyle} fullWidth={isMobile}>
-                                            View ongoing consensus
-                                        </Button>
-                                        {currentUser.role.toString().toLowerCase() === 'system admin' && (
+                                <Box
+                                    sx={{
+                                        flex: '0 0 auto',
+                                        px: 3,
+                                        py: 2,
+                                        borderTop: theme => `1px solid ${theme.palette.divider}`,
+                                        display: 'flex',
+                                        justifyContent: 'flex-start',
+                                        alignItems: 'center',
+                                        gap: 1.5,
+                                        flexWrap: 'wrap'
+                                    }}
+                                >
+                                    {!activeAgreement && (
+                                        <Tooltip title="Decide if the term's status is ready to be changed">
                                             <Button
-                                                onClick={() => setConfirmCloseConsensus(true)}
+                                                disabled={activeAgreement}
+                                                hidden={currentUser.role !== 'System Admin'}
+                                                onClick={() => setInitiateTermAgreement(true)}
                                                 variant="contained"
                                                 sx={buttonStyle}
                                                 fullWidth={isMobile}
                                             >
-                                                Close consensus
+                                                Start consensus
                                             </Button>
-                                        )}
-                                    </>
-                                )}
+                                        </Tooltip>
+                                    )}
+                                    {activeAgreement && (
+                                        <>
+                                            <Button
+                                                onClick={() => handleSetVoteViewMode(true)}
+                                                variant="contained"
+                                                sx={buttonStyle}
+                                                fullWidth={isMobile}
+                                            >
+                                                View ongoing consensus
+                                            </Button>
+                                            {currentUser.role.toString().toLowerCase() === 'system admin' && (
+                                                <Button
+                                                    onClick={() => setConfirmCloseConsensus(true)}
+                                                    variant="contained"
+                                                    sx={buttonStyle}
+                                                    fullWidth={isMobile}
+                                                >
+                                                    Close consensus
+                                                </Button>
+                                            )}
+                                        </>
+                                    )}
 
-                                <Button
-                                    hidden={activeAgreement}
-                                    onClick={() => setEditMode(true)}
-                                    variant="outlined"
-                                    sx={{ ...buttonStyle, backgroundColor: 'transparent', color: theme.palette.secondary.main }}
-                                    fullWidth={isMobile}
-                                >
-                                    Edit Term
-                                </Button>
-                            </Box>
+                                    <Button
+                                        hidden={activeAgreement}
+                                        onClick={() => setEditMode(true)}
+                                        variant="outlined"
+                                        sx={{ ...buttonStyle, backgroundColor: 'transparent', color: theme.palette.secondary.main }}
+                                        fullWidth={isMobile}
+                                    >
+                                        Edit Term
+                                    </Button>
+                                </Box>
                             )}
                         </Box>
 
@@ -570,7 +606,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                                 sx={{ marginBottom: '15px' }}
                             />
                         </Box>
-                        {splitAltLabels(updatedTerm.altLabel).map((label, index) => (
+                        {fallbackAltLabels.map((label, index) => (
                             <Box key={'altLabel_' + index} sx={{ display: 'flex', flexDirection: 'column' }}>
                                 <Typography variant="subtitle2" sx={{ marginTop: '10px', color: theme.palette.text.primary }}>
                                     <strong>Alternative Label {index + 1}:</strong>
@@ -587,9 +623,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                                 />
                             </Box>
                         ))}
-                        {(!updatedTerm.altLabel || splitAltLabels(updatedTerm.altLabel).length < 5) && (
-                            <Button onClick={handleAddAlternativeLabel}>+ Add Alternative Label</Button>
-                        )}
+                        {fallbackAltLabels.length < 5 && <Button onClick={handleAddAlternativeLabel}>+ Add Alternative Label</Button>}
                         {/* Other fields */}
                         <Box sx={{ display: 'flex', flexDirection: 'column', marginTop: '10px' }}>
                             <Typography variant="subtitle2" sx={{ marginBottom: '5px', color: theme.palette.text.primary }}>
@@ -620,7 +654,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                             />
                         </Box>
                         <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-start', gap: '15px' }}>
-                            <Button onClick={handleSave} variant="contained" sx={buttonStyle}>
+                            <Button onClick={handleSave} variant="contained" sx={buttonStyle} disabled={!hasChanges}>
                                 Save Updates
                             </Button>
                             <Button onClick={() => setEditMode(false)} variant="contained" sx={buttonStyle}>
