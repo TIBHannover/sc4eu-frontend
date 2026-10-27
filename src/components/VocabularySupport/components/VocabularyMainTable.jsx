@@ -27,8 +27,7 @@ import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
 import { ToolbarNavBar } from './ToolbarNavBar';
-import CommitChanges from './CommitChanges';
-import { commitDiscussionOnly, commitTermChanges } from '../utils/CommitChanges';
+import { commitTermChanges } from '../utils/CommitChanges';
 import { useLiveUpdates } from '../../../hooks/useLiveUpdates';
 import CreateNewTerm from './CreateNewTerm';
 import ExpandedRow from './ExpandedRow';
@@ -37,7 +36,7 @@ import VoteView from './VoteView';
 import AgreedTermsTable from './AgreedTermsTable';
 import ViewSwitcher, { VOCABULARY_VIEWS } from './ViewSwitcher';
 import { Info } from '@mui/icons-material';
-import AcceptDeclineDialog from 'components/ReusableComponents/AcceptDeclineDialog';
+import { usePushNotifications } from 'hooks/usePushNotifications';
 
 function isValidUrl(string) {
     try {
@@ -88,7 +87,6 @@ const VocabularyMainTable = ({
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
     const { mutateAsync: deleteTerm, isPending: isDeletingTerm } = useDeleteTerm();
     const { mutateAsync: createDiscussion } = useCreateDiscussion();
-    const [openCommit, setOpenCommit] = useState(false);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedTerm, setSelectedTerm] = useState(null);
     const [termComments, setTermComments] = useState([]);
@@ -111,6 +109,8 @@ const VocabularyMainTable = ({
     const { data: votesMap = [], isLoading: isLoadingVotes } = useQuery(VOTES_QUERY_KEY, getVotes);
     const [deepLinkNotification, setDeepLinkNotification] = useState(null);
 
+    const { notifyTermUpdate } = usePushNotifications(currentUser.displayName);
+
     const [pagination, setPagination] = useState({
         pageSize: 10,
         pageIndex: 0
@@ -118,7 +118,7 @@ const VocabularyMainTable = ({
 
     const mainTerms = useMemo(() => terms.filter(term => term.status !== 'accept'), [terms]);
     const agreedTerms = useMemo(() => terms.filter(term => term.status === 'accept'), [terms]);
-
+    
     const urgentTerms = terms.filter(term =>
         votesMap.some(vote => vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName))
     );
@@ -665,6 +665,7 @@ const VocabularyMainTable = ({
         await createDiscussion(newDiscussion);
         const payload = { header: `Create term ${uuid}` };
         await commitTermChanges(queryClient, payload);
+        await notifyTermUpdate(uuid, values.label, payload);
         notSavedAddedTermsIdsRef.current.push(uuid);
         table.setCreatingRow(null);
         setOpenCreateModal(false);
@@ -694,6 +695,7 @@ const VocabularyMainTable = ({
             await handleDeleteDiscussion(row.id);
             const payload = { header: `Delete term ${row.id}` };
             await commitTermChanges(queryClient, payload);
+            await notifyTermUpdate(row.id, row.original.label, payload);
             pendingDeletedTermIds.current.push(row.id);
             table.setEditingRow(null);
         }
@@ -842,29 +844,6 @@ const VocabularyMainTable = ({
                 </div>
             );
         },
-        renderBottomToolbarCustomActions: () => (
-            <>
-                {openCommit && (
-                    <CommitChanges
-                        refetch={refetch}
-                        baselineTerms={beforeEditsTermsRef.current}
-                        openCommit={openCommit}
-                        setOpenCommit={setOpenCommit}
-                        user={currentUser.displayName}
-                        onSuccess={async () => {
-                            await deleteTermVotes(pendingDeletedTermIds.current);
-                            notSavedAddedTermsIdsRef.current = [];
-                            pendingDeletedTermIds.current = [];
-                            await queryClient.invalidateQueries(VOTES_QUERY_KEY);
-                            beforeEditsTermsRef.current = queryClient.getQueryData(['terms']);
-                        }}
-                        onFail={() => {
-                            console.error(`Error while commiting changes with ${pendingDeletedTermIds.current} terms`);
-                        }}
-                    />
-                )}
-            </>
-        ),
         state: {
             columnVisibility,
             density,

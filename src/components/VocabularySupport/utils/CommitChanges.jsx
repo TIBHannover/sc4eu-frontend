@@ -37,9 +37,9 @@ export const waitForDiscussionWritesIdle = () =>
     discussionWritesInFlight === 0 ? Promise.resolve() : new Promise(resolve => idleResolvers.push(resolve));
 
 // Commits only the discussion data
-export async function commitDiscussionOnly(queryClient) {
+export async function commitDiscussionOnly(queryClient, comment, resourceId) {
     await trackDiscussionWrite(async () => {
-        const commitMessage = 'Update discussion'; // Hardcoded for now
+        const commitMessage = `Add comment by ${comment.author} on term ${resourceId}`;
         const jsonDataToCommit = queryClient.getQueryData(['discussions']);
         await saveAllDiscussion(jsonDataToCommit, commitMessage);
         await queryClient.invalidateQueries({ queryKey: ['discussions'] });
@@ -47,7 +47,7 @@ export async function commitDiscussionOnly(queryClient) {
 }
 
 export const commitTermChanges = async (queryClient, payload) => {
-    const commitMessage = isEmpty(payload.body) ? `${payload.header}` : `${payload.header}\n\n${JSON.stringify(payload.body)}`;
+    const commitMessage = isEmpty(payload.body) ? `${payload.header}` : `${payload.header}\n\n${payload.body}`;
     const dataToCommit = queryClient.getQueryData(['terms']);
     await saveAllTerms(dataToCommit, commitMessage);
     await queryClient.invalidateQueries({ queryKey: ['terms'] });
@@ -111,15 +111,8 @@ export const generateChangedValues = (termBeforeChange, termAfterChange) => {
     const before = omit(termBeforeChange, IGNORED_KEYS);
     const after = omit(termAfterChange, IGNORED_KEYS);
 
-    let result = {};
-    union(Object.keys(before), Object.keys(after)).forEach(key => {
-        console.log(key)
-        if (!isEqual(before[key], after[key])) {
-            result[key] = {
-                from: before[key] ?? null,
-                to: after[key] ?? null
-            };
-        }
-    });
-    return result;
+    return union(Object.keys(before), Object.keys(after))
+        .filter(key => !isEqual(before[key], after[key]))
+        .flatMap(key => [`${key}-from: ${before[key] ?? null}`, `${key}-to: ${after[key]}`])
+        .join('\n');
 };
