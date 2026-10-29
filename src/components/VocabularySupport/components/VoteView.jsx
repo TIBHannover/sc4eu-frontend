@@ -139,13 +139,25 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                 <Grid item xs={12}>
                     <Box sx={{ mb: 2 }}>
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 0 }}>
-                                    {term.label}
-                                </Typography>
-                                <Tooltip title={<Typography fontSize={14}>By agreeing, you confirm that the term's data, description and definition are well described and ready to be present in the vocabulary</Typography>}>
-                                    <InfoOutlinedIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
-                                </Tooltip>
+                            <Box>
+                                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                                    <Typography variant="h5" fontWeight={600} sx={{ color: theme.palette.text.secondary }}>
+                                        Label:
+                                    </Typography>
+                                    <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 0 }}>
+                                        {term.label}
+                                    </Typography>
+                                    <Tooltip
+                                        title={
+                                            <Typography fontSize={14}>
+                                                By agreeing, you confirm that the term's data, description and definition are well described and ready
+                                                to be present in the vocabulary
+                                            </Typography>
+                                        }
+                                    >
+                                        <InfoOutlinedIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
+                                    </Tooltip>
+                                </Box>
                             </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
                                 <Tooltip title="Copy URL of this consensus into a clipboard for easy sharing">
@@ -188,6 +200,9 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 }
                             }}
                         />
+                        <Typography variant="body2" fontWeight={600} sx={{ color: theme.palette.text.secondary, mt: 1.5, mb: 0.5 }}>
+                            Description:
+                        </Typography>
                         <Box
                             sx={{
                                 backgroundColor: theme.palette.background.default,

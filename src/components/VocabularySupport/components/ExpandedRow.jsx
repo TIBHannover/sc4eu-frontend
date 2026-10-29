@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useMediaQuery } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -35,7 +35,11 @@ import LastConsensusView from './LastConsensusView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
 import AcceptDeclineDialog from '../../ReusableComponents/AcceptDeclineDialog';
 import VoteView from './VoteView';
+import TermVersionsToolbar from './TermVersionsToolbar';
+import TermVersionsCompare from './TermVersionsCompare';
+import { formatVersionDate, mockTermVersions, STATUS_CHIP_VARIANTS } from '../utils/TermVersions';
 import { usePushNotifications } from 'hooks/usePushNotifications';
+import { getTermVersions } from 'network/gitLocalCalls';
 
 const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, handleSaveDiscussion, setEditMode, handleClosePopup }) => {
     const theme = useTheme();
@@ -102,6 +106,33 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
     });
 
     const fallbackAltLabels = updatedTerm.altLabel?.length ? updatedTerm.altLabel.split(',') : [''];
+
+    // MOCK: replace with versions fetched from the server (newest first).
+    const termVersions = useMemo(() => mockTermVersions(term), [term]);
+    const latestVersion = termVersions[0];
+    const [selectedVersionSha, setSelectedVersionSha] = useState(null);
+    const [compareShas, setCompareShas] = useState(null);
+
+    const selectedVersion = termVersions.find(version => version.sha === selectedVersionSha) || latestVersion;
+    const isLatestSelected = selectedVersion.sha === latestVersion.sha;
+    const isCompareMode = Boolean(compareShas);
+    // Fall back to the defaults if a selected version disappeared after the versions were refetched.
+    const compareFromVersion = isCompareMode ? termVersions.find(version => version.sha === compareShas.from) || termVersions[1] : null;
+    const compareToVersion = isCompareMode ? termVersions.find(version => version.sha === compareShas.to) || termVersions[0] : null;
+
+    const displayedTerm = isLatestSelected ? updatedTerm : selectedVersion.term;
+    const displayedAltLabels = displayedTerm.altLabel?.length ? displayedTerm.altLabel.split(',') : [''];
+
+    const handleSelectVersion = sha => setSelectedVersionSha(sha === latestVersion.sha ? null : sha);
+
+    // Defaults: latest version on the right ("To"), the one before it on the left ("From").
+    const handleToggleCompare = () => {
+        if (isCompareMode) {
+            setCompareShas(null);
+        } else if (termVersions.length > 1) {
+            setCompareShas({ from: termVersions[1].sha, to: termVersions[0].sha });
+        }
+    };
 
     const normalizeAltLabels = altLabel => {
         const labels = (altLabel || '').split(',');
@@ -186,26 +217,26 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
         const termBeforeChange = cachedTerms.find(term => term.identifier === termToSave.identifier);
         const changes = generateChangedValues(termBeforeChange, termToSave);
         const payload = { header: `Update term ${termToSave.identifier}`, body: changes };
-        
+
         await updateTerm(termToSave);
         await commitTermChanges(queryClient, payload);
-        await notifyTermUpdate(termToSave.identifier, termBeforeChange.label, payload)
+        await notifyTermUpdate(termToSave.identifier, termBeforeChange.label, payload);
         setEditMode(false);
     };
 
-    const renderSeeAlso = () => {
-        if (!updatedTerm.seeAlso) {
+    const renderSeeAlso = termToRender => {
+        if (!termToRender.seeAlso) {
             return '';
         }
-        if (updatedTerm.seeAlso.startsWith('url:')) {
-            const url = updatedTerm.seeAlso.substring(4);
+        if (termToRender.seeAlso.startsWith('url:')) {
+            const url = termToRender.seeAlso.substring(4);
             return (
                 <Link href={url} target="_blank" rel="noopener noreferrer">
-                    {updatedTerm.label}
+                    {termToRender.label}
                 </Link>
             );
         }
-        return updatedTerm.seeAlso;
+        return termToRender.seeAlso;
     };
 
     const handleAgreementSubmit = async () => {
@@ -374,127 +405,163 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                                     gap: 2
                                 }}
                             >
-                                {/* Title & badges */}
-                                <Box>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
-                                        {activeAgreement && <StyledChip label="Pending Consensus" size="small" customVariant="pendingConsensus" />}
-                                        <StyledChip
-                                            label={updatedTerm.status || 'Unknown'}
-                                            size="small"
-                                            customVariant={
-                                                {
-                                                    reject: 'rejected',
-                                                    draft: 'draft',
-                                                    accept: 'accepted'
-                                                }[updatedTerm.status?.toLowerCase()] || 'draft'
-                                            }
-                                        />
-                                        {lastConsensus && (
-                                            <Chip
-                                                label="Check last consensus"
-                                                size="small"
-                                                variant="outlined"
-                                                onClick={() => setOpenLastConsensusDialog(true)}
-                                            />
+                                {isCompareMode && compareFromVersion && compareToVersion && (
+                                    <TermVersionsCompare fromVersion={compareFromVersion} toVersion={compareToVersion} />
+                                )}
+                                {!isCompareMode && (
+                                    <>
+                                        {!isLatestSelected && (
+                                            <Alert
+                                                severity="info"
+                                                action={
+                                                    <Button color="inherit" size="small" onClick={() => setSelectedVersionSha(null)}>
+                                                        Back to latest
+                                                    </Button>
+                                                }
+                                            >
+                                                You are viewing version {selectedVersion.number} from {formatVersionDate(selectedVersion.date)} by{' '}
+                                                {selectedVersion.author}. This is a read-only snapshot.
+                                            </Alert>
                                         )}
-                                    </Box>
-                                    <Typography variant="h4" fontWeight={800} color="text.primary">
-                                        {updatedTerm.label}
-                                    </Typography>
-                                </Box>
+                                        {/* Title & badges */}
+                                        <Box>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+                                                {isLatestSelected && activeAgreement && (
+                                                    <StyledChip label="Pending Consensus" size="small" customVariant="pendingConsensus" />
+                                                )}
+                                                <StyledChip
+                                                    label={displayedTerm.status || 'Unknown'}
+                                                    size="small"
+                                                    customVariant={STATUS_CHIP_VARIANTS[displayedTerm.status?.toLowerCase()] || 'draft'}
+                                                />
+                                                {isLatestSelected && lastConsensus && (
+                                                    <Chip
+                                                        label="Check last consensus"
+                                                        size="small"
+                                                        variant="outlined"
+                                                        onClick={() => setOpenLastConsensusDialog(true)}
+                                                    />
+                                                )}
+                                            </Box>
+                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
+                                                <Typography
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                    fontWeight={600}
+                                                    sx={{ fontSize: '1.125rem', mt: 1 }}
+                                                >
+                                                    Label:
+                                                </Typography>
+                                                <Typography variant="h4" fontWeight={600} color="text.primary">
+                                                    {displayedTerm.label}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
 
-                                {/* Alternative labels */}
-                                {fallbackAltLabels.map((label, index) => (
-                                    <Box key={'altLabel' + index} sx={{ fontSize: '1rem' }}>
-                                        <Typography
-                                            component="span"
-                                            variant="body2"
-                                            color="text.secondary"
-                                            fontWeight={600}
-                                            sx={{ fontSize: 'inherit' }}
-                                        >
-                                            Alternative Label {index + 1}:
-                                        </Typography>
-                                        <Typography
-                                            component="span"
-                                            variant="body2"
-                                            fontWeight={600}
+                                        {/* Alternative labels */}
+                                        {displayedAltLabels.map((label, index) => (
+                                            <Box key={'altLabel' + index} sx={{ fontSize: '1rem' }}>
+                                                <Typography
+                                                    component="span"
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                    fontWeight={600}
+                                                    sx={{ fontSize: '1.125rem' }}
+                                                >
+                                                    Alternative Label {index + 1}:
+                                                </Typography>
+                                                <Typography
+                                                    component="span"
+                                                    variant="body2"
+                                                    fontWeight={600}
+                                                    sx={{
+                                                        fontSize: 'inherit',
+                                                        ml: 1,
+                                                        px: 1,
+                                                        py: 0.5,
+                                                        borderRadius: 1,
+                                                        backgroundColor: 'action.hover'
+                                                    }}
+                                                >
+                                                    {label}
+                                                </Typography>
+                                            </Box>
+                                        ))}
+
+                                        {/* Description */}
+                                        <Box>
+                                            <Typography
+                                                variant="body2"
+                                                color="text.secondary"
+                                                fontWeight={600}
+                                                sx={{ fontSize: '1.125rem', mb: 0.5 }}
+                                            >
+                                                Description:
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    borderLeft: theme => `3px solid ${theme.palette.primary.main}`,
+                                                    pl: 2
+                                                }}
+                                            >
+                                                <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.125rem' }}>
+                                                    {displayedTerm.description}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        <Accordion
+                                            disableGutters
+                                            elevation={0}
                                             sx={{
-                                                fontSize: 'inherit',
-                                                ml: 1,
-                                                px: 1,
-                                                py: 0.5,
-                                                borderRadius: 1,
-                                                backgroundColor: 'action.hover'
+                                                backgroundColor: 'transparent',
+                                                '&:before': { display: 'none' },
+                                                '&.Mui-expanded': { margin: 0 }
                                             }}
                                         >
-                                            {label}
-                                        </Typography>
-                                    </Box>
-                                ))}
+                                            <AccordionSummary
+                                                expandIcon={<ExpandMoreIcon fontSize="small" />}
+                                                sx={{
+                                                    minHeight: 36,
+                                                    px: 0,
+                                                    '& .MuiAccordionSummary-content': { margin: '8px 0' }
+                                                }}
+                                            >
+                                                <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
+                                                    More technical details{' '}
+                                                    <Typography variant="body2" fontStyle="italic" component="span" sx={{ fontSize: '1rem' }}>
+                                                        (see Also)
+                                                    </Typography>
+                                                </Typography>
+                                            </AccordionSummary>
 
-                                {/* Description */}
-                                <Box
-                                    sx={{
-                                        borderLeft: theme => `3px solid ${theme.palette.primary.main}`,
-                                        pl: 2
-                                    }}
-                                >
-                                    <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.125rem' }}>
-                                        {updatedTerm.description}
-                                    </Typography>
-                                </Box>
-
-                                <Accordion
-                                    disableGutters
-                                    elevation={0}
-                                    sx={{
-                                        backgroundColor: 'transparent',
-                                        '&:before': { display: 'none' },
-                                        '&.Mui-expanded': { margin: 0 }
-                                    }}
-                                >
-                                    <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon fontSize="small" />}
-                                        sx={{
-                                            minHeight: 36,
-                                            px: 0,
-                                            '& .MuiAccordionSummary-content': { margin: '8px 0' }
-                                        }}
-                                    >
-                                        <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
-                                            More technical details{' '}
-                                            <Typography variant="body2" fontStyle="italic" component="span" sx={{ fontSize: '1rem' }}>
-                                                (see Also)
-                                            </Typography>
-                                        </Typography>
-                                    </AccordionSummary>
-
-                                    <AccordionDetails sx={{ pt: 0, px: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                        <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
-                                            <Tooltip title="Unique identifier for the term">
-                                                <IconButton size="small">
-                                                    <HelpOutlineIcon fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <strong>Identifier:</strong> {updatedTerm.identifier}
-                                        </Typography>
-                                        <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
-                                            <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
-                                                <IconButton size="small">
-                                                    <HelpOutlineIcon fontSize="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <strong>See Also:</strong> {renderSeeAlso()}
-                                        </Typography>
-                                        <Typography variant="body1" sx={{ fontSize: '1.125rem' }}>
-                                            <strong>Created at:</strong> {new Date(updatedTerm.created).toLocaleDateString()}
-                                        </Typography>
-                                    </AccordionDetails>
-                                </Accordion>
+                                            <AccordionDetails sx={{ pt: 0, px: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                                <Typography variant="body1" sx={{ fontSize: '1  rem' }}>
+                                                    <Tooltip title="Unique identifier for the term">
+                                                        <IconButton size="small">
+                                                            <HelpOutlineIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <strong>Identifier:</strong> {displayedTerm.identifier}
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ fontSize: '1rem' }}>
+                                                    <Tooltip title="Indicates a resource that might provide additional information about the subject resource">
+                                                        <IconButton size="small">
+                                                            <HelpOutlineIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <strong>See Also:</strong> {renderSeeAlso(displayedTerm)}
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ fontSize: '1rem', ml: 3.65 }}>
+                                                    <strong>Created at:</strong> {new Date(displayedTerm.created).toLocaleDateString()}
+                                                </Typography>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    </>
+                                )}
                             </Box>
 
-                            {!isAccepted && (
+                            {!isAccepted && isLatestSelected && !isCompareMode && (
                                 <Box
                                     sx={{
                                         flex: '0 0 auto',
