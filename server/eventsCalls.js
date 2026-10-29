@@ -23,7 +23,7 @@ const parseFileUrl = fileUrl => {
 };
 
 const getWatchedFiles = () => ({
-    terms_changed: parseFileUrl(process.env.VOCABULARY_SERVICE_URL),
+    terms_changed: parseFileUrl(process.env.VOCABULARY_SERVICE_TERM_URL),
     discussions_changed: parseFileUrl(process.env.VOCABULARY_SERVICE_DISCUSSION_URL)
 });
 

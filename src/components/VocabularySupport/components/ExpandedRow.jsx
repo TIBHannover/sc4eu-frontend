@@ -85,7 +85,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
             };
             const termsBeforeUpdate = queryClient.getQueryData(['terms']);
             await updateTerm(newTerm);
-            await commitChanges(queryClient, `Update ${term.label} status after consensus`, termsBeforeUpdate);
+            await commitChanges(queryClient, `Update ${term.identifier} status after consensus`, termsBeforeUpdate);
         }
         await queryClient.invalidateQueries(VOTES_QUERY_KEY);
         setIsConsensusClosed(true);
@@ -158,7 +158,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
         let { name, value } = e.target;
         if (name.startsWith('altLabel')) {
             const index = Number.parseInt(name.split('-')[1], 10);
-            const altLabels = updatedTerm.altLabel ? updatedTerm.altLabel.split(',') : ['']
+            const altLabels = updatedTerm.altLabel ? updatedTerm.altLabel.split(',') : [''];
             altLabels[index] = value;
             value = altLabels.join(',');
             setUpdatedTerm({ ...updatedTerm, altLabel: value, modified: new Date().toISOString() });
@@ -304,15 +304,20 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
+                            flexWrap: 'wrap',
                             gap: 1,
                             borderBottom: theme => `1px solid ${theme.palette.divider}`
                         }}
                     >
-                        <Typography variant="body2" color="text.secondary">
-                            <strong>{isAccepted ? 'Agreed:' : 'Modified:'}</strong>{' '}
-                            {new Date(updatedTerm.modified).toLocaleDateString() + ', ' + new Date(updatedTerm.modified).toLocaleTimeString()}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <TermVersionsToolbar
+                            versions={termVersions}
+                            selectedSha={selectedVersion.sha}
+                            onSelect={handleSelectVersion}
+                            compareShas={compareShas}
+                            onCompareChange={setCompareShas}
+                            onToggleCompare={handleToggleCompare}
+                        />
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
                             <Tooltip title="Copy URL of this term into a clipboard for easy sharing">
                                 <Button size="small" startIcon={<FileCopyOutlinedIcon fontSize="small" />} onClick={handleCopyLink}>
                                     Copy term URL
@@ -548,6 +553,17 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                                         fullWidth={isMobile}
                                     >
                                         Edit Term
+                                    </Button>
+                                    <Button
+                                        onClick={async () => {
+                                            const res = await getTermVersions(term.identifier);
+                                            console.log(res);
+                                        }}
+                                        variant="outlined"
+                                        sx={{ ...buttonStyle, backgroundColor: 'transparent', color: theme.palette.secondary.main }}
+                                        fullWidth={isMobile}
+                                    >
+                                        Send identifier
                                     </Button>
                                 </Box>
                             )}

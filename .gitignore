@@ -15,3 +15,6 @@ build/
 .idea/
 
 public/env.js
+
+# Local clone of the vocabulary repository (created by server/vocabularyRepository.js)
+/vocabulary/

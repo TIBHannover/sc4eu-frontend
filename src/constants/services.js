@@ -69,3 +69,5 @@ export const URL_PLAYGROUND_JSON_TRANSFORM = `${process.env.REACT_APP_EXPRESS_BA
 export const URL_PLAYGROUND_TTL_TRANSFORM = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}playground/transformTTL`;
 // export const URL_PLAYGROUND_JSON_TRANSFORM = `http://localhost:9000/sc3/playground/transformVOWL_JSON`;
 // export const URL_PLAYGROUND_TTL_TRANSFORM = `http://localhost:9000/sc3/playground/transformTTL`;
+
+export const URL_LOCAL_GIT_VERSIONS = `${process.env.REACT_APP_EXPRESS_BACKEND_URL}versions`;
