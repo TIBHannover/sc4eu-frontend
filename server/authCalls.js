@@ -273,6 +273,35 @@ module.exports = {
 
         try {
             passport.use(
+                'linkedin',
+                new OAuth2Strategy(oauthConfig.linkedin, async function(accessToken, __refreshToken, __profile, cb) {
+                    try {
+                        const userInfo = await new Promise((resolve, reject) => {
+                            request(
+                                { url: process.env.LINKEDIN_API_V2_USERINFO, headers: { Authorization: `Bearer ${accessToken}` }, method: 'GET' },
+                                (error, response, body) => (error || response.statusCode !== 200 ? reject(error || body) : resolve(JSON.parse(body)))
+                            );
+                        });
+                        console.log('userInfo: ', userInfo);
+                        const user = await findOrCreateUser({
+                            displayName: userInfo.name || `${userInfo.given_name} ${userInfo.family_name}`.trim(),
+                            email: userInfo.email,
+                            auth_type: 'AUTH_LINKEDIN',
+                            token: 'undefined'
+                        });
+
+                        cb(null, { jwt: generateJWT(user) });
+                    } catch (error) {
+                        cb(handleAuthError(error, 'LinkedIn'), null);
+                    }
+                })
+            );
+        } catch (e) {
+            handleAuthError(e, 'LinkedIn Strategy Setup');
+        }
+
+        try {
+            passport.use(
                 'sap',
                 new OAuth2Strategy(oauthConfig.sap, async function(accessToken, refreshToken, profile, cb) {
                     try {
