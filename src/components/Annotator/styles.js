@@ -1,131 +1,135 @@
-import styled from 'styled-components';
-import { colorStyled } from '../../styledComponents/styledColor';
+import { styled } from '@mui/material';
 import { SMALL_SCREEN_WIDTH } from '../../styledComponents/styledComponents';
 
-export const ContentContainer = styled.div`
-    width: 75%;
-    margin: 0 auto;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    overflow-y: visible;
-    min-height: 0;
+export const ContentContainer = styled('div')(({ theme }) => ({
+    width: '75%',
+    margin: '0 auto',
+    maxWidth: '1200px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px',
+    overflowY: 'visible',
+    minHeight: 0,
 
-    & .MuiPaper-root {
-        overflow: visible;
+    '.MuiPaper-root': {
+        overflow: 'visible'
+    },
+
+    '.MuiTableContainer-root': {
+        overflowX: 'auto'
+    },
+
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
+        width: '90vw',
+        maxWidth: '90vw'
     }
+}));
 
-    & .MuiTableContainer-root {
-        overflow-x: auto;
+export const HighlightedLabel = styled('span')(({ theme }) => ({
+    backgroundColor: `${({ isHovered, color }) => (isHovered ? '#ffeb3b' : color)}`,
+    cursor: 'pointer',
+    padding: '2px 4px',
+    borderRadius: '4px',
+    transition: 'background-color 0.3s',
+
+    '&:hover': {
+        backgroundColor: '#ffeb3b'
     }
-    
-    @media (max-width: ${SMALL_SCREEN_WIDTH}) {
-      width: 90vw;    
-      max-width: 90vw;
-    }
-`;
+}));
 
-export const HighlightedLabel = styled.span`
-    background-color: ${({ isHovered, color }) => (isHovered ? '#ffeb3b' : color)};
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+export const InputContainer = styled('div')(({ theme }) => ({
+    marginBottom: '20px'
+}));
 
-    &:hover {
-        background-color: #ffeb3b;
-    }
-`;
+export const HelperTextContainer = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center'
+}));
 
-export const InputContainer = styled.div`
-    margin-bottom: 20px;
-`;
+export const HelperText = styled('div')(({ theme }) => ({
+    marginRight: '8px'
+}));
 
-export const HelperTextContainer = styled.div`
-    display: flex;
-    align-items: center;
-`;
+export const AnnotatedText = styled('div')(({ theme }) => ({
+    marginBottom: '20px'
+}));
 
-export const HelperText = styled.div`
-    margin-right: 8px;
-`;
+export const ScrollableText = styled('div')(({ theme }) => ({
+    height: '180px',
+    overflowY: 'auto',
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: '5px',
+    padding: '10px',
+    backgroundColor: theme.palette.background.default
+}));
 
-export const AnnotatedText = styled.div`
-    margin-bottom: 20px;
-`;
+export const ButtonContainer = styled('div')(({ theme }) => ({
+    display: 'flex',
+    gap: '10px',
+    marginTop: '10px',
+    marginBottom: '10px'
+}));
 
-export const ScrollableText = styled.div`
-    height: 180px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #f9f9f9;
-`;
+export const ErrorText = styled('div')(({ theme }) => ({
+    color: theme.palette.error.main,
+    marginRight: '8px'
+}));
 
-export const ButtonContainer = styled.div`
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-`;
-
-export const ErrorText = styled.div`
-    color: ${({ theme }) => theme.palette?.error?.main || '#f44336'};
-    margin-right: 8px;
-`;
-
-export const lightSelectStyles = {
+export const lightSelectStyles = styled('div')(({ theme }) => ({
     control: (base, state) => ({
         ...base,
-        backgroundColor: colorStyled.surfaceContainerLow,
-        borderColor: state.isFocused ? colorStyled.primary : colorStyled.outline,
-        boxShadow: state.isFocused ? `0 0 0 1px ${colorStyled.primary}` : 'none',
+        backgroundColor: theme.palette.background.default,
+        borderColor: state.isFocused ? theme.palette.primary.light : theme.palette.secondary.light,
+        boxShadow: state.isFocused ? `0 0 0 1px ${theme.palette.primary.light}` : 'none',
         '&:hover': {
-            borderColor: colorStyled.primary,
+            borderColor: theme.palette.primary.light
         },
         minHeight: '28px',
-        fontSize: '12px',
+        fontSize: '12px'
     }),
-    valueContainer: (base) => ({
+    valueContainer: base => ({
         ...base,
         padding: '0 6px',
-        height: '28px',
+        height: '28px'
     }),
-    input: (base) => ({
+    input: base => ({
         ...base,
         margin: 0,
-        padding: 0,
+        padding: 0
     }),
-    dropdownIndicator: (base) => ({
+    dropdownIndicator: base => ({
         ...base,
-        padding: '2px',
+        padding: '2px'
     }),
-    indicatorsContainer: (base) => ({
+    indicatorsContainer: base => ({
         ...base,
-        height: '28px',
+        height: '28px'
     }),
-    option: (base, state) => ({
-        ...base,
-        fontSize: '12px',
-        padding: '4px 8px',
-        backgroundColor: state.isSelected
-            ? colorStyled.primaryContainer
-            : state.isFocused
-                ? `${colorStyled.primary}1A`
-                : colorStyled.surface,
-        color: state.isSelected
-            ? colorStyled.onPrimaryContainer
-            : colorStyled.onSurface,
-        '&:active': {
-            backgroundColor: colorStyled.primaryContainer,
-        },
-    }),
-    menu: (base) => ({
-        ...base,
-        backgroundColor: colorStyled.surfaceContainerHigh,
-        zIndex: 9999,
-    }),
-};
+    option: (base, state) => {
+        let backgroundColor = theme.palette.background.default;
 
+        if (state.isSelected) {
+            backgroundColor = theme.palette.primary.light;
+        } else if (state.isFocused) {
+            backgroundColor = theme.palette.secondary.light;
+        }
+
+        const color = state.isSelected ? theme.palette.primary.contrastText : theme.palette.text.primary;
+
+        return {
+            ...base,
+            fontSize: '12px',
+            padding: '4px 8px',
+            backgroundColor,
+            color,
+            '&:active': {
+                backgroundColor: theme.palette.primary.light
+            }
+        };
+    },
+    menu: base => ({
+        ...base,
+        backgroundColor: theme.palette.background.paper,
+        zIndex: 9999
+    })
+}));

@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-module.exports = async EmailFields => {
+async function sendEmailPage (EmailFields) {
     try {
         const transporter = nodemailer.createTransport({
             host: process.env.MAIL_HOST,
@@ -19,3 +19,5 @@ module.exports = async EmailFields => {
         return error;
     }
 };
+
+module.exports = sendEmailPage;

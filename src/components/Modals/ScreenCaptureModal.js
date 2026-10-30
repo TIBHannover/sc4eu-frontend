@@ -10,7 +10,7 @@ class ScreenCaptureModal extends Component {
         link.href = this.props.screenCapture;
         document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
+        link.remove();
     };
 
     render() {

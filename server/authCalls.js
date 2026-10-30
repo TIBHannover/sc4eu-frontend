@@ -13,10 +13,11 @@ const session = require('express-session');
 // configuring some url and ports before the app;
 const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_PORT : '9000';
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
-const url = require('url');
+const projectBasedCallbackURL = process.env.CALLBACK_URL + process.env.REACT_APP_PUBLIC_URL; 
+const url = require('node:url');
 const verifyToken = require('./veryfyToken');
 const oauthConfig = require('./config/oauth.config');
-const { access } = require('fs');
+const { access } = require('node:fs');
 
 /**
  * Find or create a user in the backend.
@@ -181,7 +182,7 @@ module.exports = {
 
                         // Find or create user in the backend
                         const user = await findOrCreateUser({
-                            displayName: profile.displayName,
+                            displayName: profile.displayName?.trim() || profile.username,
                             email: userMail,
                             auth_type: 'AUTH_GITLAB',
                             token: 'undefined'
@@ -215,7 +216,7 @@ module.exports = {
 
                             // Find or create user in the backend
                             const user = await findOrCreateUser({
-                                displayName: profile.displayName,
+                                displayName: profile.displayName?.trim() || profile.username,
                                 email: userMail,
                                 auth_type: 'AUTH_GITHUB',
                                 token: 'undefined'
@@ -249,7 +250,7 @@ module.exports = {
 
                             // Find or create user in the backend
                             const user = await findOrCreateUser({
-                                displayName: profile.displayName,
+                                displayName: profile.displayName?.trim() || profile.username,
                                 email: userMail,
                                 auth_type: 'AUTH_GOOGLE',
                                 token: 'undefined'
@@ -268,6 +269,35 @@ module.exports = {
             );
         } catch (e) {
             handleAuthError(e, 'Google Strategy Setup');
+        }
+
+        try {
+            passport.use(
+                'linkedin',
+                new OAuth2Strategy(oauthConfig.linkedin, async function(accessToken, __refreshToken, __profile, cb) {
+                    try {
+                        const userInfo = await new Promise((resolve, reject) => {
+                            request(
+                                { url: process.env.LINKEDIN_API_V2_USERINFO, headers: { Authorization: `Bearer ${accessToken}` }, method: 'GET' },
+                                (error, response, body) => (error || response.statusCode !== 200 ? reject(error || body) : resolve(JSON.parse(body)))
+                            );
+                        });
+                        console.log('userInfo: ', userInfo);
+                        const user = await findOrCreateUser({
+                            displayName: userInfo.name || `${userInfo.given_name} ${userInfo.family_name}`.trim(),
+                            email: userInfo.email,
+                            auth_type: 'AUTH_LINKEDIN',
+                            token: 'undefined'
+                        });
+
+                        cb(null, { jwt: generateJWT(user) });
+                    } catch (error) {
+                        cb(handleAuthError(error, 'LinkedIn'), null);
+                    }
+                })
+            );
+        } catch (e) {
+            handleAuthError(e, 'LinkedIn Strategy Setup');
         }
 
         try {
@@ -346,7 +376,7 @@ module.exports = {
                         process.env.JWT_SECRET,
                         { expiresIn: '1h' }
                     );
-                    const callbackURL = `${process.env.CALLBACK_URL}/vocab/imagine/EmailVerify/${result.user_id}/${token}`;
+                    const callbackURL = `${projectBasedCallbackURL}EmailVerify/${result.user_id}/${token}`;
                     const EmailFields = {
                         email: req.body.username,
                         subject: 'VDST Email Verification',
@@ -374,7 +404,7 @@ module.exports = {
     },
 
     verifyEmail: function(app) {
-        const pathname = `${process.env.CALLBACK_URL}/vocab/imagine/EmailVerify`;
+        const pathname = `${projectBasedCallbackURL}EmailVerify`;
         app.get(`/EmailVerify/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             // Verifying the JWT token
@@ -403,7 +433,7 @@ module.exports = {
                         }
                     };
                     request(options, function(error, response) {
-                        if (response && response.body) {
+                        if (response?.body) {
                             try {
                                 const result = JSON.parse(response.body);
                                 if (result.result === true) {
@@ -428,6 +458,7 @@ module.exports = {
                                     );
                                 }
                             } catch (e) {
+                                console.error(e);
                                 res.redirect(
                                     url.format({
                                         pathname: pathname,
@@ -472,7 +503,7 @@ module.exports = {
                 }
             };
             request(options, function(error, response) {
-                if (response && response.body) {
+                if (response?.body) {
                     const result = JSON.parse(response.body);
                     // while login, we are checking the user is verified or not if it  is not verified than send again verification Email
                     if (result.is_email_valid === false) {
@@ -483,7 +514,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '10h' }
                         );
-                        const callbackURL = `${process.env.CALLBACK_URL}/vocab/imagine/EmailVerify/${result.user_id}/${token}`;
+                        const callbackURL = `${projectBasedCallbackURL}EmailVerify/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.username,
                             subject: 'VDST Email Verification',
@@ -509,7 +540,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '1h' }
                         );
-                        res.json({ jwt: local_accessToken, redirectRoute: `${process.env.REDIRECT_URL}/vocab/imagine/vocabulary_support` });
+                        res.json({ jwt: local_accessToken, redirectRoute: `${process.env.REDIRECT_URL}/vocab/sc4eu/vocabulary_support` });
                     } else {
                         res.json({ error: result.error });
                     }
@@ -521,7 +552,6 @@ module.exports = {
     },
     userSettings: function(app) {
         app.put('/user/updateSettings', verifyToken, (req, res) => {
-            console.log('Body', req.body);
             if (req.token === null || req.token === undefined) {
                 res.send(JSON.stringify({ result: 'empty' }));
             } else {
@@ -540,7 +570,7 @@ module.exports = {
                             body: data
                         };
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result) {
                                     res.json(response);
@@ -553,6 +583,7 @@ module.exports = {
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.send(JSON.stringify({ error: 'Could not update ' }));
                 }
             }
@@ -577,7 +608,7 @@ module.exports = {
                             body: data
                         };
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result) {
                                     res.json(result);
@@ -590,13 +621,13 @@ module.exports = {
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.send(JSON.stringify({ error: 'Could not update ' }));
                 }
             }
         });
 
         app.put('/user/updateUserProjects', verifyToken, (req, res) => {
-            console.log('Body', req.body);
             if (req.token === null || req.token === undefined) {
                 res.send(JSON.stringify({ result: 'empty' }));
             } else {
@@ -615,7 +646,7 @@ module.exports = {
                             body: data
                         };
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result.success) {
                                     res.json(response);
@@ -628,6 +659,7 @@ module.exports = {
                         });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.send(JSON.stringify({ error: 'Could not update user projects ' }));
                 }
             }
@@ -651,7 +683,7 @@ module.exports = {
                         };
 
                         request(options, function(error, response) {
-                            if (response && response.body) {
+                            if (response?.body) {
                                 const result = JSON.parse(response.body);
                                 if (result) {
                                     res.json(response);
@@ -666,6 +698,7 @@ module.exports = {
                         res.json({ error: 'Invalid  Token' });
                     }
                 } catch (e) {
+                    console.error(e);
                     res.json({ error: 'Invalid Token' });
                 }
             }
@@ -694,7 +727,7 @@ module.exports = {
                             process.env.JWT_SECRET,
                             { expiresIn: '1h' }
                         );
-                        const callbackURL = `${process.env.CALLBACK_URL}/vocab/imagine/verifResetPassword/${result.user_id}/${token}`;
+                        const callbackURL = `${projectBasedCallbackURL}verifResetPassword/${result.user_id}/${token}`;
                         const EmailFields = {
                             email: req.body.email_address,
                             subject: 'VDST Password Reset',
@@ -724,7 +757,7 @@ module.exports = {
     },
 
     verifResetPassword: function(app) {
-        const pathname = `${process.env.CALLBACK_URL}/vocab/imagine/ResetPassword`;
+        const pathname = `${projectBasedCallbackURL}/ResetPassword`;
         app.get(`/verifResetPassword/:user_id/:token`, (req, res) => {
             const { token } = req.params;
             const { user_id } = req.params;
@@ -781,9 +814,7 @@ module.exports = {
                 subject: req.body.emailSubject,
                 body: req.body.emailContent
             };
-            console.log(emailFields);
             sendProjectPermissionEmail(emailFields).then(response => {
-                console.log(response);
                 if (response.success) {
                     res.json({
                         success: true,
@@ -811,7 +842,7 @@ module.exports = {
                 };
 
                 request(options, function(error, response) {
-                    if (response && response.body) {
+                    if (response?.body) {
                         const result = JSON.parse(response.body);
                         if (result) {
                             res.json(result);

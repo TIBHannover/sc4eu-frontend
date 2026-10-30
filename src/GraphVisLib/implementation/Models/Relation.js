@@ -10,7 +10,7 @@ export default class Relation extends Resource {
     }
 
     addRange(r) {
-        if (this.ranges.indexOf(r) === -1) {
+        if (!this.ranges.includes(r)) {
             this.ranges.push(r);
         }
     }
@@ -27,12 +27,12 @@ export default class Relation extends Resource {
         super.integrateResource(src);
 
         src.domains.forEach(dom => {
-            if (this.domains.indexOf(dom) === -1) {
+            if (!this.domains.includes(dom)) {
                 this.domains.push(dom);
             }
         });
         src.ranges.forEach(ran => {
-            if (this.ranges.indexOf(ran) === -1) {
+            if (!this.ranges.includes(ran)) {
                 this.ranges.push(ran);
             }
         });

@@ -1,4 +1,4 @@
-module.exports = (projectName, emailContent, ProjectAdminName, SenderName, SenderEmail) => {
+function accessEmailHtml(projectName, emailContent, ProjectAdminName, SenderName, SenderEmail) {
     return {
         body: `
        <!DOCTYPE html>
@@ -139,7 +139,7 @@ module.exports = (projectName, emailContent, ProjectAdminName, SenderName, Sende
                         <p style="margin: 0;">Tips: </p>
                         <p style="margin: 0;">If you want to give access of  "${projectName}"  project to ${SenderName}, Please follow below steps:</p>
                         <ol>
-                            <li>Log in to the <a href="https://service.tib.eu/vocab/">VDST</a> platform using your credentials.</li>
+                            <li>Log in to the <a href="https://service.tib.eu/vocab/sc4eu/">VDST</a> platform using your credentials.</li>
                             <li>Click on your avatar located in the top-right corner of the screen.</li>
                             <li>Select "Dashboard" from the dropdown menu.</li>
                             <li>Click on the "Projects" tab located in the left sidebar menu.</li>
@@ -173,4 +173,6 @@ module.exports = (projectName, emailContent, ProjectAdminName, SenderName, Sende
 </html>
         `
     };
-};
+}
+
+module.exports = accessEmailHtml;

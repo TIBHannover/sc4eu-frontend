@@ -1,64 +1,61 @@
-import React, { useState, useEffect } from 'react';
-
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import { colorStyled } from '../../../styledComponents/styledColor';
-import { Box, ListItem, ListItemAvatar, Paper } from '@mui/material';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import {
+    Box,
+    ListItem,
+    ListItemAvatar,
+    Paper,
+    Collapse,
+    Button,
+    Typography,
+    TextField,
+    IconButton,
+    List,
+    MenuList,
+    MenuItem,
+    Tooltip,
+    Popper,
+    useTheme,
+    alpha
+} from '@mui/material';
 import { getAllUsers } from '../../../network/UserProfileCalls';
-import List from '@mui/material/List';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Popper from '@mui/material/Popper';
-import MenuList from '@mui/material/MenuList';
-import MenuItem from '@mui/material/MenuItem';
-import { commitDiscussionOnly } from '../utils/CommitChanges';
+import ThumbUpOutlined from '@mui/icons-material/ThumbUpOutlined';
+import ThumbDownOutlined from '@mui/icons-material/ThumbDownOutlined';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import AddReactionOutlinedIcon from '@mui/icons-material/AddReactionOutlined';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import { commitDiscussionOnly, trackDiscussionWrite } from '../utils/CommitChanges';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePushNotifications } from '../../../hooks/usePushNotifications';
 import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
 import { useMediaQuery } from '@material-ui/core';
+import { COMMENT_EMOJI_SET } from '../utils/Discussions';
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
 
-function stringToColor(string) {
-    let hash = 0;
-    let i;
+const INDENT_PX = 14;
 
-    for (i = 0; i < string.length; i += 1) {
-        hash = string.codePointAt(i) + ((hash << 5) - hash);
-    }
+const STATUS_OPTIONS = [
+    { value: 'none', label: 'None', icon: <FlagOutlinedIcon fontSize="small" /> },
+    { value: 'open', label: 'Open', icon: <FlagOutlinedIcon fontSize="small" sx={{ color: 'info.main' }} /> },
+    { value: 'resolved', label: 'Resolved', icon: <CheckOutlinedIcon fontSize="small" sx={{ color: 'success.main' }} /> }
+];
 
-    let color = '#';
+const STATUS_ICON = {
+    none: <FlagOutlinedIcon fontSize="small" />,
+    open: <FlagOutlinedIcon fontSize="small" sx={{ color: 'info.main' }} />,
+    resolved: <CheckOutlinedIcon fontSize="small" sx={{ color: 'success.main' }} />
+};
 
-    for (i = 0; i < 3; i += 1) {
-        const value = (hash >> (i * 8)) & 0xff;
-        color += `00${value.toString(16)}`.slice(-2);
-    }
-
-    return color;
-}
-
-export function stringAvatar(name) {
-    const nameParts = name.split(' ');
-    let initials;
-
-    if (nameParts.length === 1) {
-        initials = `${nameParts[0][0]}${nameParts[0][1] || ''}`;
-    } else {
-        initials = `${nameParts[0][0]}${nameParts[1][0]}`;
-    }
-
-    return {
-        sx: {
-            backgroundColor: stringToColor(name),
-
-            [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
-                height: 24,
-                width: 24
-            }
-        },
-        children: initials
-    };
-}
+const STATUS_TOOLTIP = {
+    none: 'Set status',
+    open: 'Marked as open — requires help',
+    resolved: 'Marked as resolved — question answered'
+};
 
 function getTimeDifferenceString(isoDateString) {
     const date = new Date(isoDateString);
@@ -82,19 +79,576 @@ function getTimeDifferenceString(isoDateString) {
     }
 }
 
-const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion, setHasUncommittedChanges }) => {
-    const userDisplayName = user?.['displayName'];
-    const [newCommentText, setNewCommentText] = useState('');
-    const [comments, setComments] = useState(termComments);
+function buildTree(flatComments) {
+    const byId = new Map();
+    const roots = [];
 
-    const [users, setUsers] = useState([]);
+    flatComments.forEach(c => byId.set(c.id, { ...c, children: [] }));
 
-    const [mentionAnchorEl, setMentionAnchorEl] = useState(null);
+    flatComments.forEach(c => {
+        const node = byId.get(c.id);
+        if (c.parentId && byId.has(c.parentId)) {
+            byId.get(c.parentId).children.push(node);
+        } else {
+            roots.push(node);
+        }
+    });
+
+    return roots;
+}
+
+// Votes are stored as lists of display names (`upvotes` / `downvotes`) so the
+// two counts stay separate and each user's own vote is tracked individually.
+// Legacy comments only have a net `votes` number; it is shown as extra
+// up (if positive) or down (if negative) counts since it can't be split.
+function getVoteState(comment, currentUser) {
+    const upvoters = comment.upvotes ?? [];
+    const downvoters = comment.downvotes ?? [];
+    const legacy = comment.votes ?? 0;
+    let userVote = null;
+    if (upvoters.includes(currentUser)) {
+        userVote = 'up';
+    } else if (downvoters.includes(currentUser)) {
+        userVote = 'down';
+    }
+    return {
+        up: upvoters.length + Math.max(legacy, 0),
+        down: downvoters.length + Math.max(-legacy, 0),
+        userVote
+    };
+}
+
+function countDescendants(node) {
+    return node.children.reduce((sum, c) => sum + 1 + countDescendants(c), 0);
+}
+
+function useMentionInput(users) {
+    const [text, setText] = useState('');
+    const [mentionedUsers, setMentionedUsers] = useState([]);
+    const [anchorEl, setAnchorEl] = useState(null);
     const [mentionSearch, setMentionSearch] = useState('');
     const [cursorPosition, setCursorPosition] = useState(null);
     const [filteredUsers, setFilteredUsers] = useState([]);
-    const textFieldRef = React.useRef(null);
-    const [mentionedUsers, setMentionedUsers] = useState([]);
+    const fieldRef = useRef(null);
+
+    const handleTextChange = useCallback(
+        e => {
+            const newValue = e.target.value;
+            setText(newValue);
+
+            const cursorPos = e.target.selectionStart;
+            const textBeforeCursor = newValue.slice(0, cursorPos);
+            const matchMention = /@(\w*)$/.exec(textBeforeCursor);
+
+            if (matchMention) {
+                const searchTerm = matchMention[1].toLowerCase();
+                setMentionSearch(searchTerm);
+
+                const filtered = users
+                    .filter(u => u?.display_name)
+                    .filter(u => u.display_name.toLowerCase().includes(searchTerm))
+                    .slice(0, 5);
+
+                setFilteredUsers(filtered);
+                setAnchorEl(fieldRef.current);
+                setCursorPosition(cursorPos);
+            } else {
+                setAnchorEl(null);
+            }
+        },
+        [users]
+    );
+
+    const handleMentionSelect = useCallback(
+        selectedUser => {
+            if (!selectedUser?.display_name) {
+                console.error('Invalid user selected:', selectedUser);
+                return;
+            }
+
+            setText(prev => {
+                const textBeforeMention = prev.slice(0, cursorPosition - mentionSearch.length - 1);
+                const textAfterMention = prev.slice(cursorPosition);
+                return `${textBeforeMention}@${selectedUser.display_name}${textAfterMention} `;
+            });
+
+            setMentionedUsers(prev => (prev.includes(selectedUser.display_name) ? prev : [...prev, selectedUser.display_name]));
+            setAnchorEl(null);
+        },
+        [cursorPosition, mentionSearch]
+    );
+
+    const handleKeyDown = useCallback(
+        e => {
+            if (anchorEl && e.key === 'Enter' && filteredUsers.length > 0) {
+                e.preventDefault();
+                handleMentionSelect(filteredUsers[0]);
+            }
+        },
+        [anchorEl, filteredUsers, handleMentionSelect]
+    );
+
+    const reset = useCallback(() => {
+        setText('');
+        setMentionedUsers([]);
+        setAnchorEl(null);
+    }, []);
+
+    return {
+        text,
+        setText,
+        mentionedUsers,
+        anchorEl,
+        filteredUsers,
+        fieldRef,
+        handleTextChange,
+        handleMentionSelect,
+        handleKeyDown,
+        reset
+    };
+}
+
+function MentionPopper({ anchorEl, filteredUsers, onSelect }) {
+    return (
+        <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="top-start" style={{ zIndex: 1300 }}>
+            <Paper>
+                <MenuList>
+                    {filteredUsers.map(user => (
+                        <MenuItem key={user.uuid} onClick={() => onSelect(user)}>
+                            <UserAvatar identifier={user.uuid} />
+                            {user.display_name}
+                        </MenuItem>
+                    ))}
+                </MenuList>
+            </Paper>
+        </Popper>
+    );
+}
+
+function StatusPicker({ commentId, status, onStatusChange, open, onOpen, onClose, visible }) {
+    const anchorRef = useRef(null);
+    const currentStatus = status ?? 'none';
+
+    return (
+        <>
+            <Tooltip title="Set status">
+                <IconButton
+                    size="small"
+                    ref={anchorRef}
+                    sx={{
+                        p: 0.25,
+                        visibility: visible ? 'visible' : 'hidden'
+                    }}
+                    onClick={() => (open ? onClose() : onOpen())}
+                >
+                    <FlagOutlinedIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+
+            <Popper open={open} anchorEl={anchorRef.current} placement="top-end" style={{ zIndex: 1300 }}>
+                <ClickAwayListener onClickAway={onClose}>
+                    <Paper sx={{ display: 'flex', gap: 0.5, p: 0.5 }}>
+                        {STATUS_OPTIONS.map(({ value, label, icon }) => (
+                            <Tooltip key={label} title={label}>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        onStatusChange(commentId, value);
+                                        onClose();
+                                    }}
+                                    sx={{ color: 'unset', backgroundColor: currentStatus === value ? 'action.selected' : 'transparent' }}
+                                >
+                                    {icon}
+                                </IconButton>
+                            </Tooltip>
+                        ))}
+                    </Paper>
+                </ClickAwayListener>
+            </Popper>
+        </>
+    );
+}
+
+function ReactionPicker({ commentId, onReact, open, onOpen, onClose, visible }) {
+    const anchorRef = useRef(null);
+
+    return (
+        <>
+            <Tooltip title="Add Reaction">
+                <IconButton
+                    size="small"
+                    ref={anchorRef}
+                    sx={{
+                        p: 0.25,
+                        visibility: visible ? 'visible' : 'hidden'
+                    }}
+                    onClick={() => (open ? onClose() : onOpen())}
+                >
+                    <AddReactionOutlinedIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+
+            <Popper open={open} anchorEl={anchorRef.current} placement="top-end" style={{ zIndex: 1300 }}>
+                <ClickAwayListener onClickAway={onClose}>
+                    <Paper sx={{ display: 'flex', gap: 0.5, p: 0.5 }}>
+                        {COMMENT_EMOJI_SET.map(({ code, emoji, label }) => (
+                            <Tooltip key={code} title={label}>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        onReact(commentId, code);
+                                        onClose();
+                                    }}
+                                    sx={{ color: 'unset' }}
+                                >
+                                    {emoji}
+                                </IconButton>
+                            </Tooltip>
+                        ))}
+                    </Paper>
+                </ClickAwayListener>
+            </Popper>
+        </>
+    );
+}
+
+function ReactionChip({ code, users, currentUser, onRemove }) {
+    const [anchorEl, setAnchorEl] = useState(null);
+    const entry = COMMENT_EMOJI_SET.find(e => e.code === code);
+    const isActive = users.includes(currentUser);
+
+    return (
+        <>
+            <Box
+                onMouseEnter={e => setAnchorEl(e.currentTarget)}
+                onMouseLeave={() => setAnchorEl(null)}
+                onClick={isActive ? () => onRemove(code) : undefined}
+                sx={theme => ({
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 0.25,
+                    px: 0.75,
+                    py: 0.25,
+                    borderRadius: '12px',
+                    border: '1px solid',
+                    borderColor: isActive ? theme.palette.primary.main : 'divider',
+                    backgroundColor: isActive ? theme.palette.background.paper : 'transparent',
+                    fontSize: '0.75rem',
+                    cursor: isActive ? 'pointer' : 'default',
+                    userSelect: 'none'
+                })}
+            >
+                <span>{entry.emoji}</span>
+                <span>{users.length}</span>
+            </Box>
+            <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="top-start" sx={{ zIndex: 1300 }}>
+                <Paper sx={{ p: 1, minWidth: '5vw' }}>
+                    <Typography variant="body1" display="flex" justifyContent="center" fontWeight="bold" gutterBottom>
+                        {entry.label}
+                    </Typography>
+                    {users.map(user => (
+                        <Typography key={user} variant="caption" display="block">
+                            {user}
+                        </Typography>
+                    ))}
+                </Paper>
+            </Popper>
+        </>
+    );
+}
+
+function VoteColumn({ up, down, userVote, onVote }) {
+    const countSx = { fontWeight: 600, lineHeight: 1 };
+
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', pt: 0.25, minWidth: 28 }}>
+            <IconButton size="small" onClick={() => onVote('up')} sx={{ p: 0.25, color: userVote === 'up' ? 'primary.main' : 'text.disabled' }}>
+                <ThumbUpOutlined fontSize="small" />
+            </IconButton>
+            <Typography variant="caption" sx={{ ...countSx, color: userVote === 'up' ? 'primary.main' : 'text.secondary' }}>
+                {up}
+            </Typography>
+            <IconButton
+                size="small"
+                onClick={() => onVote('down')}
+                sx={{ p: 0.25, mt: 0.5, color: userVote === 'down' ? 'error.main' : 'text.disabled' }}
+            >
+                <ThumbDownOutlined fontSize="small" />
+            </IconButton>
+            <Typography variant="caption" sx={{ ...countSx, color: userVote === 'down' ? 'error.main' : 'text.secondary' }}>
+                {down}
+            </Typography>
+        </Box>
+    );
+}
+
+function ReplyComposer({ users, isMobile, onSubmit, onCancel }) {
+    const mention = useMentionInput(users);
+
+    const handleSubmit = () => {
+        if (!mention.text.trim()) return;
+        onSubmit(mention.text, mention.mentionedUsers);
+        mention.reset();
+    };
+
+    return (
+        <Box sx={{ mt: 1, mb: 1.5, position: 'relative' }}>
+            <TextField
+                inputRef={mention.fieldRef}
+                fullWidth
+                multiline
+                minRows={2}
+                autoFocus
+                size="small"
+                placeholder={isMobile ? 'Add a reply' : "Add a reply — mention a user by typing '@' and their name"}
+                value={mention.text}
+                onChange={mention.handleTextChange}
+                onKeyDown={mention.handleKeyDown}
+            />
+            <MentionPopper anchorEl={mention.anchorEl} filteredUsers={mention.filteredUsers} onSelect={mention.handleMentionSelect} />
+            <Box sx={{ display: 'flex', gap: 1, mt: 0.75 }}>
+                <Button size="small" variant="contained" disabled={!mention.text.trim()} onClick={handleSubmit}>
+                    Reply
+                </Button>
+                <Button size="small" onClick={onCancel}>
+                    Cancel
+                </Button>
+            </Box>
+        </Box>
+    );
+}
+
+function CommentNode({
+    node,
+    depth,
+    isLastChild,
+    users,
+    isMobile,
+    onReply,
+    onVote,
+    onReact,
+    onStatusChange,
+    currentUser,
+    collapsedIds,
+    toggleCollapsed,
+    replyingId,
+    setReplyingId
+}) {
+    const theme = useTheme();
+
+    const replying = replyingId === node.id;
+    const isCollapsed = collapsedIds.has(node.id);
+    const hasChildren = node.children.length > 0;
+    const replyCount = countDescendants(node);
+    const [hovered, setHovered] = useState(false);
+    const [pickerOpen, setPickerOpen] = useState(false);
+    const [statusPickerOpen, setStatusPickerOpen] = useState(false);
+
+    const authorDateStyle = { display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' };
+
+    const authorId = users.find(u => u.display_name === node.author)?.uuid || node.author;
+
+    const voteState = getVoteState(node, currentUser);
+
+    const hasStatus = node.status && node.status !== 'none';
+
+    let commentBackgroundColor = theme.palette.background.paper;
+    if (node.status === 'open') {
+        commentBackgroundColor = alpha(theme.palette.info.main, 0.08);
+    } else if (hovered) {
+        commentBackgroundColor = theme.palette.surface.container;
+    }
+
+    const THREAD_ELBOW_Y = '40px';
+
+    return (
+        <Box
+            sx={{
+                position: 'relative',
+                pl: 1,
+                ml: depth > 0 ? 2 : 0,
+                ...(depth > 0 && {
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        width: '1px',
+                        backgroundColor: theme.palette.divider,
+                        height: isLastChild ? THREAD_ELBOW_Y : '100%'
+                    },
+                    '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        left: 0,
+                        top: THREAD_ELBOW_Y,
+                        width: `${INDENT_PX}px`,
+                        height: '1px',
+                        backgroundColor: theme.palette.divider
+                    }
+                })
+            }}
+        >
+            <ListItem
+                alignItems="flex-start"
+                style={{ paddingBottom: 5, paddingLeft: 0 }}
+                sx={{
+                    position: 'relative',
+                    borderRadius: 2,
+                    backgroundColor: commentBackgroundColor,
+                    transition: 'background-color 0.2s ease'
+                }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+            >
+                <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
+                    <VoteColumn up={voteState.up} down={voteState.down} userVote={voteState.userVote} onVote={dir => onVote(node.id, dir)} />
+
+                    {!isMobile && (
+                        <ListItemAvatar sx={{ minWidth: 'auto' }}>
+                            <UserAvatar identifier={authorId} />
+                        </ListItemAvatar>
+                    )}
+
+                    <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+                        <div style={authorDateStyle}>
+                            <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
+                                {node.author}
+                            </Typography>
+                            {isMobile && <UserAvatar identifier={authorId} />}
+                            <Typography variant="body1" color="textSecondary">
+                                {getTimeDifferenceString(node.timestamp)}
+                            </Typography>
+                            {hasStatus && <Tooltip title={STATUS_TOOLTIP[node.status]}>{STATUS_ICON[node.status]}</Tooltip>}
+                        </div>
+
+                        <Typography variant="body1" gutterBottom sx={{ fontSize: '1.05rem', wordBreak: 'break-word' }}>
+                            {node.content}
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: -0.5, flexWrap: 'wrap' }}>
+                            <Button
+                                size="small"
+                                onClick={() => setReplyingId(replying ? null : node.id)}
+                                sx={{ minWidth: 0, p: 0, textTransform: 'none', fontSize: '0.75rem' }}
+                            >
+                                Reply
+                            </Button>
+
+                            {hasChildren && (
+                                <Button
+                                    size="small"
+                                    onClick={() => toggleCollapsed(node.id)}
+                                    startIcon={isCollapsed ? <ChevronRightIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                                    sx={{ minWidth: 0, p: 0, textTransform: 'none', fontSize: '0.75rem' }}
+                                >
+                                    {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+                                </Button>
+                            )}
+
+                            {Object.entries(node.reactions ?? {})
+                                .filter(([, reactors]) => reactors.length > 0)
+                                .map(([code, reactors]) => (
+                                    <ReactionChip
+                                        key={code}
+                                        code={code}
+                                        users={reactors}
+                                        currentUser={currentUser}
+                                        onRemove={() => onReact(node.id, code)}
+                                    />
+                                ))}
+                        </Box>
+                    </Box>
+                </Box>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '20%',
+                        right: 8,
+                        transform: 'translateY(-50%)',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        borderRadius: 2,
+                        backgroundColor: hovered ? theme.palette.surface.containerHigh : 'transparent'
+                    }}
+                >
+                    <ReactionPicker
+                        commentId={node.id}
+                        onReact={onReact}
+                        open={pickerOpen}
+                        onOpen={() => setPickerOpen(true)}
+                        onClose={() => setPickerOpen(false)}
+                        visible={hovered || pickerOpen}
+                    />
+                    <StatusPicker
+                        commentId={node.id}
+                        status={node.status}
+                        onStatusChange={onStatusChange}
+                        open={statusPickerOpen}
+                        onOpen={() => setStatusPickerOpen(true)}
+                        onClose={() => setStatusPickerOpen(false)}
+                        visible={hovered || statusPickerOpen}
+                    />
+                </Box>
+            </ListItem>
+
+            <Collapse in={replying} unmountOnExit>
+                <ReplyComposer
+                    users={users}
+                    isMobile={isMobile}
+                    onCancel={() => setReplyingId(null)}
+                    onSubmit={(text, mentionedUsers) => {
+                        onReply(node.id, text, mentionedUsers);
+                        setReplyingId(null);
+                    }}
+                />
+            </Collapse>
+
+            {hasChildren && (
+                <Collapse in={!isCollapsed} unmountOnExit>
+                    <Box>
+                        {node.children.map((child, index) => (
+                            <CommentNode
+                                key={child.id}
+                                node={child}
+                                depth={depth + 1}
+                                isLastChild={index === node.children.length - 1}
+                                users={users}
+                                isMobile={isMobile}
+                                onReply={onReply}
+                                onVote={onVote}
+                                onReact={onReact}
+                                onStatusChange={onStatusChange}
+                                currentUser={currentUser}
+                                collapsedIds={collapsedIds}
+                                toggleCollapsed={toggleCollapsed}
+                                replyingId={replyingId}
+                                setReplyingId={setReplyingId}
+                            />
+                        ))}
+                    </Box>
+                </Collapse>
+            )}
+        </Box>
+    );
+}
+
+const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion }) => {
+    const theme = useTheme();
+
+    const userDisplayName = user?.['displayName'];
+    const [replyingId, setReplyingId] = useState(null);
+    const [comments, setComments] = useState(termComments);
+
+    useEffect(() => {
+        setComments(termComments);
+    }, [termComments]);
+
+    const [users, setUsers] = useState([]);
+    const [collapsedIds, setCollapsedIds] = useState(() => new Set());
+
+    const topLevelMention = useMentionInput(users);
+    const textFieldRef = topLevelMention.fieldRef;
 
     const { notifyNewComment } = usePushNotifications(user.displayName);
     const queryClient = useQueryClient();
@@ -104,144 +658,213 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         getAllUsers().then(users => {
             setUsers(users);
         });
-    }, []); // Empty dependency array means this runs once on mount
+    }, []);
 
-    const addComment = async (author, content, mentionedUsers) => {
+    const dividerStyle = {
+        flexGrow: 1,
+        border: 'none',
+        borderBottom: theme.palette.divider
+    };
+
+    const buttonStyle = {
+        borderRadius: '20px',
+        display: 'flex'
+    };
+
+    const tree = useMemo(() => buildTree(comments), [comments]);
+
+    const toggleCollapsed = useCallback(id => {
+        setCollapsedIds(prev => {
+            const next = new Set(prev);
+            next.has(id) ? next.delete(id) : next.add(id);
+            return next;
+        });
+    }, []);
+
+    // Serializes every write (votes, replies, top-level comments) so a second
+    // commit never starts until the previous one has fully resolved. Without
+    // this, two quick actions (e.g. upvote then reply) can both read the same
+    // GitHub file SHA and race — the second PUT gets rejected because the SHA
+    // it sends is already stale by the time it lands.
+    const commitQueueRef = useRef(Promise.resolve());
+
+    const persist = useCallback(
+        (updatedComments, comment) => {
+            const run = () =>
+                trackDiscussionWrite(async () => {
+                    await handleSaveDiscussion({ resourceId, comments: updatedComments });
+                    setComments(updatedComments);
+                    await commitDiscussionOnly(queryClient, comment, resourceId);
+                });
+
+            const result = commitQueueRef.current.then(run, run);
+            // Swallow so a failed commit doesn't permanently jam the queue for
+            // whatever runs next — the caller of persist() still sees the error.
+            commitQueueRef.current = result.catch(() => {});
+            return result;
+        },
+        [handleSaveDiscussion, resourceId, queryClient]
+    );
+
+    const addComment = async (author, content, mentionedUsers, parentId = null) => {
         const newComment = {
             id: Math.random()
                 .toString(36)
                 .substring(2, 11),
+            parentId,
             author,
             content,
             timestamp: new Date().toISOString(),
-            mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined
+            mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined,
+            upvotes: [],
+            downvotes: []
         };
 
         const updatedComments = [...comments, newComment];
-
-        await handleSaveDiscussion({ resourceId: resourceId, comments: updatedComments });
-        setComments(updatedComments);
-        setNewCommentText(''); // Clear the text field after adding comment
-        //setHasUncommittedChanges(true);
-        // Discussion here needs to be commited automatically
-        commitDiscussionOnly(queryClient);
-        await notifyNewComment();
-    };
-
-    const handleTextChange = e => {
-        const newValue = e.target.value;
-        setNewCommentText(newValue);
-
-        const cursorPos = e.target.selectionStart;
-        const textBeforeCursor = newValue.slice(0, cursorPos);
-        const matchMention = /@(\w*)$/.exec(textBeforeCursor);
-
-        if (matchMention) {
-            const searchTerm = matchMention[1].toLowerCase();
-            setMentionSearch(searchTerm);
-
-            // Filter out invalid users and handle null display_name
-            const filtered = users
-                .filter(user => user && user.display_name) // Filter out null/undefined
-                .filter(user => user.display_name.toLowerCase().includes(searchTerm))
-                .slice(0, 5);
-
-            setFilteredUsers(filtered);
-            setMentionAnchorEl(textFieldRef.current);
-            setCursorPosition(cursorPos);
-        } else {
-            setMentionAnchorEl(null);
+        await persist(updatedComments, newComment);
+        if (newComment.mentionedUsers !== undefined) {
+            await notifyNewComment(resourceId, newComment.mentionedUsers);
         }
     };
 
-    const handleMentionSelect = selectedUser => {
-        if (!selectedUser || !selectedUser.display_name) {
-            console.error('Invalid user selected:', selectedUser);
-            return;
-        }
-
-        const textBeforeMention = newCommentText.slice(0, cursorPosition - mentionSearch.length - 1);
-        const textAfterMention = newCommentText.slice(cursorPosition);
-        const newText = `${textBeforeMention}@${selectedUser.display_name}${textAfterMention} `;
-        if (!mentionedUsers.includes(selectedUser.display_name)) {
-            setMentionedUsers([...mentionedUsers, selectedUser.display_name]);
-        }
-        setNewCommentText(newText);
-        setMentionAnchorEl(null);
+    const handleTopLevelSubmit = () => {
+        if (!topLevelMention.text.trim()) return;
+        addComment(userDisplayName, topLevelMention.text, topLevelMention.mentionedUsers, null);
+        topLevelMention.reset();
     };
 
-    const handleKeyDown = e => {
-        if (mentionAnchorEl && e.key === 'Enter' && filteredUsers.length > 0) {
-            e.preventDefault();
-            handleMentionSelect(filteredUsers[0]);
-        }
+    const handleReply = (parentId, text, mentionedUsers) => {
+        addComment(userDisplayName, text, mentionedUsers, parentId);
+    };
+
+    const handleVote = async (commentId, direction) => {
+        const updatedComments = comments.map(c => {
+            if (c.id !== commentId) return c;
+
+            const upvotes = (c.upvotes ?? []).filter(u => u !== userDisplayName);
+            const downvotes = (c.downvotes ?? []).filter(u => u !== userDisplayName);
+            const previous = getVoteState(c, userDisplayName).userVote;
+
+            // clicking the same direction again removes the vote
+            if (previous !== direction) {
+                (direction === 'up' ? upvotes : downvotes).push(userDisplayName);
+            }
+
+            return { ...c, upvotes, downvotes };
+        });
+        await persist(updatedComments);
+    };
+
+    const handleReact = (commentId, code) => {
+        const updatedComments = comments.map(c => {
+            if (c.id !== commentId) return c;
+            const reactions = { ...c.reactions };
+            // remove user from all codes first (one reaction per user per comment)
+            for (const key of Object.keys(reactions)) {
+                reactions[key] = reactions[key].filter(u => u !== userDisplayName);
+            }
+            // toggle: only add if user was not already on this code
+            const wasReacted = (c.reactions?.[code] ?? []).includes(userDisplayName);
+            if (!wasReacted) {
+                reactions[code] = [...(reactions[code] ?? []), userDisplayName];
+            }
+            return { ...c, reactions };
+        });
+        persist(updatedComments);
+    };
+
+    const handleStatusChange = (commentId, value) => {
+        const updatedComments = comments.map(comment => {
+            if (comment.id !== commentId) return comment;
+            if (comment.status === value) {
+                return { ...comment, status: undefined };
+            }
+            return { ...comment, status: value };
+        });
+        persist(updatedComments);
     };
 
     return (
-        <Paper elevation={0} style={{ paddingLeft: '1px', background: 'inherit' }}>
+        <Paper
+            elevation={0}
+            style={{ paddingLeft: '1px', background: 'inherit', display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}
+        >
             <Box style={{ display: 'flex', alignItems: 'center' }}>
                 <hr style={dividerStyle} />
             </Box>
-            <List sx={{ maxHeight: '25vh', overflow: 'auto' }}>
-                {comments.map((comment, index) => (
-                    <ListItem key={index} alignItems="flex-start" style={{ paddingBottom: '1px' }}>
-                        {!isMobile && (
-                            <ListItemAvatar>
-                                <Avatar {...stringAvatar(comment.author)} style={avatarStyle} />
-                            </ListItemAvatar>
-                        )}
-                        <Box style={contentStyle}>
-                            <div style={authorDateStyle}>
-                                <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                                    {comment.author}
-                                </Typography>
-                                {isMobile && <Avatar {...stringAvatar(comment.author)} style={avatarStyle} />}
-                                <Typography variant="body2" color="textSecondary">
-                                    {getTimeDifferenceString(comment.timestamp)}
-                                </Typography>
-                            </div>
-                            <Typography variant="body1" gutterBottom style={{ wordBreak: 'break-word' }}>
-                                {comment.content}
-                            </Typography>
-                        </Box>
-                    </ListItem>
+
+            <List sx={{ flex: '1 1 auto', minHeight: 0, overflow: 'auto' }}>
+                {tree.length === 0 && (
+                    <Box
+                        sx={{
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            textAlign: 'center',
+                            color: 'text.secondary',
+                            gap: 1,
+                            py: 4
+                        }}
+                    >
+                        <ForumOutlinedIcon sx={{ fontSize: 32, opacity: 0.5 }} />
+                        <Typography variant="body1" color="text.secondary">
+                            No comments yet
+                        </Typography>
+                        <Typography variant="body2" color="text.disabled">
+                            Be the first to start the discussion
+                        </Typography>
+                    </Box>
+                )}
+                {tree.map(node => (
+                    <CommentNode
+                        key={node.id}
+                        node={node}
+                        depth={0}
+                        users={users}
+                        isMobile={isMobile}
+                        onReply={handleReply}
+                        onVote={handleVote}
+                        onReact={handleReact}
+                        onStatusChange={handleStatusChange}
+                        currentUser={userDisplayName}
+                        collapsedIds={collapsedIds}
+                        toggleCollapsed={toggleCollapsed}
+                        replyingId={replyingId}
+                        setReplyingId={setReplyingId}
+                    />
                 ))}
             </List>
 
-            <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: 'auto' }}>
+            <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: 'auto', flexShrink: 0 }}>
                 <TextField
-                    ref={textFieldRef}
+                    inputRef={textFieldRef}
                     multiline
-                    rows={4} // Adjust the rows as needed to ensure there's enough space for the button
+                    rows={4}
                     variant="outlined"
                     placeholder={"Add a comment\nmention a user by typing '@' and their name"}
+                    hidden={replyingId !== null}
                     fullWidth
                     style={{ paddingRight: '1px' }}
-                    value={newCommentText}
-                    onChange={handleTextChange}
-                    onKeyDown={handleKeyDown}
+                    value={topLevelMention.text}
+                    onChange={topLevelMention.handleTextChange}
+                    onKeyDown={topLevelMention.handleKeyDown}
                 />
-                <Popper open={Boolean(mentionAnchorEl)} anchorEl={mentionAnchorEl} placement="top-start" style={{ zIndex: 1300 }}>
-                    <Paper>
-                        <MenuList>
-                            {filteredUsers.map(user => (
-                                <MenuItem key={user.uuid} onClick={() => handleMentionSelect(user)}>
-                                    <Avatar {...stringAvatar(user.display_name)} style={{ width: 24, height: 24, marginRight: 8 }} />
-                                    {user.display_name}
-                                </MenuItem>
-                            ))}
-                        </MenuList>
-                    </Paper>
-                </Popper>
+                <MentionPopper
+                    anchorEl={topLevelMention.anchorEl}
+                    filteredUsers={topLevelMention.filteredUsers}
+                    onSelect={topLevelMention.handleMentionSelect}
+                />
                 <Box style={{ position: 'absolute', right: 5, bottom: 5 }}>
                     <Button
                         variant="contained"
                         style={{
                             ...buttonStyle,
-                            backgroundColor: newCommentText.trim() ? colorStyled.secondary : 'gray'
-                        }} // Adjust styling as needed
-                        onClick={() => addComment(userDisplayName, newCommentText, mentionedUsers)}
-                        disabled={!newCommentText.trim()}
+                            backgroundColor: topLevelMention.text.trim() ? theme.palette.secondary.main : theme.palette.action.disabledBackground
+                        }}
+                        onClick={handleTopLevelSubmit}
+                        disabled={!topLevelMention.text.trim()}
                     >
                         Add
                     </Button>
@@ -259,38 +882,7 @@ CommentsSection.propTypes = {
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     resourceId: PropTypes.string.isRequired,
     comments: PropTypes.array.isRequired,
-    handleSaveDiscussion: PropTypes.func.isRequired,
-    setHasUncommittedChanges: PropTypes.func.isRequired
+    handleSaveDiscussion: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps)(CommentsSection);
-
-// Styling
-const avatarStyle = {
-    marginRight: '10px'
-};
-
-const contentStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: 1,
-    minWidth: 0
-};
-
-const dividerStyle = {
-    flexGrow: 1,
-    border: 'none',
-    borderBottom: '1px solid #ccc'
-};
-
-const authorDateStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    flexWrap: 'wrap'
-};
-
-const buttonStyle = {
-    borderRadius: '20px',
-    display: 'flex'
-};

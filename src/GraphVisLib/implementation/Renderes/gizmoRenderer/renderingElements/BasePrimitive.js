@@ -51,13 +51,9 @@ export default class BasePrimitive {
             return this.__renderingConfig;
         }
         // using deepCopy
-        this.__renderingConfig = JSON.parse(JSON.stringify(cfgObj));
+        this.__renderingConfig = structuredClone(cfgObj);
         // this will allow a primitive to overwrite the global definitions;
     };
-
-    render() {
-        console.log('This is abstract function!');
-    }
 
     resetRenderingData = () => {
         // clear all the data; which is required for rendering elements;

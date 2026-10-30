@@ -94,8 +94,6 @@ export default class Animations {
                 n.renderingText
                     .transition()
                     .duration(morphDuration)
-                    // TODO : font size and style morphing
-                    // .attr('style', morphParameters.textParameters['style'])
                     .attr('dx', morphParameters.textParameters['dx'])
                     .attr('dy', morphParameters.textParameters['dy']);
             }
@@ -127,48 +125,12 @@ export default class Animations {
     };
 
     morphLink = (link, last, callback) => {
-        //TODO
         if (last) {
             callback();
         }
-        //     const morphParameters = link.drawTools().getMorphParameters(link.renderingConfig(), link);
-        //     const morphDuration = 500;
-        //     if (n.renderingShape) {
-        //         n.removeNestedGroupItems();
-        //         if (n.renderingText) {
-        //             n.renderingText
-        //                 .transition()
-        //                 .duration(morphDuration)
-        //                 // TODO : font size and style morphing
-        //                 // .attr('style', morphParameters.textParameters['style'])
-        //                 .attr('dx', morphParameters.textParameters['dx'])
-        //                 .attr('dy', morphParameters.textParameters['dy']);
-        //         }
-        //         n.renderingShape
-        //             .transition()
-        //             .duration(morphDuration)
-        //             .attr('x', morphParameters.baseShapeParameters['x'])
-        //             .attr('y', morphParameters.baseShapeParameters['y'])
-        //             .attr('width', morphParameters.baseShapeParameters['width'])
-        //             .attr('height', morphParameters.baseShapeParameters['height'])
-        //             .attr('rx', morphParameters.baseShapeParameters['rx'])
-        //             .attr('ry', morphParameters.baseShapeParameters['ry'])
-        //             .attr('fill', morphParameters.shapeStyleParameters['fill'])
-        //             .attr('stroke', morphParameters.shapeStyleParameters['stroke'])
-        //             .attr('stroke-width', morphParameters.shapeStyleParameters['stroke-width'])
-        //             .attr('stroke-dasharray', morphParameters.shapeStyleParameters['stroke-dasharray'])
-        //             .each('end', function() {
-        //                 n.redraw();
-        //                 // current preparations to handle sequential graph animations
-        //                 if (last && callback) {
-        //                     callback();
-        //                 }
-        //             });
-        //     }
     };
 
     collapseExpandMultiLinks = link => {
-        const that = this;
         if (link.__internalType !== 'multiLink' && link.__linkGroup === undefined) {
             return;
         }
@@ -186,12 +148,12 @@ export default class Animations {
                 item.propertyNodePostion = { x: cx, y: cy };
                 item.visible(true);
             });
-            that.graphObject.bruteForceRedrawGraph();
-            that.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+            this.graphObject.bruteForceRedrawGraph();
+            this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
             this.graphObject.pauseForceDirectedLayout(true);
             expandPropertyNodesAnimations(link, parentPos, function() {
-                that.graphObject.bruteForceRedrawGraph();
-                that.graphObject.resetUserNavigation(backupTranslation, backupZoom);
+                this.graphObject.bruteForceRedrawGraph();
+                this.graphObject.resetUserNavigation(backupTranslation, backupZoom);
             });
         } else {
             const n1 = link.sourceNode;

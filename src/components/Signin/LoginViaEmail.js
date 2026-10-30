@@ -10,14 +10,22 @@ import { minLengthPassword } from '../../constants/globalConstants';
 import success from '../../assets/images/success.png';
 import error from '../../assets/images/error.png';
 import PopUp from '../PopUp';
-import github from '../../assets/images/github.svg';
-import gitlab from '../../assets/images/gitlab.svg';
-import google from '../../assets/images/google.png';
+import githubBlack from '../../assets/images/github-logo-black.svg';
+import githubWhite from '../../assets/images/github-logo-white.svg';
+import gitlab from '../../assets/images/gitlab-logo-colour.svg';
 import sapLogo from '../../assets/images/sap-logo.png';
-import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB, URL_LOGIN_VIA_GOOGLE, URL_LOGIN_VIA_SAP } from '../../constants/services';
-import { fontStyled } from '../../styledComponents/styledFont';
-import { colorStyled } from '../../styledComponents/styledColor';
+import googleLogo from '../../assets/images/google.png';
+import linkedinLogo from '../../assets/images/linkedin-blue-logo.png';
 
+import {
+    URL_LOGIN_VIA_GITHUB,
+    URL_LOGIN_VIA_GITLAB,
+    URL_LOGIN_VIA_GOOGLE,
+    URL_LOGIN_VIA_SAP,
+    URL_LOGIN_VIA_LINKEDIN
+} from '../../constants/services';
+import { fontStyled } from '../../styledComponents/styledFont';
+import { withTheme } from '@emotion/react';
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
 
@@ -37,6 +45,7 @@ class LoginViaEmail extends Component {
             image: '',
             popUpMessage: '',
             signInModal: true,
+            showMoreOptions: false,
             nameError: '',
             emailError: '',
             passwordError: '',
@@ -62,7 +71,7 @@ class LoginViaEmail extends Component {
                 this.setState({ openPopUp: true, popUpMessage: registerToken.message, image: success });
                 // this.props.callback();
             }
-            if (registerToken && registerToken.jwt) {
+            if (registerToken?.jwt) {
                 this.props.updateCookies({ token: registerToken.jwt });
             }
             this.setState({ loading: false });
@@ -79,16 +88,10 @@ class LoginViaEmail extends Component {
                 image: error
             });
         } else {
-            if (token && token.jwt) {
-                await this.props.updateCookies({ token: token.jwt });
-            }
-            if (this.props.redirectRoute) {
-                window.location.href = this.props.redirectRoute;
-            } else if (token.redirectRoute) {
-                window.location.href = token.redirectRoute;
-            } else {
-                this.props.callback();
-            }
+            this.props.callback();
+        }
+        if (token?.jwt) {
+            this.props.updateCookies({ token: token.jwt });
         }
 
         this.setState({ loading: false });
@@ -125,7 +128,7 @@ class LoginViaEmail extends Component {
     isfieldValid = () => {
         const regexEmailValidation = /^(([^<>()\\[\]\\.,;:\s@"]+(\.[^<>()\\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        if (!this.state.displayName) {
+        if (!this.state.displayName?.trim()) {
             this.setState({
                 nameError: 'Name can not be empty'
             });
@@ -154,101 +157,102 @@ class LoginViaEmail extends Component {
         this.props.callback();
     };
 
+    renderOAuthButton = (href, logo, label, theme, compact = false) => {
+        return (
+            <a
+                href={href}
+                target="_self"
+                rel="noreferrer"
+                title={label}
+                style={{
+                    flex: compact ? 1 : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    height: compact ? '38px' : '44px',
+                    padding: '0 12px',
+                    borderRadius: '6px',
+                    border: `1px solid ${theme.palette.outline?.main || theme.palette.divider}`,
+                    backgroundColor: theme.palette.background.paper,
+                    color: theme.palette.text.primary,
+                    fontSize: compact ? '0.9rem' : '1rem',
+                    fontWeight: 500,
+                    textDecoration: 'none',
+                    cursor: 'pointer'
+                }}
+            >
+                <img
+                    src={logo}
+                    style={{
+                        height: '30px',
+                        width:  '25px',
+                        objectFit: 'contain',
+                    }}
+                    alt=""
+                />
+                <span>{label}</span>
+            </a>
+        );
+    };
+
     render() {
         // let disableRegisterAndGithub = false;
         if (process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'True' || process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'true') {
             // disableRegisterAndGithub = true;
         }
+        const { theme } = this.props;
         return (
             <div>
-                {this.state.openPopUp ? (
+                {this.state.openPopUp && (
                     <PopUp open={this.state.openPopUp} onClose={this.popUpClose} image={this.state.image} message={this.state.popUpMessage} />
-                ) : (
+                )}
+                {!this.state.openPopUp && (
                     <div style={{ fontFamily: fontStyled.fontFamily }}>
-                        {!this.state.loading ? (
+                        {this.state.loading && <div>Processing...</div>}
+                        {!this.state.loading && (
                             <Form onSubmit={this.handleSubmit}>
-                                {this.state.signInModal ? (
+                                {this.state.signInModal && (
                                     <div style={{ margin: '20px 20px 30px 20px' }}>
                                         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                                             <h2 style={{ marginBottom: '20px' }}>Sign In</h2>
-                                            <p className="mt-3">
+                                            <p className="mt-3" style={{ color: theme.palette.text.primary }}>
                                                 Don't have an account? &nbsp;
-                                                <Link to="" style={{ color: colorStyled.primary }} onClick={this.toggleSignupModel}>
-                                                    Sign Up
+                                                <Link to="" style={{ color: theme.palette.primary.main }} onClick={this.toggleSignupModel}>
+                                                    Register
                                                 </Link>
                                             </p>
                                         </div>
                                         <hr className="mt-0 mb-2" />
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                justifyContent: 'space-between',
-                                                height: '130px',
-                                                alignItems: 'center',
-                                                marginTop: '20px'
-                                            }}
-                                        >
-                                            <a
-                                                href={URL_LOGIN_VIA_GITHUB}
-                                                target="_self"
-                                                className="btn btn-primary"
-                                                style={{ width: '90%', backgroundColor: 'black', border: 'none' }}
-                                                rel="noreferrer"
-                                            >
-                                                <img src={github} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
+                                            <div style={{ width: '90%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                {this.renderOAuthButton(URL_LOGIN_VIA_LINKEDIN, linkedinLogo, 'Continue with LinkedIn', theme)}
+                                                {this.renderOAuthButton(URL_LOGIN_VIA_GOOGLE, googleLogo, 'Continue with Google', theme)}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => this.setState(prev => ({ showMoreOptions: !prev.showMoreOptions }))}
+                                                    aria-expanded={this.state.showMoreOptions}
                                                     style={{
-                                                        border: '1px solid white',
-                                                        float: 'left',
-                                                        height: '100%',
-                                                        marginLeft: '10px'
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        padding: 0,
+                                                        marginTop: '2px',
+                                                        fontSize: '0.9rem',
+                                                        cursor: 'pointer',
+                                                        color: theme.palette.primary.main
                                                     }}
-                                                />{' '}
-                                                Sign in with GitHub
-                                            </a>
-                                            <a
-                                                href={URL_LOGIN_VIA_GITLAB}
-                                                target="_self"
-                                                className="btn btn-primary"
-                                                style={{ width: '90%', backgroundColor: '#ec672a', border: 'none' }}
-                                                rel="noreferrer"
-                                            >
-                                                <img src={gitlab} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span
-                                                    style={{
-                                                        border: '1px solid white',
-                                                        float: 'left',
-                                                        height: '100%',
-                                                        marginLeft: '10px'
-                                                    }}
-                                                />{' '}
-                                                Sign in with GitLab
-                                            </a>
-                                            {/* <a
-                                                href={URL_LOGIN_VIA_GOOGLE}
-                                                target="_self"
-                                                className="btn btn-primary"
-                                                style={{ width: '90%', backgroundColor: '#4285F4', border: 'none' }}
-                                                rel="noreferrer"
-                                            >
-                                                <img src={google} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
-                                                Sign in with Google
-                                            </a> */}
-                                            {/*<a*/}
-                                            {/*    href={URL_LOGIN_VIA_SAP}*/}
-                                            {/*    target="_self"*/}
-                                            {/*    className="btn btn-primary"*/}
-                                            {/*    style={{ width: '90%', backgroundColor: '#0f6d9c', border: 'none' }}*/}
-                                            {/*    rel="noreferrer"*/}
-                                            {/*>*/}
-                                            {/*    <img src={sapLogo} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />*/}
-                                            {/*    <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />*/}
-                                            {/*    Sign in with SAP*/}
-                                            {/*</a>*/}
+                                                >
+                                                    {this.state.showMoreOptions ? 'Hide more options ▴' : 'Show more options ▾'}
+                                                </button>
+                                                {this.state.showMoreOptions && (
+                                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                                        {this.renderOAuthButton(URL_LOGIN_VIA_GITHUB, theme.palette.mode === 'dark' ? githubWhite : githubBlack, 'GitHub', theme, true)}
+                                                        {this.renderOAuthButton(URL_LOGIN_VIA_GITLAB, gitlab, 'GitLab', theme, true)}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                        <div style={{ textAlign: 'center', marginTop: '20px', color: theme.palette.text.primary }}>
                                             <hr
                                                 style={{
                                                     float: 'left',
@@ -275,9 +279,13 @@ class LoginViaEmail extends Component {
                                                 marginTop: '10px'
                                             }}
                                         >
-                                            <Label style={{ width: '90%', textAlign: 'start' }}>Email</Label>
+                                            <Label style={{ width: '90%', textAlign: 'start', color: theme.palette.text.primary }}>Email</Label>
                                             <Input
-                                                style={{ width: '90%' }}
+                                                style={{
+                                                    width: '90%',
+                                                    backgroundColor: theme.palette.background.paper,
+                                                    color: theme.palette.text.primary
+                                                }}
                                                 type="email"
                                                 name="email"
                                                 placeholder="Enter email"
@@ -293,9 +301,13 @@ class LoginViaEmail extends Component {
                                                 marginTop: '10px'
                                             }}
                                         >
-                                            <Label style={{ width: '90%', textAlign: 'start' }}>Password</Label>
+                                            <Label style={{ width: '90%', textAlign: 'start', color: theme.palette.text.primary }}>Password</Label>
                                             <Input
-                                                style={{ width: '90%' }}
+                                                style={{
+                                                    width: '90%',
+                                                    backgroundColor: theme.palette.background.paper,
+                                                    color: theme.palette.text.primary
+                                                }}
                                                 type="password"
                                                 name="password"
                                                 placeholder="Enter password"
@@ -309,8 +321,8 @@ class LoginViaEmail extends Component {
                                                 style={{
                                                     width: '90%',
                                                     marginTop: '15px',
-                                                    backgroundColor: colorStyled.primary,
-                                                    color: colorStyled.onPrimary
+                                                    backgroundColor: theme.palette.secondary.main,
+                                                    color: theme.palette.secondary.contrastText
                                                 }}
                                                 onClick={this.handleLogin}
                                             >
@@ -318,12 +330,13 @@ class LoginViaEmail extends Component {
                                             </Button>
                                         </div>
                                         <p style={{ textAlign: 'center' }}>
-                                            <Link to="" onClick={this.toggleResetPasswordModel} style={{ color: colorStyled.primary }}>
+                                            <Link to="" onClick={this.toggleResetPasswordModel} style={{ color: theme.palette.primary.main }}>
                                                 Forgot Password ?
                                             </Link>
                                         </p>
                                     </div>
-                                ) : this.state.signupModal ? (
+                                )}
+                                {this.state.signupModal && (
                                     // sign up model start from here
                                     <Modal
                                         style={{ maxWidth: '700px', width: '100%', fontFamily: fontStyled.fontFamily }}
@@ -399,56 +412,13 @@ class LoginViaEmail extends Component {
                                         </ModalBody>
                                         <ModalFooter>
                                             <Button
-                                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                                                 onClick={this.handleRegister}
                                             >
                                                 Register
                                             </Button>
                                             <Button
-                                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
-                                                onClick={this.props.toggleAuthDialog}
-                                            >
-                                                Cancel
-                                            </Button>
-                                        </ModalFooter>
-                                    </Modal>
-                                ) : (
-                                    // forgot password model start from here
-                                    <Modal
-                                        style={{ fontFamily: fontStyled.fontFamily }}
-                                        isOpen={this.state.resetPasswordModel}
-                                        toggle={this.props.toggleAuthDialog}
-                                    >
-                                        <ModalHeader toggle={this.props.toggleAuthDialog}>Reset Password</ModalHeader>
-                                        <ModalBody>
-                                            <div className="container">
-                                                <Form onSubmit={this.handleSubmit}>
-                                                    <FormGroup row>
-                                                        <Label for="exampleEmail" sm={2}>
-                                                            Email
-                                                        </Label>
-                                                        <Col sm={10}>
-                                                            <Input
-                                                                type="email"
-                                                                name="email"
-                                                                placeholder="Enter Email Address"
-                                                                value={this.state.email}
-                                                                onChange={event => this.setState({ email: event.target.value })}
-                                                            />
-                                                        </Col>
-                                                    </FormGroup>
-                                                </Form>
-                                            </div>
-                                        </ModalBody>
-                                        <ModalFooter>
-                                            <Button
-                                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
-                                                onClick={this.handleForgotPassword}
-                                            >
-                                                Reset
-                                            </Button>
-                                            <Button
-                                                style={{ backgroundColor: colorStyled.primary, color: colorStyled.onPrimary }}
+                                                style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
                                                 onClick={this.props.toggleAuthDialog}
                                             >
                                                 Cancel
@@ -456,9 +426,57 @@ class LoginViaEmail extends Component {
                                         </ModalFooter>
                                     </Modal>
                                 )}
+                                <Modal
+                                    style={{ fontFamily: fontStyled.fontFamily }}
+                                    isOpen={this.state.resetPasswordModel}
+                                    toggle={this.props.toggleAuthDialog}
+                                >
+                                    <ModalHeader
+                                        toggle={this.props.toggleAuthDialog}
+                                        style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}
+                                    >
+                                        Reset Password
+                                    </ModalHeader>
+                                    <ModalBody style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
+                                        <div className="container">
+                                            <Form onSubmit={this.handleSubmit}>
+                                                <FormGroup row>
+                                                    <Label for="exampleEmail" sm={2} style={{ color: theme.palette.text.primary }}>
+                                                        Email
+                                                    </Label>
+                                                    <Col sm={10}>
+                                                        <Input
+                                                            type="email"
+                                                            name="email"
+                                                            placeholder="Enter Email Address"
+                                                            value={this.state.email}
+                                                            onChange={event => this.setState({ email: event.target.value })}
+                                                            style={{
+                                                                backgroundColor: theme.palette.background.paper,
+                                                                color: theme.palette.text.primary
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                </FormGroup>
+                                            </Form>
+                                        </div>
+                                    </ModalBody>
+                                    <ModalFooter style={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
+                                        <Button
+                                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                                            onClick={this.handleForgotPassword}
+                                        >
+                                            Reset
+                                        </Button>
+                                        <Button
+                                            style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.secondary.contrastText }}
+                                            onClick={this.props.toggleAuthDialog}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </ModalFooter>
+                                </Modal>
                             </Form>
-                        ) : (
-                            <div>Processing...</div>
                         )}
                     </div>
                 )}
@@ -469,13 +487,9 @@ class LoginViaEmail extends Component {
 
 LoginViaEmail.propTypes = {
     openAuthDialog: PropTypes.func.isRequired,
-    updateAuth: PropTypes.func.isRequired,
     updateCookies: PropTypes.func.isRequired,
     toggleAuthDialog: PropTypes.func.isRequired,
-    callback: PropTypes.func.isRequired,
-    signInRequired: PropTypes.bool.isRequired,
-    // history: PropTypes.object.isRequired,
-    redirectRoute: PropTypes.string
+    callback: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -490,7 +504,4 @@ const mapDispatchToProps = dispatch => ({
     toggleAuthDialog: () => dispatch(toggleAuthDialog())
 });
 
-export default compose(
-    connect(mapStateToProps, mapDispatchToProps)
-    // withRouter
-)(LoginViaEmail);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(withTheme(LoginViaEmail));

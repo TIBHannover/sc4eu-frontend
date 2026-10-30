@@ -93,9 +93,6 @@ export default class NodePrimitive extends BasePrimitive {
 
     updateRenderingPosition = (debug = false) => {
         if (this.groupRoot) {
-            if (Number.isNaN(this.x) || Number.isNaN(this.y)) {
-                // console.log(this.displayName(), ' has nan positions');
-            }
             this.groupRoot.attr('transform', 'translate(' + this.x + ',' + this.y + ')');
         }
         // update all related links; (using concat as temp object to merge the links)

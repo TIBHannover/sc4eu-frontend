@@ -1,10 +1,10 @@
 import ReactApexChart from 'react-apexcharts';
 import PropTypes from 'prop-types';
-import { colorStyled } from 'styledComponents/styledColor';
+import { useTheme } from '@mui/material';
 
 export const MyApexChart = ({ data, title, yAxisTitle, xAxisTitle }) => {
+    const theme = useTheme();
     const series = data
-
     const options = {
         chart: {
             id: 'exChart',
@@ -26,16 +26,16 @@ export const MyApexChart = ({ data, title, yAxisTitle, xAxisTitle }) => {
             style: {
                 fontSize: '10px',
                 fontWeight: 'normal',
-                colors: ['#777'],
+                colors: [theme.palette.text.primary],
             },
             background: {
                 enabled: true,
-                foreColor: '#fff',
+                foreColor: theme.palette.background.default,
                 borderRadius: 2,
                 padding: 2,
                 opacity: 0.6,
                 borderWidth: 1,
-                borderColor: '#ccc',
+                borderColor: theme.palette.divider,
             },
         },
         markers: {
@@ -90,7 +90,7 @@ export const MyApexChart = ({ data, title, yAxisTitle, xAxisTitle }) => {
                 }
             }
         },
-        colors: [`${colorStyled.primary}`]
+        colors: [theme.palette.primary.main]
     };
 
     return (

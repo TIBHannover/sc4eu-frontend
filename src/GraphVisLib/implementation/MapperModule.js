@@ -5,18 +5,16 @@ import UMLStyledRenderingHandler from './Renderes/gizmoRenderer/renderingConfigs
 import VOWLRenderingHandler from './Renderes/gizmoRenderer/renderingConfigs/VOWLRenderingHandler';
 
 export default class MapperModule {
-    constructor() {
-        this.nodeLinkMapper = 'VOWL';
-        this.rrm_input = null;
-        this.ve_mapper_model = null;
-        this.graphReference = null;
-        this.supportedMapperTypes = ['UML', 'VOWL'];
+    nodeLinkMapper = 'VOWL';
+    rrm_input = null;
+    ve_mapper_model = null;
+    graphReference = null;
+    supportedMapperTypes = ['UML', 'VOWL'];
 
-        this.umlBasedRenderingConfing = new UMLStyledRenderingHandler();
-        this.vowlRenderingConfig = new VOWLRenderingHandler();
+    umlBasedRenderingConfing = new UMLStyledRenderingHandler();
+    vowlRenderingConfig = new VOWLRenderingHandler();
 
-        this.preprocessedData = false;
-    }
+    preprocessedData = false;
 
     setResourceRelationModelInput = model => {
         this.rrm_input = model;
@@ -52,7 +50,7 @@ export default class MapperModule {
     };
 
     setNodeLinkType = val => {
-        if (this.supportedMapperTypes.indexOf(val) !== -1) {
+        if (this.supportedMapperTypes.includes(val)) {
             this.nodeLinkMapper = val;
             if (val === 'UML') {
                 this.graphReference.setRenderingConfig(this.umlBasedRenderingConfing);

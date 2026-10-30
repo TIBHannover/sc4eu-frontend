@@ -1,4 +1,3 @@
-import axios from 'axios';
 import * as N3 from 'n3';
 import { getFileDataFromGitHub, saveNewContent } from './GitAPICalls';
 import { Buffer } from 'buffer';
@@ -20,11 +19,10 @@ export const parseRDF = async rdfGitHubURL => {
 
     await new Promise((resolve, reject) => {
         parser.parse(rdfDecodedDataGithub, (error, quad, prefixes) => {
-            //console.log('parseRDF quad', quad);
             if (error) {
                 reject(error);
             } else if (quad) {
-                if(quad.predicate.value.split('#')[1] !== 'type') {
+                if (quad.predicate.value.split('#')[1] !== 'type') {
                     quads.push({
                         subject: quad.subject.value.split('#')[1],
                         predicate: quad.predicate.value.split('#')[1],
@@ -48,19 +46,17 @@ export const parseRDF = async rdfGitHubURL => {
             } else {
                 result[quad.subject][quad.predicate] = quad.object;
             }
-        }
+        } else {
         /*else if (quad.predicate === 'created' && quad.datatype === 'http://www.w3.org/2001/XMLSchema#date') {
             result[quad.subject]['dcterms:created'] = quad.object;
-        }*/else {
+        }*/
             result[quad.subject][quad.predicate] = quad.object;
         }
     });
-    console.log('parseRDF result', result);
     return Object.entries(result).map(([identifier, value]) => ({ identifier, ...value }));
 };
 
-
-const createSubject = (id) => `https://example.com#${id}`;
+const createSubject = id => `https://example.com#${id}`;
 const addQuad = (writer, subject, predicate, object, isLiteral = true, datatype = null) => {
     writer.addQuad(
         N3.DataFactory.quad(

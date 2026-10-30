@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { StyledResourceBody, StyledBodyInput } from './StyledComponents';
-import { colorStyled } from 'styledComponents/styledColor';
 import { transformResourceToTTL, calculateBodyRows } from '../../mappers/ResToTTL';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
-import AnnotationsDropDown from '../ontologyView/AnnotationsDropDown';
-
+import { withTheme } from '@emotion/react';
 class ResourceBody extends Component {
     constructor(props) {
         super(props);
@@ -20,18 +18,12 @@ class ResourceBody extends Component {
         this.bodyRef = createRef();
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     render() {
         const resDef = this.props.resourceContext;
         const prefixList = this.props.metaInformation.prefixList.longToShort;
         const content = transformResourceToTTL(resDef, prefixList);
         const numRowsRequired = calculateBodyRows(content);
-        // if (numRowsRequired === 0) {
-        //     return <> </>;
-        // } else {
+        const { theme } = this.props;
         return (
             <StyledResourceBody ref={this.bodyRef}>
                 <CardWidgetVis
@@ -44,7 +36,7 @@ class ResourceBody extends Component {
                 {numRowsRequired !== 0 && (
                     <div style={{ height: 'auto', display: 'flex', width: '100%', maxHeight: '100%', maxWidth: '100%' }}>
                         <StyledBodyInput
-                            style={{ backgroundColor: colorStyled.surfaceContainerLowest, color: colorStyled.onSurface }}
+                            style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
                             type="textarea"
                             display={'flex'}
                             width="100%"
@@ -69,11 +61,10 @@ const mapStateToProps = state => {
 
 ResourceBody.propTypes = {
     resourceContext: PropTypes.object.isRequired,
-    isEditing: PropTypes.bool.isRequired,
     metaInformation: PropTypes.object.isRequired,
     isBodyExpanded: PropTypes.bool.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResourceBody);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(ResourceBody));

@@ -4,11 +4,7 @@ import { generateLink } from './utils';
 /* eslint-disable react/prop-types */
 export const createColumns = groupByAncestor => {
     const linkCell = (text, iri, ontologyId) => (
-        <Link
-            href={generateLink(iri, ontologyId)}
-            target="_blank"
-            rel="noopener noreferrer"
-        >
+        <Link href={generateLink(iri, ontologyId)} target="_blank" rel="noopener noreferrer">
             {text}
         </Link>
     );
@@ -19,7 +15,7 @@ export const createColumns = groupByAncestor => {
                 id: 'ancestor_term',
                 header: 'Ancestor Term',
                 accessorKey: 'ancestor_term',
-                Cell: ({ row }) => linkCell(row?.original?.ancestor_term, row?.original?.ancestor_iri, row?.original?.ontologyId),
+                Cell: ({ row }) => linkCell(row?.original?.ancestor_term, row?.original?.ancestor_iri, row?.original?.ontologyId)
             },
             {
                 id: 'labels',
@@ -31,21 +27,17 @@ export const createColumns = groupByAncestor => {
                             <div key={idx}>{term}</div>
                         ))}
                     </div>
-                ),
+                )
             },
             {
                 id: 'ancestor_iri',
                 header: 'IRI',
                 accessorKey: 'ancestor_iri',
                 Cell: ({ row }) => (
-                    <Link
-                        href={row.original.ancestor_iri}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
+                    <Link href={row.original.ancestor_iri} target="_blank" rel="noopener noreferrer">
                         {row?.original?.ancestor_iri}
                     </Link>
-                ),
+                )
             },
             {
                 id: 'ancestor_synonyms',
@@ -57,8 +49,8 @@ export const createColumns = groupByAncestor => {
                             <div key={i}>{s}</div>
                         ))}
                     </div>
-                ),
-            },
+                )
+            }
         ];
     }
 
@@ -67,16 +59,12 @@ export const createColumns = groupByAncestor => {
             id: 'label',
             header: 'Matched Term',
             accessorKey: 'label',
-            Cell: ({ row }) => linkCell(
-                row?.original?.label,
-                row?.original?.iri,
-                row?.original?.ontologyId
-            ),
+            Cell: ({ row }) => linkCell(row?.original?.label, row?.original?.iri, row?.original?.ontologyId)
         },
         {
             id: 'ancestor_term',
             header: 'Ancestor Term',
-            accessorKey: 'ancestor_term',
+            accessorKey: 'ancestor_term'
         },
         {
             id: 'iri',
@@ -86,7 +74,7 @@ export const createColumns = groupByAncestor => {
                 <Link href={row?.original?.iri} target="_blank" rel="noopener noreferrer">
                     {row.original.iri}
                 </Link>
-            ),
+            )
         },
         {
             id: 'synonyms',
@@ -98,7 +86,7 @@ export const createColumns = groupByAncestor => {
                         <div key={i}>{s}</div>
                     ))}
                 </div>
-            ),
-        },
+            )
+        }
     ];
 };

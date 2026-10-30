@@ -42,6 +42,17 @@ export default class ServiceStatus extends Component {
         this.setState({ ontologyProcessingService: processing.ontologyProcessingService, loading_ontologyProcessingService: false });
     };
 
+    renderService = () => {
+        if (this.state.loading_oauthConfigured || this.state.loading_backendService || this.state.loading_ontologyProcessingService) {
+            return <Icon style={{ margin: '5px' }} icon={faSpinner} spin />;
+        }
+        if (this.state.oauthConfigured || this.state.backendService || this.state.ontologyProcessingService) {
+            return <p style={{ color: 'green', marginBottom: 0 }}>True </p>;
+        } else {
+            return <p style={{ color: 'red', marginBottom: 0 }}>False </p>;
+        }
+    };
+
     render() {
         return (
             <Container className="mt-3 p-0" style={{ border: '1px solid black', borderRadius: '10px' }}>
@@ -50,38 +61,11 @@ export default class ServiceStatus extends Component {
                     {/*OAUTH LOGIN Service*/}
                     <div>Frontend Build Type: {this.state.loading_frontendBuild ? <Icon icon={faSpinner} spin /> : this.state.frontendBuild}</div>
                     {/*OAUTH LOGIN Service*/}
-                    <div style={{ display: 'flex' }}>
-                        OAUTH Configured:{' '}
-                        {this.state.loading_oauthConfigured ? (
-                            <Icon style={{ margin: '5px' }} icon={faSpinner} spin />
-                        ) : this.state.oauthConfigured ? (
-                            <p style={{ color: 'green', marginBottom: 0 }}>True </p>
-                        ) : (
-                            <p style={{ color: 'red', marginBottom: 0 }}>False </p>
-                        )}
-                    </div>
+                    <div style={{ display: 'flex' }}>OAUTH Configured: {this.renderService()}</div>
                     {/*Backend Service*/}
-                    <div style={{ display: 'flex' }}>
-                        Backend Service:{' '}
-                        {this.state.loading_backendService ? (
-                            <Icon style={{ margin: '5px' }} icon={faSpinner} spin />
-                        ) : this.state.backendService ? (
-                            <p style={{ color: 'green', marginBottom: 0 }}>True </p>
-                        ) : (
-                            <p style={{ color: 'red', marginBottom: 0 }}>False </p>
-                        )}
-                    </div>
+                    <div style={{ display: 'flex' }}>Backend Service: {this.renderService()}</div>
                     {/*Ontology Processing Service*/}
-                    <div style={{ display: 'flex' }}>
-                        Ontology Processing Service:{' '}
-                        {this.state.loading_ontologyProcessingService ? (
-                            <Icon style={{ margin: '5px' }} icon={faSpinner} spin />
-                        ) : this.state.ontologyProcessingService ? (
-                            <p style={{ color: 'green', marginBottom: 0 }}>True </p>
-                        ) : (
-                            <p style={{ color: 'red', marginBottom: 0 }}>False </p>
-                        )}
-                    </div>
+                    <div style={{ display: 'flex' }}>Ontology Processing Service: {this.renderService()}</div>
                 </div>
             </Container>
         );

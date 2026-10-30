@@ -13,7 +13,6 @@ export function InstallBanner() {
     const dismissed = localStorage.getItem('pwa-banner-dismissed-datetime');
     if (dismissed) {
       const timeSinceDismissed = differenceInHours(new Date(Date.now()), new Date(Number(dismissed)));
-      console.log(`${timeSinceDismissed}`)
       if (timeSinceDismissed >= 3) {
         setIsDismissed(false);
         setIsVisible(true);

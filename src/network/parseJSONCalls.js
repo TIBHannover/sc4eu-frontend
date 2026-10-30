@@ -15,6 +15,38 @@ export const parseJSON = async jsonGitHubURL => {
 };
 
 /**
+ * Used when discussions file was edited by different user.
+ * To save his and yours changes a local merge between local and remote versions is made
+ *
+ * @param {string} remoteJson - Discussion file fetched from GitHub.
+ * @param {JSON} localJson - Local discussion file from cached sha.
+ * @returns {string} - merged discussions file.
+ */
+function mergeDiscussions(remoteJson, localJson) {
+    const merged = new Map(remoteJson.map(d => [d.resourceId, { ...d }]));
+
+    for (const item of localJson) {
+        if (!merged.has(item.resourceId)) {
+            merged.set(item.resourceId, item);
+        } else {
+            const remoteEntry = merged.get(item.resourceId);
+            const commentMap = new Map((remoteEntry.comments || []).map(c => [c.id, c]));
+            for (const localComment of item.comments || []) {
+                // local wins on duplicate id (e.g. updated vote)
+                commentMap.set(localComment.id, localComment);
+            }
+            merged.set(item.resourceId, {
+                ...remoteEntry,
+                ...item,
+                comments: [...commentMap.values()]
+            });
+        }
+    }
+
+    return [...merged.values()];
+}
+
+/**
  * Writes an array of JavaScript objects into RDF format and commits the changes to the given URL.
  *
  * @param {string} jsonGitHubURL - The URL to commit the changes to.
@@ -24,5 +56,15 @@ export const parseJSON = async jsonGitHubURL => {
  */
 export const writeJSON = async (jsonGitHubURL, newDiscussions, commitMessage) => {
     const jsonString = JSON.stringify(newDiscussions, null, 2);
-    return await saveNewContent(jsonGitHubURL, jsonString, commitMessage);
+    try {
+        return await saveNewContent(jsonGitHubURL, jsonString, commitMessage);
+    } catch (e) {
+        if (e.status === 409 && e.remoteContent) {
+            const remoteJson = JSON.parse(e.remoteContent);
+            const merged = mergeDiscussions(remoteJson, newDiscussions);
+            const mergedString = JSON.stringify(merged, null, 2);
+            return await saveNewContent(jsonGitHubURL, mergedString, commitMessage);
+        }
+        throw e;
+    }
 };

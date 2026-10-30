@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
 import { redux_editRelation, redux_removeRelation } from '../../redux/actions/rrm_actions';
 import RelationHeader from '../RRView/RelationHeader';
@@ -10,8 +8,8 @@ import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from './CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { CollapsibleItem, GraphVisButton, WidgetVisButton } from './StyledComponents';
-import { colorStyled } from 'styledComponents/styledColor';
 import AnnotationsDropDown from './AnnotationsDropDown';
+import { withTheme } from '@emotion/react';
 
 class SingleRelation extends Component {
     constructor(props) {
@@ -34,29 +32,17 @@ class SingleRelation extends Component {
     }
 
     componentDidMount() {
-        // console.log('Mount');
         this.props.registerToParent(this);
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('am I Updated?');
     }
 
     updateSiblings = () => {
         this.setState(prevState => ({ updateSiblings: !prevState.updateSiblings }));
     };
 
-    forceRerendering = () => {
-        this.setState(prevState => ({ forcedUpdate: !prevState.forcedUpdate }));
-    };
-
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
 
-    setShowBody = val => {
-        this.setState({ showBody: val, bodyInitialRendering: false });
-    };
     showBody = () => {
         this.setState(prevState => ({ showBody: !prevState.showBody, bodyInitialRendering: false }));
     };
@@ -120,6 +106,15 @@ class SingleRelation extends Component {
             itemOfInterest: this.props.relationContext,
             callback: this.updateSiblings
         };
+        const { theme } = this.props;
+
+        let backgroundColor = theme.palette.background.default;
+        if (this.props.relationContext.type[0].toLowerCase() === 'owl:DatatypeProperty'.toLowerCase()) {
+            backgroundColor = theme.palette.background.paper;
+        } else if (this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()) {
+            backgroundColor = theme.palette.primary.light;
+        }
+
         return (
             <div
                 ref={this.ref}
@@ -128,12 +123,7 @@ class SingleRelation extends Component {
                     marginLeft: '10px',
                     overflow: 'none',
                     display: isVisible,
-                    backgroundColor:
-                        this.props.relationContext.type[0].toLowerCase() === 'owl:DatatypeProperty'.toLowerCase()
-                            ? colorStyled.surface
-                            : this.props.relationContext.type[0].toLowerCase() === 'owl:objectProperty'.toLowerCase()
-                            ? colorStyled.surfaceContainer
-                            : colorStyled.surfaceContainerLow,
+                    backgroundColor: backgroundColor,
                     borderRadius: '10px 10px 0px 0px',
                     marginBottom: '5px'
                 }}
@@ -249,4 +239,4 @@ const mapDispatchToProps = dispatch => ({
     redux_editRelation: data => dispatch(redux_editRelation(data))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleRelation);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(SingleRelation));

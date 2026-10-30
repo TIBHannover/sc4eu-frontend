@@ -2,9 +2,15 @@ import { Octokit } from '@octokit/rest';
 
 const Buffer = require('buffer/').Buffer;
 
+// Revalidate GitHub API responses carried with `Cache-Control: max-age=60`
+const revalidatingFetch = (url, options) => fetch(url, { ...options, cache: 'no-cache' });
+
 const octokit = new Octokit({
-    auth: process.env.REACT_APP_GITHUB_TOKEN2
+    auth: process.env.REACT_APP_GITHUB_TOKEN2,
+    request: { fetch: revalidatingFetch }
 });
+
+const shaCache = new Map();
 
 const getUserFromUrl = GitHubAPIUrl => {
     const url = new URL(GitHubAPIUrl);
@@ -49,6 +55,7 @@ export const getFileDataFromGitHub = async GitHubAPIUrl => {
         path,
         ...(ref && { ref })
     });
+    shaCache.set(GitHubAPIUrl, data.sha);
     return data;
 };
 
@@ -64,8 +71,14 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
     };
 
     const newContent = Buffer.from(newData).toString('base64');
-    const result = await getFileDataFromGitHub(GitHubAPIUrl);
-    const my_sha = result.sha;
+
+    let sha;
+    if (shaCache.has(GitHubAPIUrl)) {
+        sha = shaCache.get(GitHubAPIUrl);
+    } else {
+        const result = await getFileDataFromGitHub(GitHubAPIUrl);
+        sha = result.sha;
+    }
 
     try {
         // update the file content on GitHub
@@ -73,15 +86,24 @@ export const saveNewContent = async (GitHubAPIUrl, newData, commitMessage) => {
             owner,
             repo,
             path,
+            ...(branch && { branch }),
             message: commitMessage, // the commit message
             content: newContent, // the new content
-            sha: my_sha,
+            sha: sha,
             committer: { ...user_info },
             author: { ...user_info },
             branch: branch
         });
+        shaCache.set(GitHubAPIUrl, response.data.content?.sha);
         return response.data;
     } catch (e) {
+        if (e.status === 409) {
+            shaCache.delete(GitHubAPIUrl);
+            const freshFileData = await getFileDataFromGitHub(GitHubAPIUrl);
+            shaCache.set(GitHubAPIUrl, freshFileData.sha);
+            e.remoteContent = Buffer.from(freshFileData.content, 'base64').toString('utf8');
+            e.remoteSha = freshFileData.sha;
+        }
         throw e;
     }
 };

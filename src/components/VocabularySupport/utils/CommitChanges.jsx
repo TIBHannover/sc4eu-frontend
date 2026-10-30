@@ -1,6 +1,6 @@
-import { writeRDF } from '../../../network/parseRDFCalls';
-import { getFileDataFromGitHub } from '../../../network/GitAPICalls';
+import { parseRDF, writeRDF } from '../../../network/parseRDFCalls';
 import { writeJSON } from '../../../network/parseJSONCalls';
+import { isEmpty, isEqual, omit, union } from 'lodash';
 
 //const gitHubFileUrl = 'https://raw.githubusercontent.com/tib-ts/vocabulary_development/main/testexample.ttl';
 const gitHubFileUrl = process.env.REACT_APP_VOCABULARY_SERVICE_URL;
@@ -13,61 +13,106 @@ async function saveAllDiscussion(newData, commitMessage) {
     return await writeJSON(gitHubDiscussionUrl, newData, commitMessage);
 }
 
+let discussionWritesInFlight = 0;
+let idleResolvers = [];
+
+/**
+ * Runs a discussion change (update of the local cache + commit) and remembers that it is in progress.
+ * Live updates must not replace the discussions cache meanwhile, or the not yet committed comment would be lost.
+ */
+export async function trackDiscussionWrite(write) {
+    discussionWritesInFlight++;
+    try {
+        return await write();
+    } finally {
+        discussionWritesInFlight--;
+        if (discussionWritesInFlight === 0) {
+            idleResolvers.forEach(resolve => resolve());
+            idleResolvers = [];
+        }
+    }
+}
+
+export const waitForDiscussionWritesIdle = () =>
+    discussionWritesInFlight === 0 ? Promise.resolve() : new Promise(resolve => idleResolvers.push(resolve));
+
 // Commits only the discussion data
-export async function commitDiscussionOnly(queryClient) {
-    const commitMessage = 'Update discussion'; // Hardcoded for now
-    const jsonDataToCommit = queryClient.getQueryData(['discussions']);
-    const saveDiscussionResponse = await saveAllDiscussion(jsonDataToCommit, commitMessage);
-    console.log('Discussion response: ' + saveDiscussionResponse);
-
-    let attempts = 0;
-    const maxAttempts = 10;
-    const pollInterval = 60000; // Poll every minute
-
-    // Get the SHA from the response if available
-    const currentSha = saveDiscussionResponse?.content?.sha;
-
-    const poll = () => {
-        getFileDataFromGitHub(gitHubDiscussionUrl).then(latestData => {
-            if (currentSha && currentSha === latestData.sha) {
-                queryClient.invalidateQueries({ queryKey: ['discussions'] }).then(r => console.log('discussion data invalidated successfully'));
-                return;
-            }
-            if (attempts < maxAttempts) {
-                console.log('polling for the latest discussion data');
-                attempts++;
-                setTimeout(poll, pollInterval);
-            } else {
-                console.log('Discussion data has not changed after maximum attempts');
-            }
-        });
-    };
-    poll();
+export async function commitDiscussionOnly(queryClient, comment, resourceId) {
+    await trackDiscussionWrite(async () => {
+        const commitMessage = `Add comment by ${comment.author} on term ${resourceId}`;
+        const jsonDataToCommit = queryClient.getQueryData(['discussions']);
+        await saveAllDiscussion(jsonDataToCommit, commitMessage);
+        await queryClient.invalidateQueries({ queryKey: ['discussions'] });
+    });
 }
 
-export async function commitChanges(queryClient, commitMessage) {
+export const commitTermChanges = async (queryClient, payload) => {
+    const commitMessage = isEmpty(payload.body) ? `${payload.header}` : `${payload.header}\n\n${payload.body}`;
     const dataToCommit = queryClient.getQueryData(['terms']);
-    const saveResponse = await saveAllTerms(dataToCommit, commitMessage);
-    const currentSha = saveResponse.content.sha;
+    await saveAllTerms(dataToCommit, commitMessage);
+    await queryClient.invalidateQueries({ queryKey: ['terms'] });
+};
 
-    let attempts = 0;
-    const maxAttempts = 10;
-    const pollInterval = 60000; // Poll every minute
-
-    const poll = () => {
-        getFileDataFromGitHub(gitHubFileUrl).then(latestData => {
-            if (currentSha === latestData.sha) {
-                queryClient.invalidateQueries({ queryKey: ['terms'] }).then(r => console.log('data invalidated' + ' successfully: '));
-                return;
-            }
-            if (attempts < maxAttempts) {
-                console.log('polling for the latest data');
-                attempts++;
-                setTimeout(poll, pollInterval);
-            } else {
-                console.log('Data has not changed after maximum attempts');
-            }
-        });
-    };
-    poll();
+/**
+ * Returns the terms to push.
+ * - Remote did not change since we loaded it: our local terms are the truth (edits and deletions included).
+ * - Remote changed (someone committed): take the remote terms and add the terms the user created locally.
+ *   Local edits/deletions of existing terms are dropped in this case.
+ */
+export function applyLocalChanges(remote, local, baseline) {
+    if (JSON.stringify(remote) === JSON.stringify(baseline)) {
+        return local;
+    }
+    const knownIds = new Set(baseline.map(term => term.identifier));
+    const remoteIds = new Set(remote.map(term => term.identifier));
+    const added = local.filter(term => !knownIds.has(term.identifier) && !remoteIds.has(term.identifier));
+    return [...remote, ...added];
 }
+
+const MAX_ATTEMPTS = 5;
+const RETRY_DELAY_MS = 1000;
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Commits the local terms without overwriting what other users committed.
+ * Always: fetch the latest remote terms -> apply the user's changes on top -> push.
+ * If somebody commits between our fetch and push (409), the whole cycle is repeated.
+ *
+ * @param queryClient
+ * @param {string} commitMessage
+ * @param {Array} baselineTerms - terms as they were before the user's local changes.
+ */
+export async function commitChanges(queryClient, commitMessage, baselineTerms) {
+    let baseline = baselineTerms;
+    for (let attempt = 1; ; attempt++) {
+        const localTerms = queryClient.getQueryData(['terms']);
+        let termsToCommit = localTerms;
+        if (baseline) {
+            const remoteTerms = await parseRDF(gitHubFileUrl);
+            termsToCommit = applyLocalChanges(remoteTerms, localTerms, baseline);
+            queryClient.setQueryData(['terms'], termsToCommit);
+            baseline = remoteTerms;
+        }
+        try {
+            await saveAllTerms(termsToCommit, commitMessage);
+            break;
+        } catch (e) {
+            if (e?.status !== 409 || !baseline || attempt >= MAX_ATTEMPTS) {
+                throw e;
+            }
+            await sleep(RETRY_DELAY_MS);
+        }
+    }
+    await queryClient.invalidateQueries({ queryKey: ['terms'] });
+}
+
+export const generateChangedValues = (termBeforeChange, termAfterChange) => {
+    const IGNORED_KEYS = ['modified'];
+    const before = omit(termBeforeChange, IGNORED_KEYS);
+    const after = omit(termAfterChange, IGNORED_KEYS);
+
+    return union(Object.keys(before), Object.keys(after))
+        .filter(key => !isEqual(before[key], after[key]))
+        .flatMap(key => [`${key}-from: ${before[key] ?? null}`, `${key}-to: ${after[key]}`])
+        .join('\n');
+};

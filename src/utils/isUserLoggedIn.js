@@ -12,8 +12,8 @@ export const selectIsAuthenticated = state => Boolean(state.auth.user && state.a
 
 export const selectUser = state => state.auth.user;
 
-export const selectIsAdmin = state => state.auth.user && state.auth.user.role === 'admin';
+export const selectIsAdmin = state => state.auth.user?.role === 'admin';
 
-export const selectIsUser = state => state.auth.user && state.auth.user.role === 'user';
+export const selectIsUser = state => state.auth.user?.role === 'user';
 
 export const selectIsGuest = state => !state.auth.user || state.auth.user === 0;

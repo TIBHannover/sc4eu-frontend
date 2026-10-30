@@ -93,13 +93,13 @@ export default class NodeLinkMapper extends BaseComponent {
                 let allowAggregate = false;
                 if (Array.isArray(link.__linkType)) {
                     link.__linkType.forEach(t => {
-                        if (def.indexOf(t) !== -1) {
+                        if (def.includes(t)) {
                             allowAggregate = true;
                         }
                     });
                 }
 
-                if (allowAggregate || def.indexOf(link.__linkType) !== -1) {
+                if (allowAggregate || def.includes(link.__linkType)) {
                     link.__source.addAggregatedLink(link);
                     link.__target.__SHADOWNODE = true;
                     link.__SHADOWLINK = true;
@@ -144,7 +144,7 @@ export default class NodeLinkMapper extends BaseComponent {
                 }
             }
         }
-        return false;
+        return null;
     }
 
     _introduceAuxiliaryNode(model) {
@@ -153,11 +153,8 @@ export default class NodeLinkMapper extends BaseComponent {
             const links = model.modelAsJsonObject.links;
 
             links.forEach(link => {
-                // console.log(link.__linkType);
                 const auxDef = this._auxApplies(link, def);
-                // console.log("AUX NODES applies? " + link.__linkType);
-                // console.log(auxDef);
-                if (auxDef !== false) {
+                if (auxDef !== null) {
                     link.__SHADOWLINK = true;
 
                     // create a link for the property using the auxDef.auxiliaryNodeDefinition;
@@ -170,7 +167,6 @@ export default class NodeLinkMapper extends BaseComponent {
                     auxNode.__nodeType = [auxDef.auxNode[1]];
                     auxNode.resourceReference = link;
                     // create the links;
-                    //   console.log(auxDef);
                     const auxLink1 = new Link();
                     const link1Def = auxDef.auxLinks.source;
                     auxLink1.__displayName = link1Def[0];
@@ -185,7 +181,6 @@ export default class NodeLinkMapper extends BaseComponent {
                     auxLink2.__source = auxNode;
                     auxLink2.__target = link.__target;
 
-                    // todo, adjust ids;
                     auxNode.__nodeLinkIdentifier =
                         link.__source.__nodeLinkIdentifier +
                         '$$' +
@@ -233,12 +228,10 @@ export default class NodeLinkMapper extends BaseComponent {
                 link.__target.__nodeType = 'Unknown NodeType';
             }
 
-            if (link.__target.__nodeType === 'Literal' || link.__target.__nodeType.indexOf('Literal') !== -1) {
+            if (link.__target.__nodeType === 'Literal' || link.__target.__nodeType.includes('Literal')) {
                 link.__linkType = 'owl:datatypeProperty';
-            } else {
-                if (!link.__linkAxiom && (!link.__linkType || link.__linkType.length === 0)) {
-                    link.__linkType = 'owl:objectProperty';
-                }
+            } else if (!link.__linkAxiom && (!link.__linkType || link.__linkType.length === 0)) {
+                link.__linkType = 'owl:objectProperty';
             }
         });
     }
@@ -338,21 +331,18 @@ export default class NodeLinkMapper extends BaseComponent {
                         // do nothing but tell that the validation suits the constraints;
                         compares++;
                         validCompares++;
-                    } else {
-                        // check for validation
-                        if (name === 'type') {
-                            // check for type of the target node;
-                            //compare against an array of types
+                    } else if (name === 'type') {
+                        // check for type of the target node;
+                        //compare against an array of types
 
-                            const nodeTypesToApply = cons[name];
-                            for (let i = 0; i < nodeTypesToApply.length; i++) {
-                                const t = nodeTypesToApply[i];
-                                if (link.__target.isNodeOfType(t)) {
-                                    validCompares++;
-                                }
+                        const nodeTypesToApply = cons[name];
+                        for (let i = 0; i < nodeTypesToApply.length; i++) {
+                            const t = nodeTypesToApply[i];
+                            if (link.__target.isNodeOfType(t)) {
+                                validCompares++;
                             }
-                            compares++;
                         }
+                        compares++;
                     }
                 }
             }
@@ -377,8 +367,6 @@ export default class NodeLinkMapper extends BaseComponent {
                     langRep = LanguageTools.IRI2Label(this.prefixMapperL2S, item.__vertexEdgeIdentifier);
                 } else {
                     console.error('COULD NOT FIND A LABEL FOR VERTEX: ' + item.__vertexEdgeIdentifier);
-                    console.log('using workaround');
-                    //TODO : HARD CODED
                     const remainder = item.__vertexEdgeIdentifier.split('#')[1];
                     langRep = remainder;
                 }
@@ -400,7 +388,7 @@ export default class NodeLinkMapper extends BaseComponent {
             if (nMapper.hasOwnProperty(name)) {
                 // fetch data;
                 const dataPath = nMapper[name];
-                if (dataPath.indexOf('.') !== -1) {
+                if (dataPath.includes('.')) {
                     // need to perform nested getter;
                     const tokens = dataPath.split('.');
                     let dataItem = item;
@@ -428,7 +416,7 @@ export default class NodeLinkMapper extends BaseComponent {
             if (mapper.hasOwnProperty(name) && name !== 'mapAxiom') {
                 // fetch data;
                 const dataPath = mapper[name];
-                if (dataPath.indexOf('.') !== -1) {
+                if (dataPath.includes('.')) {
                     // need to perform nested getter;
                     const tokens = dataPath.split('.');
                     let dataItem = item;

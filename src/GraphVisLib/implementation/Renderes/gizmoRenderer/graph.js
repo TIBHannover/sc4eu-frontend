@@ -9,36 +9,34 @@ import NodeInteractions from './Interactions/nodeInteractions';
 import LinkInteractions from './Interactions/linkInteractions';
 import BasicRenderingHandler from './renderingConfigs/BasicRenderingHandler';
 export default class GraphRenderer {
-    constructor() {
-        this.GRAPH_TYPE = 'ABSTRACT_RENDERING_TYPE';
-        this.graphIsInitialized = false;
-        this.model = null;
-        this.originalModel = null;
-        this.layoutHandler = null;
-        this.renderingConfig = null;
-        this.interactionHandler = null;
-        this.drawTools = null;
+    GRAPH_TYPE = 'ABSTRACT_RENDERING_TYPE';
+    graphIsInitialized = false;
+    model = null;
+    originalModel = null;
+    layoutHandler = null;
+    renderingConfig = null;
+    interactionHandler = null;
+    drawTools = null;
 
-        this.nodes = [];
-        this.links = [];
+    nodes = [];
+    links = [];
 
-        this.nodeMap = {};
-        this.semanticNodeMap = {};
-        this.linkMap = {};
-        this.semanticLinkMap = {};
+    nodeMap = {};
+    semanticNodeMap = {};
+    linkMap = {};
+    semanticLinkMap = {};
 
-        this.divRoot = null;
-        this.svgRoot = null;
-        this.graphRoot = null;
+    divRoot = null;
+    svgRoot = null;
+    graphRoot = null;
 
-        // this can be overwritten (but it gives a proper ordering of the layers)
-        this.layerObject = ['arrows', 'links', 'properties', 'nodes', 'forceNodes'];
+    // this can be overwritten (but it gives a proper ordering of the layers)
+    layerObject = ['arrows', 'links', 'properties', 'nodes', 'forceNodes'];
 
-        this.graphBgColor = '#ECF0F1';
-        this.showSubclassRelations = true;
-        this.linkCounter = 0;
-        this.nodeCounter = 0;
-    }
+    graphBgColor = '#ECF0F1';
+    showSubclassRelations = true;
+    linkCounter = 0;
+    nodeCounter = 0;
 
     setGraphInitialized = val => {
         this.graphIsInitialized = val;
@@ -51,8 +49,6 @@ export default class GraphRenderer {
         this.redrawRenderingPrimitives(true);
         if (this.interactionHandler) {
             this.interactionHandler.applyInteractions(this);
-        } else {
-            console.log('No Interaction Handler set, the graph will be static!');
         }
         this.resetUserNavigation(backupTranslation, backupZoom);
         this.layoutHandler.initializeLayoutEngine();
@@ -168,14 +164,12 @@ export default class GraphRenderer {
         // create the primitives;
         this.model.nodes.forEach(node => {
             if (node) {
-                //TODO this is not a fix, check why node is undefined
                 this.createNodePrimitive(node);
             }
         });
 
         this.model.links.forEach(link => {
             if (link) {
-                //TODO this is nto a fix, check why node is undefined
                 const targetNode = this.semanticNodeMap[link.__target.__nodeLinkIdentifier];
                 const sourceNode = this.semanticNodeMap[link.__source.__nodeLinkIdentifier];
                 if (targetNode && sourceNode) {
@@ -245,7 +239,6 @@ export default class GraphRenderer {
 
     _updateSVG_Size = () => {
         if (this.svgRoot) {
-            // TODO
             const divNode = d3.select('#' + this.divRoot);
             const divBoundingBox = divNode.node().getBoundingClientRect();
             this.svgRoot.style('width', divBoundingBox.width + 'px');
@@ -331,29 +324,25 @@ export default class GraphRenderer {
             // fix duration to be max 2.5 sec
             lenAnimation = 2500;
         }
-        const that = this;
         // apply the interpolation
-        that.graphRoot
-            .attr('transform', that.transform(sP, cx, cy, this))
+        this.graphRoot
+            .attr('transform', this.transform(sP, cx, cy, this))
             .transition()
             .duration(lenAnimation)
             .attrTween('transform', function() {
                 return function(t) {
-                    return that.transform(pos_interpolation(t), cx, cy, that);
+                    return this.transform(pos_interpolation(t), cx, cy, this);
                 };
             })
-            .each('end', function() {
-                if (that.interactionHandler.graphInteractions.zoom) {
-                    that.graphRoot.attr(
-                        'transform',
-                        'translate(' +
-                            that.interactionHandler.graphInteractions.graphTranslation +
-                            ')scale(' +
-                            that.interactionHandler.graphInteractions.zoomFactor +
-                            ')'
-                    );
-                    that.interactionHandler.graphInteractions.zoom.translate(that.interactionHandler.graphInteractions.graphTranslation);
-                    that.interactionHandler.graphInteractions.zoom.scale(that.interactionHandler.graphInteractions.zoomFactor);
+            .on('end', function() {
+                const gi = this.interactionHandler.graphInteractions;
+
+                if (gi.zoom) {
+                    this.graphRoot.attr('transform', `translate(${gi.graphTranslation})scale(${gi.zoomFactor})`);
+
+                    const newTransform = d3.zoomIdentity.translate(gi.graphTranslation[0], gi.graphTranslation[1]).scale(gi.zoomFactor);
+
+                    this.svgRoot.call(gi.zoom.transform, newTransform);
                 }
             });
     };
@@ -522,8 +511,8 @@ export default class GraphRenderer {
 
     createMultiLinkPrimitive = (n1, n2, links) => {
         // sort them to create only one;
-        const left = n1.id() < n2.id() ? n1.id() : n2.id();
-        const right = n1.id() > n2.id() ? n1.id() : n2.id();
+        const left = Math.min(n1.id(), n2.id());
+        const right = Math.max(n1.id(), n2.id());
         const mlLinkId = left + '__' + right;
 
         if (this.linkMap[mlLinkId] === undefined) {
@@ -552,8 +541,8 @@ export default class GraphRenderer {
         const n1 = groupRepresentative.sourceNode;
         const n2 = groupRepresentative.targetNode;
 
-        const left = n1.id() < n2.id() ? n1.id() : n2.id();
-        const right = n1.id() > n2.id() ? n1.id() : n2.id();
+        const left = Math.min(n1.id(), n2.id());
+        const right = Math.max(n1.id(), n2.id());
         const mlLinkId = left + '__' + right;
         if (this.linkMap[mlLinkId]) {
             this.linkMap[mlLinkId].visible(true);
@@ -572,8 +561,6 @@ export default class GraphRenderer {
         // applyInteractions
         if (this.interactionHandler) {
             this.interactionHandler.applyInteractions(this);
-        } else {
-            console.log('No Interaction Handler set, the graph will be static!');
         }
 
         if (this.layoutHandler) {
@@ -581,8 +568,6 @@ export default class GraphRenderer {
             if (paused === undefined || paused === false) {
                 this.layoutHandler.resumeForce();
             }
-        } else {
-            console.log('No Layout Handler set, the graph will be static!');
         }
     };
 
@@ -659,21 +644,22 @@ export default class GraphRenderer {
 
     transform(p, cx, cy, parent) {
         if (parent) {
-            // one iteration step for the locate target animation
-            parent.interactionHandler.graphInteractions.zoomFactor = parent.svgRoot.node().getBoundingClientRect().height / p[2];
-            parent.interactionHandler.graphInteractions.graphTranslation = [
-                cx - p[0] * parent.interactionHandler.graphInteractions.zoomFactor,
-                cy - p[1] * parent.interactionHandler.graphInteractions.zoomFactor
-            ];
-            parent.interactionHandler.graphInteractions.zoom.translate(parent.interactionHandler.graphInteractions.graphTranslation);
-            parent.interactionHandler.graphInteractions.zoom.scale(parent.interactionHandler.graphInteractions.zoomFactor);
-            return (
-                'translate(' +
-                parent.interactionHandler.graphInteractions.graphTranslation +
-                ')scale(' +
-                parent.interactionHandler.graphInteractions.zoomFactor +
-                ')'
-            );
+            // Calculate zoom factor and translation
+            const zoomFactor = parent.svgRoot.node().getBoundingClientRect().height / p[2];
+            const graphTranslation = [cx - p[0] * zoomFactor, cy - p[1] * zoomFactor];
+
+            // Create the new transform using d3.zoomIdentity
+            const transform = d3.zoomIdentity.translate(graphTranslation[0], graphTranslation[1]).scale(zoomFactor);
+
+            // Apply the transform to the zoom behavior
+            parent.svgRoot.call(parent.interactionHandler.graphInteractions.zoom.transform, transform);
+
+            // Update the interaction handler's state
+            parent.interactionHandler.graphInteractions.zoomFactor = zoomFactor;
+            parent.interactionHandler.graphInteractions.graphTranslation = graphTranslation;
+
+            // Return the transform string for the SVG element
+            return transform.toString();
         }
     }
 
@@ -689,9 +675,9 @@ export default class GraphRenderer {
     };
     updateColorOfObjectPropsWithPrefix = (uriPrefix, color) => {
         this.links.forEach(link => {
-            if (link.__semanticReference && link.__semanticReference.__nodeLinkIdentifier) {
+            if (link.__semanticReference?.__nodeLinkIdentifier) {
                 const nlId = link.__semanticReference.__nodeLinkIdentifier;
-                if (link.__semanticReference.__linkType && link.__semanticReference.__linkType[0] === 'owl:ObjectProperty') {
+                if (link.__semanticReference.__linkType?.[0] === 'owl:ObjectProperty') {
                     if (nlId.startsWith(uriPrefix)) {
                         link.renderingConfig().style.propertyNode.style.bgColor = color;
                         link.redraw();

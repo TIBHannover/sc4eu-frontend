@@ -8,7 +8,7 @@ export function useCreateTerm() {
             try {
                 await Promise.resolve();
             } catch (e) {
-                console.log('Error in mutationFn' + e);
+                console.error('Error in mutationFn' + e);
             }
         },
         onMutate: async newTerm => {
@@ -20,7 +20,6 @@ export function useCreateTerm() {
             ]);
         },
         onSettled: async () => {
-            console.log('onSuccess');
             //queryClient.invalidateQueries({ queryKey: ['terms'] });
         }
     });

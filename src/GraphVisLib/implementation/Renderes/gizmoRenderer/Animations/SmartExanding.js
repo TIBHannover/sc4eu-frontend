@@ -50,7 +50,7 @@ export const smartExpandingLiterals = (node, last, callback) => {
         for (let i = 0; i < angularSpace.length - 1; i++) {
             angularDistances.push(angularSpace[i + 1] - angularSpace[i]);
         }
-        angularDistances.push(angularSpace[0] + 360 - angularSpace[angularSpace.length - 1]);
+        angularDistances.push(angularSpace[0] + 360 - angularSpace.at(-1));
         let maxDistance = 0;
         let indexInSpace = 0;
         for (let i = 0; i < angularDistances.length; i++) {
@@ -62,7 +62,7 @@ export const smartExpandingLiterals = (node, last, callback) => {
         sAngle = 0;
         sOffset = maxDistance / allLinks.length;
         if (indexInSpace === angularDistances.length - 1) {
-            sAngle = angularSpace[angularSpace.length - 1];
+            sAngle = angularSpace.at(-1);
         } else {
             sAngle = angularSpace[indexInSpace];
         }
@@ -85,7 +85,7 @@ export const smartExpandingLiterals = (node, last, callback) => {
 };
 
 const angleFromVector = (vx, vy) => {
-    const len = Math.sqrt(vx * vx + vy * vy);
+    const len = Math.hypot(vx * vx + vy * vy);
     const nx = vx / len;
     const ny = vy / len;
     let angle = (Math.atan2(-ny, nx) * 180) / Math.PI;

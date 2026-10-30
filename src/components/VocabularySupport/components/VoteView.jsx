@@ -1,157 +1,216 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Typography, Avatar, TextField, Button, Box, RadioGroup, FormControlLabel, Radio, Tooltip } from '@mui/material';
 import {
-    CheckCircle as ApprovedIcon,
-    Cancel as RejectedIcon,
-    ThumbUpAltOutlined,
-    ThumbUpAlt,
-    ThumbDownAltOutlined,
-    ThumbDownAlt
-} from '@mui/icons-material';
-import { colorStyled } from '../../../styledComponents/styledColor';
+    Alert,
+    Grid,
+    Typography,
+    TextField,
+    Button,
+    Box,
+    IconButton,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+    Snackbar,
+    Tooltip,
+    useTheme,
+    GlobalStyles
+} from '@mui/material';
+import { ThumbUpOutlined, ThumbUp, ThumbDownOutlined, ThumbDown, BackHandOutlined, BackHand } from '@mui/icons-material';
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined';
+import CloseIcon from '@mui/icons-material/Close';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import PropTypes from 'prop-types';
 import { getTermVotes, updateExpertDecision } from '../../../network/TermVoteCalls';
-import Divider from '@mui/material/Divider';
-import { stringAvatar } from './CommentsSection';
+import UserAvatar from '../../ReusableComponents/UserAvatar';
 import { ConsensusProgress } from '../utils/Consensus';
-
-const styles = {
-    button: {
-        padding: '10px 20px',
-        backgroundColor: colorStyled.primary,
-        color: colorStyled.onPrimary,
-        '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
-    },
-    voteProgress: {
-        backgroundColor: colorStyled.surfaceContainerLow,
-        p: 2,
-        borderRadius: 1,
-        mb: 3
-    },
-    voteCard: {
-        p: 2,
-        borderRadius: 1,
-        mb: 3,
-        border: '1px solid',
-        borderColor: colorStyled.outlineVariant,
-        backgroundColor: colorStyled.surfaceContainerLow
-    },
-    recentVotesContainer: {
-        maxHeight: 400,
-        overflow: 'auto',
-        border: '1px solid',
-        borderColor: colorStyled.outlineVariant,
-        borderRadius: 1,
-        p: 1
-    },
-    voteItem: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 1,
-        p: 1.5,
-        borderBottom: '1px solid',
-        borderColor: colorStyled.outlineVariant,
-        '&:hover': {
-            backgroundColor: `${colorStyled.primary}1A` // primary at 10% opacity
-        },
-        '&:last-child': {
-            borderBottom: 'none'
-        }
-    },
-    userInfoRow: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5
-    },
-    commentBox: {
-        pl: 4.5,
-        borderLeft: '2px solid',
-        borderColor: colorStyled.outline,
-        ml: 1
-    },
-    stickySidebar: {
-        position: 'sticky',
-        top: 20,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 3
-    }
-};
+import ClampLines from 'react-clamp-lines';
 
 const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => {
+    const theme = useTheme();
+
     const [decision, setDecision] = useState('');
-    const [comment, setComment] = useState(null);
+    const [comment, setComment] = useState('');
+    const [activeVote, setActiveVote] = useState(vote);
     const [decisions, setDecisions] = useState(vote.decisions);
     const [decisionMade, setDecisionMade] = useState(false);
     const [userHasVoted, setUserHasVoted] = useState(decisions.some(e => e.user_name === username && e.choice !== null));
-    const approvedCount = decisions.filter(e => e.choice === 'approved').length;
-    const rejectedCount = decisions.filter(e => e.choice === 'rejected').length;
     const votedUsers = decisions.filter(expert => expert.choice !== null);
-    const totalVotes = decisions.filter(e => e.choice !== null).length;
     const [expandedComments, setExpandedComments] = useState(new Set());
+    const [showCopyNotification, setShowCopyNotification] = useState(false);
+
+    const handleCopyLink = event => {
+        event.stopPropagation();
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            setShowCopyNotification(true);
+        });
+    };
 
     useEffect(() => {
         const getVote = async () => {
             const data = await getTermVotes(term.identifier);
             if (data.length !== 0) {
+                setActiveVote(data[0]);
                 setDecisions(data[0].decisions);
             }
         };
         getVote();
     }, [decisionMade]);
 
+    const styles = {
+        button: {
+            padding: '10px 20px',
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.secondary.contrastText,
+            '&:hover': { backgroundColor: `${theme.palette.secondary.main}BF`, color: theme.palette.secondary.contrastText }
+        },
+        voteProgress: {
+            backgroundColor: theme.palette.background.default,
+            p: 2,
+            borderRadius: 1,
+            mb: 3
+        },
+        voteCard: {
+            p: 2,
+            borderRadius: 1,
+            mb: 3,
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            backgroundColor: theme.palette.background.default
+        },
+        recentVotesContainer: {
+            maxHeight: 400,
+            overflow: 'auto',
+            border: '1px solid',
+            borderColor: theme.palette.divider,
+            borderRadius: 1,
+            p: 1
+        },
+        voteItem: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            p: 1.5,
+            borderBottom: '1px solid',
+            borderColor: theme.palette.divider,
+            '&:hover': {
+                backgroundColor: `${theme.palette.primary.main}1A`
+            },
+            '&:last-child': {
+                borderBottom: 'none'
+            }
+        },
+        userInfoRow: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5
+        },
+        commentBox: {
+            pl: 4.5,
+            borderLeft: '2px solid',
+            borderColor: theme.palette.divider,
+            ml: 1
+        },
+        stickySidebar: {
+            position: 'sticky',
+            top: 20,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3
+        }
+    };
+
     const handleExpertDecision = async () => {
-        console.log('expert decision updated: ', vote);
         await updateExpertDecision(vote.term_uuid, vote.uuid, username, decision, comment);
         setDecisionMade(true);
         setUserHasVoted(true);
-        setComment(null);
+        setComment('');
         setDecision('');
-        onDecisionMade();
+        onDecisionMade?.();
+    };
+
+    const handleCancelDecision = () => {
+        setDecision('');
+        setComment('');
     };
 
     return (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 1.5, flex: '1 1 auto', display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'auto' }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Box sx={{ mb: 2 }}>
-                        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-                            {term.label}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', mb: 0 }}>
+                                    {term.label}
+                                </Typography>
+                                <Tooltip title={<Typography fontSize={14}>By agreeing, you confirm that the term's data, description and definition are well described and ready to be present in the vocabulary</Typography>}>
+                                    <InfoOutlinedIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
+                                </Tooltip>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+                                <Tooltip title="Copy URL of this consensus into a clipboard for easy sharing">
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        startIcon={<FileCopyOutlinedIcon fontSize="small" />}
+                                        onClick={handleCopyLink}
+                                    >
+                                        Copy consensus URL
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Close">
+                                    <IconButton aria-label="close" size="small" onClick={() => setVoteViewMode(false)}>
+                                        <CloseIcon fontSize="small" />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                        </Box>
+                        <Snackbar
+                            open={showCopyNotification}
+                            autoHideDuration={3000}
+                            onClose={() => setShowCopyNotification(false)}
+                            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                        >
+                            <Alert severity="success" variant="standard">
+                                Link copied to clipboard
+                            </Alert>
+                        </Snackbar>
 
-                        <Divider
-                            sx={{
-                                bgcolor: vote.type === 'accept' ? 'success.main' : 'error.main',
-                                height: 2,
-                                mb: 1
+                        <GlobalStyles
+                            styles={{
+                                '.clamp-lines__button': {
+                                    color: theme.palette.primary.main,
+                                    background: 'none',
+                                    border: 'none',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                    fontWeight: 500
+                                }
                             }}
                         />
-
-                        <Typography
-                            variant="body1"
+                        <Box
                             sx={{
-                                color: vote.type === 'accept' ? 'success.dark' : 'error.dark',
-                                fontWeight: 500,
-                                textTransform: 'uppercase',
-                                letterSpacing: 0.5
+                                backgroundColor: theme.palette.background.default,
+                                borderLeft: `4px solid ${theme.palette.secondary.main}`,
+                                borderRadius: 1,
+                                p: 1.5,
+                                mb: 1.5
                             }}
                         >
-                            {vote.type === 'accept' ? '→ Accept Proposal' : '→ Not Accept Proposal'}
-                        </Typography>
-
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                            {vote.type === 'accept' ? 'Change term status to accept' : 'Change term status to not accepted'}
-                        </Typography>
+                            <Typography variant="body1" component="div" sx={{ color: theme.palette.text.primary, lineHeight: 1.5 }}>
+                                <ClampLines text={term.description} id="custom" lines={3} />
+                            </Typography>
+                        </Box>
                     </Box>
 
-                    <ConsensusProgress term={vote} />
+                    <ConsensusProgress term={activeVote} />
                 </Grid>
 
                 <Grid item xs={12} md={8}>
                     {userHasVoted ? (
                         <Box sx={styles.voteCard}>
                             <Typography variant="body1" paragraph>
-                                You have already voted. Would you like to change your vote?
+                                Thank you for participating! You can update your choice at any time by clicking button below
                             </Typography>
                             <Button
                                 variant="contained"
@@ -171,30 +230,25 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             </Typography>
 
                             <RadioGroup value={decision} onChange={e => setDecision(e.target.value)} sx={{ gap: 2, mb: 2 }} row>
-                                <Tooltip
-                                    title={
-                                        vote.type === 'accept'
-                                            ? 'You agree to all term details. With a majority of this vote the general term status will change to Accepted'
-                                            : 'You agree that term should be removed. With a majority of this vote the general term status will change to Not Accepted (Term should be removed from vocabulary)'
-                                    }
-                                >
+                                <Tooltip title="You agree to all term details. With a majority of this vote the general term status will change to Accepted">
                                     <FormControlLabel
                                         value="approved"
-                                        control={<Radio icon={<ThumbUpAltOutlined />} checkedIcon={<ThumbUpAlt color="success" />} />}
+                                        control={<Radio icon={<ThumbUpOutlined />} checkedIcon={<ThumbUp color="secondary" />} />}
                                         label="Agree"
                                     />
                                 </Tooltip>
-                                <Tooltip
-                                    title={
-                                        vote.type === 'accept'
-                                            ? 'You are not satisfied with the current term details. With a majority of this vote the general term status will stay the same as Draft'
-                                            : 'You want to keep this Term for now. With a majority of this vote the general term status will stay the same as Draft'
-                                    }
-                                >
+                                <Tooltip title="You are not satisfied with the current term details. With a majority of this vote the general term status will stay the same as Draft">
                                     <FormControlLabel
                                         value="rejected"
-                                        control={<Radio icon={<ThumbDownAltOutlined />} checkedIcon={<ThumbDownAlt color="error" />} />}
+                                        control={<Radio icon={<ThumbDownOutlined />} checkedIcon={<ThumbDown color="error" />} />}
                                         label="Not Agree"
+                                    />
+                                </Tooltip>
+                                <Tooltip title="You want to abstain from this vote. Your decision will be recorded but will not count towards the majority, minimum threshold or consensus calculation">
+                                    <FormControlLabel
+                                        value="abstain"
+                                        control={<Radio icon={<BackHandOutlined />} checkedIcon={<BackHand color="disabled" />} />}
+                                        label="Undecided"
                                     />
                                 </Tooltip>
                             </RadioGroup>
@@ -209,9 +263,36 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 sx={{ mb: 2 }}
                             />
 
-                            <Button variant="contained" disabled={!decision} fullWidth size="large" onClick={handleExpertDecision} sx={styles.button}>
-                                Submit Decision
-                            </Button>
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <Tooltip title={decision ? '' : "Select 'Agree', 'Not Agree' or 'Undecided' above to submit your decision"}>
+                                    <span style={{ width: '100%' }}>
+                                        <Button
+                                            variant="contained"
+                                            disabled={!decision}
+                                            fullWidth
+                                            size="large"
+                                            onClick={handleExpertDecision}
+                                            sx={styles.button}
+                                        >
+                                            Submit Decision
+                                        </Button>
+                                    </span>
+                                </Tooltip>
+                                <Tooltip title={decision || comment ? '' : 'Nothing to cancel yet'}>
+                                    <span style={{ width: '100%' }}>
+                                        <Button
+                                            variant="contained"
+                                            disabled={!decision && !comment}
+                                            fullWidth
+                                            size="large"
+                                            onClick={handleCancelDecision}
+                                            sx={styles.button}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </span>
+                                </Tooltip>
+                            </Box>
                         </Box>
                     )}
                 </Grid>
@@ -223,10 +304,11 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                 sx={{
                                     display: 'flex',
                                     flexDirection: 'row',
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+                                    gap: 1
                                 }}
                             >
-                                <Avatar {...stringAvatar(vote.assignee)} sx={{ mr: 2, width: 32, height: 32 }} />
+                                <UserAvatar identifier={vote.assignee_uuid} />
                                 <Typography variant="subtitle1" gutterBottom>
                                     Created by {vote.assignee}
                                 </Typography>
@@ -246,7 +328,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                         variant="body2"
                                         sx={{
                                             fontStyle: 'italic',
-                                            color: colorStyled.onSurfaceVariant,
+                                            color: theme.palette.text.secondary,
                                             mt: 1
                                         }}
                                     >
@@ -260,27 +342,30 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                             <Typography variant="subtitle1" gutterBottom>
                                 Recent Votes
                             </Typography>
-
                             <Box sx={styles.recentVotesContainer}>
                                 {votedUsers.length > 0 ? (
                                     votedUsers
-                                        .sort((a, b) => new Date(b.voted_at) - new Date(a.voted_at))
-                                        .slice(0, 5)
+                                        .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
                                         .map((user, index) => (
-                                            <Box key={index} sx={styles.voteItem}>
+                                            <Box key={`${user.voted_id}-${user.user_id}`} sx={styles.voteItem}>
                                                 <Box sx={styles.userInfoRow}>
-                                                    <Avatar {...stringAvatar(vote.assignee)} sx={{ width: 32, height: 32 }} />
+                                                    <UserAvatar identifier={user.user_uuid || user.user_name} />
                                                     <Typography variant="body2" fontWeight="medium">
                                                         {user.user_name}
                                                     </Typography>
                                                     {user.choice === 'approved' ? (
                                                         <>
-                                                            <ApprovedIcon color="success" fontSize="small" />
+                                                            <ThumbUpOutlined color="success" fontSize="small" />
                                                             <Typography variant="body2">agree</Typography>
+                                                        </>
+                                                    ) : user.choice === 'abstain' ? (
+                                                        <>
+                                                            <BackHandOutlined color="action" fontSize="small" />
+                                                            <Typography variant="body2">undecided</Typography>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <RejectedIcon color="error" fontSize="small" />
+                                                            <ThumbDownOutlined color="error" fontSize="small" />
                                                             <Typography variant="body2">not agree</Typography>
                                                         </>
                                                     )}
@@ -297,14 +382,12 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                             variant="body2"
                                                             sx={{
                                                                 fontStyle: 'italic',
-                                                                color: colorStyled.onSurfaceVariant,
+                                                                color: theme.palette.text.secondary,
                                                                 mt: 0.5
                                                             }}
                                                         >
                                                             "
-                                                            {expandedComments.has(index)
-                                                                ? user.comment
-                                                                : user.comment.length > 100
+                                                            {user.comment.length > 100 && !expandedComments.has(index)
                                                                 ? user.comment.substring(0, 100)
                                                                 : user.comment}
                                                             "
@@ -322,7 +405,7 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                                                                         setExpandedComments(newExpanded);
                                                                     }}
                                                                     sx={{
-                                                                        color: colorStyled.primary,
+                                                                        color: theme.palette.primary.main,
                                                                         cursor: 'pointer',
                                                                         ml: 0.5,
                                                                         '&:hover': {
@@ -347,12 +430,6 @@ const VoteView = ({ term, vote, username, setVoteViewMode, onDecisionMade }) => 
                         </Box>
                     </Box>
                 </Grid>
-
-                <Grid item xs={12}>
-                    <Button variant="contained" sx={styles.button} onClick={() => setVoteViewMode(false)}>
-                        Close
-                    </Button>
-                </Grid>
             </Grid>
         </Box>
     );
@@ -362,7 +439,7 @@ VoteView.propTypes = {
     term: PropTypes.object.isRequired,
     vote: PropTypes.object.isRequired,
     username: PropTypes.string.isRequired,
-    setVoteViewMode: PropTypes.object.isRequired,
+    setVoteViewMode: PropTypes.func.isRequired,
     onDecisionMade: PropTypes.func
 };
 

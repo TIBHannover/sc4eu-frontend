@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { MAX_WIDTH } from '../styledComponents/styledComponents';
 import ProjectView from '../components/ProjectView';
-import RightSideProjectBar from '../components/ontologyView/RightSideProjectBar';
-import styled from 'styled-components';
-import { colorStyled } from '../styledComponents/styledColor';
+import { StyledProjectListDiv } from 'styledComponents/styledComponents';
 
 export default class ProjectList extends Component {
     constructor(props) {
@@ -13,36 +10,16 @@ export default class ProjectList extends Component {
         };
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate = (prevProps, prevState) => {};
-
     reloadAfterUpdate = () => {
-        console.log('reloadAfterUpdate');
         //this.forceUpdate();
         this.setState(prevState => ({ updateFlipFlop: !prevState.updateFlipFlop }));
     };
 
     render() {
         return (
-            <>
-                <StyledDiv>
-                    <ProjectView
-                        title="Current Projects"
-                        reloadAfterUpdate={() => this.reloadAfterUpdate()}
-                        updateFlipFlop={this.state.updateFlipFlop}
-                    />
-                </StyledDiv>
-            </>
+            <StyledProjectListDiv>
+                <ProjectView title="Current Projects" reloadAfterUpdate={() => this.reloadAfterUpdate()} updateFlipFlop={this.state.updateFlipFlop} />
+            </StyledProjectListDiv>
         );
     }
 }
-
-const StyledDiv = styled.div`
-    display: flex;
-    z-index: 150;
-    height: 100%;
-    width: 100%;
-    
-`;
-

@@ -1,11 +1,9 @@
 import { Breadcrumbs, Link } from '@mui/material';
 import { makeStyles } from '@material-ui/styles';
-import { colorStyled } from '../../styledComponents/styledColor';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
     breadcrumbContainer: {
-        backgroundColor: colorStyled.onPrimaryContainer,
         borderRadius: '12px',
         padding: '8px 16px',
         display: 'inline-block',
@@ -48,7 +46,6 @@ const BreadcrumbBar = ({ setViewMode, isOntologyView = false, currentViewMode })
                     color="textPrimary"
                     onClick={event => {
                         event.preventDefault();
-                        console.log('I am clicked');
                         if (currentViewMode !== 'projects') {
                             setViewMode('projects');
                         }

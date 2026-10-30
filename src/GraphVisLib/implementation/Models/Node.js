@@ -1,6 +1,6 @@
 export default class Node {
+    resourceReference = null;
     constructor() {
-        this.resourceReference = null;
         this.__outgoingLinks = [];
         this.__incomingLinks = [];
         this.__nodeType = [];
@@ -27,11 +27,10 @@ export default class Node {
                 }
             }
             return false;
-        } else {
-            if (this.__nodeType && this.__nodeType === type) {
-                return true;
-            }
+        } else if (this.__nodeType && this.__nodeType === type) {
+            return true;
         }
+
         return false;
     }
 }

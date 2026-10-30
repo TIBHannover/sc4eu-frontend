@@ -3,18 +3,14 @@ import ResourceRenderer from './ResourceRenderer';
 import RelationRenderer from './RelationRenderer';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { reverse } from 'named-urls';
 import ROUTES from '../../constants/routes';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { expandAllBodies } from '../../redux/actions/globalUI_actions';
-import styled from 'styled-components';
-import { Button } from 'reactstrap';
-import { colorStyled } from 'styledComponents/styledColor';
-import { MAX_WIDTH, MIN_WIDTH_FOR_MONITOR } from '../../styledComponents/styledComponents';
-import { fontStyled } from '../../styledComponents/styledFont';
 import FadingNotification from '../ReusableComponents/FadingNotification';
+import { StyledOntologyContentViewerDiv, HeaderBar, ControlLink, ControlButton, Column } from 'styledComponents/styledComponents';
+
 class OntologyContentViewer extends Component {
     constructor(props) {
         super(props);
@@ -24,10 +20,6 @@ class OntologyContentViewer extends Component {
         };
     }
 
-    componentDidMount() {}
-
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     copyUrlToClipboard = () => {
         const url = window.location.href;
         navigator.clipboard.writeText(url).then(() => {
@@ -36,6 +28,19 @@ class OntologyContentViewer extends Component {
                 this.setState({ showCopyNotification: false });
             }, 2000);
         });
+    };
+
+    renderSelectedOntology = () => {
+        const selectedOntology = this.props.selectedOntology;
+        if (selectedOntology) {
+            if (selectedOntology.name.length > 42) {
+                return `${selectedOntology.name.substring(0, 40)}...`;
+            } else {
+                return selectedOntology.name;
+            }
+        } else {
+            return 'N/A';
+        }
     };
 
     render() {
@@ -56,13 +61,7 @@ class OntologyContentViewer extends Component {
                     ) : (
                         <></>
                     )}
-                    <div style={{ textAlign: 'center', fontSize: '1.5em' }}>
-                        {this.props.selectedOntology
-                            ? this.props.selectedOntology.name.length > 42
-                                ? `${this.props.selectedOntology.name.substring(0, 40)}...`
-                                : this.props.selectedOntology.name
-                            : 'N/A'}
-                    </div>
+                    <div style={{ textAlign: 'center', fontSize: '1.5em' }}>{this.renderSelectedOntology()}</div>
                     <div>
                         <ControlButton onClick={this.copyUrlToClipboard}>Copy URL</ControlButton>
                         <ControlButton
@@ -78,14 +77,14 @@ class OntologyContentViewer extends Component {
                         </ControlButton>
                     </div>
                 </HeaderBar>
-                <StyledDiv>
+                <StyledOntologyContentViewerDiv>
                     <Column>
                         <ResourceRenderer experimentalLayout={this.props.experimentalLayout} />
                     </Column>
                     <Column>
                         <RelationRenderer experimentalLayout={this.props.experimentalLayout} />
                     </Column>
-                </StyledDiv>
+                </StyledOntologyContentViewerDiv>
                 {this.state.showCopyNotification && <FadingNotification message="URL copied to clipboard" timeout={2000} />}
             </div>
         );
@@ -114,81 +113,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OntologyContentViewer);
-
-const ControlButton = styled(Button)`
-    background: ${colorStyled.primary};
-    color: ${colorStyled.onPrimary};
-    border-radius: 5px 5px;
-    margin-top: 10px;
-    margin-right: 10px;
-    color: white;
-    float: right;
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
-
-const CopyButton = styled.button`
-    padding: 5px 10px;
-    font-size: 14px;
-    cursor: pointer;
-`;
-
-const ControlLink = styled(Link)`
-    float: left;
-    margin-top: 15px;
-    margin-left: 10px;
-    font-size: ${fontStyled.fontSize.NormalText};
-
-    @media (min-width: ${MIN_WIDTH_FOR_MONITOR}) {
-        font-size: ${fontStyled.fontSize.LaptopAndDesktopViewNormalText};
-    }
-    :focus {
-        outline: none;
-    }
-    ::-moz-focus-inner {
-        border: 0;
-    }
-`;
-
-const StyledDiv = styled.div`
-    display: flex;
-    height: calc(100% - 55px);
-
-    @media (max-width: ${MAX_WIDTH}) {
-        flex-direction: column; 
-        height: auto;
-    }
-`;
-
-const Column = styled.div`
-    width: 50%;
-    overflow-y: auto;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        width: 100%;
-    }
-`;
-
-const HeaderBar = styled.div`
-    padding: 8px 12px;
-    min-height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-
-    @media (max-width: ${MAX_WIDTH}) {
-        flex-wrap: wrap;
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
-`;

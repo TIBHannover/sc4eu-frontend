@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
 import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
 import ResourceHeader from '../RRView/ResourceHeader';
 import ResourceBody from '../RRView/ResourceBody';
@@ -10,8 +8,9 @@ import CardGraphVis from '../GraphVis/CardGraphVis';
 import CardWidgetVis from '../ontologyView/CardWidgetVis';
 import ItemController from '../RRView/ItemController';
 import { GraphVisButton, WidgetVisButton, CollapsibleItem } from './StyledComponents';
-import { colorStyled } from 'styledComponents/styledColor';
 import AnnotationsDropDown from './AnnotationsDropDown';
+import { withTheme } from '@emotion/react';
+
 class SingleResource extends Component {
     constructor(props) {
         super(props);
@@ -35,21 +34,14 @@ class SingleResource extends Component {
         this.props.registerToParent(this);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {}
-
     updateSiblings = () => {
         this.setState(prevState => ({ updateSiblings: !prevState.updateSiblings }));
     };
 
-    forceRerendering = () => {
-        this.setState(prevState => ({ forcedUpdate: !prevState.forcedUpdate }));
-    };
     toggleEditButton = val => {
         this.setState({ isEditing: val });
     };
-    setShowBody = val => {
-        this.setState({ showBody: val, bodyInitialRendering: false });
-    };
+
     showBody = () => {
         this.setState(prevState => ({ showBody: !prevState.showBody, bodyInitialRendering: false }));
     };
@@ -66,7 +58,6 @@ class SingleResource extends Component {
     };
 
     editResource = inputHeaderString => {
-        console.log(inputHeaderString);
         const inputArray = inputHeaderString.split(' ');
         const typeArray = inputArray.slice(2, inputArray.length);
         if (typeArray[typeArray.length - 1] === '.' || typeArray[typeArray.length - 1] === ';') {
@@ -102,6 +93,7 @@ class SingleResource extends Component {
             itemOfInterest: this.props.resourceContext,
             callback: this.updateSiblings
         };
+        const { theme } = this.props;
         return (
             <div
                 ref={this.ref}
@@ -110,8 +102,8 @@ class SingleResource extends Component {
                     marginLeft: '10px',
                     overflow: 'none',
                     display: isVisible,
-                    backgroundColor: colorStyled.surfaceVariant,
-                    color: colorStyled.onSurfaceVariant,
+                    backgroundColor: theme.palette.secondary.main,
+                    color: theme.palette.secondary.contrastText,
                     borderRadius: '10px 10px 0px 0px ',
                     marginBottom: '5px'
                 }}
@@ -223,4 +215,4 @@ const mapDispatchToProps = dispatch => ({
     redux_editResource: data => dispatch(redux_editResource(data))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleResource);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(SingleResource));

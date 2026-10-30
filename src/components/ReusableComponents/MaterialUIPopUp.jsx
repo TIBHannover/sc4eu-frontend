@@ -1,8 +1,9 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Dialog, DialogContent, IconButton } from '@mui/material';
 import PropTypes from 'prop-types';
-import { colorStyled } from '../../styledComponents/styledColor';
+import CloseIcon from '@mui/icons-material/Close';
+import React from 'react';
 
-const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
+const MaterialUIPopUp = ({ open, onClose, message, type, fullHeight }) => {
     return (
         <Dialog
             open={open}
@@ -16,16 +17,25 @@ const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
                 }
             }}
         >
-            <DialogTitle>{title}</DialogTitle>
-            <DialogContent>
-                <DialogContentText>{message}</DialogContentText>
+            <DialogContent
+                sx={
+                    fullHeight
+                        ? {
+                              flex: '1 1 auto',
+                              minHeight: 0,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              p: 0
+                          }
+                        : undefined
+                }
+            >
+                {message}
             </DialogContent>
-            {type !== MaterialUIPopUpTypes.ACTIVE_CONSENSUS && (
-                <DialogActions style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                    <Button variant="contained" onClick={onClose} style={{ backgroundColor: colorStyled.primary }}>
-                        Close
-                    </Button>
-                </DialogActions>
+            {!fullHeight && (
+                <IconButton aria-label="close" onClick={onClose} sx={{ position: 'absolute', right: 0, top: 0 }}>
+                    <CloseIcon />
+                </IconButton>
             )}
         </Dialog>
     );
@@ -34,16 +44,20 @@ const MaterialUIPopUp = ({ open, onClose, title, message, type }) => {
 MaterialUIPopUp.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    title: PropTypes.string.isRequired,
     message: PropTypes.element.isRequired,
-    paperSizeStyles: PropTypes.object,
-    type: PropTypes.string.isRequired
+    type: PropTypes.string.isRequired,
+    fullHeight: PropTypes.bool
+};
+
+MaterialUIPopUp.defaultProps = {
+    fullHeight: false
 };
 
 export const MaterialUIPopUpTypes = {
     HISTORY: 'history',
     DISCUSSIONS: 'discussions',
-    ACTIVE_CONSENSUS: 'active_consensus'
+    ACTIVE_CONSENSUS: 'active_consensus',
+    TERM_DETAILS: 'term_details'
 };
 
 export default MaterialUIPopUp;

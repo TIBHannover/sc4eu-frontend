@@ -8,7 +8,7 @@ const GraphVisUiQueryPopup = ({ open, onClose, queryGraphData }) => {
     const containerId = useRef(
         `query_graph_rendering_div_${Math.random()
             .toString(36)
-            .substr(2, 9)}`
+            .substring(2, 9)}`
     );
     const graphRef = useRef(null);
     const graphInstance = useRef(null);

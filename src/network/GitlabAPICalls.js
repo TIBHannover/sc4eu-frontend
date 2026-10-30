@@ -1,9 +1,5 @@
 const Buffer = require('buffer/').Buffer;
 
-export const getUser = async gitlabapiurl => {
-    console.log('getUser');
-};
-
 const headers = { 'PRIVATE-TOKEN': process.env.REACT_APP_GITLAB_ACCESS_TOKEN };
 
 const getUserRepoByName = async gitlabapiurl => {
@@ -108,7 +104,8 @@ export const checkGitlabFileUpdated = async (githubApiUrl, lastFetchedFileSha) =
                 branch
             };
         }
-    } catch (error) {
+    } catch (e) {
+        console.error(e);
         return {
             status: 'error',
             commitsBehind: -1

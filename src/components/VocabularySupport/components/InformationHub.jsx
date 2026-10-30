@@ -1,44 +1,44 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useMediaQuery } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import DatePicker from 'react-datepicker';
+import { useQuery } from '@tanstack/react-query';
+
 import {
-    Box,
-    Typography,
     Avatar,
-    List,
-    ListItem,
-    ListItemText,
-    Paper,
-    TextField,
-    InputAdornment,
-    Tooltip,
+    AvatarGroup,
+    Box,
+    Button,
     Checkbox,
+    CircularProgress,
+    Divider,
     FormControlLabel,
     Grid,
+    InputAdornment,
+    List,
+    ListItem,
     ListItemAvatar,
-    Tab,
-    CircularProgress,
-    AvatarGroup,
-    Badge,
+    ListItemText,
+    MenuItem,
+    Paper,
     Popover,
     Select,
-    MenuItem,
-    Button
+    Tab,
+    Tabs,
+    TextField,
+    Tooltip,
+    Typography,
+    useTheme
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import DatePicker from 'react-datepicker';
-import { stringAvatar } from './CommentsSection';
-import Divider from '@mui/material/Divider';
-import { Tabs } from '@mui/material/';
-import { getVotes, getWeeklyTerm } from '../../../network/TermVoteCalls';
-import { StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
-import PropTypes from 'prop-types';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
-import { colorStyled } from '../../../styledComponents/styledColor';
-import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
-import { SMALL_SCREEN_WIDTH } from '../../../styledComponents/styledComponents';
-import { useMediaQuery } from '@material-ui/core';
+import SearchIcon from '@mui/icons-material/Search';
+
+import { getVotes, getWeeklyTerm, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
+import { SMALL_SCREEN_WIDTH, StyledChip, StyledBadge } from '../../../styledComponents/styledComponents';
 import { ConsensusProgress } from '../utils/Consensus';
+import DecisionBadgeAvatar from '../../ReusableComponents/DecisionBadgeAvatar';
+import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
+import { getAllUsers } from 'network/UserProfileCalls';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -49,20 +49,26 @@ const SORT_BY_OPTIONS = Object.freeze({
     MOST_COMMENTS: 'most_comments'
 });
 
-const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => {
+const MAX_VISIBLE_VOTE_AVATARS = 7;
+
+const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onConsensusSelect }) => {
+    const theme = useTheme();
+
     const [searchText, setSearchText] = useState('');
     const [showOnlyMentions, setShowOnlyMentions] = useState(false);
     const [dateFrom, setDateFrom] = useState(null);
     const [dateTo, setDateTo] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
-    const [votesMap, setVotesMap] = useState([]);
+    const { data: votesMap = [] } = useQuery(VOTES_QUERY_KEY, getVotes);
     const [loading, setLoading] = useState(false);
 
     const [termOfWeek, setTermOfWeek] = useState(null);
     const [showWeekTerm, setShowWeekTerm] = useState(false);
     const [weekTermLoading, setWeekTermLoading] = useState(false);
 
+    const [users, setUsers] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedTermId, setSelectedTermId] = useState(null);
     const open = Boolean(anchorEl);
 
     const [sortBy, setSortBy] = useState(SORT_BY_OPTIONS.RECENT_UPDATE);
@@ -74,6 +80,8 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             setLoading(true);
             try {
                 await fetchTermOfWeek();
+                const allUsers = await getAllUsers();
+                setUsers(allUsers);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -87,17 +95,15 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const fetchTermOfWeek = async () => {
         try {
             setWeekTermLoading(true);
-            const votesData = await getVotes();
-            setVotesMap(votesData);
 
             const weeklyTerm = await getWeeklyTerm();
             const termUuid = weeklyTerm?.term_uuid;
 
             if (!termUuid) {
-                console.log('No term UUID found');
                 return;
             }
 
+            const votesData = await getVotes();
             const termVoteData = votesData.find(vote => vote.term_uuid === termUuid);
 
             const decisions = termVoteData?.decisions || [];
@@ -120,28 +126,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         }
     };
 
-    const DecisionBadgeAvatar = ({ decision }) => {
-        return (
-            <Badge
-                overlap="circular"
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                badgeContent={decision.choice === 'approved' ? <CheckIcon fontSize="inherit" /> : <CloseIcon fontSize="inherit" />}
-                sx={{
-                    '& .MuiBadge-badge': {
-                        backgroundColor: decision.choice === 'approved' ? colorStyled.primary : colorStyled.error,
-                        color: decision.choice === 'approved' ? colorStyled.onPrimary : colorStyled.onError,
-                        width: 16,
-                        height: 16,
-                        fontSize: 12,
-                        border: `1px solid ${colorStyled.outlineVariant}`
-                    }
-                }}
-            >
-                <Avatar alt={decision.user_name} {...stringAvatar(decision.user_name)} />
-            </Badge>
-        );
-    };
-
     const discussionsMap = useMemo(() => {
         return discussions.reduce((map, discussion) => {
             map[discussion.resourceId] = discussion.comments || [];
@@ -153,18 +137,23 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         return terms.map(term => {
             const comments = discussionsMap[term.identifier] || [];
             const hasMention = comments.some(c => c.mentionedUsers?.includes(mentionedUser));
-            const decisions = votesMap.filter(votes => votes.term_uuid === term.identifier).flatMap(votes => votes.decisions);
-            const votesIds = votesMap.map(votes => {
-                return votes.term_uuid;
-            });
-            const hasVote = votesIds.includes(term.identifier);
+            const votes = votesMap.filter(vote => vote.term_uuid === term.identifier);
+            const decisions = votes.flatMap(vote => vote.decisions);
+            const hasVote = votes.length > 0;
+            const userDecision = decisions.find(decision => decision.user_name === mentionedUser);
+            const hasUserVoted = Boolean(userDecision && userDecision.choice !== null);
+            const otherDecisions = decisions.filter(decision => decision.user_name !== mentionedUser);
 
             return {
                 ...term,
                 comments,
                 hasMention,
                 hasVote,
-                decisions
+                hasUserVoted,
+                userDecision,
+                decisions,
+                votes,
+                otherDecisions
             };
         });
     }, [terms, discussionsMap, mentionedUser, votesMap]);
@@ -213,6 +202,23 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
         return term.comments.reduce((latest, curr) => (new Date(curr.timestamp) > new Date(latest.timestamp) ? curr : latest));
     };
 
+    const getEffectiveModifiedDate = term => {
+        const termModified = new Date(term.modified);
+        const activeVote = term.votes?.[0];
+
+        if (!activeVote?.updated_at) {
+            return termModified;
+        }
+
+        const voteUpdated = new Date(activeVote.updated_at);
+
+        if (voteUpdated > termModified) {
+            return voteUpdated;
+        }
+
+        return termModified;
+    };
+
     const filteredTerms = useMemo(() => {
         let result = enhancedTerms;
         result = filterByTab(result);
@@ -222,9 +228,9 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
         switch (sortBy) {
             case SORT_BY_OPTIONS.RECENT_UPDATE:
-                return result.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+                return result.sort((a, b) => getEffectiveModifiedDate(b) - getEffectiveModifiedDate(a));
             case SORT_BY_OPTIONS.LATEST_UPDATE:
-                return result.sort((a, b) => new Date(a.modified) - new Date(b.modified));
+                return result.sort((a, b) => getEffectiveModifiedDate(a) - getEffectiveModifiedDate(b));
             case SORT_BY_OPTIONS.ALPHABETICAL:
                 return result.sort((a, b) => a.label.localeCompare(b.label));
             case SORT_BY_OPTIONS.ALPHABETICAL_REVERSE:
@@ -241,7 +247,6 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
     const renderTermItem = term => {
         const lastComment = getLastComment(term);
         const commentCount = term.comments.length;
-
         return (
             <ListItem
                 key={term.identifier}
@@ -258,137 +263,141 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     alignItems: 'flex-start'
                 }}
             >
-                <ListItemAvatar sx={{ minWidth: 40, marginTop: '4px' }}>
-                    {lastComment ? (
-                        <Tooltip title={`Comment by ${lastComment.author}`}>
-                            <Avatar
-                                {...stringAvatar(lastComment.author)}
-                                sx={{
-                                    width: 32,
-                                    height: 32,
-                                    fontSize: '0.875rem',
-                                    border: term.hasMention ? '2px solid' : 'none',
-                                    borderColor: term.hasMention ? 'warning.dark' : 'transparent'
-                                }}
-                            />
-                        </Tooltip>
-                    ) : (
-                        <Tooltip title="No comments">
-                            <Avatar
-                                sx={{
-                                    width: 32,
-                                    height: 32,
-                                    bgcolor: 'grey.300'
-                                }}
-                            >
-                                <ChatBubbleOutlineIcon fontSize="small" />
-                            </Avatar>
-                        </Tooltip>
-                    )}
-                </ListItemAvatar>
-                <Tooltip title={term.description}>
-                    <ListItemText
-                        primary={
-                            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                <ListItemText
+                    primary={
+                        <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <Tooltip title={term.description}>
                                 <Typography variant="subtitle1" fontWeight="bold" sx={{ mr: 1 }}>
                                     {term.label}
                                 </Typography>
-                                {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
-                                {term.hasVote && <StyledChip label="In Consensus" size="small" customVariant="agreement" sx={{ mr: '1em' }} />}
+                            </Tooltip>
+                            {term.hasMention && <StyledChip label="Mention" size="small" customVariant="mention" sx={{ mr: '1em' }} />}
+                            {term.hasVote && (
+                                <Tooltip title="Check consensus">
+                                    <StyledChip
+                                        label="In Consensus"
+                                        size="small"
+                                        customVariant="agreement"
+                                        sx={{ mr: '1em', cursor: 'pointer' }}
+                                        onClick={event => {
+                                            event.stopPropagation();
+                                            onConsensusSelect(term);
+                                        }}
+                                    />
+                                </Tooltip>
+                            )}
 
-                                <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                    sx={{
-                                        fontSize: '0.75rem'
-                                    }}
-                                >
-                                    {new Date(term.modified).toLocaleDateString() + ' ' + new Date(term.modified).toLocaleTimeString()}
-                                </Typography>
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{
+                                    fontSize: '0.75rem'
+                                }}
+                            >
+                                {new Date(term.modified).toLocaleDateString() + ', ' + new Date(term.modified).toLocaleTimeString()}
+                            </Typography>
 
-                                {term.hasVote && (
-                                    <>
-                                        <ConsensusProgress term={term} />
-                                        <AvatarGroup
-                                            max={4}
-                                            onClick={event => {
-                                                event.stopPropagation();
-                                                setAnchorEl(event.currentTarget);
-                                            }}
-                                            sx={{
-                                                gap: 0.5,
-                                                marginLeft: 2,
-                                                '& .MuiAvatar-root': {
-                                                    width: 24,
-                                                    height: 24,
-                                                    fontSize: 12
-                                                },
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            {term.decisions.map(decision => (
-                                                <Tooltip key={decision.user_name} title={decision.user_name}>
+                            {term.hasVote && (
+                                <>
+                                    <ConsensusProgress term={term} username={mentionedUser} />
+                                    {term.hasUserVoted && (
+                                        <Tooltip title="This is you">
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    marginLeft: 0.5,
+                                                    pr: 2,
+                                                    borderRight: `1px solid ${theme.palette.divider}`
+                                                }}
+                                            >
+                                                <DecisionBadgeAvatar decision={term.userDecision} />
+                                            </Box>
+                                        </Tooltip>
+                                    )}
+                                    <AvatarGroup
+                                        max={MAX_VISIBLE_VOTE_AVATARS + 1}
+                                        onClick={event => {
+                                            event.stopPropagation();
+                                            setAnchorEl(event.currentTarget);
+                                            setSelectedTermId(term.identifier);
+                                        }}
+                                        sx={{
+                                            gap: 0.5,
+                                            marginLeft: 2,
+                                            '.MuiAvatar-root': {
+                                                width: 24,
+                                                height: 24,
+                                                fontSize: 12
+                                            },
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        {term.otherDecisions.map(decision => (
+                                            <Tooltip key={decision.user_name} title={decision.user_name}>
+                                                <DecisionBadgeAvatar decision={decision} />
+                                            </Tooltip>
+                                        ))}
+                                    </AvatarGroup>
+                                </>
+                            )}
+
+                            <Popover
+                                open={open && selectedTermId === term.identifier}
+                                anchorEl={anchorEl}
+                                onClose={() => {
+                                    setAnchorEl(null);
+                                    setSelectedTermId(null);
+                                }}
+                                anchorOrigin={{
+                                    vertical: 'center',
+                                    horizontal: 'right'
+                                }}
+                                slotProps={{
+                                    paper: {
+                                        sx: {
+                                            maxHeight: 200
+                                        }
+                                    }
+                                }}
+                            >
+                                <List>
+                                    {term.otherDecisions?.slice(MAX_VISIBLE_VOTE_AVATARS).map(decision => (
+                                        <ListItem key={decision.user_name}>
+                                            <ListItemAvatar>
+                                                <Tooltip title={decision.user_name}>
                                                     <DecisionBadgeAvatar decision={decision} />
                                                 </Tooltip>
-                                            ))}
-                                        </AvatarGroup>
-                                    </>
-                                )}
-
-                                <Popover
-                                    open={open}
-                                    anchorEl={anchorEl}
-                                    onClose={() => {
-                                        setAnchorEl(null);
-                                    }}
-                                    anchorOrigin={{
-                                        vertical: 'center',
-                                        horizontal: 'right'
-                                    }}
-                                    slotProps={{
-                                        paper: {
-                                            sx: {
-                                                maxHeight: 200
-                                            }
-                                        }
-                                    }}
-                                >
-                                    <List>
-                                        {term.decisions?.slice(3).map(decision => (
-                                            <ListItem key={decision.user_name}>
-                                                <ListItemAvatar>
-                                                    <DecisionBadgeAvatar decision={decision} />
-                                                </ListItemAvatar>
-                                                <ListItemText>
-                                                    <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
-                                                </ListItemText>
-                                                <Box sx={{ ml: 3 }}></Box>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                </Popover>
+                                            </ListItemAvatar>
+                                            <ListItemText>
+                                                <Typography sx={{ fontSize: '0.75rem' }}>{decision.user_name}</Typography>
+                                            </ListItemText>
+                                            <Box sx={{ ml: 3 }}></Box>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Popover>
+                        </Box>
+                    }
+                    secondary={
+                        <>
+                            <Box>
+                                <Typography variant="caption" color="text.secondary">
+                                    <ChatBubbleOutlineIcon fontSize="inherit" sx={{ mr: 0.5 }} />
+                                    {commentCount} {commentCount === 1 ? 'comment' : 'comments'}
+                                </Typography>
                             </Box>
-                        }
-                        secondary={
-                            <>
-                                <Box>
-                                    <Typography variant="caption" color="text.secondary">
-                                        <ChatBubbleOutlineIcon fontSize="inherit" sx={{ mr: 0.5 }} />
-                                        {commentCount} {commentCount === 1 ? 'comment' : 'comments'}
-                                    </Typography>
-                                </Box>
-                                {lastComment ? (
-                                    <Typography variant="body2">{lastComment.content}</Typography>
-                                ) : (
-                                    <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.disabled' }}>
-                                        No comments available
-                                    </Typography>
-                                )}
-                            </>
-                        }
-                        sx={{ my: 0 }}
-                    />
-                </Tooltip>
+                            {lastComment ? (
+                                <Typography variant="body2">{lastComment.content}</Typography>
+                            ) : (
+                                <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.disabled' }}>
+                                    No comments available
+                                </Typography>
+                            )}
+                        </>
+                    }
+                    sx={{ my: 0 }}
+                />
             </ListItem>
         );
     };
@@ -408,6 +417,34 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
             default:
                 return '...';
         }
+    };
+
+    const renderContent = () => {
+        if (loading) {
+            return (
+                <Box>
+                    <CircularProgress size={24} />
+                    <Typography variant="body2" sx={{ ml: 2 }}>
+                        Loading data...
+                    </Typography>
+                </Box>
+            );
+        }
+
+        if (filteredTerms.length === 0) {
+            return (
+                <Typography variant="body2" sx={{ mt: 10 }}>
+                    {activeTab === 0 ? 'No discussions found matching your criteria' : 'No active reviews found'}
+                </Typography>
+            );
+        }
+
+        return filteredTerms.map((term, index) => (
+            <Box key={term.identifier}>
+                {renderTermItem(term)}
+                {index < filteredTerms.length - 1 && <Divider sx={{ mx: 2 }} />}
+            </Box>
+        ));
     };
 
     return (
@@ -432,7 +469,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                     top: 0,
                     zIndex: 1000,
                     backgroundColor: 'background.paper',
-                    borderBottom: `1px solid ${colorStyled.outlineVariant}`,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
                     pb: 1
                 }}
             >
@@ -443,11 +480,11 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
                             variant="outlined"
                             size="small"
                             sx={{
-                                bgcolor: colorStyled.tertiary,
-                                color: colorStyled.onTertiary,
+                                bgcolor: theme.palette.secondary.main,
+                                color: theme.palette.secondary.contrastText,
                                 '&:hover': {
-                                    bgcolor: colorStyled.tertiaryContainer,
-                                    color: colorStyled.onTertiaryContainer
+                                    bgcolor: `${theme.palette.secondary.main}BF`,
+                                    color: theme.palette.secondary.contrastText
                                 }
                             }}
                         >
@@ -543,27 +580,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect }) => 
 
             <Grid item xs={12} sx={{ overflowY: 'auto', flexGrow: 1 }}>
                 <Paper elevation={0}>
-                    <List disablePadding>
-                        {loading ? (
-                            <Box>
-                                <CircularProgress size={24} />
-                                <Typography variant="body2" sx={{ ml: 2 }}>
-                                    Loading data...
-                                </Typography>
-                            </Box>
-                        ) : filteredTerms.length > 0 ? (
-                            filteredTerms.map((term, index) => (
-                                <Box key={term.identifier}>
-                                    {renderTermItem(term)}
-                                    {index < filteredTerms.length - 1 && <Divider sx={{ mx: 2 }} />}
-                                </Box>
-                            ))
-                        ) : (
-                            <Typography variant="body2" sx={{ mt: 10 }}>
-                                {activeTab === 0 ? 'No discussions found matching your criteria' : 'No active reviews found'}
-                            </Typography>
-                        )}
-                    </List>
+                    <List disablePadding>{renderContent()}</List>
                 </Paper>
             </Grid>
         </Grid>
@@ -587,5 +604,6 @@ InformationHub.propTypes = {
         })
     ).isRequired,
     mentionedUser: PropTypes.string.isRequired,
-    onTermSelect: PropTypes.func.isRequired
+    onTermSelect: PropTypes.func.isRequired,
+    onConsensusSelect: PropTypes.func.isRequired
 };

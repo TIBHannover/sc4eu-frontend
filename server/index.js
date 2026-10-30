@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 const express = require('express');
 require('dotenv').config();
 
@@ -13,7 +13,7 @@ const APPLICATION_PORT = process.env.APPLICATION_PORT ? process.env.APPLICATION_
 const APPLICATION_URL = process.env.APPLICATION_URL ? process.env.APPLICATION_URL : 'http://localhost';
 
 const app = express(); // create express app
-const url = require('url');
+const url = require('node:url');
 const proxy = require('http-proxy-middleware').createProxyMiddleware;
 
 //const API_SERVICE_URL = 'http://localhost:9000';
@@ -26,34 +26,34 @@ router.use(bodyParser.urlencoded({ extended: false }));
 const auth = require('./authCalls');
 const server = require('./serverCalls');
 const database = require('./databaseCalls');
+const events = require('./eventsCalls');
 const processing = require('./ontologyProcessingCalls');
 
 auth.initializeAuth(app, router, passport);
 
 // start express server on port
 app.listen(APPLICATION_PORT, () => {
-    console.log('server started on port ' + APPLICATION_PORT);
-    console.log('You can access it via ' + APPLICATION_URL + ':' + APPLICATION_PORT);
+    console.info(`Server started on port ${APPLICATION_PORT}`);
+    console.info(`You can access it via ${APPLICATION_URL}:${APPLICATION_PORT}`);
 });
 
 // THIS IS ONLY FOR DECOUPLED DEBUGING STUFF, means the react app runs on its own server e.g. localhost:3000
 app.use(
     cors({
-        origin: [
-            'http://localhost:3000',
-            process.env.REDIRECT_URL
-        ], // allow to server to accept request from different origin
+        origin: ['http://localhost:3000', process.env.REDIRECT_URL], // allow to server to accept request from different origin
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true // allow session cookie from browser to pass through
     })
 );
 
 app.use((req, res, next) => {
-    console.log('Incoming request:', req.method, req.url);
     next();
 });
 
-app.use(bodyParser.json({ limit: '10mb' }));
+const keepRawBody = (req, res, buf) => {
+    req.rawBody = buf;
+};
+app.use(bodyParser.json({ limit: '10mb', verify: keepRawBody }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false, parameterLimit: 50000 }));
 
 router.use(express.urlencoded({ extended: false }));
@@ -62,6 +62,8 @@ router.use(cookieParser());
 // apply individual "endPoints"
 server.servicesStatus(router);
 server.testConnection(router);
+events.subscribe(router);
+events.githubWebhook(router);
 server.adminDashBoard(router);
 server.allRoles(router);
 server.userRole(router);
@@ -110,7 +112,7 @@ database.getTermOfTheWeek(router);
 database.closeConsensus(router);
 database.subscribePush(router);
 database.unsubscribePush(router);
-database.notifyAddRemoveTerm(router);
+database.notifyTermUpdate(router);
 database.notifyNewComment(router);
 processing.getJSONModelForOntologyID(router);
 processing.getJSONModelForOntologyIDWithQuery(router);
@@ -123,13 +125,13 @@ processing.getHtmlForWidoco(router);
 router.get('/oauth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
 router.get(
     '/oauth/github/callback',
-    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/vocab/imagine/LoginFailedRedirect` }),
+    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/vocab/sc4eu/LoginFailedRedirect` }),
     (req, res) => {
         // Successful authentication, redirect home.
         // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
         res.redirect(
             url.format({
-                pathname: `${process.env.CALLBACK_URL}/vocab/imagine/loggedIn`,
+                pathname: `${process.env.CALLBACK_URL}/vocab/sc4eu/loggedIn`,
                 query: {
                     success: true,
                     token: req.user.jwt
@@ -142,10 +144,10 @@ router.get(
 router.get('/oauth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
 router.get(
     '/oauth/gitlab/callback',
-    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/imagine/LoginFailedRedirect` }),
+    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/sc4eu/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/vocab/imagine/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/sc4eu/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt
@@ -159,10 +161,10 @@ router.get(
 router.get('/oauth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
     '/oauth/google/callback',
-    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/imagine/LoginFailedRedirect` }),
+    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/sc4eu/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/vocab/imagine/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/sc4eu/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt
@@ -176,10 +178,27 @@ router.get(
 router.get('/oauth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
 router.get(
     '/oauth/sap/callback',
-    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/imagine/LoginFailedRedirect` }),
+    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/sc4eu/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
-            pathname: `${process.env.REDIRECT_URL}/vocab/imagine/loggedIn`,
+            pathname: `${process.env.REDIRECT_URL}/vocab/sc4eu/loggedIn`,
+            query: {
+                success: true,
+                token: req.user.jwt
+            }
+        });
+
+        res.redirect(redirectURL);
+    }
+);
+
+router.get('/oauth/linkedin', passport.authenticate('linkedin', { scope: ['openid', 'profile', 'email'] }));
+router.get(
+    '/oauth/linkedin/callback',
+    passport.authenticate('linkedin', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/sc4eu/LoginFailedRedirect` }),
+    (req, res) => {
+        const redirectURL = url.format({
+            pathname: `${process.env.REDIRECT_URL}/vocab/sc4eu/loggedIn`,
             query: {
                 success: true,
                 token: req.user.jwt

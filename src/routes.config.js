@@ -11,13 +11,11 @@ import UserSettings from './pages/UserSettings';
 import ROUTES from './constants/routes';
 import OntologyIndexing from './pages/OntologyIndexing';
 import ViewOntology from './pages/ViewOntology';
-import Documentations from './pages/Documentations';
+import Documentation from './pages/Documentation';
 import Dataprotections from './pages/Dataprotections';
 import Imprint from './pages/Imprint';
 import Partners from './pages/Partners';
 import vocabulary_support from './pages/vocabulary_support';
-import FAQ from './pages/FAQ';
-import Training from './pages/Training';
 import WebProtege from './pages/WebProtege';
 import ProjectList from './pages/ProjectList';
 import EmailVerify from './pages/EmailVerify';
@@ -26,6 +24,7 @@ import resetPassword from './pages/resetPassword';
 import { EurostatPortal } from './components/eurostat/EutostatPortal';
 import { BullWhipEffect } from './components/eurostat/BullWhipEffect';
 import AnnotatorPage from './pages/AnnotatorPage';
+import { MpcSurvey } from 'components/mpc-visualisation/MpcSurvey';
 
 const routes = [
     {
@@ -49,6 +48,12 @@ const routes = [
         path: ROUTES.WEBPROTEGE,
         exact: true,
         component: WebProtege
+    },
+
+    {
+        path: ROUTES.MPC,
+        exact: true,
+        component: MpcSurvey
     },
 
     {
@@ -111,9 +116,9 @@ const routes = [
         component: ProjectList
     },
     {
-        path: ROUTES.Documentations,
+        path: ROUTES.Documentation,
         exact: true,
-        component: Documentations
+        component: Documentation
     },
     {
         path: ROUTES.Dataprotections,
@@ -131,6 +136,23 @@ const routes = [
         component: Partners
     },
     {
+        // Shares an explicit `key` with the other vocabulary_support routes below so that
+        // react-router-config's renderRoutes() (which otherwise keys Routes by array index)
+        // treats these as the SAME component instance across navigations instead of
+        // unmounting/remounting it every time the URL moves between these 3 patterns.
+        key: 'vocabulary_support',
+        path: ROUTES.VOCABULARY_CONSENSUS,
+        exact: true,
+        component: vocabulary_support
+    },
+    {
+        key: 'vocabulary_support',
+        path: ROUTES.VOCABULARY_TERM,
+        exact: true,
+        component: vocabulary_support
+    },
+    {
+        key: 'vocabulary_support',
         path: ROUTES.VOCABULARY_SUPPORT,
         exact: true,
         component: vocabulary_support
@@ -139,16 +161,6 @@ const routes = [
         path: ROUTES.ANNOTATOR,
         exact: true,
         component: AnnotatorPage
-    },
-    {
-        path: ROUTES.FAQ,
-        exact: true,
-        component: FAQ
-    },
-    {
-        path: ROUTES.TRAINING,
-        exact: true,
-        component: Training
     },
     {
         path: ROUTES.EMAIL_VERIFY,

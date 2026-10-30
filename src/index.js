@@ -14,7 +14,6 @@ import ReactPiwik from 'react-piwik';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-// To connect Matomo Use React library react-piwik
 
 const piwik = new ReactPiwik({
     url: 'https://support.tib.eu/piwik/',
@@ -50,13 +49,18 @@ const render = () => {
 };
 
 render();
-serviceWorkerRegistration.register({
-    onUpdate: registration => {
-        if (registration && registration.waiting) {
-            registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-    }
-});
+serviceWorkerRegistration.register();
+
+// Handle clicks on push notifications: the service worker focuses this tab and sends the target path.
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data?.type !== 'NOTIFICATION_CLICK') return;
+
+        const basename = (process.env.REACT_APP_PUBLIC_URL || '').replace(/\/$/, '');
+        const path = event.data.url || '/';
+        history.push(basename && path.startsWith(basename) ? path.slice(basename.length) || '/' : path);
+    });
+}
 
 // Hot reloading components and reducers
 if (module.hot) {

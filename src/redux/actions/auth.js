@@ -29,7 +29,6 @@ export const updateCookies = payload => dispatch => {
                         }
                     })
                 );
-                return Promise.resolve();
             }
         })
         .catch(() => {
@@ -38,8 +37,7 @@ export const updateCookies = payload => dispatch => {
             dispatch({
                 type: type.RESET_AUTH
             });
-        })
-        .then(() => Promise.resolve());
+        });
 };
 
 export const updateAuth = payload => dispatch => {
@@ -90,7 +88,6 @@ export function firstLoad() {
                             }
                         })
                     );
-                    return Promise.resolve();
                 }
             })
             .catch(() => {
@@ -99,8 +96,7 @@ export function firstLoad() {
                 dispatch({
                     type: type.RESET_AUTH
                 });
-            })
-            .then(() => Promise.resolve());
+            });
     };
 }
 

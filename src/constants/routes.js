@@ -11,10 +11,12 @@ const routes = {
     SERVICE_STATUS: '/servicesStatus',
     ADMIN_DASHBOARD: '/admin_Dashboard',
     LOGGED_IN: '/loggedIn',
-    Documentations: '/Documentations',
+    Documentation: '/Documentation',
     Dataprotections: '/Dataprotections',
     Imprint: '/Imprint',
     VOCABULARY_SUPPORT: '/vocabulary_support',
+    VOCABULARY_TERM: '/vocabulary_support/terms/:termUuid',
+    VOCABULARY_CONSENSUS: '/vocabulary_support/terms/:termUuid/consensuses/:voteUuid',
     FAQ: '/FAQ',
     TRAINING: '/Training',
     WEBPROTEGE: '/WEBPROTEGE',
@@ -24,7 +26,8 @@ const routes = {
     LOGIN_FAILED: '/loginFailedRedirect',
     RESET_PASSWORD: '/resetPassword',
     ANNOTATOR: '/AnnotatorPage',
-    PARTNERS: '/partners'
+    PARTNERS: '/partners',
+    MPC: '/mpc-survey'
 };
 
 export default routes;

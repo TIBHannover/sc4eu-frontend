@@ -1,5 +1,5 @@
-
-module.exports = (callbackURL, displayName) => {
+function createLoginPage(callbackURL, displayName) {
+    const projectBasedCallbackURL = callbackURL + process.env.REACT_APP_PUBLIC_URL;
     return {
         body: `<head>
 
@@ -124,7 +124,7 @@ module.exports = (callbackURL, displayName) => {
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
               <p style="margin: 0;">Hello ${displayName}, Thank you for registering on VDST platform.</p>
-              <p>Click the button below to confirm your email address. If you didn't create an account with <a href="https://service.tib.eu/vocab/">VDST</a>, you can safely delete this email.</p>
+              <p>Click the button below to confirm your email address. If you didn't create an account with <a href="${projectBasedCallbackURL}">VDST</a>, you can safely delete this email.</p>
             </td>
           </tr>
           <tr>
@@ -159,7 +159,7 @@ module.exports = (callbackURL, displayName) => {
 
           <tr>
             <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-              <p style="margin: 0;">You received this email because we received a request for registeration for your account. If you didn't request registeration you can safely delete this email.</p>
+              <p style="margin: 0;">You received this email because we received a request for registration for your account. If you didn't request registration you can safely delete this email.</p>
             </td>
           </tr>
 
@@ -168,4 +168,6 @@ module.exports = (callbackURL, displayName) => {
     </tr>
   </table> </body>`
     };
-};
+}
+
+module.exports = createLoginPage;

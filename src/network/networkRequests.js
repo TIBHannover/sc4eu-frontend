@@ -24,11 +24,11 @@ export const submitGetRequest = (url, headers, send_token = false) => {
         })
             .then(response => {
                 if (!response.ok) {
-                    reject({
-                        error: new Error(`Error response. (${response.status}) ${response.statusText}`),
-                        statusCode: response.status,
-                        statusText: response.statusText
-                    });
+                    const error = new Error(`Error response. (${response.status}) ${response.statusText}`);
+                    error.statusCode = response.status;
+                    error.statusText = response.statusText;
+
+                    reject(error);
                 } else {
                     const json = response.json();
                     if (json.then) {
@@ -109,17 +109,15 @@ export const submitPutRequest = (url, headers, data, jsonStringify = true) => {
                     } else {
                         reject(new Error(`Error response. (${response.status}) ${response.statusText}`));
                     }
+                } else if (response.status === 204) {
+                    // HTTP 204 No Content success status
+                    return resolve();
                 } else {
-                    if (response.status === 204) {
-                        // HTTP 204 No Content success status
-                        return resolve();
+                    const json = response.json();
+                    if (json.then) {
+                        json.then(resolve).catch(reject);
                     } else {
-                        const json = response.json();
-                        if (json.then) {
-                            json.then(resolve).catch(reject);
-                        } else {
-                            return resolve(json);
-                        }
+                        return resolve(json);
                     }
                 }
             })

@@ -115,7 +115,6 @@ export default class BaseVertexEdgeMapper extends BaseComponent {
         anEdge.resourceReference = axiomName;
         anEdge.__edgeType = 'axiomEdge';
         anEdge.__edgeAxiom = axiomName;
-        // TODO : THIS IS HARDCODED TO CONTROL THE ELEMENTS, we need an other approach to handle the rmm. visualization
         if (srcVertex?.__vertexEdgeIdentifier && targetVertex?.__vertexEdgeIdentifier) {
             anEdge.__vertexEdgeIdentifier = srcVertex.__vertexEdgeIdentifier + '$$' + axiomName + '$$' + targetVertex.__vertexEdgeIdentifier;
             anEdge.__displayName = axiomName;
@@ -140,7 +139,7 @@ export default class BaseVertexEdgeMapper extends BaseComponent {
             if (vMapper.hasOwnProperty(name)) {
                 // fetch data;
                 const dataPath = vMapper[name];
-                if (dataPath.indexOf('.') !== -1) {
+                if (dataPath.includes('.')) {
                     // need to perform nested getter;
                     const tokens = dataPath.split('.');
                     let dataItem = item;
@@ -178,30 +177,28 @@ export default class BaseVertexEdgeMapper extends BaseComponent {
                 if (tar_vertex) {
                     newEdge.__target = tar_vertex;
                     tar_vertex.addOutgoingEdge(newEdge);
+                } else if (model.getVertexFromName(newEdge.__vertexEdgeIdentifier + '$$' + target)) {
+                    const tempVertex = model.getVertexFromName(newEdge.__vertexEdgeIdentifier + '$$' + target);
+                    newEdge.__target = tempVertex;
+                    tempVertex.addIncomingEdge(mappedEdge);
                 } else {
-                    if (model.getVertexFromName(newEdge.__vertexEdgeIdentifier + '$$' + target)) {
-                        const tempVertex = model.getVertexFromName(newEdge.__vertexEdgeIdentifier + '$$' + target);
-                        newEdge.__target = tempVertex;
-                        tempVertex.addIncomingEdge(mappedEdge);
+                    const aVertex = new Vertex();
+                    aVertex.resourceReference = target;
+                    if (validIRI(target)) {
+                        // create the id for this vertex;
+                        aVertex.__vertexEdgeIdentifier = target;
                     } else {
-                        const aVertex = new Vertex();
-                        aVertex.resourceReference = target;
-                        if (validIRI(target)) {
-                            // create the id for this vertex;
-                            aVertex.__vertexEdgeIdentifier = target;
-                        } else {
-                            aVertex.__vertexType = 'Literal';
-                            // its id is the full tripple;
-                            aVertex.__vertexEdgeIdentifier = newEdge.__vertexEdgeIdentifier + '$$' + target;
-                            aVertex.__displayName = target; // this is the literal value of something we have not identified
-                        }
-                        // we assume that all resources are created (the ones which could be created)
-                        // otherwise we point on a literal or a resource that has not been created>> means external resource or
-                        // not jet read any information about that;
-                        aVertex.addIncomingEdge(newEdge);
-                        model.addVertex(aVertex);
-                        newEdge.__target = aVertex;
+                        aVertex.__vertexType = 'Literal';
+                        // its id is the full tripple;
+                        aVertex.__vertexEdgeIdentifier = newEdge.__vertexEdgeIdentifier + '$$' + target;
+                        aVertex.__displayName = target; // this is the literal value of something we have not identified
                     }
+                    // we assume that all resources are created (the ones which could be created)
+                    // otherwise we point on a literal or a resource that has not been created>> means external resource or
+                    // not jet read any information about that;
+                    aVertex.addIncomingEdge(newEdge);
+                    model.addVertex(aVertex);
+                    newEdge.__target = aVertex;
                 }
                 if (model.edgeMap[newEdge.__vertexEdgeIdentifier]) {
                     const clonedEdge = new Edge();
@@ -239,7 +236,7 @@ export default class BaseVertexEdgeMapper extends BaseComponent {
             if (eMapper.hasOwnProperty(name)) {
                 // fetch data;
                 const dataPath = eMapper[name];
-                if (dataPath.indexOf('.') !== -1) {
+                if (dataPath.includes('.')) {
                     // need to perform nested getter;
                     const tokens = dataPath.split('.');
                     let dataItem = item;

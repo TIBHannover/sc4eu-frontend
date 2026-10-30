@@ -1,17 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 import { isPushSupported } from '../utils/pushNotifications';
+import PropTypes from 'prop-types';
 
 const VAPID_PUBLIC_KEY = process.env.REACT_APP_VAPID_PUBLIC_KEY;
 
 function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const base64 = (base64String + padding).replaceAll('-', '+').replaceAll('_', '/');
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
 
     for (let i = 0; i < rawData.length; ++i) {
-        outputArray[i] = rawData.charCodeAt(i);
+        outputArray[i] = rawData.codePointAt(i);
     }
     return outputArray;
 }
@@ -24,7 +25,6 @@ export function usePushNotifications(user) {
 
     useEffect(() => {
         const supported = isPushSupported();
-        console.log(`supported from usePushNotifications: ${supported}`);
         setIsSupported(supported);
 
         if (supported) {
@@ -68,6 +68,7 @@ export function usePushNotifications(user) {
                 }
             } catch (err) {
                 setError('Could not request notification permission.');
+                console.error(err);
                 return;
             }
         }
@@ -79,7 +80,7 @@ export function usePushNotifications(user) {
         });
         setSubscription(sub);
 
-        const response = await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}subscriber`, {
+        await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}subscriber`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -104,19 +105,38 @@ export function usePushNotifications(user) {
         setSubscription(null);
     }, [subscription]);
 
-    const notifyAddRemoveTerm = async () => {
-        await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyAddRemoveTerm`, {
+    const notifyTermUpdate = async (term_uuid, term_label, payload) => {
+        let notification_title = `Term ${term_label} has been added!`;
+        let notification_body = 'Click to see';
+        const type = payload.header.split(' ')[0];
+        if (type === 'Delete') {
+            notification_title = `Term ${term_label} has been removed!`;
+            notification_body = 'You will find it in a recently deleted terms tab';
+        }
+        if (type === 'Update') {
+            notification_title = `Term ${term_label} has been updated!`;
+        }
+        await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyTermUpdate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ update: 'Term has been updated or removed. Find out!' })
+            body: JSON.stringify({
+                title: notification_title,
+                body: notification_body,
+                update_type: type,
+                term_uuid: term_uuid
+            })
         });
     };
 
-    const notifyNewComment = async () => {
+    const notifyNewComment = async (resourceId, mentionedUsers) => {
         await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyNewComment`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ update: 'New comment has been added to a discussion. Check it out!' })
+            body: JSON.stringify({
+                title: 'New comment has been added to a discussion. Check it out!',
+                term_uuid: resourceId,
+                mentioned_user_names: mentionedUsers
+            })
         });
     };
 
@@ -129,7 +149,11 @@ export function usePushNotifications(user) {
         requestPermission,
         subscribe,
         unsubscribe,
-        notifyAddRemoveTerm,
+        notifyTermUpdate,
         notifyNewComment
     };
 }
+
+usePushNotifications.propTypes = {
+    user: PropTypes.string.isRequired
+};

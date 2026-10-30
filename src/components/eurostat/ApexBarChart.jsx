@@ -1,8 +1,9 @@
 import ReactApexChart from 'react-apexcharts';
 import PropTypes from 'prop-types';
-import { colorStyled } from 'styledComponents/styledColor';
+import { useTheme } from '@mui/material';
 
 export const ApexBarChart = ({ data, categories }) => {
+    const theme = useTheme();
     const series = [
         {
             data: data
@@ -40,7 +41,7 @@ export const ApexBarChart = ({ data, categories }) => {
             text:
                 'Nothing was found with the chosen parameters, try to increase number of products, change flow type, increase the interval or change reporter and/or partner'
         },
-        colors: [`${colorStyled.primary}`]
+        colors: [theme.palette.primary.main]
     };
 
     return <ReactApexChart options={options} series={series} type="bar" />;

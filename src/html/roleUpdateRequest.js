@@ -139,7 +139,7 @@ module.exports = (emailContent, SenderName) => {
                         <p style="margin: 0;">Tips: </p>
                         <p style="margin: 0;">If you want to update Role of "${SenderName}" user, Please follow below steps:</p>
                         <ol>
-                          <li>Log in to the <a href="https://service.tib.eu/vocab/">VDST</a> platform using your credentials.</li>
+                          <li>Log in to the <a href="https://service.tib.eu/vocab/sc4eu/">VDST</a> platform using your credentials.</li>
                           <li>Click on your avatar located in the top-right corner of the screen.</li>
                           <li>Select "Dashboard" from the dropdown menu.</li>
                           <li>Click on the "Users" tab located in the left sidebar menu.</li>

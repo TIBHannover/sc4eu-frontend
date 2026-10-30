@@ -1,30 +1,73 @@
-import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
-import styled from 'styled-components';
-import { Box, Button, darken, IconButton, lighten, Modal, Tooltip, useTheme } from '@mui/material';
-import { colorStyled } from '../../../styledComponents/styledColor';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import Cookies from 'js-cookie';
+import { differenceInDays } from 'date-fns';
 import PropTypes from 'prop-types';
-import ExpandedRow from './ExpandedRow';
-import CreateNewTerm from './CreateNewTerm';
-import CommitChanges from './CommitChanges';
-import { useCreateTerm } from '../hooks/useCreateTerm';
-import { useUpdateTerm } from '../hooks/useUpdateTerm';
-import { useDeleteTerm } from '../hooks/useDeleteTerm';
-import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
 import { useHistory } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { createRow, MaterialReactTable, useMaterialReactTable } from 'material-react-table';
+import { Alert, Box, Button, Chip, darken, IconButton, lighten, Snackbar, styled, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import HowToVoteOutlinedIcon from '@mui/icons-material/HowToVoteOutlined';
+import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
+import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
+
+import { getTermVotes, getVotes, deleteTermVotes, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
+import { LARGE_SCREEN_SIZE, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { getMentionedCommentsLength, hasPendingMentionReply } from '../utils/Discussions';
+import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
+import { useCreateTerm } from '../hooks/useCreateTerm';
+import { useDeleteTerm } from '../hooks/useDeleteTerm';
+import { useUpdateTerm } from '../hooks/useUpdateTerm';
 import ChangesTimeline from '../../ondet/ChangesTimeline';
 import MaterialUIPopUp, { MaterialUIPopUpTypes } from '../../ReusableComponents/MaterialUIPopUp';
-import Cookies from 'js-cookie';
-import { getGroupedMentionsByCommentInstant, getMentionedCommentsLength } from '../utils/Discussions';
-import { LARGE_SCREEN_SIZE, StyledBadge, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
+import { ToolbarNavBar } from './ToolbarNavBar';
+import { commitTermChanges } from '../utils/CommitChanges';
+import { useLiveUpdates } from '../../../hooks/useLiveUpdates';
+import CreateNewTerm from './CreateNewTerm';
+import ExpandedRow from './ExpandedRow';
 import InformationHub from './InformationHub';
-import { useMediaQuery } from '@mui/material';
-import { CardActivityWidget } from './CardActivityWidget';
-import { getTermVotes, getVotes, deleteTermVotes } from '../../../network/TermVoteCalls';
 import VoteView from './VoteView';
+import AgreedTermsTable from './AgreedTermsTable';
+import ViewSwitcher, { VOCABULARY_VIEWS } from './ViewSwitcher';
+import { Info } from '@mui/icons-material';
+import { usePushNotifications } from 'hooks/usePushNotifications';
 
-/* eslint-disable react/prop-types */
+function isValidUrl(string) {
+    try {
+        new URL(string);
+        return true;
+    } catch (_) {
+        console.info('Non-valid URL');
+        return false;
+    }
+}
+
+const CONSENSUS_VOTES_NEEDED_TO_CLOSE = 4;
+
+/** Term UUIDs of votes that are just one vote away from reaching consensus. */
+function getNearClosedConsensusTermIds(votes) {
+    return (votes || [])
+        .filter(vote => {
+            const approvedCount = vote.decisions.filter(decision => decision.choice === 'approved').length;
+            const rejectedCount = vote.decisions.filter(decision => decision.choice === 'rejected').length;
+            const leadingCount = Math.max(approvedCount, rejectedCount);
+            return CONSENSUS_VOTES_NEEDED_TO_CLOSE - leadingCount === 1;
+        })
+        .map(vote => vote.term_uuid);
+}
+
+function getUrgentVotesTooltip(urgentTermsCount, nearClosedCount) {
+    const subject = urgentTermsCount === 1 ? `${urgentTermsCount} term is` : `${urgentTermsCount} terms are`;
+    const nearClosedSuffix = nearClosedCount !== 0 ? ` · ${nearClosedCount} near closing` : '';
+    return `${subject} waiting for your vote${nearClosedSuffix}`;
+}
+
 const VocabularyMainTable = ({
     terms,
     refetch,
@@ -34,30 +77,28 @@ const VocabularyMainTable = ({
     discussions,
     handleSaveDiscussion,
     handleDeleteDiscussion,
-    currentUser
+    currentUser,
+    termUuid,
+    voteUuid
 }) => {
+    const queryClient = useQueryClient();
     const [validationErrors, setValidationErrors] = useState({});
     const { mutateAsync: createTerm, isPending: isCreatingTerm } = useCreateTerm();
     const { mutateAsync: updateTerm, isPending: isUpdatingTerm } = useUpdateTerm();
     const { mutateAsync: deleteTerm, isPending: isDeletingTerm } = useDeleteTerm();
     const { mutateAsync: createDiscussion } = useCreateDiscussion();
-    //const [openNewTerm, setNewTermOpen] = useState(false);
-    const [openCommit, setOpenCommit] = useState(false);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedTerm, setSelectedTerm] = useState(null);
     const [termComments, setTermComments] = useState([]);
     const [openCreateModal, setOpenCreateModal] = useState(false);
-    const [hasUncommittedChanges, setHasUncommittedChanges] = useState(false);
+    const [editMode, setEditMode] = useState(false);
     const [activeMUIPopUp, setActiveMUIPopUp] = useState(null);
+    const [activeView, setActiveView] = useState(VOCABULARY_VIEWS.MAIN);
     const history = useHistory();
     const theme = useTheme();
-    const baseBackgroundColor =
-        theme.palette.mode === 'light'
-            ? 'rgba(245, 245, 245, 1)' // white
-            : 'rgba(84, 90, 95, 1)'; // light gray
+    const baseBackgroundColor = theme.palette.surface.containerLow;
 
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
-    const mentionedDiscussions = getGroupedMentionsByCommentInstant(terms, discussions, currentUser.displayName);
     const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
     const isMobileScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
@@ -65,13 +106,19 @@ const VocabularyMainTable = ({
 
     const [urgentVoteTerm, setUrgentVoteTerm] = useState(null);
     const [urgentVoteData, setUrgentVoteData] = useState(null);
-    const [votesMap, setVotesMap] = useState([]);
+    const { data: votesMap = [], isLoading: isLoadingVotes } = useQuery(VOTES_QUERY_KEY, getVotes);
+    const [deepLinkNotification, setDeepLinkNotification] = useState(null);
+
+    const { notifyTermUpdate } = usePushNotifications(currentUser.displayName);
 
     const [pagination, setPagination] = useState({
         pageSize: 10,
         pageIndex: 0
     });
 
+    const mainTerms = useMemo(() => terms.filter(term => term.status !== 'accept'), [terms]);
+    const agreedTerms = useMemo(() => terms.filter(term => term.status === 'accept'), [terms]);
+    
     const urgentTerms = terms.filter(term =>
         votesMap.some(vote => vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName))
     );
@@ -80,48 +127,41 @@ const VocabularyMainTable = ({
             discussion =>
                 discussion.comments.length !== 0 &&
                 term.identifier === discussion.resourceId &&
-                discussion.comments.some(comment => comment.mentionedUsers && comment.mentionedUsers.includes(currentUser.displayName))
+                hasPendingMentionReply(discussion, currentUser.displayName)
         )
     );
-    const newTerms = terms.filter(term => new Date(term.created) >= new Date(new Date().setDate(new Date().getDate() - 70)));
+
+    const NEW_TERMS_INTERVAL = 1;
+    const newTerms = terms.filter(term => {
+        const daysSinceCreated = differenceInDays(new Date(), new Date(term.created));
+        return !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
+    });
 
     const pendingDeletedTermIds = useRef([]);
+    const notSavedAddedTermsIdsRef = useRef([]);
+    const beforeEditsTermsRef = useRef(null);
 
     useEffect(() => {
-        const fetchVotes = async () => {
-            const votesData = await getVotes();
-            setVotesMap(votesData);
-        };
+        if (!isLoadingTerms && beforeEditsTermsRef.current === null) {
+            beforeEditsTermsRef.current = terms;
+        }
+    }, [isLoadingTerms, terms]);
 
-        fetchVotes();
-    }, []);
+    useLiveUpdates({
+        onTermsRefreshed: freshTerms => {
+            beforeEditsTermsRef.current = freshTerms;
+        }
+    });
 
     useEffect(() => {
-        const handleBeforeUnload = event => {
-            if (hasUncommittedChanges) {
-                event.preventDefault();
-                event.returnValue = 'You have uncommitted changes. Do you really want to leave?';
-            }
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
-        const unblock = history.block((location, action) => {
-            if (hasUncommittedChanges) {
-                if (window.confirm('You have uncommitted changes. Do you really want to leave?')) {
-                    unblock();
-                    history.push(location.pathname);
-                } else {
-                    return false;
-                }
-            }
-        });
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-            unblock();
-        };
-    }, [hasUncommittedChanges, history]);
+        if (!openPopup || !selectedTerm) {
+            return;
+        }
+        const latestComments = discussions.find(d => d.resourceId === selectedTerm.identifier)?.comments;
+        if (latestComments) {
+            setTermComments(latestComments);
+        }
+    }, [discussions, openPopup, selectedTerm]);
 
     useEffect(() => {
         refetch();
@@ -164,6 +204,60 @@ const VocabularyMainTable = ({
         setDensity(isMobileScreen ? 'comfortable' : 'compact');
     }, [isMobileScreen, terms.length]);
 
+    const handledTermLinkRef = useRef(null);
+    const handledConsensusLinkRef = useRef(null);
+
+    useEffect(() => {
+        if (voteUuid) {
+            return;
+        }
+        if (!termUuid) {
+            handledTermLinkRef.current = null;
+            return;
+        }
+        if (isLoadingTerms || handledTermLinkRef.current === termUuid) {
+            return;
+        }
+        handledTermLinkRef.current = termUuid;
+        const term = terms.find(t => t.identifier === termUuid);
+        if (term) {
+            const currentResourceDiscussion = discussions.find(d => d.resourceId === term.identifier);
+            setTermComments(currentResourceDiscussion?.comments || []);
+            setSelectedTerm(term);
+            setOpenPopup(true);
+        } else {
+            setDeepLinkNotification(`Term ${termUuid} not found`);
+            history.replace('/vocabulary_support');
+        }
+    }, [termUuid, voteUuid, terms, isLoadingTerms, discussions, history]);
+
+    useEffect(() => {
+        if (!termUuid || !voteUuid) {
+            handledConsensusLinkRef.current = null;
+            return;
+        }
+        const linkKey = `${termUuid}:${voteUuid}`;
+        if (isLoadingTerms || isLoadingVotes || handledConsensusLinkRef.current === linkKey) {
+            return;
+        }
+        handledConsensusLinkRef.current = linkKey;
+
+        if (openPopup && selectedTerm?.identifier === termUuid) {
+            return;
+        }
+
+        const vote = votesMap.find(v => v.uuid === voteUuid && v.term_uuid === termUuid);
+        const term = terms.find(t => t.identifier === termUuid);
+        if (vote && term) {
+            setUrgentVoteTerm(term);
+            setUrgentVoteData(vote);
+            setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
+        } else {
+            setDeepLinkNotification('Consensus not found or has already been closed');
+            history.replace('/vocabulary_support');
+        }
+    }, [termUuid, voteUuid, terms, votesMap, isLoadingTerms, isLoadingVotes, history, openPopup, selectedTerm]);
+
     const handleRowClick = (row, event, discussions) => {
         if (event.target.closest('.action-button')) {
             return;
@@ -171,9 +265,8 @@ const VocabularyMainTable = ({
         const resourceId = row.original.identifier;
         const currentResourceDiscussion = discussions.find(d => d.resourceId === resourceId);
         setTermComments(currentResourceDiscussion?.comments || []);
-        // console.log('rowComments: ', rowComments);
-        setSelectedTerm(row.original);
-        setOpenPopup(true);
+        handleOpenPopup(row.original);
+        history.push(`/vocabulary_support/terms/${resourceId}`);
     };
 
     const handleNavigateToMentionedTerm = resourceId => {
@@ -182,21 +275,20 @@ const VocabularyMainTable = ({
         setSelectedTerm(term);
         setTermComments(discussion?.comments || []);
         setOpenPopup(true);
+        history.push(`/vocabulary_support/terms/${resourceId}`);
+    };
+
+    const handleOpenPopup = term => {
+        setSelectedTerm(term);
+        setOpenPopup(true);
     };
 
     const handleClosePopup = () => {
         setOpenPopup(false);
         setSelectedTerm(null);
+        history.push('/vocabulary_support');
+        setEditMode(false);
     };
-
-    function isValidUrl(string) {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
 
     const columnVisibility = useMemo(() => {
         return isMobileScreen
@@ -239,7 +331,7 @@ const VocabularyMainTable = ({
                     </a>
                 );
             }
-            return <span>{seeAlso ? seeAlso : ''}</span>;
+            return <span>{seeAlso}</span>;
         }
     };
     TerminologyCellComponent.propTypes = {
@@ -290,8 +382,19 @@ const VocabularyMainTable = ({
                         maxWidth: 150
                     }
                 },
+                Cell: ({ row }) => {
+                    const daysSinceCreated = differenceInDays(new Date(), new Date(row.original.created));
+                    const isNew = !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
 
-                Cell: ({ cell }) => <EllipsisTextCell value={cell.getValue()} />
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <span>{row.original.label}</span>
+                            {isNew && (
+                                <Chip label="Recently added" size="small" color="primary" variant="filled" sx={{ height: 20, fontSize: '0.7rem' }} />
+                            )}
+                        </Box>
+                    );
+                }
             },
             {
                 accessorKey: 'altLabel',
@@ -362,19 +465,25 @@ const VocabularyMainTable = ({
                     return row.getValue(columnId) === filterValue;
                 },
                 Cell: ({ row }) => {
-                    const inConsensus = votesMap.find(consensus => consensus.term_uuid === row.original.identifier);
+                    const inConsensus = votesMap.some(consensus => consensus.term_uuid === row.original.identifier);
                     return inConsensus ? (
-                        <StyledChip
-                            label="In Consensus"
-                            size="small"
-                            customVariant="agreement"
-                            sx={{ cursor: 'pointer' }}
-                            onClick={async event => {
-                                event.stopPropagation();
-                                await handleWidgetUrgentTermClick(row.original);
-                            }}
-                        />
-                    ) : null;
+                        <Tooltip title="Check consensus">
+                            <StyledChip
+                                label="In Consensus"
+                                size="small"
+                                customVariant="agreement"
+                                sx={{ cursor: 'pointer' }}
+                                onClick={async event => {
+                                    event.stopPropagation();
+                                    await handleWidgetUrgentTermClick(row.original);
+                                }}
+                            />
+                        </Tooltip>
+                    ) : (
+                        <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                            Not in Consensus
+                        </Typography>
+                    );
                 },
                 muiTableBodyCellProps: {
                     sx: { maxWidth: 100 }
@@ -412,6 +521,9 @@ const VocabularyMainTable = ({
                         <span>{column.columnDef.header}</span>
                     </Tooltip>
                 ),
+                Cell: ({ cell }) => {
+                    return new Date(cell.getValue()).toLocaleDateString();
+                },
                 size: 90,
                 enableEditing: false,
                 filterVariant: 'select',
@@ -469,11 +581,9 @@ const VocabularyMainTable = ({
                 Header: ({ column }) => (
                     <Tooltip
                         title={
-                            <>
-                                <span style={{ fontSize: '1.2em' }}>
-                                    Shows the last date time, when the term was edited: term metadata updated or a new comment in a discussion.
-                                </span>
-                            </>
+                            <span style={{ fontSize: '1.2em' }}>
+                                Shows the last date time, when the term was edited: term metadata updated or a new comment in a discussion.
+                            </span>
                         }
                     >
                         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -536,40 +646,6 @@ const VocabularyMainTable = ({
                         maxWidth: '150px'
                     }
                 }
-            },
-            {
-                accessorKey: 'status',
-                header: 'Status',
-                Header: (
-                    { column } // Custom header with tooltip
-                ) => (
-                    <Tooltip title="The status of the term. It can be Draft, Reject or Accept">
-                        <span>{column.columnDef.header}</span>
-                    </Tooltip>
-                ),
-                size: 100,
-                enableEditing: false,
-                filterVariant: 'select',
-                filterFn: 'equals',
-                filterSelectOptions: [
-                    { text: 'Draft', value: 'draft' },
-                    { text: 'Reject', value: 'reject' },
-                    { text: 'Accept', value: 'accept' }
-                ],
-                muiFilterTextFieldProps: {
-                    placeholder: 'Filter',
-                    select: true
-                },
-                muiTableBodyCellProps: {
-                    sx: {
-                        maxWidth: 100
-                    }
-                },
-                muiTableHeadCellProps: {
-                    sx: {
-                        maxWidth: 100
-                    }
-                }
             }
         ],
         [validationErrors, votesMap]
@@ -578,20 +654,21 @@ const VocabularyMainTable = ({
     const handleCreateTerm = async ({ values, table }) => {
         const uuid = crypto.randomUUID();
         const newValidationErrors = validateTerm(values);
-        if (Object.values(newValidationErrors).some(error => error)) {
+        if (Object.values(newValidationErrors).some(Boolean)) {
             setValidationErrors(newValidationErrors);
             return;
         }
         setValidationErrors({});
         values.identifier = uuid;
         await createTerm(values);
-        //We have to create a new discussion for this term
         const newDiscussion = { resourceId: uuid, comments: [] };
         await createDiscussion(newDiscussion);
+        const payload = { header: `Create term ${uuid}` };
+        await commitTermChanges(queryClient, payload);
+        await notifyTermUpdate(uuid, values.label, payload);
+        notSavedAddedTermsIdsRef.current.push(uuid);
         table.setCreatingRow(null);
-        //setNewTermOpen(false); // Close the create modal
-        setOpenCreateModal(false); // Close the create modal
-        setHasUncommittedChanges(true);
+        setOpenCreateModal(false);
     };
 
     const handleCancelCreateTerm = () => {
@@ -602,29 +679,25 @@ const VocabularyMainTable = ({
     };
 
     const handleSaveTerm = async ({ values, table }) => {
-        console.log('values: ', values);
         const newValidationErrors = validateTerm(values);
-        if (Object.values(newValidationErrors).some(error => error)) {
+        if (Object.values(newValidationErrors).some(Boolean)) {
             setValidationErrors(newValidationErrors);
             return;
         }
         setValidationErrors({});
         await updateTerm(values);
         table.setEditingRow(null);
-        setHasUncommittedChanges(true);
     };
-
-    // const handleSaveDiscussion = async ({ values }) => {
-    //     await updateDiscussion(values);
-    // };
 
     const openDeleteConfirmModal = async row => {
         if (window.confirm('Are you sure you want to delete this term?')) {
             await deleteTerm(row.id);
             await handleDeleteDiscussion(row.id);
+            const payload = { header: `Delete term ${row.id}` };
+            await commitTermChanges(queryClient, payload);
+            await notifyTermUpdate(row.id, row.original.label, payload);
             pendingDeletedTermIds.current.push(row.id);
             table.setEditingRow(null);
-            setHasUncommittedChanges(true);
         }
     };
 
@@ -642,7 +715,6 @@ const VocabularyMainTable = ({
     };
     // Function to handle setting a creating row
     const handleCreateRow = (row = {}) => {
-        console.log('row: ', row);
         table.setCreatingRow(
             createRow(table, {
                 ...defaultValues, // Apply defaults
@@ -656,7 +728,7 @@ const VocabularyMainTable = ({
 
     const table = useMaterialReactTable({
         columns,
-        data: terms,
+        data: mainTerms,
         initialState: {
             sorting: [{ id: 'label', desc: false }],
             columnVisibility: { identifier: false, altLabel: false, seeAlso: false },
@@ -680,24 +752,31 @@ const VocabularyMainTable = ({
             rowsPerPageOptions: [],
             showRowsPerPage: false
         },
-        muiTableBodyRowProps: ({ row }) => ({
-            onClick: event => handleRowClick(row, event, discussions),
-            sx: {
-                cursor: 'pointer' //you might want to change the cursor too when adding an onClick
-            }
-        }),
+        muiTableBodyRowProps: ({ row }) => {
+            const daysSinceCreated = differenceInDays(new Date(), new Date(row.original.created));
+            const isNew = !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;
+
+            return {
+                onClick: event => handleRowClick(row, event, discussions),
+                'data-new': isNew ? 'true' : undefined,
+                sx: {
+                    cursor: 'pointer',
+                    backgroundColor: 'transparent'
+                }
+            };
+        },
         muiTableBodyProps: {
             sx: theme => ({
-                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]) > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.1)
                 },
-                '& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                'tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]):hover > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.2)
                 },
-                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]) > td': {
+                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]) > td': {
                     backgroundColor: lighten(baseBackgroundColor, 0.1)
                 },
-                '& tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):hover > td': {
+                'tr:nth-of-type(even):not([data-selected="true"]):not([data-pinned="true"]):not([data-new="true"]):hover > td': {
                     backgroundColor: darken(baseBackgroundColor, 0.2)
                 }
             })
@@ -755,95 +834,16 @@ const VocabularyMainTable = ({
                 />
             );
         },
-        renderTopToolbarCustomActions: ({ table, row }) => (
-            <div style={{ display: 'flex', gap: 5, justifyContent: 'flex-start', flexWrap: 'nowrap' }}>
-                <Tooltip title="Add new term">
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            handleCreateRow(row);
-                        }}
-                        sx={{
-                            backgroundColor: colorStyled.primary,
-                            whiteSpace: 'nowrap',
-                            minWidth: 50,
-                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
-                        }}
-                    >
-                        {isMobileScreen ? 'New Term' : 'Create New Term'}
-                    </Button>
-                </Tooltip>
-                <Tooltip title="View this vocabulary history of changes">
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY);
-                        }}
-                        sx={{
-                            backgroundColor: colorStyled.primary,
-                            whiteSpace: 'nowrap',
-                            minWidth: 50,
-                            '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
-                        }}
-                    >
-                        Timeline
-                    </Button>
-                </Tooltip>
+        renderTopToolbarCustomActions: ({ row }) => {
+            const nearClosedConsensusTermIds = getNearClosedConsensusTermIds(votesMap);
+            const toolbarItems = buildToolbarItems(row, nearClosedConsensusTermIds);
 
-                <Tooltip title="Review active discussions and view ongoing agreements">
-                    <StyledBadge badgeContent={mentionedCommentsLength - cookieMentionedCommentsCount} customVariant="orange">
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                                setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
-                                Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
-                            }}
-                            sx={{
-                                backgroundColor: colorStyled.primary,
-                                whiteSpace: 'nowrap',
-                                minWidth: 50,
-                                '&:hover': { backgroundColor: colorStyled.primaryContainer, color: colorStyled.onPrimaryContainer }
-                            }}
-                        >
-                            {isMobileScreen ? 'Hub' : 'Information Hub'}
-                        </Button>
-                    </StyledBadge>
-                </Tooltip>
-            </div>
-        ),
-        renderBottomToolbarCustomActions: () => (
-            <>
-                <StyledTooltip title="You have made changes, Please don't forget to save your changes" disableHoverListener={!hasUncommittedChanges}>
-                    <Button
-                        variant="contained"
-                        disabled={!hasUncommittedChanges}
-                        onClick={() => setOpenCommit(true)}
-                        style={{
-                            backgroundColor: hasUncommittedChanges ? colorStyled.primary : 'gray',
-                            border: hasUncommittedChanges ? '2px' + ' solid red' : ''
-                        }}
-                    >
-                        Save Changes
-                    </Button>
-                </StyledTooltip>
-                {openCommit && (
-                    <CommitChanges
-                        refetch={refetch}
-                        openCommit={openCommit}
-                        setOpenCommit={setOpenCommit}
-                        setHasUncommittedChanges={setHasUncommittedChanges}
-                        user={currentUser.displayName}
-                        onSuccess={async () => {
-                            await deleteTermVotes(pendingDeletedTermIds.current);
-                            pendingDeletedTermIds.current = [];
-                        }}
-                        onFail={() => {
-                            console.error(`Error while commiting changes with ${pendingDeletedTermIds.current} terms`);
-                        }}
-                    />
-                )}
-            </>
-        ),
+            return (
+                <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-start', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <ToolbarNavBar items={toolbarItems} isMobileScreen={isMobileScreen} />
+                </div>
+            );
+        },
         state: {
             columnVisibility,
             density,
@@ -854,110 +854,236 @@ const VocabularyMainTable = ({
             showProgressBars: isFetchingTerms
         },
         onPaginationChange: setPagination,
-        renderRowActions: ({ row, table }) => (
-            <Box sx={{ display: 'flex', gap: '1rem' }}>
+        renderRowActions: ({ row }) => (
+            <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+                <Tooltip title="Edit">
+                    <IconButton
+                        className="action-button"
+                        sx={{ color: theme.palette.secondary.main }}
+                        onClick={() => {
+                            setEditMode(true);
+                            handleOpenPopup(row.original);
+                        }}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Delete">
-                    <IconButton className="action-button" style={{ color: colorStyled.secondary }} onClick={() => openDeleteConfirmModal(row)}>
+                    <IconButton className="action-button" sx={{ color: theme.palette.secondary.main }} onClick={() => openDeleteConfirmModal(row)}>
                         <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="To open details, click on the line.">
+                    <IconButton
+                        className="action-button"
+                        sx={{ color: theme.palette.secondary.main }}
+                        onClick={() => handleWidgetDiscussionReplyClick(row.original)}
+                    >
+                        <Info />
                     </IconButton>
                 </Tooltip>
             </Box>
         )
     });
 
+    const isNewTermsCardActive = table.getState().columnFilters.some(filter => filter.id === 'created' && filter.value === 'last3months');
+
     const handleWidgetNewTermsClick = () => {
-        table.setColumnFilters([{ id: 'created', value: 'last3months' }]);
+        table.setColumnFilters(isNewTermsCardActive ? [] : [{ id: 'created', value: 'last3months' }]);
     };
 
     const handleWidgetDiscussionReplyClick = term => {
         setSelectedTerm(term);
         const currentResourceDiscussion = discussions.find(d => d.resourceId === term.identifier);
-        setTermComments(currentResourceDiscussion.comments);
+        setTermComments(currentResourceDiscussion?.comments || []);
         setOpenPopup(true);
+        history.push(`/vocabulary_support/terms/${term.identifier}`);
     };
 
     const handleWidgetUrgentTermClick = async term => {
         const data = await getTermVotes(term.identifier);
-        setUrgentVoteTerm(term);
-        setUrgentVoteData(data[0]);
-        setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
+        if (data && data[0]) {
+            setUrgentVoteTerm(term);
+            setUrgentVoteData(data[0]);
+            setActiveMUIPopUp(MaterialUIPopUpTypes.ACTIVE_CONSENSUS);
+            history.push(`/vocabulary_support/terms/${term.identifier}/consensuses/${data[0].uuid}`);
+        }
     };
 
     const handleConsensusDecisionMade = async () => {
-        const updatedVotes = await getVotes();
-        setVotesMap(updatedVotes);
+        await queryClient.invalidateQueries(VOTES_QUERY_KEY);
     };
+
+    /**
+     * Config for every button in the table's toolbar, consumed by <ToolbarNavBar />: the
+     * "stable" actions (create/timeline/hub), a divider, then the "temporal" activity
+     * indicators (urgent votes/mentions/new terms).
+     */
+    const buildToolbarItems = (row, nearClosedConsensusTermIds) => [
+        {
+            key: 'createTerm',
+            icon: <AddCircleOutlineIcon fontSize="small" />,
+            label: isMobileScreen ? 'New Term' : 'Create New Term',
+            tooltip: 'Add new term',
+            colorRole: 'secondary',
+            onClick: () => handleCreateRow(row)
+        },
+        {
+            key: 'timeline',
+            icon: <HistoryOutlinedIcon fontSize="small" />,
+            label: 'Timeline',
+            tooltip: 'View this vocabulary history of changes',
+            colorRole: 'secondary',
+            onClick: () => setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY)
+        },
+        {
+            key: 'informationHub',
+            icon: <InfoOutlinedIcon fontSize="small" />,
+            label: isMobileScreen ? 'Hub' : 'Information Hub',
+            tooltip: 'Review active discussions and view ongoing agreements',
+            colorRole: 'secondary',
+            badgeContent: mentionedCommentsLength - cookieMentionedCommentsCount,
+            onClick: () => {
+                setActiveMUIPopUp(MaterialUIPopUpTypes.DISCUSSIONS);
+                Cookies.set('mentionedCommentsCount', mentionedCommentsLength);
+            }
+        },
+        {
+            key: 'stableVsTemporalDivider',
+            divider: true,
+            hidden: isMobileScreen
+        },
+        {
+            key: 'urgentVotes',
+            icon: <HowToVoteOutlinedIcon fontSize="small" />,
+            label: isMobileScreen ? 'Urgent' : 'Urgent votes',
+            colorRole: 'error',
+            hidden: urgentTerms.length === 0,
+            badgeContent: urgentTerms.length,
+            tooltip: getUrgentVotesTooltip(urgentTerms.length, nearClosedConsensusTermIds.length),
+            listItems: urgentTerms,
+            getListItemKey: term => term.identifier,
+            getListItemLabel: term => term.label,
+            getListItemSecondary: term => `Status: ${term.status}`,
+            renderListItemExtra: term =>
+                nearClosedConsensusTermIds.includes(term.identifier) && (
+                    <Tooltip title="Just one vote left to reach consensus">
+                        <LocalFireDepartmentOutlinedIcon sx={{ color: theme.palette.primary.main }} />
+                    </Tooltip>
+                ),
+            onSelectListItem: handleWidgetUrgentTermClick
+        },
+        {
+            key: 'mentions',
+            icon: <ForumOutlinedIcon fontSize="small" />,
+            label: 'Mentions',
+            colorRole: 'secondary',
+            hidden: discussionReplies.length === 0,
+            badgeContent: discussionReplies.length,
+            tooltip: `Someone replied to you in ${discussionReplies.length} terms · click to jump to the thread`,
+            listItems: discussionReplies,
+            getListItemKey: term => term.identifier,
+            getListItemLabel: term => term.label,
+            getListItemSecondary: term => `Status: ${term.status}`,
+            onSelectListItem: handleWidgetDiscussionReplyClick
+        },
+        {
+            key: 'newTerms',
+            icon: <AutoAwesomeOutlinedIcon fontSize="small" />,
+            label: isMobileScreen ? 'New' : 'New Terms',
+            colorRole: 'secondary',
+            hidden: newTerms.length === 0,
+            badgeContent: newTerms.length,
+            active: isNewTermsCardActive,
+            tooltip: isNewTermsCardActive
+                ? 'Showing only terms added in the last 3 months · click to clear filter'
+                : `${newTerms.length} terms added in the last 3 months · click to filter the table`,
+            onClick: handleWidgetNewTermsClick
+        }
+    ];
 
     return (
         <ScrollableDiv>
-            <CardActivityWidget
-                urgentTerms={urgentTerms}
-                votes={votesMap}
-                discussionReplies={discussionReplies}
-                newTerms={newTerms}
-                onUrgentClick={handleWidgetUrgentTermClick}
-                onNewTermsClick={handleWidgetNewTermsClick}
-                onDiscussionClick={handleWidgetDiscussionReplyClick}
-                isMobileScreen={isMobileScreen}
-            />
-            <MaterialReactTable
-                table={table}
-                muiTableContainerProps={{
-                    sx: {
-                        width: '50%',
-                        maxWidth: '50vw',
-                        overflowX: 'auto'
-                    }
-                }}
-            />
-            <Modal open={openPopup} onClose={handleClosePopup}>
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        top: { xs: '50%', xl: '25%' },
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        backgroundColor: 'white',
-                        width: { xs: '95%', xl: '70vw' },
-                        height: { xs: '95%', xl: '53%' },
-                        overflowY: 'auto',
-                        padding: 2,
-                        outline: 'none',
-                        borderRadius: 1
-                    }}
+            {deepLinkNotification && (
+                <Snackbar
+                    open={deepLinkNotification}
+                    autoHideDuration={3000}
+                    onClose={() => setDeepLinkNotification(null)}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 >
-                    {selectedTerm && (
+                    <Alert severity="warning" variant="standard">
+                        {deepLinkNotification}
+                    </Alert>
+                </Snackbar>
+            )}
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                <ViewSwitcher
+                    value={activeView}
+                    onChange={setActiveView}
+                    mainCount={mainTerms.length}
+                    agreedCount={agreedTerms.length}
+                    isMobileScreen={isMobileScreen}
+                />
+                <Box sx={{ minWidth: 0 }}>
+                    {activeView === VOCABULARY_VIEWS.MAIN ? (
+                        <MaterialReactTable
+                            table={table}
+                            muiTableContainerProps={{
+                                sx: {
+                                    width: '50%',
+                                    maxWidth: '50vw',
+                                    overflowX: 'auto'
+                                }
+                            }}
+                        />
+                    ) : (
+                        <AgreedTermsTable
+                            terms={agreedTerms}
+                            isLoading={isLoadingTerms}
+                            onTermSelect={handleNavigateToMentionedTerm}
+                            onOpenTimeline={() => setActiveMUIPopUp(MaterialUIPopUpTypes.HISTORY)}
+                        />
+                    )}
+                </Box>
+            </Box>
+            {selectedTerm && (
+                <MaterialUIPopUp
+                    open={openPopup}
+                    onClose={handleClosePopup}
+                    fullHeight
+                    message={
                         <ExpandedRow
                             term={selectedTerm}
                             currentUser={currentUser}
                             updateTerm={updateTerm}
+                            editMode={editMode}
                             termComments={termComments || []}
                             handleSaveDiscussion={handleSaveDiscussion}
-                            setHasUncommittedChanges={setHasUncommittedChanges}
+                            setEditMode={setEditMode}
                             handleClosePopup={handleClosePopup}
                         />
-                    )}
-                </Box>
-            </Modal>
+                    }
+                    type={MaterialUIPopUpTypes.TERM_DETAILS}
+                />
+            )}
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.HISTORY}
                 onClose={() => {
                     setActiveMUIPopUp(null);
                 }}
-                title="Timeline"
-                message={<ChangesTimeline id="https://raw.githubusercontent.com/tib-ts/vocabulary_development_ver_1/refs/heads/ver_1/terms.ttl" />}
+                message={<ChangesTimeline id={process.env.REACT_APP_VOCABULARY_SERVICE_URL} />}
                 type={MaterialUIPopUpTypes.DISCUSSIONS}
             />
             <MaterialUIPopUp
                 open={activeMUIPopUp === MaterialUIPopUpTypes.DISCUSSIONS}
                 onClose={() => setActiveMUIPopUp(null)}
-                title="Information Hub"
                 message={
                     <InformationHub
                         terms={terms}
                         discussions={discussions}
                         mentionedUser={currentUser.displayName}
                         onTermSelect={handleNavigateToMentionedTerm}
+                        onConsensusSelect={handleWidgetUrgentTermClick}
                     />
                 }
                 type={MaterialUIPopUpTypes.DISCUSSIONS}
@@ -967,8 +1093,9 @@ const VocabularyMainTable = ({
                     open={activeMUIPopUp === MaterialUIPopUpTypes.ACTIVE_CONSENSUS}
                     onClose={() => {
                         setActiveMUIPopUp(null);
+                        history.push('/vocabulary_support');
                     }}
-                    title="Active consensus"
+                    fullHeight
                     message={
                         <VoteView
                             term={urgentVoteTerm}
@@ -977,6 +1104,7 @@ const VocabularyMainTable = ({
                             setVoteViewMode={() => {
                                 setUrgentVoteTerm(null);
                                 setUrgentVoteData(null);
+                                history.push('/vocabulary_support');
                             }}
                             onDecisionMade={handleConsensusDecisionMade}
                         />
@@ -997,7 +1125,9 @@ VocabularyMainTable.propTypes = {
     discussions: PropTypes.array.isRequired,
     handleSaveDiscussion: PropTypes.func.isRequired,
     handleDeleteDiscussion: PropTypes.func.isRequired,
-    currentUser: PropTypes.string.isRequired
+    currentUser: PropTypes.string.isRequired,
+    termUuid: PropTypes.string,
+    voteUuid: PropTypes.string
 };
 
 export default VocabularyMainTable;
@@ -1012,24 +1142,24 @@ function validateTerm(term) {
     };
 }
 
-const ScrollableDiv = styled.div`
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    padding-bottom: 5px;
-    max-height: 90vh;
+const ScrollableDiv = styled('div')(({ theme }) => ({
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
+    paddingBottom: '5px',
+    maxHeight: '90vh',
 
-    @media (max-width: ${LARGE_SCREEN_SIZE}) {
-        padding: 5px;
+    [`@media (max-width: ${LARGE_SCREEN_SIZE})`]: {
+        padding: '5px'
     }
-`;
+}));
 
-const CellContent = styled.div`
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    cursor: pointer;
-`;
+const CellContent = styled('div')(({ theme }) => ({
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    cursor: 'pointer'
+}));
 
 const EllipsisTextCell = ({ value }) => {
     const displayValue = value && value.length > 30 ? `${value.slice(0, 30)}...` : value;
