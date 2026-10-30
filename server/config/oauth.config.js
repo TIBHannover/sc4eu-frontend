@@ -31,5 +31,13 @@ module.exports = {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET_FOR_LOGIN,
         callbackURL: `${process.env.CALLBACK_URL}/vocab/nfdi4ing/oauth/google/callback`,
         scope: ['profile', 'email']
+    },
+    linkedin: {
+        authorizationURL: 'https://www.linkedin.com/oauth/v2/authorization',
+        tokenURL: 'https://www.linkedin.com/oauth/v2/accessToken',
+        clientID: process.env.LINKEDIN_CLIENT_ID,
+        clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
+        callbackURL: `${process.env.CALLBACK_URL}/vocab/nfdi4ing/oauth/linkedin/callback`,
+        scope: ['openid', 'email', 'profile']
     }
 };

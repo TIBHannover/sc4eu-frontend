@@ -192,6 +192,23 @@ router.get(
     }
 );
 
+router.get('/oauth/linkedin', passport.authenticate('linkedin', { scope: ['openid', 'profile', 'email'] }));
+router.get(
+    '/oauth/linkedin/callback',
+    passport.authenticate('linkedin', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/LoginFailedRedirect` }),
+    (req, res) => {
+        const redirectURL = url.format({
+            pathname: `${process.env.REDIRECT_URL}/vocab/nfdi4ing/loggedIn`,
+            query: {
+                success: true,
+                token: req.user.jwt
+            }
+        });
+
+        res.redirect(redirectURL);
+    }
+);
+
 // add middle-ware
 router.use(express.static(path.join(__dirname, '..', 'build')));
 router.use(express.static('public'));
