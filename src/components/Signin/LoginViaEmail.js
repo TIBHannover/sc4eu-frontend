@@ -10,10 +10,20 @@ import { minLengthPassword } from '../../constants/globalConstants';
 import success from '../../assets/images/success.png';
 import error from '../../assets/images/error.png';
 import PopUp from '../PopUp';
-import github from '../../assets/images/github.svg';
-import gitlab from '../../assets/images/gitlab.svg';
+import githubBlack from '../../assets/images/github-logo-black.svg';
+import githubWhite from '../../assets/images/github-logo-white.svg';
+import gitlab from '../../assets/images/gitlab-logo-colour.svg';
 import sapLogo from '../../assets/images/sap-logo.png';
-import { URL_LOGIN_VIA_GITHUB, URL_LOGIN_VIA_GITLAB, URL_LOGIN_VIA_SAP } from '../../constants/services';
+import googleLogo from '../../assets/images/google.png';
+import linkedinLogo from '../../assets/images/linkedin-blue-logo.png';
+
+import {
+    URL_LOGIN_VIA_GITHUB,
+    URL_LOGIN_VIA_GITLAB,
+    URL_LOGIN_VIA_GOOGLE,
+    URL_LOGIN_VIA_SAP,
+    URL_LOGIN_VIA_LINKEDIN
+} from '../../constants/services';
 import { fontStyled } from '../../styledComponents/styledFont';
 import { withTheme } from '@emotion/react';
 class LoginViaEmail extends Component {
@@ -35,6 +45,7 @@ class LoginViaEmail extends Component {
             image: '',
             popUpMessage: '',
             signInModal: true,
+            showMoreOptions: false,
             nameError: '',
             emailError: '',
             passwordError: '',
@@ -145,6 +156,45 @@ class LoginViaEmail extends Component {
         this.props.callback();
     };
 
+    renderOAuthButton = (href, logo, label, theme, compact = false) => {
+        return (
+            <a
+                href={href}
+                target="_self"
+                rel="noreferrer"
+                title={label}
+                style={{
+                    flex: compact ? 1 : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    height: compact ? '38px' : '44px',
+                    padding: '0 12px',
+                    borderRadius: '6px',
+                    border: `1px solid ${theme.palette.outline?.main || theme.palette.divider}`,
+                    backgroundColor: theme.palette.background.paper,
+                    color: theme.palette.text.primary,
+                    fontSize: compact ? '0.9rem' : '1rem',
+                    fontWeight: 500,
+                    textDecoration: 'none',
+                    cursor: 'pointer'
+                }}
+            >
+                <img
+                    src={logo}
+                    style={{
+                        height: '30px',
+                        width:  '25px',
+                        objectFit: 'contain',
+                    }}
+                    alt=""
+                />
+                <span>{label}</span>
+            </a>
+        );
+    };
+
     render() {
         // let disableRegisterAndGithub = false;
         if (process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'True' || process.env.REACT_APP_DISABLE_REGISTER_AND_OAUTH === 'true') {
@@ -173,74 +223,33 @@ class LoginViaEmail extends Component {
                                             </p>
                                         </div>
                                         <hr className="mt-0 mb-2" />
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                justifyContent: 'space-between',
-                                                height: '130px',
-                                                alignItems: 'center',
-                                                marginTop: '20px'
-                                            }}
-                                        >
-                                            <a
-                                                href={URL_LOGIN_VIA_GITHUB}
-                                                target="_self"
-                                                className="btn btn-primary"
-                                                style={{ width: '90%', backgroundColor: 'black', border: 'none' }}
-                                                rel="noreferrer"
-                                            >
-                                                <img src={github} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
+                                            <div style={{ width: '90%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                {this.renderOAuthButton(URL_LOGIN_VIA_LINKEDIN, linkedinLogo, 'Continue with LinkedIn', theme)}
+                                                {this.renderOAuthButton(URL_LOGIN_VIA_GOOGLE, googleLogo, 'Continue with Google', theme)}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => this.setState(prev => ({ showMoreOptions: !prev.showMoreOptions }))}
+                                                    aria-expanded={this.state.showMoreOptions}
                                                     style={{
-                                                        border: '1px solid white',
-                                                        float: 'left',
-                                                        height: '100%',
-                                                        marginLeft: '10px'
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        padding: 0,
+                                                        marginTop: '2px',
+                                                        fontSize: '0.9rem',
+                                                        cursor: 'pointer',
+                                                        color: theme.palette.primary.main
                                                     }}
-                                                />{' '}
-                                                Sign in with GitHub
-                                            </a>
-                                            <a
-                                                href={URL_LOGIN_VIA_GITLAB}
-                                                target="_self"
-                                                className="btn btn-primary"
-                                                style={{ width: '90%', backgroundColor: '#ec672a', border: 'none' }}
-                                                rel="noreferrer"
-                                            >
-                                                <img src={gitlab} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span
-                                                    style={{
-                                                        border: '1px solid white',
-                                                        float: 'left',
-                                                        height: '100%',
-                                                        marginLeft: '10px'
-                                                    }}
-                                                />{' '}
-                                                Sign in with GitLab
-                                            </a>
-                                            {/* <a
-                                                href={URL_LOGIN_VIA_GOOGLE}
-                                                target="_self"
-                                                className="btn btn-primary"
-                                                style={{ width: '90%', backgroundColor: '#4285F4', border: 'none' }}
-                                                rel="noreferrer"
-                                            >
-                                                <img src={google} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />
-                                                <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />
-                                                Sign in with Google
-                                            </a> */}
-                                            {/*<a*/}
-                                            {/*    href={URL_LOGIN_VIA_SAP}*/}
-                                            {/*    target="_self"*/}
-                                            {/*    className="btn btn-primary"*/}
-                                            {/*    style={{ width: '90%', backgroundColor: '#0f6d9c', border: 'none' }}*/}
-                                            {/*    rel="noreferrer"*/}
-                                            {/*>*/}
-                                            {/*    <img src={sapLogo} style={{ height: '30px', width: '25px', float: 'left' }} alt={''} />*/}
-                                            {/*    <span style={{ border: '1px solid white', float: 'left', height: '100%', marginLeft: '10px' }} />*/}
-                                            {/*    Sign in with SAP*/}
-                                            {/*</a>*/}
+                                                >
+                                                    {this.state.showMoreOptions ? 'Hide more options ▴' : 'Show more options ▾'}
+                                                </button>
+                                                {this.state.showMoreOptions && (
+                                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                                        {this.renderOAuthButton(URL_LOGIN_VIA_GITHUB, theme.palette.mode === 'dark' ? githubWhite : githubBlack, 'GitHub', theme, true)}
+                                                        {this.renderOAuthButton(URL_LOGIN_VIA_GITLAB, gitlab, 'GitLab', theme, true)}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                         <div style={{ textAlign: 'center', marginTop: '20px', color: theme.palette.text.primary }}>
                                             <hr
@@ -479,7 +488,7 @@ LoginViaEmail.propTypes = {
     openAuthDialog: PropTypes.func.isRequired,
     updateCookies: PropTypes.func.isRequired,
     toggleAuthDialog: PropTypes.func.isRequired,
-    callback: PropTypes.func.isRequired,
+    callback: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

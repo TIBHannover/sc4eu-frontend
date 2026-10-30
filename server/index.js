@@ -125,7 +125,7 @@ processing.getHtmlForWidoco(router);
 router.get('/oauth/github', passport.authenticate('github', { scope: ['profile', 'user:email'] }));
 router.get(
     '/oauth/github/callback',
-    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('github', { failureRedirect: `${process.env.CALLBACK_URL}/vocab/LoginFailedRedirect` }),
     (req, res) => {
         // Successful authentication, redirect home.
         // >> THIS NEEDS TO BE UPDATED TO THE DEPLOYED URL IN THE END
@@ -144,7 +144,7 @@ router.get(
 router.get('/oauth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
 router.get(
     '/oauth/gitlab/callback',
-    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('gitlab', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
             pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
@@ -161,7 +161,7 @@ router.get(
 router.get('/oauth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get(
     '/oauth/google/callback',
-    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('google', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
             pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
@@ -178,7 +178,24 @@ router.get(
 router.get('/oauth/sap', passport.authenticate('sap', { scope: ['profile', 'email'] }));
 router.get(
     '/oauth/sap/callback',
-    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/ocp/LoginFailedRedirect` }),
+    passport.authenticate('sap', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
+    (req, res) => {
+        const redirectURL = url.format({
+            pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
+            query: {
+                success: true,
+                token: req.user.jwt
+            }
+        });
+
+        res.redirect(redirectURL);
+    }
+);
+
+router.get('/oauth/linkedin', passport.authenticate('linkedin', { scope: ['openid', 'profile', 'email'] }));
+router.get(
+    '/oauth/linkedin/callback',
+    passport.authenticate('linkedin', { failureRedirect: `${process.env.REDIRECT_URL}/vocab/LoginFailedRedirect` }),
     (req, res) => {
         const redirectURL = url.format({
             pathname: `${process.env.REDIRECT_URL}/vocab/loggedIn`,
