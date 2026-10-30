@@ -21,23 +21,13 @@ const DigitalReferenceTxt = (
     </>
 );
 
-class Home extends Component {
-    state = { fading: false };
-
-    handleToolOpen = () => {
-        if (this.props.isAuthenticated) {
-            this.setState({ fading: true });
-            setTimeout(() => {
-                window.location.href = VOCABULARY_URL;
-            }, 500);
-        } else {
-            this.props.openAuthDialog({
-                action: 'signin',
-                redirectRoute: VOCABULARY_URL,
-                signInRequired: true
-            });
-        }
-    };
+export default class Home extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isreadmore: false
+        };
+    }
 
     render() {
         return (
@@ -77,7 +67,7 @@ class Home extends Component {
                     </StyledHomeBody>
                 </StyledHomeRootDiv>
                 <Footer />
-            </Box>
+            </>
         );
     }
 }
