@@ -540,15 +540,17 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                                         </>
                                     )}
 
-                                    <Button
-                                        hidden={activeAgreement}
-                                        onClick={() => setEditMode(true)}
-                                        variant="outlined"
-                                        sx={{ ...buttonStyle, backgroundColor: 'transparent', color: theme.palette.secondary.main }}
-                                        fullWidth={isMobile}
-                                    >
-                                        Edit Term
-                                    </Button>
+                                    {currentUser.role.toString().toLowerCase() === 'system admin' && (
+                                        <Button
+                                            hidden={activeAgreement}
+                                            onClick={() => setEditMode(true)}
+                                            variant="outlined"
+                                            sx={{ ...buttonStyle, backgroundColor: 'transparent', color: theme.palette.secondary.main }}
+                                            fullWidth={isMobile}
+                                        >
+                                            Edit Term
+                                        </Button>
+                                    )}
                                 </Box>
                             )}
                         </Box>

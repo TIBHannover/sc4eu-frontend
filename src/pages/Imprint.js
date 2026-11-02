@@ -8,7 +8,7 @@ class Imprint extends Component {
         return (
             <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
                 <StyledImprintDiv>
-                    <h3 style={{ textAlign: 'center', color: theme.palette.text.primary }}>Imprint</h3>
+                    <h3 style={{ textAlign: 'center', color: theme.palette.text.primary, fontWeight: 'bold' }}>Imprint</h3>
                     <StyledImprintText>Imprint for this website ‐ also serves as provider identification according to § 5 Telemediengesetz (TMG)</StyledImprintText>
                     <StyledLinkH5>Provider:</StyledLinkH5>
                     <StyledImprintText>
