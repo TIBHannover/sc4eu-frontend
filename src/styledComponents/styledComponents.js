@@ -1462,7 +1462,8 @@ export const StyledImprintText = styled('p')(({ theme }) => ({
 }));
 
 export const StyledLinkH5 = styled('h5')(({ theme }) => ({
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
+    fontWeight: 'bold'
 }));
 //
 
