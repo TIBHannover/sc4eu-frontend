@@ -111,6 +111,7 @@ const CreateNewTerm = ({ displayType, table, row, internalEditComponents, handle
 
                 const newTermWithAltLabel = {
                     ...newTerm,
+                    status: 'draft',
                     altLabel: altLabelsList.join(', ')
                 };
 
