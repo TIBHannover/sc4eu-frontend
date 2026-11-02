@@ -23,7 +23,7 @@ class Dataprotections extends Component {
                     The terms used in this privacy statement are to be understood within the meaning of the European General Data Protection General
                     Data Protection Regulation (GDPR).
                 </StyledDataProtectionText>
-                <h5 style={{ color: theme.palette.text.secondary }}>Name and address of the controller</h5>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Name and address of the controller</h5>
                 <StyledDataProtectionText>
                     The controller under data protection law shall be:
                     <br />
@@ -47,7 +47,7 @@ class Dataprotections extends Component {
                         www.tib.eu
                     </a>
                 </StyledDataProtectionText>
-                <h5 style={{ color: theme.palette.text.secondary }}>Name and address of the data protection officer</h5>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Name and address of the data protection officer</h5>
                 <StyledDataProtectionText>
                     The data protection officer of the controller shall be:
                     <br />
@@ -61,7 +61,7 @@ class Dataprotections extends Component {
                     </a>
                     <br />
                 </StyledDataProtectionText>
-                <h5 style={{ color: theme.palette.text.secondary }}>Postal Address :</h5>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Postal Address :</h5>
                 <StyledDataProtectionText>
                     Technische Informationsbibliothek (TIB)
                     <br />
@@ -74,7 +74,7 @@ class Dataprotections extends Component {
                     Germany
                     <br />
                 </StyledDataProtectionText>
-                <h5 style={{ color: theme.palette.text.secondary }}>Visiting Address:</h5>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Visiting Address:</h5>
                 <StyledDataProtectionText>
                     TIB Conti-Campus
                     <br />
@@ -88,7 +88,41 @@ class Dataprotections extends Component {
                     protection at any time.
                     <br />
                 </StyledDataProtectionText>
-                <h5 style={{ color: theme.palette.text.secondary }}>Cookies</h5>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Registration</h5>
+                <StyledDataProtectionText>
+                    Users must register in order to use the vocabulary service. Registration is possible with an email address and a password, or via
+                    an external OAuth provider (GitHub, GitLab, Google, SAP). When registering, personal data is collected in order to be able to
+                    provide personalized and generally improved services to users. Services that require user authentication cannot be used without
+                    providing the required data.
+                    <br />
+                    When registering with an email address, the email address is used to identify the account and to contact the user about it. It is
+                    stored as provided, so that it can be used for login and communication. Passwords are never stored in plain text; they are stored
+                    only as salted hashes (SHA-256 crypt). When using an OAuth provider, the data provided by that provider (e.g. name and email
+                    address) is processed in accordance with the privacy policy of the respective provider.
+                    <br />
+                    The legal basis for the collection of such data shall be the{' '}
+                    <a href="https://www.tib.eu/en/terms-of-use" style={{ color: theme.palette.primary.main}} target="_blank" rel="noreferrer">
+                        Terms of use of the TIB
+                    </a>
+                    , the special conditions applicable to this service, or the consent given by the user.
+                </StyledDataProtectionText>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Terms and discussions stored on GitHub</h5>
+                <StyledDataProtectionText>
+                    Vocabulary terms and the discussions about them are stored in a publicly accessible GitHub repository. Anything submitted there,
+                    including the content of a term or comment and the associated username, is therefore openly visible to everybody and may be
+                    copied, indexed and archived by third parties. Please do not include any personal data in terms or discussions that you do not
+                    wish to be made public. Data on GitHub is processed in accordance with the{' '}
+                    <a
+                        href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+                        style={{ color: theme.palette.primary.main}}
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        GitHub Privacy Statement
+                    </a>
+                    . Removal of such content can be requested from the controller.
+                </StyledDataProtectionText>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Cookies</h5>
                 <StyledDataProtectionText>
                     The TIB websites use cookies. Cookies are text files that are placed and stored on a computer system via an Internet browser and
                     serve to render the offer of the TIB more user-friendly, effective and secure.
@@ -104,9 +138,15 @@ class Dataprotections extends Component {
                     <br />
                 </StyledDataProtectionText>
 
-                <h5 style={{ color: theme.palette.text.secondary }}>Web Analytics</h5>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Use of web analysis tools (Matomo plugin)</h5>
                 <StyledDataProtectionText>
-                    The information generated with Matomo about the use of this website is processed and stored exclusively by TIB.
+                    This website uses the open source web analytics software Matomo (matomo.org) to analyse usage data in order to optimise its online
+                    offer. TIB self-hosts Matomo and no data is shared with third parties. Cookies are used to enable a statistical analysis of the
+                    use of this website by its visitors. There is no other use, merging with other data or disclosure to third parties.
+                    <br />
+                    The information generated with Matomo about the use of this website is processed and stored exclusively by TIB. You can opt out
+                    below: an opt-out cookie is placed in your browser, which prevents Matomo from storing usage data. When cookies are deleted, the
+                    opt-out cookie is also deleted and the opt-out must be declared again on your next visit.
                 </StyledDataProtectionText>
                 <div>
                     <iframe
@@ -121,5 +161,3 @@ class Dataprotections extends Component {
 }
 
 export default withTheme(Dataprotections);
-
-
