@@ -39,6 +39,7 @@ import { ConsensusProgress } from '../utils/Consensus';
 import DecisionBadgeAvatar from '../../ReusableComponents/DecisionBadgeAvatar';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 import { getAllUsers } from 'network/UserProfileCalls';
+import { CommentContent } from './CommentEditor';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -50,6 +51,7 @@ const SORT_BY_OPTIONS = Object.freeze({
 });
 
 const MAX_VISIBLE_VOTE_AVATARS = 7;
+const MAX_COMMENT_PREVIEW_LINES = 3;
 
 const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onConsensusSelect }) => {
     const theme = useTheme();
@@ -388,7 +390,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onCon
                                 </Typography>
                             </Box>
                             {lastComment ? (
-                                <Typography variant="body2">{lastComment.content}</Typography>
+                                <CommentContent content={lastComment.content} gutterBottom maxLines={MAX_COMMENT_PREVIEW_LINES} />
                             ) : (
                                 <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.disabled' }}>
                                     No comments available

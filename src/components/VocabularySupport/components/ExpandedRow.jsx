@@ -30,6 +30,7 @@ import { getTermVotes, getTermLastConsensus, initiateNewVote, manualCloseConsens
 import { SMALL_SCREEN_WIDTH, StyledChip } from '../../../styledComponents/styledComponents';
 import { commitChanges, commitTermChanges, generateChangedValues } from '../utils/CommitChanges';
 import CommentsSection from './CommentsSection';
+import { CommentEditorOverlayContext } from './CommentEditor';
 import FadingNotification from '../../ReusableComponents/FadingNotification';
 import LastConsensusView from './LastConsensusView';
 import MaterialUIPopUp from '../../ReusableComponents/MaterialUIPopUp';
@@ -53,6 +54,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
     const [isConsensusClosed, setIsConsensusClosed] = useState(false);
     const [showCopyNotification, setShowCopyNotification] = useState(false);
     const [confirmCloseConsensus, setConfirmCloseConsensus] = useState(false);
+    const [commentEditorOverlayContainer, setCommentEditorOverlayContainer] = useState(null);
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
@@ -287,7 +289,9 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
             )}
             {!editMode && !viewAgreementMode && (
                 <Box
+                    ref={setCommentEditorOverlayContainer}
                     sx={{
+                        position: 'relative',
                         backgroundColor: 'background.paper',
                         borderRadius: 2,
                         flex: '1 1 auto',
@@ -571,12 +575,14 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
                                 Discussion
                             </Typography>
                             <Box sx={{ flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-                                <CommentsSection
-                                    resourceId={term.identifier}
-                                    comments={termComments || []}
-                                    mentionedUsers={[]}
-                                    handleSaveDiscussion={handleSaveDiscussion}
-                                />
+                                <CommentEditorOverlayContext.Provider value={commentEditorOverlayContainer}>
+                                    <CommentsSection
+                                        resourceId={term.identifier}
+                                        comments={termComments || []}
+                                        mentionedUsers={[]}
+                                        handleSaveDiscussion={handleSaveDiscussion}
+                                    />
+                                </CommentEditorOverlayContext.Provider>
                             </Box>
                         </Box>
                     </Box>
