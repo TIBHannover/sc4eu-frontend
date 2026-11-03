@@ -96,6 +96,39 @@ export const StyledCommitMessage = styled(Typography)({
     textOverflow: 'ellipsis'
 });
 
+const DIFF_API = `${process.env.REACT_APP_DIFF_BACKEND_URL}/api/ondet/sdiffs`;
+const LOADING_MESSAGE = 'Loading';
+const CALCULATING_MESSAGE = 'Ontology is not in Tracker. It will take some time to calculate all differences';
+
+const getCommitInfo = item => {
+    const isGitCommit = Object.prototype.hasOwnProperty.call(item, 'commit');
+    return {
+        date: new Date(isGitCommit ? item.commit.committer.date : item.date).toLocaleString(),
+        message: (isGitCommit ? item.commit.message : item.message) ?? ''
+    };
+};
+
+const fetchCommits = async fileUrl => {
+    const response = await fetch(`${DIFF_API}/commits?uri=${fileUrl}`);
+    if (!response.ok) throw new Error(`Failed to fetch commits: ${response.status}`);
+    return response.json();
+};
+
+/**
+ * Makes sure the ontology is tracked (posting it when missing) and returns its commits.
+ */
+const loadOntologyCommits = async (fileUrl, onCalculating) => {
+    const check = await fetch(`${DIFF_API}/checkUrl?uri=${fileUrl}`);
+    if (check.status === 404) {
+        onCalculating();
+        const post = await fetch(`${DIFF_API}?uri=${fileUrl}`, { method: 'POST' });
+        if (!post.ok) throw new Error(`Failed to register ontology: ${post.status}`);
+    } else if (!check.ok) {
+        throw new Error(`Failed to check ontology: ${check.status}`);
+    }
+    return fetchCommits(fileUrl);
+};
+
 const ChangesTimeline = ({ id }) => {
     const theme = useTheme();
 
@@ -105,43 +138,34 @@ const ChangesTimeline = ({ id }) => {
     const [html, setHtml] = useState(null);
     const [semanticHtml, setSemanticHtml] = useState('');
     const [gitHtml, setGitHtml] = useState('');
-    const [commitsFetched, setCommitsFetched] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
+    const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGE);
+    const [diffLoading, setDiffLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState(null);
     const isMobile = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
     useEffect(() => {
-        async function fetchOntology() {
-            try {
-                const fileUrl = new URL(id);
-                setCommitsFetched(true);
-                const response = await fetch(`${process.env.REACT_APP_DIFF_BACKEND_URL}/api/ondet/sdiffs/commits?uri=${fileUrl}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setOntology(data);
-                    setCommitsFetched(false);
-                }
-            } catch (error) {
-                setError(error);
-            }
-        }
+        let cancelled = false;
+        loadOntologyCommits(new URL(id), () => !cancelled && setLoadingMessage(CALCULATING_MESSAGE))
+            .then(data => !cancelled && setOntology(data))
+            .catch(e => !cancelled && setError(e))
+            .finally(() => !cancelled && setInitialLoading(false));
 
-        fetchOntology();
+        return () => {
+            cancelled = true;
+        };
     }, [id]);
 
-    const timelineOptions = ontology
-        .map((diff, index, arr) => {
-            if (arr[index - 1] === undefined) return null;
-            const item = arr[index - 1];
-            const date = diff.hasOwnProperty('commit') ? new Date(item.commit.committer.date).toLocaleString() : new Date(item.date).toLocaleString();
-            const message = diff.hasOwnProperty('commit') ? item.commit.message : item.message;
-            return { index, date, message };
-        })
-        .filter(Boolean);
+    const timelineOptions = ontology.slice(1).map((diff, i) => ({
+        index: i + 1,
+        sha: diff.sha,
+        item: ontology[i],
+        ...getCommitInfo(ontology[i])
+    }));
 
     const handleItemClick = async (item, index) => {
-        setLoading(true);
+        setDiffLoading(true);
         setSelectedItem(item);
         setSelectedIndex(index);
         const response = await fetch(`${process.env.REACT_APP_DIFF_BACKEND_URL}/api/ondet/sdiffs/${item.sha}`);
@@ -169,7 +193,7 @@ const ChangesTimeline = ({ id }) => {
 
         setSemanticHtml(robotDiff);
         setGitHtml(diffHtml);
-        setLoading(false);
+        setDiffLoading(false);
     };
 
     const formatUriFragment = uri => {
@@ -223,16 +247,6 @@ const ChangesTimeline = ({ id }) => {
         setOpen(false);
     };
 
-    const renderDiffCommit = (index, arr, diff) => {
-        const item = arr[index - 1];
-
-        if (diff.hasOwnProperty('commit')) {
-            return item?.commit?.message ?? '';
-        }
-
-        return item?.message ?? '';
-    };
-
     return (
         <Grid container spacing={2}>
             {error && (
@@ -240,49 +254,44 @@ const ChangesTimeline = ({ id }) => {
                     <Typography variant="h5">Some error happened while searching for an ontology in Ontology Development Tracker</Typography>
                 </Grid>
             )}
-            {commitsFetched && <CircularProgress sx={{ margin: '0 auto' }} size={100} />}
-            {!commitsFetched && !error && (
+            {initialLoading && (
+                <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                    <Typography variant="h5">{loadingMessage}</Typography>
+                    <CircularProgress size={100} />
+                </Grid>
+            )}
+            {!initialLoading && !error && (
                 <>
                     {!isMobile && (
                         <StyledGrid item xs={3}>
                             <StyledTimeline>
-                                {ontology.map((diff, index, arr) => {
-                                    if (arr[index - 1] === undefined) {
-                                        return null;
-                                    }
-
-                                    return (
-                                        <StyledTimelineItem key={diff.sha} onClick={() => handleItemClick(arr[index - 1], index)}>
-                                            <TimelineOppositeContent>
-                                                <Typography variant="body2" color="textSecondary">
-                                                    {diff.hasOwnProperty('commit')
-                                                        ? new Date(arr[index - 1].commit.committer.date).toLocaleString()
-                                                        : new Date(arr[index - 1].date).toLocaleString()}
-                                                </Typography>
-                                            </TimelineOppositeContent>
-                                            <TimelineSeparator sx={{ minHeight: '200px' }}>
-                                                <TimelineDot />
-                                                <TimelineConnector sx={{ width: '2px', height: '50px' }} />
-                                            </TimelineSeparator>
-                                            <StyledTimelineContent>
-                                                <Paper
-                                                    elevation={3}
-                                                    sx={{
-                                                        p: 2,
-                                                        width: '10vw',
-                                                        ...(selectedIndex === index && {
-                                                            backgroundColor: theme.palette.primary.light
-                                                        })
-                                                    }}
-                                                >
-                                                    <StyledCommitMessage variant="h6" component="h6">
-                                                        {renderDiffCommit(index, arr, diff)}
-                                                    </StyledCommitMessage>
-                                                </Paper>
-                                            </StyledTimelineContent>
-                                        </StyledTimelineItem>
-                                    );
-                                })}
+                                {timelineOptions.map(({ index, sha, item, date, message }) => (
+                                    <StyledTimelineItem key={sha} onClick={() => handleItemClick(item, index)}>
+                                        <TimelineOppositeContent>
+                                            <Typography variant="body2" color="textSecondary">
+                                                {date}
+                                            </Typography>
+                                        </TimelineOppositeContent>
+                                        <TimelineSeparator sx={{ minHeight: '200px' }}>
+                                            <TimelineDot />
+                                            <TimelineConnector sx={{ width: '2px', height: '50px' }} />
+                                        </TimelineSeparator>
+                                        <StyledTimelineContent>
+                                            <Paper
+                                                elevation={3}
+                                                sx={{
+                                                    p: 2,
+                                                    width: '10vw',
+                                                    ...(selectedIndex === index && { backgroundColor: theme.palette.primary.light })
+                                                }}
+                                            >
+                                                <StyledCommitMessage variant="h6" component="h6">
+                                                    {message}
+                                                </StyledCommitMessage>
+                                            </Paper>
+                                        </StyledTimelineContent>
+                                    </StyledTimelineItem>
+                                ))}
                             </StyledTimeline>
                         </StyledGrid>
                     )}
@@ -294,11 +303,7 @@ const ChangesTimeline = ({ id }) => {
                                     labelId="version-select-label"
                                     label="Select version"
                                     value={selectedIndex ?? ''}
-                                    onChange={e => {
-                                        const idx = e.target.value;
-                                        const arr = ontology;
-                                        handleItemClick(arr[idx - 1], idx);
-                                    }}
+                                    onChange={e => handleItemClick(ontology[e.target.value - 1], e.target.value)}
                                     sx={{ backgroundColor: theme.palette.background.paper }}
                                 >
                                     {timelineOptions.map(({ index, date, message }) => (
@@ -318,9 +323,9 @@ const ChangesTimeline = ({ id }) => {
                         </Grid>
                     )}
                     <Grid item xs={12} xl={9}>
-                        {selectedItem && loading && (
+                        {selectedItem && diffLoading && (
                             <div>
-                                <p>Loading...</p>
+                                <Typography variant="body2">{LOADING_MESSAGE}</Typography>
                                 <CircularProgress />
                             </div>
                         )}
@@ -331,7 +336,7 @@ const ChangesTimeline = ({ id }) => {
                                     : 'Choose an item from the timeline on the left to see its diff here.'}
                             </Typography>
                         )}
-                        {selectedItem && !loading && (
+                        {selectedItem && !diffLoading && (
                             <>
                                 <Typography variant="body1" align="center" marginBottom="8px">
                                     This view displays semantic differences calculated by COntoDiff and ROBOT DIFF.
