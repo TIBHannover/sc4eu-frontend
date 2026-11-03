@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
 import {
     Box,
     ListItem,
@@ -7,7 +7,6 @@ import {
     Collapse,
     Button,
     Typography,
-    TextField,
     IconButton,
     List,
     MenuList,
@@ -36,6 +35,8 @@ import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import UserAvatar from '../../ReusableComponents/UserAvatar';
+import CommentEditor, { CommentContent, getShortcutFormat } from './CommentEditor';
+import { applyCommentFormat } from '../utils/CommentMarkdown';
 
 const INDENT_PX = 14;
 
@@ -130,6 +131,7 @@ function useMentionInput(users) {
     const [cursorPosition, setCursorPosition] = useState(null);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const fieldRef = useRef(null);
+    const [expanded, setExpanded] = useState(false);
 
     const handleTextChange = useCallback(
         e => {
@@ -178,20 +180,50 @@ function useMentionInput(users) {
         [cursorPosition, mentionSearch]
     );
 
+    const pendingSelectionRef = useRef(null);
+
+    const applyFormat = useCallback(format => {
+        const field = fieldRef.current;
+        if (!field) {
+            return;
+        }
+        const result = applyCommentFormat(field.value, field.selectionStart, field.selectionEnd, format);
+        pendingSelectionRef.current = [result.selectionStart, result.selectionEnd];
+        setText(result.text);
+        setAnchorEl(null);
+    }, []);
+
+    useLayoutEffect(() => {
+        const field = fieldRef.current;
+        const selection = pendingSelectionRef.current;
+        if (field && selection) {
+            pendingSelectionRef.current = null;
+            field.focus();
+            field.setSelectionRange(selection[0], selection[1]);
+        }
+    }, [text]);
+
     const handleKeyDown = useCallback(
         e => {
             if (anchorEl && e.key === 'Enter' && filteredUsers.length > 0) {
                 e.preventDefault();
                 handleMentionSelect(filteredUsers[0]);
+                return;
+            }
+            const shortcutFormat = getShortcutFormat(e);
+            if (shortcutFormat) {
+                e.preventDefault();
+                applyFormat(shortcutFormat);
             }
         },
-        [anchorEl, filteredUsers, handleMentionSelect]
+        [anchorEl, filteredUsers, handleMentionSelect, applyFormat]
     );
 
     const reset = useCallback(() => {
         setText('');
         setMentionedUsers([]);
         setAnchorEl(null);
+        setExpanded(false);
     }, []);
 
     return {
@@ -204,6 +236,9 @@ function useMentionInput(users) {
         handleTextChange,
         handleMentionSelect,
         handleKeyDown,
+        applyFormat,
+        expanded,
+        setExpanded,
         reset
     };
 }
@@ -382,7 +417,7 @@ function VoteColumn({ up, down, userVote, onVote }) {
     );
 }
 
-function ReplyComposer({ users, isMobile, onSubmit, onCancel }) {
+function ReplyComposer({ users, isMobile, replyTo, onSubmit, onCancel }) {
     const mention = useMentionInput(users);
 
     const handleSubmit = () => {
@@ -393,27 +428,37 @@ function ReplyComposer({ users, isMobile, onSubmit, onCancel }) {
 
     return (
         <Box sx={{ mt: 1, mb: 1.5, position: 'relative' }}>
-            <TextField
+            <CommentEditor
                 inputRef={mention.fieldRef}
-                fullWidth
-                multiline
-                minRows={2}
-                autoFocus
-                size="small"
-                placeholder={isMobile ? 'Add a reply' : "Add a reply — mention a user by typing '@' and their name"}
                 value={mention.text}
                 onChange={mention.handleTextChange}
                 onKeyDown={mention.handleKeyDown}
+                onFormat={mention.applyFormat}
+                expanded={mention.expanded}
+                onExpandedChange={mention.setExpanded}
+                title={`Reply to ${replyTo}`}
+                placeholder={
+                    isMobile ? (
+                        'Add a reply'
+                    ) : (
+                        <>
+                            You are replying to <strong>{replyTo}</strong> — mention other user/-s by typing &apos;@&apos; and their name
+                        </>
+                    )
+                }
+                textFieldProps={{ minRows: 2, autoFocus: true, size: 'small' }}
+                actions={
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button size="small" variant="contained" disabled={!mention.text.trim()} onClick={handleSubmit}>
+                            Reply
+                        </Button>
+                        <Button size="small" onClick={onCancel}>
+                            Cancel
+                        </Button>
+                    </Box>
+                }
             />
             <MentionPopper anchorEl={mention.anchorEl} filteredUsers={mention.filteredUsers} onSelect={mention.handleMentionSelect} />
-            <Box sx={{ display: 'flex', gap: 1, mt: 0.75 }}>
-                <Button size="small" variant="contained" disabled={!mention.text.trim()} onClick={handleSubmit}>
-                    Reply
-                </Button>
-                <Button size="small" onClick={onCancel}>
-                    Cancel
-                </Button>
-            </Box>
         </Box>
     );
 }
@@ -522,9 +567,7 @@ function CommentNode({
                             {hasStatus && <Tooltip title={STATUS_TOOLTIP[node.status]}>{STATUS_ICON[node.status]}</Tooltip>}
                         </div>
 
-                        <Typography variant="body1" gutterBottom sx={{ fontSize: '1.05rem', wordBreak: 'break-word' }}>
-                            {node.content}
-                        </Typography>
+                        <CommentContent content={node.content} gutterBottom />
 
                         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: -0.5, flexWrap: 'wrap' }}>
                             <Button
@@ -596,6 +639,7 @@ function CommentNode({
                 <ReplyComposer
                     users={users}
                     isMobile={isMobile}
+                    replyTo={node.author}
                     onCancel={() => setReplyingId(null)}
                     onSubmit={(text, mentionedUsers) => {
                         onReply(node.id, text, mentionedUsers);
@@ -838,37 +882,38 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             </List>
 
             <Box style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: 'auto', flexShrink: 0 }}>
-                <TextField
+                <CommentEditor
                     inputRef={textFieldRef}
-                    multiline
-                    rows={4}
-                    variant="outlined"
-                    placeholder={"Add a comment\nmention a user by typing '@' and their name"}
                     hidden={replyingId !== null}
-                    fullWidth
-                    style={{ paddingRight: '1px' }}
                     value={topLevelMention.text}
                     onChange={topLevelMention.handleTextChange}
                     onKeyDown={topLevelMention.handleKeyDown}
+                    onFormat={topLevelMention.applyFormat}
+                    expanded={topLevelMention.expanded}
+                    onExpandedChange={topLevelMention.setExpanded}
+                    title="New comment"
+                    placeholder={"Add a comment\nmention a user by typing '@' and their name"}
+                    textFieldProps={{ rows: 4, variant: 'outlined', style: { paddingRight: '1px' } }}
+                    actionsInside
+                    actions={
+                        <Button
+                            variant="contained"
+                            style={{
+                                ...buttonStyle,
+                                backgroundColor: topLevelMention.text.trim() ? theme.palette.secondary.main : theme.palette.action.disabledBackground
+                            }}
+                            onClick={handleTopLevelSubmit}
+                            disabled={!topLevelMention.text.trim()}
+                        >
+                            Add
+                        </Button>
+                    }
                 />
                 <MentionPopper
                     anchorEl={topLevelMention.anchorEl}
                     filteredUsers={topLevelMention.filteredUsers}
                     onSelect={topLevelMention.handleMentionSelect}
                 />
-                <Box style={{ position: 'absolute', right: 5, bottom: 5 }}>
-                    <Button
-                        variant="contained"
-                        style={{
-                            ...buttonStyle,
-                            backgroundColor: topLevelMention.text.trim() ? theme.palette.secondary.main : theme.palette.action.disabledBackground
-                        }}
-                        onClick={handleTopLevelSubmit}
-                        disabled={!topLevelMention.text.trim()}
-                    >
-                        Add
-                    </Button>
-                </Box>
             </Box>
         </Paper>
     );
