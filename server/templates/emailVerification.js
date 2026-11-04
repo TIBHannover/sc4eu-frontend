@@ -1,5 +1,6 @@
-function createLoginPage(callbackURL, displayName) {
-    const projectBasedCallbackURL = callbackURL + process.env.REACT_APP_PUBLIC_URL;
+import { PUBLIC_APP_URL } from '../config.js';
+
+export default function emailVerificationHtml(callbackURL, displayName) {
     return {
         body: `<head>
 
@@ -124,7 +125,7 @@ function createLoginPage(callbackURL, displayName) {
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
               <p style="margin: 0;">Hello ${displayName}, Thank you for registering on SC4EU platform.</p>
-              <p>Click the button below to confirm your email address. If you didn't create an account with <a href="${projectBasedCallbackURL}">SC4</a>, you can safely delete this email.</p>
+              <p>Click the button below to confirm your email address. If you didn't create an account with <a href="${PUBLIC_APP_URL}">SC4</a>, you can safely delete this email.</p>
             </td>
           </tr>
           <tr>
@@ -170,4 +171,3 @@ function createLoginPage(callbackURL, displayName) {
     };
 }
 
-module.exports = createLoginPage;

@@ -3,13 +3,12 @@ import thunk from 'redux-thunk';
 import rootReducer from './redux/rootReducer';
 import { routerMiddleware } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
-import env from '@beam-australia/react-env';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // enable redux debug tools
 
-const history = createBrowserHistory({ basename: env('PUBLIC_URL') });
+const history = createBrowserHistory({ basename: process.env.REACT_APP_PUBLIC_URL });
 
 const persistConfig = {
     key: 'root',

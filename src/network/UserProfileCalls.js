@@ -8,7 +8,6 @@ import {
     URL_GET_USER_PROJECT,
     URL_GET_USER_PROJECTS_Detail,
     URL_GET_USER_ROLE,
-    URL_UPDATE_USER_PROJECTS,
     URL_UPDATE_USER_ROLE,
     URL_GET_PROJECT_USERS_Detail,
     URL_GET_USER_PROFILE,
@@ -29,7 +28,7 @@ export const getUserSettings = () => {
 };
 
 export const deleteUser = userId => {
-    return submitGetRequest(`${URL_DELETE_USER}/?userId=${userId}`, {}, false);
+    return submitGetRequest(`${URL_DELETE_USER}/?userId=${userId}`, {}, true);
 };
 
 export const getAllRoles = () => {
@@ -41,23 +40,23 @@ export const getAllRoles = () => {
 };
 
 export const getUserRole = userId => {
-    return submitGetRequest(`${URL_GET_USER_ROLE}/?userId=${userId}`, {}, false);
+    return submitGetRequest(`${URL_GET_USER_ROLE}/?userId=${userId}`, {}, true);
 };
 
 export const getUserProjects = userId => {
-    return submitGetRequest(`${URL_GET_USER_PROJECT}/?userId=${userId}`, {}, false);
+    return submitGetRequest(`${URL_GET_USER_PROJECT}/?userId=${userId}`, {}, true);
 };
 
 export const getUserProjectsDetail = userId => {
-    return submitGetRequest(`${URL_GET_USER_PROJECTS_Detail}/?userId=${userId}`, {}, false);
+    return submitGetRequest(`${URL_GET_USER_PROJECTS_Detail}/?userId=${userId}`, {}, true);
 };
 
 export const getProjectUsersDetail = projectId => {
-    return submitGetRequest(`${URL_GET_PROJECT_USERS_Detail}/?projectId=${projectId}`, {}, false);
+    return submitGetRequest(`${URL_GET_PROJECT_USERS_Detail}/?projectId=${projectId}`, {}, true);
 };
 
 export const doesUserExist = email => {
-    return submitGetRequest(`${URL_CHECK_USER_EXIST_BY_EMAIL}/?email=${email}`, {}, false);
+    return submitGetRequest(`${URL_CHECK_USER_EXIST_BY_EMAIL}/?email=${encodeURIComponent(email)}`, {}, true);
 };
 
 export const updateUserSettings = payload => {
@@ -85,19 +84,6 @@ export const updateUserRole = payload => {
         'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
     };
     return submitPutRequest(URL_UPDATE_USER_ROLE, headers, data);
-};
-
-export const updateUserProjects = payload => {
-    //Send a put request to backend
-    const data = {
-        userId: payload.user_id,
-        projectsId: payload.projects_id
-    };
-    const headers = {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
-    };
-    return submitPutRequest(URL_UPDATE_USER_PROJECTS, headers, data);
 };
 
 export const getAllUsers = () => {

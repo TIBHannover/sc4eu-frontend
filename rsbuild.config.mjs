@@ -46,23 +46,6 @@ export default defineConfig(({ command }) => {
             ...(mode === 'production' && {
                 sourceMap: { js: process.env.GENERATE_SOURCEMAP === 'false' ? false : 'source-map', css: false }
             })
-        },
-
-        environments: {
-            web: {
-                source: { entry: { index: './src/index.js' } }
-            },
-            sw: {
-                source: { entry: { 'service-worker': './src/service-worker.js' } },
-                output: {
-                    target: 'web-worker',
-                    filenameHash: false,
-                    distPath: { root: 'build', js: '' },
-                    copyPublicDir: false,
-                    cleanDistPath: false
-                },
-                performance: { chunkSplit: { strategy: 'all-in-one' } }
-            }
         }
     };
 });

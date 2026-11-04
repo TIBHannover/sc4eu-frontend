@@ -71,14 +71,14 @@ export const forgotPassword = email_address => {
     return submitPostRequest(URL_FORGOT_PASSWORD, headers, formBody, false, false);
 };
 
-export const setNewPassword = (user_id, password) => {
-    // we use parameters from env.
+/** @param {string} token reset token from the password-reset e-mail link */
+export const setNewPassword = (token, password) => {
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     const data = {
-        user_id,
+        token,
         password
     };
     const formBody = Object.keys(data)
