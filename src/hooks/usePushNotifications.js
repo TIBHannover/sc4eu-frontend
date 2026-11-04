@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { isPushSupported } from '../utils/pushNotifications';
+import { withAuthHeader } from '../network/networkRequests';
 import PropTypes from 'prop-types';
 
 const VAPID_PUBLIC_KEY = process.env.REACT_APP_VAPID_PUBLIC_KEY;
@@ -82,7 +83,7 @@ export function usePushNotifications(user) {
 
         await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}subscriber`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: withAuthHeader({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 ...sub.toJSON(),
                 username: user
@@ -98,7 +99,7 @@ export function usePushNotifications(user) {
 
         await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}unsubscriber`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: withAuthHeader({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ endpoint: subscription.endpoint })
         });
 
@@ -118,7 +119,7 @@ export function usePushNotifications(user) {
         }
         await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyTermUpdate`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: withAuthHeader({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 title: notification_title,
                 body: notification_body,
@@ -131,7 +132,7 @@ export function usePushNotifications(user) {
     const notifyNewComment = async (resourceId, mentionedUsers) => {
         await fetch(`${process.env.REACT_APP_EXPRESS_BACKEND_URL}notifyNewComment`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: withAuthHeader({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 title: 'New comment has been added to a discussion. Check it out!',
                 term_uuid: resourceId,

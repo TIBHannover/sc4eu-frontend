@@ -39,7 +39,7 @@ class ResetPassword extends Component {
             if (this.props.location.search) {
                 const urlParams = new URLSearchParams(this.props.location.search);
                 const data = Object.fromEntries(urlParams);
-                const response = await setNewPassword(data.user_id, this.state.password);
+                const response = await setNewPassword(data.token, this.state.password);
                 if (response.success === false) {
                     this.setState({ message: response.message });
                     this.setState({ openPopUp: true });

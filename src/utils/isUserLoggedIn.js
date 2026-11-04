@@ -12,7 +12,10 @@ export const selectIsAuthenticated = state => Boolean(state.auth.user && state.a
 
 export const selectUser = state => state.auth.user;
 
-export const selectIsAdmin = state => state.auth.user?.role === 'admin';
+/** System Admins and Project Admins may manage projects and ontologies (enforced by the server too). */
+export const isAdminUser = user => ['system admin', 'project admin'].includes(user?.role?.toLowerCase());
+
+export const selectIsAdmin = state => isAdminUser(state.auth.user);
 
 export const selectIsUser = state => state.auth.user?.role === 'user';
 

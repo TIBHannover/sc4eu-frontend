@@ -1,5 +1,11 @@
 import { Cookies } from 'react-cookie';
 
+/** Adds "Authorization: Bearer <login token>" if the user is logged in (for raw fetch calls). */
+export const withAuthHeader = (headers = {}) => {
+    const token = new Cookies().get('token');
+    return token ? { ...headers, Authorization: `Bearer ${token}` } : headers;
+};
+
 export const plainGetRequest = (url, headers) => {
     return submitGetRequest(url, headers, false);
 };

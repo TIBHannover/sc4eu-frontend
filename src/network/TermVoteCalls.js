@@ -6,37 +6,26 @@ import {
     URL_GET_TERM_VOTES,
     URL_MANUAL_CLOSE_CONSENSUS,
     URL_GET_VOTES,
-    URL_UPDATE_EXPERT_VOTE_DECISION,
-    URL_DELETE_TERM_VOTES
+    URL_UPDATE_EXPERT_VOTE_DECISION
 } from '../constants/services';
 
 export const VOTES_QUERY_KEY = ['votes', 'under_agreement'];
 
 export const getTermLastConsensus = term_uuid => {
-    return submitGetRequest(`${URL_GET_TERM_LAST_CONSENSUS}/?term_uuid=${term_uuid}`, {}, false);
+    return submitGetRequest(`${URL_GET_TERM_LAST_CONSENSUS}/?term_uuid=${term_uuid}`, {}, true);
 };
 
 export const getTermVotes = term_uuid => {
-    return submitGetRequest(`${URL_GET_TERM_VOTES}/?term_uuid=${term_uuid}&status=under_agreement`, {}, false);
+    return submitGetRequest(`${URL_GET_TERM_VOTES}/?term_uuid=${term_uuid}&status=under_agreement`, {}, true);
 };
 
-export const deleteTermVotes = term_uuids => {
-        const headers = {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': `${process.env.REACT_APP_EXPRESS_BACKEND_URL}`
-    };
-    const data = {
-        term_uuids: term_uuids
-    };
-    return submitPostRequest(`${URL_DELETE_TERM_VOTES}`, headers, data);
-};
 
 export const getVotes = () => {
-    return submitGetRequest(`${URL_GET_VOTES}/?status=under_agreement`, {}, false);
+    return submitGetRequest(`${URL_GET_VOTES}/?status=under_agreement`, {}, true);
 };
 
 export const getWeeklyTerm = () => {
-    return submitGetRequest(`${URL_GET_TERM_OF_THE_WEEK}`, {}, false);
+    return submitGetRequest(`${URL_GET_TERM_OF_THE_WEEK}`, {}, true);
 };
 
 export const initiateNewVote = (term_uuid, user, type, reason) => {

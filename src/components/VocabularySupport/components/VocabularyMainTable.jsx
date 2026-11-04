@@ -17,7 +17,7 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
 
-import { getTermVotes, getVotes, deleteTermVotes, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
+import { getTermVotes, getVotes, VOTES_QUERY_KEY } from '../../../network/TermVoteCalls';
 import { LARGE_SCREEN_SIZE, StyledChip, StyledTooltip } from '../../../styledComponents/styledComponents';
 import { getMentionedCommentsLength, hasPendingMentionReply } from '../utils/Discussions';
 import { useCreateDiscussion } from '../hooks/useCreateDiscussion';
