@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig, loadEnv } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
@@ -11,6 +12,12 @@ export default defineConfig(({ command }) => {
 
     const BASE = '/' + rawPublicVars.REACT_APP_PUBLIC_URL.replace(/^\/+|\/+$/g, '');
 
+    const instance = rawPublicVars.REACT_APP_INSTANCE || 'default';
+    const instanceDir = path.resolve('src/instances', instance);
+    if (!fs.existsSync(instanceDir)) {
+        throw new Error(`REACT_APP_INSTANCE="${instance}": folder src/instances/${instance} does not exist`);
+    }
+
     return {
         mode,
         plugins: [pluginReact(), pluginSass()],
@@ -20,6 +27,10 @@ export default defineConfig(({ command }) => {
                 ...publicVars,
                 'process.env': JSON.stringify(rawPublicVars)
             }
+        },
+
+        resolve: {
+            alias: { '@instance': [instanceDir, path.resolve('src/instances/default')] }
         },
 
         tools: {

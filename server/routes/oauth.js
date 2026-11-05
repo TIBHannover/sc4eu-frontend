@@ -7,12 +7,12 @@ import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as GitLabStrategy } from 'passport-gitlab2';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import OAuth2Strategy from 'passport-oauth2';
-import { BASE_PATH, CALLBACK_URL, REDIRECT_URL } from '../config.js';
+import { PUBLIC_PATH, CALLBACK_URL, REDIRECT_URL } from '../config.js';
 import { signLoginToken } from '../lib/tokens.js';
 import { callUpstreamJson } from '../lib/upstream.js';
 
 const env = process.env;
-const callbackUrl = provider => `${CALLBACK_URL}${BASE_PATH}/oauth/${provider}/callback`;
+const callbackUrl = provider => `${CALLBACK_URL}${PUBLIC_PATH}/oauth/${provider}/callback`;
 
 /** Reads a JSON resource from a provider API with the user's access token. */
 async function fetchProviderJson(url, { method = 'GET', headers = {}, body } = {}) {
@@ -146,7 +146,7 @@ for (const [name, provider] of Object.entries(PROVIDERS)) {
         continue;
     }
     registerStrategy(name, provider);
-    const appPage = page => `${provider.redirectTo}${BASE_PATH}/${page}`;
+    const appPage = page => `${provider.redirectTo}${PUBLIC_PATH}/${page}`;
     oauthRouter.get(`/oauth/${name}`, passport.authenticate(name, { scope: provider.scope, session: false }));
     oauthRouter.get(
         `/oauth/${name}/callback`,

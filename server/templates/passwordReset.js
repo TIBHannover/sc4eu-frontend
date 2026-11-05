@@ -1,4 +1,4 @@
-import { PUBLIC_APP_URL } from '../config.js';
+import { PORTAL_NAME, PUBLIC_APP_URL } from '../config.js';
 
 export default function passwordResetHtml(callbackURL, displayName) {
     return {
@@ -130,7 +130,7 @@ export default function passwordResetHtml(callbackURL, displayName) {
                         style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                         <h3 style="margin: 0;">Hello ${displayName}, </h3>
                         <p>You recently requested to reset your password for your account. Use the button below to reset it. If you didn't create an account with <a
-                            href=${PUBLIC_APP_URL}>SC4</a>, you can safely delete this email.</p>
+                            href=${PUBLIC_APP_URL}>${PORTAL_NAME}</a>, you can safely delete this email.</p>
                     </td>
                 </tr>
                 <tr>
@@ -155,7 +155,7 @@ export default function passwordResetHtml(callbackURL, displayName) {
                 <tr>
                     <td align="left" bgcolor="#ffffff"
                         style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-                        <p style="margin: 0;">Thanks,<br> SC4 Team</p>
+                        <p style="margin: 0;">Thanks,<br> ${PORTAL_NAME} Team</p>
                     </td>
                 </tr>
 

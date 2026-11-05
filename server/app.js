@@ -49,7 +49,7 @@ export function createApp() {
         req.method === 'GET' || req.method === 'HEAD' ? res.sendFile(path.join(BUILD_DIR, 'index.html')) : res.status(404).json({ error: 'Not found' })
     );
 
-    app.use(BASE_PATH, routes);
+    app.use(PUBLIC_PATH, routes);
     app.use(errorHandler);
     return app;
 }
