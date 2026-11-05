@@ -1,5 +1,5 @@
 import defaultConfig from '../default/config';
-import logo from '.sc4eu_logo.png';
+import logo from './sc4eu_logo.png';
 
 /** Vocabulary Development Support Tool: only the vocabulary part of the portal. */
 const config = {
