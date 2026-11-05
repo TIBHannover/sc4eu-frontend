@@ -1,4 +1,23 @@
-node_modules/
-#build/
-server/node_modules
+# dependencies are installed inside the image
+**/node_modules
 
+# build output is produced inside the image
+build
+
+# VCS / IDE / docs
+.git
+.github
+.idea
+.vscode
+*.iml
+docs
+gradle
+app
+vocabulary
+README.md
+AGENTS.md
+LICENSE
+sonar-project.properties
+**/npm-debug.log
+
+server/robot.jar

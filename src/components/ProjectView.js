@@ -11,7 +11,7 @@ import CheckboxDropdown from '../utils/CheckboxDropdown';
 import DeleteConfirmationDialog from '../utils/DeleteConfirmationDialog';
 import { getAllProjects, deleteProject } from '../network/projectIndexing';
 import { getUserProjects } from '../network/UserProfileCalls';
-import { userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import { isAdminUser } from '../utils/isUserLoggedIn';
 import { redux_addProject, redux_removeProject, redux_removeOntology, redux_removeAlreadyLoadedOntology } from '../redux/actions/rrm_actions';
 import {
     StyledProjectsViewRootDiv,
@@ -95,17 +95,11 @@ class ProjectView extends Component {
             const allProjects = [...response];
 
             // Process projects in parallel
-            const processedProjects = await Promise.all(
-                allProjects.map(async project => {
-                    const unlock = this.determineProjectAccess(project);
-                    const allows = await userIsAllowdToUploadOntology();
-                    return {
-                        ...project,
-                        unlock,
-                        canDelete: allows.result && unlock
-                    };
-                })
-            );
+            const isAdmin = isAdminUser(this.props.user);
+            const processedProjects = allProjects.map(project => {
+                const unlock = this.determineProjectAccess(project);
+                return { ...project, unlock, canDelete: isAdmin && unlock };
+            });
 
             // If user is logged in, get and process user projects
             if (this.props.user) {

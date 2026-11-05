@@ -9,7 +9,8 @@ import { connect } from 'react-redux';
 import { reverse } from 'named-urls';
 import ROUTES from '../constants/routes';
 import { MODE_OF_OPERATIONS } from '../constants/globalConstants';
-import { deleteOntology, getOntologyById, userIsAllowdToUploadOntology } from '../network/ontologyIndexing';
+import { deleteOntology, getOntologyById } from '../network/ontologyIndexing';
+import { isAdminUser } from '../utils/isUserLoggedIn';
 import { redux_addOntology, redux_removeOntology } from '../redux/actions/rrm_actions';
 import DeleteConfirmationDialog from '../utils/DeleteConfirmationDialog';
 import UpdateConfirmationDialog from '../utils/UpdateConfirmationDialog';
@@ -68,18 +69,14 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
         }
     };
 
-    const handleDelete = async e => {
+    const isAdmin = isAdminUser(currentUser);
+
+    const handleDelete = e => {
         e.stopPropagation();
-        try {
-            const allows = await userIsAllowdToUploadOntology();
-            if (allows.result === true) {
-                setDeleteDialogOpen(true);
-            } else {
-                setError('You are not authorized to delete this ontology');
-            }
-        } catch (error) {
-            console.error('Error checking authorization:', error);
-            setError('Failed to verify authorization. Please try again.');
+        if (isAdmin) {
+            setDeleteDialogOpen(true);
+        } else {
+            setError('You are not authorized to delete this ontology');
         }
     };
 
@@ -138,18 +135,12 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
         }
     };
 
-    const handleRefresh = async e => {
+    const handleRefresh = e => {
         e.stopPropagation();
-        try {
-            const allows = await userIsAllowdToUploadOntology();
-            if (allows.result === true) {
-                setUpdateDialogOpen(true);
-            } else {
-                setError('You are not authorized to update this ontology');
-            }
-        } catch (error) {
-            console.error('Error checking authorization:', error);
-            setError('Failed to verify authorization. Please try again.');
+        if (isAdmin) {
+            setUpdateDialogOpen(true);
+        } else {
+            setError('You are not authorized to update this ontology');
         }
     };
 
@@ -286,7 +277,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                             >
                                 {loading.download ? <CircularProgress size={24} /> : <Download />}
                             </IconButton>
-                            {currentUser !== 0 && currentUser !== null && !autoRefresh && (
+                            {isAdmin && !autoRefresh && (
                                 <IconButton
                                     aria-label="delete"
                                     onClick={handleDelete}
@@ -295,8 +286,7 @@ function OntologyCard({ ontology, currentUser, callback, autoRefresh, ontologyVe
                                     {loading.delete ? <CircularProgress size={24} /> : <Delete />}
                                 </IconButton>
                             )}
-                            {currentUser !== 0 &&
-                                currentUser !== null &&
+                            {isAdmin &&
                                 (ontology.lookup_type === 'online' || ontology.lookup_type === 'online-gitlab') && (
                                     <IconButton
                                         aria-label="refresh"

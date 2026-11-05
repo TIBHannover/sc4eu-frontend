@@ -1,73 +1,74 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Container } from 'reactstrap';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { checkBuildType, checkOAuth, checkBackend, checkOntologyProcessing } from '../network/serviceStatusCalls';
+import { getServicesStatus } from '../network/serviceStatusCalls';
 
-export default class ServiceStatus extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            frontendBuild: 'unknown',
-            oauthConfigured: false,
-            backendService: false,
-            ontologyProcessingService: false,
+const SERVICE_LABELS = {
+    backend: 'Backend Service',
+    fastapi: 'Vocabulary Service (FastAPI)',
+    processing: 'Ontology Processing Service'
+};
 
-            loading_frontendBuild: true,
-            loading_oauthConfigured: true,
-            loading_backendService: true,
-            loading_ontologyProcessingService: true
-        };
-    }
+const OAUTH_LABELS = {
+    github: 'GitHub',
+    gitlab: 'GitLab',
+    google: 'Google',
+    sap: 'SAP',
+    linkedin: 'LinkedIn'
+};
 
-    componentDidMount = async () => {
-        // check build type
-        const buildType = await checkBuildType();
-        this.setState({ frontendBuild: buildType.frontendBuild, loading_frontendBuild: false });
+const STATE_COLORS = {
+    up: 'green',
+    configured: 'green',
+    down: 'red',
+    'not configured': 'gray'
+};
 
-        // check if oauth is configured
-        if (buildType !== 'NodeJs -- Client only  !!!') {
-            const oauth = await checkOAuth();
-            this.setState({ oauthConfigured: oauth.oauth, loading_oauthConfigured: false });
-        } else {
-            this.setState({ oauthConfigured: false, loading_oauthConfigured: false });
-        }
+const StatusRow = ({ label, state }) => (
+    <div>
+        {label}: <span style={{ color: STATE_COLORS[state] }}>{state}</span>
+    </div>
+);
 
-        // check if backend is configured
-        const backend = await checkBackend();
-        this.setState({ backendService: backend.backendService, loading_backendService: false });
+StatusRow.propTypes = {
+    label: PropTypes.string.isRequired,
+    state: PropTypes.string.isRequired
+};
 
-        // check if ontology processing is configured
-        const processing = await checkOntologyProcessing();
-        this.setState({ ontologyProcessingService: processing.ontologyProcessingService, loading_ontologyProcessingService: false });
-    };
+const ServiceStatus = () => {
+    // null while loading, 'unreachable' if the Express server does not answer (client-only build)
+    const [status, setStatus] = useState(null);
 
-    renderService = () => {
-        if (this.state.loading_oauthConfigured || this.state.loading_backendService || this.state.loading_ontologyProcessingService) {
-            return <Icon style={{ margin: '5px' }} icon={faSpinner} spin />;
-        }
-        if (this.state.oauthConfigured || this.state.backendService || this.state.ontologyProcessingService) {
-            return <p style={{ color: 'green', marginBottom: 0 }}>True </p>;
-        } else {
-            return <p style={{ color: 'red', marginBottom: 0 }}>False </p>;
-        }
-    };
+    useEffect(() => {
+        getServicesStatus()
+            .then(setStatus)
+            .catch(() => setStatus('unreachable'));
+    }, []);
 
-    render() {
-        return (
-            <Container className="mt-3 p-0" style={{ border: '1px solid black', borderRadius: '10px' }}>
-                <div style={{ padding: '10px' }}>
-                    <h1>Status:</h1>
-                    {/*OAUTH LOGIN Service*/}
-                    <div>Frontend Build Type: {this.state.loading_frontendBuild ? <Icon icon={faSpinner} spin /> : this.state.frontendBuild}</div>
-                    {/*OAUTH LOGIN Service*/}
-                    <div style={{ display: 'flex' }}>OAUTH Configured: {this.renderService()}</div>
-                    {/*Backend Service*/}
-                    <div style={{ display: 'flex' }}>Backend Service: {this.renderService()}</div>
-                    {/*Ontology Processing Service*/}
-                    <div style={{ display: 'flex' }}>Ontology Processing Service: {this.renderService()}</div>
-                </div>
-            </Container>
-        );
-    }
-}
+    return (
+        <Container className="mt-3 p-0" style={{ border: '1px solid black', borderRadius: '10px' }}>
+            <div style={{ padding: '10px' }}>
+                <h1>Status:</h1>
+                {status === null && <Icon icon={faSpinner} spin />}
+                {status === 'unreachable' && <div>Frontend Build Type: Client only (no Express server)</div>}
+                {status?.services && (
+                    <>
+                        <div>Frontend Build Type: Express</div>
+                        <h5 className="mt-3">Services</h5>
+                        {Object.entries(SERVICE_LABELS).map(([name, label]) => (
+                            <StatusRow key={name} label={label} state={status.services[name] ?? 'not configured'} />
+                        ))}
+                        <h5 className="mt-3">Login providers</h5>
+                        {Object.entries(OAUTH_LABELS).map(([name, label]) => (
+                            <StatusRow key={name} label={label} state={status.oauth[name] ? 'configured' : 'not configured'} />
+                        ))}
+                    </>
+                )}
+            </div>
+        </Container>
+    );
+};
+
+export default ServiceStatus;

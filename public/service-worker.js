@@ -1,10 +1,5 @@
-/* eslint-disable no-restricted-globals */
-import { clientsClaim } from 'workbox-core';
 
-clientsClaim();
-
-// eslint-disable-next-line no-unused-expressions
-self.__WB_MANIFEST;
+self.addEventListener('activate', () => self.clients.claim());
 
 self.addEventListener('activate', event => {
     event.waitUntil(

@@ -1,4 +1,4 @@
-import { plainGetRequest, submitGetRequest, submitPostRequest } from './networkRequests';
+import { plainGetRequest, submitGetRequest, submitPostRequest, withAuthHeader } from './networkRequests';
 import {
     URL_CHECK_IF_ABLE_TO_UPLOAD_ONTOLOGY,
     URL_UPDATEONTOLOGY,
@@ -7,7 +7,6 @@ import {
     URL_ONTOLOGYINDEXING,
     URL_PRE_INIT
 } from 'constants/services';
-import { Cookies } from 'react-cookie';
 import { URL_GET_ONTOLOGY_GIT_DATA, URL_ONTOLOGYBYID } from '../constants/services';
 
 export const getAllOntologies = project_id => {
@@ -55,19 +54,7 @@ export const preInitializeOntologyUpload = data => {
     // HAVE A CLOSER LOOK AT THAT , should be similar to uploadOntology , w.r.t access tokens stuff.
 
     // TODO: verify with the new network communications
-    const postHeader = {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': `${process.env.REACT_APP_ONTOLOGY_SERVICE_BACKEND_URL}`
-    };
-
-    const send_token = false;
-    if (send_token) {
-        const cookies = new Cookies();
-        const token = cookies.get('token') ? cookies.get('token') : null;
-        if (token) {
-            postHeader.append('Authorization', `Bearer ${token}`);
-        }
-    }
+    const postHeader = withAuthHeader({ 'Content-Type': 'application/json' });
 
     return new Promise((resolve, reject) => {
         fetch(URL_PRE_INIT, { method: 'POST', headers: postHeader, body: JSON.stringify(data) })
