@@ -1,4 +1,6 @@
 import defaultConfig from '../default/config';
+import logo from './logo.svg';
+import logoDark from './logo-dark.svg';
 
 /** Vocabulary Development Support Tool: only the vocabulary part of the portal. */
 const config = {
@@ -15,7 +17,8 @@ const config = {
         sapLogin: false
     },
     documentationGroups: ['vocabulary'],
-    newTermsDays: 1
+    newTermsDays: 1,
+    home: { logo, logoDark, logoAlt: 'NFDI4Ing Logo', logoWidth: { xs: '10rem', md: '15rem', xl: '20rem' } }
 };
 
 export default config;

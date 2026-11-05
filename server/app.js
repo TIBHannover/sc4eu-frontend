@@ -1,7 +1,7 @@
 import path from 'node:path';
 import cors from 'cors';
 import express, { Router } from 'express';
-import { BASE_PATH, CORS_ORIGINS } from './config.js';
+import { CORS_ORIGINS, PUBLIC_PATH } from './config.js';
 import { registerProxyRoutes } from './proxy/proxy.js';
 import { accountRouter } from './routes/account.js';
 import { eventsRouter } from './routes/events.js';

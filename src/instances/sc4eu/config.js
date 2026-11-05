@@ -1,4 +1,5 @@
 import defaultConfig from '../default/config';
+import logo from '.sc4eu_logo.png';
 
 /** Vocabulary Development Support Tool: only the vocabulary part of the portal. */
 const config = {
@@ -15,7 +16,8 @@ const config = {
         sapLogin: false
     },
     documentationGroups: ['vocabulary'],
-    newTermsDays: 1
+    newTermsDays: 1,
+    home: { logo, logoAlt: 'SC4EU Logo', logoWidth: { xs: '10rem', md: '12rem', xl: '15rem' } }
 };
 
 export default config;
