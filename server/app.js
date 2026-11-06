@@ -1,7 +1,7 @@
 import path from 'node:path';
 import cors from 'cors';
 import express, { Router } from 'express';
-import { BASE_PATH, CORS_ORIGINS } from './config.js';
+import { CORS_ORIGINS, PUBLIC_PATH } from './config.js';
 import { registerProxyRoutes } from './proxy/proxy.js';
 import { accountRouter } from './routes/account.js';
 import { eventsRouter } from './routes/events.js';
@@ -49,7 +49,7 @@ export function createApp() {
         req.method === 'GET' || req.method === 'HEAD' ? res.sendFile(path.join(BUILD_DIR, 'index.html')) : res.status(404).json({ error: 'Not found' })
     );
 
-    app.use(BASE_PATH, routes);
+    app.use(PUBLIC_PATH, routes);
     app.use(errorHandler);
     return app;
 }

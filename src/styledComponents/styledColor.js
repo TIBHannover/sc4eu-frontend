@@ -1,4 +1,4 @@
-import materialTheme from './material-theme.json'
+import materialTheme from '@instance/material-theme.json'
 
 export const colorStyled = materialTheme.schemes.light;
 

@@ -2,7 +2,7 @@
 // backend services. Anything not listed here is not reachable (the backend has no auth itself).
 // Routes that need more than forwarding live in ../routes/*.js.
 //
-//   method, path    Express route (mounted under BASE_PATH, e.g. /ocp)
+//   method, path    Express route (mounted under PUBLIC_PATH, e.g. /ocp)
 //   target          'backend' (Flask) | 'fastapi' | 'processing'
 //   to              upstream path, or (req) => path
 //   upstreamMethod  only if different from `method`

@@ -1,5 +1,5 @@
 import LoggedIn from './pages/loggedIn';
-import Home from './pages/Home';
+import Home from '@instance/Home';
 import NotFound from './pages/NotFound';
 import PageA from './pages/PageA';
 import PageB from './pages/PageB';

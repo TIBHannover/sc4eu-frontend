@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Accordion, AccordionSummary, AccordionDetails, Typography, Card, CardContent, Link, Container, useTheme } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { fontStyled } from '../styledComponents/styledFont';
+import instance from '@instance/config';
 
 const USER_ROLES = [
     {
@@ -174,19 +175,21 @@ export default function Faq() {
                     </AccordionDetails>
                 </Accordion>
 
-                <Accordion sx={accordionSx}>
-                    <AccordionHeader title="WebProtege" />
-                    <AccordionDetails>
-                        <Typography sx={bodyTextSx}>
-                            WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology Curation
-                            Portal ( <ExternalLink href={PORTAL_LINK}>SC4EU Ontology Curation Portal</ExternalLink> ) and WebProtege ({' '}
-                            <ExternalLink href={WEBPROTEGE_LINK}>WebProtege</ExternalLink> ) are only loosely coupled. Both have their own
-                            authentication solutions and data management systems. It is therefore not yet possible to access WebProtege content
-                            directly from the Visualization tab. A workaround is to first work collaboratively in WebProtege. Then download the
-                            ontology from WebProtege and from there into the visualization tool. A more integrated solution is coming.
-                        </Typography>
-                    </AccordionDetails>
-                </Accordion>
+                {instance.features.webprotege && (
+                    <Accordion sx={accordionSx}>
+                        <AccordionHeader title="WebProtege" />
+                        <AccordionDetails>
+                            <Typography sx={bodyTextSx}>
+                                WebProtege is a well-known tool for collaborative creation and modification of ontologies. So far, SC4EU Ontology Curation
+                                Portal ( <ExternalLink href={PORTAL_LINK}>SC4EU Ontology Curation Portal</ExternalLink> ) and WebProtege ({' '}
+                                <ExternalLink href={WEBPROTEGE_LINK}>WebProtege</ExternalLink> ) are only loosely coupled. Both have their own
+                                authentication solutions and data management systems. It is therefore not yet possible to access WebProtege content
+                                directly from the Visualization tab. A workaround is to first work collaboratively in WebProtege. Then download the
+                                ontology from WebProtege and from there into the visualization tool. A more integrated solution is coming.
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
+                )}
             </Container>
         </Box>
     );

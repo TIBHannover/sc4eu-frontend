@@ -50,7 +50,12 @@ import MetaDataModal from './Modals/metaData';
 import { fontStyled } from '../styledComponents/styledFont';
 import { StyledBadge, StyledLink, StyledText, StyledSideBarButton } from '../styledComponents/styledComponents';
 
+import instance from '@instance/config';
+
 import 'react-modern-drawer/dist/index.css';
+
+const { features } = instance;
+const showToolsHeading = features.webprotege || features.annotator || features.mpc || features.eurostat;
 
 const SideBar = ({ isOpen, onNavigate, user }) => {
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
@@ -127,152 +132,156 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         <HomeOutlined color="action" />
                         <StyledText>Home</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT} onClick={onNavigate}>
-                        <CollectionsOutlined color="action" />
-                        <StyledText>Projects</StyledText>
-                    </StyledLink>
-                    {selectedProject ? (
-                        <div>
-                            <StyledLink
-                                to={{
-                                    pathname: reverse(ROUTES.ONTOLOGY),
-                                    project: selectedProject
-                                }}
-                                activeStyle={ActiveStyle}
-                                title="Open Ontology List"
-                                onClick={onNavigate}
-                            >
-                                <HubOutlined color="action" />
-                                <StyledText>Ontologies</StyledText>
+                    {features.projects && (
+                        <>
+                            <StyledLink title="Open Projects List" activeStyle={ActiveStyle} to={ROUTES.PROJECT} onClick={onNavigate}>
+                                <CollectionsOutlined color="action" />
+                                <StyledText>Projects</StyledText>
                             </StyledLink>
-                            <Divider />
-                            {selectedOntology ? (
-                                <>
-                                    <div
-                                        style={{
-                                            marginLeft: isOpen ? '25px' : '0px',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            transition: '0.6s'
+                            {selectedProject ? (
+                                <div>
+                                    <StyledLink
+                                        to={{
+                                            pathname: reverse(ROUTES.ONTOLOGY),
+                                            project: selectedProject
                                         }}
+                                        activeStyle={ActiveStyle}
+                                        title="Open Ontology List"
+                                        onClick={onNavigate}
                                     >
-                                        <p
-                                            style={{
-                                                display: isOpen ? 'block' : 'none',
-                                                marginLeft: isOpen ? '-25px' : '0px',
-                                                paddingTop: '5px',
-                                                marginBottom: '1px',
-                                                fontSize: '13px',
-                                                textAlign: 'center'
-                                            }}
-                                        >
-                                            Visualizations
-                                        </p>
-                                        <StyledLink
-                                            title="Open Hybrid View"
-                                            to={{
-                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?view=hybrid&ontologyId=${selectedOntology.uuid}`
-                                            }}
-                                            onClick={() => {
-                                                selectModeOfOperation('hybrid');
-                                                onNavigate();
-                                            }}
-                                            activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
-                                        >
-                                            <LegendToggleOutlined color="action" />
-                                            <StyledText>Hybrid</StyledText>
-                                        </StyledLink>
-                                        <StyledLink
-                                            title="Open Graph View"
-                                            to={{
-                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?view=graph&ontologyId=${selectedOntology.uuid}`
-                                            }}
-                                            onClick={() => {
-                                                selectModeOfOperation('graph');
-                                                onNavigate();
-                                            }}
-                                            activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
-                                        >
-                                            <AccountTreeOutlined color="action" />
-                                            <StyledText>Graph</StyledText>
-                                        </StyledLink>
-                                        <StyledLink
-                                            title="Open Text View"
-                                            to={{
-                                                pathname: reverse(ROUTES.VIEW_ONTOLOGY),
-                                                search: `?view=text&ontologyId=${selectedOntology.uuid}`
-                                            }}
-                                            onClick={() => {
-                                                selectModeOfOperation('text');
-                                                onNavigate();
-                                            }}
-                                            activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
-                                        >
-                                            <FormatAlignJustifyOutlined color="action" />
-                                            <StyledText>Text</StyledText>
-                                        </StyledLink>
-                                        <StyledSideBarButton
-                                            title="metaData"
-                                            onClick={() => {
-                                                setMetaDataModalOpen(true);
-                                                onNavigate();
-                                            }}
-                                        >
-                                            <DiscountOutlined color="action" />
-                                            <StyledText>Meta Data</StyledText>
-                                        </StyledSideBarButton>
-                                        {isMetaDataModalOpen && (
-                                            <MetaDataModal
-                                                toggle={() => {
-                                                    setMetaDataModalOpen(false);
+                                        <HubOutlined color="action" />
+                                        <StyledText>Ontologies</StyledText>
+                                    </StyledLink>
+                                    <Divider />
+                                    {selectedOntology ? (
+                                        <>
+                                            <div
+                                                style={{
+                                                    marginLeft: isOpen ? '25px' : '0px',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    transition: '0.6s'
                                                 }}
-                                                isModalOpen={isMetaDataModalOpen}
-                                            />
-                                        )}
-                                        <StyledSideBarButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
-                                            <ArticleOutlined color="action" />
-                                            <StyledText>Onto Document</StyledText>
-                                        </StyledSideBarButton>
-                                        {isLoadingForWidoco && (
-                                            <div className="text-center text-primary" style={{ marginTop: '10px' }}>
-                                                <h6 className="h6">
-                                                    <span>
-                                                        <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
-                                                    </span>{' '}
-                                                    Loading Document
-                                                </h6>
-                                            </div>
-                                        )}
-                                        {selectedOntology.lookup_type === 'online' || selectedOntology.lookup_type === 'online-gitlab' ? (
-                                            <>
-                                                <StyledSideBarButton
-                                                    title="Ontology Git commit Comparison"
-                                                    onClick={() => setIsOntoComparisonModalOpen(true)}
+                                            >
+                                                <p
+                                                    style={{
+                                                        display: isOpen ? 'block' : 'none',
+                                                        marginLeft: isOpen ? '-25px' : '0px',
+                                                        paddingTop: '5px',
+                                                        marginBottom: '1px',
+                                                        fontSize: '13px',
+                                                        textAlign: 'center'
+                                                    }}
                                                 >
-                                                    <DifferenceOutlined color="action" />
-                                                    <StyledText>Version Compare</StyledText>
+                                                    Visualizations
+                                                </p>
+                                                <StyledLink
+                                                    title="Open Hybrid View"
+                                                    to={{
+                                                        pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                        search: `?view=hybrid&ontologyId=${selectedOntology.uuid}`
+                                                    }}
+                                                    onClick={() => {
+                                                        selectModeOfOperation('hybrid');
+                                                        onNavigate();
+                                                    }}
+                                                    activeStyle={isActiveTab === 'hybrid' ? ActiveStyle : {}}
+                                                >
+                                                    <LegendToggleOutlined color="action" />
+                                                    <StyledText>Hybrid</StyledText>
+                                                </StyledLink>
+                                                <StyledLink
+                                                    title="Open Graph View"
+                                                    to={{
+                                                        pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                        search: `?view=graph&ontologyId=${selectedOntology.uuid}`
+                                                    }}
+                                                    onClick={() => {
+                                                        selectModeOfOperation('graph');
+                                                        onNavigate();
+                                                    }}
+                                                    activeStyle={isActiveTab === 'graph' ? ActiveStyle : {}}
+                                                >
+                                                    <AccountTreeOutlined color="action" />
+                                                    <StyledText>Graph</StyledText>
+                                                </StyledLink>
+                                                <StyledLink
+                                                    title="Open Text View"
+                                                    to={{
+                                                        pathname: reverse(ROUTES.VIEW_ONTOLOGY),
+                                                        search: `?view=text&ontologyId=${selectedOntology.uuid}`
+                                                    }}
+                                                    onClick={() => {
+                                                        selectModeOfOperation('text');
+                                                        onNavigate();
+                                                    }}
+                                                    activeStyle={isActiveTab === 'text' ? ActiveStyle : {}}
+                                                >
+                                                    <FormatAlignJustifyOutlined color="action" />
+                                                    <StyledText>Text</StyledText>
+                                                </StyledLink>
+                                                <StyledSideBarButton
+                                                    title="metaData"
+                                                    onClick={() => {
+                                                        setMetaDataModalOpen(true);
+                                                        onNavigate();
+                                                    }}
+                                                >
+                                                    <DiscountOutlined color="action" />
+                                                    <StyledText>Meta Data</StyledText>
                                                 </StyledSideBarButton>
-                                                {isOntoComparisonModalOpen && (
-                                                    <MaterialUIPopUp
-                                                        open={isOntoComparisonModalOpen}
-                                                        onClose={() => {
-                                                            setIsOntoComparisonModalOpen(false);
+                                                {isMetaDataModalOpen && (
+                                                    <MetaDataModal
+                                                        toggle={() => {
+                                                            setMetaDataModalOpen(false);
                                                         }}
-                                                        message={<ChangesTimeline id={selectedOntology.lookup_path} />}
+                                                        isModalOpen={isMetaDataModalOpen}
                                                     />
                                                 )}
-                                            </>
-                                        ) : (
-                                            <></>
-                                        )}
-                                    </div>
-                                    <Divider />
-                                </>
+                                                <StyledSideBarButton title="widoco documentation" onClick={getOntologyFileForDocumentation}>
+                                                    <ArticleOutlined color="action" />
+                                                    <StyledText>Onto Document</StyledText>
+                                                </StyledSideBarButton>
+                                                {isLoadingForWidoco && (
+                                                    <div className="text-center text-primary" style={{ marginTop: '10px' }}>
+                                                        <h6 className="h6">
+                                                            <span>
+                                                                <Icon icon={faSpinner} spin style={{ marginRight: '5px' }} />
+                                                            </span>{' '}
+                                                            Loading Document
+                                                        </h6>
+                                                    </div>
+                                                )}
+                                                {selectedOntology.lookup_type === 'online' || selectedOntology.lookup_type === 'online-gitlab' ? (
+                                                    <>
+                                                        <StyledSideBarButton
+                                                            title="Ontology Git commit Comparison"
+                                                            onClick={() => setIsOntoComparisonModalOpen(true)}
+                                                        >
+                                                            <DifferenceOutlined color="action" />
+                                                            <StyledText>Version Compare</StyledText>
+                                                        </StyledSideBarButton>
+                                                        {isOntoComparisonModalOpen && (
+                                                            <MaterialUIPopUp
+                                                                open={isOntoComparisonModalOpen}
+                                                                onClose={() => {
+                                                                    setIsOntoComparisonModalOpen(false);
+                                                                }}
+                                                                message={<ChangesTimeline id={selectedOntology.lookup_path} />}
+                                                            />
+                                                        )}
+                                                    </>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                            </div>
+                                            <Divider />
+                                        </>
+                                    ) : null}
+                                </div>
                             ) : null}
-                        </div>
-                    ) : null}
+                        </>
+                    )}
                     <div
                         style={{
                             marginLeft: '0px',
@@ -281,22 +290,26 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                             transition: '0.6s'
                         }}
                     >
-                        <p
-                            style={{
-                                display: isOpen ? 'block' : 'none',
-                                marginLeft: isOpen ? '-25px' : '0px',
-                                paddingTop: '5px',
-                                marginBottom: '1px',
-                                fontSize: '13px',
-                                textAlign: 'center'
-                            }}
-                        >
-                            Tools
-                        </p>
-                        <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE} onClick={onNavigate}>
-                            <BorderColorOutlined color="action" />
-                            <StyledText>WebProtege</StyledText>
-                        </StyledLink>
+                        {showToolsHeading && (
+                            <p
+                                style={{
+                                    display: isOpen ? 'block' : 'none',
+                                    marginLeft: isOpen ? '-25px' : '0px',
+                                    paddingTop: '5px',
+                                    marginBottom: '1px',
+                                    fontSize: '13px',
+                                    textAlign: 'center'
+                                }}
+                            >
+                                Tools
+                            </p>
+                        )}
+                        {features.webprotege && (
+                            <StyledLink title="Open WebProtege" activeStyle={ActiveStyle} to={ROUTES.WEBPROTEGE} onClick={onNavigate}>
+                                <BorderColorOutlined color="action" />
+                                <StyledText>WebProtege</StyledText>
+                            </StyledLink>
+                        )}
 
                         <StyledLink
                             title="Open VDST"
@@ -316,76 +329,84 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                             </Tooltip>
                         </StyledLink>
 
-                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR} onClick={onNavigate}>
-                            <BorderAllOutlined color="action" />
-                            <StyledText>Annotator</StyledText>
-                        </StyledLink>
-                        <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.MPC} onClick={onNavigate}>
-                            <StackedBarChartOutlined color="action" />
-                            <StyledText>MPC</StyledText>
-                        </StyledLink>
-                        <StyledLink
-                            title="Open Eurostat Visualisation"
-                            activeStyle={ActiveStyle}
-                            to={ROUTES.EUROSTAT}
-                            onClick={() => {
-                                selectModeOfOperation('eurostat');
-                                onNavigate();
-                            }}
-                        >
-                            <AnalyticsOutlined color="action" />
-                            <StyledText>Eurostat</StyledText>
-                        </StyledLink>
-                        {(isActiveTab === 'eurostat' || isActiveTab === 'bullwhip') && (
-                            <div
-                                style={{
-                                    marginLeft: isOpen ? '10px' : '0px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    transition: '0.6s'
-                                }}
-                            >
-                                <p
-                                    style={{
-                                        display: isOpen ? 'block' : 'none',
-                                        marginLeft: isOpen ? '-5px' : '0px',
-                                        paddingTop: '5px',
-                                        marginBottom: '1px',
-                                        fontSize: '13px',
-                                        textAlign: 'center'
-                                    }}
-                                >
-                                    Knowledge Graphs
-                                </p>
+                        {features.annotator && (
+                            <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.ANNOTATOR} onClick={onNavigate}>
+                                <BorderAllOutlined color="action" />
+                                <StyledText>Annotator</StyledText>
+                            </StyledLink>
+                        )}
+                        {features.mpc && (
+                            <StyledLink title="Open Annotator" activeStyle={ActiveStyle} to={ROUTES.MPC} onClick={onNavigate}>
+                                <StackedBarChartOutlined color="action" />
+                                <StyledText>MPC</StyledText>
+                            </StyledLink>
+                        )}
+                        {features.eurostat && (
+                            <>
                                 <StyledLink
-                                    title="Open EU trade view"
-                                    to={{
-                                        pathname: reverse(ROUTES.EUROSTAT)
-                                    }}
+                                    title="Open Eurostat Visualisation"
+                                    activeStyle={ActiveStyle}
+                                    to={ROUTES.EUROSTAT}
                                     onClick={() => {
                                         selectModeOfOperation('eurostat');
                                         onNavigate();
                                     }}
-                                    activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}
                                 >
-                                    <TimelineOutlined color="action" />
-                                    <StyledText>EU trade</StyledText>
+                                    <AnalyticsOutlined color="action" />
+                                    <StyledText>Eurostat</StyledText>
                                 </StyledLink>
-                                <StyledLink
-                                    title="Open Bullwhip View"
-                                    to={{
-                                        pathname: reverse(ROUTES.EUROSTAT_BULLWHIP)
-                                    }}
-                                    onClick={() => {
-                                        selectModeOfOperation('bullwhip');
-                                        onNavigate();
-                                    }}
-                                    activeStyle={isActiveTab === 'bullwhip' ? ActiveStyle : {}}
-                                >
-                                    <BarChartOutlined color="action" />
-                                    <StyledText>Bullwhip Effect</StyledText>
-                                </StyledLink>
-                            </div>
+                                {(isActiveTab === 'eurostat' || isActiveTab === 'bullwhip') && (
+                                    <div
+                                        style={{
+                                            marginLeft: isOpen ? '10px' : '0px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            transition: '0.6s'
+                                        }}
+                                    >
+                                        <p
+                                            style={{
+                                                display: isOpen ? 'block' : 'none',
+                                                marginLeft: isOpen ? '-5px' : '0px',
+                                                paddingTop: '5px',
+                                                marginBottom: '1px',
+                                                fontSize: '13px',
+                                                textAlign: 'center'
+                                            }}
+                                        >
+                                            Knowledge Graphs
+                                        </p>
+                                        <StyledLink
+                                            title="Open EU trade view"
+                                            to={{
+                                                pathname: reverse(ROUTES.EUROSTAT)
+                                            }}
+                                            onClick={() => {
+                                                selectModeOfOperation('eurostat');
+                                                onNavigate();
+                                            }}
+                                            activeStyle={isActiveTab === 'eurostat' ? ActiveStyle : {}}
+                                        >
+                                            <TimelineOutlined color="action" />
+                                            <StyledText>EU trade</StyledText>
+                                        </StyledLink>
+                                        <StyledLink
+                                            title="Open Bullwhip View"
+                                            to={{
+                                                pathname: reverse(ROUTES.EUROSTAT_BULLWHIP)
+                                            }}
+                                            onClick={() => {
+                                                selectModeOfOperation('bullwhip');
+                                                onNavigate();
+                                            }}
+                                            activeStyle={isActiveTab === 'bullwhip' ? ActiveStyle : {}}
+                                        >
+                                            <BarChartOutlined color="action" />
+                                            <StyledText>Bullwhip Effect</StyledText>
+                                        </StyledLink>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
                     <Divider />
@@ -402,10 +423,12 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         <ApprovalOutlined color="action" />
                         <StyledText>Imprint</StyledText>
                     </StyledLink>
-                    <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS} onClick={onNavigate}>
-                        <HandshakeOutlined color="action" />
-                        <StyledText>Partners</StyledText>
-                    </StyledLink>
+                    {features.partners && (
+                        <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS} onClick={onNavigate}>
+                            <HandshakeOutlined color="action" />
+                            <StyledText>Partners</StyledText>
+                        </StyledLink>
+                    )}
                 </div>
             </ListItem>
         </List>

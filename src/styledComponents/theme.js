@@ -1,4 +1,4 @@
-import materialTheme from './material-theme.json';
+import materialTheme from '@instance/material-theme.json';
 import makePalette from './makePalette';
 import { experimental_extendTheme } from '@mui/material/styles';
 

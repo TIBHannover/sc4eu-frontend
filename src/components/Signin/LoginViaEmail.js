@@ -26,6 +26,7 @@ import {
 } from '../../constants/services';
 import { fontStyled } from '../../styledComponents/styledFont';
 import { withTheme } from '@emotion/react';
+import instance from '@instance/config';
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
 
@@ -227,7 +228,7 @@ class LoginViaEmail extends Component {
                                             <div style={{ width: '90%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                                 {this.renderOAuthButton(URL_LOGIN_VIA_LINKEDIN, linkedinLogo, 'Continue with LinkedIn', theme)}
                                                 {this.renderOAuthButton(URL_LOGIN_VIA_GOOGLE, googleLogo, 'Continue with Google', theme)}
-                                                {this.renderOAuthButton(URL_LOGIN_VIA_SAP, sapLogo, 'Continue with SAP', theme)}
+                                                {instance.features.sapLogin && this.renderOAuthButton(URL_LOGIN_VIA_SAP, sapLogo, 'Continue with SAP', theme)}
                                                 <button
                                                     type="button"
                                                     onClick={() => this.setState(prev => ({ showMoreOptions: !prev.showMoreOptions }))}

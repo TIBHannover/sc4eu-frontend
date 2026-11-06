@@ -12,13 +12,14 @@ import VocabActivityWidgets from '../assets/images/Vocabulary/Activity Widgets.j
 import VocabAdminConsensus from '../assets/images/Vocabulary/Admin - initiate consensus.jpg';
 import VocabInfoHub from '../assets/images/Vocabulary/Information Hub.jpg';
 import VocabTermDetails from '../assets/images/Vocabulary/Term Details and Discussions.jpg';
-import VocabTermEdit from '../assets/images/Vocabulary/Term Edit.jpg';
+import VocabTermCreate from '../assets/images/Vocabulary/Term Create.jpg';
 import VocabTermOfTheWeek from '../assets/images/Vocabulary/Term of the Week.jpg';
 import VocabTimeline from '../assets/images/Vocabulary/Timeline.jpg';
 import VocabVoteView from '../assets/images/Vocabulary/Vote View.jpg';
 import { Page, PageTitle, PageContent, StyledTrainingLink, MobileTOC, LeftSidebar, RightSidebar, RootDiv } from 'styledComponents/styledComponents';
 import mediumZoom from 'medium-zoom';
 import { withTheme } from '@emotion/react';
+import instance from '@instance/config';
 
 const OCP_IDS = [
     'OCP - Using the Portal',
@@ -64,6 +65,16 @@ const INTRO_IDS = [
     'Establish Ontology'
 ];
 const OUTRO_IDS = ['Presentation Material', 'Scientific Publication'];
+
+// Which groups of the table of contents an instance shows, see documentationGroups in src/instances/*/config.js
+const { documentationGroups } = instance;
+const showGroup = group => documentationGroups.includes(group);
+const GROUP_IDS = {
+    intro: INTRO_IDS,
+    ocp: OCP_IDS,
+    vocabulary: [...VOCAB_INTRO_IDS, ...FOR_ALL_USERS_IDS, ...FOR_ADMINISTRATORS_IDS],
+    outro: OUTRO_IDS
+};
 
 const documentData = [
     {
@@ -474,7 +485,10 @@ const documentData = [
             '<li>Submit the term.</li>' +
             '</ol>' +
             '<b>Result:</b> The new term is added to the vocabulary process and can be discussed, edited, and later brought to a consensus vote.<br><br>' +
-            '<i><b>Best Practice:</b> Always review suggested terms before creating a new entry. Reuse an established term whenever it matches the intended meaning. This helps avoid duplicates and conflicting definitions.</i>'
+            '<i><b>Best Practice:</b> Always review suggested terms before creating a new entry. Reuse an established term whenever it matches the intended meaning. This helps avoid duplicates and conflicting definitions.</i>' +
+            '<img src="' +
+            VocabTermCreate +
+            '" alt="Term Edit Screenshot" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/>'
     },
     {
         id: 'Vocabulary (Users) - Term Edit',
@@ -497,10 +511,7 @@ const documentData = [
             '<li>Save the changes.</li>' +
             '</ol>' +
             '<b>Result:</b> The updated version is stored. The change is recorded in the Timeline, so users can review how the term has evolved over time.<br><br>' +
-            '<i><b>Important Note:</b> Terms cannot be edited while an active consensus vote is running. This ensures that all participants vote on the same version of the label, definition, and metadata. If changes are needed during a vote, an administrator must close or stop the active vote before the term can be revised.</i><br><br>' +
-            '<img src="' +
-            VocabTermEdit +
-            '" alt="Term Edit Screenshot" style="width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px; border: 1px solid black;"/>'
+            '<i><b>Important Note:</b> Terms cannot be edited while an active consensus vote is running. This ensures that all participants vote on the same version of the label, definition, and metadata. If changes are needed during a vote, an administrator must close or stop the active vote before the term can be revised.</i><br><br>'
     },
     {
         id: 'Vocabulary (Users) - Align Terms',
@@ -870,12 +881,14 @@ const documentData = [
     }
 ];
 
+const visibleSections = documentData.filter(section => documentationGroups.some(group => GROUP_IDS[group].includes(section.id)));
+
 class Training extends Component {
     constructor(props) {
         super(props);
 
         const hashId = window.location.hash.replace('#', '');
-        const initialSection = (hashId && documentData.find(d => d.id === hashId)) || null;
+        const initialSection = (hashId && visibleSections.find(d => d.id === hashId)) || null;
 
         this.state = {
             selectedSection: initialSection
@@ -918,8 +931,8 @@ class Training extends Component {
     renderDocument = () => {
         const { selectedSection } = this.state;
 
-        if (!selectedSection && documentData.length > 0) {
-            const firstSection = documentData[0];
+        if (!selectedSection && visibleSections.length > 0) {
+            const firstSection = visibleSections[0];
             this.setState({ selectedSection: firstSection });
             return (
                 <Page>
@@ -999,21 +1012,22 @@ class Training extends Component {
 
     renderTableOfContents = () => (
         <>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>{this.renderLinks(INTRO_IDS)}</ul>
+            {showGroup('intro') && <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>{this.renderLinks(INTRO_IDS)}</ul>}
 
-            {this.renderTopicAccordion('OCP – Ontology Curation Portal', OCP_IDS)}
+            {showGroup('ocp') && this.renderTopicAccordion('OCP – Ontology Curation Portal', OCP_IDS)}
 
-            {this.renderTopicAccordion('Vocabulary Development Support Service', null, {
-                children: (
-                    <>
-                        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>{this.renderLinks(VOCAB_INTRO_IDS)}</ul>
-                        {this.renderTopicAccordion('For All Users', FOR_ALL_USERS_IDS, { nested: true })}
-                        {this.renderTopicAccordion('For Administrators', FOR_ADMINISTRATORS_IDS, { nested: true })}
-                    </>
-                )
-            })}
+            {showGroup('vocabulary') &&
+                this.renderTopicAccordion('Vocabulary Development Support Service', null, {
+                    children: (
+                        <>
+                            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>{this.renderLinks(VOCAB_INTRO_IDS)}</ul>
+                            {this.renderTopicAccordion('For All Users', FOR_ALL_USERS_IDS, { nested: true })}
+                            {this.renderTopicAccordion('For Administrators', FOR_ADMINISTRATORS_IDS, { nested: true })}
+                        </>
+                    )
+                })}
 
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>{this.renderLinks(OUTRO_IDS)}</ul>
+            {showGroup('outro') && <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>{this.renderLinks(OUTRO_IDS)}</ul>}
         </>
     );
 
@@ -1034,15 +1048,19 @@ class Training extends Component {
                 this.setState({ selectedSection: section });
             }}
         >
-            {this.renderMobileOptions(INTRO_IDS)}
+            {showGroup('intro') && this.renderMobileOptions(INTRO_IDS)}
 
-            <optgroup label="OCP – Ontology Curation Portal">{this.renderMobileOptions(OCP_IDS)}</optgroup>
+            {showGroup('ocp') && <optgroup label="OCP – Ontology Curation Portal">{this.renderMobileOptions(OCP_IDS)}</optgroup>}
 
-            <optgroup label="Vocabulary Development Support Service">{this.renderMobileOptions(VOCAB_INTRO_IDS)}</optgroup>
-            <optgroup label="Vocabulary » For All Users">{this.renderMobileOptions(FOR_ALL_USERS_IDS)}</optgroup>
-            <optgroup label="Vocabulary » For Administrators">{this.renderMobileOptions(FOR_ADMINISTRATORS_IDS)}</optgroup>
+            {showGroup('vocabulary') && (
+                <>
+                    <optgroup label="Vocabulary Development Support Service">{this.renderMobileOptions(VOCAB_INTRO_IDS)}</optgroup>
+                    <optgroup label="Vocabulary » For All Users">{this.renderMobileOptions(FOR_ALL_USERS_IDS)}</optgroup>
+                    <optgroup label="Vocabulary » For Administrators">{this.renderMobileOptions(FOR_ADMINISTRATORS_IDS)}</optgroup>
+                </>
+            )}
 
-            {this.renderMobileOptions(OUTRO_IDS)}
+            {showGroup('outro') && this.renderMobileOptions(OUTRO_IDS)}
         </MobileTOC>
     );
 

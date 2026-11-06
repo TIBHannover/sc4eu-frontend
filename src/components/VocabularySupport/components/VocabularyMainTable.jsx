@@ -37,6 +37,10 @@ import AgreedTermsTable from './AgreedTermsTable';
 import ViewSwitcher, { VOCABULARY_VIEWS } from './ViewSwitcher';
 import { Info } from '@mui/icons-material';
 import { usePushNotifications } from 'hooks/usePushNotifications';
+import instance from '@instance/config';
+
+// Terms created within this many days are shown as "new" (differs per instance)
+const NEW_TERMS_INTERVAL = instance.newTermsDays;
 
 function isValidUrl(string) {
     try {
@@ -131,7 +135,6 @@ const VocabularyMainTable = ({
         )
     );
 
-    const NEW_TERMS_INTERVAL = 7;
     const newTerms = terms.filter(term => {
         const daysSinceCreated = differenceInDays(new Date(), new Date(term.created));
         return !Number.isNaN(daysSinceCreated) && daysSinceCreated <= NEW_TERMS_INTERVAL;

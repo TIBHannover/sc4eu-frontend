@@ -1,4 +1,10 @@
-module.exports = (emailContent, SenderName) => {
+import instance from '@instance/config';
+
+const { portalName } = instance;
+/** Address of this portal as the reader of the e-mail needs it, e.g. https://service.tib.eu/vocab/ */
+const portalUrl = () => `${window.location.origin}${process.env.REACT_APP_PUBLIC_URL}`;
+
+const roleUpdateRequestHtml = (emailContent, SenderName) => {
     return {
         body: `
        <!DOCTYPE html>
@@ -116,7 +122,7 @@ module.exports = (emailContent, SenderName) => {
                     <td align="left" bgcolor="#ffffff"
                         style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf;">
                         <h2 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">
-                            Request to change user role of SC3 Portal</h2>
+                            Request to change user role of ${portalName} Portal</h2>
                     </td>
                 </tr>
             </table>
@@ -128,7 +134,7 @@ module.exports = (emailContent, SenderName) => {
                 <tr>
                     <td align="left" bgcolor="#ffffff"
                         style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-                        <p style="margin: 0;">Hello System Admin of SC3 Portal,</p>
+                        <p style="margin: 0;">Hello System Admin of ${portalName} Portal,</p>
                         <p>${emailContent}</p>
                         <p style="margin: 0;">Best regards,<br> ${SenderName}</p>
                     </td>
@@ -139,7 +145,7 @@ module.exports = (emailContent, SenderName) => {
                         <p style="margin: 0;">Tips: </p>
                         <p style="margin: 0;">If you want to update Role of "${SenderName}" user, Please follow below steps:</p>
                         <ol>
-                          <li>Log in to the <a href="https://service.tib.eu/sc3/">SC3</a> platform using your credentials.</li>
+                          <li>Log in to the <a href="${portalUrl()}">${portalName}</a> platform using your credentials.</li>
                           <li>Click on your avatar located in the top-right corner of the screen.</li>
                           <li>Select "Dashboard" from the dropdown menu.</li>
                           <li>Click on the "Users" tab located in the left sidebar menu.</li>
@@ -160,7 +166,7 @@ module.exports = (emailContent, SenderName) => {
                 <tr>
                     <td align="center" bgcolor="#e9ecef"
                         style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                        <p style="margin: 0;">You received this email because you are System Admin  of the SC3 Portal.
+                        <p style="margin: 0;">You received this email because you are System Admin  of the ${portalName} Portal.
                             If you are not aware of it you can safely delete this email.</p>
                     </td>
                 </tr>
@@ -174,3 +180,5 @@ module.exports = (emailContent, SenderName) => {
         `
     };
 };
+
+export default roleUpdateRequestHtml;
