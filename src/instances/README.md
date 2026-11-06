@@ -1,8 +1,16 @@
 # Instances
 
 One folder per deployment of the portal (e.g. `default`, `vdst`). A folder holds only what differs from `default/`:
-`config.js` (feature switches, texts), `material-theme.json` (colours), and optionally pages or components to override
-(import them as `@instance/<file>`, see `rsbuild.config.mjs`).
+
+| File | Purpose |
+|---|---|
+| `config.js` | feature switches, texts, home-page logo (`home`) |
+| `material-theme.json` | colours |
+| `Home.js` | which home page the instance uses |
+| `public/` | files that replace those of the same name in `/public`: `favicon.ico`, `logo.png` (app icon), `manifest.json` (app name, used as the page `<title>` too). Only put the files that differ here. |
+
+Other pages or components can be overridden the same way: import them as `@instance/<file>` (see `rsbuild.config.mjs`).
+Keep `"start_url": "./"` in a `manifest.json`, so the installed app starts at the instance's own path.
 
 ## Settings
 

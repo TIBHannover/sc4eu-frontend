@@ -4,6 +4,27 @@ import { defineConfig, loadEnv } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
 import { pluginSass } from '@rsbuild/plugin-sass';
 
+const SHARED_PUBLIC_DIR = path.resolve('public');
+
+const publicDirsFor = (instanceDir) => {
+    const instancePublicDir = path.join(instanceDir, 'public');
+    if (!fs.existsSync(instancePublicDir)) {
+        return [{ name: SHARED_PUBLIC_DIR }];
+    }
+
+    const replacedFiles = fs.readdirSync(instancePublicDir).map(file => `**/${file}`);
+    const instanceFiles = { name: instancePublicDir };
+    const sharedFilesExceptReplaced = { name: SHARED_PUBLIC_DIR, ignore: replacedFiles };
+    return [instanceFiles, sharedFilesExceptReplaced];
+}
+
+/** Name of the app from the instance's manifest.json, or from the shared one. Used as the page <title>. */
+const resolveAppName = (instanceDir) => {
+    const instanceManifest = path.join(instanceDir, 'public', 'manifest.json');
+    const manifest = fs.existsSync(instanceManifest) ? instanceManifest : path.join(SHARED_PUBLIC_DIR, 'manifest.json');
+    return JSON.parse(fs.readFileSync(manifest, 'utf8')).name;
+}
+
 export default defineConfig(({ command }) => {
     const mode = command === 'dev' ? 'development' : 'production';
     process.env.NODE_ENV = mode;
@@ -42,12 +63,14 @@ export default defineConfig(({ command }) => {
         },
 
         html: {
-            template: './public/index.html'
+            template: './public/index.html',
+            templateParameters: { appName: resolveAppName(instanceDir) }
         },
 
         server: {
             base: BASE,
-            port: 3000
+            port: 3000,
+            publicDir: publicDirsFor(instanceDir)
         },
 
         output: {

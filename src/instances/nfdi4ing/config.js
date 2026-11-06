@@ -1,6 +1,6 @@
 import defaultConfig from '../default/config';
-import logo from './logo.svg';
-import logoDark from './logo-dark.svg';
+import logo from './public/logo.svg';
+import logoDark from './public/logo-dark.svg';
 
 /** Vocabulary Development Support Tool: only the vocabulary part of the portal. */
 const config = {
