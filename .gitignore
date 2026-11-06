@@ -15,3 +15,7 @@ build/
 .idea/
 
 public/env.js
+
+vocabulary/
+src/instances/*/.env
+src/instances/*/*.env

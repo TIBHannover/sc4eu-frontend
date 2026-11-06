@@ -1,3 +1,9 @@
+import instance from '@instance/config';
+
+const { portalName } = instance;
+/** Address of this portal as the reader of the e-mail needs it, e.g. https://service.tib.eu/vocab/ */
+const portalUrl = () => `${window.location.origin}${process.env.REACT_APP_PUBLIC_URL}`;
+
 function accessEmailHtml(projectName, emailContent, ProjectAdminName, SenderName, SenderEmail) {
     return {
         body: `
@@ -139,7 +145,7 @@ function accessEmailHtml(projectName, emailContent, ProjectAdminName, SenderName
                         <p style="margin: 0;">Tips: </p>
                         <p style="margin: 0;">If you want to give access of  "${projectName}"  project to ${SenderName}, Please follow below steps:</p>
                         <ol>
-                            <li>Log in to the <a href="https://service.tib.eu/sc3/">SC3</a> platform using your credentials.</li>
+                            <li>Log in to the <a href="${portalUrl()}">${portalName}</a> platform using your credentials.</li>
                             <li>Click on your avatar located in the top-right corner of the screen.</li>
                             <li>Select "Dashboard" from the dropdown menu.</li>
                             <li>Click on the "Projects" tab located in the left sidebar menu.</li>
@@ -160,7 +166,7 @@ function accessEmailHtml(projectName, emailContent, ProjectAdminName, SenderName
                 <tr>
                     <td align="center" bgcolor="#e9ecef"
                         style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                        <p style="margin: 0;">You received this email because you are project admin of  "${projectName}"  on SC3 Portal
+                        <p style="margin: 0;">You received this email because you are project admin of  "${projectName}"  on ${portalName} Portal
                             If you are not aware of it you can safely delete this email.</p>
                     </td>
                 </tr>
@@ -175,4 +181,4 @@ function accessEmailHtml(projectName, emailContent, ProjectAdminName, SenderName
     };
 }
 
-module.exports = accessEmailHtml;
+export default accessEmailHtml;

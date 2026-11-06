@@ -3,6 +3,7 @@
         "checkJs": true,
         "resolveJsonModule": true,
         "baseUrl": "src",
+        "paths": { "@instance/*": ["instances/default/*"] },
         "jsx": "react"
     },
     "include": ["src", "public/service-worker.js"]

@@ -16,11 +16,14 @@ RUN --mount=type=cache,target=/root/.npm \
 
 FROM client-deps AS client-build
 ENV GENERATE_SOURCEMAP=false
+# Passed by docker compose (build.args.INSTANCE). Selects src/instances/<INSTANCE>/ and uses its .env for the build.
+# Without it (plain docker build) the repository's own ./.env is used.
+ARG INSTANCE
 
 COPY rsbuild.config.mjs .env* ./
 COPY public ./public
 COPY src ./src
-RUN npm run build
+RUN if [ -n "$INSTANCE" ]; then cp "src/instances/$INSTANCE/.env" .env && export REACT_APP_INSTANCE="$INSTANCE"; fi && npm run build
 
 FROM node:${NODE_VERSION}-slim
 LABEL maintainer="Mark Vanin <mark.vanin@tib.eu>"

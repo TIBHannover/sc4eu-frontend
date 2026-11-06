@@ -1,4 +1,4 @@
-import { PUBLIC_APP_URL } from '../config.js';
+import { PORTAL_NAME, PUBLIC_APP_URL } from '../config.js';
 
 export default function emailVerificationHtml(callbackURL, displayName) {
     return {
@@ -124,8 +124,8 @@ export default function emailVerificationHtml(callbackURL, displayName) {
 
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-              <p style="margin: 0;">Hello ${displayName}, Thank you for registering on SC4EU platform.</p>
-              <p>Click the button below to confirm your email address. If you didn't create an account with <a href="${PUBLIC_APP_URL}">SC4</a>, you can safely delete this email.</p>
+              <p style="margin: 0;">Hello ${displayName}, Thank you for registering on ${PORTAL_NAME} platform.</p>
+              <p>Click the button below to confirm your email address. If you didn't create an account with <a href="${PUBLIC_APP_URL}">${PORTAL_NAME}</a>, you can safely delete this email.</p>
             </td>
           </tr>
           <tr>
@@ -147,7 +147,7 @@ export default function emailVerificationHtml(callbackURL, displayName) {
           </tr>
           <tr>
             <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-              <p style="margin: 0;">Cheers,<br> SC4 Team</p>
+              <p style="margin: 0;">Cheers,<br> ${PORTAL_NAME} Team</p>
             </td>
           </tr>
 
