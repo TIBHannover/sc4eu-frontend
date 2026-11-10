@@ -679,8 +679,7 @@ function CommentNode({
 
 const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion }) => {
     const theme = useTheme();
-
-    const userDisplayName = user?.['displayName'];
+    const userId = user?.['userId'];
     const [replyingId, setReplyingId] = useState(null);
     const [comments, setComments] = useState(termComments);
 
@@ -733,12 +732,12 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const commitQueueRef = useRef(Promise.resolve());
 
     const persist = useCallback(
-        (updatedComments, comment) => {
+        (updatedComments, commitMessage) => {
             const run = () =>
                 trackDiscussionWrite(async () => {
                     await handleSaveDiscussion({ resourceId, comments: updatedComments });
                     setComments(updatedComments);
-                    await commitDiscussionOnly(queryClient, comment, resourceId);
+                    await commitDiscussionOnly(queryClient, commitMessage);
                 });
 
             const result = commitQueueRef.current.then(run, run);
@@ -750,13 +749,13 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         [handleSaveDiscussion, resourceId, queryClient]
     );
 
-    const addComment = async (author, content, mentionedUsers, parentId = null) => {
+    const addComment = async (author_uuid, content, mentionedUsers, parentId = null) => {
         const newComment = {
             id: Math.random()
                 .toString(36)
                 .substring(2, 11),
             parentId,
-            author,
+            author_uuid,
             content,
             timestamp: new Date().toISOString(),
             mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined,
@@ -765,7 +764,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         };
 
         const updatedComments = [...comments, newComment];
-        await persist(updatedComments, newComment);
+        await persist(updatedComments, `Add comment by ${author_uuid} on term ${resourceId}`);
         if (newComment.mentionedUsers !== undefined) {
             await notifyNewComment(resourceId, newComment.mentionedUsers);
         }
@@ -773,30 +772,30 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
 
     const handleTopLevelSubmit = () => {
         if (!topLevelMention.text.trim()) return;
-        addComment(userDisplayName, topLevelMention.text, topLevelMention.mentionedUsers, null);
+        addComment(userId, topLevelMention.text, topLevelMention.mentionedUsers, null);
         topLevelMention.reset();
     };
 
     const handleReply = (parentId, text, mentionedUsers) => {
-        addComment(userDisplayName, text, mentionedUsers, parentId);
+        addComment(userId, text, mentionedUsers, parentId);
     };
 
     const handleVote = async (commentId, direction) => {
         const updatedComments = comments.map(c => {
             if (c.id !== commentId) return c;
 
-            const upvotes = (c.upvotes ?? []).filter(u => u !== userDisplayName);
-            const downvotes = (c.downvotes ?? []).filter(u => u !== userDisplayName);
-            const previous = getVoteState(c, userDisplayName).userVote;
+            const upvotes = (c.upvotes ?? []).filter(u => u !== userId);
+            const downvotes = (c.downvotes ?? []).filter(u => u !== userId);
+            const previous = getVoteState(c, userId).userVote;
 
             // clicking the same direction again removes the vote
             if (previous !== direction) {
-                (direction === 'up' ? upvotes : downvotes).push(userDisplayName);
+                (direction === 'up' ? upvotes : downvotes).push(userId);
             }
 
             return { ...c, upvotes, downvotes };
         });
-        await persist(updatedComments);
+        await persist(updatedComments, `${direction === 'up' ? 'Upvote' : 'Downvote'} comment ${commentId} by ${userId} on term ${resourceId}`);
     };
 
     const handleReact = (commentId, code) => {
@@ -805,16 +804,16 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             const reactions = { ...c.reactions };
             // remove user from all codes first (one reaction per user per comment)
             for (const key of Object.keys(reactions)) {
-                reactions[key] = reactions[key].filter(u => u !== userDisplayName);
+                reactions[key] = reactions[key].filter(u => u !== userId);
             }
             // toggle: only add if user was not already on this code
-            const wasReacted = (c.reactions?.[code] ?? []).includes(userDisplayName);
+            const wasReacted = (c.reactions?.[code] ?? []).includes(userId);
             if (!wasReacted) {
-                reactions[code] = [...(reactions[code] ?? []), userDisplayName];
+                reactions[code] = [...(reactions[code] ?? []), userId];
             }
             return { ...c, reactions };
         });
-        persist(updatedComments);
+        persist(updatedComments, `React to comment ${commentId} by ${userId} on term ${resourceId}`);
     };
 
     const handleStatusChange = (commentId, value) => {
@@ -825,7 +824,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             }
             return { ...comment, status: value };
         });
-        persist(updatedComments);
+        persist(updatedComments, `Change status of comment ${commentId} by ${userId} on term ${resourceId}`);
     };
 
     return (
@@ -872,7 +871,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                         onVote={handleVote}
                         onReact={handleReact}
                         onStatusChange={handleStatusChange}
-                        currentUser={userDisplayName}
+                        currentUser={userId}
                         collapsedIds={collapsedIds}
                         toggleCollapsed={toggleCollapsed}
                         replyingId={replyingId}
