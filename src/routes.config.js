@@ -12,7 +12,7 @@ import ROUTES from './constants/routes';
 import OntologyIndexing from './pages/OntologyIndexing';
 import ViewOntology from './pages/ViewOntology';
 import Documentation from './pages/Documentation';
-import Dataprotections from './pages/Dataprotections';
+import DataPolicy from './pages/DataPolicy';
 import Imprint from './pages/Imprint';
 import Partners from './pages/Partners';
 import vocabulary_support from './pages/vocabulary_support';
@@ -25,6 +25,9 @@ import { EurostatPortal } from './components/eurostat/EutostatPortal';
 import { BullWhipEffect } from './components/eurostat/BullWhipEffect';
 import AnnotatorPage from './pages/AnnotatorPage';
 import { MpcSurvey } from 'components/mpc-visualisation/MpcSurvey';
+import TermsOfUse from 'pages/TermsOfUse';
+import Accessibility from 'pages/Accessibility';
+import License from 'pages/License';
 
 const routes = [
     {
@@ -121,14 +124,29 @@ const routes = [
         component: Documentation
     },
     {
-        path: ROUTES.Dataprotections,
+        path: ROUTES.DATA_POLICY,
         exact: true,
-        component: Dataprotections
+        component: DataPolicy
     },
     {
         path: ROUTES.Imprint,
         exact: true,
         component: Imprint
+    },
+    {
+        path: ROUTES.ACCESSABILITY_STATEMENT,
+        exact: true,
+        component: Accessibility
+    },
+    {
+        path: ROUTES.TERMS_OF_USE,
+        exact: true,
+        component: TermsOfUse
+    },
+    {
+        path: ROUTES.LICENSE,
+        exact: true,
+        component: License
     },
     {
         path: ROUTES.PARTNERS,

@@ -7,7 +7,6 @@ import { Box, Typography, Button, Link } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
-import Footer from '../Layout/Footer';
 import IntroductoryPopUp from '../components/IntroductoryPopUp';
 import GoogleSurvey from '../components/GoogleSurvey';
 import ROUTES from '../constants/routes';
@@ -238,7 +237,6 @@ class VocabularyHome extends Component {
                 <Box sx={{ position: 'fixed', bottom: '5rem', right: 0, display: { xs: 'none', md: 'block' } }}>
                     <GoogleSurvey />
                 </Box>
-                <Footer />
             </Box>
         );
     }

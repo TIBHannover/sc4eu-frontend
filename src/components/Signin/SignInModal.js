@@ -7,11 +7,13 @@ import { TransitionGroup } from 'react-transition-group';
 import LoginViaEmail from './LoginViaEmail';
 import { AnimationContainer } from 'styledComponents/styledComponents';
 import { withTheme } from '@emotion/react';
+import { AUTH_MODAL_Z_INDEX } from 'constants/globalConstants';
+
 class SignInModal extends Component {
     render() {
         const { theme } = this.props;
         return (
-            <Modal isOpen={this.props.dialogIsOpen} toggle={this.props.toggleAuthDialog}>
+            <Modal isOpen={this.props.dialogIsOpen} toggle={this.props.toggleAuthDialog} zIndex={AUTH_MODAL_Z_INDEX}>
                 <div style={{ backgroundColor: theme.palette.background.paper }}>
                     <TransitionGroup exit={false}>
                         {this.props.action === 'signin' && (

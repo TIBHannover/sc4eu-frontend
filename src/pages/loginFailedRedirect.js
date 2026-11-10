@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Footer from '../Layout/Footer';
 import { withTheme } from '@emotion/react';
 class LoginFailedRedirect extends Component {
     render() {
@@ -17,7 +16,6 @@ class LoginFailedRedirect extends Component {
                 >
                     <p style={{ paddingTop: '40px' }}>Something Went wrong please try again after some time</p>
                 </div>
-                <Footer />
             </div>
         );
     }

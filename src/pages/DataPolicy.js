@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { withTheme } from '@emotion/react';
 import { StyledDataProtectionDiv, StyledDataProtectionText } from 'styledComponents/styledComponents';
-class Dataprotections extends Component {
+class DataPolicy extends Component {
     render() {
         const { theme } = this.props;
         return (
             <StyledDataProtectionDiv>
-                <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '1%', color: theme.palette.text.secondary }}>
+                <h3 style={{ textAlign: 'center', paddingBottom: '2%', paddingTop: '1%', color: theme.palette.text.secondary, fontWeight: 'bold' }}>
                     Privacy Statement{' '}
                 </h3>
                 <StyledDataProtectionText>
@@ -21,8 +21,19 @@ class Dataprotections extends Component {
                     and purpose of the personal data we collect, use and process, as well as of the rights data subjects are entitled to.
                     <br />
                     The terms used in this privacy statement are to be understood within the meaning of the European General Data Protection General
-                    Data Protection Regulation (GDPR).
+                    Data{' '}
+                    <a href="https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX%3A32016R0679" style={{ color: theme.palette.primary.main }}>
+                        Protection Regulation (GDPR)
+                    </a>{' '}
+                    .
                 </StyledDataProtectionText>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Name and address of the controller</h5>
+                <a
+                    href={`${process.env.REACT_APP_PUBLIC_URL}${encodeURIComponent('VDST_Info_Sheet.pdf')}`}
+                    style={{ color: theme.palette.primary.main }}
+                >
+                    View our data protection info sheet.
+                </a>
                 <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Name and address of the controller</h5>
                 <StyledDataProtectionText>
                     The controller under data protection law shall be:
@@ -57,7 +68,7 @@ class Dataprotections extends Component {
                     <br />
                     Email : &nbsp;
                     <a href="mailto:datenschutz@tib.eu" style={{ color: theme.palette.primary.main }}>
-                        datenschutz(AT)tib.eu
+                        datenschutz@tib.eu
                     </a>
                     <br />
                 </StyledDataProtectionText>
@@ -101,7 +112,7 @@ class Dataprotections extends Component {
                     address) is processed in accordance with the privacy policy of the respective provider.
                     <br />
                     The legal basis for the collection of such data shall be the{' '}
-                    <a href="https://www.tib.eu/en/terms-of-use" style={{ color: theme.palette.primary.main}} target="_blank" rel="noreferrer">
+                    <a href="https://www.tib.eu/en/terms-of-use" style={{ color: theme.palette.primary.main }} target="_blank" rel="noreferrer">
                         Terms of use of the TIB
                     </a>
                     , the special conditions applicable to this service, or the consent given by the user.
@@ -114,7 +125,7 @@ class Dataprotections extends Component {
                     wish to be made public. Data on GitHub is processed in accordance with the{' '}
                     <a
                         href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
-                        style={{ color: theme.palette.primary.main}}
+                        style={{ color: theme.palette.primary.main }}
                         target="_blank"
                         rel="noreferrer"
                     >
@@ -137,8 +148,7 @@ class Dataprotections extends Component {
                     in the Internet browser used, the TIB web pages may not function properly.
                     <br />
                 </StyledDataProtectionText>
-
-                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Use of web analysis tools (Matomo plugin)</h5>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Matomo-Opt-Out</h5>
                 <StyledDataProtectionText>
                     This website uses the open source web analytics software Matomo (matomo.org) to analyse usage data in order to optimise its online
                     offer. TIB self-hosts Matomo and no data is shared with third parties. Cookies are used to enable a statistical analysis of the
@@ -148,16 +158,25 @@ class Dataprotections extends Component {
                     below: an opt-out cookie is placed in your browser, which prevents Matomo from storing usage data. When cookies are deleted, the
                     opt-out cookie is also deleted and the opt-out must be declared again on your next visit.
                 </StyledDataProtectionText>
-                <div>
-                    <iframe
-                        title="data policy"
-                        src="https://support.tib.eu/piwik/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=en&amp;backgroundColor=&amp;fontColor=&amp;fontSize=&amp;fontFamily=sans-serif"
-                        style={{ border: 0, height: '250px', width: '100%', color: theme.palette.text.secondary, textAlign: 'justify' }}
-                    />
-                </div>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Routine deletion and blocking of personal data</h5>
+                <StyledDataProtectionText>
+                    The TIB processes and stores the data subject’s personal data only for the period necessary to achieve the purpose of such storage
+                    and in accordance with the General Data Protection Regulation and the country and institution-specific data protection regulations
+                    applicable to the TIB. Thereafter, the personal data will routinely be blocked or deleted in accordance with the statutory
+                    provisions. If the user no longer wishes to use the services of the TIB and in the absence of any claims of the TIB against the
+                    user and of any other legal basis for storage, we shall delete the personal data upon request.
+                </StyledDataProtectionText>
+                <h5 style={{ color: theme.palette.text.secondary, fontWeight: 'bold' }}>Rights of the data subject</h5>
+                <StyledDataProtectionText>
+                    You shall at any time be entitled to obtain information about the data stored in this service, its origin and recipient and about
+                    the purpose of such data processing, as well as to rectification or erasure or restriction of processing or – to the extent that
+                    such processing is based on your consent – a right of withdrawal, possibly a right of objection and the right to data portability.
+                    Complaints may be lodged with the above-mentioned supervisory authority. You can contact us at any time for further questions on
+                    the subject of personal data.{' '}
+                </StyledDataProtectionText>
             </StyledDataProtectionDiv>
         );
     }
 }
 
-export default withTheme(Dataprotections);
+export default withTheme(DataPolicy);
