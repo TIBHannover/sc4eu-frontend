@@ -103,7 +103,7 @@ const VocabularyMainTable = ({
     const baseBackgroundColor = theme.palette.surface.containerLow;
 
     const cookieMentionedCommentsCount = Number(Cookies.get('mentionedCommentsCount') || 0);
-    const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.displayName);
+    const mentionedCommentsLength = getMentionedCommentsLength(discussions, currentUser.userId);
     const isMobileScreen = useMediaQuery(`(max-width:${LARGE_SCREEN_SIZE})`);
 
     const [density, setDensity] = useState(isMobileScreen ? 'comfortable' : 'compact');
@@ -113,7 +113,7 @@ const VocabularyMainTable = ({
     const { data: votesMap = [], isLoading: isLoadingVotes } = useQuery(VOTES_QUERY_KEY, getVotes);
     const [deepLinkNotification, setDeepLinkNotification] = useState(null);
 
-    const { notifyTermUpdate } = usePushNotifications(currentUser.displayName);
+    const { notifyTermUpdate } = usePushNotifications(currentUser.userId);
 
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -124,14 +124,14 @@ const VocabularyMainTable = ({
     const agreedTerms = useMemo(() => terms.filter(term => term.status === 'accept'), [terms]);
     
     const urgentTerms = terms.filter(term =>
-        votesMap.some(vote => vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_name === currentUser.displayName))
+        votesMap.some(vote => vote.term_uuid === term.identifier && !vote.decisions?.some(decision => decision.user_uuid === currentUser.userId))
     );
     const discussionReplies = terms.filter(term =>
         discussions.some(
             discussion =>
                 discussion.comments.length !== 0 &&
                 term.identifier === discussion.resourceId &&
-                hasPendingMentionReply(discussion, currentUser.displayName)
+                hasPendingMentionReply(discussion, currentUser.userId)
         )
     );
 
@@ -1084,7 +1084,8 @@ const VocabularyMainTable = ({
                     <InformationHub
                         terms={terms}
                         discussions={discussions}
-                        mentionedUser={currentUser.displayName}
+                        mentionedUser={currentUser.userId}
+                        username={currentUser.displayName}
                         onTermSelect={handleNavigateToMentionedTerm}
                         onConsensusSelect={handleWidgetUrgentTermClick}
                     />

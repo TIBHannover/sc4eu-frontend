@@ -37,6 +37,7 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import UserAvatar from '../../ReusableComponents/UserAvatar';
 import CommentEditor, { CommentContent, getShortcutFormat } from './CommentEditor';
 import { applyCommentFormat } from '../utils/CommentMarkdown';
+import { serializeMentions, getUserName } from '../utils/CommentMentions';
 
 const INDENT_PX = 14;
 
@@ -98,10 +99,6 @@ function buildTree(flatComments) {
     return roots;
 }
 
-// Votes are stored as lists of display names (`upvotes` / `downvotes`) so the
-// two counts stay separate and each user's own vote is tracked individually.
-// Legacy comments only have a net `votes` number; it is shown as extra
-// up (if positive) or down (if negative) counts since it can't be split.
 function getVoteState(comment, currentUser) {
     const upvoters = comment.upvotes ?? [];
     const downvoters = comment.downvotes ?? [];
@@ -125,7 +122,7 @@ function countDescendants(node) {
 
 function useMentionInput(users) {
     const [text, setText] = useState('');
-    const [mentionedUsers, setMentionedUsers] = useState([]);
+    const [mentions, setMentions] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [mentionSearch, setMentionSearch] = useState('');
     const [cursorPosition, setCursorPosition] = useState(null);
@@ -162,7 +159,7 @@ function useMentionInput(users) {
 
     const handleMentionSelect = useCallback(
         selectedUser => {
-            if (!selectedUser?.display_name) {
+            if (!selectedUser?.uuid || !selectedUser.display_name) {
                 console.error('Invalid user selected:', selectedUser);
                 return;
             }
@@ -173,7 +170,9 @@ function useMentionInput(users) {
                 return `${textBeforeMention}@${selectedUser.display_name}${textAfterMention} `;
             });
 
-            setMentionedUsers(prev => (prev.includes(selectedUser.display_name) ? prev : [...prev, selectedUser.display_name]));
+            setMentions(prev =>
+                prev.some(m => m.uuid === selectedUser.uuid) ? prev : [...prev, { uuid: selectedUser.uuid, display_name: selectedUser.display_name }]
+            );
             setAnchorEl(null);
         },
         [cursorPosition, mentionSearch]
@@ -220,15 +219,18 @@ function useMentionInput(users) {
 
     const reset = useCallback(() => {
         setText('');
-        setMentionedUsers([]);
+        setMentions([]);
         setAnchorEl(null);
         setExpanded(false);
     }, []);
 
+    // text as it is stored: `@Name` -> `@{uuid}`, plus the uuids still mentioned in it
+    const serialize = useCallback(() => serializeMentions(text, mentions), [text, mentions]);
+
     return {
         text,
         setText,
-        mentionedUsers,
+        serialize,
         anchorEl,
         filteredUsers,
         fieldRef,
@@ -346,7 +348,7 @@ function ReactionPicker({ commentId, onReact, open, onOpen, onClose, visible }) 
     );
 }
 
-function ReactionChip({ code, users, currentUser, onRemove }) {
+function ReactionChip({ code, users, userDirectory, currentUser, onRemove }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const entry = COMMENT_EMOJI_SET.find(e => e.code === code);
     const isActive = users.includes(currentUser);
@@ -382,7 +384,7 @@ function ReactionChip({ code, users, currentUser, onRemove }) {
                     </Typography>
                     {users.map(user => (
                         <Typography key={user} variant="caption" display="block">
-                            {user}
+                            {getUserName(userDirectory, user, user)}
                         </Typography>
                     ))}
                 </Paper>
@@ -421,7 +423,8 @@ function ReplyComposer({ users, isMobile, replyTo, onSubmit, onCancel }) {
 
     const handleSubmit = () => {
         if (!mention.text.trim()) return;
-        onSubmit(mention.text, mention.mentionedUsers);
+        const { content, mentionedUsers } = mention.serialize();
+        onSubmit(content, mentionedUsers);
         mention.reset();
     };
 
@@ -490,7 +493,8 @@ function CommentNode({
 
     const authorDateStyle = { display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' };
 
-    const authorId = users.find(u => u.display_name === node.author)?.uuid || node.author;
+    const authorId = node.author_uuid ?? node.author;
+    const authorName = node.author_uuid ? getUserName(users, node.author_uuid) : node.author;
 
     const voteState = getVoteState(node, currentUser);
 
@@ -557,7 +561,7 @@ function CommentNode({
                     <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
                         <div style={authorDateStyle}>
                             <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                                {node.author}
+                                {authorName}
                             </Typography>
                             {isMobile && <UserAvatar identifier={authorId} />}
                             <Typography variant="body1" color="textSecondary">
@@ -566,7 +570,7 @@ function CommentNode({
                             {hasStatus && <Tooltip title={STATUS_TOOLTIP[node.status]}>{STATUS_ICON[node.status]}</Tooltip>}
                         </div>
 
-                        <CommentContent content={node.content} gutterBottom />
+                        <CommentContent content={node.content} users={users} gutterBottom />
 
                         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: -0.5, flexWrap: 'wrap' }}>
                             <Button
@@ -595,6 +599,7 @@ function CommentNode({
                                         key={code}
                                         code={code}
                                         users={reactors}
+                                        userDirectory={users}
                                         currentUser={currentUser}
                                         onRemove={() => onReact(node.id, code)}
                                     />
@@ -638,7 +643,7 @@ function CommentNode({
                 <ReplyComposer
                     users={users}
                     isMobile={isMobile}
-                    replyTo={node.author}
+                    replyTo={authorName}
                     onCancel={() => setReplyingId(null)}
                     onSubmit={(text, mentionedUsers) => {
                         onReply(node.id, text, mentionedUsers);
@@ -692,7 +697,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const topLevelMention = useMentionInput(users);
     const textFieldRef = topLevelMention.fieldRef;
 
-    const { notifyNewComment } = usePushNotifications(user.displayName);
+    const { notifyNewComment } = usePushNotifications(userId);
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
@@ -771,7 +776,8 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
 
     const handleTopLevelSubmit = () => {
         if (!topLevelMention.text.trim()) return;
-        addComment(userId, topLevelMention.text, topLevelMention.mentionedUsers, null);
+        const { content, mentionedUsers } = topLevelMention.serialize();
+        addComment(userId, content, mentionedUsers, null);
         topLevelMention.reset();
     };
 

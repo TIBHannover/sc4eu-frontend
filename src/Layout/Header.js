@@ -13,6 +13,7 @@ import SignInModal from '../components/Signin/SignInModal';
 import { SettingsOutlined, LogoutOutlined, AccountCircleOutlined, DashboardCustomizeOutlined } from '@mui/icons-material';
 import { NotificationToggle } from '../components/ReusableComponents/NotificationToggle';
 import { NotificationManager } from '../utils/NotificationManager';
+import LinkedInConsentBanner from '../components/ReusableComponents/LinkedInConsentBanner';
 import { ThemeToggle } from 'components/ReusableComponents/ThemeToggle';
 import {
     StyledHeaderRootDiv,
@@ -117,14 +118,14 @@ class Header extends Component {
 
         return (
             <StyledHeaderRootDiv>
-                {this.props.user?.displayName && <NotificationManager user={this.props.user.displayName} />}
+                {this.props.user?.userId && <NotificationManager user={this.props.user.userId} />}
                 <StyledHeaderDiv>
                     <StyledRightSideDiv>
                         {this.props.user?.userId && <LinkedInConsentBanner userId={this.props.user.userId} />}
                         <ThemeToggle />
                         {this.props.user.gravatarId ? (
                             <>
-                                <NotificationToggle user={this.props.user.displayName} />
+                                <NotificationToggle user={this.props.user.userId} />
                                 <UserAvatar identifier={this.props.user.userId} className="rounded-circle" size={35} id="TooltipExample" />
 
                                 <StyledAuthTooltip

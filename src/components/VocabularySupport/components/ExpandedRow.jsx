@@ -58,7 +58,7 @@ const ExpandedRow = ({ term, currentUser, updateTerm, editMode, termComments, ha
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
-    const { notifyTermUpdate } = usePushNotifications(currentUser.displayName);
+    const { notifyTermUpdate } = usePushNotifications(currentUser.userId);
 
     const handleSetVoteViewMode = isOpen => {
         setViewAgreementMode(isOpen);

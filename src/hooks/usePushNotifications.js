@@ -86,7 +86,7 @@ export function usePushNotifications(user) {
             headers: withAuthHeader({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 ...sub.toJSON(),
-                username: user
+                user_uuid: user
             })
         });
         return sub;
@@ -136,7 +136,7 @@ export function usePushNotifications(user) {
             body: JSON.stringify({
                 title: 'New comment has been added to a discussion. Check it out!',
                 term_uuid: resourceId,
-                mentioned_user_names: mentionedUsers
+                mentioned_user_uuids: mentionedUsers
             })
         });
     };

@@ -40,6 +40,7 @@ import DecisionBadgeAvatar from '../../ReusableComponents/DecisionBadgeAvatar';
 import TermOfTheWeekPopup from './TermOfTheWeekPopUp';
 import { getAllUsers } from 'network/UserProfileCalls';
 import { CommentContent } from './CommentEditor';
+import { deserializeMentions, getCommentAuthorName } from '../utils/CommentMentions';
 
 const SORT_BY_OPTIONS = Object.freeze({
     RECENT_UPDATE: 'recent_update',
@@ -53,7 +54,7 @@ const SORT_BY_OPTIONS = Object.freeze({
 const MAX_VISIBLE_VOTE_AVATARS = 7;
 const MAX_COMMENT_PREVIEW_LINES = 3;
 
-const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onConsensusSelect }) => {
+const InformationHub = ({ terms, discussions, mentionedUser, username, onTermSelect, onConsensusSelect }) => {
     const theme = useTheme();
 
     const [searchText, setSearchText] = useState('');
@@ -142,9 +143,9 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onCon
             const votes = votesMap.filter(vote => vote.term_uuid === term.identifier);
             const decisions = votes.flatMap(vote => vote.decisions);
             const hasVote = votes.length > 0;
-            const userDecision = decisions.find(decision => decision.user_name === mentionedUser);
+            const userDecision = decisions.find(decision => decision.user_uuid === mentionedUser);
             const hasUserVoted = Boolean(userDecision && userDecision.choice !== null);
-            const otherDecisions = decisions.filter(decision => decision.user_name !== mentionedUser);
+            const otherDecisions = decisions.filter(decision => decision.user_uuid !== mentionedUser);
 
             return {
                 ...term,
@@ -195,7 +196,11 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onCon
             term =>
                 term.label.toLowerCase().includes(lower) ||
                 term.description?.toLowerCase().includes(lower) ||
-                term.comments.some(c => c.content.toLowerCase().includes(lower) || c.author.toLowerCase().includes(lower))
+                term.comments.some(
+                    c =>
+                        deserializeMentions(c.content, users).toLowerCase().includes(lower) ||
+                        getCommentAuthorName(c, users).toLowerCase().includes(lower)
+                )
         );
     };
 
@@ -301,7 +306,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onCon
 
                             {term.hasVote && (
                                 <>
-                                    <ConsensusProgress term={term} username={mentionedUser} />
+                                    <ConsensusProgress term={term} />
                                     {term.hasUserVoted && (
                                         <Tooltip title="This is you">
                                             <Box
@@ -390,7 +395,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onCon
                                 </Typography>
                             </Box>
                             {lastComment ? (
-                                <CommentContent content={lastComment.content} gutterBottom maxLines={MAX_COMMENT_PREVIEW_LINES} />
+                                <CommentContent content={lastComment.content} users={users} gutterBottom maxLines={MAX_COMMENT_PREVIEW_LINES} />
                             ) : (
                                 <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.disabled' }}>
                                     No comments available
@@ -455,7 +460,7 @@ const InformationHub = ({ terms, discussions, mentionedUser, onTermSelect, onCon
                 <TermOfTheWeekPopup
                     term={termOfWeek}
                     open={showWeekTerm}
-                    username={mentionedUser}
+                    username={username}
                     onLoading={weekTermLoading}
                     onClose={() => {
                         setShowWeekTerm(false);
@@ -606,6 +611,7 @@ InformationHub.propTypes = {
         })
     ).isRequired,
     mentionedUser: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
     onTermSelect: PropTypes.func.isRequired,
     onConsensusSelect: PropTypes.func.isRequired
 };

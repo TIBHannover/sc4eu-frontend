@@ -12,6 +12,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 import { renderCommentMarkdown } from '../utils/CommentMarkdown';
+import { deserializeMentions } from '../utils/CommentMentions';
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 const MOD_KEY = isMac ? '⌘' : 'Ctrl';
@@ -68,8 +69,8 @@ const CONTENT_LINE_HEIGHT = 1.5;
  * `maxLines` clips long comments to roughly that many lines (formatting stays intact)
  * and fades out the last line when something was cut off.
  */
-export function CommentContent({ content, gutterBottom, maxLines }) {
-    const html = useMemo(() => renderCommentMarkdown(content), [content]);
+export function CommentContent({ content, gutterBottom, maxLines, users }) {
+    const html = useMemo(() => renderCommentMarkdown(deserializeMentions(content, users)), [content, users]);
     const ref = useRef(null);
     const [isClipped, setIsClipped] = useState(false);
 
@@ -105,7 +106,8 @@ export function CommentContent({ content, gutterBottom, maxLines }) {
 CommentContent.propTypes = {
     content: PropTypes.string,
     gutterBottom: PropTypes.bool,
-    maxLines: PropTypes.number
+    maxLines: PropTypes.number,
+    users: PropTypes.array
 };
 
 function ToolbarButton({ label, onClick, disabled, active, children }) {
