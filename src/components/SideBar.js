@@ -415,14 +415,6 @@ const SideBar = ({ isOpen, onNavigate, user }) => {
                         <StyledText>Documentation</StyledText>
                     </StyledLink>
                     <Divider />
-                    <StyledLink title="Open Data Policy" activeStyle={ActiveStyle} to={ROUTES.Dataprotections} onClick={onNavigate}>
-                        <PrivacyTipOutlined color="action" />
-                        <StyledText>Data Policy</StyledText>
-                    </StyledLink>
-                    <StyledLink title="Open Imprint" activeStyle={ActiveStyle} to={ROUTES.Imprint} onClick={onNavigate}>
-                        <ApprovalOutlined color="action" />
-                        <StyledText>Imprint</StyledText>
-                    </StyledLink>
                     {features.partners && (
                         <StyledLink title="Open Partners" activeStyle={ActiveStyle} to={ROUTES.PARTNERS} onClick={onNavigate}>
                             <HandshakeOutlined color="action" />

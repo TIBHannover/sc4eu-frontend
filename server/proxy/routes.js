@@ -46,7 +46,7 @@ export const proxyRoutes = [
     },
     {
         method: 'PUT', path: '/user/updateSettings', target: 'backend', to: '/users/viewProfile/', upstreamMethod: 'POST',
-        identity: 'userId+token', body: req => ({ username: req.body.username }), auth: 'login', response: 'envelope',
+        identity: 'userId+token', body: req => ({ username: req.body.username, linkedin_publication_consent: req.body.linkedin_publication_consent }), auth: 'login', response: 'envelope',
         errors: { ...networkErrors(NETWORK_ERROR), denied: { error: 'Could not update ' }, empty: { error: 'error while updating user settings' } }
     },
     {

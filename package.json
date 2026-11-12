@@ -102,7 +102,6 @@
     "named-urls": "^2.0.1",
     "prettier": "^1.18.2",
     "process-env": "^2.0.2",
-    "react-gravatar": "^2.6.3",
     "reactstrap": "^8.10.1"
   },
   "scripts": {

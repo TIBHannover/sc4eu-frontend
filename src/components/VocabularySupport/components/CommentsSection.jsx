@@ -37,6 +37,7 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import UserAvatar from '../../ReusableComponents/UserAvatar';
 import CommentEditor, { CommentContent, getShortcutFormat } from './CommentEditor';
 import { applyCommentFormat } from '../utils/CommentMarkdown';
+import { serializeMentions, getUserName } from '../utils/CommentMentions';
 
 const INDENT_PX = 14;
 
@@ -98,10 +99,6 @@ function buildTree(flatComments) {
     return roots;
 }
 
-// Votes are stored as lists of display names (`upvotes` / `downvotes`) so the
-// two counts stay separate and each user's own vote is tracked individually.
-// Legacy comments only have a net `votes` number; it is shown as extra
-// up (if positive) or down (if negative) counts since it can't be split.
 function getVoteState(comment, currentUser) {
     const upvoters = comment.upvotes ?? [];
     const downvoters = comment.downvotes ?? [];
@@ -125,7 +122,7 @@ function countDescendants(node) {
 
 function useMentionInput(users) {
     const [text, setText] = useState('');
-    const [mentionedUsers, setMentionedUsers] = useState([]);
+    const [mentions, setMentions] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [mentionSearch, setMentionSearch] = useState('');
     const [cursorPosition, setCursorPosition] = useState(null);
@@ -145,9 +142,8 @@ function useMentionInput(users) {
             if (matchMention) {
                 const searchTerm = matchMention[1].toLowerCase();
                 setMentionSearch(searchTerm);
-
                 const filtered = users
-                    .filter(u => u?.display_name)
+                    .filter(u => u?.uuid && u.display_name && !u.anonymized_at)
                     .filter(u => u.display_name.toLowerCase().includes(searchTerm))
                     .slice(0, 5);
 
@@ -163,7 +159,7 @@ function useMentionInput(users) {
 
     const handleMentionSelect = useCallback(
         selectedUser => {
-            if (!selectedUser?.display_name) {
+            if (!selectedUser?.uuid || !selectedUser.display_name) {
                 console.error('Invalid user selected:', selectedUser);
                 return;
             }
@@ -174,7 +170,9 @@ function useMentionInput(users) {
                 return `${textBeforeMention}@${selectedUser.display_name}${textAfterMention} `;
             });
 
-            setMentionedUsers(prev => (prev.includes(selectedUser.display_name) ? prev : [...prev, selectedUser.display_name]));
+            setMentions(prev =>
+                prev.some(m => m.uuid === selectedUser.uuid) ? prev : [...prev, { uuid: selectedUser.uuid, display_name: selectedUser.display_name }]
+            );
             setAnchorEl(null);
         },
         [cursorPosition, mentionSearch]
@@ -221,15 +219,18 @@ function useMentionInput(users) {
 
     const reset = useCallback(() => {
         setText('');
-        setMentionedUsers([]);
+        setMentions([]);
         setAnchorEl(null);
         setExpanded(false);
     }, []);
 
+    // text as it is stored: `@Name` -> `@{uuid}`, plus the uuids still mentioned in it
+    const serialize = useCallback(() => serializeMentions(text, mentions), [text, mentions]);
+
     return {
         text,
         setText,
-        mentionedUsers,
+        serialize,
         anchorEl,
         filteredUsers,
         fieldRef,
@@ -347,7 +348,7 @@ function ReactionPicker({ commentId, onReact, open, onOpen, onClose, visible }) 
     );
 }
 
-function ReactionChip({ code, users, currentUser, onRemove }) {
+function ReactionChip({ code, users, userDirectory, currentUser, onRemove }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const entry = COMMENT_EMOJI_SET.find(e => e.code === code);
     const isActive = users.includes(currentUser);
@@ -383,7 +384,7 @@ function ReactionChip({ code, users, currentUser, onRemove }) {
                     </Typography>
                     {users.map(user => (
                         <Typography key={user} variant="caption" display="block">
-                            {user}
+                            {getUserName(userDirectory, user, user)}
                         </Typography>
                     ))}
                 </Paper>
@@ -422,7 +423,8 @@ function ReplyComposer({ users, isMobile, replyTo, onSubmit, onCancel }) {
 
     const handleSubmit = () => {
         if (!mention.text.trim()) return;
-        onSubmit(mention.text, mention.mentionedUsers);
+        const { content, mentionedUsers } = mention.serialize();
+        onSubmit(content, mentionedUsers);
         mention.reset();
     };
 
@@ -491,7 +493,8 @@ function CommentNode({
 
     const authorDateStyle = { display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' };
 
-    const authorId = users.find(u => u.display_name === node.author)?.uuid || node.author;
+    const authorId = node.author_uuid ?? node.author;
+    const authorName = node.author_uuid ? getUserName(users, node.author_uuid) : node.author;
 
     const voteState = getVoteState(node, currentUser);
 
@@ -558,7 +561,7 @@ function CommentNode({
                     <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
                         <div style={authorDateStyle}>
                             <Typography variant="subtitle1" component="span" style={{ fontWeight: 'bold' }}>
-                                {node.author}
+                                {authorName}
                             </Typography>
                             {isMobile && <UserAvatar identifier={authorId} />}
                             <Typography variant="body1" color="textSecondary">
@@ -567,7 +570,7 @@ function CommentNode({
                             {hasStatus && <Tooltip title={STATUS_TOOLTIP[node.status]}>{STATUS_ICON[node.status]}</Tooltip>}
                         </div>
 
-                        <CommentContent content={node.content} gutterBottom />
+                        <CommentContent content={node.content} users={users} gutterBottom />
 
                         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: -0.5, flexWrap: 'wrap' }}>
                             <Button
@@ -596,6 +599,7 @@ function CommentNode({
                                         key={code}
                                         code={code}
                                         users={reactors}
+                                        userDirectory={users}
                                         currentUser={currentUser}
                                         onRemove={() => onReact(node.id, code)}
                                     />
@@ -639,7 +643,7 @@ function CommentNode({
                 <ReplyComposer
                     users={users}
                     isMobile={isMobile}
-                    replyTo={node.author}
+                    replyTo={authorName}
                     onCancel={() => setReplyingId(null)}
                     onSubmit={(text, mentionedUsers) => {
                         onReply(node.id, text, mentionedUsers);
@@ -679,8 +683,7 @@ function CommentNode({
 
 const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveDiscussion }) => {
     const theme = useTheme();
-
-    const userDisplayName = user?.['displayName'];
+    const userId = user?.['userId'];
     const [replyingId, setReplyingId] = useState(null);
     const [comments, setComments] = useState(termComments);
 
@@ -694,7 +697,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const topLevelMention = useMentionInput(users);
     const textFieldRef = topLevelMention.fieldRef;
 
-    const { notifyNewComment } = usePushNotifications(user.displayName);
+    const { notifyNewComment } = usePushNotifications(userId);
     const queryClient = useQueryClient();
     const isMobile = useMediaQuery(`(max-width:${SMALL_SCREEN_WIDTH})`);
 
@@ -733,12 +736,12 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
     const commitQueueRef = useRef(Promise.resolve());
 
     const persist = useCallback(
-        (updatedComments, comment) => {
+        (updatedComments, commitMessage) => {
             const run = () =>
                 trackDiscussionWrite(async () => {
                     await handleSaveDiscussion({ resourceId, comments: updatedComments });
                     setComments(updatedComments);
-                    await commitDiscussionOnly(queryClient, comment, resourceId);
+                    await commitDiscussionOnly(queryClient, commitMessage);
                 });
 
             const result = commitQueueRef.current.then(run, run);
@@ -750,13 +753,13 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         [handleSaveDiscussion, resourceId, queryClient]
     );
 
-    const addComment = async (author, content, mentionedUsers, parentId = null) => {
+    const addComment = async (author_uuid, content, mentionedUsers, parentId = null) => {
         const newComment = {
             id: Math.random()
                 .toString(36)
                 .substring(2, 11),
             parentId,
-            author,
+            author_uuid,
             content,
             timestamp: new Date().toISOString(),
             mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined,
@@ -765,7 +768,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
         };
 
         const updatedComments = [...comments, newComment];
-        await persist(updatedComments, newComment);
+        await persist(updatedComments, `Add comment by ${author_uuid} on term ${resourceId}`);
         if (newComment.mentionedUsers !== undefined) {
             await notifyNewComment(resourceId, newComment.mentionedUsers);
         }
@@ -773,30 +776,31 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
 
     const handleTopLevelSubmit = () => {
         if (!topLevelMention.text.trim()) return;
-        addComment(userDisplayName, topLevelMention.text, topLevelMention.mentionedUsers, null);
+        const { content, mentionedUsers } = topLevelMention.serialize();
+        addComment(userId, content, mentionedUsers, null);
         topLevelMention.reset();
     };
 
     const handleReply = (parentId, text, mentionedUsers) => {
-        addComment(userDisplayName, text, mentionedUsers, parentId);
+        addComment(userId, text, mentionedUsers, parentId);
     };
 
     const handleVote = async (commentId, direction) => {
         const updatedComments = comments.map(c => {
             if (c.id !== commentId) return c;
 
-            const upvotes = (c.upvotes ?? []).filter(u => u !== userDisplayName);
-            const downvotes = (c.downvotes ?? []).filter(u => u !== userDisplayName);
-            const previous = getVoteState(c, userDisplayName).userVote;
+            const upvotes = (c.upvotes ?? []).filter(u => u !== userId);
+            const downvotes = (c.downvotes ?? []).filter(u => u !== userId);
+            const previous = getVoteState(c, userId).userVote;
 
             // clicking the same direction again removes the vote
             if (previous !== direction) {
-                (direction === 'up' ? upvotes : downvotes).push(userDisplayName);
+                (direction === 'up' ? upvotes : downvotes).push(userId);
             }
 
             return { ...c, upvotes, downvotes };
         });
-        await persist(updatedComments);
+        await persist(updatedComments, `${direction === 'up' ? 'Upvote' : 'Downvote'} comment ${commentId} by ${userId} on term ${resourceId}`);
     };
 
     const handleReact = (commentId, code) => {
@@ -805,16 +809,16 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             const reactions = { ...c.reactions };
             // remove user from all codes first (one reaction per user per comment)
             for (const key of Object.keys(reactions)) {
-                reactions[key] = reactions[key].filter(u => u !== userDisplayName);
+                reactions[key] = reactions[key].filter(u => u !== userId);
             }
             // toggle: only add if user was not already on this code
-            const wasReacted = (c.reactions?.[code] ?? []).includes(userDisplayName);
+            const wasReacted = (c.reactions?.[code] ?? []).includes(userId);
             if (!wasReacted) {
-                reactions[code] = [...(reactions[code] ?? []), userDisplayName];
+                reactions[code] = [...(reactions[code] ?? []), userId];
             }
             return { ...c, reactions };
         });
-        persist(updatedComments);
+        persist(updatedComments, `React to comment ${commentId} by ${userId} on term ${resourceId}`);
     };
 
     const handleStatusChange = (commentId, value) => {
@@ -825,7 +829,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
             }
             return { ...comment, status: value };
         });
-        persist(updatedComments);
+        persist(updatedComments, `Change status of comment ${commentId} by ${userId} on term ${resourceId}`);
     };
 
     return (
@@ -872,7 +876,7 @@ const CommentsSection = ({ user, resourceId, comments: termComments, handleSaveD
                         onVote={handleVote}
                         onReact={handleReact}
                         onStatusChange={handleStatusChange}
-                        currentUser={userDisplayName}
+                        currentUser={userId}
                         collapsedIds={collapsedIds}
                         toggleCollapsed={toggleCollapsed}
                         replyingId={replyingId}

@@ -1,4 +1,3 @@
-import Gravatar from 'react-gravatar';
 import { Badge, Chip, Button, Tooltip, Card, IconButton, styled } from '@mui/material';
 import MuiSwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { tooltipClasses } from '@mui/material/Tooltip';
@@ -956,7 +955,8 @@ export const StyledBodyDiv = styled('div')(({ theme }) => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    position: 'absolute',
+    position: 'fixed',
+    zIndex: 1300,
     left: 0,
     bottom: 0,
     right: 0,
@@ -965,11 +965,20 @@ export const StyledBodyDiv = styled('div')(({ theme }) => ({
     height: '55px',
     backgroundColor: `${theme.palette.background.default}`,
     color: `${theme.palette.text.primary}`,
-    overflow: 'hidden',
+    overflow: 'auto',
 
     [`@media (max-width: ${MAX_WIDTH})`]: {
         paddingLeft: '1%',
         paddingRight: '1%'
+    },
+
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
+        position: 'static',
+        flexDirection: 'column',
+        alignItems: 'left',
+        height: 'auto',
+        overflow: 'visible',
+        padding: '10px 3%'
     },
 
     [`@media screen and (min-width: ${MIN_WIDTH_FOR_MONITOR})`]: {
@@ -1029,6 +1038,10 @@ export const StyledRightDiv = styled('div')(({ theme }) => ({
 
     [`@media (max-width: ${MAX_WIDTH})`]: {
         transform: 'translate(-30%, 15%)'
+    },
+
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
+        transform: 'none'
     }
 }));
 
@@ -1056,6 +1069,12 @@ export const StyledFooterText = styled('p')(({ theme }) => ({
     marginTop: '1.5%',
     marginLeft: '3%',
     whiteSpace: 'nowrap',
+
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
+        whiteSpace: 'normal',
+        marginTop: 0,
+        marginBottom: 0
+    },
 
     [`@media (max-width: ${MAX_WIDTH})`]: {
         marginLeft: '1%',
@@ -1150,18 +1169,24 @@ export const ButtonText = styled('span')(({ theme }) => ({
 
 //SideBarLayout.js
 export const StyledAppContent = styled('div')(({ theme, activePage }) => ({
-    height: activePage === '/' ? 'calc(100vh - 155px)' : 'calc(100vh - 100px)',
-    overflow: 'auto'
+    height: 'calc(100vh - 155px)',
+    overflow: 'auto',
+
+    [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
+        height: 'auto',
+        minHeight: 'calc(100vh - 155px)',
+        overflow: 'visible'
+    }
 }));
 
 const createMixin = (theme, activePage) => ({
-    height: activePage === '/' ? 'calc(100% - 55px)' : 'calc(100% - 0px)',
+    height: 'calc(100% - 55px)',
     top: 0,
     overflow: 'hidden',
     transition: '0.6s',
     backgroundColor: theme.palette.background.default,
     [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
-        height: activePage === '/' ? 'calc(100% - 55px)' : 'calc(100% - 0px)',
+        height: '100%',
         top: 50
     }
 });

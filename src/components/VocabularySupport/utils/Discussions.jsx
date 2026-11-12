@@ -24,6 +24,7 @@ import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { deserializeMentions, getCommentAuthorName } from './CommentMentions';
 
 const menuFilterTypes = {
     comment: 'Filter by comment text...',
@@ -70,7 +71,7 @@ const reduceCommentsMentioned = (discussions, mentionedUser) => {
 export const hasPendingMentionReply = (discussion, mentionedUser) => {
     const toTimestamp = comment => new Date(comment.timestamp).getTime();
     const mentionsUser = comment => comment.mentionedUsers?.includes(mentionedUser);
-    const isAuthoredBy = comment => comment.author === mentionedUser;
+    const isAuthoredBy = comment => comment.author_uuid === mentionedUser;
 
     const mentionTimestamps = discussion.comments.filter(mentionsUser).map(toTimestamp);
     if (mentionTimestamps.length === 0) {
@@ -105,7 +106,9 @@ const groupMentionedByCommentInstant = mentioned => {
             }
 
             grouped[dateKey][labelKey].comments.push({
+                id: comment.id,
                 author: comment.author,
+                author_uuid: comment.author_uuid,
                 content: comment.content
             });
         });
@@ -119,7 +122,7 @@ export const getMentionedCommentsLength = (discussions, mentionedUser) => {
     return mentionedDiscussions.reduce((sum, item) => sum + item.comments.length, 0);
 };
 
-export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) => {
+export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm, users = [] }) => {
     const [filterText, setFilterText] = useState('');
     const [filterType, setFilterType] = useState('comment');
     const [filterAnchorEl, setFilterAnchorEl] = useState(null);
@@ -131,6 +134,9 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
         const date = new Date(dateParam);
         return (!dateFrom || date >= dateFrom) && (!dateTo || date <= dateTo);
     };
+
+    const authorName = comment => getCommentAuthorName(comment, users);
+    const contentText = comment => deserializeMentions(comment.content, users);
 
     const handleFilterByAuthor = author => {
         setFilterType('author');
@@ -150,10 +156,10 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                     let filteredComments;
                     switch (filterType) {
                         case 'author':
-                            filteredComments = group.comments.filter(comment => comment.author.toLowerCase().includes(filterText.toLowerCase()));
+                            filteredComments = group.comments.filter(comment => authorName(comment).toLowerCase().includes(filterText.toLowerCase()));
                             break;
                         case 'comment':
-                            filteredComments = group.comments.filter(comment => comment.content.toLowerCase().includes(filterText.toLowerCase()));
+                            filteredComments = group.comments.filter(comment => contentText(comment).toLowerCase().includes(filterText.toLowerCase()));
                             break;
                         case 'term':
                             isGroupMatch = group.label?.toLowerCase().includes(filterText.toLowerCase());
@@ -275,17 +281,17 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
                                                 {group.comments.map(comment => (
                                                     <ListItem key={comment.id} disableGutters>
                                                         <ListItemAvatar
-                                                            onClick={() => handleFilterByAuthor(comment.author)}
+                                                            onClick={() => handleFilterByAuthor(authorName(comment))}
                                                             sx={{ cursor: 'pointer' }}
                                                         >
-                                                            <Tooltip title={`Filter by ${comment.author}`} arrow>
-                                                                <UserAvatar identifier={comment.author} />
+                                                            <Tooltip title={`Filter by ${authorName(comment)}`} arrow>
+                                                                <UserAvatar identifier={comment.author_uuid ?? comment.author} />
                                                             </Tooltip>
                                                         </ListItemAvatar>
                                                         <ListItemText
                                                             secondary={
                                                                 <Typography variant="body2">
-                                                                    {comment.author} — {comment.content}
+                                                                    {authorName(comment)} — {contentText(comment)}
                                                                 </Typography>
                                                             }
                                                         />
@@ -309,5 +315,6 @@ export const RenderGroupedMentions = ({ groupedMentioned, onNavigateToTerm }) =>
 
 RenderGroupedMentions.propTypes = {
     groupedMentioned: PropTypes.array.isRequired,
-    onNavigateToTerm: PropTypes.func.isRequired
+    onNavigateToTerm: PropTypes.func.isRequired,
+    users: PropTypes.array
 };

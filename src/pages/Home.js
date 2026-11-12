@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Footer from '../Layout/Footer';
 import visualisation from '../assets/images/visulization.png';
 import IntroductoryPopUp from '../components/IntroductoryPopUp';
 import Logo from '../assets/images/logo.png';
@@ -66,7 +65,6 @@ export default class Home extends Component {
                         ></div>
                     </StyledHomeBody>
                 </StyledHomeRootDiv>
-                <Footer />
             </>
         );
     }

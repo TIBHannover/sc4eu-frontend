@@ -6,7 +6,7 @@ import { openAuthDialog, toggleAuthDialog, updateAuth, updateCookies } from '../
 import { compose } from 'redux';
 import { loginViaEmail, regsiterViaEmail, forgotPassword } from '../../network/loginCalls';
 import { Link } from 'react-router-dom';
-import { minLengthPassword } from '../../constants/globalConstants';
+import { AUTH_MODAL_Z_INDEX, minLengthPassword } from '../../constants/globalConstants';
 import success from '../../assets/images/success.png';
 import error from '../../assets/images/error.png';
 import PopUp from '../PopUp';
@@ -27,6 +27,10 @@ import {
 import { fontStyled } from '../../styledComponents/styledFont';
 import { withTheme } from '@emotion/react';
 import instance from '@instance/config';
+import { Typography } from '@mui/material';
+import ROUTES from 'constants/routes';
+import { Link as MaterialLink } from '@mui/material';
+import { history } from 'store';
 class LoginViaEmail extends Component {
     //prevent the submitEvent of the Form
 
@@ -50,7 +54,9 @@ class LoginViaEmail extends Component {
             nameError: '',
             emailError: '',
             passwordError: '',
-            confirmPasswordError: ''
+            confirmPasswordError: '',
+            legalInfoState: false,
+            legalInfoNotAcceptedError: ''
         };
     }
 
@@ -148,6 +154,11 @@ class LoginViaEmail extends Component {
                 confirmPasswordError: 'Password and Confirm Password does not match.'
             });
             return false;
+        } else if (this.state.legalInfoState === false) {
+            this.setState({
+                legalInfoNotAcceptedError: 'In order to use Vocabulary Service, you must agree to Terms and conditions.'
+            });
+            return false;
         }
         return true;
     };
@@ -157,14 +168,65 @@ class LoginViaEmail extends Component {
         this.props.callback();
     };
 
-    renderOAuthButton = (href, logo, label, theme, compact = false) => {
+    /** On the register view an OAuth provider creates an account, so the terms must be accepted first. */
+    handleOAuthClick = event => {
+        if (this.state.signupModal && !this.state.legalInfoState) {
+            event.preventDefault();
+            this.setState({ legalInfoNotAcceptedError: 'In order to use Vocabulary Service, you must agree to Terms and conditions.' });
+        }
+    };
+
+    renderOAuthButtons = (theme, verb = 'Continue') => {
+        const disabled = this.state.signupModal && !this.state.legalInfoState;
+        return (
+            <div style={{ width: '90%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {this.renderOAuthButton(URL_LOGIN_VIA_LINKEDIN, linkedinLogo, `${verb} with LinkedIn`, theme, false, disabled)}
+                {this.renderOAuthButton(URL_LOGIN_VIA_GOOGLE, googleLogo, `${verb} with Google`, theme, false, disabled)}
+                {instance.features.sapLogin && this.renderOAuthButton(URL_LOGIN_VIA_SAP, sapLogo, `${verb} with SAP`, theme, false, disabled)}
+                <button
+                    type="button"
+                    onClick={() => this.setState(prev => ({ showMoreOptions: !prev.showMoreOptions }))}
+                    aria-expanded={this.state.showMoreOptions}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        marginTop: '2px',
+                        fontSize: '0.9rem',
+                        cursor: 'pointer',
+                        color: theme.palette.primary.main
+                    }}
+                >
+                    {this.state.showMoreOptions ? 'Hide more options ▴' : 'Show more options ▾'}
+                </button>
+                {this.state.showMoreOptions && (
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        {this.renderOAuthButton(
+                            URL_LOGIN_VIA_GITHUB,
+                            theme.palette.mode === 'dark' ? githubWhite : githubBlack,
+                            'GitHub',
+                            theme,
+                            true,
+                            disabled
+                        )}
+                        {this.renderOAuthButton(URL_LOGIN_VIA_GITLAB, gitlab, 'GitLab', theme, true, disabled)}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    renderOAuthButton = (href, logo, label, theme, compact = false, disabled = false) => {
         return (
             <a
                 href={href}
                 target="_self"
                 rel="noreferrer"
                 title={label}
+                aria-disabled={disabled}
+                onClick={this.handleOAuthClick}
                 style={{
+                    opacity: disabled ? 0.5 : 1,
                     flex: compact ? 1 : 'none',
                     display: 'flex',
                     alignItems: 'center',
@@ -186,8 +248,8 @@ class LoginViaEmail extends Component {
                     src={logo}
                     style={{
                         height: '30px',
-                        width:  '25px',
-                        objectFit: 'contain',
+                        width: '25px',
+                        objectFit: 'contain'
                     }}
                     alt=""
                 />
@@ -225,33 +287,7 @@ class LoginViaEmail extends Component {
                                         </div>
                                         <hr className="mt-0 mb-2" />
                                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
-                                            <div style={{ width: '90%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                                {this.renderOAuthButton(URL_LOGIN_VIA_LINKEDIN, linkedinLogo, 'Continue with LinkedIn', theme)}
-                                                {this.renderOAuthButton(URL_LOGIN_VIA_GOOGLE, googleLogo, 'Continue with Google', theme)}
-                                                {instance.features.sapLogin && this.renderOAuthButton(URL_LOGIN_VIA_SAP, sapLogo, 'Continue with SAP', theme)}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => this.setState(prev => ({ showMoreOptions: !prev.showMoreOptions }))}
-                                                    aria-expanded={this.state.showMoreOptions}
-                                                    style={{
-                                                        background: 'none',
-                                                        border: 'none',
-                                                        padding: 0,
-                                                        marginTop: '2px',
-                                                        fontSize: '0.9rem',
-                                                        cursor: 'pointer',
-                                                        color: theme.palette.primary.main
-                                                    }}
-                                                >
-                                                    {this.state.showMoreOptions ? 'Hide more options ▴' : 'Show more options ▾'}
-                                                </button>
-                                                {this.state.showMoreOptions && (
-                                                    <div style={{ display: 'flex', gap: '10px' }}>
-                                                        {this.renderOAuthButton(URL_LOGIN_VIA_GITHUB, theme.palette.mode === 'dark' ? githubWhite : githubBlack, 'GitHub', theme, true)}
-                                                        {this.renderOAuthButton(URL_LOGIN_VIA_GITLAB, gitlab, 'GitLab', theme, true)}
-                                                    </div>
-                                                )}
-                                            </div>
+                                            {this.renderOAuthButtons(theme)}
                                         </div>
                                         <div style={{ textAlign: 'center', marginTop: '20px', color: theme.palette.text.primary }}>
                                             <hr
@@ -343,11 +379,72 @@ class LoginViaEmail extends Component {
                                         style={{ maxWidth: '700px', width: '100%', fontFamily: fontStyled.fontFamily }}
                                         isOpen={this.state.signupModal}
                                         toggle={this.props.toggleAuthDialog}
+                                        zIndex={AUTH_MODAL_Z_INDEX}
                                     >
-                                        <ModalHeader toggle={this.props.toggleAuthDialog}>Sign Up</ModalHeader>
+                                        <ModalHeader toggle={this.props.toggleAuthDialog}>Register</ModalHeader>
                                         <ModalBody>
                                             <div className="container">
                                                 <Form onSubmit={this.handleSubmit}>
+                                                    <Typography variant="h6">Terms and Conditions</Typography>
+                                                    <Typography>
+                                                        I accept the{' '}
+                                                        <MaterialLink
+                                                            underline="hover"
+                                                            href={history.createHref({ pathname: ROUTES.TERMS_OF_USE })}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            sx={{ color: theme.palette.primary.main }}
+                                                        >
+                                                            Special Conditions VDST
+                                                        </MaterialLink>
+                                                        , and agree to the processing of my personal data provided here by Technische
+                                                        Informationsbibliothek (TIB). In accordance with the{' '}
+                                                        <MaterialLink
+                                                            underline="hover"
+                                                            href={history.createHref({ pathname: ROUTES.DATA_POLICY })}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            sx={{ color: theme.palette.primary.main }}
+                                                        >
+                                                            data protection declaration
+                                                        </MaterialLink>{' '}
+                                                        as well as the{' '}
+                                                        <MaterialLink
+                                                            underline="hover"
+                                                            // a static file from public/, not a router route: no history basename
+                                                            href={`${process.env.REACT_APP_PUBLIC_URL}VDST_Info_Sheet.pdf`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            sx={{ color: theme.palette.primary.main }}
+                                                        >
+                                                            info sheet data protection
+                                                        </MaterialLink>
+                                                        , the data is processed exclusively by TIB in order to provide services of our platform.{' '}
+                                                    </Typography>
+                                                    <FormGroup check className="mt-3">
+                                                        <Input
+                                                            id="legalInfoAccept"
+                                                            name="legalInfoAccept"
+                                                            type="checkbox"
+                                                            checked={this.state.legalInfoState}
+                                                            onChange={event =>
+                                                                this.setState({ legalInfoState: event.target.checked, legalInfoNotAcceptedError: '' })
+                                                            }
+                                                        />
+                                                        <Label check for="legalInfoAccept">
+                                                            I agree to the terms and conditions
+                                                        </Label>
+                                                        <div className="text-danger">{this.state.legalInfoNotAcceptedError}</div>
+                                                    </FormGroup>
+                                                    <Typography variant="h6" className="mt-4">
+                                                        Register with
+                                                    </Typography>
+                                                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                                                        {this.renderOAuthButtons(theme, 'Register')}
+                                                    </div>
+                                                    <div style={{ textAlign: 'center', margin: '20px 0', color: theme.palette.text.primary }}>
+                                                        OR register with e-mail
+                                                    </div>
                                                     <FormGroup row>
                                                         <Label for="displayName" sm={2}>
                                                             Name
@@ -431,6 +528,7 @@ class LoginViaEmail extends Component {
                                     style={{ fontFamily: fontStyled.fontFamily }}
                                     isOpen={this.state.resetPasswordModel}
                                     toggle={this.props.toggleAuthDialog}
+                                    zIndex={AUTH_MODAL_Z_INDEX}
                                 >
                                     <ModalHeader
                                         toggle={this.props.toggleAuthDialog}

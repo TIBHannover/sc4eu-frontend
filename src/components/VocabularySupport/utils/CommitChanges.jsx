@@ -37,9 +37,8 @@ export const waitForDiscussionWritesIdle = () =>
     discussionWritesInFlight === 0 ? Promise.resolve() : new Promise(resolve => idleResolvers.push(resolve));
 
 // Commits only the discussion data
-export async function commitDiscussionOnly(queryClient, comment, resourceId) {
+export async function commitDiscussionOnly(queryClient, commitMessage) {
     await trackDiscussionWrite(async () => {
-        const commitMessage = `Add comment by ${comment.author} on term ${resourceId}`;
         const jsonDataToCommit = queryClient.getQueryData(['discussions']);
         await saveAllDiscussion(jsonDataToCommit, commitMessage);
         await queryClient.invalidateQueries({ queryKey: ['discussions'] });
