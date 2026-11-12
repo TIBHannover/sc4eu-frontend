@@ -61,11 +61,10 @@ export const doesUserExist = email => {
 
 export const updateUserSettings = payload => {
     // we a put request on the backend
-    // currently our data can only update the user name
-    // TODO allow this function to update anything about user that can be updated.
-
+    // only the provided fields are updated (display name and/or LinkedIn publication consent)
     const data = {
-        username: payload.name
+        username: payload.name,
+        linkedin_publication_consent: payload.linkedinPublicationConsent
     };
 
     const headers = { 'Content-Type': 'application/json' };

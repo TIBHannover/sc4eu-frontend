@@ -120,6 +120,7 @@ class Header extends Component {
                 {this.props.user?.displayName && <NotificationManager user={this.props.user.displayName} />}
                 <StyledHeaderDiv>
                     <StyledRightSideDiv>
+                        {this.props.user?.userId && <LinkedInConsentBanner userId={this.props.user.userId} />}
                         <ThemeToggle />
                         {this.props.user.gravatarId ? (
                             <>
