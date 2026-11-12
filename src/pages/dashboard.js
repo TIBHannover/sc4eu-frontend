@@ -63,17 +63,19 @@ class Dashboard extends Component {
     };
 
     dashBoardRowItem = () => {
-        return this.state.users.map(rowItem => {
-            return (
-                <DashboardItem
-                    key={'row_item' + rowItem['uuid']}
-                    userData={rowItem}
-                    roleOptions={this.state.userRoles}
-                    projects={this.state.projects}
-                    callback={this.getBackendData}
-                />
-            );
-        });
+        return this.state.users
+            .filter(user => !user.anonymized_at)
+            .map(rowItem => {
+                return (
+                    <DashboardItem
+                        key={'row_item' + rowItem['uuid']}
+                        userData={rowItem}
+                        roleOptions={this.state.userRoles}
+                        projects={this.state.projects}
+                        callback={this.getBackendData}
+                    />
+                );
+            });
     };
 
     PopUpCallback = confirmed => {
@@ -120,6 +122,43 @@ class Dashboard extends Component {
                 );
             }
         }
+    };
+
+    renderAnonymizedUsers = () => {
+        if (!Array.isArray(this.state.users)) {
+            return null;
+        }
+
+        const anonymizedUsers = this.state.users
+            .filter(user => user.anonymized_at)
+            .sort((a, b) => new Date(b.anonymized_at) - new Date(a.anonymized_at));
+
+        if (anonymizedUsers.length === 0) {
+            return <p style={{ textAlign: 'center', marginTop: '1rem' }}>No anonymized users.</p>;
+        }
+
+        return (
+            <div style={{ textAlign: 'center' }}>
+                <StyledTable bordered>
+                    <thead>
+                        <tr>
+                            <th>Pseudonym</th>
+                            <th>User ID</th>
+                            <th>Anonymized at</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {anonymizedUsers.map(user => (
+                            <tr key={`anonymized_${user.uuid}`}>
+                                <td>{user.display_name}</td>
+                                <td>{user.uuid}</td>
+                                <td>{new Date(user.anonymized_at).toLocaleString()}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </StyledTable>
+            </div>
+        );
     };
 
     toggle = tab => {
@@ -171,6 +210,16 @@ class Dashboard extends Component {
                             Users
                         </NavLink>
                     </NavItem>
+                    <NavItem hidden={this.props.user && this.props.user.role.toLowerCase() !== 'System ADMIN'.toLowerCase()}>
+                        <NavLink
+                            className={classnames({ active: this.state.activeTab === '3' })}
+                            onClick={() => {
+                                this.toggle('3');
+                            }}
+                        >
+                            Anonymized users
+                        </NavLink>
+                    </NavItem>
                 </Nav>
 
                 <TabContent activeTab={this.state.activeTab}>
@@ -179,6 +228,9 @@ class Dashboard extends Component {
                     </TabPane>
                     <TabPane tabId="2">
                         <div>{!this.state.loading && this.renderUserDashboard()}</div>
+                    </TabPane>
+                    <TabPane tabId="3">
+                        <div>{!this.state.loading && this.renderAnonymizedUsers()}</div>
                     </TabPane>
                 </TabContent>
 
@@ -198,4 +250,3 @@ const mapStateToProps = state => ({
 });
 
 export default compose(connect(mapStateToProps))(withRouter(Dashboard));
-

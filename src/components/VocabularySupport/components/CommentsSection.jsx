@@ -145,9 +145,8 @@ function useMentionInput(users) {
             if (matchMention) {
                 const searchTerm = matchMention[1].toLowerCase();
                 setMentionSearch(searchTerm);
-
                 const filtered = users
-                    .filter(u => u?.display_name)
+                    .filter(u => u?.uuid && u.display_name && !u.anonymized_at)
                     .filter(u => u.display_name.toLowerCase().includes(searchTerm))
                     .slice(0, 5);
 
