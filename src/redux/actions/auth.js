@@ -111,6 +111,10 @@ export const openAuthDialog = ({ action, redirectRoute = null, signInRequired = 
     });
 };
 
+export const clearRedirectRoute = () => dispatch => {
+    dispatch(updateAuth({ redirectRoute: null }));
+};
+
 export const toggleAuthDialog = () => dispatch => {
     dispatch({
         type: type.TOGGLE_AUTHENTICATION_DIALOG

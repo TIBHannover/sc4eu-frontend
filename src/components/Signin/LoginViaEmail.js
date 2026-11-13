@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Button, Form, FormGroup, Label, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { connect } from 'react-redux';
-import { openAuthDialog, toggleAuthDialog, updateAuth, updateCookies } from '../../redux/actions/auth';
+import { clearRedirectRoute, openAuthDialog, toggleAuthDialog, updateAuth, updateCookies } from '../../redux/actions/auth';
 import { compose } from 'redux';
 import { loginViaEmail, regsiterViaEmail, forgotPassword } from '../../network/loginCalls';
 import { Link } from 'react-router-dom';
@@ -94,11 +94,17 @@ class LoginViaEmail extends Component {
                 popUpMessage: token.error,
                 image: error
             });
-        } else {
-            this.props.callback();
         }
         if (token?.jwt) {
-            this.props.updateCookies({ token: token.jwt });
+            await this.props.updateCookies({ token: token.jwt });
+        }
+        if (!token.error) {
+            const { redirectRoute } = this.props;
+            this.props.clearRedirectRoute();
+            this.props.callback();
+            if (redirectRoute) {
+                history.push(redirectRoute);
+            }
         }
         this.setState({ loading: false });
         return true;
@@ -585,6 +591,8 @@ class LoginViaEmail extends Component {
 }
 
 LoginViaEmail.propTypes = {
+    redirectRoute: PropTypes.string,
+    clearRedirectRoute: PropTypes.func.isRequired,
     openAuthDialog: PropTypes.func.isRequired,
     updateCookies: PropTypes.func.isRequired,
     toggleAuthDialog: PropTypes.func.isRequired,
@@ -600,7 +608,8 @@ const mapDispatchToProps = dispatch => ({
     openAuthDialog: payload => dispatch(openAuthDialog(payload)),
     updateAuth: data => dispatch(updateAuth(data)),
     updateCookies: data => dispatch(updateCookies(data)),
-    toggleAuthDialog: () => dispatch(toggleAuthDialog())
+    toggleAuthDialog: () => dispatch(toggleAuthDialog()),
+    clearRedirectRoute: () => dispatch(clearRedirectRoute())
 });
 
 export default compose(connect(mapStateToProps, mapDispatchToProps))(withTheme(LoginViaEmail));

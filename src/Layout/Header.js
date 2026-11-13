@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ROUTES from '../constants/routes';
+import { IS_VOCABULARY_INSTANCE } from '../constants/globalConstants';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -188,10 +189,9 @@ class Header extends Component {
                             <StyledHeaderReactStrapButton
                                 className="clearfix"
                                 onClick={() => {
-                                    // push that to the redux state so that the user is rederected to its prev location;
                                     this.props.openAuthDialog({
                                         action: 'signin',
-                                        redirectRoute: this.props.location.pathname
+                                        redirectRoute: IS_VOCABULARY_INSTANCE ? ROUTES.VOCABULARY_SUPPORT : this.props.location.pathname
                                     });
                                 }}
                             >

@@ -3,10 +3,15 @@ import { Redirect, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { updateCookies } from '../redux/actions/auth';
+import { clearRedirectRoute, updateCookies } from '../redux/actions/auth';
+import ROUTES from '../constants/routes';
 
 class LoggedIn extends Component {
+    // taken once: the route is cleared from the store right after mounting
+    redirectRoute = this.props.redirectRoute || ROUTES.HOME;
+
     componentDidMount() {
+        this.props.clearRedirectRoute();
         const urlParams = new URLSearchParams(this.props.location.search);
         const response = Object.fromEntries(urlParams);
         if (this.props.user === 0) {
@@ -15,7 +20,7 @@ class LoggedIn extends Component {
         }
     }
     render() {
-        return <Redirect to="/" />;
+        return <Redirect to={this.redirectRoute} />;
     }
 }
 
@@ -29,11 +34,14 @@ const mapStateToProps = state => {
 LoggedIn.propTypes = {
     user: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     location: PropTypes.object.isRequired,
-    updateCookies: PropTypes.func.isRequired
+    redirectRoute: PropTypes.string,
+    updateCookies: PropTypes.func.isRequired,
+    clearRedirectRoute: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
-    updateCookies: payload => dispatch(updateCookies(payload))
+    updateCookies: payload => dispatch(updateCookies(payload)),
+    clearRedirectRoute: () => dispatch(clearRedirectRoute())
 });
 
 export default compose(connect(mapStateToProps, mapDispatchToProps), withRouter)(LoggedIn);

@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import Footer from './Footer';
 import SideBarLayout from './SideBarLayout';
 import { StyledBody } from 'styledComponents/styledComponents';
+import { IS_VOCABULARY_INSTANCE } from '../constants/globalConstants';
 
 export default function DefaultLayout(props) {
     return (
         <StyledBody>
             <Header />
             <SideBarLayout>{props.children}</SideBarLayout>
-            {process.env.REACT_APP_PUBLIC_URL !== '/ocp/' && <Footer />}
+            {IS_VOCABULARY_INSTANCE && <Footer />}
         </StyledBody>
     );
 }
@@ -18,4 +19,3 @@ export default function DefaultLayout(props) {
 DefaultLayout.propTypes = {
     children: PropTypes.node.isRequired
 };
-
