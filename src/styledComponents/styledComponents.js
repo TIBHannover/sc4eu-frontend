@@ -1170,7 +1170,7 @@ export const ButtonText = styled('span')(({ theme }) => ({
 //SideBarLayout.js
 export const StyledAppContent = styled('div')(({ theme, activePage }) => ({
     height: 'calc(100vh - 155px)',
-    overflow: 'auto',
+    overflow: 'hidden',
 
     [`@media (max-width: ${SMALL_SCREEN_WIDTH})`]: {
         height: 'auto',

@@ -18,7 +18,7 @@ const config = {
     },
     documentationGroups: ['vocabulary'],
     newTermsDays: 1,
-    home: { logo, logoDark, logoAlt: 'NFDI4Ing Logo', logoWidth: { xs: '10rem', md: '15rem', xl: '20rem' } }
+    home: { logo, logoDark, logoAlt: 'NFDI4Ing Logo', logoWidth: { xs: '10rem', md: '12rem', xl: '15rem' } }
 };
 
 export default config;

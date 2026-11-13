@@ -18,7 +18,7 @@ const config = {
     documentationGroups: ['vocabulary'],
     newTermsDays: 1,
     /** Logo on the home page (src/pages/VocabularyHome.js); logoDark is optional. */
-    home: { logo, logoAlt: 'VDST Logo', logoWidth: { xs: '10rem', md: '12rem', xl: '15rem' } }
+    home: { logo, logoAlt: 'VDST Logo', logoWidth: { xs: '6rem', md: '8rem', xl: '10rem' } }
 };
 
 export default config;
